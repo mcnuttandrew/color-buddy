@@ -40,21 +40,26 @@
   {#each colors as color, i}
     <div>
       <div
-        class="w-32 h-32 text-center flex justify-center items-center rounded-full"
-        class:text-white={chroma(color).luminance() < 0.5}
+        class="w-32 h-32 text-center flex flex-col justify-center items-center rounded-full"
         style="background-color: {color}"
       >
-        {color}
-      </div>
-      <div>
-        <button on:click={() => setColors(insert(colors, randColor(), i))}>
-          random
-        </button>
-        <button on:click={() => setColors(deleteFrom(colors, i))}>
-          Delete
-        </button>
+        <div>
+          <button on:click={() => setColors(insert(colors, randColor(), i))}>
+            🔀
+          </button>
+          <button on:click={() => setColors(deleteFrom(colors, i))}>␡</button>
+        </div>
+        <div
+          class:text-white={chroma(color).luminance() < 0.5}
+          bind:textContent={color}
+          contenteditable="true"
+        >
+          {color}
+        </div>
       </div>
     </div>
+
+    <div></div>
   {/each}
   <div class="w-32 h-32 text-center flex justify-center items-center">
     {#each computedGuess as color, i}

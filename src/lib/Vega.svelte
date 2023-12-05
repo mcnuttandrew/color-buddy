@@ -9,9 +9,7 @@
     vegaEmbed(container, JSON.parse(JSON.stringify(spec)), {
       actions,
       config: theme,
-    }).catch((e) => {
-      console.log("chart error", e);
-    });
+    }).catch((e) => {});
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->

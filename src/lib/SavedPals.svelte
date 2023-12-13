@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { flip } from "svelte/animate";
   import colorStore from "./color-store";
   import { actionButton } from "../styles";
   import chroma from "chroma-js";
@@ -32,8 +33,9 @@
       class="flex flex-wrap rounded p-2"
       style="background-color: {$colorStore.currentPal.background};"
     >
-      {#each colors as color}
+      {#each colors as color (color)}
         <div
+          animate:flip={{ duration: 200 }}
           class={colorClass}
           class:text-white={chroma(color).luminance() < 0.5}
           style="background-color: {color}"

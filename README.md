@@ -12,3 +12,4 @@ Use: should point to localhost:8888 if all is well
 - make color sliders be shaded in the background
 - make charts be end user manipuable
 - make AI suggestions be background aware
+- undo / redo

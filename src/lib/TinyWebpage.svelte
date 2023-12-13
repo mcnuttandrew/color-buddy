@@ -5,14 +5,14 @@
 </script>
 
 <div
-  class="preview"
+  class="preview transition-all"
   style="--background: {colors[0]}; --header: {colors[1]}; --text: {colors[2]}; --button: {colors[3]}; background-color: {bg};"
 >
-  <div class="header">Header</div>
-  <div class="content">
+  <div class="header transition-all">Header</div>
+  <div class="content transition-all">
     <p>Webpage Preview</p>
   </div>
-  <button class="button">Button</button>
+  <button class="button transition-all">Button</button>
 </div>
 
 <style>

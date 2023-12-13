@@ -28,10 +28,10 @@ export function avgColors(
     hsl: (x) => chroma(x).hsl(),
     lab: (x) => chroma(x).lab(),
   };
-  const colorSpaceFormatters: Record<string, (color: number[]) => string> = {
-    rgb: (x) => `rgb(${x.map((x) => Math.round(x)).join(",")})`,
-    hsl: ([h, s, l]) => `hsl(${h}, ${s}%, ${l}%)`,
-    lab: (x) => `lab(${x.map((x) => Math.round(x)).join(",")})`,
+  const colorSpaceFormatters: any = {
+    rgb: (x: number[]) => chroma.rgb(x[0], x[1], x[2]),
+    hsl: (x: number[]) => chroma.hsl(x[0], x[1], x[2]),
+    lab: (x: number[]) => chroma.lab(x[0], x[1], x[2]),
   };
   const sum = (a: any[], b: any[]) => a.map((x, i) => x + b[i]);
   const sumColor = colors.reduce(
@@ -42,5 +42,11 @@ export function avgColors(
   if (avgColor.some((x) => isNaN(x))) {
     return "#000000";
   }
-  return chroma(colorSpaceFormatters[colorSpace](avgColor)).hex();
+  return colorSpaceFormatters[colorSpace](avgColor).hex();
+}
+
+export function opposingColor(color: string) {
+  const c = chroma(color).hsl();
+  const channels = c.map((x, i) => (i === 0 ? (x + 180) % 360 : x));
+  return chroma.hsl(channels[0], channels[1], channels[2]).hex();
 }

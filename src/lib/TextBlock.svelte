@@ -25,6 +25,6 @@
 
 <p class="max-w-sm flex flex-wrap text-sm" style="background-color: {bg};">
   {#each wordBreakDown as { word, style }}
-    <span {style} class="mr-1">{` ${word} `}</span>
+    <span {style} class="mr-1 transition-all">{` ${word} `}</span>
   {/each}
 </p>

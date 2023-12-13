@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { insert, randColor, avgColors } from "../utils";
+  import { insert, randColor, avgColors, opposingColor } from "../utils";
   import colorStore from "./color-store";
   import { actionButton } from "../styles";
   import { suggestAdditionsToPalette } from "../api-calls";
@@ -8,6 +8,8 @@
     { color: randColor(), explanation: "random" },
     { color: avgColors(colors, "hsl"), explanation: "average HSL" },
     { color: avgColors(colors, "rgb"), explanation: "average RGB" },
+    { color: avgColors(colors, "lab"), explanation: "average LAB" },
+    { color: opposingColor(colors[0]), explanation: "opposite of first color" },
   ];
   let aiSuggestions: string[] = [];
   let requestState: "idle" | "loading" = "idle";

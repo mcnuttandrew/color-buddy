@@ -21,6 +21,19 @@ const InitialStore: StoreData = {
   mostRecentPal: "Untitled",
 };
 
+function insertPalette(
+  palettes: StoreData["palettes"],
+  pal: Palette,
+  palName: string
+) {
+  let nameCount = palettes.reduce(
+    (acc, x) => acc + (x.name === palName ? 1 : 0),
+    0
+  );
+  const name = nameCount === 0 ? palName : `${palName} ${nameCount}`;
+  return [...palettes, { palette: pal, name }];
+}
+
 function createStore() {
   const storeData: StoreData = JSON.parse(
     localStorage.getItem("color-pal") || JSON.stringify(InitialStore)
@@ -34,11 +47,6 @@ function createStore() {
       return newVal;
     });
 
-  //   const setIn = (group: string) => (key: string, val: number) =>
-  //     persistUpdate((oldStore) => ({
-  //       ...oldStore,
-  //       [group]: { ...oldStore[group], [key]: val },
-  //     }));
   const simpleSet = (key: keyof StoreData) => (val: any) =>
     persistUpdate((n) => ({ ...n, [key]: val }));
 
@@ -65,11 +73,8 @@ function createStore() {
       persistUpdate((n) => ({
         ...n,
         currentPal: outfitToPal(pick(outfits)),
-        name: "Untitled",
-        palettes: [
-          ...n.palettes,
-          { palette: n.currentPal, name: n.mostRecentPal },
-        ],
+        mostRecentPal: "Untitled",
+        palettes: insertPalette(n.palettes, n.currentPal, n.mostRecentPal),
       })),
     removePal: (pal: string) =>
       persistUpdate((n) => ({

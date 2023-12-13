@@ -72,7 +72,8 @@
     </g>
   </svg>
   <img
-    src="public/circle-grad.png"
+    src="circle-grad.png"
+    alt="color wheel"
     style={`height: ${height}px;width:${width}px`}
   />
 </div>

@@ -20,7 +20,6 @@ export function avgColors(
   colors: string[],
   colorSpace: "rgb" | "hsl" | "lab" = "rgb"
 ) {
-  console.log(colors);
   if (colors.length === 0) {
     return "#000000";
   }
@@ -40,7 +39,6 @@ export function avgColors(
     [0, 0, 0]
   );
   const avgColor = sumColor.map((x) => x / colors.length);
-  console.log(avgColor);
   if (avgColor.some((x) => isNaN(x))) {
     return "#000000";
   }

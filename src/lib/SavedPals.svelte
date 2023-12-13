@@ -1,18 +1,15 @@
 <script lang="ts">
   import { store } from "./store";
   import chroma from "chroma-js";
-
   const colorClass = "w-6 h-6 mx-2 rounded-full";
+  import SuggestName from "./actions-components/SuggestName.svelte";
+
+  $: console.log($store.mostRecentPal);
 </script>
 
 <div class="bg-slate-400 p-2 w-96">
   <div class="text-4xl font-bold">Color Buddy</div>
 
-  <section class="mt-4 border-t-2 border-black">
-    <button class="underline" on:click={() => store.createNewPal()}>
-      Save Current Pal and create new one
-    </button>
-  </section>
   <section class="mt-4 border-t-2 border-black">
     <div class="flex items-center justify-between">
       <span class="italic">Current Pal:</span>
@@ -40,17 +37,27 @@
         ></div>
       {/each}
     </div>
-    <div class="flex">
-      <span>Name:</span>
+
+    <div class="mt-5">
+      <label for="current-colors">Current Colors</label>
+      <textarea
+        id="current-colors"
+        class="w-full p-2 rounded"
+        value={$store.currentPal.join(", ")}
+        on:change={(e) => {
+          console.log(e.target.value);
+        }}
+      />
     </div>
-    <button class="underline">Suggest a name</button>
-    <input
-      class="w-full h-5"
-      value={$store.currentPal.join(", ")}
-      on:change={(e) => {
-        console.log(e.target.value);
-      }}
-    />
+
+    <div class="mt-5">
+      <div>Actions</div>
+      <button class="underline" on:click={() => store.createNewPal()}>
+        Save Current Pal and create new one
+      </button>
+
+      <SuggestName />
+    </div>
   </section>
   <section class="mt-4 border-t-2 border-black">
     <div class="italic">Saved Pals</div>

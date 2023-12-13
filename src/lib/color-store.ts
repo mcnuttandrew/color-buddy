@@ -98,8 +98,15 @@ function createStore() {
         ...n,
         currentPal: n.currentPal.sort(() => Math.random() - 0.5),
       })),
+    replaceColor: (oldColor: string, newColor: string) =>
+      persistUpdate((n) => ({
+        ...n,
+        currentPal: n.currentPal.map((x) => (x === oldColor ? newColor : x)),
+      })),
     reset: () => set({ ...InitialStore }),
   };
 }
 
-export const store = createStore();
+const store = createStore();
+
+export default store;

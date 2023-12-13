@@ -1,11 +1,13 @@
 <script lang="ts">
-  import { store } from "./store";
+  import colorStore from "./color-store";
+  import focusStore from "./focus-store";
   import chroma from "chroma-js";
   import { scaleLinear } from "d3-scale";
 
-  console.log;
   export let width = 256;
   export let height = 256;
+  $: focusedColor = $focusStore.focusedColor;
+
   const margin = {
     top: 10,
     right: 10,
@@ -39,6 +41,9 @@
   on:mouseleave={() => {
     dragging = false;
   }}
+  on:mouseup={() => {
+    dragging = false;
+  }}
 >
   <defs>
     <linearGradient id="rainbow" gradientTransform="rotate(0)">
@@ -65,17 +70,20 @@
         if (dragging) {
           dragging = false;
         } else {
-          store.setCurrentPal([...$store.currentPal, eventToColor(e)]);
+          colorStore.setCurrentPal([
+            ...$colorStore.currentPal,
+            eventToColor(e),
+          ]);
         }
       }}
       on:mousemove={(e) => {
         if (dragging) {
           const newColors = [
-            ...$store.currentPal.slice(0, dragging),
+            ...$colorStore.currentPal.slice(0, dragging),
             eventToColor(e),
-            ...$store.currentPal.slice(dragging + 1),
+            ...$colorStore.currentPal.slice(dragging + 1),
           ];
-          store.setCurrentPal(newColors);
+          colorStore.setCurrentPal(newColors);
         }
       }}
       on:mouseup={() => {
@@ -88,16 +96,23 @@
       fill="url('#chroma')"
       style="mix-blend-mode: screen"
     />
-    {#each $store.currentPal as color, i}
+    {#each $colorStore.currentPal as color, i}
       <!-- svelte-ignore a11y-no-static-element-interactions -->
       <circle
+        on:mouseenter={() => {
+          focusStore.setFocusedColor(color);
+        }}
+        on:mouseleave={() => {
+          focusStore.setFocusedColor(null);
+        }}
         on:mousedown={(e) => {
           dragging = i;
         }}
         class="cursor-pointer"
         cx={xScale(chroma(color).hsl()[0])}
         cy={yScale(chroma(color).hsl()[1])}
-        stroke="black"
+        stroke={focusedColor === color ? "black" : "white"}
+        stroke-width={focusedColor === color ? "2" : "1"}
         r="10"
         fill={color}
         style="mix-blend-mode: multiply"

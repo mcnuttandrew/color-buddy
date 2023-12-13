@@ -78,6 +78,8 @@ export function buildTheme(colors: string[]) {
 }
 
 const groupedBarChart = (_pal: string[]) => ({
+  height: 150,
+  width: 150,
   $schema: "https://vega.github.io/schema/vega-lite/v5.json",
   data: {
     values: [
@@ -101,6 +103,8 @@ const groupedBarChart = (_pal: string[]) => ({
   },
 });
 const scatterPlot = (_pal: string[]) => ({
+  height: 150,
+  width: 150,
   $schema: "https://vega.github.io/schema/vega-lite/v5.json",
   description:
     "A scatterplot showing body mass and flipper lengths of penguins.",

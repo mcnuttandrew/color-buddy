@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { store } from "./lib/store";
+  import colorStore from "./lib/color-store";
   import { charts, buildTheme } from "./charts";
   import Vega from "./lib/Vega.svelte";
   import ColorArea from "./lib/ColorArea.svelte";
@@ -8,6 +8,7 @@
   import ColorPanel from "./lib/ColorPanel.svelte";
   import TinyWebpage from "./lib/TinyWebpage.svelte";
   import TextBlock from "./lib/TextBlock.svelte";
+  import SuggestionsPanel from "./lib/SuggestionsPanel.svelte";
 </script>
 
 <main class="flex h-full">
@@ -20,6 +21,7 @@
         <ColorArea height={300} width={300} />
       </div>
       <ColorPanel />
+      <SuggestionsPanel />
     </div>
     <!-- right colum -->
     <div class=" w-1/2">
@@ -27,8 +29,8 @@
       <div class="flex flex-wrap overflow-auto">
         {#each charts as spec}
           <Vega
-            theme={buildTheme($store.currentPal)}
-            spec={spec($store.currentPal)}
+            theme={buildTheme($colorStore.currentPal)}
+            spec={spec($colorStore.currentPal)}
           />
         {/each}
       </div>

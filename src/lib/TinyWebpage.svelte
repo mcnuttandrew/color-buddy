@@ -1,6 +1,6 @@
 <script>
-  import { store } from "./store";
-  $: colors = $store.currentPal;
+  import colorStore from "./color-store";
+  $: colors = $colorStore.currentPal;
   // export let colors = ["#f3f3f3", "#333333", "#000000", "#007bff"]; // Default colors
 </script>
 

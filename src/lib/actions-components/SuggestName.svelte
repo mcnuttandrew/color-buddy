@@ -1,5 +1,6 @@
 <script lang="ts">
-  import { store } from "./../store";
+  import colorStore from "../color-store";
+  import { actionButton } from "../../styles";
 
   import { suggestNameForPalette } from "../../api-calls";
 
@@ -9,11 +10,11 @@
 
 <div class="border-2 border-white rounded p-2">
   <button
-    class="bg-amber-400 text-white rounded p-2"
+    class={actionButton}
     on:click={() => {
       if (requestState === "loading") return;
       requestState = "loading";
-      suggestNameForPalette($store.currentPal)
+      suggestNameForPalette($colorStore.currentPal)
         .then((x) => {
           nameSuggestions = x;
           requestState = "idle";
@@ -34,7 +35,7 @@
       <div class="ml-2 rounded bg-green-800 text-white">
         <button
           class="rounded p-2"
-          on:click={() => store.setMostRecentPal(name)}
+          on:click={() => colorStore.setMostRecentPal(name)}
         >
           {name}
         </button>

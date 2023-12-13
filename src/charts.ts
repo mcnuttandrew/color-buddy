@@ -1,10 +1,11 @@
-export function buildTheme(colors: string[]) {
+import type { Palette } from "./lib/color-store";
+export function buildTheme(pal: Palette) {
   const fontStandard = "Montserrat, sans-serif UI";
   const fontTitle = "wf_standard-font, helvetica, arial, sans-serif";
-  const firstLevelElementColor = "#252423";
-  const secondLevelElementColor = "#605E5C";
-  const backgroundColor = "transparent";
-  const backgroundSecondaryColor = "#C8C6C4";
+  // const firstLevelElementColor = "#252423";
+  // const secondLevelElementColor = "#605E5C";
+  const backgroundColor = pal.background;
+  // const backgroundSecondaryColor = "#C8C6C4";
 
   return {
     view: { stroke: backgroundColor },
@@ -13,35 +14,35 @@ export function buildTheme(colors: string[]) {
     header: {
       titleFont: fontTitle,
       // titleFontSize: fontLargePx,
-      titleColor: firstLevelElementColor,
+      // titleColor: firstLevelElementColor,
       labelFont: fontStandard,
       // labelFontSize: legendFontPx,
-      labelColor: secondLevelElementColor,
+      // labelColor: secondLevelElementColor,
     },
     axis: {
       ticks: false,
       grid: false,
       domain: false,
-      labelColor: secondLevelElementColor,
+      // labelColor: secondLevelElementColor,
       // labelFontSize: fontSmallPx,
       titleFont: fontTitle,
-      titleColor: firstLevelElementColor,
+      // titleColor: firstLevelElementColor,
       // titleFontSize: fontLargePx,
       titleFontWeight: "normal",
     },
     axisQuantitative: {
       tickCount: 3,
       grid: true,
-      gridColor: backgroundSecondaryColor,
+      // gridColor: backgroundSecondaryColor,
       gridDash: [1, 5],
       labelFlush: false,
     },
     axisBand: { tickExtra: true },
     axisX: { labelPadding: 5 },
     axisY: { labelPadding: 10 },
-    bar: { fill: colors[0] },
+    bar: { fill: pal.colors[0] },
     line: {
-      stroke: colors[0],
+      stroke: pal.colors[0],
       strokeWidth: 3,
       strokeCap: "round",
       strokeJoin: "round",
@@ -49,27 +50,27 @@ export function buildTheme(colors: string[]) {
     text: {
       font: fontStandard,
       // fontSize: fontSmallPx,
-      fill: secondLevelElementColor,
+      // fill: secondLevelElementColor,
     },
-    arc: { fill: colors[0] },
-    area: { fill: colors[0], line: true, opacity: 0.6 },
-    path: { stroke: colors[0] },
-    rect: { fill: colors[0] },
-    point: { fill: colors[0], filled: true, size: 75 },
-    shape: { stroke: colors[0] },
-    symbol: { fill: colors[0], strokeWidth: 1.5, size: 50 },
+    arc: { fill: pal.colors[0] },
+    area: { fill: pal.colors[0], line: true, opacity: 0.6 },
+    path: { stroke: pal.colors[0] },
+    rect: { fill: pal.colors[0] },
+    point: { fill: pal.colors[0], filled: true, size: 75 },
+    shape: { stroke: pal.colors[0] },
+    symbol: { fill: pal.colors[0], strokeWidth: 1.5, size: 50 },
     legend: {
       titleFont: fontStandard,
       titleFontWeight: "bold",
-      titleColor: secondLevelElementColor,
+      // titleColor: secondLevelElementColor,
       labelFont: fontStandard,
       // labelFontSize: legendFontPx,
-      labelColor: secondLevelElementColor,
+      // labelColor: secondLevelElementColor,
       symbolType: "circle",
       symbolSize: 75,
     },
     range: {
-      category: colors,
+      category: pal.colors,
       // diverging: divergentPalette,
       // heatmap: divergentPalette,
       // ordinal: ordinalPalette,
@@ -77,7 +78,7 @@ export function buildTheme(colors: string[]) {
   };
 }
 
-const groupedBarChart = (_pal: string[]) => ({
+const groupedBarChart = (_pal: Palette) => ({
   height: 150,
   width: 150,
   $schema: "https://vega.github.io/schema/vega-lite/v5.json",
@@ -102,7 +103,7 @@ const groupedBarChart = (_pal: string[]) => ({
     color: { field: "group" },
   },
 });
-const scatterPlot = (_pal: string[]) => ({
+const scatterPlot = (_pal: Palette) => ({
   height: 150,
   width: 150,
   $schema: "https://vega.github.io/schema/vega-lite/v5.json",
@@ -128,7 +129,7 @@ const scatterPlot = (_pal: string[]) => ({
   },
 });
 
-const map = (COLORS: string[]) => ({
+const map = (pal: Palette) => ({
   $schema: "https://vega.github.io/schema/vega/v5.json",
   width: 500,
   height: 200,
@@ -141,8 +142,8 @@ const map = (COLORS: string[]) => ({
       transform: [
         {
           type: "formula",
-          expr: `datum.id - (parseInt(datum.id/${COLORS.length + 5}) * ${
-            COLORS.length
+          expr: `datum.id - (parseInt(datum.id/${pal.colors.length + 5}) * ${
+            pal.colors.length
           })`,
           as: "mod",
         },
@@ -156,7 +157,7 @@ const map = (COLORS: string[]) => ({
       name: "color",
       type: "ordinal",
       domain: { data: "counties", field: "mod" },
-      range: COLORS,
+      range: pal.colors,
     },
   ],
 
@@ -173,7 +174,7 @@ const map = (COLORS: string[]) => ({
   ],
 });
 
-const areaChart = (_pal: string[]) => ({
+const areaChart = (pal: Palette) => ({
   $schema: "https://vega.github.io/schema/vega-lite/v5.json",
   width: 400,
   height: 80,

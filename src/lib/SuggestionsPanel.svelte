@@ -3,7 +3,7 @@
   import colorStore from "./color-store";
   import { actionButton } from "../styles";
   import { suggestAdditionsToPalette } from "../api-calls";
-  $: colors = $colorStore.currentPal;
+  $: colors = $colorStore.currentPal.colors;
   $: computedGuess = [
     { color: randColor(), explanation: "random" },
     { color: avgColors(colors, "hsl"), explanation: "average HSL" },
@@ -21,7 +21,7 @@
         <button
           class="w-8 h-8 rounded-full"
           style="background-color: {color}"
-          on:click={() => colorStore.setCurrentPal(insert(colors, color))}
+          on:click={() => colorStore.setCurrentPalColors(insert(colors, color))}
         >
           +
         </button>
@@ -36,7 +36,7 @@
           class="w-8 h-8 rounded-full"
           style="background-color: {color}"
           on:click={() => {
-            colorStore.setCurrentPal(insert(colors, color));
+            colorStore.setCurrentPalColors(insert(colors, color));
             aiSuggestions = aiSuggestions.filter((x) => x !== color);
           }}
         >
@@ -48,10 +48,11 @@
   </div>
   <button
     class={actionButton}
+    class:animate-pulse={requestState === "loading"}
     on:click={() => {
       if (requestState === "loading") return;
       requestState = "loading";
-      suggestAdditionsToPalette($colorStore.currentPal)
+      suggestAdditionsToPalette($colorStore.currentPal.colors)
         .then((x) => {
           console.log(x);
           aiSuggestions = x;

@@ -11,10 +11,11 @@
 <div class="border-2 border-white rounded p-2">
   <button
     class={actionButton}
+    class:animate-pulse={requestState === "loading"}
     on:click={() => {
       if (requestState === "loading") return;
       requestState = "loading";
-      suggestNameForPalette($colorStore.currentPal)
+      suggestNameForPalette($colorStore.currentPal.colors)
         .then((x) => {
           nameSuggestions = x;
           requestState = "idle";
@@ -35,7 +36,7 @@
       <div class="ml-2 rounded bg-green-800 text-white">
         <button
           class="rounded p-2"
-          on:click={() => colorStore.setMostRecentPal(name)}
+          on:click={() => colorStore.setCurrentPalName(name)}
         >
           {name}
         </button>

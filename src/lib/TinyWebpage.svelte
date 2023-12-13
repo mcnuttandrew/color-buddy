@@ -1,12 +1,12 @@
 <script>
   import colorStore from "./color-store";
-  $: colors = $colorStore.currentPal;
-  // export let colors = ["#f3f3f3", "#333333", "#000000", "#007bff"]; // Default colors
+  $: colors = $colorStore.currentPal.colors;
+  $: bg = $colorStore.currentPal.background;
 </script>
 
 <div
   class="preview"
-  style="--background: {colors[0]}; --header: {colors[1]}; --text: {colors[2]}; --button: {colors[3]}"
+  style="--background: {colors[0]}; --header: {colors[1]}; --text: {colors[2]}; --button: {colors[3]}; background-color: {bg};"
 >
   <div class="header">Header</div>
   <div class="content">

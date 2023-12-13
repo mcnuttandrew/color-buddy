@@ -4,6 +4,8 @@
   import chroma from "chroma-js";
   const colorClass = "w-6 h-6 mx-2 rounded-full";
   import SuggestName from "./actions-components/SuggestName.svelte";
+  $: colors = $colorStore.currentPal.colors || [];
+  $: console.log(colors);
 </script>
 
 <div class="bg-slate-400 p-2 w-96">
@@ -19,16 +21,19 @@
           class=""
           on:keyup={(e) => {
             // @ts-ignore
-            $colorStore.mostRecentPal = e.target.textContent;
+            colorStore.setCurrentPalName(e.target.textContent);
           }}
           contenteditable="true"
         >
-          {$colorStore.mostRecentPal}
+          {$colorStore.currentPal.name}
         </div>
       </div>
     </div>
-    <div class="flex flex-wrap bg-white rounded p-2">
-      {#each $colorStore.currentPal as color}
+    <div
+      class="flex flex-wrap rounded p-2"
+      style="background-color: {$colorStore.currentPal.background};"
+    >
+      {#each colors as color}
         <div
           class={colorClass}
           class:text-white={chroma(color).luminance() < 0.5}
@@ -42,7 +47,7 @@
       <textarea
         id="current-colors"
         class="w-full p-2 rounded"
-        value={$colorStore.currentPal.join(", ")}
+        value={colors.join(", ")}
         on:change={(e) => {
           console.log("TODO");
           // console.log(e.target.value);
@@ -89,8 +94,11 @@
             </button>
           </div>
         </div>
-        <div class="flex flex-wrap bg-white rounded p-2">
-          {#each pal.palette as color}
+        <div
+          class="flex flex-wrap rounded p-2"
+          style="background-color: {pal.background};"
+        >
+          {#each pal.colors as color}
             <div
               class={colorClass}
               class:text-white={chroma(color).luminance() < 0.5}

@@ -70,20 +70,17 @@
         if (dragging) {
           dragging = false;
         } else {
-          colorStore.setCurrentPal([
-            ...$colorStore.currentPal,
-            eventToColor(e),
-          ]);
+          colorStore.addColorToCurrentPal(eventToColor(e));
         }
       }}
       on:mousemove={(e) => {
         if (dragging) {
           const newColors = [
-            ...$colorStore.currentPal.slice(0, dragging),
+            ...$colorStore.currentPal.colors.slice(0, dragging),
             eventToColor(e),
-            ...$colorStore.currentPal.slice(dragging + 1),
+            ...$colorStore.currentPal.colors.slice(dragging + 1),
           ];
-          colorStore.setCurrentPal(newColors);
+          colorStore.setCurrentPalColors(newColors);
         }
       }}
       on:mouseup={() => {
@@ -96,14 +93,11 @@
       fill="url('#chroma')"
       style="mix-blend-mode: screen"
     />
-    {#each $colorStore.currentPal as color, i}
+    {#each $colorStore.currentPal.colors as color, i}
       <!-- svelte-ignore a11y-no-static-element-interactions -->
       <circle
         on:mouseenter={() => {
           focusStore.setFocusedColor(color);
-        }}
-        on:mouseleave={() => {
-          focusStore.setFocusedColor(null);
         }}
         on:mousedown={(e) => {
           dragging = i;

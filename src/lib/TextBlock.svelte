@@ -2,7 +2,8 @@
   import chroma from "chroma-js";
   import colorStore from "./color-store";
   import { pick } from "../utils";
-  $: colors = $colorStore.currentPal;
+  $: bg = $colorStore.currentPal.background;
+  $: colors = $colorStore.currentPal.colors;
 
   let wordBreakDown: { word: string; style: string }[] = [];
   $: wordBreakDown =
@@ -22,7 +23,7 @@
       });
 </script>
 
-<p class="max-w-sm flex flex-wrap text-sm">
+<p class="max-w-sm flex flex-wrap text-sm" style="background-color: {bg};">
   {#each wordBreakDown as { word, style }}
     <span {style} class="mr-1">{` ${word} `}</span>
   {/each}

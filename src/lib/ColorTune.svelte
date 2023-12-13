@@ -3,9 +3,9 @@
   import focusStore from "./focus-store";
   import colorStore from "./color-store";
 
-  $: validColor = true;
   $: chromaColor = null as null | ReturnType<typeof chroma>;
   $: focusedColor = $focusStore.focusedColor;
+  $: validColor = !!focusedColor;
   $: try {
     if (focusedColor) {
       chromaColor = chroma(focusedColor);
@@ -53,48 +53,54 @@
   let dragging = false;
 </script>
 
-<div class="flex h-full pl-2" style="border-left: 20px solid {focusedColor};">
-  <div class="flex flex-col">
-    <select bind:value={colorMode}>
-      {#each Object.keys(colorConfigs) as mode}
-        <option value={mode}>{mode}</option>
-      {/each}
-    </select>
+<div>
+  <div>Focused Color</div>
+  <div class="flex h-full pl-2" style="border-left: 20px solid {focusedColor};">
     <div class="flex flex-col">
-      {#if validColor === true}
-        <div>
-          {#each colorConfigs[colorMode] as channel, idx}
-            <div class="flex items-start flex-col">
-              <div class="w-8">{channel.name}</div>
-              <input
-                type="range"
-                min={channel.min}
-                max={channel.max}
-                step={channel.step}
-                value={channel.value}
-                on:mousedown={() => {
-                  dragging = true;
-                }}
-                on:mousemove={(e) => {
-                  if (!dragging) return;
-                  const values = [
-                    ...colorConfigs[colorMode].map((x) => x.value),
-                  ];
-                  values[idx] = e.target.value;
-                  const newVal = toColor[colorMode](values).hex();
-                  colorStore.replaceColor(focusedColor, newVal);
-                  focusStore.setFocusedColor(newVal);
-                }}
-                on:mouseup={() => {
-                  dragging = false;
-                }}
-              />
-            </div>
-          {/each}
-        </div>
-      {:else}
-        <div class="text-red-500">Invalid color</div>
-      {/if}
+      <select bind:value={colorMode}>
+        {#each Object.keys(colorConfigs) as mode}
+          <option value={mode}>{mode}</option>
+        {/each}
+      </select>
+      <div class="flex flex-col">
+        {#if validColor === true}
+          <div>
+            {#each colorConfigs[colorMode] as channel, idx}
+              <div class="flex items-start flex-col">
+                <div class="w-8">{channel.name}</div>
+                <input
+                  type="range"
+                  min={channel.min}
+                  max={channel.max}
+                  step={channel.step}
+                  value={channel.value}
+                  on:mousedown={() => {
+                    dragging = true;
+                  }}
+                  on:mousemove={(e) => {
+                    if (!dragging) return;
+                    const values = [
+                      ...colorConfigs[colorMode].map((x) => x.value),
+                    ];
+                    // @ts-ignore
+                    values[idx] = e.target.value;
+                    // @ts-ignore
+                    const newVal = toColor[colorMode](values).hex();
+                    // @ts-ignore
+                    colorStore.replaceColor(focusedColor, newVal);
+                    focusStore.setFocusedColor(newVal);
+                  }}
+                  on:mouseup={() => {
+                    dragging = false;
+                  }}
+                />
+              </div>
+            {/each}
+          </div>
+        {:else}
+          <div class="text-red-500">Select a color</div>
+        {/if}
+      </div>
     </div>
   </div>
 </div>

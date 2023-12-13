@@ -33,8 +33,7 @@
             yScale.invert(e.clientY) * 100
           }%, 50%)`
         ).hex();
-
-        colorStore.setCurrentPal([...$colorStore.currentPal, newColor]);
+        colorStore.addColorToCurrentPal(newColor);
       }}
       on:mousemove={(e) => {
         if (dragging) {
@@ -44,11 +43,11 @@
             }%, 50%)`
           ).hex();
           const newColors = [
-            ...$colorStore.currentPal.slice(0, dragging),
+            ...$colorStore.currentPal.colors.slice(0, dragging),
             newColor,
-            ...$colorStore.currentPal.slice(dragging + 1),
+            ...$colorStore.currentPal.colors.slice(dragging + 1),
           ];
-          colorStore.setCurrentPal(newColors);
+          colorStore.setCurrentPalColors(newColors);
         }
       }}
       on:mouseup={() => {
@@ -56,7 +55,7 @@
       }}
     />
     <g transform={`translate(${width / 2}, ${height / 2})`}>
-      {#each $colorStore.currentPal as color, i}
+      {#each $colorStore.currentPal.colors as color, i}
         <!-- svelte-ignore a11y-no-static-element-interactions -->
         <circle
           class="cursor-pointer"

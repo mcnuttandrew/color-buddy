@@ -4,23 +4,28 @@
   import { insert, deleteFrom, randColor } from "../utils";
   import colorStore from "./color-store";
   $: focusedColor = $focusStore.focusedColor;
-  $: colors = $colorStore.currentPal;
+  $: colors = $colorStore.currentPal.colors;
   export let i: number;
   $: color = colors[i];
   let state: "idle" | "editing" | "error" = "idle";
   $: localColor = color;
+
+  $: borderColor =
+    focusedColor === color
+      ? "black"
+      : state === "error"
+        ? "red"
+        : state === "editing"
+          ? "blue"
+          : color;
 </script>
 
 <div>
   <!-- svelte-ignore a11y-click-events-have-key-events -->
   <!-- svelte-ignore a11y-no-static-element-interactions -->
   <div
-    class="w-32 h-32 text-center flex flex-col justify-center items-center rounded-full cursor-pointer border-8 mr-2 mb-2"
-    class:border-red-500={state === "error"}
-    class:border-blue-500={state === "editing"}
-    class:border-transparent={state === "idle"}
-    class:border-black={focusedColor === color}
-    style="background-color: {color}"
+    class="w-32 h-32 text-center flex flex-col justify-center items-center rounded-full cursor-pointer mr-2 mb-2"
+    style="border: 10px solid {borderColor}; background-color: {color}; "
     on:click={() => {
       focusStore.setFocusedColor(color);
     }}
@@ -28,11 +33,13 @@
     <div>
       <button
         on:click={() =>
-          colorStore.setCurrentPal(insert(colors, randColor(), i))}
+          colorStore.setCurrentPalColors(insert(colors, randColor(), i))}
       >
         🔀
       </button>
-      <button on:click={() => colorStore.setCurrentPal(deleteFrom(colors, i))}>
+      <button
+        on:click={() => colorStore.setCurrentPalColors(deleteFrom(colors, i))}
+      >
         ␡
       </button>
     </div>
@@ -55,7 +62,7 @@
         // update store
         const palUpdates = [...colors];
         palUpdates[i] = localColor;
-        colorStore.setCurrentPal(palUpdates);
+        colorStore.setCurrentPalColors(palUpdates);
       }}
       on:keyup={(e) => {
         // @ts-ignore

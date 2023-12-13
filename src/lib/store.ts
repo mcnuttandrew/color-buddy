@@ -93,6 +93,11 @@ function createStore() {
           n.palettes.find((x) => x.name === pal)!.name
         ),
       })),
+    randomizeOrder: () =>
+      persistUpdate((n) => ({
+        ...n,
+        currentPal: n.currentPal.sort(() => Math.random() - 0.5),
+      })),
     reset: () => set({ ...InitialStore }),
   };
 }

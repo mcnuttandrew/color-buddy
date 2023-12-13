@@ -55,6 +55,9 @@
       </button>
 
       <SuggestName />
+      <button class="underline" on:click={() => store.randomizeOrder()}>
+        Randomize order
+      </button>
     </div>
   </section>
   <section class="mt-4 border-t-2 border-black">

@@ -416,6 +416,11 @@
     p-limit "^3.1.0"
     readable-stream "^4.0.0"
 
+"@google/generative-ai@^0.1.1":
+  version "0.1.1"
+  resolved "https://registry.yarnpkg.com/@google/generative-ai/-/generative-ai-0.1.1.tgz#ecf0cd832620527f0e35c3aecc17c058d8ba52b8"
+  integrity sha512-cbzKa8mT9YkTrT4XUuENIuvlqiJjwDgcD2Ks4L99Az9dWLgdXn8xnETEAZLOpqzoGx+1PuATZqlUnVRAeLbMgA==
+
 "@grpc/grpc-js@^1.7.1", "@grpc/grpc-js@^1.7.3":
   version "1.9.13"
   resolved "https://registry.yarnpkg.com/@grpc/grpc-js/-/grpc-js-1.9.13.tgz#ad9b7dbb6089c462469653c809996f13e46aa1cd"

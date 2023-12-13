@@ -169,4 +169,24 @@ const map = (COLORS: string[]) => ({
   ],
 });
 
-export const charts = [groupedBarChart, scatterPlot, map];
+const areaChart = (_pal: string[]) => ({
+  $schema: "https://vega.github.io/schema/vega-lite/v5.json",
+  width: 400,
+  height: 80,
+  data: { url: "penguins.json" },
+  mark: { type: "area", opacity: 0.5 },
+  transform: [
+    {
+      density: "Body Mass (g)",
+      groupby: ["Species"],
+      extent: [2500, 6500],
+    },
+  ],
+  encoding: {
+    x: { field: "value", type: "quantitative", title: "Body Mass (g)" },
+    y: { field: "density", type: "quantitative", stack: null },
+    color: { field: "Species", type: "nominal" },
+  },
+});
+
+export const charts = [groupedBarChart, scatterPlot, map, areaChart];

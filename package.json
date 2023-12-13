@@ -25,6 +25,7 @@
     "vite": "^5.0.0"
   },
   "dependencies": {
+    "@google/generative-ai": "^0.1.1",
     "chroma-js": "^2.4.2",
     "d3-dsv": "^3.0.1",
     "d3-scale": "^4.0.2",

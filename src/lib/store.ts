@@ -59,8 +59,11 @@ function createStore() {
       persistUpdate((n) => {
         const newPal = n.palettes.find((x) => x.name === pal);
         if (!newPal) return n;
-        const updatedPals = n.palettes.filter((x) => x.name !== pal);
-        updatedPals.unshift({ palette: n.currentPal, name: n.mostRecentPal });
+        const updatedPals = insertPalette(
+          n.palettes.filter((x) => x.name !== pal),
+          n.currentPal,
+          n.mostRecentPal
+        );
         return {
           ...n,
           currentPal: newPal.palette,
@@ -80,6 +83,15 @@ function createStore() {
       persistUpdate((n) => ({
         ...n,
         palettes: n.palettes.filter((x) => x.name !== pal),
+      })),
+    copyPal: (pal: string) =>
+      persistUpdate((n) => ({
+        ...n,
+        palettes: insertPalette(
+          n.palettes,
+          n.palettes.find((x) => x.name === pal)!.palette,
+          n.palettes.find((x) => x.name === pal)!.name
+        ),
       })),
     reset: () => set({ ...InitialStore }),
   };

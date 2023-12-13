@@ -3,8 +3,6 @@
   import chroma from "chroma-js";
   const colorClass = "w-6 h-6 mx-2 rounded-full";
   import SuggestName from "./actions-components/SuggestName.svelte";
-
-  $: console.log($store.mostRecentPal);
 </script>
 
 <div class="bg-slate-400 p-2 w-96">
@@ -71,6 +69,9 @@
               on:click={() => store.startUsingPal(pal.name)}
             >
               Use
+            </button>
+            <button class="underline" on:click={() => store.copyPal(pal.name)}>
+              Copy
             </button>
             <button
               class="underline"

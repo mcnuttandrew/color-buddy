@@ -77,7 +77,7 @@ export function buildTheme(colors: string[]) {
   };
 }
 
-const groupedBarChart = {
+const groupedBarChart = (_pal: string[]) => ({
   $schema: "https://vega.github.io/schema/vega-lite/v5.json",
   data: {
     values: [
@@ -99,8 +99,8 @@ const groupedBarChart = {
     xOffset: { field: "group" },
     color: { field: "group" },
   },
-};
-const scatterPlot = {
+});
+const scatterPlot = (_pal: string[]) => ({
   $schema: "https://vega.github.io/schema/vega-lite/v5.json",
   description:
     "A scatterplot showing body mass and flipper lengths of penguins.",
@@ -122,5 +122,51 @@ const scatterPlot = {
     color: { field: "Species", type: "nominal" },
     shape: { field: "Species", type: "nominal" },
   },
-};
-export const charts = [groupedBarChart, scatterPlot];
+});
+
+const map = (COLORS: string[]) => ({
+  $schema: "https://vega.github.io/schema/vega/v5.json",
+  width: 500,
+  height: 200,
+  autosize: "none",
+  data: [
+    {
+      name: "counties",
+      url: "./us-10m.json",
+      format: { type: "topojson", feature: "counties" },
+      transform: [
+        {
+          type: "formula",
+          expr: `datum.id - (parseInt(datum.id/${COLORS.length + 5}) * ${
+            COLORS.length
+          })`,
+          as: "mod",
+        },
+      ],
+    },
+  ],
+  projections: [{ name: "projection", type: "albersUsa" }],
+
+  scales: [
+    {
+      name: "color",
+      type: "ordinal",
+      domain: { data: "counties", field: "mod" },
+      range: COLORS,
+    },
+  ],
+
+  marks: [
+    {
+      type: "shape",
+      from: { data: "counties" },
+      encode: {
+        update: { fill: { scale: "color", field: "mod" } },
+        hover: { fill: { value: "red" } },
+      },
+      transform: [{ type: "geoshape", projection: "projection" }],
+    },
+  ],
+});
+
+export const charts = [groupedBarChart, scatterPlot, map];

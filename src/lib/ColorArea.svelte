@@ -1,8 +1,8 @@
 <script lang="ts">
+  import { store } from "./store";
   import chroma from "chroma-js";
   import { scaleLinear } from "d3-scale";
-  export let colors: string[] = [];
-  export let setColors: (colors: string[]) => void = () => {};
+
   console.log;
   export let width = 256;
   export let height = 256;
@@ -65,17 +65,17 @@
         if (dragging) {
           dragging = false;
         } else {
-          setColors([...colors, eventToColor(e)]);
+          store.setCurrentPal([...$store.currentPal, eventToColor(e)]);
         }
       }}
       on:mousemove={(e) => {
         if (dragging) {
           const newColors = [
-            ...colors.slice(0, dragging),
+            ...$store.currentPal.slice(0, dragging),
             eventToColor(e),
-            ...colors.slice(dragging + 1),
+            ...$store.currentPal.slice(dragging + 1),
           ];
-          setColors(newColors);
+          store.setCurrentPal(newColors);
         }
       }}
       on:mouseup={() => {
@@ -88,7 +88,7 @@
       fill="url('#chroma')"
       style="mix-blend-mode: screen"
     />
-    {#each colors as color, i}
+    {#each $store.currentPal as color, i}
       <!-- svelte-ignore a11y-no-static-element-interactions -->
       <circle
         on:mousedown={(e) => {

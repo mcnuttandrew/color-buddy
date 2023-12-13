@@ -1,39 +1,14 @@
 <script lang="ts">
   import chroma from "chroma-js";
-  import { insert, deleteFrom, randColor } from "../utils";
-  export let colors: string[] = [];
-  export let setColors: (colors: string[]) => void = () => {};
-
-  function avgColors(
-    colors: string[],
-    colorSpace: "rgb" | "hsl" | "lab" = "rgb"
-  ) {
-    const colorSpaceMap: Record<string, (color: string) => number[]> = {
-      rgb: (x) => chroma(x).rgb(),
-      hsl: (x) => chroma(x).hsl(),
-      lab: (x) => chroma(x).lab(),
-    };
-    const colorSpaceFormatters: Record<string, (color: number[]) => string> = {
-      rgb: (x) => `rgb(${x.map((x) => Math.round(x)).join(",")})`,
-      hsl: ([h, s, l]) => `hsl(${h}, ${s}%, ${l}%)`,
-      lab: (x) => `lab(${x.map((x) => Math.round(x)).join(",")})`,
-    };
-    const sum = (a: any[], b: any[]) => a.map((x, i) => x + b[i]);
-    const sumColor = colors.reduce(
-      (acc, x) => sum(acc, colorSpaceMap[colorSpace](x)),
-      [0, 0, 0]
-    );
-    const avgColor = sumColor.map((x) => x / colors.length);
-    return chroma(colorSpaceFormatters[colorSpace](avgColor)).hex();
-  }
-
+  import { insert, deleteFrom, randColor, avgColors } from "../utils";
+  import { store } from "./store";
+  $: colors = $store.currentPal;
   $: computedGuess = [
     randColor(),
     avgColors(colors, "rgb"),
     avgColors(colors, "hsl"),
     // avgColors(colors, "lab"),
   ];
-  $: console.log(computedGuess);
 </script>
 
 <div class="flex color-container">
@@ -44,10 +19,14 @@
         style="background-color: {color}"
       >
         <div>
-          <button on:click={() => setColors(insert(colors, randColor(), i))}>
+          <button
+            on:click={() => store.setCurrentPal(insert(colors, randColor(), i))}
+          >
             🔀
           </button>
-          <button on:click={() => setColors(deleteFrom(colors, i))}>␡</button>
+          <button on:click={() => store.setCurrentPal(deleteFrom(colors, i))}>
+            ␡
+          </button>
         </div>
         <div
           class:text-white={chroma(color).luminance() < 0.5}
@@ -66,7 +45,7 @@
       <button
         class="w-8 h-8 rounded-full"
         style="background-color: {color}"
-        on:click={() => setColors(insert(colors, color))}
+        on:click={() => store.setCurrentPal(insert(colors, color))}
       >
         +
       </button>

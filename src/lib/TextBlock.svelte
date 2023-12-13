@@ -1,14 +1,14 @@
 <script lang="ts">
   import chroma from "chroma-js";
-  import { onMount } from "svelte";
+  import { store } from "./store";
   import { pick } from "../utils";
-  export let colors: string[] = [];
+  $: colors = $store.currentPal;
 
   let wordBreakDown: { word: string; style: string }[] = [];
   $: wordBreakDown =
     "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
       .split(" ")
-      .map((word) => {
+      .map((word, idx) => {
         const cases = [
           ...colors.map((color) => `color: ${color}`),
           ...colors.map(

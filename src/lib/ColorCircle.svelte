@@ -1,8 +1,7 @@
 <script lang="ts">
+  import { store } from "./store";
   import { scaleLinear } from "d3-scale";
   import chroma from "chroma-js";
-  export let colors: string[] = [];
-  export let setColors: (colors: string[]) => void = () => {};
   export let width = 256;
   export let height = 256;
   const xScale = scaleLinear().domain([0, 1]).range([0, width]);
@@ -34,7 +33,8 @@
             yScale.invert(e.clientY) * 100
           }%, 50%)`
         ).hex();
-        setColors([...colors, newColor]);
+
+        store.setCurrentPal([...$store.currentPal, newColor]);
       }}
       on:mousemove={(e) => {
         if (dragging) {
@@ -44,11 +44,11 @@
             }%, 50%)`
           ).hex();
           const newColors = [
-            ...colors.slice(0, dragging),
+            ...$store.currentPal.slice(0, dragging),
             newColor,
-            ...colors.slice(dragging + 1),
+            ...$store.currentPal.slice(dragging + 1),
           ];
-          setColors(newColors);
+          store.setCurrentPal(newColors);
         }
       }}
       on:mouseup={() => {
@@ -56,7 +56,7 @@
       }}
     />
     <g transform={`translate(${width / 2}, ${height / 2})`}>
-      {#each colors as color, i}
+      {#each $store.currentPal as color, i}
         <!-- svelte-ignore a11y-no-static-element-interactions -->
         <circle
           class="cursor-pointer"

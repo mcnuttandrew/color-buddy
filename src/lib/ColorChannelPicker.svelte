@@ -1,9 +1,10 @@
 <script lang="ts">
   import chroma from "chroma-js";
-  import colorStore from "./color-store";
+  export let color: string;
+  export let onColorChange: (color: string) => void;
+  export let heading: string;
 
-  $: bg = $colorStore.currentPal.background;
-  $: chromaColor = chroma(bg);
+  $: chromaColor = chroma(color);
 
   type ColorMode = "hsl" | "rgb";
   let colorMode: ColorMode = "rgb";
@@ -45,8 +46,8 @@
 </script>
 
 <div>
-  <div>Background Color</div>
-  <div class="flex h-full pl-2" style="border-left: 20px solid {bg};">
+  <div>{heading}</div>
+  <div class="flex h-full pl-2" style="border-left: 20px solid {color};">
     <div class="flex flex-col">
       <select bind:value={colorMode}>
         {#each Object.keys(colorConfigs) as mode}
@@ -72,10 +73,10 @@
                     ...colorConfigs[colorMode].map((x) => x.value),
                   ];
                   // @ts-ignore
-                  values[idx] = e.target.value;
+                  values[idx] = Number(e.target.value);
                   // @ts-ignore
                   const newVal = toColor[colorMode](values).hex();
-                  colorStore.setBackground(newVal);
+                  onColorChange(newVal);
                 }}
                 on:mousemove={(e) => {
                   if (!dragging) return;
@@ -83,10 +84,10 @@
                     ...colorConfigs[colorMode].map((x) => x.value),
                   ];
                   // @ts-ignore
-                  values[idx] = e.target.value;
+                  values[idx] = Number(e.target.value);
                   // @ts-ignore
                   const newVal = toColor[colorMode](values).hex();
-                  colorStore.setBackground(newVal);
+                  onColorChange(newVal);
                 }}
                 on:mouseup={() => {
                   dragging = false;

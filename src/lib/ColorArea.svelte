@@ -31,6 +31,8 @@
     ).hex();
     return newColor;
   };
+
+  $: bg = $colorStore.currentPal.background;
 </script>
 
 <!-- svelte-ignore a11y-no-static-element-interactions -->
@@ -112,5 +114,8 @@
         style="mix-blend-mode: multiply"
       />
     {/each}
+    <text x={xScale(chroma(bg).hsl()[0])} y={yScale(chroma(bg).hsl()[1])}>
+      X
+    </text>
   </g>
 </svg>

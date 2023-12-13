@@ -5,7 +5,6 @@
   const colorClass = "w-6 h-6 mx-2 rounded-full";
   import SuggestName from "./actions-components/SuggestName.svelte";
   $: colors = $colorStore.currentPal.colors || [];
-  $: console.log(colors);
 </script>
 
 <div class="bg-slate-400 p-2 w-96">

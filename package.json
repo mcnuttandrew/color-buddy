@@ -7,7 +7,8 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "check": "svelte-check --tsconfig ./tsconfig.json"
+    "check": "svelte-check --tsconfig ./tsconfig.json",
+    "types": "tsc --noEmit --watch"
   },
   "devDependencies": {
     "@sveltejs/vite-plugin-svelte": "^3.0.0",
@@ -27,7 +28,6 @@
   "dependencies": {
     "@google/generative-ai": "^0.1.1",
     "chroma-js": "^2.4.2",
-    "colorjs.io": "^0.4.5",
     "d3-dsv": "^3.0.1",
     "d3-scale": "^4.0.2",
     "openai": "^4.21.0",

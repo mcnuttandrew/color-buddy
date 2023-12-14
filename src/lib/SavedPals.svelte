@@ -2,7 +2,6 @@
   import { flip } from "svelte/animate";
   import colorStore from "./color-store";
   import { actionButton } from "../styles";
-  import chroma from "chroma-js";
   const colorClass = "w-6 h-6 mx-2 rounded-full";
   import SuggestName from "./actions-components/SuggestName.svelte";
   import AddFamiliarPal from "./actions-components/AddFamiliarPal.svelte";
@@ -38,7 +37,7 @@
         <div
           animate:flip={{ duration: 200 }}
           class={colorClass}
-          class:text-white={chroma(color).luminance() < 0.5}
+          class:text-white={color.luminance() < 0.5}
           style="background-color: {color}"
         ></div>
       {/each}
@@ -49,7 +48,7 @@
       <textarea
         id="current-colors"
         class="w-full p-2 rounded"
-        value={colors.join(", ")}
+        value={colors.map((color) => color.hex()).join(", ")}
         on:change={(e) => {
           console.log("TODO");
           // console.log(e.target.value);
@@ -104,7 +103,7 @@
           {#each pal.colors as color}
             <div
               class={colorClass}
-              class:text-white={chroma(color).luminance() < 0.5}
+              class:text-white={color.luminance() < 0.5}
               style="background-color: {color}"
             ></div>
           {/each}

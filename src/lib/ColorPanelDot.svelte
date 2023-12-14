@@ -11,7 +11,7 @@
   $: localColor = color;
 
   $: borderColor =
-    focusedColor === color
+    focusedColor === color.hex()
       ? "black"
       : state === "error"
         ? "red"

@@ -1,5 +1,6 @@
 <script lang="ts">
   import { flip } from "svelte/animate";
+  import chroma from "chroma-js";
   import ColorPanelDot from "./ColorPanelDot.svelte";
   import ColorChannelPicker from "./ColorChannelPicker.svelte";
   import colorStore from "./color-store";
@@ -18,9 +19,10 @@
     {#if !!$focusStore.focusedColor}
       <ColorChannelPicker
         heading="Focused Color"
-        color={$focusStore.focusedColor}
+        color={chroma($focusStore.focusedColor)}
         onColorChange={(color) => {
-          colorStore.replaceColor($focusStore.focusedColor, color);
+          if (!$focusStore.focusedColor) return;
+          colorStore.replaceColor(chroma($focusStore.focusedColor), color);
           focusStore.setFocusedColor(color);
         }}
       />

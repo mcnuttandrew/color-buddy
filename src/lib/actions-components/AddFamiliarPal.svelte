@@ -15,8 +15,8 @@
             if (typeof colors === "string") return;
             familiarPals.push({
               name: `${schemeName}-${size}`,
-              colors: (colors as any).map((x: any) => chroma(x).hex()) as any,
-              background: "#ffffff",
+              colors: (colors as any).map((x: any) => chroma(x)) as any,
+              background: chroma("#ffffff"),
             });
           });
         });
@@ -47,7 +47,7 @@
       let idx = 0;
       const colors = [];
       while (idx < x.length) {
-        colors.push(`#${x.slice(idx, idx + 6)}`);
+        colors.push(chroma(`#${x.slice(idx, idx + 6)}`));
         idx += 6;
       }
       return colors;
@@ -57,7 +57,7 @@
       familiarPals.push({
         name,
         colors: toHex(colors),
-        background: "#ffffff",
+        background: chroma("#ffffff"),
       });
     });
   });
@@ -78,7 +78,9 @@
     <select
       value={null}
       on:change={(e) => {
+        // @ts-ignore
         const pal = familiarPals.find((x) => x.name === e.target.value);
+        if (!pal) return;
         colorStore.createNewPalWithExplicitPal(pal);
         state = "closed";
       }}

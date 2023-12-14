@@ -1,12 +1,12 @@
 <script>
   import colorStore from "./color-store";
-  $: colors = $colorStore.currentPal.colors;
+  $: colors = $colorStore.currentPal.colors.map((x) => x.hex());
   $: bg = $colorStore.currentPal.background;
 </script>
 
 <div
   class="preview transition-all"
-  style="--background: {colors[0]}; --header: {colors[1]}; --text: {colors[2]}; --button: {colors[3]}; background-color: {bg};"
+  style="--background: {colors[0]}; --header: {colors[1]}; --text: {colors[2]}; --button: {colors[3]}; background-color: {bg.hex()};"
 >
   <div class="header transition-all">Header</div>
   <div class="content transition-all">

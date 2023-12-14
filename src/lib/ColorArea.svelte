@@ -2,8 +2,9 @@
   import colorStore from "./color-store";
   import focusStore from "./focus-store";
   import chroma from "chroma-js";
+  import type { Color } from "chroma-js";
   import { scaleLinear } from "d3-scale";
-  import { replaceVal } from "../utils";
+  import { replaceVal, toLab } from "../utils";
 
   export let width = 256;
   export let height = 256;
@@ -18,9 +19,9 @@
   const plotWidth = width - margin.left - margin.right;
   const plotHeight = height - margin.top - margin.bottom;
   // A
-  const xScale = scaleLinear().domain([-110, 110]).range([0, plotWidth]);
+  const xScale = scaleLinear().domain([-100, 100]).range([0, plotWidth]);
   // B
-  const yScale = scaleLinear().domain([-110, 110]).range([0, plotHeight]);
+  const yScale = scaleLinear().domain([-100, 100]).range([0, plotHeight]);
   // L
   const zScale = scaleLinear().domain([0, 100]).range([0, plotHeight]);
 
@@ -30,26 +31,24 @@
     const parentY = e?.target?.getBoundingClientRect().y;
     return { parentX, parentY };
   };
-  const eventToColorXY = (e: any, target: string | false) => {
+  const eventToColorXY = (e: any, target: Color | false): Color => {
     const oldColor = target ? chroma(target).lab() : [50, 0, 0];
     const { parentX, parentY } = getXY(e);
-    const newColor = chroma
-      .lab(
-        oldColor[0],
-        xScale.invert(e.clientX - parentX),
-        yScale.invert(e.clientY - parentY)
-      )
-      .hex();
-    return newColor;
+    return chroma.lab(
+      oldColor[0],
+      xScale.invert(e.clientX - parentX),
+      yScale.invert(e.clientY - parentY)
+    );
   };
 
-  const eventToColorZ = (e: any, target: string | false) => {
+  const eventToColorZ = (e: any, target: Color | false): Color => {
     const oldColor = target ? chroma(target).lab() : [50, 0, 0];
     const { parentY } = getXY(e);
-    const newColor = chroma
-      .lab(zScale.invert(e.clientY - parentY), oldColor[1], oldColor[2])
-      .hex();
-    return newColor;
+    return chroma.lab(
+      zScale.invert(e.clientY - parentY),
+      oldColor[1],
+      oldColor[2]
+    );
   };
 
   $: bg = $colorStore.currentPal.background;
@@ -57,6 +56,10 @@
   function stopDrag() {
     dragging = false;
   }
+
+  const startDrag = (target: number) => () => {
+    dragging = target;
+  };
 </script>
 
 <!-- svelte-ignore a11y-no-static-element-interactions -->
@@ -81,14 +84,14 @@
     <line
       x1={xScale(0)}
       x2={xScale(0)}
-      y1={yScale(-110)}
-      y2={yScale(110)}
+      y1={yScale(-100)}
+      y2={yScale(100)}
       stroke="gray"
       stroke-width="1"
     />
     <line
-      x1={xScale(-110)}
-      x2={xScale(110)}
+      x1={xScale(-100)}
+      x2={xScale(100)}
       y1={yScale(0)}
       y2={yScale(0)}
       stroke="gray"
@@ -133,16 +136,14 @@
         on:mouseenter={() => {
           focusStore.setFocusedColor(color);
         }}
-        on:mousedown={(e) => {
-          dragging = i;
-        }}
+        on:mousedown={startDrag(i)}
         class="cursor-pointer"
         cx={xScale(chroma(color).lab()[1])}
         cy={yScale(chroma(color).lab()[2])}
-        stroke={focusedColor === color ? "black" : "white"}
-        stroke-width={focusedColor === color ? "2" : "1"}
+        stroke={focusedColor === color.hex() ? "black" : "white"}
+        stroke-width={focusedColor === color.hex() ? "2" : "1"}
         r="10"
-        fill={color}
+        fill={color.hex()}
       />
     {/each}
     <text x={xScale(chroma(bg).lab()[1])} y={yScale(chroma(bg).lab()[2])}>
@@ -190,15 +191,13 @@
         y={zScale(chroma(color).lab()[0])}
         width={80 - 10 * 2}
         height={5}
-        fill={color}
-        stroke={focusedColor === color ? "black" : "white"}
-        stroke-width={focusedColor === color ? "2" : "1"}
+        fill={color.hex()}
+        stroke={focusedColor === color.hex() ? "black" : "white"}
+        stroke-width={focusedColor === color.hex() ? "2" : "1"}
         on:mouseenter={() => {
           focusStore.setFocusedColor(color);
         }}
-        on:mousedown={(e) => {
-          dragging = i;
-        }}
+        on:mousedown={startDrag(i)}
       />
     {/each}
   </g>

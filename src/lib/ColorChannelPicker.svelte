@@ -1,10 +1,9 @@
 <script lang="ts">
   import chroma from "chroma-js";
-  export let color: string;
-  export let onColorChange: (color: string) => void;
+  import type { Color } from "chroma-js";
+  export let color: Color;
+  export let onColorChange: (color: Color) => void;
   export let heading: string;
-
-  $: chromaColor = chroma(color);
 
   type ColorMode = "hsl" | "rgb" | "lab";
   let colorMode: ColorMode = "lab";
@@ -33,10 +32,10 @@
     ],
   } as Record<ColorMode, Channel[]>;
   $: {
-    if (chromaColor) {
+    if (color) {
       (Object.keys(colorConfigs) as ColorMode[]).forEach((key) => {
         colorConfigs[key].forEach((channel, idx) => {
-          colorConfigs[key][idx].value = (chromaColor as any)[key]()[idx];
+          colorConfigs[key][idx].value = (color as any)[key]()[idx];
         });
       });
     }
@@ -56,9 +55,10 @@
     <div
       contenteditable="true"
       on:blur={(e) => {
+        // @ts-ignore
         const newColor = e.target.textContent;
         try {
-          onColorChange(chroma(newColor).hex());
+          onColorChange(newColor);
         } catch (e) {
           console.log(e);
         }
@@ -95,8 +95,7 @@
                   // @ts-ignore
                   values[idx] = Number(e.target.value);
                   // @ts-ignore
-                  const newVal = toColor[colorMode](values).toString();
-                  onColorChange(newVal);
+                  onColorChange(toColor[colorMode](values));
                 }}
                 on:mousemove={(e) => {
                   if (!dragging) return;
@@ -106,8 +105,7 @@
                   // @ts-ignore
                   values[idx] = Number(e.target.value);
                   // @ts-ignore
-                  const newVal = toColor[colorMode](values).toString();
-                  onColorChange(newVal);
+                  onColorChange(toColor[colorMode](values));
                 }}
                 on:mouseup={() => {
                   dragging = false;

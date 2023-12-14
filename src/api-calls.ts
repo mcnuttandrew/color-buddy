@@ -1,3 +1,5 @@
+import type { Color } from "chroma-js";
+
 function openAIScaffold(api: string, body: string): Promise<string[]> {
   return fetch(api, {
     method: "POST",
@@ -16,7 +18,7 @@ function openAIScaffold(api: string, body: string): Promise<string[]> {
         .map((x: any) => x?.message?.content)
         .filter((x: any) => x)
         .flatMap((x: any) => JSON.parse(x))
-        .filter((x) => typeof x === "string");
+        .filter((x: any) => typeof x === "string");
       return result;
     });
 }
@@ -44,20 +46,28 @@ function googleScaffold(api: string, body: string): Promise<string[]> {
     });
 }
 
+const toHex = (x: Color) => x.hex().toUpperCase();
+
 export function suggestNameForPalette(
-  palette: string[],
-  background: string
+  palette: Color[],
+  background: Color
 ): Promise<string[]> {
-  const body = JSON.stringify({ palette, background });
+  const body = JSON.stringify({
+    palette: palette.map((x) => toHex(x)),
+    background: background.hex(),
+  });
   return openAIScaffold(`/.netlify/functions/suggest-name`, body);
   // return googleScaffold(`/.netlify/functions/suggest-name`, body);
 }
 
 export function suggestAdditionsToPalette(
-  palette: string[],
-  background: string
+  palette: Color[],
+  background: Color
 ): Promise<string[]> {
-  const body = JSON.stringify({ palette, background });
+  const body = JSON.stringify({
+    palette: palette.map((x) => toHex(x)),
+    background: background.hex(),
+  });
   return openAIScaffold(`/.netlify/functions/get-color-suggestions`, body);
   // return googleScaffold(`/.netlify/functions/get-color-suggestions`, body);
 }

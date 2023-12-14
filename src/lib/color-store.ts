@@ -1,16 +1,24 @@
 import { writable } from "svelte/store";
+import chroma from "chroma-js";
+import type { Color } from "chroma-js";
 import fits from "../assets/outfits.json";
 import { pick } from "../utils";
 const outfitToPal = (x: any) => [x.fill1, x.fill2, x.fill3];
 const outfits = fits.map((x) => outfitToPal(x));
-export type Palette = { colors: string[]; name: string; background: string };
+type Pal<A> = { colors: A[]; name: string; background: A };
+export type Palette = Pal<Color>;
 
 interface StoreData {
-  palettes: Palette[];
-  currentPal: Palette;
+  palettes: Pal<Color>[];
+  currentPal: Pal<Color>;
 }
 
-const InitialStore: StoreData = {
+interface StorageData {
+  palettes: Pal<string>[];
+  currentPal: Pal<string>;
+}
+
+const InitialStore: StorageData = {
   palettes: [
     { name: "Example 1", colors: pick(outfits), background: "#ffffff" },
     { name: "Example 2", colors: pick(outfits), background: "#ffffff" },
@@ -23,6 +31,36 @@ const InitialStore: StoreData = {
   },
 };
 
+function convertStoreHexToColor(store: StorageData): StoreData {
+  return {
+    palettes: store.palettes.map((x) => ({
+      name: x.name,
+      background: chroma(x.background),
+      colors: x.colors.map((y) => chroma(y)),
+    })),
+    currentPal: {
+      background: chroma(store.currentPal.background),
+      name: store.currentPal.name,
+      colors: store.currentPal.colors.map((y) => chroma(y)),
+    },
+  };
+}
+
+function convertStoreColorToHex(store: StoreData): StorageData {
+  return {
+    palettes: store.palettes.map((x) => ({
+      name: x.name,
+      background: x.background.hex(),
+      colors: x.colors.map((y) => y.hex()),
+    })),
+    currentPal: {
+      background: store.currentPal.background.hex(),
+      name: store.currentPal.name,
+      colors: store.currentPal.colors.map((y) => y.hex()),
+    },
+  };
+}
+
 function insertPalette(palettes: Palette[], pal: Palette): Palette[] {
   let nameCount = palettes.reduce(
     (acc, x) => acc + (x.name === pal.name ? 1 : 0),
@@ -33,15 +71,24 @@ function insertPalette(palettes: Palette[], pal: Palette): Palette[] {
 }
 
 function createStore() {
-  const storeData: StoreData = JSON.parse(
-    localStorage.getItem("color-pal") || JSON.stringify(InitialStore)
+  const storeData: StoreData = convertStoreHexToColor(
+    JSON.parse(
+      localStorage.getItem("color-pal") || JSON.stringify(InitialStore)
+    )
   );
-  localStorage.setItem("color-pal", JSON.stringify(storeData));
+
+  localStorage.setItem(
+    "color-pal",
+    JSON.stringify(convertStoreColorToHex(storeData))
+  );
   const { subscribe, set, update } = writable<StoreData>(storeData);
   const persistUpdate = (updateFunc: (old: StoreData) => StoreData) =>
     update((oldStore) => {
       const newVal: StoreData = updateFunc(oldStore);
-      localStorage.setItem("color-pal", JSON.stringify(newVal));
+      localStorage.setItem(
+        "color-pal",
+        JSON.stringify(convertStoreColorToHex(newVal))
+      );
       return newVal;
     });
 
@@ -51,7 +98,7 @@ function createStore() {
   return {
     subscribe,
     setPalettes: simpleSet("palettes"),
-    setCurrentPalColors: (colors: string[]) =>
+    setCurrentPalColors: (colors: Color[]) =>
       persistUpdate((n) => ({ ...n, currentPal: { ...n.currentPal, colors } })),
     startUsingPal: (palName: string) => {
       persistUpdate((n) => {
@@ -74,7 +121,7 @@ function createStore() {
         currentPal: {
           colors: pick(outfits),
           name: "Untitled",
-          background: "#ffffff",
+          background: chroma("#ffffff"),
         },
         palettes: insertPalette(n.palettes, n.currentPal),
       })),
@@ -105,13 +152,13 @@ function createStore() {
           colors: n.currentPal.colors.sort(() => Math.random() - 0.5),
         },
       })),
-    replaceColor: (oldColor: string, newColor: string) =>
+    replaceColor: (oldColor: Color, newColor: Color) =>
       persistUpdate((n) => ({
         ...n,
         currentPal: {
           ...n.currentPal,
           colors: n.currentPal.colors.map((x) =>
-            x === oldColor ? newColor : x
+            x.hex() === oldColor.hex() ? newColor : x
           ),
         },
       })),
@@ -120,7 +167,7 @@ function createStore() {
         ...n,
         currentPal: { ...n.currentPal, name },
       })),
-    addColorToCurrentPal: (color: string) =>
+    addColorToCurrentPal: (color: Color) =>
       persistUpdate((n) => ({
         ...n,
         currentPal: {
@@ -128,12 +175,12 @@ function createStore() {
           colors: [...n.currentPal.colors, color],
         },
       })),
-    setBackground: (color: string) =>
+    setBackground: (color: Color) =>
       persistUpdate((n) => ({
         ...n,
         currentPal: { ...n.currentPal, background: color },
       })),
-    reset: () => set({ ...InitialStore }),
+    reset: () => set({ ...convertStoreHexToColor(InitialStore) }),
   };
 }
 

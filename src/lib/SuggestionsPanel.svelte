@@ -54,7 +54,10 @@
     on:click={() => {
       if (requestState === "loading") return;
       requestState = "loading";
-      suggestAdditionsToPalette($colorStore.currentPal.colors)
+      suggestAdditionsToPalette(
+        $colorStore.currentPal.colors,
+        $colorStore.currentPal.background
+      )
         .then((x) => {
           console.log(x);
           aiSuggestions = x;

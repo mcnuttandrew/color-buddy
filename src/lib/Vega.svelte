@@ -6,6 +6,7 @@
   export let theme: any;
   let container: any;
   $: spec &&
+    theme &&
     vegaEmbed(container, JSON.parse(JSON.stringify(spec)), {
       actions,
       config: theme,

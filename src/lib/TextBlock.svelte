@@ -23,7 +23,11 @@
       });
 </script>
 
-<p class="max-w-sm flex flex-wrap text-sm" style="background-color: {bg};">
+<p
+  class="max-w-sm flex flex-wrap text-sm"
+  style="background-color: {bg};"
+  class:text-white={chroma(bg).luminance() < 0.5}
+>
   {#each wordBreakDown as { word, style }}
     <span {style} class="mr-1 transition-all">{` ${word} `}</span>
   {/each}

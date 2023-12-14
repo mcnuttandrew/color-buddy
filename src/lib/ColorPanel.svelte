@@ -11,7 +11,9 @@
     <ColorChannelPicker
       heading="Background"
       color={$colorStore.currentPal.background}
-      onColorChange={(color) => colorStore.setBackground(color)}
+      onColorChange={(color) => {
+        colorStore.setBackground(color);
+      }}
     />
     {#if !!$focusStore.focusedColor}
       <ColorChannelPicker

@@ -33,6 +33,7 @@ export const genericHandler =
     try {
       promptInput = bodyGetter(event.body);
     } catch (e) {
+      console.log(e);
       errorResponse(callback, "Bad submit");
       return;
     }

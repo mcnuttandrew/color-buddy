@@ -46,7 +46,22 @@
 </script>
 
 <div>
-  <div>{heading}</div>
+  <div class="flex justify-between">
+    <span>{heading}</span>
+    <div
+      contenteditable="true"
+      on:blur={(e) => {
+        const newColor = e.target.textContent;
+        try {
+          onColorChange(chroma(newColor).hex());
+        } catch (e) {
+          console.log(e);
+        }
+      }}
+    >
+      {color}
+    </div>
+  </div>
   <div class="flex h-full pl-2" style="border-left: 20px solid {color};">
     <div class="flex flex-col">
       <select bind:value={colorMode}>

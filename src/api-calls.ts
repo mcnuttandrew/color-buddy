@@ -33,6 +33,7 @@ function googleScaffold(api: string, body: string): Promise<string[]> {
   })
     .then((response) => response.json())
     .then((x: any) => {
+      console.log(x);
       const result = x?.response?.candidates
         .flatMap((x: any) => x.content?.parts?.flatMap((x: any) => x.text))
         .map((x: any) => x.replace(/\\n/g, "").replace(/\`/g, "").trim())
@@ -42,16 +43,20 @@ function googleScaffold(api: string, body: string): Promise<string[]> {
     });
 }
 
-export function suggestNameForPalette(palette: string[]): Promise<string[]> {
-  const body = JSON.stringify(palette);
+export function suggestNameForPalette(
+  palette: string[],
+  background: string
+): Promise<string[]> {
+  const body = JSON.stringify({ palette, background });
   return openAIScaffold(`/.netlify/functions/suggest-name`, body);
   // return googleScaffold(`/.netlify/functions/suggest-name`, body);
 }
 
 export function suggestAdditionsToPalette(
-  palette: string[]
+  palette: string[],
+  background: string
 ): Promise<string[]> {
-  const body = JSON.stringify(palette);
+  const body = JSON.stringify({ palette, background });
   return openAIScaffold(`/.netlify/functions/get-color-suggestions`, body);
   // return googleScaffold(`/.netlify/functions/get-color-suggestions`, body);
 }

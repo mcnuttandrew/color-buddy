@@ -6,6 +6,10 @@ export const insert = (arr: string[], newItem: string, index?: number) => {
   return [...arr.slice(0, index), newItem, ...arr.slice(index)];
 };
 
+export const replaceVal = (arr: string[], newItem: string, index: number) => {
+  return [...arr.slice(0, index), newItem, ...arr.slice(index + 1)];
+};
+
 export const deleteFrom = (arr: string[], index: number) => {
   return [...arr.slice(0, index), ...arr.slice(index + 1)];
 };

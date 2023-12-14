@@ -27,6 +27,7 @@
   "dependencies": {
     "@google/generative-ai": "^0.1.1",
     "chroma-js": "^2.4.2",
+    "colorjs.io": "^0.4.5",
     "d3-dsv": "^3.0.1",
     "d3-scale": "^4.0.2",
     "openai": "^4.21.0",

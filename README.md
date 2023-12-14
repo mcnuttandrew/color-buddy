@@ -7,9 +7,12 @@ Use: should point to localhost:8888 if all is well
 - add fancy cacheing to make the vega-charts not re-render constantly
 - make text display deterministic
 - add color analysis
-- add "jump to familiar pal"
 - add text commands
 - make color sliders be shaded in the background
 - make charts be end user manipuable
-- make AI suggestions be background aware
 - undo / redo
+- other keyboard controls
+- multi-select of colors?
+- higher card. vis examples
+- color text input
+- order as diverging

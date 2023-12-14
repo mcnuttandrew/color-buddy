@@ -6,8 +6,8 @@
 
   $: chromaColor = chroma(color);
 
-  type ColorMode = "hsl" | "rgb";
-  let colorMode: ColorMode = "rgb";
+  type ColorMode = "hsl" | "rgb" | "lab";
+  let colorMode: ColorMode = "lab";
   type Channel = {
     name: string;
     min: number;
@@ -21,11 +21,15 @@
       { name: "Green", min: 0, max: 255, step: 1 },
       { name: "Blue", min: 0, max: 255, step: 1 },
     ],
-    // ranges might be wrong
     hsl: [
       { name: "Hue", min: 0, max: 360, step: 1 },
       { name: "Saturation", min: 0, max: 1, step: 0.01 },
       { name: "Lightness", min: 0, max: 1, step: 0.01 },
+    ],
+    lab: [
+      { name: "L*", min: 0, max: 100, step: 1 },
+      { name: "a*", min: -110, max: 110, step: 1 },
+      { name: "b*", min: -110, max: 110, step: 1 },
     ],
   } as Record<ColorMode, Channel[]>;
   $: {
@@ -40,6 +44,7 @@
   const toColor = {
     rgb: (colors: number[]) => chroma.rgb(colors[0], colors[1], colors[2]),
     hsl: (colors: number[]) => chroma.hsl(colors[0], colors[1], colors[2]),
+    lab: (colors: number[]) => chroma.lab(colors[0], colors[1], colors[2]),
   };
 
   let dragging = false;
@@ -90,7 +95,7 @@
                   // @ts-ignore
                   values[idx] = Number(e.target.value);
                   // @ts-ignore
-                  const newVal = toColor[colorMode](values).hex();
+                  const newVal = toColor[colorMode](values).toString();
                   onColorChange(newVal);
                 }}
                 on:mousemove={(e) => {
@@ -101,7 +106,7 @@
                   // @ts-ignore
                   values[idx] = Number(e.target.value);
                   // @ts-ignore
-                  const newVal = toColor[colorMode](values).hex();
+                  const newVal = toColor[colorMode](values).toString();
                   onColorChange(newVal);
                 }}
                 on:mouseup={() => {

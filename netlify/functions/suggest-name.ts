@@ -6,7 +6,7 @@ You are a color expert. You beautifully name color palettes. Your names should b
 For example:
 Palette: ["#000000", "#FF0000", "#00FF00", "#0000FF"]
 Background Color: "#FFFFFF" 
-Output: ["Color Wheel Basics"]
+Output: ["Color Wheel Basics", "Primary School", "RGB"]
 
 Present your names a list of JSON strings. They should have a type like string[]. Only respond with one array. Do not offer any other response
 

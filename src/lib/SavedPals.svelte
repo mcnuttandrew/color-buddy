@@ -5,6 +5,7 @@
   import chroma from "chroma-js";
   const colorClass = "w-6 h-6 mx-2 rounded-full";
   import SuggestName from "./actions-components/SuggestName.svelte";
+  import AddFamiliarPal from "./actions-components/AddFamiliarPal.svelte";
   $: colors = $colorStore.currentPal.colors || [];
 </script>
 
@@ -66,6 +67,7 @@
       <button class={actionButton} on:click={() => colorStore.randomizeOrder()}>
         Randomize order
       </button>
+      <AddFamiliarPal />
     </div>
   </section>
   <section class="mt-4 border-t-2 border-black">

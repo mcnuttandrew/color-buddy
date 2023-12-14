@@ -78,6 +78,12 @@ function createStore() {
         },
         palettes: insertPalette(n.palettes, n.currentPal),
       })),
+    createNewPalWithExplicitPal: (newPal: Palette) =>
+      persistUpdate((n) => ({
+        ...n,
+        currentPal: newPal,
+        palettes: insertPalette(n.palettes, n.currentPal),
+      })),
     removePal: (pal: string) =>
       persistUpdate((n) => ({
         ...n,

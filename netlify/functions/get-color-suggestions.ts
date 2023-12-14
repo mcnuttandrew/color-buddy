@@ -9,7 +9,6 @@ Present your names a list of JSON strings. They should have a type like string[]
 Palette: ${JSON.stringify(pal.inputColors)}
 Background Color: ${pal.background}
 Your response: \`\`\`json`;
-  console.log(result);
   return result;
 };
 

@@ -59,7 +59,7 @@
         $colorStore.currentPal.background
       )
         .then((x) => {
-          console.log(x);
+          console.log("ai suggestions", x);
           aiSuggestions = x;
           requestState = "idle";
         })

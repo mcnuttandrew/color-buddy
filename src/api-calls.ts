@@ -11,6 +11,7 @@ function openAIScaffold(api: string, body: string): Promise<string[]> {
   })
     .then((response) => response.json())
     .then((x: any) => {
+      console.log(x);
       const result = x.choices
         .map((x: any) => x?.message?.content)
         .filter((x: any) => x)

@@ -82,8 +82,11 @@ function createStore() {
     JSON.stringify(convertStoreColorToHex(storeData))
   );
   const { subscribe, set, update } = writable<StoreData>(storeData);
+  let undoStack: StoreData[] = [];
+  let redoStack: StoreData[] = [];
   const persistUpdate = (updateFunc: (old: StoreData) => StoreData) =>
     update((oldStore) => {
+      undoStack.push(oldStore);
       const newVal: StoreData = updateFunc(oldStore);
       localStorage.setItem(
         "color-pal",
@@ -97,6 +100,17 @@ function createStore() {
 
   return {
     subscribe,
+    undo: () => {
+      if (undoStack.length === 0) return;
+      redoStack.push(undoStack.pop()!);
+      set(undoStack[undoStack.length - 1]);
+    },
+    redo: () => {
+      if (redoStack.length === 0) return;
+      undoStack.push(redoStack.pop()!);
+      set(undoStack[undoStack.length - 1]);
+    },
+
     setPalettes: simpleSet("palettes"),
     setCurrentPalColors: (colors: Color[]) =>
       persistUpdate((n) => ({ ...n, currentPal: { ...n.currentPal, colors } })),

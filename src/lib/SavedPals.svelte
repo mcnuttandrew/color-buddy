@@ -10,6 +10,10 @@
 
 <div class="bg-slate-400 p-2 w-96">
   <div class="text-4xl font-bold">Color Buddy</div>
+  <div>
+    <button on:click={() => colorStore.undo()}>Undo</button>
+    <button on:click={() => colorStore.redo()}>Redo</button>
+  </div>
 
   <section class="mt-4 border-t-2 border-black">
     <div class="flex items-center justify-between">

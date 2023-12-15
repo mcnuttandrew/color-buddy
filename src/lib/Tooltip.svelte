@@ -3,18 +3,16 @@
   function onClick() {
     tooltipOpen = false;
   }
+  function toggle() {
+    tooltipOpen = !tooltipOpen;
+  }
 </script>
 
-<div class="has-tooltip relative">
-  <button
-    on:click={() => {
-      tooltipOpen = !tooltipOpen;
-    }}
-  >
-    <slot name="target">
-      <span class="missing">No content</span>
-    </slot>
-  </button>
+<div class="relative">
+  <slot name="target" {toggle}>
+    <span class="missing">No content</span>
+  </slot>
+
   <span
     class="tooltip rounded shadow-lg p-4 bg-slate-100 text-black -mt-8 max-w-lg flex-wrap flex w-96"
     class:visibleTooltip={tooltipOpen}

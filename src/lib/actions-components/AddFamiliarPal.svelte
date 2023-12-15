@@ -82,7 +82,7 @@
     </div>
   </span>
 
-  <span slot="target">
-    <span class="underline">Add predefined palette</span>
+  <span slot="target" let:toggle>
+    <button class="underline" on:click={toggle}>Add predefined palette</button>
   </span>
 </Tooltip>

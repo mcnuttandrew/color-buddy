@@ -8,6 +8,7 @@
   import TinyWebpage from "./lib/TinyWebpage.svelte";
   import TextBlock from "./lib/TextBlock.svelte";
   import SuggestionsPanel from "./lib/SuggestionsPanel.svelte";
+  import Swatches from "./lib/Swatches.svelte";
 
   let showOption: Record<string, boolean> = {
     swatches: true,
@@ -54,7 +55,7 @@
       </div>
       {#if showOption.swatches}
         <h1>Swatches</h1>
-        <div>TODO</div>
+        <Swatches />
       {/if}
       {#if showOption.visualizations}
         <h1>Visualizations</h1>

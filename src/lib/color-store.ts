@@ -119,7 +119,7 @@ function createStore() {
       persistUpdate((n) => ({
         ...n,
         currentPal: {
-          colors: pick(outfits),
+          colors: pick(outfits).map((x: string) => chroma(x)),
           name: "Untitled",
           background: chroma("#ffffff"),
         },

@@ -1,10 +1,12 @@
 import type { Palette } from "./lib/color-store";
 export function buildTheme(pal: Palette) {
+  const colors = pal.colors.map((x) => x.hex());
+
   const fontStandard = "Montserrat, sans-serif UI";
   const fontTitle = "wf_standard-font, helvetica, arial, sans-serif";
   // const firstLevelElementColor = "#252423";
   // const secondLevelElementColor = "#605E5C";
-  const backgroundColor = pal.background;
+  const backgroundColor = pal.background.hex();
   // const backgroundSecondaryColor = "#C8C6C4";
 
   return {
@@ -40,9 +42,9 @@ export function buildTheme(pal: Palette) {
     axisBand: { tickExtra: true },
     axisX: { labelPadding: 5 },
     axisY: { labelPadding: 10 },
-    bar: { fill: pal.colors[0] },
+    bar: { fill: colors[0] },
     line: {
-      stroke: pal.colors[0],
+      stroke: colors[0],
       strokeWidth: 3,
       strokeCap: "round",
       strokeJoin: "round",
@@ -52,13 +54,13 @@ export function buildTheme(pal: Palette) {
       // fontSize: fontSmallPx,
       // fill: secondLevelElementColor,
     },
-    arc: { fill: pal.colors[0] },
-    area: { fill: pal.colors[0], line: true, opacity: 0.6 },
-    path: { stroke: pal.colors[0] },
-    rect: { fill: pal.colors[0] },
-    point: { fill: pal.colors[0], filled: true, size: 75 },
-    shape: { stroke: pal.colors[0] },
-    symbol: { fill: pal.colors[0], strokeWidth: 1.5, size: 50 },
+    arc: { fill: colors[0] },
+    area: { fill: colors[0], line: true, opacity: 0.6 },
+    path: { stroke: colors[0] },
+    rect: { fill: colors[0] },
+    point: { fill: colors[0], filled: true, size: 75 },
+    shape: { stroke: colors[0] },
+    symbol: { fill: colors[0], strokeWidth: 1.5, size: 50 },
     legend: {
       titleFont: fontStandard,
       titleFontWeight: "bold",
@@ -70,7 +72,7 @@ export function buildTheme(pal: Palette) {
       symbolSize: 75,
     },
     range: {
-      category: pal.colors,
+      category: colors,
       // diverging: divergentPalette,
       // heatmap: divergentPalette,
       // ordinal: ordinalPalette,

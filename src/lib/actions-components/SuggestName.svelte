@@ -8,7 +8,7 @@
   let requestState: "idle" | "loading" = "idle";
 </script>
 
-<div class="border-2 border-white rounded p-2">
+<div class="">
   <button
     class={actionButton}
     class:animate-pulse={requestState === "loading"}

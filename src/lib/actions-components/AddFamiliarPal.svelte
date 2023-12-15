@@ -2,25 +2,11 @@
   import chroma from "chroma-js";
   import colorStore from "../color-store";
   import { onMount } from "svelte";
-  import { actionButton } from "../../styles";
   import type { Palette } from "../color-store";
+  import Tooltip from "../Tooltip.svelte";
 
-  const familiarPals: Palette[] = [];
+  $: familiarPals = [] as Palette[];
   onMount(() => {
-    fetch("./brewer.json")
-      .then((x) => x.json())
-      .then((x) => {
-        Object.entries(x).forEach(([schemeName, schemeSizes]) => {
-          Object.entries(schemeSizes as any).forEach(([size, colors]) => {
-            if (typeof colors === "string") return;
-            familiarPals.push({
-              name: `${schemeName}-${size}`,
-              colors: (colors as any).map((x: any) => chroma(x)) as any,
-              background: chroma("#ffffff"),
-            });
-          });
-        });
-      });
     const vega = {
       category10:
         "1f77b4ff7f0e2ca02cd627289467bd8c564be377c27f7f7fbcbd2217becf",
@@ -52,42 +38,51 @@
       }
       return colors;
     };
-
+    let newPals = [] as Palette[];
     Object.entries(vega).forEach(([name, colors]) => {
-      familiarPals.push({
+      newPals.push({
         name,
         colors: toHex(colors),
         background: chroma("#ffffff"),
       });
     });
+    fetch("./brewer.json")
+      .then((x) => x.json())
+      .then((x) => {
+        Object.entries(x).forEach(([schemeName, schemeSizes]) => {
+          Object.entries(schemeSizes as any).forEach(([size, colors]) => {
+            if (typeof colors === "string") return;
+            newPals.push({
+              name: `${schemeName}-${size}`,
+              colors: (colors as any).map((x: any) => chroma(x)) as any,
+              background: chroma("#ffffff"),
+            });
+          });
+        });
+        familiarPals = newPals;
+      });
+    familiarPals = newPals;
   });
-
-  let state: "closed" | "open" = "closed";
 </script>
 
-<div class="border-2 border-white rounded p-2">
-  <button
-    class={actionButton}
-    on:click={() => {
-      state = state === "closed" ? "open" : "closed";
-    }}
-  >
-    Select a familiar palette
-  </button>
-  {#if state === "open"}
-    <select
-      value={null}
-      on:change={(e) => {
-        // @ts-ignore
-        const pal = familiarPals.find((x) => x.name === e.target.value);
-        if (!pal) return;
-        colorStore.createNewPalWithExplicitPal(pal);
-        state = "closed";
-      }}
-    >
+<Tooltip>
+  <span slot="content" let:onClick>
+    <div class="max-h-48 overflow-y-scroll">
       {#each familiarPals as pal}
-        <option value={pal.name}>{pal.name}</option>
+        <button
+          class="underline mr-2"
+          on:click={() => {
+            colorStore.createNewPalWithExplicitPal(pal);
+            onClick();
+          }}
+        >
+          {pal.name}
+        </button>
       {/each}
-    </select>
-  {/if}
-</div>
+    </div>
+  </span>
+
+  <span slot="target">
+    <span class="underline">Add predefined palette</span>
+  </span>
+</Tooltip>

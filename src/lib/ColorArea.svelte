@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { flip } from "svelte/animate";
   import colorStore from "./color-store";
   import focusStore from "./focus-store";
   import chroma from "chroma-js";
@@ -130,9 +131,10 @@
       fill="white"
     />
 
-    {#each $colorStore.currentPal.colors as color, i}
+    {#each $colorStore.currentPal.colors as color, i (color)}
       <!-- svelte-ignore a11y-no-static-element-interactions -->
       <circle
+        animate:flip={{ duration: 200 }}
         on:mouseenter={() => {
           focusStore.setFocusedColor(color);
         }}

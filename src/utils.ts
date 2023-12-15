@@ -11,8 +11,9 @@ export const replaceVal = (arr: Color[], newItem: Color, index: number) => {
   return [...arr.slice(0, index), newItem, ...arr.slice(index + 1)];
 };
 
-export const deleteFrom = (arr: Color[], index: number) => {
-  return [...arr.slice(0, index), ...arr.slice(index + 1)];
+export const deleteFrom = (arr: Color[], item: string) => {
+  return arr.filter((x) => x.hex() !== item);
+  // return [...arr.slice(0, index), ...arr.slice(index + 1)];
 };
 
 export const randChan = () => Math.floor(Math.random() * 255);

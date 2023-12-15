@@ -152,6 +152,14 @@ function createStore() {
           colors: n.currentPal.colors.sort(() => Math.random() - 0.5),
         },
       })),
+    sortByHue: () =>
+      persistUpdate((n) => ({
+        ...n,
+        currentPal: {
+          ...n.currentPal,
+          colors: n.currentPal.colors.sort((a, b) => a.hsl()[0] - b.hsl()[0]),
+        },
+      })),
     replaceColor: (oldColor: Color, newColor: Color) =>
       persistUpdate((n) => ({
         ...n,

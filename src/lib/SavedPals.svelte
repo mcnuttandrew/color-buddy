@@ -66,6 +66,9 @@
       <button class={actionButton} on:click={() => colorStore.randomizeOrder()}>
         Randomize order
       </button>
+      <button class={actionButton} on:click={() => colorStore.sortByHue()}>
+        Sort by hue
+      </button>
       <AddFamiliarPal />
     </div>
   </section>

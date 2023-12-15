@@ -9,12 +9,15 @@
   import TextBlock from "./lib/TextBlock.svelte";
   import SuggestionsPanel from "./lib/SuggestionsPanel.svelte";
   import Swatches from "./lib/Swatches.svelte";
+  import Tooltip from "./lib/Tooltip.svelte";
+  import ColorChannelPicker from "./components/ColorChannelPicker.svelte";
+  import ColorNameWithEdit from "./components/ColorNameWithEdit.svelte";
 
   let showOption: Record<string, boolean> = {
-    swatches: true,
     visualizations: true,
     pages: true,
   };
+  $: bg = $colorStore.currentPal.background;
 </script>
 
 <main class="flex h-full">
@@ -22,6 +25,8 @@
   <div class="w-full flex p-2">
     <!-- left column -->
     <div class="flex-col w-1/2">
+      <h1>Swatches (Click to modify colors)</h1>
+      <Swatches />
       <div class="flex">
         <!-- <ColorCircle height={300} width={300} /> -->
         <ColorArea height={400} width={400} />
@@ -53,13 +58,45 @@
           </label>
         {/each}
       </div>
-      {#if showOption.swatches}
-        <h1>Swatches</h1>
-        <Swatches />
-      {/if}
+      {#if showOption.swatches}{/if}
+      <div>
+        <h1>Background</h1>
+        <div>
+          <!-- svelte-ignore a11y-click-events-have-key-events -->
+          <Tooltip top={"100px"}>
+            <div slot="content" class="flex" let:onClick>
+              <ColorNameWithEdit
+                color={$colorStore.currentPal.background}
+                onColorChange={(color) => colorStore.setBackground(color)}
+              />
+              {#each ["lab", "hsv"] as colorMode}
+                <ColorChannelPicker
+                  color={$colorStore.currentPal.background}
+                  {colorMode}
+                  onColorChange={(color) => colorStore.setBackground(color)}
+                />
+              {/each}
+            </div>
+            <!-- svelte-ignore a11y-click-events-have-key-events -->
+            <!-- svelte-ignore a11y-no-static-element-interactions -->
+            <div
+              let:toggle
+              slot="target"
+              class={"cursor-pointer mr-2 mb-2 w-8 h-8 rounded-full border-2 border-gray-200"}
+              style={`background: ${$colorStore.currentPal.background.hex()}`}
+              on:click={() => {
+                toggle();
+              }}
+            ></div>
+          </Tooltip>
+        </div>
+      </div>
       {#if showOption.visualizations}
         <h1>Visualizations</h1>
-        <div class="flex flex-wrap overflow-auto">
+        <div
+          class="flex flex-wrap overflow-auto p-4"
+          style={`background-color: ${bg.hex()}`}
+        >
           {#each charts as spec}
             <Vega
               theme={buildTheme($colorStore.currentPal)}

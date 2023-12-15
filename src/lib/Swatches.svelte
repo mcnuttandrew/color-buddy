@@ -1,66 +1,68 @@
 <script lang="ts">
-  import { flip } from "svelte/animate";
+  import type { Color } from "chroma-js";
   import colorStore from "./color-store";
   import focusStore from "./focus-store";
+  import Tooltip from "./Tooltip.svelte";
+  import SwatchTooltipContent from "./SwatchTooltipContent.svelte";
   $: colors = $colorStore.currentPal.colors;
+  $: bg = $colorStore.currentPal.background;
+  $: focused = $focusStore.focusedColor;
 
-  const rowCount = 4;
-  const boxSize = 50;
-
-  $: height = Math.ceil((colors || []).length / rowCount) * boxSize;
+  let common = "cursor-pointer mr-2 mb-2";
+  let classes = [
+    {
+      className: `${common} w-14 h-14 `,
+      styleMap: (color: Color): string => `background-color: ${color.hex()}`,
+    },
+    {
+      className: `${common} w-8 h-8`,
+      styleMap: (color: Color): string => `background-color: ${color.hex()}`,
+    },
+    {
+      className: `${common} w-8 h-8 rounded-full`,
+      styleMap: (color: Color): string => `border: 4px solid ${color.hex()}`,
+    },
+  ];
 </script>
 
-<div class="flex">
-  <svg width={200} {height} overflow="visible">
-    {#each colors as color, i (color)}
+<div class="flex p-2" style={`background-color: ${bg.hex()}`}>
+  {#each classes as { className, styleMap }, jdx}
+    <div class="flex flex-wrap">
+      {#each colors as color, idx}
+        <!-- svelte-ignore a11y-click-events-have-key-events -->
+        <!-- svelte-ignore a11y-no-static-element-interactions -->
+        <div>
+          <Tooltip
+            top={"100px"}
+            onClose={() => focusStore.setFocusedColor(undefined)}
+          >
+            <div slot="content" class="flex flex-col" let:onClick>
+              <SwatchTooltipContent {color} closeTooltip={onClick} {idx} />
+            </div>
+            <div
+              let:toggle
+              slot="target"
+              class={className}
+              style={styleMap(color)}
+              on:click={() => {
+                toggle();
+                focusStore.setFocusedColor(idx);
+              }}
+              class:mt-2={focused === idx}
+              class:ml-2={focused === idx}
+            ></div>
+          </Tooltip>
+        </div>
+      {/each}
+    </div>
+  {/each}
+  <div class="flex flex-wrap">
+    {#each colors as color}
       <!-- svelte-ignore a11y-click-events-have-key-events -->
       <!-- svelte-ignore a11y-no-static-element-interactions -->
-      <rect
-        class="cursor-pointer"
-        animate:flip={{ duration: 200 }}
-        x={(i % rowCount) * boxSize}
-        y={Math.floor(i / rowCount) * boxSize}
-        width={boxSize - 5}
-        height={boxSize - 5}
-        fill={color.hex()}
-        stroke={color.hex() === $focusStore.focusedColor ? "black" : "none"}
-        stroke-width={color.hex() === $focusStore.focusedColor ? 2 : 0}
-        on:click={() => focusStore.setFocusedColor(color.hex())}
-      />
+      <div style={`color: ${color.hex()}`}>
+        {color.hex()}
+      </div>
     {/each}
-  </svg>
-  <svg width={200} {height} overflow="visible">
-    {#each colors as color, i (color)}
-      <!-- svelte-ignore a11y-click-events-have-key-events -->
-      <!-- svelte-ignore a11y-no-static-element-interactions -->
-      <rect
-        class="cursor-pointer"
-        x={(i % rowCount) * boxSize}
-        y={Math.floor(i / rowCount) * boxSize}
-        width={boxSize / 2}
-        height={boxSize / 2}
-        fill={color.hex()}
-        stroke={color.hex() === $focusStore.focusedColor ? "black" : "none"}
-        stroke-width={color.hex() === $focusStore.focusedColor ? 2 : 0}
-        on:click={() => focusStore.setFocusedColor(color.hex())}
-      />
-    {/each}
-  </svg>
-  <svg width={200} {height} overflow="visible">
-    {#each colors as color, i (color)}
-      <!-- svelte-ignore a11y-click-events-have-key-events -->
-      <!-- svelte-ignore a11y-no-static-element-interactions -->
-      <circle
-        class="cursor-pointer"
-        animate:flip={{ duration: 200 }}
-        cx={(i % rowCount) * boxSize + boxSize / 4}
-        cy={Math.floor(i / rowCount) * boxSize + boxSize / 4}
-        r={boxSize / 4}
-        stroke={color.hex()}
-        stroke-width={5}
-        fill={color.hex() === $focusStore.focusedColor ? "black" : "white"}
-        on:click={() => focusStore.setFocusedColor(color.hex())}
-      />
-    {/each}
-  </svg>
+  </div>
 </div>

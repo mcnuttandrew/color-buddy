@@ -31,6 +31,14 @@ const InitialStore: StorageData = {
   },
 };
 
+function deDup(arr: Color[]): Color[] {
+  const seen = new Set();
+  return arr.filter((item) => {
+    const k = item.hex();
+    return seen.has(k) ? false : seen.add(k);
+  });
+}
+
 function convertStoreHexToColor(store: StorageData): StoreData {
   return {
     palettes: store.palettes.map((x) => ({
@@ -87,6 +95,7 @@ function createStore() {
   const persistUpdate = (updateFunc: (old: StoreData) => StoreData) =>
     update((oldStore) => {
       undoStack.push(oldStore);
+      redoStack = [];
       const newVal: StoreData = updateFunc(oldStore);
       localStorage.setItem(
         "color-pal",
@@ -95,21 +104,34 @@ function createStore() {
       return newVal;
     });
 
+  const simpleUpdate = (updateFunc: (old: StoreData) => StoreData) =>
+    update((oldStore) => updateFunc(oldStore));
+
   const simpleSet = (key: keyof StoreData) => (val: any) =>
     persistUpdate((n) => ({ ...n, [key]: val }));
 
+  const doSort = (comparator: (a: Color, b: Color) => number) => () =>
+    persistUpdate((n) => ({
+      ...n,
+      currentPal: {
+        ...n.currentPal,
+        colors: n.currentPal.colors.sort(comparator),
+      },
+    }));
   return {
     subscribe,
-    undo: () => {
-      if (undoStack.length === 0) return;
-      redoStack.push(undoStack.pop()!);
-      set(undoStack[undoStack.length - 1]);
-    },
-    redo: () => {
-      if (redoStack.length === 0) return;
-      undoStack.push(redoStack.pop()!);
-      set(undoStack[undoStack.length - 1]);
-    },
+    undo: () =>
+      simpleUpdate((currentVal) => {
+        if (undoStack.length === 0) return currentVal;
+        redoStack.push(currentVal);
+        return undoStack.pop()!;
+      }),
+    redo: () =>
+      simpleUpdate((currentVal) => {
+        if (redoStack.length === 0) return currentVal;
+        undoStack.push(currentVal);
+        return redoStack.pop()!;
+      }),
 
     setPalettes: simpleSet("palettes"),
     setCurrentPalColors: (colors: Color[]) =>
@@ -122,11 +144,7 @@ function createStore() {
           n.palettes.filter((x) => x.name !== palName),
           n.currentPal
         );
-        return {
-          ...n,
-          currentPal: newPal,
-          palettes: updatedPals,
-        };
+        return { ...n, currentPal: newPal, palettes: updatedPals };
       });
     },
     createNewPal: () =>
@@ -158,22 +176,14 @@ function createStore() {
           n.palettes.find((x) => x.name === pal)!
         ),
       })),
-    randomizeOrder: () =>
+
+    setSort: (sort: Color[]) =>
       persistUpdate((n) => ({
         ...n,
-        currentPal: {
-          ...n.currentPal,
-          colors: n.currentPal.colors.sort(() => Math.random() - 0.5),
-        },
+        currentPal: { ...n.currentPal, colors: deDup(sort) },
       })),
-    sortByHue: () =>
-      persistUpdate((n) => ({
-        ...n,
-        currentPal: {
-          ...n.currentPal,
-          colors: n.currentPal.colors.sort((a, b) => a.hsl()[0] - b.hsl()[0]),
-        },
-      })),
+    randomizeOrder: doSort(() => Math.random() - 0.5),
+    sortByHue: doSort((a, b) => a.hsl()[0] - b.hsl()[0]),
     replaceColor: (oldColor: Color, newColor: Color) =>
       persistUpdate((n) => ({
         ...n,

@@ -4,7 +4,7 @@ export function buildTheme(pal: Palette) {
 
   const fontStandard = "Montserrat, sans-serif UI";
   const fontTitle = "wf_standard-font, helvetica, arial, sans-serif";
-  // const firstLevelElementColor = "#252423";
+  const basicColor = pal.background.luminance() > 0.5 ? "#000000" : "#ffffff";
   // const secondLevelElementColor = "#605E5C";
   const backgroundColor = pal.background.hex();
   // const backgroundSecondaryColor = "#C8C6C4";
@@ -16,26 +16,26 @@ export function buildTheme(pal: Palette) {
     header: {
       titleFont: fontTitle,
       // titleFontSize: fontLargePx,
-      // titleColor: firstLevelElementColor,
+      titleColor: basicColor,
       labelFont: fontStandard,
       // labelFontSize: legendFontPx,
-      // labelColor: secondLevelElementColor,
+      labelColor: basicColor,
     },
     axis: {
       ticks: false,
       grid: false,
       domain: false,
-      // labelColor: secondLevelElementColor,
+      labelColor: basicColor,
       // labelFontSize: fontSmallPx,
       titleFont: fontTitle,
-      // titleColor: firstLevelElementColor,
+      titleColor: basicColor,
       // titleFontSize: fontLargePx,
       titleFontWeight: "normal",
     },
     axisQuantitative: {
       tickCount: 3,
       grid: true,
-      // gridColor: backgroundSecondaryColor,
+      gridColor: basicColor,
       gridDash: [1, 5],
       labelFlush: false,
     },
@@ -52,7 +52,7 @@ export function buildTheme(pal: Palette) {
     text: {
       font: fontStandard,
       // fontSize: fontSmallPx,
-      // fill: secondLevelElementColor,
+      fill: basicColor,
     },
     arc: { fill: colors[0] },
     area: { fill: colors[0], line: true, opacity: 0.6 },
@@ -64,10 +64,10 @@ export function buildTheme(pal: Palette) {
     legend: {
       titleFont: fontStandard,
       titleFontWeight: "bold",
-      // titleColor: secondLevelElementColor,
+      titleColor: basicColor,
       labelFont: fontStandard,
       // labelFontSize: legendFontPx,
-      // labelColor: secondLevelElementColor,
+      labelColor: basicColor,
       symbolType: "circle",
       symbolSize: 75,
     },
@@ -159,7 +159,7 @@ const map = (pal: Palette) => ({
       name: "color",
       type: "ordinal",
       domain: { data: "counties", field: "mod" },
-      range: pal.colors,
+      range: pal.colors.map((x) => x.hex()),
     },
   ],
 

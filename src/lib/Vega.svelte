@@ -10,6 +10,7 @@
     vegaEmbed(container, JSON.parse(JSON.stringify(spec)), {
       actions,
       config: theme,
+      renderer: "canvas",
     }).catch((e) => {});
 </script>
 

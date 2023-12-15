@@ -73,12 +73,12 @@
     Get AI suggestions
     {#if requestState === "loading"}(loading){/if}
   </button>
-  <button
+  <!-- <button
     on:click={() => {
       // list of plausible fake color suggestions in hex codes
       aiSuggestions = ["#ff0000", "#00ff00", "#0000ff"];
     }}
   >
     Fake Suggestions
-  </button>
+  </button> -->
 </div>

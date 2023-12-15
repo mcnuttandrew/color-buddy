@@ -8,7 +8,7 @@ Palette: ["#000000", "#FF0000", "#00FF00", "#0000FF"]
 Background Color: "#FFFFFF" 
 Output: ["Color Wheel Basics", "Primary School", "RGB"]
 
-Present your names a list of JSON strings. They should have a type like string[]. Only respond with one array. Do not offer any other response
+Present your names a list of JSON strings. They should have a type like string[]. Only respond with one array consisting of 4 name suggestions. Do not offer any other response.
 
 Palette: ${JSON.stringify(pal.inputColors)}
 Background Color: ${pal.background}

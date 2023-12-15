@@ -1,7 +1,7 @@
 import { writable } from "svelte/store";
 
 interface StoreData {
-  focusedColor: string | undefined;
+  focusedColor: number | undefined;
 }
 
 const InitialStore: StoreData = {
@@ -13,12 +13,10 @@ function createStore() {
   const persistUpdate = (updateFunc: (old: StoreData) => StoreData) =>
     update((oldStore) => updateFunc(oldStore));
 
-  const simpleSet = (key: keyof StoreData) => (val: any) =>
-    persistUpdate((n) => ({ ...n, [key]: val }));
-
   return {
     subscribe,
-    setFocusedColor: simpleSet("focusedColor"),
+    setFocusedColor: (val: number | undefined) =>
+      persistUpdate((n) => ({ ...n, focusedColor: val })),
     reset: () => set({ ...InitialStore }),
   };
 }

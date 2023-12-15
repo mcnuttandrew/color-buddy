@@ -3,10 +3,9 @@
   import type { Color } from "chroma-js";
   export let color: Color;
   export let onColorChange: (color: Color) => void;
-  export let heading: string;
-
-  type ColorMode = "hsl" | "rgb" | "lab";
-  let colorMode: ColorMode = "lab";
+  type ColorMode = "hsl" | "rgb" | "lab" | "hsv";
+  export let colorMode: string = "lab";
+  // let colorMode: ColorMode = "lab";
   type Channel = {
     name: string;
     min: number;
@@ -30,7 +29,12 @@
       { name: "a*", min: -110, max: 110, step: 1 },
       { name: "b*", min: -110, max: 110, step: 1 },
     ],
-  } as Record<ColorMode, Channel[]>;
+    hsv: [
+      { name: "Hue", min: 0, max: 360, step: 1 },
+      { name: "Saturation", min: 0, max: 1, step: 0.01 },
+      { name: "Value", min: 0, max: 1, step: 0.01 },
+    ],
+  } as Record<string, Channel[]>;
   $: {
     if (color) {
       (Object.keys(colorConfigs) as ColorMode[]).forEach((key) => {
@@ -44,36 +48,20 @@
     rgb: (colors: number[]) => chroma.rgb(colors[0], colors[1], colors[2]),
     hsl: (colors: number[]) => chroma.hsl(colors[0], colors[1], colors[2]),
     lab: (colors: number[]) => chroma.lab(colors[0], colors[1], colors[2]),
+    hsv: (colors: number[]) => chroma.hsv(colors[0], colors[1], colors[2]),
   };
 
   let dragging = false;
 </script>
 
 <div>
-  <div class="flex justify-between">
-    <span>{heading}</span>
-    <div
-      contenteditable="true"
-      on:blur={(e) => {
-        // @ts-ignore
-        const newColor = e.target.textContent;
-        try {
-          onColorChange(newColor);
-        } catch (e) {
-          console.log(e);
-        }
-      }}
-    >
-      {color}
-    </div>
-  </div>
-  <div class="flex h-full pl-2" style="border-left: 20px solid {color};">
+  <div class="flex h-full pl-2">
     <div class="flex flex-col">
-      <select bind:value={colorMode}>
+      <!-- <select bind:value={colorMode}>
         {#each Object.keys(colorConfigs) as mode}
           <option value={mode}>{mode}</option>
         {/each}
-      </select>
+      </select> -->
       <div class="flex flex-col">
         <div>
           {#each colorConfigs[colorMode] as channel, idx}

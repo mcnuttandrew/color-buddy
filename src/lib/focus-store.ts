@@ -1,22 +1,32 @@
 import { writable } from "svelte/store";
 
 interface StoreData {
-  focusedColor: number | undefined;
+  focusedColors: number[];
 }
 
 const InitialStore: StoreData = {
-  focusedColor: undefined,
+  focusedColors: [],
 };
 
 function createStore() {
   const { subscribe, set, update } = writable<StoreData>(InitialStore);
-  const persistUpdate = (updateFunc: (old: StoreData) => StoreData) =>
-    update((oldStore) => updateFunc(oldStore));
-
+  const simpleUpdate = (updateFunc: (old: number[]) => number[]) =>
+    update((oldStore) => ({
+      ...oldStore,
+      focusedColors: updateFunc(oldStore.focusedColors),
+    }));
   return {
     subscribe,
-    setFocusedColor: (val: number | undefined) =>
-      persistUpdate((n) => ({ ...n, focusedColor: val })),
+    toggleColor: (val: number) =>
+      simpleUpdate((colors) =>
+        colors.includes(val)
+          ? colors.filter((x) => x !== val)
+          : [...colors, val]
+      ),
+    addColor: (val: number) => simpleUpdate((colors) => [...colors, val]),
+    removeColor: (val: number) =>
+      simpleUpdate((colors) => colors.filter((x) => x !== val)),
+    clearColors: () => simpleUpdate(() => []),
     reset: () => set({ ...InitialStore }),
   };
 }

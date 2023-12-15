@@ -7,9 +7,6 @@
     onClose();
   }
   function toggle() {
-    if (tooltipOpen) {
-      onClose();
-    }
     tooltipOpen = !tooltipOpen;
   }
 </script>

@@ -4,7 +4,7 @@
   import Vega from "./lib/Vega.svelte";
   import ColorArea from "./lib/ColorArea.svelte";
   import SavedPals from "./lib/SavedPals.svelte";
-  import ColorPanel from "./lib/ColorPanel.svelte";
+  import ColorPanel from "./lib/ActionArea.svelte";
   import TinyWebpage from "./lib/TinyWebpage.svelte";
   import TextBlock from "./lib/TextBlock.svelte";
   import SuggestionsPanel from "./lib/SuggestionsPanel.svelte";
@@ -25,13 +25,13 @@
   <div class="w-full flex p-2">
     <!-- left column -->
     <div class="flex-col w-1/2">
-      <h1>Swatches (Click to modify colors)</h1>
-      <Swatches />
+      <ColorPanel />
       <div class="flex">
         <!-- <ColorCircle height={300} width={300} /> -->
         <ColorArea height={400} width={400} />
       </div>
-      <ColorPanel />
+      <Swatches />
+
       <SuggestionsPanel />
       <h1>Evaluation</h1>
       <div>TODO</div>

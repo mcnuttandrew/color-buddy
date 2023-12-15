@@ -6,7 +6,7 @@
   import SwatchTooltipContent from "./SwatchTooltipContent.svelte";
   $: colors = $colorStore.currentPal.colors;
   $: bg = $colorStore.currentPal.background;
-  $: focused = $focusStore.focusedColor;
+  $: focusSet = new Set($focusStore.focusedColors);
 
   let common = "cursor-pointer mr-2 mb-2";
   let classes = [
@@ -34,7 +34,9 @@
         <div>
           <Tooltip
             top={"100px"}
-            onClose={() => focusStore.setFocusedColor(undefined)}
+            onClose={() => {
+              focusStore.clearColors();
+            }}
           >
             <div slot="content" class="flex flex-col" let:onClick>
               <SwatchTooltipContent {color} closeTooltip={onClick} {idx} />
@@ -46,10 +48,11 @@
               style={styleMap(color)}
               on:click={() => {
                 toggle();
-                focusStore.setFocusedColor(idx);
+
+                focusStore.addColor(idx);
               }}
-              class:mt-2={focused === idx}
-              class:ml-2={focused === idx}
+              class:mt-2={focusSet.has(idx)}
+              class:ml-2={focusSet.has(idx)}
             ></div>
           </Tooltip>
         </div>

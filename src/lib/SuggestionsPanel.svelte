@@ -7,10 +7,10 @@
   $: colors = $colorStore.currentPal.colors;
   $: computedGuess = [
     { color: randColor(), explanation: "random" },
-    { color: avgColors(colors, "hsl"), explanation: "average HSL" },
-    { color: avgColors(colors, "rgb"), explanation: "average RGB" },
-    { color: avgColors(colors, "lab"), explanation: "average LAB" },
-    { color: opposingColor(colors[0]), explanation: "opposite of first color" },
+    // { color: avgColors(colors, "hsl"), explanation: "average HSL" },
+    // { color: avgColors(colors, "rgb"), explanation: "average RGB" },
+    // { color: avgColors(colors, "lab"), explanation: "average LAB" },
+    // { color: opposingColor(colors[0]), explanation: "opposite of first color" },
   ];
   let aiSuggestions: string[] = [];
   let requestState: "idle" | "loading" = "idle";

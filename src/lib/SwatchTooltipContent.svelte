@@ -64,10 +64,8 @@
   <button
     class="underline mr-2"
     on:click={() => {
-      colorStore.setCurrentPalColors(
-        colors.filter((_, idx) => idx !== $focusStore.focusedColor)
-      );
-      focusStore.setFocusedColor(undefined);
+      colorStore.setCurrentPalColors(colors.filter((_, jdx) => jdx !== idx));
+      focusStore.removeColor(idx);
       closeTooltip();
     }}
   >

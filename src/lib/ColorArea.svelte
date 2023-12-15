@@ -1,15 +1,14 @@
 <script lang="ts">
-  import { flip } from "svelte/animate";
   import colorStore from "./color-store";
   import focusStore from "./focus-store";
   import chroma from "chroma-js";
   import type { Color } from "chroma-js";
   import { scaleLinear } from "d3-scale";
-  import { replaceVal, toLab } from "../utils";
 
   export let width = 256;
   export let height = 256;
-  $: focusedColor = $focusStore.focusedColor;
+  $: focusedColors = $focusStore.focusedColors;
+  $: focusSet = new Set(focusedColors);
 
   const margin = {
     top: 10,
@@ -26,54 +25,63 @@
   // L
   const zScale = scaleLinear().domain([100, 0]).range([0, plotHeight]);
 
-  let dragging: false | number = false;
-  const getXY = (e: any) => {
-    const parentX = e?.target?.getBoundingClientRect().x;
-    const parentY = e?.target?.getBoundingClientRect().y;
-    return { parentX, parentY };
-  };
-  const eventToColorXY = (e: any, target: Color | false): Color => {
-    const oldColor = target ? target.lab() : [50, 0, 0];
-    const { parentX, parentY } = getXY(e);
-    return chroma.lab(
-      oldColor[0],
-      xScale.invert(e.clientX - parentX),
-      yScale.invert(e.clientY - parentY)
-    );
+  let dragging: false | { x: number; y: number } = false;
+  const eventToColorXY = (
+    e: any,
+    color: Color,
+    originalColor: Color
+  ): Color => {
+    if (!dragging || dragging.x === undefined || dragging.y === undefined)
+      return color;
+
+    const screenPosDelta = {
+      x: e.clientX - dragging.x,
+      y: e.clientY - dragging.y,
+    };
+    const [l, a, b] = originalColor.lab();
+    const newX = xScale.invert(xScale(a) + screenPosDelta.x);
+    const newY = yScale.invert(yScale(b) + screenPosDelta.y);
+
+    return chroma.lab(l, newX, newY);
   };
 
-  const eventToColorZ = (e: any, target: Color | false): Color => {
-    const oldColor = target ? target.lab() : [50, 0, 0];
-    const { parentY } = getXY(e);
-    return chroma.lab(
-      zScale.invert(e.clientY - parentY),
-      oldColor[1],
-      oldColor[2]
-    );
+  const eventToColorZ = (e: any, color: Color, originalColor: Color): Color => {
+    if (!dragging || dragging.x === undefined || dragging.y === undefined)
+      return color;
+
+    const screenPosDelta = e.clientY - dragging.y;
+    const [l, a, b] = originalColor.lab();
+    const newZ = zScale.invert(zScale(l) + screenPosDelta);
+    return chroma.lab(newZ, a, b);
   };
 
   $: bg = $colorStore.currentPal.background;
+  $: colors = $colorStore.currentPal.colors;
 
   function stopDrag() {
     dragging = false;
   }
 
-  const startDrag = (target: number) => () => {
-    dragging = target;
+  let originalColors = [] as Color[];
+  const startDrag = (e: any) => {
+    dragging = { x: e.clientX, y: e.clientY };
+    originalColors = [...colors];
   };
+  const dragResponse =
+    (func: typeof eventToColorZ | typeof eventToColorZ) => (e: any) => {
+      const newColors = colors.map((color: Color, idx: number) =>
+        focusSet.has(idx) ? func(e, color, originalColors[idx]) : color
+      );
+
+      colorStore.setCurrentPalColors(newColors);
+    };
 </script>
 
 <!-- svelte-ignore a11y-no-static-element-interactions -->
 <!-- svelte-ignore a11y-no-static-element-interactions -->
 <div>
   <span>CIELAB a*, b*</span>
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    {width}
-    {height}
-    on:mouseleave={stopDrag}
-    on:mouseup={stopDrag}
-  >
+  <svg {width} {height} on:mouseleave={stopDrag} on:mouseup={stopDrag}>
     <g transform={`translate(${margin.left}, ${margin.top})`}>
       <rect
         x={0}
@@ -108,18 +116,12 @@
           if (dragging) {
             dragging = false;
           } else {
-            colorStore.addColorToCurrentPal(eventToColorXY(e, false));
+            focusStore.clearColors();
           }
         }}
         on:mousemove={(e) => {
           if (dragging) {
-            const colors = $colorStore.currentPal.colors;
-            const newColors = replaceVal(
-              colors,
-              eventToColorXY(e, colors[dragging]),
-              dragging
-            );
-            colorStore.setCurrentPalColors(newColors);
+            dragResponse(eventToColorXY)(e);
           }
         }}
         on:mouseup={() => {
@@ -133,18 +135,18 @@
         fill="white"
       />
 
-      {#each $colorStore.currentPal.colors as color, i (color)}
+      {#each colors as color, i (color)}
         <!-- svelte-ignore a11y-no-static-element-interactions -->
         <!-- svelte-ignore a11y-click-events-have-key-events -->
         <circle
-          on:mousedown={startDrag(i)}
+          on:mousedown={(e) => startDrag(e)}
           class="cursor-pointer"
           cx={xScale(color.lab()[1])}
           cy={yScale(color.lab()[2])}
-          r={10 + (focusedColor === i ? 5 : 0)}
+          r={10 + (focusSet.has(i) ? 5 : 0)}
           fill={color.hex()}
           on:click={() => {
-            focusStore.setFocusedColor(i);
+            focusStore.toggleColor(i);
           }}
         />
       {/each}
@@ -180,13 +182,7 @@
         stroke-width="1"
         on:mousemove={(e) => {
           if (dragging) {
-            const colors = $colorStore.currentPal.colors;
-            const newColors = replaceVal(
-              colors,
-              eventToColorZ(e, colors[dragging]),
-              dragging
-            );
-            colorStore.setCurrentPalColors(newColors);
+            dragResponse(eventToColorZ)(e);
           }
         }}
       />
@@ -194,16 +190,16 @@
         <!-- svelte-ignore a11y-no-static-element-interactions -->
         <!-- svelte-ignore a11y-click-events-have-key-events -->
         <rect
-          x={10 - (focusedColor === i ? 5 : 0)}
+          x={10 - (focusSet.has(i) ? 5 : 0)}
           class="cursor-pointer"
           y={zScale(color.lab()[0])}
-          width={80 - 10 * 2 + (focusedColor === i ? 10 : 0)}
+          width={80 - 10 * 2 + (focusSet.has(i) ? 10 : 0)}
           height={5}
           fill={color.hex()}
           on:click={() => {
-            focusStore.setFocusedColor(i);
+            focusStore.toggleColor(i);
           }}
-          on:mousedown={startDrag(i)}
+          on:mousedown={(e) => startDrag(e)}
         />
       {/each}
     </g>

@@ -66,7 +66,26 @@
         <div>
           {#each colorConfigs[colorMode] as channel, idx}
             <div class="flex items-start flex-col">
-              <div class="w-8">{channel.name}</div>
+              <div class="flex">
+                <span>{channel.name}</span>
+                <input
+                  type="number"
+                  class="w-full ml-2"
+                  min={channel.min}
+                  max={channel.max}
+                  step={channel.step}
+                  value={channel.value.toFixed(6)}
+                  on:click={(e) => {
+                    const values = [
+                      ...colorConfigs[colorMode].map((x) => x.value),
+                    ];
+                    // @ts-ignore
+                    values[idx] = Number(e.target.value);
+                    // @ts-ignore
+                    onColorChange(toColor[colorMode](values));
+                  }}
+                />
+              </div>
               <input
                 type="range"
                 min={channel.min}

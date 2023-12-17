@@ -23,6 +23,7 @@ function createStore() {
           ? colors.filter((x) => x !== val)
           : [...colors, val]
       ),
+    setColors: (val: number[]) => simpleUpdate(() => val),
     addColor: (val: number) => simpleUpdate((colors) => [...colors, val]),
     removeColor: (val: number) =>
       simpleUpdate((colors) => colors.filter((x) => x !== val)),

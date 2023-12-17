@@ -1,26 +1,23 @@
 <script lang="ts">
-  import vegaEmbed from "vega-embed";
+  import colorStore from "./color-store";
+  import { getSVG } from "../charts";
 
-  let actions = false;
+  import { idxToKey } from "../charts";
   export let spec: any;
-  export let theme: any;
-  let container: any;
-  $: spec &&
-    theme &&
-    vegaEmbed(container, JSON.parse(JSON.stringify(spec)), {
-      actions,
-      config: theme,
-      renderer: "canvas",
-    }).catch((e) => {});
+
+  let producedSVG: string = "";
+  $: colors = $colorStore.currentPal.colors;
+
+  $: getSVG(spec, $colorStore.currentPal).then((x) => {
+    producedSVG = x;
+  });
+  $: bg = $colorStore.currentPal.background.hex();
+  $: finalSVG = colors.reduce(
+    (acc, color, idx) => {
+      return acc.replace(new RegExp(idxToKey(idx), "g"), color.hex());
+    },
+    producedSVG.replace("SaLmOn", bg)
+  );
 </script>
 
-<!-- svelte-ignore a11y-click-events-have-key-events -->
-<!-- svelte-ignore a11y-no-static-element-interactions -->
-<div
-  bind:this={container}
-  on:click={(e) => {
-    if (e.vegaType) {
-      actions = !actions;
-    }
-  }}
-/>
+<div class="flex max-w-fit">{@html finalSVG}</div>

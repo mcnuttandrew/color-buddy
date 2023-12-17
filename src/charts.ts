@@ -1,12 +1,19 @@
+import * as vega from "vega";
+import * as vegaLite from "vega-lite";
 import type { Palette } from "./lib/color-store";
-export function buildTheme(pal: Palette) {
-  const colors = pal.colors.map((x) => x.hex());
+
+export const idxToKey = (idx: number) => `#${idx}A${idx}0${idx}${idx}`;
+
+export function buildTheme(pal: Palette): any {
+  // const colors = pal.colors.map((x) => x.hex());
+  const colors = pal.colors.map((_x, idx) => idxToKey(idx));
 
   const fontStandard = "Montserrat, sans-serif UI";
   const fontTitle = "wf_standard-font, helvetica, arial, sans-serif";
   const basicColor = pal.background.luminance() > 0.5 ? "#000000" : "#ffffff";
   // const secondLevelElementColor = "#605E5C";
-  const backgroundColor = pal.background.hex();
+  // const backgroundColor = pal.background.hex();
+  const backgroundColor = "SaLmOn";
   // const backgroundSecondaryColor = "#C8C6C4";
 
   return {
@@ -159,7 +166,8 @@ const map = (pal: Palette) => ({
       name: "color",
       type: "ordinal",
       domain: { data: "counties", field: "mod" },
-      range: pal.colors.map((x) => x.hex()),
+      range: pal.colors.map((_x, idx) => idxToKey(idx)),
+      // range: pal.colors.map((x) => x.hex()),
     },
   ],
 
@@ -196,4 +204,28 @@ const areaChart = (pal: Palette) => ({
   },
 });
 
-export const charts = [groupedBarChart, scatterPlot, map, areaChart];
+export const charts = [
+  groupedBarChart, //
+  scatterPlot,
+  map,
+  areaChart,
+];
+
+const results: Record<string, string> = {};
+export async function getSVG(localSpec: any, pal: Palette) {
+  const newKey =
+    pal.colors.length + pal.background.hex() + JSON.stringify(localSpec);
+  if (results[newKey]) return results[newKey];
+  console.log("did run");
+  const theme = buildTheme(pal);
+  let spec = localSpec;
+  if (spec.$schema.includes("vega-lite")) {
+    spec = vegaLite.compile(spec, { config: theme }).spec;
+  }
+  const runtime = vega.parse(spec, theme);
+  const view = await new vega.View(runtime, { renderer: "svg" }).runAsync();
+  return await view.toSVG().then((x) => {
+    results[newKey] = x;
+    return x;
+  });
+}

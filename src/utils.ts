@@ -20,6 +20,15 @@ export const randChan = () => Math.floor(Math.random() * 255);
 export const randColor = () =>
   chroma(`rgb(${randChan()},${randChan()},${randChan()})`);
 
+// seeded random
+export const seededPick = (seedInit: number) => {
+  var seed = seedInit;
+  function random() {
+    var x = Math.sin(seed++) * 10000;
+    return x - Math.floor(x);
+  }
+  return (arr: any[]) => arr[Math.floor(random() * arr.length)];
+};
 export const pick = (arr: any[]) => arr[Math.floor(Math.random() * arr.length)];
 
 export const toLab = (color: Color) => `lab(${color.lab().join(",")})`;

@@ -99,8 +99,8 @@
         >
           {#each charts as spec}
             <Vega
-              theme={buildTheme($colorStore.currentPal)}
               spec={spec($colorStore.currentPal)}
+              pal={$colorStore.currentPal}
             />
           {/each}
         </div>

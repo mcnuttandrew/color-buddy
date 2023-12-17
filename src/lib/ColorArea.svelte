@@ -145,8 +145,12 @@
           cy={yScale(color.lab()[2])}
           r={10 + (focusSet.has(i) ? 5 : 0)}
           fill={color.hex()}
-          on:click={() => {
-            focusStore.toggleColor(i);
+          on:click={(e) => {
+            if (e.metaKey) {
+              focusStore.toggleColor(i);
+            } else {
+              focusStore.setColors([i]);
+            }
           }}
         />
       {/each}

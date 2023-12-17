@@ -95,6 +95,15 @@
           {name}
         </button>
       {/each}
+      <div>TODO Distribute vertical / horizontally</div>
+      <!-- <button on:click={() => {
+        const newColors = [...colors];
+        // const sortedColors = focusedColors.map((idx) => colors[idx]).sort((a, b) => a.lab()[0] - b.lab()[0]);
+        focusedColors.forEach((idx, i) => {
+          newColors[idx] = sortedColors[i];
+        });
+        colorStore.setCurrentPalColors(newColors);
+      }}>Distribute horizontally</button> -->
     {/if}
     <button class="underline mr-2" on:click={() => focusStore.clearColors()}>
       Clear Selection

@@ -1,6 +1,5 @@
 import { writable } from "svelte/store";
-import chroma from "chroma-js";
-import type { Color } from "chroma-js";
+import { Color, CIELAB } from "./Color";
 import fits from "../assets/outfits.json";
 import { pick } from "../utils";
 const outfitToPal = (x: any) => [x.fill1, x.fill2, x.fill3];
@@ -34,7 +33,7 @@ const InitialStore: StorageData = {
 function deDup(arr: Color[]): Color[] {
   const seen = new Set();
   return arr.filter((item) => {
-    const k = item.hex();
+    const k = item.toHex();
     return seen.has(k) ? false : seen.add(k);
   });
 }
@@ -43,13 +42,13 @@ function convertStoreHexToColor(store: StorageData): StoreData {
   return {
     palettes: store.palettes.map((x) => ({
       name: x.name,
-      background: chroma(x.background),
-      colors: x.colors.map((y) => chroma(y)),
+      background: CIELAB.fromString(x.background),
+      colors: x.colors.map((y) => CIELAB.fromString(y)),
     })),
     currentPal: {
-      background: chroma(store.currentPal.background),
+      background: CIELAB.fromString(store.currentPal.background),
       name: store.currentPal.name,
-      colors: store.currentPal.colors.map((y) => chroma(y)),
+      colors: store.currentPal.colors.map((y) => CIELAB.fromString(y)),
     },
   };
 }
@@ -58,13 +57,13 @@ function convertStoreColorToHex(store: StoreData): StorageData {
   return {
     palettes: store.palettes.map((x) => ({
       name: x.name,
-      background: x.background.hex(),
-      colors: x.colors.map((y) => y.hex()),
+      background: x.background.toHex(),
+      colors: x.colors.map((y) => y.toHex()),
     })),
     currentPal: {
-      background: store.currentPal.background.hex(),
+      background: store.currentPal.background.toHex(),
       name: store.currentPal.name,
-      colors: store.currentPal.colors.map((y) => y.hex()),
+      colors: store.currentPal.colors.map((y) => y.toHex()),
     },
   };
 }
@@ -151,9 +150,9 @@ function createStore() {
       persistUpdate((n) => ({
         ...n,
         currentPal: {
-          colors: pick(outfits).map((x: string) => chroma(x)),
+          colors: pick(outfits).map((x: string) => CIELAB.fromString(x)),
           name: "Untitled",
-          background: chroma("#ffffff"),
+          background: CIELAB.fromString("#ffffff"),
         },
         palettes: insertPalette(n.palettes, n.currentPal),
       })),
@@ -183,14 +182,15 @@ function createStore() {
         currentPal: { ...n.currentPal, colors: deDup(sort) },
       })),
     randomizeOrder: doSort(() => Math.random() - 0.5),
-    sortByHue: doSort((a, b) => a.hsl()[0] - b.hsl()[0]),
+    // sortByHue: doSort((a, b) => a.hsl()[0] - b.hsl()[0]),
+    sortByHue: doSort((a, b) => a.toChroma().hsl()[0] - b.toChroma().hsl()[0]),
     replaceColor: (oldColor: Color, newColor: Color) =>
       persistUpdate((n) => ({
         ...n,
         currentPal: {
           ...n.currentPal,
           colors: n.currentPal.colors.map((x) =>
-            x.hex() === oldColor.hex() ? newColor : x
+            x.toHex() === oldColor.toHex() ? newColor : x
           ),
         },
       })),

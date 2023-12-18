@@ -16,3 +16,4 @@ Use: should point to localhost:8888 if all is well
 - [ ] color text input
 - [ ] order as diverging
 - [ ] Coat of paint
+- [ ] Refactor file structure

@@ -1,5 +1,6 @@
 <script lang="ts">
-  import chroma from "chroma-js";
+  // import chroma from "chroma-js";
+  import { CIELAB } from "../Color";
   import colorStore from "../color-store";
   import { onMount } from "svelte";
   import type { Palette } from "../color-store";
@@ -33,7 +34,7 @@
       let idx = 0;
       const colors = [];
       while (idx < x.length) {
-        colors.push(chroma(`#${x.slice(idx, idx + 6)}`));
+        colors.push(CIELAB.fromString(`#${x.slice(idx, idx + 6)}`));
         idx += 6;
       }
       return colors;
@@ -43,7 +44,7 @@
       newPals.push({
         name,
         colors: toHex(colors),
-        background: chroma("#ffffff"),
+        background: CIELAB.fromString("#ffffff"),
       });
     });
     fetch("./brewer.json")
@@ -54,8 +55,10 @@
             if (typeof colors === "string") return;
             newPals.push({
               name: `${schemeName}-${size}`,
-              colors: (colors as any).map((x: any) => chroma(x)) as any,
-              background: chroma("#ffffff"),
+              colors: (colors as any).map((x: any) =>
+                CIELAB.fromString(x)
+              ) as any,
+              background: CIELAB.fromString("#ffffff"),
             });
           });
         });

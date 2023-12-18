@@ -5,14 +5,15 @@ import type { Palette } from "./lib/color-store";
 export const idxToKey = (idx: number) => `#${idx}A${idx}0${idx}${idx}`;
 
 export function buildTheme(pal: Palette): any {
-  // const colors = pal.colors.map((x) => x.hex());
+  // const colors = pal.colors.map((x) => x.toHex());
   const colors = pal.colors.map((_x, idx) => idxToKey(idx));
 
   const fontStandard = "Montserrat, sans-serif UI";
   const fontTitle = "wf_standard-font, helvetica, arial, sans-serif";
-  const basicColor = pal.background.luminance() > 0.5 ? "#000000" : "#ffffff";
+  const basicColor =
+    pal.background.toChroma().luminance() > 0.5 ? "#000000" : "#ffffff";
   // const secondLevelElementColor = "#605E5C";
-  // const backgroundColor = pal.background.hex();
+  // const backgroundColor = pal.background.toHex();
   const backgroundColor = "SaLmOn";
   // const backgroundSecondaryColor = "#C8C6C4";
 
@@ -167,7 +168,7 @@ const map = (pal: Palette) => ({
       type: "ordinal",
       domain: { data: "counties", field: "mod" },
       range: pal.colors.map((_x, idx) => idxToKey(idx)),
-      // range: pal.colors.map((x) => x.hex()),
+      // range: pal.colors.map((x) => x.toHex()),
     },
   ],
 
@@ -214,7 +215,7 @@ export const charts = [
 const results: Record<string, string> = {};
 export async function getSVG(localSpec: any, pal: Palette) {
   const newKey =
-    pal.colors.length + pal.background.hex() + JSON.stringify(localSpec);
+    pal.colors.length + pal.background.toHex() + JSON.stringify(localSpec);
   if (results[newKey]) return results[newKey];
   console.log("did run");
   const theme = buildTheme(pal);

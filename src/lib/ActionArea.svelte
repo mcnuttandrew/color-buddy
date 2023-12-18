@@ -1,13 +1,12 @@
 <script lang="ts">
   import chroma from "chroma-js";
-  import type { Color } from "chroma-js";
   import colorStore from "./color-store";
   import focusStore from "./focus-store";
   import { avgColors, opposingColor } from "../utils";
   $: colors = $colorStore.currentPal.colors;
   $: focusedColors = $focusStore.focusedColors;
   $: focusSet = new Set(focusedColors);
-  $: focusLabs = focusedColors.map((idx) => colors[idx].lab());
+  $: focusLabs = focusedColors.map((idx) => colors[idx].toChannels());
 
   function actionOnColor(idx: number, action: (Color: any) => any) {
     const newColor = action(colors[idx]);
@@ -17,7 +16,9 @@
   }
 
   const mapFocusedColors = (fn: (color: [number, number, number]) => any) =>
-    colors.map((color, idx) => (focusSet.has(idx) ? fn(color.lab()) : color));
+    colors.map((color, idx) =>
+      focusSet.has(idx) ? fn(color.toChannels()) : color
+    );
 
   const ALIGNS = [
     { pos: 1, name: "Align Left", op: Math.min },

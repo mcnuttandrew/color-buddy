@@ -1,7 +1,7 @@
 <script lang="ts">
   import ColorNameWithEdit from "../components/ColorNameWithEdit.svelte";
   import ColorChannelPicker from "../components/ColorChannelPicker.svelte";
-  import type { Color } from "chroma-js";
+  import { Color } from "./Color";
   import colorStore from "./color-store";
   import focusStore from "./focus-store";
   export let idx: number;
@@ -28,8 +28,8 @@
 />
 
 <div class="flex">
-  {#each ["lab", "hsv"] as colorMode}
-    <ColorChannelPicker
+  {#each ["lab"] as colorMode}
+    <!-- <ColorChannelPicker
       {color}
       {colorMode}
       onColorChange={(color) => {
@@ -37,7 +37,7 @@
         updatedColors[idx] = color;
         colorStore.setCurrentPalColors(updatedColors);
       }}
-    />
+    /> -->
   {/each}
 </div>
 <div class="flex">

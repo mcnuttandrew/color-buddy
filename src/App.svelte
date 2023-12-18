@@ -69,7 +69,7 @@
                 color={$colorStore.currentPal.background}
                 onColorChange={(color) => colorStore.setBackground(color)}
               />
-              {#each ["lab", "hsv"] as colorMode}
+              {#each ["lab"] as colorMode}
                 <ColorChannelPicker
                   color={$colorStore.currentPal.background}
                   {colorMode}
@@ -83,7 +83,7 @@
               let:toggle
               slot="target"
               class={"cursor-pointer mr-2 mb-2 w-8 h-8 rounded-full border-2 border-gray-200"}
-              style={`background: ${$colorStore.currentPal.background.hex()}`}
+              style={`background: ${$colorStore.currentPal.background.toHex()}`}
               on:click={() => {
                 toggle();
               }}
@@ -95,13 +95,10 @@
         <h1>Visualizations</h1>
         <div
           class="flex flex-wrap overflow-auto p-4"
-          style={`background-color: ${bg.hex()}`}
+          style={`background-color: ${bg.toHex()}`}
         >
           {#each charts as spec}
-            <Vega
-              spec={spec($colorStore.currentPal)}
-              pal={$colorStore.currentPal}
-            />
+            <Vega spec={spec($colorStore.currentPal)} />
           {/each}
         </div>
       {/if}

@@ -1,6 +1,5 @@
 <script lang="ts">
-  import chroma from "chroma-js";
-  import type { Color } from "chroma-js";
+  import { Color, CIELAB } from "../lib/Color";
   export let color: Color;
   export let onColorChange: (color: Color) => void;
 </script>
@@ -12,7 +11,7 @@
       // @ts-ignore
       const newColor = e.target.textContent;
       try {
-        onColorChange(chroma(newColor));
+        onColorChange(CIELAB.fromString(newColor));
       } catch (e) {
         console.log(e);
       }

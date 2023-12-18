@@ -41,7 +41,7 @@
         <div
           animate:flip={{ duration: 200 }}
           class={colorClass}
-          class:text-white={color.luminance() < 0.5}
+          class:text-white={color.toChroma().luminance() < 0.5}
           style="background-color: {color}"
         ></div>
       {/each}
@@ -52,7 +52,7 @@
       <textarea
         id="current-colors"
         class="w-full p-2 rounded"
-        value={colors.map((color) => color.hex()).join(", ")}
+        value={colors.map((color) => color.toHex()).join(", ")}
         on:change={(e) => {
           console.log("TODO");
           // console.log(e.target.value);
@@ -110,7 +110,7 @@
           {#each pal.colors as color}
             <div
               class={colorClass}
-              class:text-white={color.luminance() < 0.5}
+              class:text-white={color.toChroma().luminance() < 0.5}
               style="background-color: {color}"
             ></div>
           {/each}

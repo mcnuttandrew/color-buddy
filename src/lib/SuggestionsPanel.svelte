@@ -1,5 +1,6 @@
 <script lang="ts">
-  import chroma from "chroma-js";
+  // import chroma from "chroma-js";
+  import { CIELAB } from "./Color";
   import { insert, randColor, avgColors, opposingColor } from "../utils";
   import colorStore from "./color-store";
   import { actionButton } from "../styles";
@@ -23,7 +24,7 @@
       <div class="flex items-center justify-center mr-4">
         <button
           class="w-8 h-8 rounded-full"
-          style="background-color: {color.hex()}"
+          style="background-color: {color.toHex()}"
           on:click={() => colorStore.setCurrentPalColors(insert(colors, color))}
         >
           +
@@ -39,7 +40,9 @@
           class="w-8 h-8 rounded-full"
           style="background-color: {color}"
           on:click={() => {
-            colorStore.setCurrentPalColors(insert(colors, chroma(color)));
+            colorStore.setCurrentPalColors(
+              insert(colors, CIELAB.fromString(color))
+            );
             aiSuggestions = aiSuggestions.filter((x) => x !== color);
           }}
         >

@@ -11,10 +11,10 @@
   $: getSVG(spec, $colorStore.currentPal).then((x) => {
     producedSVG = x;
   });
-  $: bg = $colorStore.currentPal.background.hex();
+  $: bg = $colorStore.currentPal.background.toHex();
   $: finalSVG = colors.reduce(
     (acc, color, idx) => {
-      return acc.replace(new RegExp(idxToKey(idx), "g"), color.hex());
+      return acc.replace(new RegExp(idxToKey(idx), "g"), color.toHex());
     },
     producedSVG.replace("SaLmOn", bg)
   );

@@ -1,4 +1,4 @@
-import type { Color } from "chroma-js";
+import { Color } from "./lib/Color";
 
 function openAIScaffold(api: string, body: string): Promise<string[]> {
   return fetch(api, {
@@ -46,7 +46,7 @@ function googleScaffold(api: string, body: string): Promise<string[]> {
     });
 }
 
-const toHex = (x: Color) => x.hex().toUpperCase();
+const toHex = (x: Color) => x.toHex().toUpperCase();
 
 export function suggestNameForPalette(
   palette: Color[],
@@ -54,7 +54,7 @@ export function suggestNameForPalette(
 ): Promise<string[]> {
   const body = JSON.stringify({
     palette: palette.map((x) => toHex(x)),
-    background: background.hex(),
+    background: background.toHex(),
   });
   return openAIScaffold(`/.netlify/functions/suggest-name`, body);
   // return googleScaffold(`/.netlify/functions/suggest-name`, body);
@@ -66,7 +66,7 @@ export function suggestAdditionsToPalette(
 ): Promise<string[]> {
   const body = JSON.stringify({
     palette: palette.map((x) => toHex(x)),
-    background: background.hex(),
+    background: background.toHex(),
   });
   return openAIScaffold(`/.netlify/functions/get-color-suggestions`, body);
   // return googleScaffold(`/.netlify/functions/get-color-suggestions`, body);

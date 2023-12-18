@@ -1,8 +1,7 @@
 <script lang="ts">
   import colorStore from "./color-store";
   import focusStore from "./focus-store";
-  import chroma from "chroma-js";
-  import type { Color } from "chroma-js";
+  import { Color, CIELAB } from "./Color";
   import { scaleLinear } from "d3-scale";
 
   export let width = 256;
@@ -38,11 +37,11 @@
       x: e.clientX - dragging.x,
       y: e.clientY - dragging.y,
     };
-    const [l, a, b] = originalColor.lab();
+    const [l, a, b] = originalColor.toChannels();
     const newX = xScale.invert(xScale(a) + screenPosDelta.x);
     const newY = yScale.invert(yScale(b) + screenPosDelta.y);
 
-    return chroma.lab(l, newX, newY);
+    return CIELAB.fromChannels([l, newX, newY]);
   };
 
   const eventToColorZ = (e: any, color: Color, originalColor: Color): Color => {
@@ -50,9 +49,9 @@
       return color;
 
     const screenPosDelta = e.clientY - dragging.y;
-    const [l, a, b] = originalColor.lab();
+    const [l, a, b] = originalColor.toChannels();
     const newZ = zScale.invert(zScale(l) + screenPosDelta);
-    return chroma.lab(newZ, a, b);
+    return CIELAB.fromChannels([newZ, a, b]);
   };
 
   $: bg = $colorStore.currentPal.background;
@@ -88,7 +87,7 @@
         y={0}
         width={xScale.range()[1]}
         height={yScale.range()[1]}
-        fill={bg.hex()}
+        fill={bg.toHex()}
         stroke="gray"
         stroke-width="1"
       />
@@ -141,10 +140,10 @@
         <circle
           on:mousedown={(e) => startDrag(e)}
           class="cursor-pointer"
-          cx={xScale(color.lab()[1])}
-          cy={yScale(color.lab()[2])}
+          cx={xScale(color.toChannels()[1])}
+          cy={yScale(color.toChannels()[2])}
           r={10 + (focusSet.has(i) ? 5 : 0)}
-          fill={color.hex()}
+          fill={color.toHex()}
           on:click={(e) => {
             if (e.metaKey) {
               focusStore.toggleColor(i);
@@ -155,9 +154,9 @@
         />
       {/each}
       <text
-        x={xScale(bg.lab()[1])}
-        y={yScale(bg.lab()[2])}
-        fill={bg.luminance() > 0.5 ? "black" : "white"}
+        x={xScale(bg.toChannels()[1])}
+        y={yScale(bg.toChannels()[2])}
+        fill={bg.toChroma().luminance() > 0.5 ? "black" : "white"}
       >
         BG
       </text>
@@ -181,7 +180,7 @@
         y={0}
         width={80}
         height={yScale.range()[1]}
-        fill={bg.hex()}
+        fill={bg.toHex()}
         stroke="gray"
         stroke-width="1"
         on:mousemove={(e) => {
@@ -196,10 +195,10 @@
         <rect
           x={10 - (focusSet.has(i) ? 5 : 0)}
           class="cursor-pointer"
-          y={zScale(color.lab()[0])}
+          y={zScale(color.toChannels()[0])}
           width={80 - 10 * 2 + (focusSet.has(i) ? 10 : 0)}
           height={5}
-          fill={color.hex()}
+          fill={color.toHex()}
           on:click={() => {
             focusStore.toggleColor(i);
           }}

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { Color } from "chroma-js";
+  import { Color } from "./Color";
   import colorStore from "./color-store";
   import focusStore from "./focus-store";
   import Tooltip from "./Tooltip.svelte";
@@ -12,20 +12,20 @@
   let classes = [
     {
       className: `${common} w-14 h-14 `,
-      styleMap: (color: Color): string => `background-color: ${color.hex()}`,
+      styleMap: (color: Color): string => `background-color: ${color.toHex()}`,
     },
     {
       className: `${common} w-8 h-8`,
-      styleMap: (color: Color): string => `background-color: ${color.hex()}`,
+      styleMap: (color: Color): string => `background-color: ${color.toHex()}`,
     },
     {
       className: `${common} w-8 h-8 rounded-full`,
-      styleMap: (color: Color): string => `border: 4px solid ${color.hex()}`,
+      styleMap: (color: Color): string => `border: 4px solid ${color.toHex()}`,
     },
   ];
 </script>
 
-<div class="flex p-2" style={`background-color: ${bg.hex()}`}>
+<div class="flex p-2" style={`background-color: ${bg.toHex()}`}>
   {#each classes as { className, styleMap }, jdx}
     <div class="flex flex-wrap">
       {#each colors as color, idx}
@@ -63,8 +63,8 @@
     {#each colors as color}
       <!-- svelte-ignore a11y-click-events-have-key-events -->
       <!-- svelte-ignore a11y-no-static-element-interactions -->
-      <div style={`color: ${color.hex()}`}>
-        {color.hex()}
+      <div style={`color: ${color.toHex()}`}>
+        {color.toHex()}
       </div>
     {/each}
   </div>

@@ -22,13 +22,14 @@ const engines = {
     openai.chat.completions.create({
       messages: [{ role: "user", content: prompt }],
       model: "gpt-3.5-turbo",
+      // model: "gpt-4",
     }),
 };
 
 export const genericHandler =
-  (engine: keyof typeof engines) =>
-  (prompt: (input: any) => string, bodyGetter: (string) => any) =>
-  async (event, context, callback) => {
+  <A>(engine: keyof typeof engines) =>
+  (prompt: (input: A) => string, bodyGetter: (string) => A) =>
+  async (event, _context, callback) => {
     let promptInput;
     try {
       promptInput = bodyGetter(event.body);
@@ -38,6 +39,7 @@ export const genericHandler =
       return;
     }
     const content = prompt(promptInput);
+    console.log(content);
     const result = await engines[engine](content);
     callback(null, { statusCode: 200, body: JSON.stringify(result) });
   };

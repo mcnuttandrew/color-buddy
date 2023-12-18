@@ -1,6 +1,6 @@
 import { Color } from "./Color";
 
-function openAIScaffold(api: string, body: string): Promise<string[]> {
+function openAIScaffold<A>(api: string, body: string): Promise<A[]> {
   return fetch(api, {
     method: "POST",
     mode: "cors",
@@ -17,8 +17,8 @@ function openAIScaffold(api: string, body: string): Promise<string[]> {
       const result = x.choices
         .map((x: any) => x?.message?.content)
         .filter((x: any) => x)
-        .flatMap((x: any) => JSON.parse(x))
-        .filter((x: any) => typeof x === "string");
+        .flatMap((x: any) => JSON.parse(x));
+      // .filter((x: any) => typeof x === "string");
       return result;
     });
 }
@@ -56,7 +56,7 @@ export function suggestNameForPalette(
     palette: palette.map((x) => toHex(x)),
     background: background.toHex(),
   });
-  return openAIScaffold(`/.netlify/functions/suggest-name`, body);
+  return openAIScaffold<string>(`/.netlify/functions/suggest-name`, body);
   // return googleScaffold(`/.netlify/functions/suggest-name`, body);
 }
 
@@ -68,6 +68,20 @@ export function suggestAdditionsToPalette(
     palette: palette.map((x) => toHex(x)),
     background: background.toHex(),
   });
-  return openAIScaffold(`/.netlify/functions/get-color-suggestions`, body);
+  return openAIScaffold<string>(
+    `/.netlify/functions/get-color-suggestions`,
+    body
+  );
   // return googleScaffold(`/.netlify/functions/get-color-suggestions`, body);
+}
+
+export function suggestPal(prompt: string) {
+  const body = JSON.stringify({
+    prompt,
+  });
+  return openAIScaffold<{ colors: string[]; background: string }>(
+    `/.netlify/functions/suggest-a-pal`,
+    body
+  );
+  // return googleScaffold(`/.netlify/functions/suggest-a-pal`, body);
 }

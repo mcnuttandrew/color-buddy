@@ -1,5 +1,4 @@
 <script lang="ts">
-  // import chroma from "chroma-js";
   import { CIELAB } from "../../lib/Color";
   import colorStore from "../../stores/color-store";
   import { onMount } from "svelte";

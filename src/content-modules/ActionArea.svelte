@@ -1,5 +1,5 @@
 <script lang="ts">
-  import chroma from "chroma-js";
+  import { CIELAB } from "../lib/Color";
   import colorStore from "../stores/color-store";
   import focusStore from "../stores/focus-store";
   import { avgColors, opposingColor } from "../lib/utils";
@@ -86,11 +86,13 @@
           on:click={() => {
             const newCoordinate = op(...focusLabs.map((x) => x[pos]));
             colorStore.setCurrentPalColors(
-              mapFocusedColors(([l, a, b]) =>
-                pos === 1
-                  ? chroma.lab(l, newCoordinate, b)
-                  : chroma.lab(l, a, newCoordinate)
-              )
+              mapFocusedColors(([l, a, b]) => {
+                return CIELAB.fromChannels([
+                  pos === 0 ? newCoordinate : l,
+                  pos === 1 ? newCoordinate : a,
+                  pos === 2 ? newCoordinate : b,
+                ]);
+              })
             );
           }}
         >

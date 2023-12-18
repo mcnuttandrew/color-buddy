@@ -1,9 +1,9 @@
 <script lang="ts">
-  import { flip } from "svelte/animate";
   import colorStore from "../stores/color-store";
-  const colorClass = "w-6 h-6 mx-2 rounded-full";
   import SuggestName from "./actions-components/SuggestName.svelte";
   import AddFamiliarPal from "./actions-components/AddFamiliarPal.svelte";
+  import SuggestColorPal from "./actions-components/SuggestColorPal.svelte";
+  import PalPreview from "../components/PalPreview.svelte";
   $: colors = $colorStore.currentPal.colors || [];
 </script>
 
@@ -32,19 +32,8 @@
         </div>
       </div>
     </div>
-    <div
-      class="flex flex-wrap rounded p-2"
-      style="background-color: {$colorStore.currentPal.background.toHex()};"
-    >
-      {#each colors as color (color)}
-        <div
-          animate:flip={{ duration: 200 }}
-          class={colorClass}
-          class:text-white={color.toChroma().luminance() < 0.5}
-          style="background-color: {color.toHex()}"
-        ></div>
-      {/each}
-    </div>
+
+    <PalPreview pal={$colorStore.currentPal} />
 
     <div class="mt-5">
       <label for="current-colors">Current Colors</label>
@@ -73,6 +62,7 @@
         Sort by hue
       </button>
       <AddFamiliarPal />
+      <SuggestColorPal />
     </div>
   </section>
   <section class="mt-4 border-t-2 border-black">
@@ -102,18 +92,7 @@
             </button>
           </div>
         </div>
-        <div
-          class="flex flex-wrap rounded p-2"
-          style="background-color: {pal.background.toHex()};"
-        >
-          {#each pal.colors as color}
-            <div
-              class={colorClass}
-              class:text-white={color.toChroma().luminance() < 0.5}
-              style="background-color: {color.toHex()}"
-            ></div>
-          {/each}
-        </div>
+        <PalPreview {pal} />
       </div>
     {/each}
   </section>

@@ -3,7 +3,7 @@
   import { CIELAB } from "../lib/Color";
   import { insert, randColor } from "../lib/utils";
   import colorStore from "../stores/color-store";
-  import { suggestAdditionsToPalette } from "../api-calls";
+  import { suggestAdditionsToPalette } from "../lib/api-calls";
   $: colors = $colorStore.currentPal.colors;
   $: computedGuess = [
     { color: randColor(), explanation: "random" },

@@ -1,4 +1,4 @@
-import { Color } from "./lib/Color";
+import { Color } from "./Color";
 
 function openAIScaffold(api: string, body: string): Promise<string[]> {
   return fetch(api, {

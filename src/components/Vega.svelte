@@ -1,8 +1,8 @@
 <script lang="ts">
   import colorStore from "../stores/color-store";
-  import { getSVG } from "../charts";
+  import { getSVG } from "../lib/charts";
 
-  import { idxToKey } from "../charts";
+  import { idxToKey } from "../lib/charts";
   export let spec: any;
 
   let producedSVG: string = "";

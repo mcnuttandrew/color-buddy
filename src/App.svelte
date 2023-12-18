@@ -1,6 +1,6 @@
 <script lang="ts">
   import colorStore from "./stores/color-store";
-  import { charts, buildTheme } from "./charts";
+  import { charts } from "./lib/charts";
   import Vega from "./components/Vega.svelte";
   import ColorArea from "./content-modules/ColorArea.svelte";
   import SavedPals from "./content-modules/SavedPals.svelte";

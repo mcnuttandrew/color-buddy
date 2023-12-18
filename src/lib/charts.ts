@@ -1,6 +1,6 @@
 import * as vega from "vega";
 import * as vegaLite from "vega-lite";
-import type { Palette } from "./stores/color-store";
+import type { Palette } from "../stores/color-store";
 
 export const idxToKey = (idx: number) => `#${idx}A${idx}0${idx}${idx}`;
 

@@ -1,7 +1,7 @@
 <script lang="ts">
   import colorStore from "../../stores/color-store";
 
-  import { suggestNameForPalette } from "../../api-calls";
+  import { suggestNameForPalette } from "../../lib/api-calls";
 
   let nameSuggestions: string[] = [];
   let requestState: "idle" | "loading" = "idle";

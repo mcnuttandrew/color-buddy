@@ -1,7 +1,7 @@
 <script lang="ts">
-  import colorStore from "./color-store";
-  import focusStore from "./focus-store";
-  import { Color, CIELAB } from "./Color";
+  import colorStore from "../stores/color-store";
+  import focusStore from "../stores/focus-store";
+  import { Color, CIELAB } from "../lib/Color";
   import { scaleLinear } from "d3-scale";
 
   export let width = 256;

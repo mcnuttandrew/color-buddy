@@ -1,6 +1,5 @@
 <script lang="ts">
-  import colorStore from "../color-store";
-  import { actionButton } from "../../styles";
+  import colorStore from "../../stores/color-store";
 
   import { suggestNameForPalette } from "../../api-calls";
 
@@ -10,7 +9,7 @@
 
 <div class="">
   <button
-    class={actionButton}
+    class={"underline"}
     class:animate-pulse={requestState === "loading"}
     on:click={() => {
       if (requestState === "loading") return;

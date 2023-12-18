@@ -1,8 +1,8 @@
 <script lang="ts">
-  import { Color } from "./Color";
-  import colorStore from "./color-store";
-  import focusStore from "./focus-store";
-  import Tooltip from "./Tooltip.svelte";
+  import { Color } from "../lib/Color";
+  import colorStore from "../stores/color-store";
+  import focusStore from "../stores/focus-store";
+  import Tooltip from "../components/Tooltip.svelte";
   import SwatchTooltipContent from "./SwatchTooltipContent.svelte";
   $: colors = $colorStore.currentPal.colors;
   $: bg = $colorStore.currentPal.background;

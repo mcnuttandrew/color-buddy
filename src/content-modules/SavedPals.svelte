@@ -1,7 +1,6 @@
 <script lang="ts">
   import { flip } from "svelte/animate";
-  import colorStore from "./color-store";
-  import { actionButton } from "../styles";
+  import colorStore from "../stores/color-store";
   const colorClass = "w-6 h-6 mx-2 rounded-full";
   import SuggestName from "./actions-components/SuggestName.svelte";
   import AddFamiliarPal from "./actions-components/AddFamiliarPal.svelte";
@@ -35,14 +34,14 @@
     </div>
     <div
       class="flex flex-wrap rounded p-2"
-      style="background-color: {$colorStore.currentPal.background};"
+      style="background-color: {$colorStore.currentPal.background.toHex()};"
     >
       {#each colors as color (color)}
         <div
           animate:flip={{ duration: 200 }}
           class={colorClass}
           class:text-white={color.toChroma().luminance() < 0.5}
-          style="background-color: {color}"
+          style="background-color: {color.toHex()}"
         ></div>
       {/each}
     </div>
@@ -62,15 +61,15 @@
 
     <div class="mt-5">
       <div>Actions</div>
-      <button class={actionButton} on:click={() => colorStore.createNewPal()}>
+      <button class="underline" on:click={() => colorStore.createNewPal()}>
         Save Current Pal and create new one
       </button>
 
       <SuggestName />
-      <button class={actionButton} on:click={() => colorStore.randomizeOrder()}>
+      <button class="underline" on:click={() => colorStore.randomizeOrder()}>
         Randomize order
       </button>
-      <button class={actionButton} on:click={() => colorStore.sortByHue()}>
+      <button class="underline" on:click={() => colorStore.sortByHue()}>
         Sort by hue
       </button>
       <AddFamiliarPal />
@@ -105,13 +104,13 @@
         </div>
         <div
           class="flex flex-wrap rounded p-2"
-          style="background-color: {pal.background};"
+          style="background-color: {pal.background.toHex()};"
         >
           {#each pal.colors as color}
             <div
               class={colorClass}
               class:text-white={color.toChroma().luminance() < 0.5}
-              style="background-color: {color}"
+              style="background-color: {color.toHex()}"
             ></div>
           {/each}
         </div>

@@ -41,7 +41,6 @@
       (Object.keys(colorConfigs) as ColorMode[]).forEach((key) => {
         colorConfigs[key].forEach((channel, idx) => {
           // colorConfigs[key][idx].value = (color as any)[key]()[idx];
-          console.log(color.channels[key]);
           colorConfigs[key][idx].value = color.channels[key];
         });
       });
@@ -54,7 +53,6 @@
     // hsv: (colors: number[]) => chroma.hsv(colors[0], colors[1], colors[2]),
   };
 
-  $: console.log(colorConfigs.lab);
   let dragging = false;
 </script>
 

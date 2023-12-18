@@ -1,6 +1,6 @@
 import * as vega from "vega";
 import * as vegaLite from "vega-lite";
-import type { Palette } from "./lib/color-store";
+import type { Palette } from "./stores/color-store";
 
 export const idxToKey = (idx: number) => `#${idx}A${idx}0${idx}${idx}`;
 
@@ -217,7 +217,6 @@ export async function getSVG(localSpec: any, pal: Palette) {
   const newKey =
     pal.colors.length + pal.background.toHex() + JSON.stringify(localSpec);
   if (results[newKey]) return results[newKey];
-  console.log("did run");
   const theme = buildTheme(pal);
   let spec = localSpec;
   if (spec.$schema.includes("vega-lite")) {

@@ -1,7 +1,7 @@
 import { writable } from "svelte/store";
-import { Color, CIELAB } from "./Color";
+import { Color, CIELAB } from "../lib/Color";
 import fits from "../assets/outfits.json";
-import { pick } from "../utils";
+import { pick } from "../lib/utils";
 const outfitToPal = (x: any) => [x.fill1, x.fill2, x.fill3];
 const outfits = fits.map((x) => outfitToPal(x));
 type Pal<A> = { colors: A[]; name: string; background: A };

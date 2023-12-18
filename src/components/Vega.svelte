@@ -1,5 +1,5 @@
 <script lang="ts">
-  import colorStore from "./color-store";
+  import colorStore from "../stores/color-store";
   import { getSVG } from "../charts";
 
   import { idxToKey } from "../charts";

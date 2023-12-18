@@ -1,15 +1,15 @@
 <script lang="ts">
-  import colorStore from "./lib/color-store";
+  import colorStore from "./stores/color-store";
   import { charts, buildTheme } from "./charts";
-  import Vega from "./lib/Vega.svelte";
-  import ColorArea from "./lib/ColorArea.svelte";
-  import SavedPals from "./lib/SavedPals.svelte";
-  import ColorPanel from "./lib/ActionArea.svelte";
-  import TinyWebpage from "./lib/TinyWebpage.svelte";
-  import TextBlock from "./lib/TextBlock.svelte";
-  import SuggestionsPanel from "./lib/SuggestionsPanel.svelte";
-  import Swatches from "./lib/Swatches.svelte";
-  import Tooltip from "./lib/Tooltip.svelte";
+  import Vega from "./components/Vega.svelte";
+  import ColorArea from "./content-modules/ColorArea.svelte";
+  import SavedPals from "./content-modules/SavedPals.svelte";
+  import ColorPanel from "./content-modules/ActionArea.svelte";
+  import TinyWebpage from "./content-modules/TinyWebpage.svelte";
+  import TextBlock from "./content-modules/TextBlock.svelte";
+  import SuggestionsPanel from "./content-modules/SuggestionsPanel.svelte";
+  import Swatches from "./content-modules/Swatches.svelte";
+  import Tooltip from "./components/Tooltip.svelte";
   import ColorChannelPicker from "./components/ColorChannelPicker.svelte";
   import ColorNameWithEdit from "./components/ColorNameWithEdit.svelte";
 

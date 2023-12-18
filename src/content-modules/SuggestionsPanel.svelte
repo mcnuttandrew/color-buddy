@@ -1,9 +1,8 @@
 <script lang="ts">
   // import chroma from "chroma-js";
-  import { CIELAB } from "./Color";
-  import { insert, randColor, avgColors, opposingColor } from "../utils";
-  import colorStore from "./color-store";
-  import { actionButton } from "../styles";
+  import { CIELAB } from "../lib/Color";
+  import { insert, randColor } from "../lib/utils";
+  import colorStore from "../stores/color-store";
   import { suggestAdditionsToPalette } from "../api-calls";
   $: colors = $colorStore.currentPal.colors;
   $: computedGuess = [
@@ -53,7 +52,7 @@
     {/each}
   </div>
   <button
-    class={actionButton}
+    class="underline"
     class:animate-pulse={requestState === "loading"}
     on:click={() => {
       if (requestState === "loading") return;

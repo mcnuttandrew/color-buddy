@@ -1,6 +1,6 @@
 <script lang="ts">
-  import colorStore from "./color-store";
-  import { seededPick } from "../utils";
+  import colorStore from "../stores/color-store";
+  import { seededPick } from "../lib/utils";
   $: bg = $colorStore.currentPal.background;
   $: colors = $colorStore.currentPal.colors;
 

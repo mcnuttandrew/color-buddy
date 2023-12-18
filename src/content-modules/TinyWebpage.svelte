@@ -1,5 +1,5 @@
 <script>
-  import colorStore from "./color-store";
+  import colorStore from "../stores/color-store";
   $: colors = $colorStore.currentPal.colors.map((x) => x.toHex());
   $: bg = $colorStore.currentPal.background;
 </script>

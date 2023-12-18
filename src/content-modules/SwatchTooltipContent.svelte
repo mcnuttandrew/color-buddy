@@ -1,9 +1,9 @@
 <script lang="ts">
   import ColorNameWithEdit from "../components/ColorNameWithEdit.svelte";
   import ColorChannelPicker from "../components/ColorChannelPicker.svelte";
-  import { Color } from "./Color";
-  import colorStore from "./color-store";
-  import focusStore from "./focus-store";
+  import { Color } from "../lib/Color";
+  import colorStore from "../stores/color-store";
+  import focusStore from "../stores/focus-store";
   export let idx: number;
   export let color: Color;
   export let closeTooltip: () => void;

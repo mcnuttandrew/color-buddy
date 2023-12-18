@@ -1,8 +1,8 @@
 <script lang="ts">
   import chroma from "chroma-js";
-  import colorStore from "./color-store";
-  import focusStore from "./focus-store";
-  import { avgColors, opposingColor } from "../utils";
+  import colorStore from "../stores/color-store";
+  import focusStore from "../stores/focus-store";
+  import { avgColors, opposingColor } from "../lib/utils";
   $: colors = $colorStore.currentPal.colors;
   $: focusedColors = $focusStore.focusedColors;
   $: focusSet = new Set(focusedColors);
@@ -79,6 +79,7 @@
           {colorSpace} avg
         </button>
       {/each}
+
       {#each ALIGNS as { pos, name, op }}
         <button
           class="underline mr-2"

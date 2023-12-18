@@ -1,10 +1,10 @@
 <script lang="ts">
   // import chroma from "chroma-js";
-  import { CIELAB } from "../Color";
-  import colorStore from "../color-store";
+  import { CIELAB } from "../../lib/Color";
+  import colorStore from "../../stores/color-store";
   import { onMount } from "svelte";
-  import type { Palette } from "../color-store";
-  import Tooltip from "../Tooltip.svelte";
+  import type { Palette } from "../../stores/color-store";
+  import Tooltip from "../../components/Tooltip.svelte";
 
   $: familiarPals = [] as Palette[];
   onMount(() => {

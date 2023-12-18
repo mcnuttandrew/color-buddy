@@ -1,5 +1,5 @@
 import chroma from "chroma-js";
-import { Color, CIELAB } from "./lib/Color";
+import { Color, CIELAB } from "./Color";
 export const insert = (arr: Color[], newItem: Color, index?: number) => {
   if (index === undefined) {
     return [...arr, newItem];

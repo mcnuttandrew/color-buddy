@@ -7,7 +7,9 @@ Use: should point to localhost:8888 if all is well
 - [x] undo / redo
 - [x] multi-select of colors?
 - [ ] add color analysis
-- [ ] Make colors actually work right (eg rip out chroma)
+- [x] Make colors actually work right (eg rip out chroma)
+- [ ] Add support for other color schemes (finish generalizing the chroma refactor)
+- [ ] Unbreak the color channel stuff
 - [ ] add text commands
 - [ ] make color sliders be shaded in the background (https://observablehq.com/@d3/hcl-color-picker)
 - [ ] make charts be end user manipuable

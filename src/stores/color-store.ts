@@ -107,6 +107,8 @@ function createStore() {
       );
       return newVal;
     });
+  const palUp = (updateFunc: (old: Palette) => Palette) =>
+    persistUpdate((n) => ({ ...n, currentPal: updateFunc(n.currentPal) }));
 
   const simpleUpdate = (updateFunc: (old: StoreData) => StoreData) =>
     update((oldStore) => updateFunc(oldStore));
@@ -115,13 +117,8 @@ function createStore() {
     persistUpdate((n) => ({ ...n, [key]: val }));
 
   const doSort = (comparator: (a: Color, b: Color) => number) => () =>
-    persistUpdate((n) => ({
-      ...n,
-      currentPal: {
-        ...n.currentPal,
-        colors: n.currentPal.colors.sort(comparator),
-      },
-    }));
+    palUp((n) => ({ ...n, colors: n.colors.sort(comparator) }));
+
   return {
     subscribe,
     undo: () =>
@@ -138,8 +135,7 @@ function createStore() {
       }),
 
     setPalettes: simpleSet("palettes"),
-    setCurrentPalColors: (colors: Color[]) =>
-      persistUpdate((n) => ({ ...n, currentPal: { ...n.currentPal, colors } })),
+    setCurrentPalColors: (colors: Color[]) => palUp((n) => ({ ...n, colors })),
     startUsingPal: (palName: string) => {
       persistUpdate((n) => {
         const newPal = n.palettes.find((x) => x.name === palName);
@@ -180,43 +176,25 @@ function createStore() {
           n.palettes.find((x) => x.name === pal)!
         ),
       })),
+    setSort: (sort: Color[]) => palUp((n) => ({ ...n, colors: deDup(sort) })),
 
-    setSort: (sort: Color[]) =>
-      persistUpdate((n) => ({
-        ...n,
-        currentPal: { ...n.currentPal, colors: deDup(sort) },
-      })),
     randomizeOrder: doSort(() => Math.random() - 0.5),
-    // sortByHue: doSort((a, b) => a.hsl()[0] - b.hsl()[0]),
     sortByHue: doSort((a, b) => a.toChroma().hsl()[0] - b.toChroma().hsl()[0]),
     replaceColor: (oldColor: Color, newColor: Color) =>
-      persistUpdate((n) => ({
+      palUp((n) => ({
         ...n,
-        currentPal: {
-          ...n.currentPal,
-          colors: n.currentPal.colors.map((x) =>
-            x.toHex() === oldColor.toHex() ? newColor : x
-          ),
-        },
+        colors: n.colors.map((x) =>
+          x.toHex() === oldColor.toHex() ? newColor : x
+        ),
       })),
-    setCurrentPalName: (name: string) =>
-      persistUpdate((n) => ({
-        ...n,
-        currentPal: { ...n.currentPal, name },
-      })),
+    setCurrentPalName: (name: string) => palUp((n) => ({ ...n, name })),
     addColorToCurrentPal: (color: Color) =>
-      persistUpdate((n) => ({
+      palUp((n) => ({
         ...n,
-        currentPal: {
-          ...n.currentPal,
-          colors: [...n.currentPal.colors, color],
-        },
+        colors: [...n.colors, color],
       })),
     setBackground: (color: Color) =>
-      persistUpdate((n) => ({
-        ...n,
-        currentPal: { ...n.currentPal, background: color },
-      })),
+      palUp((n) => ({ ...n, background: color })),
     reset: () => set({ ...convertStoreHexToColor(InitialStore) }),
     setEngine: simpleSet("engine"),
   };

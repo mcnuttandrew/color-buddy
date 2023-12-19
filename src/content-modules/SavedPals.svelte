@@ -5,7 +5,6 @@
   import SuggestColorPal from "./actions-components/SuggestColorPal.svelte";
   import PalPreview from "../components/PalPreview.svelte";
   $: colors = $colorStore.currentPal.colors || [];
-  $: console.log($colorStore.engine);
 </script>
 
 <div class="bg-slate-400 p-2 w-96">

@@ -1,6 +1,6 @@
 <script lang="ts">
   import chroma from "chroma-js";
-  import { Color } from "../lib/Color";
+  import { Color, colorFromChannels } from "../lib/Color";
   export let color: Color;
   export let onColorChange: (color: Color) => void;
   // type ColorMode = "hsl" | "rgb" | "lab" | "hsv";
@@ -30,11 +30,11 @@
       { name: "a", min: -110, max: 110, step: 1 },
       { name: "b", min: -110, max: 110, step: 1 },
     ],
-    // hsv: [
-    //   { name: "Hue", min: 0, max: 360, step: 1 },
-    //   { name: "Saturation", min: 0, max: 1, step: 0.01 },
-    //   { name: "Value", min: 0, max: 1, step: 0.01 },
-    // ],
+    hsv: [
+      { name: "h", min: 0, max: 360, step: 1 },
+      { name: "s", min: 0, max: 1, step: 0.01 },
+      { name: "v", min: 0, max: 1, step: 0.01 },
+    ],
   } as Record<string, Channel[]>;
   $: {
     if (color) {
@@ -50,7 +50,7 @@
     // rgb: (colors: number[]) => chroma.rgb(colors[0], colors[1], colors[2]),
     // hsl: (colors: number[]) => chroma.hsl(colors[0], colors[1], colors[2]),
     lab: (colors: number[]) => chroma.lab(colors[0], colors[1], colors[2]),
-    // hsv: (colors: number[]) => chroma.hsv(colors[0], colors[1], colors[2]),
+    hsv: (colors: number[]) => chroma.hsv(colors[0], colors[1], colors[2]),
   };
 
   let dragging = false;
@@ -84,7 +84,7 @@
                     // @ts-ignore
                     values[idx] = Number(e.target.value);
                     // @ts-ignore
-                    onColorChange(toColor[colorMode](values));
+                    onColorChange(colorFromChannels(values, colorMode));
                   }}
                 />
               </div>
@@ -104,7 +104,7 @@
                   // @ts-ignore
                   values[idx] = Number(e.target.value);
                   // @ts-ignore
-                  onColorChange(toColor[colorMode](values));
+                  onColorChange(colorFromChannels(values, colorMode));
                 }}
                 on:mousemove={(e) => {
                   if (!dragging) return;
@@ -114,7 +114,7 @@
                   // @ts-ignore
                   values[idx] = Number(e.target.value);
                   // @ts-ignore
-                  onColorChange(toColor[colorMode](values));
+                  onColorChange(colorFromChannels(values, colorMode));
                 }}
                 on:mouseup={() => {
                   dragging = false;

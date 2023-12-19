@@ -1,7 +1,7 @@
 <script lang="ts">
   import colorStore from "../stores/color-store";
   import focusStore from "../stores/focus-store";
-  import { Color, CIELAB } from "../lib/Color";
+  import { Color, colorFromChannels } from "../lib/Color";
   import { scaleLinear } from "d3-scale";
 
   export let width = 256;
@@ -44,11 +44,10 @@
     const newX = xScale.invert(xScale(a) + screenPosDelta.x);
     const newY = yScale.invert(yScale(b) + screenPosDelta.y);
 
-    return CIELAB.fromChannels([
-      l,
-      clampToBoundary(newX),
-      clampToBoundary(newY),
-    ]);
+    return colorFromChannels(
+      [l, clampToBoundary(newX), clampToBoundary(newY)],
+      "lab"
+    );
   };
 
   const eventToColorZ = (e: any, color: Color, originalColor: Color): Color => {
@@ -59,7 +58,7 @@
     const [l, a, b] = originalColor.toChannels();
     const newZ = zScale.invert(zScale(l) + screenPosDelta);
     const clampToBoundary = (val: number) => Math.min(Math.max(val, 0), 100);
-    return CIELAB.fromChannels([clampToBoundary(newZ), a, b]);
+    return colorFromChannels([clampToBoundary(newZ), a, b], "lab");
   };
 
   $: bg = $colorStore.currentPal.background;

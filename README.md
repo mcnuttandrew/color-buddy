@@ -1,5 +1,7 @@
 Install: `yarn`
+
 Run: `npx netlify dev`
+
 Use: should point to localhost:8888 if all is well
 
 - [ ] Add support for other color schemes (finish generalizing the chroma refactor)
@@ -15,6 +17,7 @@ Use: should point to localhost:8888 if all is well
 - [ ] make charts be end user manipuable
 - [ ] make color sliders be shaded in the background (https://observablehq.com/@d3/hcl-color-picker)
 - [ ] order as diverging
+- [ ] make old pals searchable
 - [ ] Cursor selection range
 - [x] Make colors actually work right (eg rip out chroma)
 - [x] Refactor file structure

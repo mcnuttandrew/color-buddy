@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { CIELAB, Color } from "../lib/Color";
+  import { Color, colorFromChannels, colorDirectory } from "../lib/Color";
   import colorStore from "../stores/color-store";
   import focusStore from "../stores/focus-store";
   import Tooltip from "../components/Tooltip.svelte";
@@ -41,7 +41,7 @@
               actionOnColor(focusedColors[0], (color) => {
                 // @ts-ignore
                 const chromaColor = color.toChroma()[action]();
-                return CIELAB.fromChannels(chromaColor.lab());
+                return colorFromChannels(chromaColor.lab(), "lab");
               });
             }}
           >
@@ -70,7 +70,7 @@
     {/if}
 
     {#if focusedColors.length > 1}
-      {#each ["hsl", "rgb", "lab"] as colorSpace}
+      {#each Object.keys(colorDirectory) as colorSpace}
         <button
           class="underline mr-2"
           on:click={() => {
@@ -93,11 +93,14 @@
                 const newCoordinate = op(...focusLabs.map((x) => x[pos]));
                 colorStore.setCurrentPalColors(
                   mapFocusedColors(([l, a, b]) => {
-                    return CIELAB.fromChannels([
-                      pos === 0 ? newCoordinate : l,
-                      pos === 1 ? newCoordinate : a,
-                      pos === 2 ? newCoordinate : b,
-                    ]);
+                    return colorFromChannels(
+                      [
+                        pos === 0 ? newCoordinate : l,
+                        pos === 1 ? newCoordinate : a,
+                        pos === 2 ? newCoordinate : b,
+                      ],
+                      "lab"
+                    );
                   })
                 );
               }}

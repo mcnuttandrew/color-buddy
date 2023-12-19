@@ -1,5 +1,5 @@
 import chroma from "chroma-js";
-import { Color, CIELAB } from "./Color";
+import { Color, colorFromString, colorFromChannels } from "./Color";
 export const insert = (arr: Color[], newItem: Color, index?: number) => {
   if (index === undefined) {
     return [...arr, newItem];
@@ -18,7 +18,7 @@ export const deleteFrom = (arr: Color[], item: string) => {
 
 export const randChan = () => Math.floor(Math.random() * 255);
 export const randColor = () =>
-  CIELAB.fromString(`rgb(${randChan()},${randChan()},${randChan()})`);
+  colorFromString(`rgb(${randChan()},${randChan()},${randChan()})`, "lab");
 
 // seeded random
 export const seededPick = (seedInit: number) => {
@@ -36,7 +36,7 @@ export function avgColors(
   colorSpace: "rgb" | "hsl" | "lab" = "rgb"
 ): Color {
   if (colors.length === 0) {
-    return CIELAB.fromString("#000000");
+    return colorFromString("#000000", "lab");
   }
   const colorSpaceMap: Record<string, (color: Color) => number[]> = {
     rgb: (x) => x.toChannels(),
@@ -46,23 +46,34 @@ export function avgColors(
   const colorSpaceFormatters: any = {
     // rgb: (x: number[]) => chroma.rgb(x[0], x[1], x[2]),
     // hsl: (x: number[]) => chroma.hsl(x[0], x[1], x[2]),
-    lab: (x: number[]) => CIELAB.fromChannels([x[0], x[1], x[2]]),
+    hsv: (x: number[]) => colorFromChannels([x[0], x[1], x[2]], "hsv"),
+    lab: (x: number[]) => colorFromChannels([x[0], x[1], x[2]], "lab"),
   };
-  const sum = (a: any[], b: any[]) => a.map((x, i) => x + b[i]);
-  const sumColor = colors.reduce(
-    (acc, x) => sum(acc, colorSpaceMap[colorSpace](x)),
-    [0, 0, 0]
-  );
-  const avgColor = sumColor.map((x) => x / colors.length);
+  type ColorChannels = [number, number, number];
+  const sum = (a: ColorChannels, b: ColorChannels) =>
+    a.map((x, i) => x + b[i]) as ColorChannels;
+  const sumColor = colors.reduce((acc, x) => sum(acc, x.toChannels()), [
+    0, 0, 0,
+  ] as ColorChannels);
+  const avgColor = sumColor.map((x) => x / colors.length) as ColorChannels;
   if (avgColor.some((x) => isNaN(x))) {
-    return CIELAB.fromString("#000000");
+    return colorFromString("#000000", "lab");
   }
-  return colorSpaceFormatters[colorSpace](avgColor);
+  return colorFromChannels(avgColor, "lab");
+  // return colorSpaceFormatters[colorSpace](avgColor);
 }
 
 export function opposingColor(color: Color): Color {
   const c = color.toChroma().hsl();
   const channels = c.map((x, i) => (i === 0 ? (x + 180) % 360 : x));
   const chromaColor = chroma.hsl(channels[0], channels[1], channels[2]);
-  return CIELAB.fromChannels(chromaColor.lab());
+  return colorFromChannels(chromaColor.lab(), "lab");
+}
+
+export function deDup(arr: Color[]): Color[] {
+  const seen = new Set();
+  return arr.filter((item) => {
+    const k = item.toHex();
+    return seen.has(k) ? false : seen.add(k);
+  });
 }

@@ -1,7 +1,7 @@
 import { writable } from "svelte/store";
-import { Color, CIELAB } from "../lib/Color";
+import { Color, colorFromString } from "../lib/Color";
 import fits from "../assets/outfits.json";
-import { pick } from "../lib/utils";
+import { pick, deDup } from "../lib/utils";
 const outfitToPal = (x: any) => [x.fill1, x.fill2, x.fill3];
 const outfits = fits.map((x) => outfitToPal(x));
 type Pal<A> = { colors: A[]; name: string; background: A };
@@ -33,25 +33,17 @@ const InitialStore: StorageData = {
   engine: "google",
 };
 
-function deDup(arr: Color[]): Color[] {
-  const seen = new Set();
-  return arr.filter((item) => {
-    const k = item.toHex();
-    return seen.has(k) ? false : seen.add(k);
-  });
-}
-
 function convertStoreHexToColor(store: StorageData): StoreData {
   return {
     palettes: store.palettes.map((x) => ({
       name: x.name,
-      background: CIELAB.fromString(x.background),
-      colors: x.colors.map((y) => CIELAB.fromString(y)),
+      background: colorFromString(x.background, "lab"),
+      colors: x.colors.map((y) => colorFromString(y, "lab")),
     })),
     currentPal: {
-      background: CIELAB.fromString(store.currentPal.background),
+      background: colorFromString(store.currentPal.background, "lab"),
       name: store.currentPal.name,
-      colors: store.currentPal.colors.map((y) => CIELAB.fromString(y)),
+      colors: store.currentPal.colors.map((y) => colorFromString(y, "lab")),
     },
     engine: store.engine,
   };
@@ -151,9 +143,9 @@ function createStore() {
       persistUpdate((n) => ({
         ...n,
         currentPal: {
-          colors: pick(outfits).map((x: string) => CIELAB.fromString(x)),
+          colors: pick(outfits).map((x: string) => colorFromString(x, "lab")),
           name: "Untitled",
-          background: CIELAB.fromString("#ffffff"),
+          background: colorFromString("#ffffff", "lab"),
         },
         palettes: insertPalette(n.palettes, n.currentPal),
       })),

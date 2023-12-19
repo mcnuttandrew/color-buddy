@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { CIELAB } from "../lib/Color";
+  import { colorFromString } from "../lib/Color";
   import { insert, randColor } from "../lib/utils";
   import colorStore from "../stores/color-store";
   import { suggestAdditionsToPalette } from "../lib/api-calls";
@@ -39,7 +39,7 @@
           style="background-color: {color}"
           on:click={() => {
             colorStore.setCurrentPalColors(
-              insert(colors, CIELAB.fromString(color))
+              insert(colors, colorFromString(color, "lab"))
             );
             aiSuggestions = aiSuggestions.filter((x) => x !== color);
           }}

@@ -1,7 +1,8 @@
 import { Color } from "./Color";
 
 function openAIScaffold<A>(api: string, body: string): Promise<A[]> {
-  return fetch(api, {
+  // add a question string parameter to the api call
+  return fetch(`${api}?engine=openai`, {
     method: "POST",
     mode: "cors",
     cache: "no-cache",
@@ -23,8 +24,8 @@ function openAIScaffold<A>(api: string, body: string): Promise<A[]> {
     });
 }
 
-function googleScaffold(api: string, body: string): Promise<string[]> {
-  return fetch(api, {
+function googleScaffold<A>(api: string, body: string): Promise<A[]> {
+  return fetch(`${api}?engine=google`, {
     method: "POST",
     mode: "cors",
     cache: "no-cache",
@@ -48,40 +49,45 @@ function googleScaffold(api: string, body: string): Promise<string[]> {
 
 const toHex = (x: Color) => x.toHex().toUpperCase();
 
+const engineToScaffold = {
+  openai: openAIScaffold,
+  google: googleScaffold,
+};
+
 export function suggestNameForPalette(
   palette: Color[],
-  background: Color
+  background: Color,
+  engine: "openai" | "google"
 ): Promise<string[]> {
   const body = JSON.stringify({
     palette: palette.map((x) => toHex(x)),
     background: background.toHex(),
   });
-  return openAIScaffold<string>(`/.netlify/functions/suggest-name`, body);
-  // return googleScaffold(`/.netlify/functions/suggest-name`, body);
+  const scaffold = engineToScaffold[engine];
+  return scaffold<string>(`/.netlify/functions/suggest-name`, body);
 }
 
 export function suggestAdditionsToPalette(
   palette: Color[],
-  background: Color
+  background: Color,
+  engine: "openai" | "google"
 ): Promise<string[]> {
   const body = JSON.stringify({
     palette: palette.map((x) => toHex(x)),
     background: background.toHex(),
   });
-  return openAIScaffold<string>(
-    `/.netlify/functions/get-color-suggestions`,
-    body
-  );
-  // return googleScaffold(`/.netlify/functions/get-color-suggestions`, body);
+
+  const scaffold = engineToScaffold[engine];
+  return scaffold<string>(`/.netlify/functions/get-color-suggestions`, body);
 }
 
-export function suggestPal(prompt: string) {
+export function suggestPal(prompt: string, engine: "openai" | "google") {
   const body = JSON.stringify({
     prompt,
   });
-  return openAIScaffold<{ colors: string[]; background: string }>(
+  const scaffold = engineToScaffold[engine];
+  return scaffold<{ colors: string[]; background: string }>(
     `/.netlify/functions/suggest-a-pal`,
     body
   );
-  // return googleScaffold(`/.netlify/functions/suggest-a-pal`, body);
 }

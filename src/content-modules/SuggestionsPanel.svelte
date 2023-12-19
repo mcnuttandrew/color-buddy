@@ -58,7 +58,8 @@
       requestState = "loading";
       suggestAdditionsToPalette(
         $colorStore.currentPal.colors,
-        $colorStore.currentPal.background
+        $colorStore.currentPal.background,
+        $colorStore.engine
       )
         .then((x) => {
           console.log("ai suggestions", x);

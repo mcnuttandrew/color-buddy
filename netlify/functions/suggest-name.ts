@@ -14,7 +14,7 @@ Present your names a list of JSON strings. They should have a type like string[]
 Palette: ${JSON.stringify(pal.inputColors)}
 Background Color: ${pal.background}
 Your response: `;
-export const handler = genericHandler<promptInput>("openai")(prompt, (x) => {
+export const handler = genericHandler<promptInput>(prompt, (x) => {
   const input = JSON.parse(x);
   const inputColors = input.palette;
   if (

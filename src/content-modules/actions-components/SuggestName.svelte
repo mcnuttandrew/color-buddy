@@ -16,7 +16,8 @@
       requestState = "loading";
       suggestNameForPalette(
         $colorStore.currentPal.colors,
-        $colorStore.currentPal.background
+        $colorStore.currentPal.background,
+        $colorStore.engine
       )
         .then((x) => {
           nameSuggestions = x;

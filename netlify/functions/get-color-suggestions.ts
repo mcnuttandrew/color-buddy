@@ -13,7 +13,7 @@ Your response: \`\`\`json`;
   return result;
 };
 
-export const handler = genericHandler<promptInput>("openai")(prompt, (x) => {
+export const handler = genericHandler<promptInput>(prompt, (x) => {
   const input = JSON.parse(x);
   const inputColors = input.palette;
   if (

@@ -5,13 +5,29 @@
   import SuggestColorPal from "./actions-components/SuggestColorPal.svelte";
   import PalPreview from "../components/PalPreview.svelte";
   $: colors = $colorStore.currentPal.colors || [];
+  $: console.log($colorStore.engine);
 </script>
 
 <div class="bg-slate-400 p-2 w-96">
   <div class="text-4xl font-bold">Color Buddy</div>
-  <div>
-    <button on:click={() => colorStore.undo()}>Undo</button>
-    <button on:click={() => colorStore.redo()}>Redo</button>
+  <div class="flex justify-between">
+    <div>
+      <button on:click={() => colorStore.undo()}>Undo</button>
+      <button on:click={() => colorStore.redo()}>Redo</button>
+    </div>
+    <div>
+      {#each ["google", "openai"] as ai}
+        <button
+          class="underline ml-2"
+          class:font-bold={ai === $colorStore.engine}
+          on:click={() => {
+            colorStore.setEngine(ai);
+          }}
+        >
+          {ai}
+        </button>
+      {/each}
+    </div>
   </div>
 
   <section class="mt-4 border-t-2 border-black">

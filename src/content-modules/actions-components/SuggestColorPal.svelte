@@ -59,8 +59,7 @@
           on:click={() => {
             if (requestState === "loading") return;
             requestState = "loading";
-            suggestPal(palPrompt).then((suggestions) => {
-              console.log(suggestions);
+            suggestPal(palPrompt, $colorStore.engine).then((suggestions) => {
               if (suggestions.length === 0) {
                 //   alert("No suggestions found");
                 requestState = "idle";

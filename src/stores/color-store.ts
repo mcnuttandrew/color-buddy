@@ -10,11 +10,13 @@ export type Palette = Pal<Color>;
 interface StoreData {
   palettes: Pal<Color>[];
   currentPal: Pal<Color>;
+  engine: "openai" | "google";
 }
 
 interface StorageData {
   palettes: Pal<string>[];
   currentPal: Pal<string>;
+  engine: "openai" | "google";
 }
 
 const InitialStore: StorageData = {
@@ -28,6 +30,7 @@ const InitialStore: StorageData = {
     colors: pick(outfits),
     background: "#ffffff",
   },
+  engine: "google",
 };
 
 function deDup(arr: Color[]): Color[] {
@@ -50,6 +53,7 @@ function convertStoreHexToColor(store: StorageData): StoreData {
       name: store.currentPal.name,
       colors: store.currentPal.colors.map((y) => CIELAB.fromString(y)),
     },
+    engine: store.engine,
   };
 }
 
@@ -65,6 +69,7 @@ function convertStoreColorToHex(store: StoreData): StorageData {
       name: store.currentPal.name,
       colors: store.currentPal.colors.map((y) => y.toHex()),
     },
+    engine: store.engine,
   };
 }
 
@@ -213,6 +218,7 @@ function createStore() {
         currentPal: { ...n.currentPal, background: color },
       })),
     reset: () => set({ ...convertStoreHexToColor(InitialStore) }),
+    setEngine: simpleSet("engine"),
   };
 }
 

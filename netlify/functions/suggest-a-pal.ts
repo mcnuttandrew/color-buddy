@@ -16,7 +16,7 @@ Present your names a list of JSON strings. They should have a type like {"colors
 Prompt: ${JSON.stringify(pal.textPrompt)}
 Your response: `;
 
-export const handler = genericHandler<promptInput>("openai")(prompt, (x) => {
+export const handler = genericHandler<promptInput>(prompt, (x) => {
   // TODO sanitize for prompt injection
 
   const input = JSON.parse(x);

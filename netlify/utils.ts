@@ -27,8 +27,7 @@ const engines = {
 };
 
 export const genericHandler =
-  <A>(engine: keyof typeof engines) =>
-  (prompt: (input: A) => string, bodyGetter: (string) => A) =>
+  <A>(prompt: (input: A) => string, bodyGetter: (string) => A) =>
   async (event, _context, callback) => {
     let promptInput;
     try {
@@ -38,8 +37,17 @@ export const genericHandler =
       errorResponse(callback, "Bad submit");
       return;
     }
+    const engine = event.queryStringParameters.engine;
+    if (!engine) {
+      errorResponse(callback, "No engine");
+      return;
+    }
+    if (typeof engine !== "string" || !engines[engine]) {
+      errorResponse(callback, "Bad engine");
+      return;
+    }
     const content = prompt(promptInput);
-    console.log(content);
+    console.log(engine, content);
     const result = await engines[engine](content);
     callback(null, { statusCode: 200, body: JSON.stringify(result) });
   };

@@ -1,7 +1,14 @@
 import { Color } from "./Color";
+import type { Palette } from "../stores/color-store";
+
+type Engine = "openai" | "google";
+
+const palToString = (pal: Palette) => ({
+  background: pal.background.toHex(),
+  colors: pal.colors.map((x) => x.toHex()),
+});
 
 function openAIScaffold<A>(api: string, body: string): Promise<A[]> {
-  // add a question string parameter to the api call
   return fetch(`${api}?engine=openai`, {
     method: "POST",
     mode: "cors",
@@ -57,10 +64,10 @@ const engineToScaffold = {
 export function suggestNameForPalette(
   palette: Color[],
   background: Color,
-  engine: "openai" | "google"
+  engine: Engine
 ): Promise<string[]> {
   const body = JSON.stringify({
-    palette: palette.map((x) => toHex(x)),
+    colors: palette.map((x) => toHex(x)),
     background: background.toHex(),
   });
   const scaffold = engineToScaffold[engine];
@@ -70,10 +77,10 @@ export function suggestNameForPalette(
 export function suggestAdditionsToPalette(
   palette: Color[],
   background: Color,
-  engine: "openai" | "google"
+  engine: Engine
 ): Promise<string[]> {
   const body = JSON.stringify({
-    palette: palette.map((x) => toHex(x)),
+    colors: palette.map((x) => toHex(x)),
     background: background.toHex(),
   });
 
@@ -81,13 +88,21 @@ export function suggestAdditionsToPalette(
   return scaffold<string>(`/.netlify/functions/get-color-suggestions`, body);
 }
 
-export function suggestPal(prompt: string, engine: "openai" | "google") {
-  const body = JSON.stringify({
-    prompt,
-  });
+export function suggestPal(prompt: string, engine: Engine) {
+  const body = JSON.stringify({ prompt });
   const scaffold = engineToScaffold[engine];
   return scaffold<{ colors: string[]; background: string }>(
     `/.netlify/functions/suggest-a-pal`,
     body
   );
+}
+
+export function suggestAdjustments(
+  prompt: string,
+  currentPal: Palette,
+  engine: Engine
+) {
+  const body = JSON.stringify({ prompt, ...palToString(currentPal) });
+  const scaffold = engineToScaffold[engine];
+  return scaffold<string>(`/.netlify/functions/suggest-adjustments`, body);
 }

@@ -4,6 +4,7 @@
   import AddFamiliarPal from "./actions-components/AddFamiliarPal.svelte";
   import SuggestColorPal from "./actions-components/SuggestColorPal.svelte";
   import PalPreview from "../components/PalPreview.svelte";
+  import SuggestAdjustments from "./actions-components/SuggestAdjustments.svelte";
   $: colors = $colorStore.currentPal.colors || [];
 </script>
 
@@ -66,8 +67,9 @@
     <div class="mt-5">
       <div>Actions</div>
       <button class="underline" on:click={() => colorStore.createNewPal()}>
-        Save Current Pal and create new one
+        New Pal
       </button>
+      <AddFamiliarPal />
 
       <SuggestName />
       <button class="underline" on:click={() => colorStore.randomizeOrder()}>
@@ -76,8 +78,9 @@
       <button class="underline" on:click={() => colorStore.sortByHue()}>
         Sort by hue
       </button>
-      <AddFamiliarPal />
+
       <SuggestColorPal />
+      <SuggestAdjustments />
     </div>
   </section>
   <section class="mt-4 border-t-2 border-black">

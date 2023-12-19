@@ -15,7 +15,7 @@ Your response: \`\`\`json`;
 
 export const handler = genericHandler<promptInput>(prompt, (x) => {
   const input = JSON.parse(x);
-  const inputColors = input.palette;
+  const inputColors = input.colors;
   if (
     !Array.isArray(inputColors) ||
     !inputColors.every((x) => typeof x === "string")

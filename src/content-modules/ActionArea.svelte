@@ -2,6 +2,7 @@
   import { CIELAB, Color } from "../lib/Color";
   import colorStore from "../stores/color-store";
   import focusStore from "../stores/focus-store";
+  import Tooltip from "../components/Tooltip.svelte";
   import { avgColors, opposingColor } from "../lib/utils";
   $: colors = $colorStore.currentPal.colors;
   $: focusedColors = $focusStore.focusedColors;
@@ -21,10 +22,10 @@
     );
 
   const ALIGNS = [
-    { pos: 1, name: "Align Left", op: Math.min },
-    { pos: 1, name: "Align Right", op: Math.max },
-    { pos: 2, name: "Align Top", op: Math.max },
-    { pos: 2, name: "Align Bottom", op: Math.min },
+    { pos: 1, name: "Left", op: Math.min },
+    { pos: 1, name: "Right", op: Math.max },
+    { pos: 2, name: "Top", op: Math.max },
+    { pos: 2, name: "Bottom", op: Math.min },
   ];
 </script>
 
@@ -83,26 +84,33 @@
           {colorSpace} avg
         </button>
       {/each}
+      <Tooltip>
+        <div slot="content" class="w-24">
+          {#each ALIGNS as { pos, name, op }}
+            <button
+              class="underline mr-2"
+              on:click={() => {
+                const newCoordinate = op(...focusLabs.map((x) => x[pos]));
+                colorStore.setCurrentPalColors(
+                  mapFocusedColors(([l, a, b]) => {
+                    return CIELAB.fromChannels([
+                      pos === 0 ? newCoordinate : l,
+                      pos === 1 ? newCoordinate : a,
+                      pos === 2 ? newCoordinate : b,
+                    ]);
+                  })
+                );
+              }}
+            >
+              {name}
+            </button>
+          {/each}
+        </div>
+        <span slot="target" let:toggle>
+          <button class="underline" on:click={toggle}>Align to</button>
+        </span>
+      </Tooltip>
 
-      {#each ALIGNS as { pos, name, op }}
-        <button
-          class="underline mr-2"
-          on:click={() => {
-            const newCoordinate = op(...focusLabs.map((x) => x[pos]));
-            colorStore.setCurrentPalColors(
-              mapFocusedColors(([l, a, b]) => {
-                return CIELAB.fromChannels([
-                  pos === 0 ? newCoordinate : l,
-                  pos === 1 ? newCoordinate : a,
-                  pos === 2 ? newCoordinate : b,
-                ]);
-              })
-            );
-          }}
-        >
-          {name}
-        </button>
-      {/each}
       <div>TODO Distribute vertical / horizontally</div>
       <!-- <button on:click={() => {
         const newColors = [...colors];

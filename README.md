@@ -5,8 +5,9 @@ Use: should point to localhost:8888 if all is well
 - [ ] Add support for other color schemes (finish generalizing the chroma refactor)
 - [ ] Coat of paint
 - [ ] Unbreak the color channel stuff, also the avging actions
-- [ ] Minor: Make the aligns be a tool tip
+- [x] Minor: Make the aligns be a tool tip
 - [ ] add color analysis
+- [ ] distribute horizontal / vertical
 - [ ] add text commands
 - [ ] color text input
 - [ ] higher card. vis examples

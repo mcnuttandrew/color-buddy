@@ -25,6 +25,8 @@
   const zScale = scaleLinear().domain([100, 0]).range([0, plotHeight]);
 
   let dragging: false | { x: number; y: number } = false;
+  let dragBox: false | { x: number; y: number } = false;
+  let parentPos = { x: 0, y: 0 };
   const eventToColorXY = (
     e: any,
     color: Color,
@@ -38,10 +40,15 @@
       y: e.clientY - dragging.y,
     };
     const [l, a, b] = originalColor.toChannels();
+    const clampToBoundary = (val: number) => Math.min(Math.max(val, -100), 100);
     const newX = xScale.invert(xScale(a) + screenPosDelta.x);
     const newY = yScale.invert(yScale(b) + screenPosDelta.y);
 
-    return CIELAB.fromChannels([l, newX, newY]);
+    return CIELAB.fromChannels([
+      l,
+      clampToBoundary(newX),
+      clampToBoundary(newY),
+    ]);
   };
 
   const eventToColorZ = (e: any, color: Color, originalColor: Color): Color => {
@@ -51,7 +58,8 @@
     const screenPosDelta = e.clientY - dragging.y;
     const [l, a, b] = originalColor.toChannels();
     const newZ = zScale.invert(zScale(l) + screenPosDelta);
-    return CIELAB.fromChannels([newZ, a, b]);
+    const clampToBoundary = (val: number) => Math.min(Math.max(val, 0), 100);
+    return CIELAB.fromChannels([clampToBoundary(newZ), a, b]);
   };
 
   $: bg = $colorStore.currentPal.background;
@@ -59,13 +67,21 @@
 
   function stopDrag() {
     dragging = false;
+    dragBox = false;
   }
 
   let originalColors = [] as Color[];
   const startDrag = (e: any) => {
+    parentPos = e.target.getBoundingClientRect();
     dragging = { x: e.clientX, y: e.clientY };
     originalColors = [...colors];
+    if ($focusStore.focusedColors.length === 0) {
+      dragBox = { x: e.clientX, y: e.clientY };
+    } else {
+      dragBox = false;
+    }
   };
+
   const dragResponse =
     (func: typeof eventToColorZ | typeof eventToColorZ) => (e: any) => {
       const newColors = colors.map((color: Color, idx: number) =>
@@ -74,6 +90,23 @@
 
       colorStore.setCurrentPalColors(newColors);
     };
+  function selectColorsFromDrag(
+    dragBox: { x: number; y: number },
+    dragging: { x: number; y: number }
+  ) {
+    const xMin = Math.min(dragging.x, dragBox.x) - parentPos.x;
+    const xMax = Math.max(dragging.x, dragBox.x) - parentPos.x;
+    const yMin = Math.min(dragging.y, dragBox.y) - parentPos.y;
+    const yMax = Math.max(dragging.y, dragBox.y) - parentPos.y;
+    const newFocusedColors = colors
+      .map((color, idx) => {
+        const [_l, a, b] = color.toChannels();
+        const [x, y] = [xScale(a), yScale(b)];
+        return xMin <= x && x <= xMax && yMin <= y && y <= yMax ? idx : -1;
+      })
+      .filter((x) => x !== -1);
+    focusStore.setColors(newFocusedColors);
+  }
 </script>
 
 <!-- svelte-ignore a11y-no-static-element-interactions -->
@@ -110,21 +143,29 @@
       <!-- svelte-ignore a11y-no-static-element-interactions -->
       <!-- svelte-ignore a11y-click-events-have-key-events -->
       <rect
-        class="cursor-pointer"
-        on:click={(e) => {
-          if (dragging) {
-            dragging = false;
-          } else {
-            focusStore.clearColors();
-          }
-        }}
+        on:mousedown={(e) => startDrag(e)}
         on:mousemove={(e) => {
-          if (dragging) {
+          if (dragging && $focusStore.focusedColors.length > 0) {
             dragResponse(eventToColorXY)(e);
           }
+          if (dragging && $focusStore.focusedColors.length === 0) {
+            dragBox = { x: e.clientX, y: e.clientY };
+          }
         }}
-        on:mouseup={() => {
+        on:mouseup={(e) => {
+          if (dragBox && dragging) {
+            selectColorsFromDrag(dragBox, dragging);
+          }
+          if (
+            dragging &&
+            dragging.x === e.clientX &&
+            dragging.y === e.clientY
+          ) {
+            focusStore.clearColors();
+          }
+
           dragging = false;
+          dragBox = false;
         }}
         x="0"
         y="0"
@@ -160,6 +201,17 @@
       >
         BG
       </text>
+      {#if dragging && dragBox}
+        <rect
+          x={Math.min(dragging.x, dragBox.x) - parentPos.x}
+          y={Math.min(dragging.y, dragBox.y) - parentPos.y}
+          width={Math.abs(dragging.x - dragBox.x)}
+          height={Math.abs(dragging.y - dragBox.y)}
+          fill="steelblue"
+          fill-opacity="0.5"
+          class="pointer-events-none"
+        />
+      {/if}
     </g>
   </svg>
 </div>

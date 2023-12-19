@@ -2,20 +2,22 @@ Install: `yarn`
 Run: `npx netlify dev`
 Use: should point to localhost:8888 if all is well
 
+- [ ] Add support for other color schemes (finish generalizing the chroma refactor)
+- [ ] Coat of paint
+- [ ] Unbreak the color channel stuff, also the avging actions
+- [ ] Minor: Make the aligns be a tool tip
+- [ ] add color analysis
+- [ ] add text commands
+- [ ] color text input
+- [ ] higher card. vis examples
+- [ ] kbd commands, up/down for moving selections, cmd+z for undo, etc
+- [ ] make charts be end user manipuable
+- [ ] make color sliders be shaded in the background (https://observablehq.com/@d3/hcl-color-picker)
+- [ ] order as diverging
+- [ ] Cursor selection range
+- [x] Make colors actually work right (eg rip out chroma)
+- [x] Refactor file structure
 - [x] add fancy cacheing to make the vega-charts not re-render constantly
 - [x] make text display deterministic
-- [x] undo / redo
 - [x] multi-select of colors?
-- [ ] add color analysis
-- [x] Make colors actually work right (eg rip out chroma)
-- [ ] Add support for other color schemes (finish generalizing the chroma refactor)
-- [ ] Unbreak the color channel stuff
-- [ ] add text commands
-- [ ] make color sliders be shaded in the background (https://observablehq.com/@d3/hcl-color-picker)
-- [ ] make charts be end user manipuable
-- [ ] kbd commands, up/down for moving selections, cmd+z for undo, etc
-- [ ] higher card. vis examples
-- [ ] color text input
-- [ ] order as diverging
-- [ ] Coat of paint
-- [x] Refactor file structure
+- [x] undo / redo

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { CIELAB } from "../lib/Color";
+  import { CIELAB, Color } from "../lib/Color";
   import colorStore from "../stores/color-store";
   import focusStore from "../stores/focus-store";
   import { avgColors, opposingColor } from "../lib/utils";
@@ -8,7 +8,7 @@
   $: focusSet = new Set(focusedColors);
   $: focusLabs = focusedColors.map((idx) => colors[idx].toChannels());
 
-  function actionOnColor(idx: number, action: (Color: any) => any) {
+  function actionOnColor(idx: number, action: (Color: Color) => any) {
     const newColor = action(colors[idx]);
     const newColors = [...colors];
     newColors[idx] = newColor;
@@ -28,7 +28,7 @@
   ];
 </script>
 
-<div class="flex flex-col border-2 border-slate-300 rounded">
+<div class="flex flex-col border-2 border-slate-300 rounded h-40">
   Action Panel
   <div class="flex flex-wrap">
     {#if focusedColors.length === 1}
@@ -37,7 +37,11 @@
           <button
             class="underline mr-2"
             on:click={() => {
-              actionOnColor(focusedColors[0], (color) => color[action]());
+              actionOnColor(focusedColors[0], (color) => {
+                // @ts-ignore
+                const chromaColor = color.toChroma()[action]();
+                return CIELAB.fromChannels(chromaColor.lab());
+              });
             }}
           >
             {action[0].toUpperCase()}{action.slice(1)}

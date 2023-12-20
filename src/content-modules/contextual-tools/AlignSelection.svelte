@@ -1,8 +1,9 @@
 <script lang="ts">
   import focusStore from "../../stores/focus-store";
   import colorStore from "../../stores/color-store";
-  import { Color, colorFromChannels, colorDirectory } from "../../lib/Color";
+  import { colorFromChannels } from "../../lib/Color";
   import Tooltip from "../../components/Tooltip.svelte";
+  import { buttonStyle } from "../../lib/styles";
 
   $: colors = $colorStore.currentPal.colors;
   $: focusedColors = $focusStore.focusedColors;
@@ -26,7 +27,7 @@
     <div slot="content" class="w-24">
       {#each ALIGNS as { pos, name, op }}
         <button
-          class="underline mr-2"
+          class={buttonStyle}
           on:click={() => {
             const newCoordinate = op(...focusLabs.map((x) => x[pos]));
             colorStore.setCurrentPalColors(
@@ -48,7 +49,7 @@
       {/each}
     </div>
     <span slot="target" let:toggle>
-      <button class="underline" on:click={toggle}>Align to</button>
+      <button class={buttonStyle} on:click={toggle}>Align to</button>
     </span>
   </Tooltip>
 {/if}

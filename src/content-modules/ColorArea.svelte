@@ -192,6 +192,7 @@
           {height}
           opacity="0"
           fill="white"
+          class:cursor-pointer={dragging}
         />
 
         {#each colors as color, i (color)}
@@ -218,6 +219,8 @@
           x={xScale(bg.toChannels()[1])}
           y={yScale(bg.toChannels()[2])}
           fill={bg.toChroma().luminance() > 0.5 ? "black" : "white"}
+          text-anchor="middle"
+          alignment-baseline="middle"
         >
           BG
         </text>

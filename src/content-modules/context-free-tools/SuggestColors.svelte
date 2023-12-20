@@ -4,10 +4,11 @@
   import { colorFromString } from "../../lib/Color";
   import { suggestAdditionsToPalette } from "../../lib/api-calls";
   import { randColor, insert } from "../../lib/utils";
+  import { buttonStyle } from "../../lib/styles";
 
   let colors = $colorStore.currentPal.colors;
 
-  let requestState: "idle" | "loading" | "loaded" = "idle";
+  let requestState: "idle" | "loading" | "loaded" | "failed" = "idle";
   let suggestions = [randColor(), randColor(), randColor()].map((x) =>
     x.toHex()
   );
@@ -15,17 +16,16 @@
 
 <Tooltip>
   <span slot="target" let:toggle>
-    <button class={"underline"} on:click={toggle}>Get Color Suggestions</button>
+    <button class={buttonStyle} on:click={toggle}>Get Color Suggestions</button>
   </span>
   <div slot="content" let:onClick>
     <div class="flex flex-col">
+      Suggestions:
       <div class="flex flex-wrap">
         {#each suggestions as color}
-          <div
-            class=" border-black rounded p-2 flex justify-between items-center"
-          >
+          <div class=" {buttonStyle} h-12 flex justify-between items-center">
             <button
-              class="w-6 h-6 rounded-full"
+              class="w-6 h-6 rounded-full mr-2"
               style="background-color: {color}"
               on:click={() => {
                 colorStore.setCurrentPalColors(
@@ -45,9 +45,10 @@
           </div>
         {/each}
       </div>
-
+      Options:
       <button
-        class:underline={requestState === "idle"}
+        class={buttonStyle}
+        class:pointer-events-none={requestState === "loading"}
         on:click={() => {
           if (requestState === "loading") return;
           requestState = "loading";
@@ -67,7 +68,7 @@
             })
             .catch((e) => {
               console.log(e);
-              requestState = "idle";
+              requestState = "failed";
             });
         }}
       >
@@ -77,8 +78,11 @@
           loading...
         {/if}
       </button>
+      {#if requestState === "failed"}
+        <div>Failed to get suggestions,please try again</div>
+      {/if}
       <button
-        class="underline"
+        class={buttonStyle}
         on:click={() => {
           suggestions = [];
         }}

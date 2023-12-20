@@ -1,5 +1,6 @@
 import { writable } from "svelte/store";
 import { Color, colorFromString } from "../lib/Color";
+import ColorIO from "colorjs.io";
 import fits from "../assets/outfits.json";
 import { pick, deDup } from "../lib/utils";
 const outfitToPal = (x: any) => [x.fill1, x.fill2, x.fill3];
@@ -171,7 +172,12 @@ function createStore() {
     setSort: (sort: Color[]) => palUp((n) => ({ ...n, colors: deDup(sort) })),
 
     randomizeOrder: doSort(() => Math.random() - 0.5),
-    sortByHue: doSort((a, b) => a.toChroma().hsl()[0] - b.toChroma().hsl()[0]),
+    sortByChannel: (colorSpace: string, channel: number) =>
+      doSort((a, b) => {
+        const aVal = new ColorIO(a.toHex()).to(colorSpace).coords[channel];
+        const bVal = new ColorIO(b.toHex()).to(colorSpace).coords[channel];
+        return aVal - bVal;
+      })(),
     replaceColor: (oldColor: Color, newColor: Color) =>
       palUp((n) => ({
         ...n,

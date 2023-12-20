@@ -6,6 +6,7 @@
   import type { Palette } from "../../stores/color-store";
   import Tooltip from "../../components/Tooltip.svelte";
   import { VegaColors } from "../../lib/charts";
+  import { buttonStyle } from "../../lib/styles";
 
   interface ExtendedPal extends Palette {
     group: string;
@@ -96,7 +97,7 @@
                 {/each}
               </div>
               <button
-                class="underline mr-2"
+                class="{buttonStyle} "
                 on:click={() => {
                   colorStore.createNewPalWithExplicitPal(pal);
                   onClick();
@@ -113,6 +114,6 @@
   </span>
 
   <span slot="target" let:toggle>
-    <button class="underline" on:click={toggle}>Add familiar pal</button>
+    <button class={buttonStyle} on:click={toggle}>Add familiar pal</button>
   </span>
 </Tooltip>

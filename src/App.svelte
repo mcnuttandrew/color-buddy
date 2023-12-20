@@ -9,6 +9,7 @@
   import TextBlock from "./content-modules/TextBlock.svelte";
   import Swatches from "./content-modules/Swatches.svelte";
   import Eval from "./content-modules/Eval.svelte";
+  import { buttonStyle } from "./lib/styles";
 
   let state: "swatches" | "eval" = "swatches";
 
@@ -25,17 +26,28 @@
           <ColorArea height={450} width={450} />
         </div>
         <div class="w-full">
-          {#each ["swatches", "eval"] as tab}
-            <button
-              class="underline mr-2"
-              class:font-bold={state === tab}
-              on:click={() => {
-                state = tab;
-              }}
-            >
-              {tab}
-            </button>
-          {/each}
+          <nav aria-label="Page navigation">
+            <ul class="inline-flex">
+              {#each ["swatches", "eval"] as tab}
+                <li>
+                  <button
+                    class="h-6 px-2 transition-colors duration-150 border border-slate-500 focus:shadow-outline"
+                    class:bg-slate-500={state === tab}
+                    class:bg-white={state !== tab}
+                    class:text-white={state === tab}
+                    class:rounded-r-lg={tab === "eval"}
+                    class:rounded-l-lg={tab === "swatches"}
+                    on:click={() => {
+                      state = tab;
+                    }}
+                  >
+                    {tab}
+                  </button>
+                </li>
+              {/each}
+            </ul>
+          </nav>
+
           {#if state === "swatches"}
             <Swatches />
           {:else}

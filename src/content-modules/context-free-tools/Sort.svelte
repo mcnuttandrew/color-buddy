@@ -1,6 +1,7 @@
 <script lang="ts">
   import colorStore from "../../stores/color-store";
   import Tooltip from "../../components/Tooltip.svelte";
+  import { buttonStyle } from "../../lib/styles";
   const spaces = ["lab", "lch", "rgb", "hsl", "hsv"];
   let selectedColorSpace: (typeof spaces)[number] = "lab";
   let selectedLetter = "a";
@@ -8,11 +9,8 @@
 
 <Tooltip>
   <span slot="content" let:onClick>
-    <button class="underline" on:click={() => colorStore.randomizeOrder()}>
+    <button class={buttonStyle} on:click={() => colorStore.randomizeOrder()}>
       Randomize order
-    </button>
-    <button class="underline" on:click={() => colorStore.sortByHue()}>
-      Sort by hue
     </button>
     <select bind:value={selectedColorSpace}>
       {#each spaces as space}
@@ -24,9 +22,19 @@
         <option value={letter}>{letter}</option>
       {/each}
     </select>
+    <button
+      class={buttonStyle}
+      on:click={() =>
+        colorStore.sortByChannel(
+          selectedColorSpace,
+          selectedColorSpace.indexOf(selectedLetter)
+        )}
+    >
+      Sort by {selectedLetter}
+    </button>
   </span>
 
   <span slot="target" let:toggle>
-    <button class="underline" on:click={toggle}>Sort</button>
+    <button class={buttonStyle} on:click={toggle}>Sort</button>
   </span>
 </Tooltip>

@@ -14,7 +14,9 @@ Background Color: "#FFFFFF"
 Prompt: "Make the colors more pastel."
 Output: {"background": "#FFFFFF", "colors": ["#9E9E9E", "#F8BBD0", "#D3EC8A", "#D3D3FF"]}
 
-Present your names a single JSON object. It should have a type like {"background: string; colors: string[]}. It should have exactly the same number of colors as the input. Do not offer any other response.
+Present your names a single JSON object. It should have a type like {"background: string; colors: string[]}. 
+It should have EXACTLY the same number of colors as the input. 
+Do not offer any other response.
 
 Palette: ${JSON.stringify(pal.inputColors)}
 Background Color: ${JSON.stringify(pal.background)}

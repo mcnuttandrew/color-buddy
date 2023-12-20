@@ -4,6 +4,7 @@
   import colorStore from "../../stores/color-store";
   import focusStore from "../../stores/focus-store";
   import Tooltip from "../../components/Tooltip.svelte";
+  import { buttonStyle } from "../../lib/styles";
 
   $: focusedColors = $focusStore.focusedColors;
   $: colors = $colorStore.currentPal.colors;
@@ -56,7 +57,7 @@
         </select>
       </label>
       <button
-        class="underline"
+        class={buttonStyle}
         on:click={() => {
           let newColors = [...colors];
           const [pointA, pointB] = focusedColors.map((idx) => colors[idx]);
@@ -74,7 +75,7 @@
       </button>
     </div>
     <span slot="target" let:toggle>
-      <button class="underline mr-2" on:click={toggle}>Interpolate</button>
+      <button class={buttonStyle} on:click={toggle}>Interpolate</button>
     </span>
   </Tooltip>
 {/if}

@@ -4,9 +4,10 @@
   import focusStore from "../../stores/focus-store";
   import { colorFromString } from "../../lib/Color";
   import { suggestContextualAdjustments } from "../../lib/api-calls";
+  import { buttonStyle } from "../../lib/styles";
   import PalPreview from "../../components/PalPreview.svelte";
 
-  let requestState: "idle" | "loading" | "loaded" = "idle";
+  let requestState: "idle" | "loading" | "loaded" | "failed" = "idle";
   $: colors = $colorStore.currentPal.colors;
   $: selectedColors = $focusStore.focusedColors.map((x) => colors[x].toHex());
   let suggestedColors: string[] = [];
@@ -24,12 +25,12 @@
 {#if $focusStore.focusedColors.length > 0}
   <Tooltip>
     <span slot="target" let:toggle>
-      <button class={"underline"} on:click={toggle}>Modify with text</button>
+      <button class={buttonStyle} on:click={toggle}>Modify with text</button>
     </span>
     <div slot="content" let:onClick>
       <div class="flex flex-col w-72">
         <label for="pal-prompt">
-          <div>Command</div>
+          <div>Change these points</div>
           <div class="text-sm italic">(e.g. "Make them groovier")</div>
         </label>
         {#if requestState === "loaded"}
@@ -41,7 +42,7 @@
           </div>
           <div class="flex justify-between">
             <button
-              class="underline"
+              class={buttonStyle}
               on:click={() => {
                 const newColors = colors.map((x) => {
                   const idx = selectedColors.indexOf(x.toHex());
@@ -57,7 +58,7 @@
               Use
             </button>
             <button
-              class="underline"
+              class={buttonStyle}
               on:click={() => {
                 requestState = "idle";
               }}
@@ -68,7 +69,8 @@
         {:else}
           <input bind:value={palPrompt} id="pal-prompt" />
           <button
-            class:underline={requestState === "idle"}
+            class={buttonStyle}
+            class:pointer-events-none={requestState === "loading"}
             on:click={() => {
               if (requestState === "loading") return;
               requestState = "loading";
@@ -80,23 +82,31 @@
                   name: $colorStore.currentPal.name,
                 },
                 $colorStore.engine
-              ).then((suggestions) => {
-                if (suggestions.length === 0) {
+              )
+                .then((suggestions) => {
+                  if (suggestions.length === 0) {
+                    requestState = "idle";
+                    return;
+                  }
+                  const suggestion = suggestions[0];
+                  suggestedColors = suggestion.colors;
+                  requestState = "loaded";
+                })
+                .catch((e) => {
+                  console.log(e);
                   requestState = "idle";
-                  return;
-                }
-                const suggestion = suggestions[0];
-                suggestedColors = suggestion.colors;
-                requestState = "loaded";
-              });
+                });
             }}
           >
-            {#if requestState === "idle"}
+            {#if requestState === "idle" || requestState === "failed"}
               Submit
             {:else}
               loading...
             {/if}
           </button>
+        {/if}
+        {#if requestState === "failed"}
+          <div class="text-red-500">No suggestions found, please try again</div>
         {/if}
       </div>
     </div>

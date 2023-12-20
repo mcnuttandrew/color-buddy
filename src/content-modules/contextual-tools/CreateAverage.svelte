@@ -4,6 +4,7 @@
   import focusStore from "../../stores/focus-store";
   import Tooltip from "../../components/Tooltip.svelte";
   import { avgColors } from "../../lib/utils";
+  import { buttonStyle } from "../../lib/styles";
 
   $: focusedColors = $focusStore.focusedColors;
   $: colors = $colorStore.currentPal.colors;
@@ -22,7 +23,7 @@
       Create average in
       {#each Object.keys(colorDirectory) as colorSpace}
         <button
-          class="underline mr-2"
+          class={buttonStyle}
           on:click={() =>
             colorStore.addColorToCurrentPal(createAvg(colorSpace))}
         >
@@ -31,7 +32,7 @@
       {/each}
     </div>
     <span slot="target" let:toggle>
-      <button class="underline mr-2" on:click={toggle}>
+      <button class={buttonStyle} on:click={toggle}>
         Create average point
       </button>
     </span>

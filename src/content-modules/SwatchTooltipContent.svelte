@@ -3,6 +3,7 @@
   import { Color } from "../lib/Color";
   import colorStore from "../stores/color-store";
   import focusStore from "../stores/focus-store";
+  import { buttonStyle } from "../lib/styles";
   export let idx: number;
   export let color: Color;
   export let closeTooltip: () => void;
@@ -33,7 +34,7 @@
 <div class="flex">
   {#if idx > 0}
     <button
-      class="underline mr-2"
+      class="{buttonStyle} mr-2"
       on:click={() => {
         colorStore.setSort(swap(colors, idx, idx - 1));
         focusStore.setColors([idx - 1]);
@@ -44,7 +45,7 @@
   {/if}
   {#if idx < colors.length - 1}
     <button
-      class="underline mr-2"
+      class="{buttonStyle} mr-2"
       on:click={() => {
         colorStore.setSort(swap(colors, idx, idx + 1));
         focusStore.setColors([idx + 1]);
@@ -54,7 +55,7 @@
     </button>
   {/if}
   <button
-    class="underline mr-2"
+    class="{buttonStyle} mr-2"
     on:click={() => {
       colorStore.setCurrentPalColors(colors.filter((_, jdx) => jdx !== idx));
       focusStore.removeColor(idx);

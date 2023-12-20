@@ -9,6 +9,8 @@
   import Background from "./Background.svelte";
   import Sort from "./context-free-tools/Sort.svelte";
   import GetColorsFromString from "./context-free-tools/GetColorsFromString.svelte";
+  import { buttonStyle } from "../lib/styles";
+  import Tooltip from "../components/Tooltip.svelte";
 </script>
 
 <div class="bg-slate-400 p-2 w-96">
@@ -21,7 +23,7 @@
     <div>
       {#each ["google", "openai"] as ai}
         <button
-          class="underline ml-2"
+          class={buttonStyle}
           class:font-bold={ai === $colorStore.engine}
           on:click={() => {
             colorStore.setEngine(ai);
@@ -54,9 +56,9 @@
     <PalPreview pal={$colorStore.currentPal} />
     <Background />
     <GetColorsFromString />
-    <div class="mt-5">
-      <div>Actions</div>
-      <button class="underline" on:click={() => colorStore.createNewPal()}>
+    <div class="mt-4 border-t-2 border-black">
+      <div class="italic">Global Actions</div>
+      <button class={buttonStyle} on:click={() => colorStore.createNewPal()}>
         New Pal
       </button>
       <AddFamiliarPal />
@@ -70,29 +72,35 @@
   <section class="mt-4 border-t-2 border-black">
     <div class="italic">Saved Pals</div>
     {#each $colorStore.palettes as pal}
-      <div class="flex flex-col">
+      <div class="flex flex-col mt-2">
         <div class="flex items-center justify-between">
-          <div>{pal.name}</div>
           <div>
             <button
-              class="underline"
+              class={buttonStyle}
               on:click={() => colorStore.startUsingPal(pal.name)}
             >
-              Use
-            </button>
-            <button
-              class="underline"
-              on:click={() => colorStore.copyPal(pal.name)}
-            >
-              Copy
-            </button>
-            <button
-              class="underline"
-              on:click={() => colorStore.removePal(pal.name)}
-            >
-              Delete
+              {pal.name}
             </button>
           </div>
+          <Tooltip>
+            <div slot="content">
+              <button
+                class={buttonStyle}
+                on:click={() => colorStore.copyPal(pal.name)}
+              >
+                Copy
+              </button>
+              <button
+                class={buttonStyle}
+                on:click={() => colorStore.removePal(pal.name)}
+              >
+                Delete
+              </button>
+            </div>
+            <div slot="target" let:toggle>
+              <button class={buttonStyle} on:click={toggle}>⚙</button>
+            </div>
+          </Tooltip>
         </div>
         <PalPreview {pal} />
       </div>

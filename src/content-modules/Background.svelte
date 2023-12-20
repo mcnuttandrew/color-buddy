@@ -24,12 +24,15 @@
       <div
         let:toggle
         slot="target"
-        class={"cursor-pointer mr-2 mb-2 w-full h-8 rounded-full border-2 border-gray-200"}
+        class={"cursor-pointer mr-2 mb-2 w-full h-8 rounded-full border-2 border-gray-200 text-center"}
+        class:text-white={bg.toChroma().luminance() < 0.5}
         style={`background: ${bg.toHex()}`}
         on:click={() => {
           toggle();
         }}
-      ></div>
+      >
+        {bg.toHex()}
+      </div>
     </Tooltip>
   </div>
 </div>

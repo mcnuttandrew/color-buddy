@@ -1,8 +1,9 @@
 <script lang="ts">
-  import { Color, colorFromChannels } from "../../lib/Color";
+  import { colorFromChannels } from "../../lib/Color";
   import colorStore from "../../stores/color-store";
   import focusStore from "../../stores/focus-store";
   import Tooltip from "../../components/Tooltip.svelte";
+  import { buttonStyle } from "../../lib/styles";
 
   $: colors = $colorStore.currentPal.colors;
   $: focusedColors = $focusStore.focusedColors;
@@ -53,13 +54,16 @@
   <Tooltip>
     <div slot="content" class="w-40">
       {#each directions as direction}
-        <button class="underline" on:click={() => distributePoints(direction)}>
+        <button
+          class={buttonStyle}
+          on:click={() => distributePoints(direction)}
+        >
           {direction}ly
         </button>
       {/each}
     </div>
     <div slot="target" let:toggle>
-      <button class="underline" on:click={toggle}>Distribute</button>
+      <button class={buttonStyle} on:click={toggle}>Distribute</button>
     </div>
   </Tooltip>
 {/if}

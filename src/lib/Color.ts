@@ -103,6 +103,10 @@ export class HSV extends Color {
       v: [0, 1],
     };
   }
+  toString(): string {
+    const [h, s, v] = Object.values(this.channels);
+    return `color(hsv ${h} ${s} ${v})`;
+  }
 }
 
 export class RGB extends Color {

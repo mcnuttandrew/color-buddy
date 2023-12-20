@@ -36,16 +36,26 @@
       { name: "v", min: 0, max: 1, step: 0.01 },
     ],
   } as Record<string, Channel[]>;
-  $: toColorSpace(color, colorMode)
-    .toChannels()
-    .forEach((val, idx) => {
-      colorConfigs[colorMode][idx].value = val;
+  const colorModeMap: any = { rgb: "srgb" };
+  function toColorIO() {
+    try {
+      return new ColorIO(color.toString());
+    } catch (e) {
+      return new ColorIO(color.toHex());
+    }
+  }
+  $: toColorIO()
+    .to(colorModeMap[colorMode] || colorMode)
+    .coords.forEach((val, idx) => {
+      // @ts-ignore
+      const newVal = typeof val === "object" ? val.valueOf() : val;
+      colorConfigs[colorMode][idx].value = newVal;
     });
 
   // largely copped from https://colorjs.io/apps/picker/lab, https://github.dev/color-js/color.js
   function buildSliderSteps() {
     const coord_meta = colorConfigs[colorMode];
-    const colorModeMap: any = { rgb: "srgb" };
+
     let spaceId = colorModeMap[colorMode] || colorMode;
     const coords = new ColorIO(color.toHex()).to(spaceId).coords;
     const alpha = 1;
@@ -55,11 +65,11 @@
     for (let i = 0; i < coord_meta.length; i++) {
       let { name, min, max } = coord_meta[i];
 
-      let start = coords.slice();
+      let start = coords.slice() as [number, number, number];
       start[i] = min;
       let color1 = new ColorIO(spaceId, start, alpha);
 
-      let end = coords.slice();
+      let end = coords.slice() as [number, number, number];
       end[i] = max;
       let color2 = new ColorIO(spaceId, end, alpha);
 
@@ -115,7 +125,8 @@
                       // @ts-ignore
                       values[idx] = Number(e.target.value);
                       // @ts-ignore
-                      onColorChange(colorFromChannels(values, colorMode));
+                      const newColor = colorFromChannels(values, colorMode);
+                      onColorChange(newColor);
                     }}
                   />
                 </label>

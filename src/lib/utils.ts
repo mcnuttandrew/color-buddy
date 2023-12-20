@@ -11,11 +11,6 @@ export const replaceVal = (arr: Color[], newItem: Color, index: number) => {
   return [...arr.slice(0, index), newItem, ...arr.slice(index + 1)];
 };
 
-export const deleteFrom = (arr: Color[], item: string) => {
-  return arr.filter((x) => x.toHex() !== item);
-  // return [...arr.slice(0, index), ...arr.slice(index + 1)];
-};
-
 export const randChan = () => Math.floor(Math.random() * 255);
 export const randColor = () =>
   colorFromString(`rgb(${randChan()},${randChan()},${randChan()})`, "lab");
@@ -38,17 +33,7 @@ export function avgColors(
   if (colors.length === 0) {
     return colorFromString("#000000", "lab");
   }
-  const colorSpaceMap: Record<string, (color: Color) => number[]> = {
-    rgb: (x) => x.toChannels(),
-    hsl: (x) => x.toChannels(),
-    lab: (x) => x.toChannels(),
-  };
-  const colorSpaceFormatters: any = {
-    // rgb: (x: number[]) => chroma.rgb(x[0], x[1], x[2]),
-    // hsl: (x: number[]) => chroma.hsl(x[0], x[1], x[2]),
-    hsv: (x: number[]) => colorFromChannels([x[0], x[1], x[2]], "hsv"),
-    lab: (x: number[]) => colorFromChannels([x[0], x[1], x[2]], "lab"),
-  };
+
   type ColorChannels = [number, number, number];
   const sum = (a: ColorChannels, b: ColorChannels) =>
     a.map((x, i) => x + b[i]) as ColorChannels;
@@ -57,10 +42,9 @@ export function avgColors(
   ] as ColorChannels);
   const avgColor = sumColor.map((x) => x / colors.length) as ColorChannels;
   if (avgColor.some((x) => isNaN(x))) {
-    return colorFromString("#000000", "lab");
+    return colorFromString("#000000", colorSpace);
   }
-  return colorFromChannels(avgColor, "lab");
-  // return colorSpaceFormatters[colorSpace](avgColor);
+  return colorFromChannels(avgColor, colorSpace);
 }
 
 export function opposingColor(color: Color): Color {

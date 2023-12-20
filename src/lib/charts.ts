@@ -164,7 +164,7 @@ const scatterPlot = (_pal: Palette) => ({
 const map = (pal: Palette) => ({
   $schema: "https://vega.github.io/schema/vega/v5.json",
   width: 500,
-  height: 200,
+  height: 300,
   autosize: "none",
   data: [
     {
@@ -247,7 +247,8 @@ export async function getSVG(localSpec: any, pal: Palette) {
   const runtime = vega.parse(spec, theme);
   const view = await new vega.View(runtime, { renderer: "svg" }).runAsync();
   return await view.toSVG().then((x) => {
-    results[newKey] = x;
-    return x;
+    const newSvg = x.replace("<svg", `<svg overflow="visible" `);
+    results[newKey] = newSvg;
+    return newSvg;
   });
 }

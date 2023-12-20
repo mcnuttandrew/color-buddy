@@ -46,22 +46,15 @@
       <ActionArea />
     </div>
     <!-- right colum -->
-    <div class=" h-1/2 flex-col">
-      <div
-        class="flex flex-wrap overflow-auto p-4"
-        style={`background-color: ${bg.toHex()}`}
-      >
-        {#each charts as spec}
-          <Vega spec={spec($colorStore.currentPal)} />
-        {/each}
-      </div>
-      <div>
-        <h1>Web pages</h1>
-        <div class="flex overflow-auto">
-          <TinyWebpage />
-          <TextBlock />
-        </div>
-      </div>
+    <div
+      class=" h-1/2 flex-col flex flex-wrap overflow-auto p-4"
+      style={`background-color: ${bg.toHex()}`}
+    >
+      <TinyWebpage />
+      <TextBlock />
+      {#each charts as spec}
+        <Vega spec={spec($colorStore.currentPal)} />
+      {/each}
     </div>
   </div>
 </main>

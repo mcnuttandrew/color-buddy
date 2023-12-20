@@ -8,7 +8,7 @@
   import SuggestAdjustments from "./actions-components/SuggestAdjustments.svelte";
   import Background from "./Background.svelte";
   import Sort from "./actions-components/Sort.svelte";
-  $: colors = $colorStore.currentPal.colors || [];
+  import GetColorsFromString from "./actions-components/GetColorsFromString.svelte";
 </script>
 
 <div class="bg-slate-400 p-2 w-96">
@@ -51,23 +51,9 @@
         </div>
       </div>
     </div>
-
     <PalPreview pal={$colorStore.currentPal} />
     <Background />
-
-    <div class="mt-5">
-      <label for="current-colors">Current Colors</label>
-      <textarea
-        id="current-colors"
-        class="w-full p-2 rounded"
-        value={colors.map((color) => color.toHex()).join(", ")}
-        on:change={(e) => {
-          console.log("TODO");
-          // console.log(e.target.value);
-        }}
-      />
-    </div>
-
+    <GetColorsFromString />
     <div class="mt-5">
       <div>Actions</div>
       <button class="underline" on:click={() => colorStore.createNewPal()}>

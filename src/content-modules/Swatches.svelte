@@ -27,7 +27,7 @@
 
 <div class="h-full">
   Swatches
-  <div class="flex p-4" style={`background-color: ${bg.toHex()}`}>
+  <div class="h-full flex p-4" style={`background-color: ${bg.toHex()}`}>
     {#each classes as { className, styleMap }, jdx}
       <div class="flex flex-wrap">
         {#each colors as color, idx}

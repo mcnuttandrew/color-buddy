@@ -19,7 +19,6 @@
       background: $colorStore.currentPal.background,
     };
   }
-  $: console.log(selectedColors);
 </script>
 
 {#if $focusStore.focusedColors.length > 0}

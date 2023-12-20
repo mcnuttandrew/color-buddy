@@ -71,5 +71,6 @@
     top: 0;
     background-color: red;
     opacity: 0;
+    z-index: 1;
   }
 </style>

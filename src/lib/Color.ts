@@ -1,4 +1,5 @@
 import type { Color as ChromaColor } from "chroma-js";
+import ColorIO from "colorjs.io";
 import chroma from "chroma-js";
 export class Color {
   name: string;
@@ -18,7 +19,9 @@ export class Color {
     return this.chromaBind(...this.toChannels()).hex();
   }
   toString(): string {
-    const channelsString = Object.values(this.channels).join(",");
+    const channelsString = Object.values(this.channels)
+      // .map((x) => x.toPrecision(4))
+      .join(",");
     return `${this.spaceName}(${channelsString})`;
   }
   getChannel(channel: keyof typeof this.channels): number {
@@ -31,7 +34,10 @@ export class Color {
     return Object.values(this.channels) as [number, number, number];
   }
   fromChroma(color: ChromaColor): Color {
-    return new Color();
+    // @ts-ignore
+    const channels = color[this.spaceName]();
+    return this.fromChannels(channels);
+    // return this.chromaBind();
   }
   setChannel(channel: keyof typeof this.channels, value: number) {
     this.channels[channel] = value;
@@ -47,7 +53,7 @@ export class Color {
     const regex = new RegExp(`${this.spaceName}\\((.*)% (.*) (.*)\\)`);
     const match = colorString.match(regex);
     if (!match) {
-      throw new Error("Invalid color string");
+      throw new Error(`Invalid color string: ${colorString}`);
     }
     const [_, ...channels] = match;
     return this.fromChannels([+channels[0], +channels[1], +channels[2]]);
@@ -75,6 +81,11 @@ export class CIELAB extends Color {
       a: [-100, 100],
       b: [-100, 100],
     };
+  }
+  toString(): string {
+    const [L, a, b] = Object.values(this.channels);
+    // .map((x) => x.toPrecision(1));
+    return `lab(${L}% ${a} ${b})`;
   }
 }
 export class HSV extends Color {
@@ -141,6 +152,15 @@ export function colorFromChannels(
   colorSpace: keyof typeof colorDirectory
 ): Color {
   return new colorDirectory[colorSpace]().fromChannels(channels);
+}
+
+export function toColorSpace(
+  color: Color,
+  colorSpace: keyof typeof colorDirectory
+): Color {
+  return new colorDirectory[colorSpace]().fromChroma(color.toChroma());
+  // color.toChroma()
+  // return new colorDirectory[colorSpace]().fromString(color.toString());
 }
 
 export const colorDirectory = {

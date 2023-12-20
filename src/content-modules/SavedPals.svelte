@@ -5,6 +5,7 @@
   import SuggestColorPal from "./actions-components/SuggestColorPal.svelte";
   import PalPreview from "../components/PalPreview.svelte";
   import SuggestAdjustments from "./actions-components/SuggestAdjustments.svelte";
+  import Background from "./Background.svelte";
   $: colors = $colorStore.currentPal.colors || [];
 </script>
 
@@ -50,6 +51,7 @@
     </div>
 
     <PalPreview pal={$colorStore.currentPal} />
+    <Background />
 
     <div class="mt-5">
       <label for="current-colors">Current Colors</label>

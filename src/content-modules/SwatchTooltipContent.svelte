@@ -1,5 +1,4 @@
 <script lang="ts">
-  import ColorNameWithEdit from "../components/ColorNameWithEdit.svelte";
   import ColorChannelPicker from "../components/ColorChannelPicker.svelte";
   import { Color } from "../lib/Color";
   import colorStore from "../stores/color-store";
@@ -18,18 +17,9 @@
   };
 </script>
 
-<ColorNameWithEdit
-  {color}
-  onColorChange={(color) => {
-    const updatedColors = [...colors];
-    updatedColors[idx] = color;
-    colorStore.setCurrentPalColors(updatedColors);
-  }}
-/>
-
 <div class="flex">
-  {#each ["lab"] as colorMode}
-    <!-- <ColorChannelPicker
+  {#each ["lab", "hsv"] as colorMode}
+    <ColorChannelPicker
       {color}
       {colorMode}
       onColorChange={(color) => {
@@ -37,7 +27,7 @@
         updatedColors[idx] = color;
         colorStore.setCurrentPalColors(updatedColors);
       }}
-    /> -->
+    />
   {/each}
 </div>
 <div class="flex">
@@ -46,6 +36,7 @@
       class="underline mr-2"
       on:click={() => {
         colorStore.setSort(swap(colors, idx, idx - 1));
+        focusStore.setColors([idx - 1]);
       }}
     >
       Move forward
@@ -56,6 +47,7 @@
       class="underline mr-2"
       on:click={() => {
         colorStore.setSort(swap(colors, idx, idx + 1));
+        focusStore.setColors([idx + 1]);
       }}
     >
       Move backward

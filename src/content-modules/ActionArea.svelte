@@ -10,12 +10,14 @@
   import { buttonStyle } from "../lib/styles";
   import AdjustColor from "./contextual-tools/AdjustColor.svelte";
   import OpposingColor from "./contextual-tools/OpposingColor.svelte";
+  import AddColor from "./contextual-tools/AddColor.svelte";
 
   $: focusedColors = $focusStore.focusedColors;
 </script>
 
 <div class="flex flex-col bg-slate-400 w-full p-2 h-20">
   <div class="flex">
+    <AddColor />
     <AdjustColor />
     <OpposingColor />
 

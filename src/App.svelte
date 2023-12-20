@@ -19,7 +19,7 @@
 <main class="flex h-full">
   <SavedPals />
   <div class="w-full flex-fol">
-    <!-- left column -->
+    <!-- top row -->
     <div class="flex flex-col w h-1/2">
       <div class="flex p-2">
         <div class="w-full flex">
@@ -57,9 +57,9 @@
       </div>
       <ActionArea />
     </div>
-    <!-- right colum -->
+    <!-- bottom row -->
     <div
-      class=" h-1/2 flex-col flex flex-wrap overflow-auto p-4"
+      class=" h-1/2 flex-col flex flex-wrap overflow-auto p-4 max-h-1/2"
       style={`background-color: ${bg.toHex()}`}
     >
       <TinyWebpage />

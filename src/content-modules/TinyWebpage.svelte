@@ -6,7 +6,7 @@
 
 <div
   class="preview transition-all"
-  style="--background: {colors[0]}; --header: {colors[1]}; --text: {colors[2]}; --button: {colors[3]}; background-color: {bg.toHex()};"
+  style="--background: {colors[0]}; --header: {colors[1]}; --text: {colors[2]}; --button: {colors[3]}; "
 >
   <div class="header transition-all">Header</div>
   <div class="content transition-all">
@@ -26,6 +26,7 @@
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    background-color: white;
   }
 
   .header {

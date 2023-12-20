@@ -4,10 +4,12 @@
   import focusStore from "../stores/focus-store";
   import { opposingColor } from "../lib/utils";
 
-  import DeleteSelection from "./brushes/DeleteSelection.svelte";
-  import AlignSelection from "./brushes/AlignSelection.svelte";
-  import CreateAverage from "./brushes/CreateAverage.svelte";
-  import SuggestionModificationToSelection from "./brushes/SuggestionModificationToSelection.svelte";
+  import DeleteSelection from "./contextual-tools/DeleteSelection.svelte";
+  import AlignSelection from "./contextual-tools/AlignSelection.svelte";
+  import CreateAverage from "./contextual-tools/CreateAverage.svelte";
+  import SuggestionModificationToSelection from "./contextual-tools/SuggestionModificationToSelection.svelte";
+  import InterpolatePoints from "./contextual-tools/InterpolatePoints.svelte";
+  import DistributePoints from "./contextual-tools/DistributePoints.svelte";
 
   $: colors = $colorStore.currentPal.colors;
   $: focusedColors = $focusStore.focusedColors;
@@ -52,8 +54,9 @@
 
     <CreateAverage />
     <SuggestionModificationToSelection />
+    <InterpolatePoints />
+    <DistributePoints />
 
-    <div>TODO Distribute vertical / horizontally</div>
     <AlignSelection />
     {#if focusedColors.length > 0}
       <div>

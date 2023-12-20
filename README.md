@@ -4,15 +4,17 @@ Run: `npx netlify dev`
 
 Use: should point to localhost:8888 if all is well
 
+- [ ] Touch events
 - [ ] Coat of paint
 - [ ] add color analysis
-- [ ] distribute horizontal / vertical
 - [ ] higher card. vis examples
 - [ ] kbd commands, up/down for moving selections, cmd+z for undo, etc
 - [ ] make charts be end user manipuable
 - [ ] make old pals searchable
 - [ ] order as diverging
 - [ ] Plot operate over other color spaces
+- [ ] Meta: figure out all the other features in maureen's setup
+- [x] distribute horizontal / vertical
 - [x] Plot zoom (maybe need to return and make this good and dynamic)
 - [x] Cursor selection range
 - [x] color text input

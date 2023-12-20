@@ -1,14 +1,14 @@
 <script lang="ts">
   import colorStore from "../stores/color-store";
-  import SuggestName from "./actions-components/SuggestName.svelte";
-  import AddFamiliarPal from "./actions-components/AddFamiliarPal.svelte";
-  import SuggestColorPal from "./actions-components/SuggestColorPal.svelte";
-  import SuggestColors from "./actions-components/SuggestColors.svelte";
+  import SuggestName from "./context-free-tools/SuggestName.svelte";
+  import AddFamiliarPal from "./context-free-tools/AddFamiliarPal.svelte";
+  import SuggestColorPal from "./context-free-tools/SuggestColorPal.svelte";
+  import SuggestColors from "./context-free-tools/SuggestColors.svelte";
   import PalPreview from "../components/PalPreview.svelte";
-  import SuggestAdjustments from "./actions-components/SuggestAdjustments.svelte";
+  import SuggestAdjustments from "./context-free-tools/SuggestAdjustments.svelte";
   import Background from "./Background.svelte";
-  import Sort from "./actions-components/Sort.svelte";
-  import GetColorsFromString from "./actions-components/GetColorsFromString.svelte";
+  import Sort from "./context-free-tools/Sort.svelte";
+  import GetColorsFromString from "./context-free-tools/GetColorsFromString.svelte";
 </script>
 
 <div class="bg-slate-400 p-2 w-96">

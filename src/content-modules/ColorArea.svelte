@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { flip } from "svelte/animate";
   import colorStore from "../stores/color-store";
   import focusStore from "../stores/focus-store";
   import { Color, colorFromChannels } from "../lib/Color";
@@ -10,6 +9,13 @@
   $: focusedColors = $focusStore.focusedColors;
   $: focusSet = new Set(focusedColors);
 
+  let minA = -100;
+  let maxA = 100;
+  let minB = -100;
+  let maxB = 100;
+  let minL = 0;
+  let maxL = 100;
+
   const margin = {
     top: 10,
     right: 10,
@@ -19,11 +25,11 @@
   const plotWidth = width - margin.left - margin.right;
   const plotHeight = height - margin.top - margin.bottom;
   // A
-  const xScale = scaleLinear().domain([-100, 100]).range([0, plotWidth]);
+  $: xScale = scaleLinear().domain([minA, maxA]).range([0, plotWidth]);
   // B
-  const yScale = scaleLinear().domain([100, -100]).range([0, plotHeight]);
+  $: yScale = scaleLinear().domain([maxB, minB]).range([0, plotHeight]);
   // L
-  const zScale = scaleLinear().domain([100, 0]).range([0, plotHeight]);
+  $: zScale = scaleLinear().domain([maxL, minL]).range([0, plotHeight]);
 
   let dragging: false | { x: number; y: number } = false;
   let dragBox: false | { x: number; y: number } = false;
@@ -215,6 +221,94 @@
       {/if}
     </g>
   </svg>
+  <div class="flex text-sm">
+    <div class="flex flex-col">
+      <label for="min-a">Min a*</label>
+      <input
+        class="w-full"
+        type="number"
+        id="min-a"
+        min={-100}
+        max={maxA}
+        bind:value={minA}
+        step={1}
+      />
+    </div>
+    <div class="flex flex-col">
+      <label for="max-a">Max a*</label>
+      <input
+        class="w-full"
+        type="number"
+        id="max-a"
+        min={minA}
+        max={100}
+        bind:value={maxA}
+        step={1}
+      />
+    </div>
+
+    <div class="flex flex-col">
+      <label for="min-b">Min b*</label>
+      <input
+        class="w-full"
+        type="number"
+        id="min-b"
+        min={-100}
+        max={maxB}
+        bind:value={minB}
+        step={1}
+      />
+    </div>
+    <div class="flex flex-col">
+      <label for="max-b">Max b*</label>
+      <input
+        class="w-full"
+        type="number"
+        id="max-b"
+        min={minB}
+        max={100}
+        bind:value={maxB}
+        step={1}
+      />
+    </div>
+
+    <div class="flex flex-col">
+      <label for="min-L">Min L*</label>
+      <input
+        class="w-full"
+        type="number"
+        id="min-L"
+        min={0}
+        max={maxL}
+        bind:value={minL}
+        step={1}
+      />
+    </div>
+    <div class="flex flex-col">
+      <label for="max-L">Max L*</label>
+      <input
+        class="w-full"
+        type="number"
+        id="max-L"
+        min={minL}
+        max={100}
+        bind:value={maxL}
+        step={1}
+      />
+    </div>
+    <button
+      on:click={() => {
+        minA = -100;
+        maxA = 100;
+        minB = -100;
+        maxB = 100;
+        minL = 0;
+        maxL = 100;
+      }}
+    >
+      Reset
+    </button>
+  </div>
 </div>
 <div>
   <span>CIELAB L*</span>

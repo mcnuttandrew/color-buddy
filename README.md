@@ -12,8 +12,8 @@ Use: should point to localhost:8888 if all is well
 - [ ] make charts be end user manipuable
 - [ ] make old pals searchable
 - [ ] order as diverging
-- [ ] Plot zoom
 - [ ] Plot operate over other color spaces
+- [x] Plot zoom (maybe need to return and make this good and dynamic)
 - [x] Cursor selection range
 - [x] color text input
 - [x] make color sliders be shaded in the background (https://observablehq.com/@d3/hcl-color-picker)

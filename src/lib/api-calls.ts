@@ -104,5 +104,8 @@ export function suggestAdjustments(
 ) {
   const body = JSON.stringify({ prompt, ...palToString(currentPal) });
   const scaffold = engineToScaffold[engine];
-  return scaffold<string>(`/.netlify/functions/suggest-adjustments`, body);
+  return scaffold<{ background: string; colors: string[] }>(
+    `/.netlify/functions/suggest-adjustments`,
+    body
+  );
 }

@@ -8,7 +8,7 @@
   $: bg = $colorStore.currentPal.background;
   $: focusSet = new Set($focusStore.focusedColors);
 
-  let common = "cursor-pointer mr-2 mb-2";
+  let common = "cursor-pointer mr-2 mb-2 transition-transform";
   let classes = [
     {
       className: `${common} w-14 h-14 `,
@@ -25,7 +25,7 @@
   ];
 </script>
 
-<div class="flex p-2" style={`background-color: ${bg.toHex()}`}>
+<div class="flex p-4" style={`background-color: ${bg.toHex()}`}>
   {#each classes as { className, styleMap }, jdx}
     <div class="flex flex-wrap">
       {#each colors as color, idx}
@@ -51,8 +51,7 @@
 
                 focusStore.addColor(idx);
               }}
-              class:mt-2={focusSet.has(idx)}
-              class:ml-2={focusSet.has(idx)}
+              class:rotate-45={focusSet.has(idx)}
             ></div>
           </Tooltip>
         </div>

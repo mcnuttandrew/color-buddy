@@ -33,11 +33,13 @@
     class:visibleTooltip={tooltipOpen}
     style={`top: ${top}`}
   >
-    <span>
-      <slot name="content" {onClick}>
-        <span class="missing">No content</span>
-      </slot>
-    </span>
+    {#if tooltipOpen}
+      <span>
+        <slot name="content" {onClick}>
+          <span class="missing">No content</span>
+        </slot>
+      </span>
+    {/if}
   </span>
 </div>
 
@@ -71,5 +73,6 @@
     top: 0;
     background-color: red;
     opacity: 0;
+    z-index: 1;
   }
 </style>

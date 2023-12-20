@@ -1,110 +1,175 @@
 import type { Color as ChromaColor } from "chroma-js";
+import ColorIO from "colorjs.io";
 import chroma from "chroma-js";
 export class Color {
   name: string;
   channels: Record<string, number>;
+  chromaBind: typeof chroma.lab;
+  spaceName: string;
+  channelDimensions: Record<keyof typeof this.channels, [number, number]>;
   constructor() {
     this.name = "";
     this.channels = {};
+    this.chromaBind = chroma.rgb;
+    this.spaceName = "";
+    this.channelDimensions = {};
   }
 
   toHex(): string {
-    return "#000000";
+    return this.chromaBind(...this.toChannels()).hex();
   }
   toString(): string {
-    return "#000000";
+    const channelsString = Object.values(this.channels)
+      // .map((x) => x.toPrecision(4))
+      .join(",");
+    return `${this.spaceName}(${channelsString})`;
   }
-  getChannel(channel: string): number {
-    return 0;
+  getChannel(channel: keyof typeof this.channels): number {
+    return this.channels[channel];
   }
   toChroma(): ChromaColor {
-    return chroma("#000000");
+    return this.chromaBind(...this.toChannels());
   }
   toChannels(): [number, number, number] {
-    return [0, 0, 0];
+    return Object.values(this.channels) as [number, number, number];
   }
-  static fromChroma(color: ChromaColor): Color {
-    return new Color();
+  fromChroma(color: ChromaColor): Color {
+    // @ts-ignore
+    const channels = color[this.spaceName]();
+    return this.fromChannels(channels);
+    // return this.chromaBind();
   }
-  setChannel(channel: string, value: number) {
+  setChannel(channel: keyof typeof this.channels, value: number) {
     this.channels[channel] = value;
   }
-  static channelDimensions(channel: string): [number, number] {
-    return [0, 0];
+
+  fromString(colorString: string): Color {
+    if (!colorString.startsWith(`${this.spaceName}(`)) {
+      // @ts-ignore
+      const chromaChannels = chroma(colorString)[this.spaceName]();
+      return this.fromChannels(chromaChannels);
+    }
+    // extract the numbers from the string
+    const regex = new RegExp(`${this.spaceName}\\((.*)% (.*) (.*)\\)`);
+    const match = colorString.match(regex);
+    if (!match) {
+      throw new Error(`Invalid color string: ${colorString}`);
+    }
+    const [_, ...channels] = match;
+    return this.fromChannels([+channels[0], +channels[1], +channels[2]]);
   }
-  static fromString(colorString: string): Color {
-    return new Color();
-  }
-  static fromChannels(channels: [number, number, number]): Color {
-    return new Color();
-  }
-  static distance(color1: Color, color2: Color): number {
-    return 0;
+  fromChannels(channels: [number, number, number]): Color {
+    const newColor = new (this.constructor as typeof Color)();
+    Object.keys(this.channels).forEach((channel, i) => {
+      newColor.setChannel(channel, channels[i]);
+    });
+    return newColor;
   }
 }
 
-export class CIELAB implements Color {
+export class CIELAB extends Color {
   name: "CIELAB";
   channels: { L: number; a: number; b: number };
   constructor() {
+    super();
     this.name = "CIELAB";
     this.channels = { L: 0, a: 0, b: 0 };
-  }
-  toHex(): string {
-    return chroma.lab(this.channels.L, this.channels.a, this.channels.b).hex();
+    this.chromaBind = chroma.lab;
+    this.spaceName = "lab";
+    this.channelDimensions = {
+      L: [0, 100],
+      a: [-100, 100],
+      b: [-100, 100],
+    };
   }
   toString(): string {
-    return `lab(${this.channels.L},${this.channels.a},${this.channels.b})`;
-  }
-  toChroma(): ChromaColor {
-    return chroma.lab(this.channels.L, this.channels.a, this.channels.b);
-  }
-  toChannels(): [number, number, number] {
-    return [this.channels.L, this.channels.a, this.channels.b];
-  }
-  setChannel(channel: "L" | "a" | "b", value: number) {
-    this.channels[channel] = value;
-  }
-  getChannel(channel: "L" | "a" | "b"): number {
-    return this.channels[channel];
-  }
-
-  static channelDimensions(channel: "L" | "a" | "b"): [number, number] {
-    switch (channel) {
-      case "L":
-        return [0, 100];
-      case "a":
-        return [-100, 100];
-      case "b":
-        return [-100, 100];
-    }
-  }
-  static fromString(colorString: string): CIELAB {
-    if (!colorString.startsWith("lab(")) {
-      const chromaColor = chroma(colorString).lab();
-      return CIELAB.fromChannels(chromaColor);
-    }
-    // extract the numbers from the string
-    // lab(29.2345% 39.3825 20.0664) -> [29.2345, 39.3825, 20.0664];
-    // lab(52.2345% 40.1645 59.9971) -> [52.2345, 40.1645, 59.9971];
-    const regex = /lab\((.*)% (.*) (.*)\)/;
-    const match = colorString.match(regex);
-    if (!match) {
-      throw new Error("Invalid color string");
-    }
-    const [_, L, a, b] = match;
-    const lab = CIELAB.fromChannels([+L, +a, +b]);
-    return lab;
-  }
-  static fromChannels(channels: [number, number, number]): CIELAB {
-    const lab = new CIELAB();
-    lab.channels.L = channels[0];
-    lab.channels.a = channels[1];
-    lab.channels.b = channels[2];
-    return lab;
-  }
-  static distance(color1: CIELAB, color2: CIELAB): number {
-    // todo rework
-    return chroma.deltaE(color1.toChroma(), color2.toChroma());
+    const [L, a, b] = Object.values(this.channels);
+    // .map((x) => x.toPrecision(1));
+    return `lab(${L}% ${a} ${b})`;
   }
 }
+export class HSV extends Color {
+  name: "HSV";
+  channels: { h: number; s: number; v: number };
+  constructor() {
+    super();
+    this.name = "HSV";
+    this.channels = { h: 0, s: 0, v: 0 };
+    this.chromaBind = chroma.hsv;
+    this.spaceName = "hsv";
+    this.channelDimensions = {
+      h: [0, 360],
+      s: [0, 1],
+      v: [0, 1],
+    };
+  }
+  toString(): string {
+    const [h, s, v] = Object.values(this.channels);
+    return `color(hsv ${h} ${s} ${v})`;
+  }
+}
+
+export class RGB extends Color {
+  name: "RGB";
+  channels: { r: number; g: number; b: number };
+  constructor() {
+    super();
+    this.name = "RGB";
+    this.channels = { r: 0, g: 0, b: 0 };
+    this.chromaBind = chroma.rgb;
+    this.spaceName = "rgb";
+    this.channelDimensions = {
+      h: [0, 255],
+      s: [0, 255],
+      v: [0, 255],
+    };
+  }
+}
+
+export class HSL extends Color {
+  name: "HSL";
+  channels: { h: number; s: number; l: number };
+  constructor() {
+    super();
+    this.name = "HSL";
+    this.channels = { h: 0, s: 0, l: 0 };
+    this.chromaBind = chroma.hsl;
+    this.spaceName = "hsl";
+    // todo maybe wrong
+    this.channelDimensions = {
+      h: [0, 360],
+      s: [0, 100],
+      v: [0, 100],
+    };
+  }
+}
+
+export function colorFromString(
+  colorString: string,
+  colorSpace: keyof typeof colorDirectory
+): Color {
+  return new colorDirectory[colorSpace]().fromString(colorString);
+}
+
+export function colorFromChannels(
+  channels: [number, number, number],
+  colorSpace: keyof typeof colorDirectory
+): Color {
+  return new colorDirectory[colorSpace]().fromChannels(channels);
+}
+
+export function toColorSpace(
+  color: Color,
+  colorSpace: keyof typeof colorDirectory
+): Color {
+  return new colorDirectory[colorSpace]().fromChroma(color.toChroma());
+  // color.toChroma()
+  // return new colorDirectory[colorSpace]().fromString(color.toString());
+}
+
+export const colorDirectory = {
+  lab: CIELAB,
+  hsv: HSV,
+  hsl: HSL,
+  rgb: RGB,
+};

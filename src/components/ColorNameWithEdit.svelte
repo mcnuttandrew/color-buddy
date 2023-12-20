@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Color, CIELAB } from "../lib/Color";
+  import { Color, colorFromString } from "../lib/Color";
   export let color: Color;
   export let onColorChange: (color: Color) => void;
 </script>
@@ -11,7 +11,7 @@
       // @ts-ignore
       const newColor = e.target.textContent;
       try {
-        onColorChange(CIELAB.fromString(newColor));
+        onColorChange(colorFromString(newColor, "lab"));
       } catch (e) {
         console.log(e);
       }

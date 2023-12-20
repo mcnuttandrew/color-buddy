@@ -1,7 +1,7 @@
 <script lang="ts">
   import Tooltip from "../../components/Tooltip.svelte";
   import colorStore from "../../stores/color-store";
-  import { CIELAB } from "../../lib/Color";
+  import { colorFromString } from "../../lib/Color";
   import { suggestAdjustments } from "../../lib/api-calls";
   import type { Palette } from "../../stores/color-store";
   import PalPreview from "../../components/PalPreview.svelte";
@@ -9,7 +9,7 @@
   let requestState: "idle" | "loading" | "loaded" = "idle";
   let newPal: Palette = {
     colors: [],
-    background: CIELAB.fromString("#000000"),
+    background: colorFromString("#000000", "lab"),
     name: "blank",
   };
   let palPrompt: string = "";
@@ -71,10 +71,10 @@
               }
               const suggestion = suggestions[0];
               newPal.colors = suggestion.colors.map((x) =>
-                CIELAB.fromString(x)
+                colorFromString(x, "lab")
               );
-              newPal.background = CIELAB.fromString(suggestion.background);
-              newPal.name = palPrompt;
+              newPal.background = colorFromString(suggestion.background, "lab");
+              newPal.name = $colorStore.currentPal.name;
 
               requestState = "loaded";
             });

@@ -14,28 +14,30 @@
     step: number;
     value?: number;
   };
-  $: colorConfigs = {
-    rgb: [
-      { name: "Red", min: 0, max: 255, step: 1 },
-      { name: "Green", min: 0, max: 255, step: 1 },
-      { name: "Blue", min: 0, max: 255, step: 1 },
-    ],
-    hsl: [
-      { name: "Hue", min: 0, max: 360, step: 1 },
-      { name: "Saturation", min: 0, max: 1, step: 0.01 },
-      { name: "Lightness", min: 0, max: 1, step: 0.01 },
-    ],
-    lab: [
-      { name: "L", min: 0, max: 100, step: 1 },
-      { name: "a", min: -110, max: 110, step: 1 },
-      { name: "b", min: -110, max: 110, step: 1 },
-    ],
-    hsv: [
-      { name: "h", min: 0, max: 360, step: 1 },
-      { name: "s", min: 0, max: 1, step: 0.01 },
-      { name: "v", min: 0, max: 1, step: 0.01 },
-    ],
-  } as Record<string, Channel[]>;
+  $: colorConfigs =
+    color &&
+    ({
+      rgb: [
+        { name: "Red", min: 0, max: 255, step: 1 },
+        { name: "Green", min: 0, max: 255, step: 1 },
+        { name: "Blue", min: 0, max: 255, step: 1 },
+      ],
+      hsl: [
+        { name: "Hue", min: 0, max: 360, step: 1 },
+        { name: "Saturation", min: 0, max: 1, step: 0.01 },
+        { name: "Lightness", min: 0, max: 1, step: 0.01 },
+      ],
+      lab: [
+        { name: "L", min: 0, max: 100, step: 1 },
+        { name: "a", min: -110, max: 110, step: 1 },
+        { name: "b", min: -110, max: 110, step: 1 },
+      ],
+      hsv: [
+        { name: "h", min: 0, max: 360, step: 1 },
+        { name: "s", min: 0, max: 1, step: 0.01 },
+        { name: "v", min: 0, max: 1, step: 0.01 },
+      ],
+    } as Record<string, Channel[]>);
   const colorModeMap: any = { rgb: "srgb" };
   function toColorIO() {
     try {
@@ -44,13 +46,14 @@
       return new ColorIO(color.toHex());
     }
   }
-  $: toColorIO()
-    .to(colorModeMap[colorMode] || colorMode)
-    .coords.forEach((val, idx) => {
-      // @ts-ignore
-      const newVal = typeof val === "object" ? val.valueOf() : val;
-      colorConfigs[colorMode][idx].value = newVal;
-    });
+  $: color &&
+    toColorIO()
+      .to(colorModeMap[colorMode] || colorMode)
+      .coords.forEach((val, idx) => {
+        // @ts-ignore
+        const newVal = typeof val === "object" ? val.valueOf() : val;
+        colorConfigs[colorMode][idx].value = newVal;
+      });
 
   // largely copped from https://colorjs.io/apps/picker/lab, https://github.dev/color-js/color.js
   function buildSliderSteps() {
@@ -109,7 +112,27 @@
             <div class="flex items-start flex-col mb-2">
               <div class="flex">
                 <label class="block uppercase text-sm mt-2">
-                  {channel.name} ({channel.min}-{channel.max})
+                  <div class="flex w-full justify-between">
+                    <span>{channel.name} ({channel.min}-{channel.max})</span>
+                    <input
+                      class="w-full h-4 text-right"
+                      type="number"
+                      value={channel.value}
+                      min={channel.min}
+                      max={channel.max}
+                      step={channel.step}
+                      on:change={(e) => {
+                        const values = [
+                          ...colorConfigs[colorMode].map((x) => x.value),
+                        ];
+                        // @ts-ignore
+                        values[idx] = Number(e.target.value);
+                        // @ts-ignore
+                        const newColor = colorFromChannels(values, colorMode);
+                        onColorChange(newColor);
+                      }}
+                    />
+                  </div>
                   <input
                     class="color-slider"
                     type="range"

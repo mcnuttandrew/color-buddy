@@ -9,7 +9,7 @@
   import TextBlock from "./content-modules/TextBlock.svelte";
   import Swatches from "./content-modules/Swatches.svelte";
   import Eval from "./content-modules/Eval.svelte";
-  import { buttonStyle } from "./lib/styles";
+  import KeyboardHooks from "./components/KeyboardHooks.svelte";
 
   let state: "swatches" | "eval" = "swatches";
 
@@ -70,3 +70,5 @@
     </div>
   </div>
 </main>
+
+<KeyboardHooks />

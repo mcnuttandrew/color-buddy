@@ -66,7 +66,6 @@
             pointB,
             numPointsToAdd
           );
-          console.log(newPoints);
           newColors = [...newColors, ...newPoints];
           colorStore.setCurrentPalColors(newColors);
         }}

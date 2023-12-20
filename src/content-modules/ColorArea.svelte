@@ -221,6 +221,7 @@
           fill={bg.toChroma().luminance() > 0.5 ? "black" : "white"}
           text-anchor="middle"
           alignment-baseline="middle"
+          class="pointer-events-none"
         >
           BG
         </text>

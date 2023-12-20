@@ -8,17 +8,17 @@ Use: should point to localhost:8888 if all is well
 - [ ] Coat of paint
 - [ ] add color analysis
 - [ ] higher card. vis examples
-- [x] kbd commands, up/down for moving selections, cmd+z for undo, etc
-- [ ] make charts be end user manipuable
+- [ ] make charts be end user manipulable
 - [ ] make old pals searchable
 - [ ] order as diverging
 - [ ] Plot operate over other color spaces
 - [ ] Meta: figure out all the other features in maureen's setup
+- [x] kbd commands, up/down for moving selections, cmd+z for undo, etc
 - [x] distribute horizontal / vertical
 - [x] Plot zoom
 - [x] Cursor selection range
 - [x] color text input
-- [x] make color sliders be shaded in the background (https://observablehq.com/@d3/hcl-color-picker)
+- [x] make color sliders be shaded in the background
 - [x] Add support for other color schemes (finish generalizing the chroma refactor)
 - [x] Make colors actually work right (eg rip out chroma)
 - [x] Minor: Make the aligns be a tool tip

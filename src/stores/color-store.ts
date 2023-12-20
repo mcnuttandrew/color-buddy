@@ -178,6 +178,8 @@ function createStore() {
         const bVal = new ColorIO(b.toHex()).to(colorSpace).coords[channel];
         return aVal - bVal;
       })(),
+    reverseSort: () => palUp((n) => ({ ...n, colors: n.colors.reverse() })),
+
     replaceColor: (oldColor: Color, newColor: Color) =>
       palUp((n) => ({
         ...n,

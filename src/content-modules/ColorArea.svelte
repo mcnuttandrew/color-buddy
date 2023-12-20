@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { flip } from "svelte/animate";
   import colorStore from "../stores/color-store";
   import focusStore from "../stores/focus-store";
   import { Color, colorFromChannels } from "../lib/Color";
@@ -179,9 +180,10 @@
         <!-- svelte-ignore a11y-click-events-have-key-events -->
         <circle
           on:mousedown={(e) => startDrag(e)}
-          class="cursor-pointer"
-          cx={xScale(color.toChannels()[1])}
-          cy={yScale(color.toChannels()[2])}
+          class="cursor-pointer transition-all"
+          transform={`translate(${xScale(color.toChannels()[1])}, ${yScale(
+            color.toChannels()[2]
+          )})`}
           r={10 + (focusSet.has(i) ? 5 : 0)}
           fill={color.toHex()}
           on:click={(e) => {

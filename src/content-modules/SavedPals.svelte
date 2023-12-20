@@ -3,15 +3,17 @@
   import SuggestName from "./actions-components/SuggestName.svelte";
   import AddFamiliarPal from "./actions-components/AddFamiliarPal.svelte";
   import SuggestColorPal from "./actions-components/SuggestColorPal.svelte";
+  import SuggestColors from "./actions-components/SuggestColors.svelte";
   import PalPreview from "../components/PalPreview.svelte";
   import SuggestAdjustments from "./actions-components/SuggestAdjustments.svelte";
   import Background from "./Background.svelte";
+  import Sort from "./actions-components/Sort.svelte";
   $: colors = $colorStore.currentPal.colors || [];
 </script>
 
 <div class="bg-slate-400 p-2 w-96">
   <div class="text-4xl font-bold">Color Buddy</div>
-  <div class="flex justify-between">
+  <div class="flex justify-between z-50">
     <div>
       <button on:click={() => colorStore.undo()}>Undo</button>
       <button on:click={() => colorStore.redo()}>Redo</button>
@@ -72,17 +74,11 @@
         New Pal
       </button>
       <AddFamiliarPal />
-
       <SuggestName />
-      <button class="underline" on:click={() => colorStore.randomizeOrder()}>
-        Randomize order
-      </button>
-      <button class="underline" on:click={() => colorStore.sortByHue()}>
-        Sort by hue
-      </button>
-
+      <Sort />
       <SuggestColorPal />
       <SuggestAdjustments />
+      <SuggestColors />
     </div>
   </section>
   <section class="mt-4 border-t-2 border-black">

@@ -4,7 +4,7 @@ Run: `npx netlify dev`
 
 Use: should point to localhost:8888 if all is well
 
-- [ ] Add support for other color schemes (finish generalizing the chroma refactor)
+- [x] Add support for other color schemes (finish generalizing the chroma refactor)
 - [ ] Coat of paint
 - [ ] Unbreak the color channel stuff, also the avging actions
 - [x] Minor: Make the aligns be a tool tip

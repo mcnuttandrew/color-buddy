@@ -35,7 +35,7 @@
           <button
             class="underline"
             on:click={() => {
-              colorStore.createNewPalWithExplicitPal(newPal);
+              colorStore.setCurrentPalColors(newPal.colors);
               requestState = "idle";
               palPrompt = "";
               onClick();

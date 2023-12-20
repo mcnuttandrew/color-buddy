@@ -1,6 +1,7 @@
 <script lang="ts">
-  import { CIELAB, colorFromString } from "../../lib/Color";
+  import { colorFromString } from "../../lib/Color";
   import colorStore from "../../stores/color-store";
+  import focusStore from "../../stores/focus-store";
   import { onMount } from "svelte";
   import type { Palette } from "../../stores/color-store";
   import Tooltip from "../../components/Tooltip.svelte";
@@ -99,6 +100,7 @@
                 on:click={() => {
                   colorStore.createNewPalWithExplicitPal(pal);
                   onClick();
+                  focusStore.clearColors();
                 }}
               >
                 {pal.name}

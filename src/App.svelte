@@ -4,37 +4,49 @@
   import Vega from "./components/Vega.svelte";
   import ColorArea from "./content-modules/ColorArea.svelte";
   import SavedPals from "./content-modules/SavedPals.svelte";
-  import ColorPanel from "./content-modules/ActionArea.svelte";
+  import ActionArea from "./content-modules/ActionArea.svelte";
   import TinyWebpage from "./content-modules/TinyWebpage.svelte";
   import TextBlock from "./content-modules/TextBlock.svelte";
-  import SuggestionsPanel from "./content-modules/SuggestionsPanel.svelte";
   import Swatches from "./content-modules/Swatches.svelte";
-  import Tooltip from "./components/Tooltip.svelte";
-  import ColorChannelPicker from "./components/ColorChannelPicker.svelte";
-  import ColorNameWithEdit from "./components/ColorNameWithEdit.svelte";
+  import Eval from "./content-modules/Eval.svelte";
+
+  let state: "swatches" | "eval" = "swatches";
 
   $: bg = $colorStore.currentPal.background;
 </script>
 
 <main class="flex h-full">
   <SavedPals />
-  <div class="w-full flex p-2">
+  <div class="w-full flex-fol">
     <!-- left column -->
-    <div class="flex-col w-1/2">
-      <ColorPanel />
-      <div class="flex">
-        <!-- <ColorCircle height={300} width={300} /> -->
-        <ColorArea height={400} width={400} />
+    <div class="flex flex-col w h-1/2">
+      <div class="flex p-2">
+        <div class="w-full flex">
+          <ColorArea height={450} width={450} />
+        </div>
+        <div class="w-full">
+          {#each ["swatches", "eval"] as tab}
+            <button
+              class="underline mr-2"
+              class:font-bold={state === tab}
+              on:click={() => {
+                state = tab;
+              }}
+            >
+              {tab}
+            </button>
+          {/each}
+          {#if state === "swatches"}
+            <Swatches />
+          {:else}
+            <Eval />
+          {/if}
+        </div>
       </div>
-      <Swatches />
-
-      <SuggestionsPanel />
-      <h1>Evaluation</h1>
-      <div>TODO</div>
+      <ActionArea />
     </div>
     <!-- right colum -->
-    <div class=" w-1/2">
-      <h1>Visualizations</h1>
+    <div class=" h-1/2 flex-col">
       <div
         class="flex flex-wrap overflow-auto p-4"
         style={`background-color: ${bg.toHex()}`}
@@ -43,10 +55,12 @@
           <Vega spec={spec($colorStore.currentPal)} />
         {/each}
       </div>
-      <h1>Web pages</h1>
-      <div class="flex flex-wrap overflow-auto">
-        <TinyWebpage />
-        <TextBlock />
+      <div>
+        <h1>Web pages</h1>
+        <div class="flex overflow-auto">
+          <TinyWebpage />
+          <TextBlock />
+        </div>
       </div>
     </div>
   </div>

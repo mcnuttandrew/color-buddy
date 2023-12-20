@@ -25,46 +25,49 @@
   ];
 </script>
 
-<div class="flex p-4" style={`background-color: ${bg.toHex()}`}>
-  {#each classes as { className, styleMap }, jdx}
+<div class="h-full">
+  Swatches
+  <div class="flex p-4" style={`background-color: ${bg.toHex()}`}>
+    {#each classes as { className, styleMap }, jdx}
+      <div class="flex flex-wrap">
+        {#each colors as color, idx}
+          <!-- svelte-ignore a11y-click-events-have-key-events -->
+          <!-- svelte-ignore a11y-no-static-element-interactions -->
+          <div>
+            <Tooltip
+              top={"100px"}
+              onClose={() => {
+                focusStore.clearColors();
+              }}
+            >
+              <div slot="content" class="flex flex-col" let:onClick>
+                <SwatchTooltipContent {color} closeTooltip={onClick} {idx} />
+              </div>
+              <div
+                let:toggle
+                slot="target"
+                class={className}
+                style={styleMap(color)}
+                on:click={() => {
+                  toggle();
+
+                  focusStore.addColor(idx);
+                }}
+                class:rotate-45={focusSet.has(idx)}
+              ></div>
+            </Tooltip>
+          </div>
+        {/each}
+      </div>
+    {/each}
     <div class="flex flex-wrap">
-      {#each colors as color, idx}
+      {#each colors as color}
         <!-- svelte-ignore a11y-click-events-have-key-events -->
         <!-- svelte-ignore a11y-no-static-element-interactions -->
-        <div>
-          <Tooltip
-            top={"100px"}
-            onClose={() => {
-              focusStore.clearColors();
-            }}
-          >
-            <div slot="content" class="flex flex-col" let:onClick>
-              <SwatchTooltipContent {color} closeTooltip={onClick} {idx} />
-            </div>
-            <div
-              let:toggle
-              slot="target"
-              class={className}
-              style={styleMap(color)}
-              on:click={() => {
-                toggle();
-
-                focusStore.addColor(idx);
-              }}
-              class:rotate-45={focusSet.has(idx)}
-            ></div>
-          </Tooltip>
+        <div style={`color: ${color.toHex()}`}>
+          {color.toHex()}
         </div>
       {/each}
     </div>
-  {/each}
-  <div class="flex flex-wrap">
-    {#each colors as color}
-      <!-- svelte-ignore a11y-click-events-have-key-events -->
-      <!-- svelte-ignore a11y-no-static-element-interactions -->
-      <div style={`color: ${color.toHex()}`}>
-        {color.toHex()}
-      </div>
-    {/each}
   </div>
 </div>

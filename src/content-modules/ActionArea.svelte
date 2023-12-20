@@ -1,13 +1,16 @@
 <script lang="ts">
-  import { Color, colorFromChannels, colorDirectory } from "../lib/Color";
+  import { Color, colorFromChannels } from "../lib/Color";
   import colorStore from "../stores/color-store";
   import focusStore from "../stores/focus-store";
-  import Tooltip from "../components/Tooltip.svelte";
-  import { avgColors, opposingColor } from "../lib/utils";
+  import { opposingColor } from "../lib/utils";
+
+  import DeleteSelection from "./brushes/DeleteSelection.svelte";
+  import AlignSelection from "./brushes/AlignSelection.svelte";
+  import CreateAverage from "./brushes/CreateAverage.svelte";
+  import SuggestionModificationToSelection from "./brushes/SuggestionModificationToSelection.svelte";
+
   $: colors = $colorStore.currentPal.colors;
   $: focusedColors = $focusStore.focusedColors;
-  $: focusSet = new Set(focusedColors);
-  $: focusLabs = focusedColors.map((idx) => colors[idx].toChannels());
 
   function actionOnColor(idx: number, action: (Color: Color) => any) {
     const newColor = action(colors[idx]);
@@ -15,23 +18,11 @@
     newColors[idx] = newColor;
     colorStore.setCurrentPalColors(newColors);
   }
-
-  const mapFocusedColors = (fn: (color: [number, number, number]) => any) =>
-    colors.map((color, idx) =>
-      focusSet.has(idx) ? fn(color.toChannels()) : color
-    );
-
-  const ALIGNS = [
-    { pos: 1, name: "Left", op: Math.min },
-    { pos: 1, name: "Right", op: Math.max },
-    { pos: 2, name: "Top", op: Math.max },
-    { pos: 2, name: "Bottom", op: Math.min },
-  ];
 </script>
 
-<div class="flex flex-col border-2 border-slate-300 rounded h-40">
-  Action Panel
-  <div class="flex flex-wrap">
+<div class="flex flex-col bg-slate-400 w-full p-2 h-20">
+  <!-- Action Panel -->
+  <div class="flex">
     {#if focusedColors.length === 1}
       <div class="flex">
         {#each ["brighten", "darken", "saturate", "desaturate"] as action}
@@ -48,17 +39,7 @@
             {action[0].toUpperCase()}{action.slice(1)}
           </button>
         {/each}
-        <button
-          class="underline mr-2"
-          on:click={() => {
-            colorStore.setCurrentPalColors(
-              colors.filter((_, idx) => idx !== focusedColors[0])
-            );
-            focusStore.clearColors();
-          }}
-        >
-          Delete
-        </button>
+
         <button
           class="underline mr-2"
           on:click={() =>
@@ -69,69 +50,27 @@
       </div>
     {/if}
 
-    {#if focusedColors.length > 1}
-      {#each Object.keys(colorDirectory) as colorSpace}
+    <CreateAverage />
+    <SuggestionModificationToSelection />
+
+    <div>TODO Distribute vertical / horizontally</div>
+    <AlignSelection />
+    {#if focusedColors.length > 0}
+      <div>
         <button
           class="underline mr-2"
-          on:click={() => {
-            const newColor = avgColors(
-              focusedColors.map((idx) => colors[idx]),
-              colorSpace
-            );
-            colorStore.setCurrentPalColors([...colors, newColor]);
-          }}
+          on:click={() => focusStore.clearColors()}
         >
-          {colorSpace} avg
+          Clear Selection
         </button>
-      {/each}
-      <Tooltip>
-        <div slot="content" class="w-24">
-          {#each ALIGNS as { pos, name, op }}
-            <button
-              class="underline mr-2"
-              on:click={() => {
-                const newCoordinate = op(...focusLabs.map((x) => x[pos]));
-                colorStore.setCurrentPalColors(
-                  mapFocusedColors(([l, a, b]) => {
-                    return colorFromChannels(
-                      [
-                        pos === 0 ? newCoordinate : l,
-                        pos === 1 ? newCoordinate : a,
-                        pos === 2 ? newCoordinate : b,
-                      ],
-                      "lab"
-                    );
-                  })
-                );
-              }}
-            >
-              {name}
-            </button>
-          {/each}
-        </div>
-        <span slot="target" let:toggle>
-          <button class="underline" on:click={toggle}>Align to</button>
-        </span>
-      </Tooltip>
-
-      <div>TODO Distribute vertical / horizontally</div>
-      <!-- <button on:click={() => {
-        const newColors = [...colors];
-        // const sortedColors = focusedColors.map((idx) => colors[idx]).sort((a, b) => a.lab()[0] - b.lab()[0]);
-        focusedColors.forEach((idx, i) => {
-          newColors[idx] = sortedColors[i];
-        });
-        colorStore.setCurrentPalColors(newColors);
-      }}>Distribute horizontally</button> -->
+      </div>
     {/if}
-    <button class="underline mr-2" on:click={() => focusStore.clearColors()}>
-      Clear Selection
-    </button>
+    <DeleteSelection />
   </div>
 </div>
 
 <style>
-  .color-container {
-    max-width: 640px;
+  .action-area {
+    min-width: 300px;
   }
 </style>

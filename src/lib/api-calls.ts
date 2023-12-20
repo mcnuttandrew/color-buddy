@@ -109,3 +109,16 @@ export function suggestAdjustments(
     body
   );
 }
+
+export function suggestContextualAdjustments(
+  prompt: string,
+  currentPal: Palette,
+  engine: Engine
+) {
+  const body = JSON.stringify({ prompt, ...palToString(currentPal) });
+  const scaffold = engineToScaffold[engine];
+  return scaffold<{ background: string; colors: string[] }>(
+    `/.netlify/functions/suggest-contextual-adjustments`,
+    body
+  );
+}

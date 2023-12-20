@@ -140,7 +140,7 @@
           width={xScale.range()[1]}
           height={yScale.range()[1]}
           fill={bg.toHex()}
-          stroke="gray"
+          stroke={bg.toChroma().luminance() > 0.5 ? "gray" : "white"}
           stroke-width="1"
         />
         <line
@@ -148,7 +148,7 @@
           x2={(xScale.range()[1] - xScale.range()[0]) / 2}
           y1={yScale.range()[0]}
           y2={yScale.range()[1]}
-          stroke="gray"
+          stroke={bg.toChroma().luminance() > 0.5 ? "gray" : "white"}
           stroke-width="1"
         />
         <line
@@ -156,7 +156,7 @@
           x2={xScale.range()[1]}
           y1={(yScale.range()[1] - yScale.range()[0]) / 2}
           y2={(yScale.range()[1] - yScale.range()[0]) / 2}
-          stroke="gray"
+          stroke={bg.toChroma().luminance() > 0.5 ? "gray" : "white"}
           stroke-width="1"
         />
         <!-- svelte-ignore a11y-no-static-element-interactions -->

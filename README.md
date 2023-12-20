@@ -8,7 +8,7 @@ Use: should point to localhost:8888 if all is well
 - [ ] Coat of paint
 - [ ] add color analysis
 - [ ] higher card. vis examples
-- [ ] kbd commands, up/down for moving selections, cmd+z for undo, etc
+- [x] kbd commands, up/down for moving selections, cmd+z for undo, etc
 - [ ] make charts be end user manipuable
 - [ ] make old pals searchable
 - [ ] order as diverging

@@ -15,11 +15,7 @@
     on:click={() => {
       if (requestState === "loading") return;
       requestState = "loading";
-      suggestNameForPalette(
-        $colorStore.currentPal.colors,
-        $colorStore.currentPal.background,
-        $colorStore.engine
-      )
+      suggestNameForPalette($colorStore.currentPal, $colorStore.engine)
         .then((x) => {
           nameSuggestions = x;
           requestState = "idle";

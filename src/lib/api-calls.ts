@@ -62,26 +62,25 @@ const engineToScaffold = {
 };
 
 export function suggestNameForPalette(
-  palette: Color[],
-  background: Color,
+  palette: Palette,
   engine: Engine
 ): Promise<string[]> {
   const body = JSON.stringify({
-    colors: palette.map((x) => toHex(x)),
-    background: background.toHex(),
+    colors: palette.colors.map((x) => toHex(x)),
+    background: palette.background.toHex(),
   });
   const scaffold = engineToScaffold[engine];
   return scaffold<string>(`/.netlify/functions/suggest-name`, body);
 }
 
 export function suggestAdditionsToPalette(
-  palette: Color[],
-  background: Color,
+  palette: Palette,
   engine: Engine
 ): Promise<string[]> {
   const body = JSON.stringify({
-    colors: palette.map((x) => toHex(x)),
-    background: background.toHex(),
+    colors: palette.colors.map((x) => toHex(x)),
+    background: palette.background.toHex(),
+    name: palette.name,
   });
 
   const scaffold = engineToScaffold[engine];

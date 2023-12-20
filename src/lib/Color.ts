@@ -119,9 +119,9 @@ export class RGB extends Color {
     this.chromaBind = chroma.rgb;
     this.spaceName = "rgb";
     this.channelDimensions = {
-      h: [0, 255],
-      s: [0, 255],
-      v: [0, 255],
+      h: [0, 1],
+      s: [0, 1],
+      v: [0, 1],
     };
   }
 }
@@ -171,5 +171,6 @@ export const colorDirectory = {
   lab: CIELAB,
   hsv: HSV,
   hsl: HSL,
+  srgb: RGB,
   rgb: RGB,
 };

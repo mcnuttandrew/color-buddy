@@ -17,15 +17,15 @@
   $: colorConfigs =
     color &&
     ({
-      rgb: [
-        { name: "Red", min: 0, max: 255, step: 1 },
-        { name: "Green", min: 0, max: 255, step: 1 },
-        { name: "Blue", min: 0, max: 255, step: 1 },
+      srgb: [
+        { name: "Red", min: 0, max: 1, step: 0.01 },
+        { name: "Green", min: 0, max: 1, step: 0.01 },
+        { name: "Blue", min: 0, max: 1, step: 0.01 },
       ],
       hsl: [
         { name: "Hue", min: 0, max: 360, step: 1 },
-        { name: "Saturation", min: 0, max: 1, step: 0.01 },
-        { name: "Lightness", min: 0, max: 1, step: 0.01 },
+        { name: "Saturation", min: 0, max: 100, step: 1 },
+        { name: "Lightness", min: 0, max: 100, step: 1 },
       ],
       lab: [
         { name: "L", min: 0, max: 100, step: 1 },
@@ -34,8 +34,8 @@
       ],
       hsv: [
         { name: "h", min: 0, max: 360, step: 1 },
-        { name: "s", min: 0, max: 1, step: 0.01 },
-        { name: "v", min: 0, max: 1, step: 0.01 },
+        { name: "s", min: 0, max: 100, step: 1 },
+        { name: "v", min: 0, max: 100, step: 1 },
       ],
     } as Record<string, Channel[]>);
   const colorModeMap: any = { rgb: "srgb" };
@@ -122,12 +122,19 @@
                       max={channel.max}
                       step={channel.step}
                       on:change={(e) => {
-                        const values = [
+                        let values = [
                           ...colorConfigs[colorMode].map((x) => x.value),
                         ];
                         // @ts-ignore
                         values[idx] = Number(e.target.value);
                         // @ts-ignore
+                        if (colorMode.includes("rgb")) {
+                          values = values.map((x) => x * 255);
+                        }
+                        if (colorMode === "hsl") {
+                          values[1] = values[1] / 100;
+                          values[2] = values[2] / 100;
+                        }
                         const newColor = colorFromChannels(values, colorMode);
                         onColorChange(newColor);
                       }}
@@ -142,11 +149,18 @@
                     max={channel.max}
                     step={channel.step}
                     on:change={(e) => {
-                      const values = [
+                      let values = [
                         ...colorConfigs[colorMode].map((x) => x.value),
                       ];
                       // @ts-ignore
                       values[idx] = Number(e.target.value);
+                      if (colorMode.includes("rgb")) {
+                        values = values.map((x) => x * 255);
+                      }
+                      if (colorMode === "hsl") {
+                        values[1] = values[1] / 100;
+                        values[2] = values[2] / 100;
+                      }
                       // @ts-ignore
                       const newColor = colorFromChannels(values, colorMode);
                       onColorChange(newColor);

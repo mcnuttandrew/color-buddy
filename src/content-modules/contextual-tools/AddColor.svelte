@@ -1,7 +1,7 @@
 <script lang="ts">
   import colorStore from "../../stores/color-store";
   import focusStore from "../../stores/focus-store";
-  import { avgColors } from "../../lib/utils";
+  import { avgColors, randColor } from "../../lib/utils";
   import { buttonStyle } from "../../lib/styles";
 
   $: focusedColors = $focusStore.focusedColors;
@@ -11,7 +11,13 @@
 <div>
   <button
     class={buttonStyle}
-    on:click={() => colorStore.addColorToCurrentPal(avgColors(colors, "lab"))}
+    on:click={() => {
+      if (colors.length < 2) {
+        colorStore.addColorToCurrentPal(randColor());
+      } else {
+        colorStore.addColorToCurrentPal(avgColors(colors));
+      }
+    }}
   >
     Add Color
   </button>

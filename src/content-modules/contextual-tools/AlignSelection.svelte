@@ -12,8 +12,8 @@
   const ALIGNS = [
     { pos: 1, name: "Left", op: Math.min },
     { pos: 1, name: "Right", op: Math.max },
-    { pos: 2, name: "Top", op: Math.max },
-    { pos: 2, name: "Bottom", op: Math.min },
+    { pos: 2, name: "Top", op: Math.min },
+    { pos: 2, name: "Bottom", op: Math.max },
   ];
 
   const mapFocusedColors = (fn: (color: [number, number, number]) => any) =>

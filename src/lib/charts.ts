@@ -105,7 +105,7 @@ export function buildTheme(pal: Palette): any {
       category: colors,
       // diverging: divergentPalette,
       // heatmap: divergentPalette,
-      // ordinal: ordinalPalette,
+      ordinal: colors,
     },
   };
 }
@@ -227,11 +227,80 @@ const areaChart = (pal: Palette) => ({
   },
 });
 
+const stackedAreaChart = (pal: Palette) => ({
+  $schema: "https://vega.github.io/schema/vega-lite/v5.json",
+  data: { url: "./barley.json" },
+  mark: "bar",
+  encoding: {
+    column: { field: "year" },
+    x: { field: "yield", type: "quantitative", aggregate: "sum" },
+    y: { field: "variety", type: "nominal" },
+    color: { field: "site", type: "nominal" },
+  },
+});
+
+const scatterPlotOrdinal = (_pal: Palette) => ({
+  $schema: "https://vega.github.io/schema/vega-lite/v5.json",
+  description:
+    "A scatterplot showing body mass and flipper lengths of penguins.",
+  data: {
+    url: "./penguins.json",
+  },
+  mark: "point",
+  encoding: {
+    x: {
+      field: "Flipper Length (mm)",
+      type: "quantitative",
+      scale: { zero: false },
+    },
+    y: {
+      field: "Body Mass (g)",
+      type: "quantitative",
+      scale: { zero: false },
+    },
+    color: { field: "Flipper Length (mm)", type: "ordinal", legend: null },
+    shape: { field: "Species", type: "nominal" },
+  },
+});
+
+const heatmap = (_pal: Palette) => ({
+  $schema: "https://vega.github.io/schema/vega-lite/v5.json",
+  data: {
+    values: [
+      { x: 0, y: 0, value: -10 },
+      { x: 1, y: 0, value: -5 },
+      { x: 2, y: 0, value: 0 },
+      { x: 3, y: 0, value: 5 },
+      { x: 0, y: 1, value: -5 },
+      { x: 1, y: 1, value: 0 },
+      { x: 2, y: 1, value: 5 },
+      { x: 3, y: 1, value: 10 },
+      { x: 0, y: 2, value: 0 },
+      { x: 1, y: 2, value: 5 },
+      { x: 2, y: 2, value: 10 },
+      { x: 3, y: 2, value: 15 },
+    ],
+  },
+  mark: "rect",
+  encoding: {
+    x: { field: "x", type: "ordinal" },
+    y: { field: "y", type: "ordinal" },
+    color: {
+      field: "value",
+      type: "ordinal",
+      bin: true,
+    },
+  },
+});
+
 export const charts = [
-  groupedBarChart, //
-  scatterPlot,
-  map,
-  areaChart,
+  // groupedBarChart, //
+  { group: "categorical", chart: scatterPlot },
+  { group: "categorical", chart: map },
+  { group: "categorical", chart: areaChart },
+  { group: "categorical", chart: stackedAreaChart },
+  { group: "ordinal", chart: scatterPlotOrdinal },
+  { group: "ordinal", chart: heatmap },
 ];
 
 const results: Record<string, string> = {};

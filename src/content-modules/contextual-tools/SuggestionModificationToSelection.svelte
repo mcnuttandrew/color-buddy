@@ -9,7 +9,9 @@
 
   let requestState: "idle" | "loading" | "loaded" | "failed" = "idle";
   $: colors = $colorStore.currentPal.colors;
-  $: selectedColors = $focusStore.focusedColors.map((x) => colors[x].toHex());
+  $: selectedColors = $focusStore.focusedColors
+    .map((x) => colors[x]?.toHex())
+    .filter((x) => x !== undefined);
   let suggestedColors: string[] = [];
   let palPrompt: string = "";
 

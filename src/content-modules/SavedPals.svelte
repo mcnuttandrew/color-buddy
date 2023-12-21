@@ -13,7 +13,7 @@
   import Tooltip from "../components/Tooltip.svelte";
 </script>
 
-<div class="bg-slate-400 p-2 w-96">
+<div class="bg-slate-400 p-2 w-96 h-full">
   <div class="text-4xl font-bold">Color Buddy</div>
   <div class="flex justify-between z-50">
     <div>
@@ -72,7 +72,7 @@
   <section class="mt-4 border-t-2 border-black">
     <div class="italic">Saved Pals</div>
     {#each $colorStore.palettes as pal}
-      <div class="flex flex-col mt-2">
+      <div class="flex flex-col mt-2 h-full overflow-auto">
         <div class="flex items-center justify-between">
           <div>
             <button
@@ -83,7 +83,7 @@
             </button>
           </div>
           <Tooltip>
-            <div slot="content">
+            <div slot="content" let:onClick>
               <button
                 class={buttonStyle}
                 on:click={() => colorStore.copyPal(pal.name)}
@@ -92,7 +92,10 @@
               </button>
               <button
                 class={buttonStyle}
-                on:click={() => colorStore.removePal(pal.name)}
+                on:click={() => {
+                  colorStore.removePal(pal.name);
+                  onClick();
+                }}
               >
                 Delete
               </button>

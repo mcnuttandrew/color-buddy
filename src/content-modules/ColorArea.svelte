@@ -207,7 +207,7 @@
             r={10 + (focusSet.has(i) ? 5 : 0)}
             fill={color.toHex()}
             on:click={(e) => {
-              if (e.metaKey) {
+              if (e.metaKey || e.shiftKey) {
                 focusStore.toggleColor(i);
               } else {
                 focusStore.setColors([i]);

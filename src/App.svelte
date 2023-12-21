@@ -1,26 +1,21 @@
 <script lang="ts">
   import colorStore from "./stores/color-store";
-  import { charts } from "./lib/charts";
-  import Vega from "./components/Vega.svelte";
   import ColorArea from "./content-modules/ColorArea.svelte";
   import SavedPals from "./content-modules/SavedPals.svelte";
   import ActionArea from "./content-modules/ActionArea.svelte";
-  import TinyWebpage from "./content-modules/TinyWebpage.svelte";
-  import TextBlock from "./content-modules/TextBlock.svelte";
+  import Examples from "./content-modules/Examples.svelte";
   import Swatches from "./content-modules/Swatches.svelte";
   import Eval from "./content-modules/Eval.svelte";
   import KeyboardHooks from "./components/KeyboardHooks.svelte";
 
   let state: "swatches" | "eval" = "swatches";
-
-  $: bg = $colorStore.currentPal.background;
 </script>
 
 <main class="flex h-full">
   <SavedPals />
-  <div class="w-full flex-fol">
+  <div class="w-full flex-fol h-full">
     <!-- top row -->
-    <div class="flex flex-col w h-1/2">
+    <div class="flex flex-col h-1/2">
       <div class="flex p-2">
         <div class="w-full flex">
           <ColorArea height={450} width={450} />
@@ -58,16 +53,7 @@
       <ActionArea />
     </div>
     <!-- bottom row -->
-    <div
-      class=" h-1/2 flex-col flex flex-wrap overflow-auto p-4 max-h-1/2"
-      style={`background-color: ${bg.toHex()}`}
-    >
-      <TinyWebpage />
-      <TextBlock />
-      {#each charts as spec}
-        <Vega spec={spec($colorStore.currentPal)} />
-      {/each}
-    </div>
+    <Examples />
   </div>
 </main>
 

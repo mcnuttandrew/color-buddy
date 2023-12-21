@@ -5,19 +5,24 @@
   import focusStore from "../../stores/focus-store";
   import Tooltip from "../../components/Tooltip.svelte";
   import { buttonStyle } from "../../lib/styles";
+  const interpolationSchemes = ["linear", "quadratic"];
 
   $: focusedColors = $focusStore.focusedColors;
   $: colors = $colorStore.currentPal.colors;
   let colorSpace = "lab";
+  let interpolationScheme = "linear";
+  let numPoints = 1;
+  $: pointA = colors[focusedColors[0]];
+  $: pointB = colors[focusedColors[1]];
 
-  function createInterpolatedPoints(
-    pointA: Color,
-    pointB: Color,
-    numPoints: number
-  ) {
+  function createInterpolatedPoints() {
     const points: Color[] = [];
     for (let i = 0; i < numPoints + 1; i++) {
-      const t = i / (numPoints + 1);
+      let t = i / (numPoints + 1);
+      if (interpolationScheme === "quadratic") {
+        t = t * t;
+      }
+
       if (t === 0 || t === 1) continue;
       const [x1, x2, x3] = new ColorIO("lab", pointA.toChannels()).to(
         colorSpace
@@ -35,37 +40,64 @@
     }
     return points;
   }
-
-  let numPointsToAdd = 1;
 </script>
 
 {#if focusedColors.length === 2}
   <Tooltip>
     <div slot="content" class="w-40">
-      <label for="color-space-select">Color Space</label>
-      <select id="color-space-select" bind:value={colorSpace}>
-        {#each ["lab", "lch", "hsl", "hsv"] as space}
-          <option value={space}>{space}</option>
-        {/each}
-      </select>
-      <label>
-        Num points to add
-        <select bind:value={numPointsToAdd}>
+      <div class="flex justify-between">
+        <label for="color-space-select">Color Space</label>
+        <select id="color-space-select" bind:value={colorSpace}>
+          {#each ["lab", "lch", "hsl", "hsv"] as space}
+            <option value={space}>{space}</option>
+          {/each}
+        </select>
+      </div>
+      <div class="flex justify-between">
+        <label for="interpolate-count">Num points to add</label>
+        <select id="interpolate-count" bind:value={numPoints}>
           {#each [1, 2, 3, 4, 5, 6, 7, 8] as numPoints}
             <option value={numPoints}>{numPoints}</option>
           {/each}
         </select>
-      </label>
+      </div>
+      <div class="flex justify-between">
+        <label for="interpolate-scheme">Scheme</label>
+        <select id="interpolate-scheme" bind:value={interpolationScheme}>
+          {#each interpolationSchemes as scheme}
+            <option value={scheme}>{scheme}</option>
+          {/each}
+        </select>
+      </div>
+
+      <div class="flex justify-between items-center w-full transition-all">
+        <div>
+          From <div
+            class="h-5 w-5 rounded-full"
+            style="background-color: {pointA.toHex()}"
+          ></div>
+        </div>
+        <div>
+          To <div
+            class="h-5 w-5 rounded-full"
+            style="background-color: {pointB.toHex()}"
+          ></div>
+        </div>
+        <button
+          class={buttonStyle}
+          on:click={() => {
+            focusStore.setColors([focusedColors[1], focusedColors[0]]);
+          }}
+        >
+          flip points
+        </button>
+      </div>
       <button
-        class={buttonStyle}
+        class="{buttonStyle} mt-5"
         on:click={() => {
           let newColors = [...colors];
           const [pointA, pointB] = focusedColors.map((idx) => colors[idx]);
-          const newPoints = createInterpolatedPoints(
-            pointA,
-            pointB,
-            numPointsToAdd
-          );
+          const newPoints = createInterpolatedPoints();
           newColors = [...newColors, ...newPoints];
           colorStore.setCurrentPalColors(newColors);
         }}

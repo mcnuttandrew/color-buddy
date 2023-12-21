@@ -2,6 +2,9 @@
   import colorStore from "../stores/color-store";
   import focusStore from "../stores/focus-store";
   function onKeyDown(e: any) {
+    if (e.target.tagName === "INPUT") {
+      return;
+    }
     const key = e.key.toLowerCase();
     // UNDO REDO
     if (key === "z" && e.metaKey) {
@@ -14,6 +17,17 @@
     ) {
       e.preventDefault();
       colorStore.redo();
+    }
+
+    // DELETE
+    if (key === "backspace" || key === "delete") {
+      e.preventDefault();
+      const focusedSet = new Set($focusStore.focusedColors);
+      const newColors = $colorStore.currentPal.colors.filter(
+        (_, idx) => !focusedSet.has(idx)
+      );
+      colorStore.setCurrentPalColors(newColors);
+      focusStore.clearColors();
     }
 
     // COLOR SCOOTING

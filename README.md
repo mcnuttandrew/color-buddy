@@ -12,6 +12,7 @@ Use: should point to localhost:8888 if all is well
 - [ ] make old pals searchable
 - [ ] order as diverging
 - [ ] Plot operate over other color spaces
+- [ ] Responsiveness
 - [ ] Meta: figure out all the other features in maureen's setup
 - [x] kbd commands, up/down for moving selections, cmd+z for undo, etc
 - [x] distribute horizontal / vertical

@@ -8,16 +8,14 @@
   $: colors = $colorStore.currentPal.colors;
   $: focusedColors = $focusStore.focusedColors;
 
-  type Direction = "horizontal" | "vertical";
+  type Direction = "horizontal" | "vertical" | "in z space";
   function distributePoints(direction: Direction) {
     let sortedIndexes = focusedColors.sort((a, b) => {
-      const pointA = colors[a].toChannels();
-      const pointB = colors[b].toChannels();
-      if (direction === "horizontal") {
-        return pointA[1] - pointB[1];
-      } else {
-        return pointA[2] - pointB[2];
-      }
+      const modeToIdx = { horizontal: 1, vertical: 2, "in z space": 0 };
+      const idx = modeToIdx[direction];
+      const pointA = colors[a].toChannels()[idx];
+      const pointB = colors[b].toChannels()[idx];
+      return pointA - pointB;
     });
     type Channels = [number, number, number];
     const minPoint = colors[sortedIndexes[0]].toChannels() as Channels;
@@ -31,6 +29,8 @@
       const newPoint = colors.at(colorIdx)!.toChannels() as Channels;
       if (direction === "horizontal") {
         newPoint[1] = minPoint[1] * (1 - t) + maxPoint[1] * t;
+      } else if (direction === "in z space") {
+        newPoint[0] = minPoint[0] * (1 - t) + maxPoint[0] * t;
       } else {
         newPoint[2] = minPoint[2] * (1 - t) + maxPoint[2] * t;
       }
@@ -47,7 +47,7 @@
 
     colorStore.setCurrentPalColors(newColors);
   }
-  const directions: Direction[] = ["horizontal", "vertical"];
+  const directions: Direction[] = ["horizontal", "vertical", "in z space"];
 </script>
 
 {#if focusedColors.length > 2}

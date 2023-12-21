@@ -72,7 +72,7 @@
   <section class="mt-4 border-t-2 border-black">
     <div class="italic">Saved Pals</div>
     {#each $colorStore.palettes as pal}
-      <div class="flex flex-col mt-2 h-full overflow-auto">
+      <div class="flex flex-col mt-2 h-full">
         <div class="flex items-center justify-between">
           <div>
             <button

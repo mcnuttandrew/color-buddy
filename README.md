@@ -1,19 +1,25 @@
+# "Color IDE" or "Color Buddy"
+
+## SETUP
+
 Install: `yarn`
 
 Run: `npx netlify dev`
 
 Use: should point to localhost:8888 if all is well
 
-- [ ] Touch events
+## TODOS
+
+- [ ] Touch events, just pull the the touch event stuff from the double rangle slider, also refactor that out into something common
 - [ ] Coat of paint
 - [ ] add color analysis
 - [ ] higher card. vis examples
-- [ ] make charts be end user manipulable
 - [ ] make old pals searchable
 - [ ] order as diverging
 - [ ] Plot operate over other color spaces
 - [ ] Responsiveness
 - [ ] Meta: figure out all the other features in maureen's setup
+- [x] make charts be end user manipulable
 - [x] kbd commands, up/down for moving selections, cmd+z for undo, etc
 - [x] distribute horizontal / vertical
 - [x] Plot zoom

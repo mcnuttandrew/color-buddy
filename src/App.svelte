@@ -1,5 +1,4 @@
 <script lang="ts">
-  import colorStore from "./stores/color-store";
   import ColorArea from "./content-modules/ColorArea.svelte";
   import SavedPals from "./content-modules/SavedPals.svelte";
   import ActionArea from "./content-modules/ActionArea.svelte";
@@ -8,12 +7,13 @@
   import Eval from "./content-modules/Eval.svelte";
   import KeyboardHooks from "./components/KeyboardHooks.svelte";
 
-  let state: "swatches" | "eval" = "swatches";
+  let state: "swatches" | "eval" = "eval";
 </script>
 
 <main class="flex h-full">
   <SavedPals />
   <div class="w-full flex-fol h-full">
+    <ActionArea />
     <!-- top row -->
     <div class="flex flex-col h-1/2">
       <div class="flex p-2">
@@ -50,7 +50,6 @@
           {/if}
         </div>
       </div>
-      <ActionArea />
     </div>
     <!-- bottom row -->
     <Examples />

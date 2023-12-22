@@ -15,7 +15,7 @@
   $: focusedColors = $focusStore.focusedColors;
 </script>
 
-<div class="flex flex-col bg-slate-400 w-full p-2 h-20">
+<div class="flex flex-col bg-slate-400 w-full p-2 h-12">
   <div class="flex">
     <AddColor />
     <AdjustColor />

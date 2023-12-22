@@ -4,3 +4,5 @@
 
 export const buttonStyle =
   "text-sm h-5 px-2 transition-colors duration-150 border bg-slate-600 rounded-lg border-0 text-white mr-2";
+
+export const AIButtonStyle = `${buttonStyle} bg-amber-900`;

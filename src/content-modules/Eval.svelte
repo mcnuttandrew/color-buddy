@@ -38,24 +38,23 @@
 
             focusStore.addColor(idx);
           }}
-          class="w-40 h-8 mr-2 flex justify-center items-center text-sm"
+          class="w-40 h-8 mr-2 flex justify-center items-center text-sm relative mt-2 mr-12"
           class:text-white={color.toChroma().luminance() < 0.5}
           style="background-color: {color.toHex()}"
         >
           <div>
             {color.toHex()}{#if colorNames[idx]}—{colorNames[idx]?.word}{/if}
           </div>
+          {#if stats?.dE[idx]}
+            <div
+              class="absolute text-black text-right"
+              style="right: -30px; bottom: -8px"
+            >
+              <div>dE: {stats?.dE[idx]}</div>
+            </div>
+          {/if}
         </button>
       </Tooltip>
-    {/each}
-  </div>
-  <div class="flex flex-col mt-6">
-    {#each stats?.dE || [] as dE}
-      <div class="flex flex-col">
-        <div class="h-8 flex justify-center items-center">
-          <div>{dE}</div>
-        </div>
-      </div>
     {/each}
   </div>
 </div>

@@ -24,23 +24,22 @@
       }
 
       if (t === 0 || t === 1) continue;
-      const [x1, x2, x3] = new ColorIO(
-        pointA.spaceName,
-        pointA.toChannels()
-      ).to(colorSpace).coords;
-      const [y1, y2, y3] = new ColorIO(
-        pointB.spaceName,
-        pointB.toChannels()
-      ).to(colorSpace).coords;
+      const adjustedSpace = colorSpace === "rgb" ? "srgb" : colorSpace;
+      const space = pointA.spaceName === "rgb" ? "srgb" : pointA.spaceName;
+      const [x1, x2, x3] = new ColorIO(space, pointA.toChannels()).to(
+        adjustedSpace
+      ).coords;
+      const bSpace = pointB.spaceName === "rgb" ? "srgb" : pointB.spaceName;
+      const [y1, y2, y3] = new ColorIO(bSpace, pointB.toChannels()).to(
+        adjustedSpace
+      ).coords;
       const lab = [
         x1 * (1 - t) + y1 * t,
         x2 * (1 - t) + y2 * t,
         x3 * (1 - t) + y3 * t,
       ] as [number, number, number];
-      const finalColor = new ColorIO(colorSpace, lab).to(
-        pointA.spaceName
-      ).coords;
-      points.push(colorFromChannels(finalColor, pointA.spaceName));
+      const finalColor = new ColorIO(adjustedSpace, lab).to(space).coords;
+      points.push(colorFromChannels(finalColor, space));
     }
     return points;
   }
@@ -48,11 +47,11 @@
 
 {#if focusedColors.length === 2}
   <Tooltip>
-    <div slot="content" class="w-40">
+    <div slot="content" class="w-60">
       <div class="flex justify-between">
         <label for="color-space-select">Color Space</label>
         <select id="color-space-select" bind:value={colorSpace}>
-          {#each ["lab", "lch", "hsl", "hsv"] as space}
+          {#each ["lab", "lch", "hsl", "hsv", "oklab", "oklch", "rgb"] as space}
             <option value={space}>{space}</option>
           {/each}
         </select>

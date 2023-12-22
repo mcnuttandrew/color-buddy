@@ -1,0 +1,443 @@
+[
+    {
+        "name": "enjoyable",
+        "Category": "casual",
+        "Soft": "1.372964899",
+        "Cool": "2.47249863",
+        "fill1": "#F68B41",
+        "fill2": "#F6ED83",
+        "fill3": "#3FB876"
+    },
+    {
+        "name": "bright",
+        "Category": "casual",
+        "Soft": "1.038386856",
+        "Cool": "2.656801366",
+        "fill1": "#F4B260",
+        "fill2": "#FAF7F4",
+        "fill3": "#F25846"
+    },
+    {
+        "name": "casual",
+        "Category": "casual",
+        "Soft": "0.7037963654",
+        "Cool": "2.181292322",
+        "fill1": "#F15845",
+        "fill2": "#F7F4F1",
+        "fill3": "#0351A1"
+    },
+    {
+        "name": "colorful",
+        "Category": "casual",
+        "Soft": "0.2884490914",
+        "Cool": "2.299138593",
+        "fill1": "#F7E869",
+        "fill2": "#F69345",
+        "fill3": "#E84F82"
+    },
+    {
+        "name": "chic",
+        "Category": "chic",
+        "Soft": "0.1369180981",
+        "Cool": "-1.244630434",
+        "fill1": "#D8DACD",
+        "fill2": "#86AD94",
+        "fill3": "#566C5D"
+    },
+    {
+        "name": "noble and elegant",
+        "Category": "chic",
+        "Soft": "-0.2182972367",
+        "Cool": "-0.9965678627",
+        "fill1": "#A0A096",
+        "fill2": "#D3D3D3",
+        "fill3": "#95AFC7"
+    },
+    {
+        "name": "stylish",
+        "Category": "chic",
+        "Soft": "-0.5735125716",
+        "Cool": "-0.8556815786",
+        "fill1": "#294C9A",
+        "fill2": "#A0A579",
+        "fill3": "#D8DCCE"
+    },
+    {
+        "name": "traditional",
+        "Category": "classic",
+        "Soft": "-1.596041822",
+        "Cool": "0.7707846692",
+        "fill1": "#B7854C",
+        "fill2": "#38241A",
+        "fill3": "#6C8455"
+    },
+    {
+        "name": "elaborate",
+        "Category": "classic",
+        "Soft": "-1.965446851",
+        "Cool": "0.5932917317",
+        "fill1": "#443513",
+        "fill2": "#9A9157",
+        "fill3": "#182D48"
+    },
+    {
+        "name": "heavy and deep",
+        "Category": "classic",
+        "Soft": "-2.438486433",
+        "Cool": "0.4205169288",
+        "fill1": "#332D1B",
+        "fill2": "#B2723B",
+        "fill3": "#182222"
+    },
+    {
+        "name": "neat",
+        "Category": "clear",
+        "Soft": "2.629878018",
+        "Cool": "-2.322768478",
+        "fill1": "#D7E9CF",
+        "fill2": "#F9F9F6",
+        "fill3": "#DDEFEF"
+    },
+    {
+        "name": "clean",
+        "Category": "clear",
+        "Soft": "1.994339059",
+        "Cool": "-2.399245267",
+        "fill1": "#98D0DB",
+        "fill2": "#F9F9F7",
+        "fill3": "#B6C9DB"
+    },
+    {
+        "name": "refreshing",
+        "Category": "clear",
+        "Soft": "1.372267862",
+        "Cool": "-2.322768478",
+        "fill1": "#ABD59B",
+        "fill2": "#FAF9F6",
+        "fill3": "#5696AB"
+    },
+    {
+        "name": "youthful",
+        "Category": "cool casual",
+        "Soft": "1.010206622",
+        "Cool": "-1.510140406",
+        "fill1": "#F5ED85",
+        "fill2": "#9FD19E",
+        "fill3": "#5797B1"
+    },
+    {
+        "name": "agile",
+        "Category": "cool casual",
+        "Soft": "0.3997635051",
+        "Cool": "-2.312029346",
+        "fill1": "#20A56D",
+        "fill2": "#F6F7F5",
+        "fill3": "#00B2B4"
+    },
+    {
+        "name": "speed",
+        "Category": "cool casual",
+        "Soft": "0.03770226537",
+        "Cool": "-2.097099127",
+        "fill1": "#FCDB60",
+        "fill2": "#F9F8F4",
+        "fill3": "#0056AA"
+    },
+    {
+        "name": "quiet and sophisticated",
+        "Category": "dandy",
+        "Soft": "-1.04377645",
+        "Cool": "-0.3797234052",
+        "fill1": "#908747",
+        "fill2": "#1B2114",
+        "fill3": "#ACB3A8"
+    },
+    {
+        "name": "dapper",
+        "Category": "dandy",
+        "Soft": "-1.608837441",
+        "Cool": "-0.7228022094",
+        "fill1": "#5B6B52",
+        "fill2": "#A4A582",
+        "fill3": "#103434"
+    },
+    {
+        "name": "dignified",
+        "Category": "dandy",
+        "Soft": "-2.222628827",
+        "Cool": "-1.103398406",
+        "fill1": "#1B2117",
+        "fill2": "#7F867B",
+        "fill3": "#192E1A"
+    },
+    {
+        "name": "lively",
+        "Category": "dynamic",
+        "Soft": "-0.4614886731",
+        "Cool": "2.656801366",
+        "fill1": "#F18439",
+        "fill2": "#0655A2",
+        "fill3": "#F25A47"
+    },
+    {
+        "name": "bold",
+        "Category": "dynamic",
+        "Soft": "-1.127620115",
+        "Cool": "2.73321318",
+        "fill1": "#F8D75A",
+        "fill2": "#F15144",
+        "fill3": "#030200"
+    },
+    {
+        "name": "active",
+        "Category": "dynamic",
+        "Soft": "-1.542967389",
+        "Cool": "2.30738795",
+        "fill1": "#020101",
+        "fill2": "#F05346",
+        "fill3": "#0B52A3"
+    },
+    {
+        "name": "wild",
+        "Category": "dynamic",
+        "Soft": "-1.992930047",
+        "Cool": "1.768118227",
+        "fill1": "#F05747",
+        "fill2": "#332920",
+        "fill3": "#B0A23D"
+    },
+    {
+        "name": "delicate",
+        "Category": "elegant",
+        "Soft": "1.400448096",
+        "Cool": "-0.6493485685",
+        "fill1": "#F1E3D7",
+        "fill2": "#E6D1CC",
+        "fill3": "#9DAFC6"
+    },
+    {
+        "name": "emotional",
+        "Category": "elegant",
+        "Soft": "1.081914364",
+        "Cool": "0.1256018889",
+        "fill1": "#EBD8C3",
+        "fill2": "#CFBFD0",
+        "fill3": "#A6A296"
+    },
+    {
+        "name": "graceful",
+        "Category": "elegant",
+        "Soft": "0.6507219318",
+        "Cool": "0.5974237888",
+        "fill1": "#9E9C96",
+        "fill2": "#DDA8A9",
+        "fill3": "#D3D3D6"
+    },
+    {
+        "name": "fashionable",
+        "Category": "elegant",
+        "Soft": "0.5844909136",
+        "Cool": "-0.5534679766",
+        "fill1": "#CCCDC4",
+        "fill2": "#E8D7D0",
+        "fill3": "#A1B1A2"
+    },
+    {
+        "name": "calm",
+        "Category": "elegant",
+        "Soft": "0.3441125218",
+        "Cool": "0.2218914703",
+        "fill1": "#EED9C5",
+        "fill2": "#C09E80",
+        "fill3": "#CCCCC7"
+    },
+    {
+        "name": "alluring",
+        "Category": "gorgeous",
+        "Soft": "-0.4058252427",
+        "Cool": "1.305932454",
+        "fill1": "#E3A7A9",
+        "fill2": "#C5605C",
+        "fill3": "#212A7A"
+    },
+    {
+        "name": "extravagant",
+        "Category": "gorgeous",
+        "Soft": "-0.7461165049",
+        "Cool": "1.808312181",
+        "fill1": "#D15E41",
+        "fill2": "#E2C14D",
+        "fill3": "#2D2773"
+    },
+    {
+        "name": "mellow",
+        "Category": "gorgeous",
+        "Soft": "-0.8581404033",
+        "Cool": "0.7666568284",
+        "fill1": "#264D18",
+        "fill2": "#E75A50",
+        "fill3": "#2E4795"
+    },
+    {
+        "name": "luxorious",
+        "Category": "gorgeous",
+        "Soft": "-1.196079164",
+        "Cool": "1.590629085",
+        "fill1": "#522830",
+        "fill2": "#05020D",
+        "fill3": "#E6C555"
+    },
+    {
+        "name": "sharp",
+        "Category": "modern",
+        "Soft": "-0.9324495892",
+        "Cool": "-2.286001602",
+        "fill1": "#050503",
+        "fill2": "#F6F5F3",
+        "fill3": "#1EA66A"
+    },
+    {
+        "name": "rational",
+        "Category": "modern",
+        "Soft": "-1.273773961",
+        "Cool": "-2.081802083",
+        "fill1": "#8B988D",
+        "fill2": "#F9F9F5",
+        "fill3": "#10383E"
+    },
+    {
+        "name": "masculine",
+        "Category": "modern",
+        "Soft": "-1.664500871",
+        "Cool": "-1.924218915",
+        "fill1": "#BDCBD6",
+        "fill2": "#3B7988",
+        "fill3": "#05040A"
+    },
+    {
+        "name": "metallic",
+        "Category": "modern",
+        "Soft": "-2.250809061",
+        "Cool": "-2.285103512",
+        "fill1": "#050403",
+        "fill2": "#91A89D",
+        "fill3": "#132715"
+    },
+    {
+        "name": "intimate",
+        "Category": "natural",
+        "Soft": "1.995037341",
+        "Cool": "0.7235147784",
+        "fill1": "#ECBB7F",
+        "fill2": "#F8F3C5",
+        "fill3": "#F5F2BB"
+    },
+    {
+        "name": "tranquil",
+        "Category": "natural",
+        "Soft": "1.941962908",
+        "Cool": "-0.4311000548",
+        "fill1": "#F2E4B7",
+        "fill2": "#F6F0D5",
+        "fill3": "#C6DEB3"
+    },
+    {
+        "name": "plain",
+        "Category": "natural",
+        "Soft": "1.938676873",
+        "Cool": "-1.244630434",
+        "fill1": "#F9F7CF",
+        "fill2": "#D9DFA3",
+        "fill3": "#CFD0C8"
+    },
+    {
+        "name": "wholesome",
+        "Category": "natural",
+        "Soft": "1.625628579",
+        "Cool": "0.1705063878",
+        "fill1": "#F6EED5",
+        "fill2": "#CDD97E",
+        "fill3": "#B7AD89"
+    },
+    {
+        "name": "fresh",
+        "Category": "natural",
+        "Soft": "1.572554145",
+        "Cool": "-1.484445756",
+        "fill1": "#E6EA99",
+        "fill2": "#B1D899",
+        "fill3": "#E6EED9"
+    },
+    {
+        "name": "mild",
+        "Category": "natural",
+        "Soft": "1.038386856",
+        "Cool": "1.025095923",
+        "fill1": "#F3E7D5",
+        "fill2": "#E2A887",
+        "fill3": "#B7A285"
+    },
+    {
+        "name": "modest",
+        "Category": "elegant",
+        "Soft": "-0.2314413742",
+        "Cool": "0.2052746975",
+        "fill1": "#8C8541",
+        "fill2": "#AF9877",
+        "fill3": "#CBC6BE"
+    },
+    {
+        "name": "sweet",
+        "Category": "pretty",
+        "Soft": "2.451716455",
+        "Cool": "1.56436944",
+        "fill1": "#F8CB94",
+        "fill2": "#FDF9F5",
+        "fill3": "#F3BFA8"
+    },
+    {
+        "name": "pretty",
+        "Category": "pretty",
+        "Soft": "2.001756286",
+        "Cool": "2.232682042",
+        "fill1": "#FEED72",
+        "fill2": "#F8F4D2",
+        "fill3": "#EB717B"
+    },
+    {
+        "name": "childlike",
+        "Category": "pretty",
+        "Soft": "1.678703012",
+        "Cool": "1.693413164",
+        "fill1": "#F48C72",
+        "fill2": "#F5F2CD",
+        "fill3": "#ADD5A1"
+    },
+    {
+        "name": "soft",
+        "Category": "romantic",
+        "Soft": "2.736026886",
+        "Cool": "0.2218914703",
+        "fill1": "#F2E8D7",
+        "fill2": "#F7F6F3",
+        "fill3": "#F3F4C6"
+    },
+    {
+        "name": "dreamy",
+        "Category": "romantic",
+        "Soft": "2.599108788",
+        "Cool": "-0.8828393136",
+        "fill1": "#F1E7D5",
+        "fill2": "#FAF9F6",
+        "fill3": "#E4E7EB"
+    },
+    {
+        "name": "charming",
+        "Category": "romantic",
+        "Soft": "2.367872791",
+        "Cool": "-0.01380444407",
+        "fill1": "#F4E8DD",
+        "fill2": "#ECCBC7",
+        "fill3": "#DEECEC"
+    }
+]

@@ -5,7 +5,7 @@
   import { suggestAdjustments } from "../../lib/api-calls";
   import type { Palette } from "../../stores/color-store";
   import PalPreview from "../../components/PalPreview.svelte";
-  import { buttonStyle } from "../../lib/styles";
+  import { buttonStyle, AIButtonStyle } from "../../lib/styles";
 
   $: colorSpace = $colorStore.currentPal.colors[0]?.spaceName || "lab";
   let requestState: "idle" | "loading" | "loaded" | "failed" = "idle";
@@ -19,7 +19,7 @@
 
 <Tooltip>
   <span slot="target" let:toggle>
-    <button class={buttonStyle} on:click={toggle}>
+    <button class={AIButtonStyle} on:click={toggle}>
       Modify Current Pal with AI
     </button>
   </span>

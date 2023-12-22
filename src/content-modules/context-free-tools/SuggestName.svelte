@@ -1,7 +1,7 @@
 <script lang="ts">
   import colorStore from "../../stores/color-store";
   import Tooltip from "../../components/Tooltip.svelte";
-  import { buttonStyle } from "../../lib/styles";
+  import { AIButtonStyle, buttonStyle } from "../../lib/styles";
 
   import { suggestNameForPalette } from "../../lib/api-calls";
 
@@ -13,7 +13,7 @@
   <div slot="content">
     <div class="">
       <button
-        class={buttonStyle}
+        class={AIButtonStyle}
         class:animate-pulse={requestState === "loading"}
         on:click={() => {
           if (requestState === "loading") return;

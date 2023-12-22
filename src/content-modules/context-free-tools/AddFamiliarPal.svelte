@@ -24,21 +24,21 @@
       return colors;
     };
     let newPals = [
-      {
-        colors: [
-          "#c60c30",
-          "#00a1de",
-          "#62361b",
-          "#009b3a",
-          "#f9461c",
-          "#522398",
-          "#e27ea6",
-          "#f9e300",
-        ].map((x) => colorFromString(x, colorSpace)),
-        name: "CTA",
-        background: colorFromString("#ffffff", colorSpace),
-        group: "CTA",
-      },
+      // {
+      //   colors: [
+      //     "#c60c30",
+      //     "#00a1de",
+      //     "#62361b",
+      //     "#009b3a",
+      //     "#f9461c",
+      //     "#522398",
+      //     "#e27ea6",
+      //     "#f9e300",
+      //   ].map((x) => colorFromString(x, colorSpace)),
+      //   name: "CTA",
+      //   background: colorFromString("#ffffff", colorSpace),
+      //   group: "CTA",
+      // },
     ] as ExtendedPal[];
     Object.entries(VegaColors).forEach(([name, colors]) => {
       newPals.push({
@@ -48,25 +48,46 @@
         group: "vega",
       });
     });
-    fetch("./brewer.json")
-      .then((x) => x.json())
-      .then((x) => {
-        Object.entries(x).forEach(([schemeName, schemeSizes]) => {
-          Object.entries(schemeSizes as any).forEach(([size, colors]) => {
-            if (typeof colors === "string") return;
-            newPals.push({
-              name: `${schemeName}-${size}`,
-              colors: (colors as any).map((x: any) =>
-                colorFromString(x, colorSpace)
-              ) as any,
-              background: colorFromString("#ffffff", colorSpace),
-              group: "brewer",
+    Promise.all([
+      fetch("./brewer.json")
+        .then((x) => x.json())
+        .then((x) => {
+          const brewerPals = [] as any;
+          Object.entries(x).forEach(([schemeName, schemeSizes]) => {
+            Object.entries(schemeSizes as any).forEach(([size, colors]) => {
+              if (typeof colors === "string") return;
+              brewerPals.push({
+                name: `${schemeName}-${size}`,
+                colors: (colors as any).map((x: any) =>
+                  colorFromString(x, colorSpace)
+                ) as any,
+                background: colorFromString("#ffffff", colorSpace),
+                group: "brewer",
+              });
             });
           });
-        });
-        familiarPals = newPals;
-      });
-    familiarPals = newPals;
+          return brewerPals;
+        }),
+      fetch("./outfits.json")
+        .then((x) => x.json())
+        .then((x) => {
+          const outfitPals = [] as any;
+          x.forEach((outfit: any) => {
+            const colors = [outfit.fill1, outfit.fill2, outfit.fill3].map((x) =>
+              colorFromString(x, colorSpace)
+            );
+            outfitPals.push({
+              name: `${outfit.name}-${outfit.Category}`,
+              colors,
+              background: colorFromString("#ffffff", colorSpace),
+              group: "outfit",
+            });
+          });
+          return outfitPals;
+        }),
+    ]).then(([brewerPals, outfitPals]) => {
+      familiarPals = [...newPals, ...brewerPals, ...outfitPals];
+    });
   });
   let searchString = "";
   $: groups = familiarPals.reduce(

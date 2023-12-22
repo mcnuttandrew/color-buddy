@@ -4,7 +4,7 @@
   import focusStore from "../../stores/focus-store";
   import { colorFromString } from "../../lib/Color";
   import { suggestContextualAdjustments } from "../../lib/api-calls";
-  import { buttonStyle } from "../../lib/styles";
+  import { buttonStyle, AIButtonStyle } from "../../lib/styles";
   import PalPreview from "../../components/PalPreview.svelte";
 
   let requestState: "idle" | "loading" | "loaded" | "failed" = "idle";
@@ -28,7 +28,7 @@
 {#if $focusStore.focusedColors.length > 0}
   <Tooltip>
     <span slot="target" let:toggle>
-      <button class={buttonStyle} on:click={toggle}>Modify with text</button>
+      <button class={AIButtonStyle} on:click={toggle}>Modify with AI</button>
     </span>
     <div slot="content" let:onClick>
       <div class="flex flex-col w-72">

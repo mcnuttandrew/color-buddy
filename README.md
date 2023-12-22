@@ -15,9 +15,9 @@ Use: should point to localhost:8888 if all is well
 - [ ] add color analysis
 - [ ] higher card. vis examples
 - [ ] order as diverging
-- [ ] Plot operate over other color spaces
 - [ ] Responsiveness
 - [ ] Meta: figure out all the other features in maureen's setup
+- [x] Plot operate over other color spaces
 - [x] make old pals searchable
 - [x] make charts be end user manipulable
 - [x] kbd commands, up/down for moving selections, cmd+z for undo, etc

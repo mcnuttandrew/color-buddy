@@ -8,6 +8,7 @@
   import PalPreview from "../../components/PalPreview.svelte";
 
   let requestState: "idle" | "loading" | "loaded" | "failed" = "idle";
+  $: colorSpace = $colorStore.currentPal.colors[0]?.spaceName || "lab";
   $: colors = $colorStore.currentPal.colors;
   $: selectedColors = $focusStore.focusedColors
     .map((x) => colors[x]?.toHex())
@@ -17,7 +18,7 @@
 
   function toPal(colors: string[]) {
     return {
-      colors: colors.map((x) => colorFromString(x, "lab")),
+      colors: colors.map((x) => colorFromString(x, colorSpace)),
       name: "mods",
       background: $colorStore.currentPal.background,
     };
@@ -49,7 +50,7 @@
                 const newColors = colors.map((x) => {
                   const idx = selectedColors.indexOf(x.toHex());
                   if (idx === -1) return x;
-                  return colorFromString(suggestedColors[idx], "lab");
+                  return colorFromString(suggestedColors[idx], colorSpace);
                 });
                 colorStore.setCurrentPalColors(newColors);
                 onClick();
@@ -79,7 +80,9 @@
               suggestContextualAdjustments(
                 palPrompt,
                 {
-                  colors: selectedColors.map((x) => colorFromString(x, "lab")),
+                  colors: selectedColors.map((x) =>
+                    colorFromString(x, colorSpace)
+                  ),
                   background: $colorStore.currentPal.background,
                   name: $colorStore.currentPal.name,
                 },

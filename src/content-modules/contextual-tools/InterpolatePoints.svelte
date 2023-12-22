@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Color, colorFromChannels } from "../../lib/Color";
+  import { Color, colorFromChannels, toColorSpace } from "../../lib/Color";
   import ColorIO from "colorjs.io";
   import colorStore from "../../stores/color-store";
   import focusStore from "../../stores/focus-store";
@@ -24,19 +24,23 @@
       }
 
       if (t === 0 || t === 1) continue;
-      const [x1, x2, x3] = new ColorIO("lab", pointA.toChannels()).to(
-        colorSpace
-      ).coords;
-      const [y1, y2, y3] = new ColorIO("lab", pointB.toChannels()).to(
-        colorSpace
-      ).coords;
+      const [x1, x2, x3] = new ColorIO(
+        pointA.spaceName,
+        pointA.toChannels()
+      ).to(colorSpace).coords;
+      const [y1, y2, y3] = new ColorIO(
+        pointB.spaceName,
+        pointB.toChannels()
+      ).to(colorSpace).coords;
       const lab = [
         x1 * (1 - t) + y1 * t,
         x2 * (1 - t) + y2 * t,
         x3 * (1 - t) + y3 * t,
       ] as [number, number, number];
-      const finalColor = new ColorIO(colorSpace, lab).to("lab").coords;
-      points.push(colorFromChannels(finalColor, "lab"));
+      const finalColor = new ColorIO(colorSpace, lab).to(
+        pointA.spaceName
+      ).coords;
+      points.push(colorFromChannels(finalColor, pointA.spaceName));
     }
     return points;
   }
@@ -96,7 +100,6 @@
         class="{buttonStyle} mt-5"
         on:click={() => {
           let newColors = [...colors];
-          const [pointA, pointB] = focusedColors.map((idx) => colors[idx]);
           const newPoints = createInterpolatedPoints();
           newColors = [...newColors, ...newPoints];
           colorStore.setCurrentPalColors(newColors);

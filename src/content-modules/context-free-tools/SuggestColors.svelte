@@ -12,6 +12,7 @@
   let suggestions = [randColor(), randColor(), randColor()].map((x) =>
     x.toHex()
   );
+  $: colorSpace = $colorStore.currentPal.colors[0]?.spaceName || "lab";
 </script>
 
 <Tooltip>
@@ -29,7 +30,7 @@
               style="background-color: {color}"
               on:click={() => {
                 colorStore.setCurrentPalColors(
-                  insert(colors, colorFromString(color, "lab"))
+                  insert(colors, colorFromString(color, colorSpace))
                 );
                 suggestions = suggestions.filter((x) => x !== color);
                 requestState = "idle";

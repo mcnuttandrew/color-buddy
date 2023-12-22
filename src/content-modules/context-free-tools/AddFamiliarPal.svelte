@@ -12,12 +12,13 @@
     group: string;
   }
   $: familiarPals = [] as ExtendedPal[];
+  $: colorSpace = $colorStore.currentPal.colors[0]?.spaceName || "lab";
   onMount(() => {
     const toHex = (x: string) => {
       let idx = 0;
       const colors = [];
       while (idx < x.length) {
-        colors.push(colorFromString(`#${x.slice(idx, idx + 6)}`, "lab"));
+        colors.push(colorFromString(`#${x.slice(idx, idx + 6)}`, colorSpace));
         idx += 6;
       }
       return colors;
@@ -33,9 +34,9 @@
           "#522398",
           "#e27ea6",
           "#f9e300",
-        ].map((x) => colorFromString(x, "lab")),
+        ].map((x) => colorFromString(x, colorSpace)),
         name: "CTA",
-        background: colorFromString("#ffffff", "lab"),
+        background: colorFromString("#ffffff", colorSpace),
         group: "CTA",
       },
     ] as ExtendedPal[];
@@ -43,7 +44,7 @@
       newPals.push({
         name,
         colors: toHex(colors),
-        background: colorFromString("#ffffff", "lab"),
+        background: colorFromString("#ffffff", colorSpace),
         group: "vega",
       });
     });
@@ -56,9 +57,9 @@
             newPals.push({
               name: `${schemeName}-${size}`,
               colors: (colors as any).map((x: any) =>
-                colorFromString(x, "lab")
+                colorFromString(x, colorSpace)
               ) as any,
-              background: colorFromString("#ffffff", "lab"),
+              background: colorFromString("#ffffff", colorSpace),
               group: "brewer",
             });
           });

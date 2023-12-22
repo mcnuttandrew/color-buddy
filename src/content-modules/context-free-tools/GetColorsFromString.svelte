@@ -3,13 +3,14 @@
   import colorStore from "../../stores/color-store";
   $: colors = $colorStore.currentPal.colors;
   let state: "idle" | "error" = "idle";
+  $: colorSpace = $colorStore.currentPal.colors[0]?.spaceName || "lab";
   function processBodyInput(body: string) {
     try {
       const newColors = body
         .split(",")
         .map((x) => x.trim())
         .filter((x) => x.length > 0)
-        .map((x) => colorFromString(x, "lab"));
+        .map((x) => colorFromString(x, colorSpace));
       colorStore.setCurrentPalColors(newColors);
       state = "idle";
     } catch (e) {

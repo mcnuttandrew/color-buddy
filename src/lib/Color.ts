@@ -1,18 +1,15 @@
 import type { Color as ChromaColor } from "chroma-js";
-import ColorIO from "colorjs.io";
 import chroma from "chroma-js";
 export class Color {
   name: string;
   channels: Record<string, number>;
   chromaBind: typeof chroma.lab;
-  spaceName: string;
-  channelDimensions: Record<keyof typeof this.channels, [number, number]>;
+  spaceName: keyof typeof colorDirectory;
   constructor() {
     this.name = "";
     this.channels = {};
     this.chromaBind = chroma.rgb;
-    this.spaceName = "";
-    this.channelDimensions = {};
+    this.spaceName = "rgb";
   }
 
   toHex(): string {
@@ -76,11 +73,6 @@ export class CIELAB extends Color {
     this.channels = { L: 0, a: 0, b: 0 };
     this.chromaBind = chroma.lab;
     this.spaceName = "lab";
-    this.channelDimensions = {
-      L: [0, 100],
-      a: [-100, 100],
-      b: [-100, 100],
-    };
   }
   toString(): string {
     const [L, a, b] = Object.values(this.channels);
@@ -97,11 +89,6 @@ export class HSV extends Color {
     this.channels = { h: 0, s: 0, v: 0 };
     this.chromaBind = chroma.hsv;
     this.spaceName = "hsv";
-    this.channelDimensions = {
-      h: [0, 360],
-      s: [0, 1],
-      v: [0, 1],
-    };
   }
   toString(): string {
     const [h, s, v] = Object.values(this.channels);
@@ -118,11 +105,6 @@ export class RGB extends Color {
     this.channels = { r: 0, g: 0, b: 0 };
     this.chromaBind = chroma.rgb;
     this.spaceName = "rgb";
-    this.channelDimensions = {
-      h: [0, 1],
-      s: [0, 1],
-      v: [0, 1],
-    };
   }
 }
 
@@ -135,18 +117,47 @@ export class HSL extends Color {
     this.channels = { h: 0, s: 0, l: 0 };
     this.chromaBind = chroma.hsl;
     this.spaceName = "hsl";
-    // todo maybe wrong
-    this.channelDimensions = {
-      h: [0, 360],
-      s: [0, 100],
-      v: [0, 100],
-    };
+  }
+}
+export class LCH extends Color {
+  name: "LCH";
+  channels: { l: number; c: number; h: number };
+  constructor() {
+    super();
+    this.name = "LCH";
+    this.channels = { l: 0, c: 0, h: 0 };
+    this.chromaBind = chroma.lch;
+    this.spaceName = "lch";
+  }
+}
+
+export class OKLAB extends Color {
+  name: "OKLAB";
+  channels: { l: number; a: number; b: number };
+  constructor() {
+    super();
+    this.name = "OKLAB";
+    this.channels = { l: 0, a: 0, b: 0 };
+    this.chromaBind = chroma.oklab;
+    this.spaceName = "oklab";
+  }
+}
+
+export class OKLCH extends Color {
+  name: "OKLCH";
+  channels: { l: number; c: number; h: number };
+  constructor() {
+    super();
+    this.name = "OKLCH";
+    this.channels = { l: 0, c: 0, h: 0 };
+    this.chromaBind = chroma.oklch;
+    this.spaceName = "oklch";
   }
 }
 
 export function colorFromString(
   colorString: string,
-  colorSpace: keyof typeof colorDirectory
+  colorSpace: keyof typeof colorDirectory = "lab"
 ): Color {
   return new colorDirectory[colorSpace]().fromString(colorString);
 }
@@ -162,15 +173,91 @@ export function toColorSpace(
   color: Color,
   colorSpace: keyof typeof colorDirectory
 ): Color {
+  if (color.spaceName === colorSpace) {
+    return color;
+  }
   return new colorDirectory[colorSpace]().fromChroma(color.toChroma());
-  // color.toChroma()
-  // return new colorDirectory[colorSpace]().fromString(color.toString());
 }
 
 export const colorDirectory = {
-  lab: CIELAB,
-  hsv: HSV,
   hsl: HSL,
-  srgb: RGB,
+  hsv: HSV,
+  lab: CIELAB,
+  lch: LCH,
+  oklab: OKLAB,
   rgb: RGB,
+  srgb: RGB,
+  oklch: OKLCH,
 };
+
+type ColorSpace = keyof typeof colorDirectory | string;
+const domains = {
+  lab: { a: [-100, 100], b: [-100, 100], l: [0, 100] },
+  oklab: { a: [-0.4, 0.4], b: [-0.4, 0.4], l: [0, 1] },
+  rgb: { r: [0, 255], g: [0, 255], b: [0, 255] },
+  // srgb: { r: [0, 255], g: [255, 0], b: [0, 255] },
+  hsv: { h: [0, 360], s: [0, 1], v: [0, 1] },
+  hsl: { h: [0, 360], s: [0, 1], l: [0, 1] },
+  lch: { l: [0, 100], c: [0, 150], h: [0, 360] },
+  oklch: { l: [0, 1], c: [0, 0.4], h: [0, 360] },
+} as Record<ColorSpace, Record<string, [number, number]>>;
+
+const dimensionToChannel = {
+  lab: { x: "a", y: "b", z: "l" },
+  oklab: { x: "a", y: "b", z: "l" },
+  rgb: { x: "g", y: "b", z: "r" },
+  // srgb: { x: "g", y: "b", z: "r" },
+  hsv: { x: "s", y: "v", z: "h" },
+  hsl: { x: "s", y: "l", z: "h" },
+  lch: { x: "c", y: "h", z: "l" },
+  oklch: { x: "c", y: "h", z: "l" },
+} as Record<ColorSpace, Record<string, string>>;
+const xyTitles = {
+  lab: "CIELAB: a* b*",
+  oklab: "OKLAB: a* b*",
+  rgb: "RGB: Green Blue",
+  // srgb: "sRGB: Green Blue",
+  hsv: "HSV: Saturation Value",
+  hsl: "HSL: Saturation Lightness",
+  lch: "LCH: Chroma Hue",
+  oklch: "OKLCH: Chroma Hue",
+} as Record<ColorSpace, string>;
+const zTitles = {
+  lab: "CIELAB: L*",
+  oklab: "OKLAB: L*",
+  rgb: "RGB: Red",
+  // srgb: "sRGB: Red",
+  hsv: "HSV: Hue",
+  hsl: "HSL: Hue",
+  lch: "LCH: Lightness",
+  oklch: "OKLCH: Lightness",
+} as Record<ColorSpace, string>;
+const titleMap = {
+  lab: "CIELAB",
+  oklab: "OKLAB",
+  rgb: "RGB",
+  // srgb: "sRGB",
+  hsv: "HSV",
+  hsl: "HSL",
+  lch: "LCH",
+  oklch: "OKLCH",
+} as Record<ColorSpace, string>;
+
+export const colorPickerConfig = Object.fromEntries(
+  (Object.keys(domains) as ColorSpace[]).map((name) => {
+    return [
+      name,
+      {
+        title: titleMap[name],
+        xyTitle: xyTitles[name],
+        zTitle: zTitles[name],
+        xDomain: domains[name][dimensionToChannel[name].x],
+        yDomain: domains[name][dimensionToChannel[name].y],
+        zDomain: domains[name][dimensionToChannel[name].z],
+        xChannel: dimensionToChannel[name].x,
+        yChannel: dimensionToChannel[name].y,
+        zChannel: dimensionToChannel[name].z,
+      },
+    ];
+  })
+);

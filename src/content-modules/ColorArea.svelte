@@ -1,7 +1,12 @@
 <script lang="ts">
   import colorStore from "../stores/color-store";
   import focusStore from "../stores/focus-store";
-  import { Color, colorFromChannels } from "../lib/Color";
+  import {
+    Color,
+    colorFromChannels,
+    toColorSpace,
+    colorPickerConfig,
+  } from "../lib/Color";
   import { scaleLinear } from "d3-scale";
   import DoubleRangeSlider from "../components/DoubleRangeSlider.svelte";
   import VerticalDoubleRangeSlider from "../components/VerticalDoubleRangeSlider.svelte";
@@ -11,38 +16,44 @@
   $: focusedColors = $focusStore.focusedColors;
   $: focusSet = new Set(focusedColors);
 
-  const margin = {
-    top: 10,
-    right: 10,
-    bottom: 10,
-    left: 10,
-  };
+  const margin = { top: 15, right: 15, bottom: 15, left: 15 };
   const plotWidth = width - margin.left - margin.right;
   const plotHeight = height - margin.top - margin.bottom;
+  let extents = { x: [0, 1], y: [0, 1], z: [0, 1] };
 
-  // A: -100 to 100
-  let minA = 0;
-  let maxA = 1;
-  const domainAScale = scaleLinear().domain([0, 1]).range([-100, 100]);
-  $: aDomain = [domainAScale(minA), domainAScale(maxA)];
-  $: xScale = scaleLinear().domain(aDomain).range([0, plotWidth]);
-  // B: -100 to 100
-  let minB = 0;
-  let maxB = 1;
-  const domainBScale = scaleLinear().domain([0, 1]).range([-100, 100]);
-  $: bDomain = [domainBScale(minB), domainBScale(maxB)];
-  $: yScale = scaleLinear().domain(bDomain).range([0, plotHeight]);
+  $: config = colorPickerConfig[colorSpace];
+  $: bg = $colorStore.currentPal.background;
+  $: colorSpace = $colorStore.currentPal.colors[0].spaceName;
+  $: colors = $colorStore.currentPal.colors.map((x) =>
+    toColorSpace(x, colorSpace)
+  );
 
-  // L: 0 to 100
-  let minL = 0;
-  let maxL = 1;
-  const domainLScale = scaleLinear().domain([0, 1]).range([0, 100]);
-  $: lDomain = [domainLScale(minL), domainLScale(maxL)];
-  $: zScale = scaleLinear().domain(lDomain).range([0, plotHeight]);
+  $: xRange = config.xDomain;
+  $: domainXScale = scaleLinear().domain([0, 1]).range(xRange);
+  $: xScale = scaleLinear()
+    .domain([domainXScale(extents.x[0]), domainXScale(extents.x[1])])
+    .range([0, plotWidth]);
+
+  $: yRange = config.yDomain;
+  $: domainYScale = scaleLinear().domain([0, 1]).range(yRange);
+  $: yScale = scaleLinear()
+    .domain([domainYScale(extents.y[0]), domainYScale(extents.y[1])])
+    .range([0, plotHeight]);
+
+  $: zRange = config.zDomain;
+  $: domainLScale = scaleLinear().domain([0, 1]).range(zRange);
+  $: zScale = scaleLinear()
+    .domain([domainLScale(extents.z[0]), domainLScale(extents.z[1])])
+    .range([0, plotHeight]);
 
   let dragging: false | { x: number; y: number } = false;
   let dragBox: false | { x: number; y: number } = false;
   let parentPos = { x: 0, y: 0 };
+  const clampToRange = (val: number, range: number[]) => {
+    const min = Math.min(...range);
+    const max = Math.max(...range);
+    return Math.min(Math.max(val, min), max);
+  };
   const eventToColorXY = (
     e: any,
     color: Color,
@@ -56,13 +67,12 @@
       y: e.clientY - dragging.y,
     };
     const [l, a, b] = originalColor.toChannels();
-    const clampToBoundary = (val: number) => Math.min(Math.max(val, -100), 100);
     const newX = xScale.invert(xScale(a) + screenPosDelta.x);
     const newY = yScale.invert(yScale(b) + screenPosDelta.y);
 
     return colorFromChannels(
-      [l, clampToBoundary(newX), clampToBoundary(newY)],
-      "lab"
+      [l, clampToRange(newX, xRange), clampToRange(newY, yRange)],
+      colorSpace
     );
   };
 
@@ -73,12 +83,9 @@
     const screenPosDelta = e.clientY - dragging.y;
     const [l, a, b] = originalColor.toChannels();
     const newZ = zScale.invert(zScale(l) + screenPosDelta);
-    const clampToBoundary = (val: number) => Math.min(Math.max(val, 0), 100);
-    return colorFromChannels([clampToBoundary(newZ), a, b], "lab");
-  };
 
-  $: bg = $colorStore.currentPal.background;
-  $: colors = $colorStore.currentPal.colors;
+    return colorFromChannels([clampToRange(newZ, zRange), a, b], colorSpace);
+  };
 
   function stopDrag() {
     dragging = false;
@@ -122,15 +129,59 @@
       .filter((x) => x !== -1);
     focusStore.setColors(newFocusedColors);
   }
+  $: points = {
+    centerTop: {
+      x: (xScale.range()[1] - xScale.range()[0]) / 2,
+      y: yScale.range()[0],
+      anchor: "end",
+      label: `${config.yChannel}: ${yScale.domain()[0]}`,
+    },
+    centerBottom: {
+      x: (xScale.range()[1] - xScale.range()[0]) / 2,
+      y: yScale.range()[1],
+      anchor: "start",
+      label: yScale.domain()[1],
+    },
+    centerLeft: {
+      x: xScale.range()[0],
+      y: (yScale.range()[1] - yScale.range()[0]) / 2,
+      anchor: "start",
+      label: xScale.domain()[0],
+    },
+    centerRight: {
+      x: xScale.range()[1],
+      y: (yScale.range()[1] - yScale.range()[0]) / 2,
+      anchor: "end",
+      // label: xScale.domain()[1],
+      label: `${config.xChannel}: ${xScale.domain()[1]}`,
+    },
+  };
+  $: axisColor = bg.toChroma().luminance() > 0.5 ? "gray" : "white";
 </script>
 
 <!-- svelte-ignore a11y-no-static-element-interactions -->
 <!-- svelte-ignore a11y-no-static-element-interactions -->
 <div class="flex flex-col">
-  <span>CIELAB a*, b*</span>
+  <select
+    value={colors[0] && colors[0].spaceName}
+    on:change={(e) => {
+      const newColors = colors.map((color) =>
+        toColorSpace(color, e.target.value)
+      );
+      colorStore.setCurrentPalColors(newColors);
+    }}
+  >
+    {#each Object.entries(colorPickerConfig) as [space, { title }]}
+      <option value={space}>{title}</option>
+    {/each}
+  </select>
+  <span>{config.xyTitle}</span>
   <div class="flex h-full">
     <div class="h-full py-4" style="max-height: {height}px">
-      <VerticalDoubleRangeSlider bind:start={minB} bind:end={maxB} />
+      <VerticalDoubleRangeSlider
+        bind:start={extents.y[0]}
+        bind:end={extents.y[1]}
+      />
     </div>
     <svg {width} {height} on:mouseleave={stopDrag} on:mouseup={stopDrag}>
       <g transform={`translate(${margin.left}, ${margin.top})`}>
@@ -140,25 +191,31 @@
           width={xScale.range()[1]}
           height={yScale.range()[1]}
           fill={bg.toHex()}
-          stroke={bg.toChroma().luminance() > 0.5 ? "gray" : "white"}
+          stroke={axisColor}
           stroke-width="1"
         />
         <line
-          x1={(xScale.range()[1] - xScale.range()[0]) / 2}
-          x2={(xScale.range()[1] - xScale.range()[0]) / 2}
-          y1={yScale.range()[0]}
-          y2={yScale.range()[1]}
-          stroke={bg.toChroma().luminance() > 0.5 ? "gray" : "white"}
+          x1={points.centerTop.x}
+          y1={points.centerTop.y}
+          x2={points.centerBottom.x}
+          y2={points.centerBottom.y}
+          stroke={axisColor}
           stroke-width="1"
         />
         <line
-          x1={xScale.range()[0]}
-          x2={xScale.range()[1]}
-          y1={(yScale.range()[1] - yScale.range()[0]) / 2}
-          y2={(yScale.range()[1] - yScale.range()[0]) / 2}
-          stroke={bg.toChroma().luminance() > 0.5 ? "gray" : "white"}
+          x1={points.centerLeft.x}
+          y1={points.centerLeft.y}
+          x2={points.centerRight.x}
+          y2={points.centerRight.y}
+          stroke={axisColor}
           stroke-width="1"
         />
+        {#each Object.values(points) as point}
+          <text text-anchor={point.anchor} x={point.x} y={point.y}>
+            {point.label}
+          </text>
+        {/each}
+
         <!-- svelte-ignore a11y-no-static-element-interactions -->
         <!-- svelte-ignore a11y-click-events-have-key-events -->
         <rect
@@ -240,11 +297,11 @@
     </svg>
   </div>
   <div style="width: {width}px;" class="w-full px-4 ml-5">
-    <DoubleRangeSlider bind:start={minA} bind:end={maxA} />
+    <DoubleRangeSlider bind:start={extents.x[0]} bind:end={extents.x[1]} />
   </div>
 </div>
-<div class="h-full">
-  <span>CIELAB L*</span>
+<div class="h-full mt-5">
+  <span>{config.zTitle}</span>
   <!-- svelte-ignore a11y-no-static-element-interactions -->
   <div class="flex h-full">
     <div class="flex flex-col">
@@ -265,13 +322,14 @@
             fill={bg.toHex()}
             stroke="gray"
             stroke-width="1"
+            class:cursor-pointer={dragging}
             on:mousemove={(e) => {
               if (dragging) {
                 dragResponse(eventToColorZ)(e);
               }
             }}
           />
-          {#each $colorStore.currentPal.colors as color, i}
+          {#each colors as color, i}
             <!-- svelte-ignore a11y-no-static-element-interactions -->
             <!-- svelte-ignore a11y-click-events-have-key-events -->
             <rect
@@ -291,19 +349,17 @@
       </svg>
       <button
         on:click={() => {
-          minA = 0;
-          maxA = 1;
-          minB = 0;
-          maxB = 1;
-          minL = 0;
-          maxL = 1;
+          extents = { x: [0, 1], y: [0, 1], z: [0, 1] };
         }}
       >
         Reset
       </button>
     </div>
     <div class="py-4" style="height: {height}px">
-      <VerticalDoubleRangeSlider bind:start={minL} bind:end={maxL} />
+      <VerticalDoubleRangeSlider
+        bind:start={extents.z[0]}
+        bind:end={extents.z[1]}
+      />
     </div>
   </div>
 </div>

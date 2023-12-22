@@ -2,7 +2,6 @@
   import colorStore from "../stores/color-store";
   import { Color } from "../lib/Color";
   import ColorChannelPicker from "../components/ColorChannelPicker.svelte";
-  import ColorNameWithEdit from "../components/ColorNameWithEdit.svelte";
   import Tooltip from "../components/Tooltip.svelte";
   $: bg = $colorStore.currentPal.background;
   function onChange(color: Color) {
@@ -16,7 +15,6 @@
     <!-- svelte-ignore a11y-click-events-have-key-events -->
     <Tooltip top={"75px"}>
       <div slot="content" class="flex flex-col" let:onClick>
-        <!-- <ColorNameWithEdit color={bg} onColorChange={onChange} /> -->
         <ColorChannelPicker color={bg} onColorChange={onChange} />
       </div>
       <!-- svelte-ignore a11y-click-events-have-key-events -->

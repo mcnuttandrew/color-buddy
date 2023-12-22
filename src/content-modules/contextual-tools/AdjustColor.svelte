@@ -8,6 +8,7 @@
 
   $: colors = $colorStore.currentPal.colors;
   $: focusedColors = $focusStore.focusedColors;
+  $: colorSpace = $colorStore.currentPal.colors[0]?.spaceName || "lab";
 
   function actionOnColor(idx: number, action: (Color: Color) => any) {
     const newColor = action(colors[idx]);
@@ -27,7 +28,7 @@
             actionOnColor(focusedColors[0], (color) => {
               // @ts-ignore
               const chromaColor = color.toChroma()[action]();
-              return colorFromChannels(chromaColor.lab(), "lab");
+              return colorFromChannels(chromaColor.lab(), colorSpace);
             });
           }}
         >

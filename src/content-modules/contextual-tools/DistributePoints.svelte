@@ -7,6 +7,7 @@
 
   $: colors = $colorStore.currentPal.colors;
   $: focusedColors = $focusStore.focusedColors;
+  $: colorSpace = $colorStore.currentPal.colors[0]?.spaceName || "lab";
 
   type Direction = "horizontal" | "vertical" | "in z space";
   function distributePoints(direction: Direction) {
@@ -42,7 +43,7 @@
 
     const newColors = [...colors].map((color, idx) => {
       const point = pointsByIndex[idx];
-      return point ? colorFromChannels(point, "lab") : color;
+      return point ? colorFromChannels(point, colorSpace) : color;
     });
 
     colorStore.setCurrentPalColors(newColors);

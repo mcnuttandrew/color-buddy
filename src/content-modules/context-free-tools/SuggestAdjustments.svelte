@@ -7,10 +7,11 @@
   import PalPreview from "../../components/PalPreview.svelte";
   import { buttonStyle } from "../../lib/styles";
 
+  $: colorSpace = $colorStore.currentPal.colors[0]?.spaceName || "lab";
   let requestState: "idle" | "loading" | "loaded" | "failed" = "idle";
   let newPal: Palette = {
     colors: [],
-    background: colorFromString("#000000", "lab"),
+    background: colorFromString("#000000", colorSpace),
     name: "blank",
   };
   let palPrompt: string = "";
@@ -74,11 +75,11 @@
                 }
                 const suggestion = suggestions[0];
                 newPal.colors = suggestion.colors.map((x) =>
-                  colorFromString(x, "lab")
+                  colorFromString(x, colorSpace)
                 );
                 newPal.background = colorFromString(
                   suggestion.background,
-                  "lab"
+                  colorSpace
                 );
                 newPal.name = $colorStore.currentPal.name;
 

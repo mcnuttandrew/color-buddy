@@ -134,7 +134,7 @@
       x: (xScale.range()[1] - xScale.range()[0]) / 2,
       y: yScale.range()[0],
       anchor: "end",
-      label: `${config.yChannel}: ${yScale.domain()[0]}`,
+      label: `${config.yChannel}: ${yScale.domain()[0].toFixed(1)}`,
     },
     centerBottom: {
       x: (xScale.range()[1] - xScale.range()[0]) / 2,
@@ -153,7 +153,7 @@
       y: (yScale.range()[1] - yScale.range()[0]) / 2,
       anchor: "end",
       // label: xScale.domain()[1],
-      label: `${config.xChannel}: ${xScale.domain()[1]}`,
+      label: `${config.xChannel}: ${xScale.domain()[1].toFixed(1)}`,
     },
   };
   $: axisColor = bg.toChroma().luminance() > 0.5 ? "gray" : "white";

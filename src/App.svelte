@@ -12,7 +12,7 @@
 
 <main class="flex h-full">
   <SavedPals />
-  <div class="w-full flex-fol h-full">
+  <div class="w-full h-fit">
     <ActionArea />
     <!-- top row -->
     <div class="flex flex-col h-1/2">

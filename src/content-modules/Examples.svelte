@@ -61,17 +61,19 @@
 </script>
 
 <div
-  class=" h-1/2 flex-col flex flex-wrap overflow-auto p-4 max-h-1/2"
+  class=" h-1/2 flex flex flex-wrap overflow-auto p-4"
   style={`background-color: ${bg.toHex()}`}
 >
-  <div class="flex">
+  <div class="flex-col">
     {#each Object.keys($exampleStore.sections) as group}
-      <label for={`${group}-checkbox`}>{group}</label>
-      <input
-        id={`${group}-checkbox`}
-        type="checkbox"
-        bind:checked={$exampleStore.sections[group]}
-      />
+      <div>
+        <label for={`${group}-checkbox`}>{group}</label>
+        <input
+          id={`${group}-checkbox`}
+          type="checkbox"
+          bind:checked={$exampleStore.sections[group]}
+        />
+      </div>
     {/each}
     <button
       class={buttonStyle}

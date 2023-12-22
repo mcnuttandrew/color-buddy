@@ -163,7 +163,7 @@ const scatterPlot = (_pal: Palette) => ({
 
 const map = (pal: Palette) => ({
   $schema: "https://vega.github.io/schema/vega/v5.json",
-  width: 500,
+  width: 300,
   height: 300,
   autosize: "none",
   data: [
@@ -182,7 +182,9 @@ const map = (pal: Palette) => ({
       ],
     },
   ],
-  projections: [{ name: "projection", type: "albersUsa" }],
+  projections: [
+    { name: "projection", type: "albersUsa", translate: [0, 400], scale: 2900 },
+  ],
 
   scales: [
     {
@@ -209,7 +211,7 @@ const map = (pal: Palette) => ({
 
 const areaChart = (pal: Palette) => ({
   $schema: "https://vega.github.io/schema/vega-lite/v5.json",
-  width: 400,
+  width: 300,
   height: 80,
   data: { url: "penguins.json" },
   mark: { type: "area", opacity: 0.5 },
@@ -295,7 +297,7 @@ const heatmap = (_pal: Palette) => ({
 
 export const charts = [
   // groupedBarChart, //
-  { group: "categorical", chart: scatterPlot },
+  // { group: "categorical", chart: scatterPlot },
   { group: "categorical", chart: map },
   { group: "categorical", chart: areaChart },
   { group: "categorical", chart: stackedAreaChart },
@@ -316,7 +318,8 @@ export async function getSVG(localSpec: any, pal: Palette) {
   const runtime = vega.parse(spec, theme);
   const view = await new vega.View(runtime, { renderer: "svg" }).runAsync();
   return await view.toSVG().then((x) => {
-    const newSvg = x.replace("<svg", `<svg overflow="visible" `);
+    const newSvg = x;
+    // .replace("<svg", `<svg overflow="visible" `);
     results[newKey] = newSvg;
     return newSvg;
   });

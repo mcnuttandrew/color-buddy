@@ -1,65 +1,16 @@
 <script lang="ts">
+  import { draggable } from "../lib/utils";
   // from https://svelte.dev/repl/75d34e46cbe64bb68b7c2ac2c61931ce?version=4.2.8
   export let start = 0;
   export let end = 1;
   const clamp = (n: number, min: number, max: number) =>
     Math.min(Math.max(n, min), max);
-  let leftHandle;
-  let body;
-  let slider;
-  function draggable(node: any) {
-    let x;
-    let y;
-    function handleMousedown(event) {
-      if (event.type === "touchstart") {
-        event = event.touches[0];
-      }
-      x = event.clientX;
-      y = event.clientY;
-      node.dispatchEvent(new CustomEvent("dragstart", { detail: { x, y } }));
-      window.addEventListener("mousemove", handleMousemove);
-      window.addEventListener("mouseup", handleMouseup);
-      window.addEventListener("touchmove", handleMousemove);
-      window.addEventListener("touchend", handleMouseup);
-    }
-    function handleMousemove(event) {
-      if (event.type === "touchmove") {
-        event = event.changedTouches[0];
-      }
-      const dx = event.clientX - x;
-      const dy = event.clientY - y;
-      x = event.clientX;
-      y = event.clientY;
-      node.dispatchEvent(
-        new CustomEvent("dragmove", {
-          detail: { x, y, dx, dy },
-        })
-      );
-    }
-    function handleMouseup(event) {
-      x = event.clientX;
-      y = event.clientY;
-      node.dispatchEvent(
-        new CustomEvent("dragend", {
-          detail: { x, y },
-        })
-      );
-      window.removeEventListener("mousemove", handleMousemove);
-      window.removeEventListener("mouseup", handleMouseup);
-      window.removeEventListener("touchmove", handleMousemove);
-      window.removeEventListener("touchend", handleMouseup);
-    }
-    node.addEventListener("mousedown", handleMousedown);
-    node.addEventListener("touchstart", handleMousedown);
-    return {
-      destroy() {
-        node.removeEventListener("mousedown", handleMousedown);
-        node.removeEventListener("touchstart", handleMousedown);
-      },
-    };
-  }
-  function setHandlePosition(which) {
-    return function (evt) {
+  let leftHandle: HTMLDivElement;
+  let body: HTMLDivElement;
+  let slider: HTMLDivElement;
+
+  function setHandlePosition(which: string) {
+    return function (evt: { detail: { x: number } }) {
       const { left, right } = slider.getBoundingClientRect();
       const parentWidth = right - left;
       const p = Math.min(Math.max((evt.detail.x - left) / parentWidth, 0), 1);
@@ -72,7 +23,7 @@
       }
     };
   }
-  function setHandlesFromBody(evt) {
+  function setHandlesFromBody(evt: any) {
     const { width } = body.getBoundingClientRect();
     const { left, right } = slider.getBoundingClientRect();
     const parentWidth = right - left;

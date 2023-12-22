@@ -122,6 +122,30 @@
       .filter((x) => x !== -1);
     focusStore.setColors(newFocusedColors);
   }
+  function dragGeneric(e) {
+    if (dragging && $focusStore.focusedColors.length > 0) {
+      dragResponse(eventToColorXY)(e);
+    }
+    if (dragging && $focusStore.focusedColors.length === 0) {
+      dragBox = { x: e.clientX, y: e.clientY };
+    }
+  }
+  function backgroundEnd(e) {
+    if (dragBox && dragging) {
+      selectColorsFromDrag(dragBox, dragging);
+    }
+    if (dragging && dragging.x === e.clientX && dragging.y === e.clientY) {
+      focusStore.clearColors();
+    }
+
+    dragging = false;
+    dragBox = false;
+  }
+  function dragGenericZ(e) {
+    if (dragging) {
+      dragResponse(eventToColorZ)(e);
+    }
+  }
 </script>
 
 <!-- svelte-ignore a11y-no-static-element-interactions -->
@@ -163,29 +187,11 @@
         <!-- svelte-ignore a11y-click-events-have-key-events -->
         <rect
           on:mousedown={(e) => startDrag(e)}
-          on:mousemove={(e) => {
-            if (dragging && $focusStore.focusedColors.length > 0) {
-              dragResponse(eventToColorXY)(e);
-            }
-            if (dragging && $focusStore.focusedColors.length === 0) {
-              dragBox = { x: e.clientX, y: e.clientY };
-            }
-          }}
-          on:mouseup={(e) => {
-            if (dragBox && dragging) {
-              selectColorsFromDrag(dragBox, dragging);
-            }
-            if (
-              dragging &&
-              dragging.x === e.clientX &&
-              dragging.y === e.clientY
-            ) {
-              focusStore.clearColors();
-            }
-
-            dragging = false;
-            dragBox = false;
-          }}
+          on:touchstart={(e) => startDrag(e)}
+          on:mousemove={(e) => dragGeneric(e)}
+          on:touchmove={(e) => dragGeneric(e)}
+          on:mouseup={(e) => backgroundEnd(e)}
+          on:touchend={(e) => backgroundEnd(e)}
           x="0"
           y="0"
           {width}
@@ -200,6 +206,7 @@
           <!-- svelte-ignore a11y-click-events-have-key-events -->
           <circle
             on:mousedown={(e) => startDrag(e)}
+            on:touchstart={(e) => startDrag(e)}
             class="cursor-pointer transition-all"
             transform={`translate(${xScale(color.toChannels()[1])}, ${yScale(
               color.toChannels()[2]
@@ -253,6 +260,7 @@
         width={80 + margin.left + margin.right}
         on:mouseleave={stopDrag}
         on:mouseup={stopDrag}
+        on:touchend={stopDrag}
       >
         <!-- svelte-ignore a11y-no-static-element-interactions -->
         <g transform={`translate(${margin.left}, ${margin.top})`}>
@@ -265,11 +273,8 @@
             fill={bg.toHex()}
             stroke="gray"
             stroke-width="1"
-            on:mousemove={(e) => {
-              if (dragging) {
-                dragResponse(eventToColorZ)(e);
-              }
-            }}
+            on:mousemove={dragGenericZ}
+            on:touchmove={dragGenericZ}
           />
           {#each $colorStore.currentPal.colors as color, i}
             <!-- svelte-ignore a11y-no-static-element-interactions -->
@@ -285,6 +290,7 @@
                 focusStore.toggleColor(i);
               }}
               on:mousedown={(e) => startDrag(e)}
+              on:touchstart={(e) => startDrag(e)}
             />
           {/each}
         </g>

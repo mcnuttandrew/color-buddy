@@ -67,9 +67,15 @@
       });
     familiarPals = newPals;
   });
+  let searchString = "";
   $: groups = familiarPals.reduce(
     (acc, pal) => {
       if (!acc[pal.group]) acc[pal.group] = [];
+      if (searchString.length > 0) {
+        if (!pal.name.toLowerCase().includes(searchString.toLowerCase())) {
+          return acc;
+        }
+      }
       acc[pal.group].push(pal);
       return acc;
     },
@@ -79,6 +85,7 @@
 
 <Tooltip>
   <span slot="content" let:onClick>
+    <input bind:value={searchString} placeholder="Search for palettes" />
     <div class="max-h-48 overflow-y-scroll">
       {#each Object.entries(groups) as [group, pals]}
         <div class="font-bold">{group}</div>

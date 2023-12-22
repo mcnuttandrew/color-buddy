@@ -192,7 +192,6 @@ const map = (pal: Palette) => ({
       type: "ordinal",
       domain: { data: "counties", field: "mod" },
       range: pal.colors.map((_x, idx) => idxToKey(idx)),
-      // range: pal.colors.map((x) => x.toHex()),
     },
   ],
 
@@ -202,7 +201,6 @@ const map = (pal: Palette) => ({
       from: { data: "counties" },
       encode: {
         update: { fill: { scale: "color", field: "mod" } },
-        hover: { fill: { value: "red" } },
       },
       transform: [{ type: "geoshape", projection: "projection" }],
     },
@@ -216,11 +214,7 @@ const areaChart = (pal: Palette) => ({
   data: { url: "penguins.json" },
   mark: { type: "area", opacity: 0.5 },
   transform: [
-    {
-      density: "Body Mass (g)",
-      groupby: ["Species"],
-      extent: [2500, 6500],
-    },
+    { density: "Body Mass (g)", groupby: ["Species"], extent: [2500, 6500] },
   ],
   encoding: {
     x: { field: "value", type: "quantitative", title: "Body Mass (g)" },
@@ -243,11 +237,7 @@ const stackedAreaChart = (pal: Palette) => ({
 
 const scatterPlotOrdinal = (_pal: Palette) => ({
   $schema: "https://vega.github.io/schema/vega-lite/v5.json",
-  description:
-    "A scatterplot showing body mass and flipper lengths of penguins.",
-  data: {
-    url: "./penguins.json",
-  },
+  data: { url: "./penguins.json" },
   mark: "point",
   encoding: {
     x: {
@@ -287,11 +277,7 @@ const heatmap = (_pal: Palette) => ({
   encoding: {
     x: { field: "x", type: "ordinal" },
     y: { field: "y", type: "ordinal" },
-    color: {
-      field: "value",
-      type: "ordinal",
-      bin: true,
-    },
+    color: { field: "value", type: "ordinal", bin: true },
   },
 });
 

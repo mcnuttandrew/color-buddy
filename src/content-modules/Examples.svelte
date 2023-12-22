@@ -11,6 +11,7 @@
   import { xml } from "@codemirror/lang-xml";
   import CodeMirror from "svelte-codemirror-editor";
   import Tooltip from "../components/Tooltip.svelte";
+  import Example from "../components/Example.svelte";
 
   let modalState: "closed" | "input-svg" | "edit-colors" = "closed";
   let modifyingExample: number | false = false;
@@ -38,25 +39,7 @@
     });
     return svg;
   }
-  function insertColorsToExample(
-    example: string,
-    colors: string[],
-    bg: string
-  ) {
-    let svg = example
-      .replace("SaLmOn", bg)
-      .replace("<svg", `<svg overflow="visible" `);
-    if (!svg.match(/<svg[^>]*\sheight="([^"]*)"/)) {
-      svg = svg.replace("<svg", `<svg height="300px" `);
-    }
-    if (!svg.match(/<svg[^>]*\width="([^"]*)"/)) {
-      svg = svg.replace("<svg", `<svg width="300px" `);
-    }
-    return colors.reduce(
-      (acc, color, idx) => acc.replace(new RegExp(idxToKey(idx), "g"), color),
-      svg
-    );
-  }
+
   $: detectedColors = [] as string[];
 </script>
 
@@ -96,11 +79,7 @@
   {#each $exampleStore.examples as example, idx}
     <div class="flex flex-col border-2 border-dashed rounded w-min">
       <div class="flex">
-        {@html insertColorsToExample(
-          example.svg,
-          colors.map((x) => x.toHex()),
-          bg.toHex()
-        )}
+        <Example example={example.svg} />
         <Tooltip>
           <div slot="content" let:onClick>
             <button

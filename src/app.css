@@ -6,3 +6,12 @@ html, body, #app {
     height: 100%;
     /* height: fit-content; */
 }
+
+.example-container path {
+    cursor: pointer;
+}
+
+.example-container path:hover {
+    stroke: black !important;
+    stroke-width: 2px;
+}

@@ -1,7 +1,8 @@
 <script lang="ts">
-  let tooltipOpen: boolean = false;
   export let top: string = "4rem";
   export let onClose: () => void = () => {};
+  export let initiallyOpen: boolean = false;
+  let tooltipOpen: boolean = initiallyOpen;
   function onClick() {
     tooltipOpen = false;
     onClose();
@@ -49,7 +50,6 @@
   }
 
   .tooltip span:before {
-    border-bottom: 10px solid rgb(241 245 249 / var(--tw-bg-opacity));
     border-left: 10px solid transparent;
     border-right: 10px solid transparent;
     content: "";

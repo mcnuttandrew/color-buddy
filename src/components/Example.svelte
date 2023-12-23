@@ -1,9 +1,12 @@
 <script lang="ts">
   import { tick } from "svelte";
   import colorStore from "../stores/color-store";
+  import Tooltip from "../components/Tooltip.svelte";
+  import SwatchTooltipContent from "../content-modules/SwatchTooltipContent.svelte";
   import focusStore from "../stores/focus-store";
   import { idxToKey } from "../lib/charts";
   export let example: string;
+  let focusedColor = false as false | number;
   function insertColorsToExample(
     example: string,
     colors: string[],
@@ -24,19 +27,13 @@
   }
   $: colors = $colorStore.currentPal.colors;
   $: bg = $colorStore.currentPal.background;
-  $: colors, attachListeners();
-
+  $: colors, example, attachListeners();
   function onClick(e: any) {
-    console.log("click");
     const colorIdx = colors.findIndex(
       (x) => x.toHex() === e.target.getAttribute("fill")
     );
-    if (colorIdx !== -1) {
-      if (e.shiftKey || e.metaKey) {
-        focusStore.toggleColor(colorIdx);
-      } else {
-        focusStore.setColors([colorIdx]);
-      }
+    if (colorIdx > -1) {
+      focusedColor = colorIdx;
     }
   }
 
@@ -54,6 +51,7 @@
     });
   }
   let container: HTMLDivElement;
+  $: color = focusedColor !== false && colors[focusedColor];
 </script>
 
 <div bind:this={container} class="example-container">
@@ -63,3 +61,17 @@
     bg.toHex()
   )}
 </div>
+{#if color}
+  <Tooltip
+    top={"0"}
+    initiallyOpen={true}
+    onClose={() => {
+      focusStore.clearColors();
+      focusedColor = false;
+    }}
+  >
+    <div slot="content" class="flex flex-col" let:onClick>
+      <SwatchTooltipContent {color} closeTooltip={onClick} idx={focusedColor} />
+    </div>
+  </Tooltip>
+{/if}

@@ -1,10 +1,15 @@
 <script lang="ts">
   import colorStore from "../stores/color-store";
   import focusStore from "../stores/focus-store";
-  import { computeStats, c3, colorNameDiscrimCheck } from "../lib/color-stats";
+  import {
+    computeStats,
+    c3,
+    colorNameDiscrimCheck,
+    colorBlindCheck,
+  } from "../lib/color-stats";
   import Tooltip from "../components/Tooltip.svelte";
   import SwatchTooltipContent from "./SwatchTooltipContent.svelte";
-  let metric: "dE" | "dE94" | "none" = "dE";
+  let metric: "dE" | "dE94" | "none" = "none";
   $: colors = $colorStore.currentPal.colors;
   $: stats = computeStats(
     colors.map((x) => x.toChroma()),
@@ -15,6 +20,7 @@
     .flatMap((x) => x?.terms);
 
   $: discrimCheck = colorNameDiscrimCheck(colorNames);
+  $: blindCheck = colorBlindCheck(colors.map((x) => x.toChroma()));
 </script>
 
 <div class="flex" style="height: 400px;">
@@ -71,6 +77,11 @@
     {#if discrimCheck}
       <div class="text-red-500">
         {discrimCheck}
+      </div>
+    {/if}
+    {#if blindCheck.length > 0}
+      <div class="text-red-500">
+        This palette is not colorblind friendly (for {blindCheck.join(", ")} specifically).
       </div>
     {/if}
   </div>

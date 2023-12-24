@@ -11,6 +11,7 @@
   import AdjustColor from "./contextual-tools/AdjustColor.svelte";
   import OpposingColor from "./contextual-tools/OpposingColor.svelte";
   import AddColor from "./contextual-tools/AddColor.svelte";
+  import Rotate from "./contextual-tools/Rotate.svelte";
 
   $: focusedColors = $focusStore.focusedColors;
 </script>
@@ -25,6 +26,7 @@
     <SuggestionModificationToSelection />
     <InterpolatePoints />
     <DistributePoints />
+    <Rotate />
 
     <AlignSelection />
     {#if focusedColors.length > 0}

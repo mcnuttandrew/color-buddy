@@ -16,6 +16,7 @@ Use: should point to localhost:8888 if all is well
 - [ ] higher card. vis examples
 - [ ] order as diverging
 - [ ] Responsiveness
+- [ ] Rest of basic geometry manipulations: flip (horizontal, vertical), scale
 - [ ] Meta: figure out all the other features in maureen's setup
 - [x] Plot operate over other color spaces
 - [x] make old pals searchable

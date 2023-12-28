@@ -13,7 +13,7 @@
   import Tooltip from "../components/Tooltip.svelte";
 </script>
 
-<div class="bg-slate-400 p-2 w-96 h-fit">
+<div class="bg-slate-400 p-2 w-96 h-fit container">
   <div class="text-4xl font-bold">Color Buddy</div>
   <div class="flex justify-between z-50">
     <div>
@@ -110,3 +110,9 @@
     {/each}
   </section>
 </div>
+
+<style>
+  .container {
+    min-width: 18rem;
+  }
+</style>

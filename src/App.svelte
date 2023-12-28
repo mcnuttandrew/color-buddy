@@ -7,7 +7,7 @@
   import Eval from "./content-modules/Eval.svelte";
   import KeyboardHooks from "./components/KeyboardHooks.svelte";
 
-  let state: "swatches" | "eval" = "eval";
+  let state: "swatches" | "eval" = "swatches";
 </script>
 
 <main class="flex h-full">

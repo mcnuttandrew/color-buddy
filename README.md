@@ -8,6 +8,8 @@ Run: `npx netlify dev`
 
 Use: should point to localhost:8888 if all is well
 
+First time you start it up you should also run `yarn prep data`
+
 ## TODOS
 
 - [ ] Coat of paint

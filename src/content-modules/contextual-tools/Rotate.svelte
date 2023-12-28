@@ -3,7 +3,7 @@
   import colorStore from "../../stores/color-store";
   import focusStore from "../../stores/focus-store";
   import Tooltip from "../../components/Tooltip.svelte";
-  import { avgColors } from "../../lib/utils";
+  import { avgColors, draggable } from "../../lib/utils";
   import { buttonStyle } from "../../lib/styles";
 
   let isOpen = false;
@@ -67,7 +67,14 @@
   >
     <div slot="content">
       Rotate: {angle}
-      <input min={0} max={360} step={1} type="range" bind:value={angle} />
+      <input
+        min={0}
+        max={360}
+        step={1}
+        type="range"
+        bind:value={angle}
+        use:draggable
+      />
       <span class="text-sm">
         Rotates about an average point of the selected colors.
       </span>

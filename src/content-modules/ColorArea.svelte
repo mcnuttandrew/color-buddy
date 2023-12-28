@@ -7,6 +7,7 @@
     toColorSpace,
     colorPickerConfig,
   } from "../lib/Color";
+  import { makeExtents } from "../lib/utils";
   import { scaleLinear } from "d3-scale";
   import DoubleRangeSlider from "../components/DoubleRangeSlider.svelte";
   import VerticalDoubleRangeSlider from "../components/VerticalDoubleRangeSlider.svelte";
@@ -20,6 +21,14 @@
   const plotWidth = width - margin.left - margin.right;
   const plotHeight = height - margin.top - margin.bottom;
   let extents = { x: [0, 1], y: [0, 1], z: [0, 1] };
+  $: pickedColors = focusedColors.map((x) => colors[x].toChannels());
+  $: selectionExtents = makeExtents(pickedColors);
+  $: xPos = xScale(selectionExtents.x[0] - 7.5);
+  $: yPos = yScale(selectionExtents.y[0] - 7.5);
+  $: selectionWidth =
+    xScale(selectionExtents.x[1]) - xScale(selectionExtents.x[0]) + 30;
+  $: selectionHeight =
+    yScale(selectionExtents.y[1]) - yScale(selectionExtents.y[0]) + 30;
 
   $: config = colorPickerConfig[colorSpace];
   $: bg = $colorStore.currentPal.background;
@@ -96,9 +105,7 @@
 
   let originalColors = [] as Color[];
   let isXYDrag = true;
-  $: console.log("isXYDrag", isXYDrag);
   const startDrag = (isXYDrag: boolean) => (e: any) => {
-    console.log("startDrag", isXYDrag);
     isXYDrag = isXYDrag;
     parentPos = e.target.getBoundingClientRect();
     const { x, y } = toXY(e);
@@ -124,7 +131,6 @@
     dragBox: { x: number; y: number },
     dragging: { x: number; y: number }
   ) {
-    console.log("isXYDrag", isXYDrag);
     const xMin = Math.min(dragging.x, dragBox.x) - parentPos.x;
     const xMax = Math.max(dragging.x, dragBox.x) - parentPos.x;
     const yMin = Math.min(dragging.y, dragBox.y) - parentPos.y;
@@ -330,6 +336,21 @@
             fill="steelblue"
             fill-opacity="0.5"
             class="pointer-events-none"
+          />
+        {/if}
+        {#if pickedColors.length}
+          <rect
+            x={xPos - 5}
+            y={yPos - 5}
+            width={selectionWidth + 10}
+            height={selectionHeight + 10}
+            stroke="steelblue"
+            fill="white"
+            fill-opacity="0"
+            pointer-events="none"
+            stroke-dasharray="5,5"
+            stroke-width="2"
+            cursor="grab"
           />
         {/if}
       </g>

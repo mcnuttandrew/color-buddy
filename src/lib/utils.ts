@@ -123,3 +123,12 @@ export function draggable(node: any) {
     },
   };
 }
+
+const extent = (arr: number[]) => [Math.min(...arr), Math.max(...arr)];
+export function makeExtents(arr: number[][]) {
+  return {
+    x: extent(arr.map((x) => x[1])),
+    y: extent(arr.map((x) => x[2])),
+    z: extent(arr.map((x) => x[0])),
+  };
+}

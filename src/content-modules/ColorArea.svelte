@@ -62,9 +62,11 @@
     if (!dragging || dragging.x === undefined || dragging.y === undefined)
       return color;
 
+    const { x, y } = toXY(e);
+
     const screenPosDelta = {
-      x: e.clientX - dragging.x,
-      y: e.clientY - dragging.y,
+      x: x - dragging.x,
+      y: y - dragging.y,
     };
     const [l, a, b] = originalColor.toChannels();
     const newX = xScale.invert(xScale(a) + screenPosDelta.x);
@@ -80,7 +82,7 @@
     if (!dragging || dragging.x === undefined || dragging.y === undefined)
       return color;
 
-    const screenPosDelta = e.clientY - dragging.y;
+    const screenPosDelta = toXY(e).y - dragging.y;
     const [l, a, b] = originalColor.toChannels();
     const newZ = zScale.invert(zScale(l) + screenPosDelta);
 
@@ -93,12 +95,18 @@
   }
 
   let originalColors = [] as Color[];
-  const startDrag = (e: any) => {
+  let isXYDrag = true;
+  $: console.log("isXYDrag", isXYDrag);
+  const startDrag = (isXYDrag: boolean) => (e: any) => {
+    console.log("startDrag", isXYDrag);
+    isXYDrag = isXYDrag;
     parentPos = e.target.getBoundingClientRect();
-    dragging = { x: e.clientX, y: e.clientY };
+    const { x, y } = toXY(e);
+    dragging = { x, y };
     originalColors = [...colors];
+
     if ($focusStore.focusedColors.length === 0) {
-      dragBox = { x: e.clientX, y: e.clientY };
+      dragBox = { x, y };
     } else {
       dragBox = false;
     }
@@ -116,6 +124,7 @@
     dragBox: { x: number; y: number },
     dragging: { x: number; y: number }
   ) {
+    console.log("isXYDrag", isXYDrag);
     const xMin = Math.min(dragging.x, dragBox.x) - parentPos.x;
     const xMax = Math.max(dragging.x, dragBox.x) - parentPos.x;
     const yMin = Math.min(dragging.y, dragBox.y) - parentPos.y;
@@ -127,7 +136,7 @@
         return xMin <= x && x <= xMax && yMin <= y && y <= yMax ? idx : -1;
       })
       .filter((x) => x !== -1);
-    focusStore.setColors(newFocusedColors);
+    focusStore.setColors([...newFocusedColors]);
   }
   $: points = {
     centerTop: {
@@ -152,11 +161,47 @@
       x: xScale.range()[1],
       y: (yScale.range()[1] - yScale.range()[0]) / 2,
       anchor: "end",
-      // label: xScale.domain()[1],
       label: `${config.xChannel}: ${xScale.domain()[1].toFixed(1)}`,
     },
   };
   $: axisColor = bg.toChroma().luminance() > 0.5 ? "gray" : "white";
+
+  const toXY = (e: any) => {
+    const touches = e?.touches?.length ? e.touches : e?.changedTouches || [];
+    const x = [...touches].at(0)?.clientX || e.clientX;
+    const y = [...touches].at(0)?.clientY || e.clientY;
+    return { x, y };
+  };
+  function rectMoveResponse(e: any) {
+    const { x, y } = toXY(e);
+    if (dragging && $focusStore.focusedColors.length > 0) {
+      dragResponse(eventToColorXY)(e);
+    }
+    if (dragging && $focusStore.focusedColors.length === 0) {
+      dragBox = { x, y };
+    }
+  }
+  function rectMoveResponseZ(e: any) {
+    const { x, y } = toXY(e);
+    if (dragging && $focusStore.focusedColors.length > 0) {
+      dragResponse(eventToColorZ)(e);
+    }
+    if (dragging && $focusStore.focusedColors.length === 0) {
+      dragBox = { x, y };
+    }
+  }
+  function rectMoveEnd(e: any) {
+    if (dragBox && dragging) {
+      selectColorsFromDrag(dragBox, dragging);
+    }
+    const { x, y } = toXY(e);
+    if (dragging && dragging.x === x && dragging.y === y) {
+      focusStore.clearColors();
+    }
+
+    dragging = false;
+    dragBox = false;
+  }
 </script>
 
 <!-- svelte-ignore a11y-no-static-element-interactions -->
@@ -166,6 +211,7 @@
     value={colors[0] && colors[0].spaceName}
     on:change={(e) => {
       const newColors = colors.map((color) =>
+        // @ts-ignore
         toColorSpace(color, e.target.value)
       );
       colorStore.setCurrentPalColors(newColors);
@@ -183,7 +229,13 @@
         bind:end={extents.y[1]}
       />
     </div>
-    <svg {width} {height} on:mouseleave={stopDrag} on:mouseup={stopDrag}>
+    <svg
+      {width}
+      {height}
+      on:mouseleave={stopDrag}
+      on:mouseup={stopDrag}
+      on:touchend={stopDrag}
+    >
       <g transform={`translate(${margin.left}, ${margin.top})`}>
         <rect
           x={0}
@@ -219,30 +271,12 @@
         <!-- svelte-ignore a11y-no-static-element-interactions -->
         <!-- svelte-ignore a11y-click-events-have-key-events -->
         <rect
-          on:mousedown={(e) => startDrag(e)}
-          on:mousemove={(e) => {
-            if (dragging && $focusStore.focusedColors.length > 0) {
-              dragResponse(eventToColorXY)(e);
-            }
-            if (dragging && $focusStore.focusedColors.length === 0) {
-              dragBox = { x: e.clientX, y: e.clientY };
-            }
-          }}
-          on:mouseup={(e) => {
-            if (dragBox && dragging) {
-              selectColorsFromDrag(dragBox, dragging);
-            }
-            if (
-              dragging &&
-              dragging.x === e.clientX &&
-              dragging.y === e.clientY
-            ) {
-              focusStore.clearColors();
-            }
-
-            dragging = false;
-            dragBox = false;
-          }}
+          on:touchstart|preventDefault={startDrag(true)}
+          on:mousedown|preventDefault={startDrag(true)}
+          on:touchmove|preventDefault={rectMoveResponse}
+          on:mousemove|preventDefault={rectMoveResponse}
+          on:touchend|preventDefault={rectMoveEnd}
+          on:mouseup|preventDefault={rectMoveEnd}
           x="0"
           y="0"
           {width}
@@ -256,7 +290,12 @@
           <!-- svelte-ignore a11y-no-static-element-interactions -->
           <!-- svelte-ignore a11y-click-events-have-key-events -->
           <circle
-            on:mousedown={(e) => startDrag(e)}
+            on:mousedown|preventDefault={startDrag(true)}
+            on:touchstart|preventDefault={startDrag(true)}
+            on:touchend|preventDefault={() => {
+              focusStore.setColors([i]);
+            }}
+            pointer-events={!focusSet.has(i) ? "all" : "none"}
             class="cursor-pointer transition-all"
             transform={`translate(${xScale(color.toChannels()[1])}, ${yScale(
               color.toChannels()[2]
@@ -282,7 +321,7 @@
         >
           BG
         </text>
-        {#if dragging && dragBox}
+        {#if dragging && dragBox && isXYDrag}
           <rect
             x={Math.min(dragging.x, dragBox.x) - parentPos.x}
             y={Math.min(dragging.y, dragBox.y) - parentPos.y}
@@ -310,6 +349,7 @@
         width={80 + margin.left + margin.right}
         on:mouseleave={stopDrag}
         on:mouseup={stopDrag}
+        on:touchend={stopDrag}
       >
         <!-- svelte-ignore a11y-no-static-element-interactions -->
         <g transform={`translate(${margin.left}, ${margin.top})`}>
@@ -323,12 +363,18 @@
             stroke="gray"
             stroke-width="1"
             class:cursor-pointer={dragging}
-            on:mousemove={(e) => {
+            on:touchstart|preventDefault={startDrag(false)}
+            on:mousedown|preventDefault={startDrag(false)}
+            on:touchmove|preventDefault={rectMoveResponseZ}
+            on:mousemove|preventDefault={rectMoveResponseZ}
+            on:touchend|preventDefault={rectMoveEnd}
+            on:mouseup|preventDefault={rectMoveEnd}
+          />
+          <!-- on:mousemove={(e) => {
               if (dragging) {
                 dragResponse(eventToColorZ)(e);
               }
-            }}
-          />
+            }} -->
           {#each colors as color, i}
             <!-- svelte-ignore a11y-no-static-element-interactions -->
             <!-- svelte-ignore a11y-click-events-have-key-events -->
@@ -339,12 +385,25 @@
               width={80 - 10 * 2 + (focusSet.has(i) ? 10 : 0)}
               height={5}
               fill={color.toHex()}
-              on:click={() => {
-                focusStore.toggleColor(i);
+              on:click={() => focusStore.toggleColor(i)}
+              on:mousedown|preventDefault={startDrag(false)}
+              on:touchstart|preventDefault={startDrag(false)}
+              on:touchend|preventDefault={() => {
+                focusStore.setColors([i]);
               }}
-              on:mousedown={(e) => startDrag(e)}
             />
           {/each}
+          {#if dragging && dragBox && !isXYDrag}
+            <rect
+              x={5}
+              y={Math.min(dragging.y, dragBox.y) - parentPos.y}
+              width={80 - 10}
+              height={Math.abs(dragging.y - dragBox.y)}
+              fill="steelblue"
+              fill-opacity="0.5"
+              class="pointer-events-none"
+            />
+          {/if}
         </g>
       </svg>
       <button

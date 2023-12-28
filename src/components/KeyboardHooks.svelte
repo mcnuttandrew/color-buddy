@@ -1,6 +1,9 @@
 <script lang="ts">
+  import { Color } from "../lib/Color";
   import colorStore from "../stores/color-store";
   import focusStore from "../stores/focus-store";
+  $: focusedSet = new Set($focusStore.focusedColors);
+  $: copiedData = [] as Color[];
   function onKeyDown(e: any) {
     if (e.target.tagName === "INPUT") {
       return;
@@ -61,6 +64,21 @@
       });
 
       colorStore.setCurrentPalColors(newColors);
+    }
+
+    // COPY PASTE
+    if (key === "c" && e.metaKey) {
+      e.preventDefault();
+      copiedData = $colorStore.currentPal.colors.filter((_, idx) =>
+        focusedSet.has(idx)
+      );
+    }
+    if (key === "v" && e.metaKey && copiedData.length) {
+      e.preventDefault();
+      colorStore.setCurrentPalColors([
+        ...$colorStore.currentPal.colors,
+        ...copiedData,
+      ]);
     }
   }
 </script>

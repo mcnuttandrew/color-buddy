@@ -10,7 +10,6 @@ Use: should point to localhost:8888 if all is well
 
 ## TODOS
 
-- [ ] Touch events, just pull the the touch event stuff from the double rangle slider, also refactor that out into something common
 - [ ] Coat of paint
 - [ ] add color analysis
 - [ ] higher card. vis examples
@@ -27,8 +26,10 @@ Use: should point to localhost:8888 if all is well
 - [ ] Meta: figure out all the other features in maureen's setup
 - [ ] Minor: make axis numbers not too big
 - [ ] Make clicking and moving points smoother
-- [ ] Copy/paste
 - [ ] Examples held as assets somewhere that are downloaded rather than components (for consistency)
+- [ ] Touch events polish, drag box in z channel should work
+- [x] Copy/paste
+- [x] Touch events, just pull the the touch event stuff from the double rangle slider, also refactor that out into something common
 - [x] Plot operate over other color spaces
 - [x] make old pals searchable
 - [x] make charts be end user manipulable

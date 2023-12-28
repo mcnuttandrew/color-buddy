@@ -7,7 +7,7 @@
     toColorSpace,
     colorPickerConfig,
   } from "../lib/Color";
-  import { makeExtents } from "../lib/utils";
+  import { makeExtents, deDup } from "../lib/utils";
   import { scaleLinear } from "d3-scale";
   import DoubleRangeSlider from "../components/DoubleRangeSlider.svelte";
   import VerticalDoubleRangeSlider from "../components/VerticalDoubleRangeSlider.svelte";
@@ -292,7 +292,7 @@
           class:cursor-pointer={dragging}
         />
 
-        {#each colors as color, i (color)}
+        {#each deDup(colors) as color, i (color)}
           <!-- svelte-ignore a11y-no-static-element-interactions -->
           <!-- svelte-ignore a11y-click-events-have-key-events -->
           <circle
@@ -396,7 +396,7 @@
                 dragResponse(eventToColorZ)(e);
               }
             }} -->
-          {#each colors as color, i}
+          {#each deDup(colors) as color, i}
             <!-- svelte-ignore a11y-no-static-element-interactions -->
             <!-- svelte-ignore a11y-click-events-have-key-events -->
             <rect

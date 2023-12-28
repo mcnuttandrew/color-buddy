@@ -41,11 +41,11 @@
           let:toggle
           on:click={() => {
             toggle();
-
             focusStore.addColor(idx);
           }}
-          class="w-40 h-8 mr-2 flex justify-center items-center text-sm relative mt-2 mr-12"
+          class="w-40 h-8 flex justify-center items-center text-sm relative mt-2 mr-12 transition-all"
           class:text-white={color.toChroma().luminance() < 0.5}
+          class:ml-5={$focusStore.focusedColors.includes(idx)}
           style="background-color: {color.toHex()}"
         >
           <div>

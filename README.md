@@ -14,20 +14,20 @@ Use: should point to localhost:8888 if all is well
 - [ ] add color analysis
 - [ ] higher card. vis examples
 - [ ] order as diverging
-- [ ] Show select on eval
 - [ ] Color correction
 - [ ] Responsiveness
 - [ ] Distribute radially
-- [ ] Step needs to be adapted to small spaces
 - [ ] Rearrange some of the colors in the color area eg make rg on xy and b on z etc
 - [ ] "opposing color" to "Convert selection to opposing"
 - [ ] Insert color theory options, eg insert opposing, inserting analogous color, etc, mine from the adobe picker
 - [ ] NTH: Rest of basic geometry manipulations: flip (horizontal, vertical), scale
 - [ ] Meta: figure out all the other features in maureen's setup
-- [ ] Minor: make axis numbers not too big
 - [ ] Make clicking and moving points smoother
 - [ ] Examples held as assets somewhere that are downloaded rather than components (for consistency)
 - [ ] Touch events polish, drag box in z channel should work
+- [x] Step needs to be adapted to small spaces
+- [x] Show select on eval
+- [x] Minor: make axis numbers not too big
 - [x] Copy/paste
 - [x] Touch events, just pull the the touch event stuff from the double rangle slider, also refactor that out into something common
 - [x] Plot operate over other color spaces

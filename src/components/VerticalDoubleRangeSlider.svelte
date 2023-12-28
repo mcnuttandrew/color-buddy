@@ -1,67 +1,13 @@
 <script lang="ts">
+  import { draggable, clamp } from "../lib/utils";
   // from https://github.com/mhkeller/svelte-double-range-slider/tree/master
   export let start = 0;
   export let end = 1;
-  const clamp = (n: number, min: number, max: number) =>
-    Math.min(Math.max(n, min), max);
+
   let topHandle: HTMLDivElement;
   let body: HTMLDivElement;
   let slider: HTMLDivElement;
-  function draggable(node: any) {
-    let x: number;
-    let y: number;
-    function handleMousedown(event: {
-      type: string;
-      touches: any[];
-      clientX: any;
-      clientY: any;
-    }) {
-      if (event.type === "touchstart") {
-        event = event.touches[0];
-      }
-      x = event.clientX;
-      y = event.clientY;
-      node.dispatchEvent(new CustomEvent("dragstart", { detail: { x, y } }));
-      window.addEventListener("mousemove", handleMousemove);
-      window.addEventListener("mouseup", handleMouseup);
-      window.addEventListener("touchmove", handleMousemove);
-      window.addEventListener("touchend", handleMouseup);
-    }
-    function handleMousemove(event: {
-      type: string;
-      changedTouches: any[];
-      clientX: number;
-      clientY: number;
-    }) {
-      if (event.type === "touchmove") {
-        event = event.changedTouches[0];
-      }
-      const dx = event.clientX - x;
-      const dy = event.clientY - y;
-      x = event.clientX;
-      y = event.clientY;
-      node.dispatchEvent(
-        new CustomEvent("dragmove", { detail: { x, y, dx, dy } })
-      );
-    }
-    function handleMouseup(event: { clientX: any; clientY: any }) {
-      x = event.clientX;
-      y = event.clientY;
-      node.dispatchEvent(new CustomEvent("dragend", { detail: { x, y } }));
-      window.removeEventListener("mousemove", handleMousemove);
-      window.removeEventListener("mouseup", handleMouseup);
-      window.removeEventListener("touchmove", handleMousemove);
-      window.removeEventListener("touchend", handleMouseup);
-    }
-    node.addEventListener("mousedown", handleMousedown);
-    node.addEventListener("touchstart", handleMousedown);
-    return {
-      destroy() {
-        node.removeEventListener("mousedown", handleMousedown);
-        node.removeEventListener("touchstart", handleMousedown);
-      },
-    };
-  }
+
   function setHandlePosition(which: string) {
     return function (evt: { detail: { y: number } }) {
       const { top, bottom } = slider.getBoundingClientRect();
@@ -82,7 +28,7 @@
     const parentHeight = bottom - top;
     const topHandleTop = topHandle.getBoundingClientRect().top;
     const pyStart = clamp(
-      topHandleTop + event.detail.dy - top,
+      topHandleTop + evt.detail.dy - top,
       0,
       parentHeight - height
     );

@@ -1,9 +1,11 @@
 <script lang="ts">
-  import { Color } from "../lib/Color";
+  import { Color, stepSize } from "../lib/Color";
   import colorStore from "../stores/color-store";
   import focusStore from "../stores/focus-store";
   $: focusedSet = new Set($focusStore.focusedColors);
   $: copiedData = [] as Color[];
+  $: colorSpace = $colorStore.currentPal.colors[0].spaceName;
+  $: [zStep, xStep, yStep] = stepSize[colorSpace];
   function onKeyDown(e: any) {
     if (e.target.tagName === "INPUT") {
       return;
@@ -36,9 +38,10 @@
     // COLOR SCOOTING
     const arrows = new Set(["arrowup", "arrowdown", "arrowleft", "arrowright"]);
     if (arrows.has(key) && $focusStore.focusedColors.length > 0) {
-      let step = 1;
-      if (e.metaKey) {
-        step = 10;
+      const verticalDirs = new Set(["arrowup", "arrowdown"]);
+      let step = verticalDirs.has(key) ? yStep : xStep;
+      if (e.metaKey || e.shiftKey) {
+        step *= 10;
       }
       e.preventDefault();
       const focusSet = new Set($focusStore.focusedColors);

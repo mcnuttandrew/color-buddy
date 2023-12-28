@@ -155,13 +155,13 @@
       x: (xScale.range()[1] - xScale.range()[0]) / 2,
       y: yScale.range()[1],
       anchor: "start",
-      label: yScale.domain()[1],
+      label: yScale.domain()[1].toFixed(1),
     },
     centerLeft: {
       x: xScale.range()[0],
       y: (yScale.range()[1] - yScale.range()[0]) / 2,
       anchor: "start",
-      label: xScale.domain()[0],
+      label: xScale.domain()[0].toFixed(1),
     },
     centerRight: {
       x: xScale.range()[1],

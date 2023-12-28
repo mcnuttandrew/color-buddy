@@ -1,16 +1,14 @@
 <script lang="ts">
-  import { draggable } from "../lib/utils";
+  import { draggable, clamp } from "../lib/utils";
   // from https://svelte.dev/repl/75d34e46cbe64bb68b7c2ac2c61931ce?version=4.2.8
   export let start = 0;
   export let end = 1;
-  const clamp = (n: number, min: number, max: number) =>
-    Math.min(Math.max(n, min), max);
-  let leftHandle;
-  let body;
-  let slider;
+  let leftHandle: HTMLDivElement;
+  let body: HTMLDivElement;
+  let slider: HTMLDivElement;
 
-  function setHandlePosition(which) {
-    return function (evt) {
+  function setHandlePosition(which: string) {
+    return function (evt: { detail: { x: number } }) {
       const { left, right } = slider.getBoundingClientRect();
       const parentWidth = right - left;
       const p = Math.min(Math.max((evt.detail.x - left) / parentWidth, 0), 1);
@@ -23,13 +21,13 @@
       }
     };
   }
-  function setHandlesFromBody(evt) {
+  function setHandlesFromBody(evt: { detail: { dx: any } }) {
     const { width } = body.getBoundingClientRect();
     const { left, right } = slider.getBoundingClientRect();
     const parentWidth = right - left;
     const leftHandleLeft = leftHandle.getBoundingClientRect().left;
     const pxStart = clamp(
-      leftHandleLeft + event.detail.dx - left,
+      leftHandleLeft + evt.detail.dx - left,
       0,
       parentWidth - width
     );
@@ -48,10 +46,7 @@
       bind:this={body}
       use:draggable
       on:dragmove|preventDefault|stopPropagation={setHandlesFromBody}
-      style="
-				left: {100 * start}%;
-				right: {100 * (1 - end)}%;
-			"
+      style=" left: {100 * start}%; right: {100 * (1 - end)}%;"
     ></div>
     <div
       class="handle"
@@ -59,18 +54,14 @@
       data-which="start"
       use:draggable
       on:dragmove|preventDefault|stopPropagation={setHandlePosition("start")}
-      style="
-				left: {100 * start}%
-			"
+      style="left: {100 * start}%"
     ></div>
     <div
       class="handle"
       data-which="end"
       use:draggable
       on:dragmove|preventDefault|stopPropagation={setHandlePosition("end")}
-      style="
-				left: {100 * end}%
-			"
+      style="left: {100 * end}%"
     ></div>
   </div>
 </div>
@@ -112,9 +103,7 @@
     border: 1px solid #7b7b7b;
     transform: translate(-50%, -50%);
   }
-  /* .handle[data-which="end"]:after{
-		transform: translate(-100%, -50%);
-	} */
+
   .handle:active:after {
     background-color: #ddd;
     z-index: 9;

@@ -201,6 +201,16 @@ const domains = {
   lch: { l: [0, 100], c: [0, 150], h: [0, 360] },
   oklch: { l: [0, 1], c: [0, 0.4], h: [0, 360] },
 } as Record<ColorSpace, Record<string, [number, number]>>;
+export const stepSize = {
+  lab: [1, 1, 1],
+  oklab: [0.01, 0.01, 0.01],
+  rgb: [1, 1, 1],
+  // srgb: [1, 1, 1],
+  hsv: [1, 0.01, 0.01],
+  hsl: [1, 0.01, 0.01],
+  lch: [1, 1, 1],
+  oklch: [0.01, 0.01, 1],
+} as Record<ColorSpace, [number, number, number]>;
 
 const dimensionToChannel = {
   lab: { x: "a", y: "b", z: "l" },

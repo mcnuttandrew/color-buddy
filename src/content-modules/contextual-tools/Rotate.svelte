@@ -67,14 +67,7 @@
   >
     <div slot="content">
       Rotate: {angle}
-      <input
-        min={0}
-        max={360}
-        step={1}
-        type="range"
-        bind:value={angle}
-        use:draggable
-      />
+      <input min={0} max={360} step={1} type="range" bind:value={angle} />
       <span class="text-sm">
         Rotates about an average point of the selected colors.
       </span>

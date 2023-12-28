@@ -132,3 +132,6 @@ export function makeExtents(arr: number[][]) {
     z: extent(arr.map((x) => x[0])),
   };
 }
+
+export const clamp = (n: number, min: number, max: number) =>
+  Math.min(Math.max(n, min), max);

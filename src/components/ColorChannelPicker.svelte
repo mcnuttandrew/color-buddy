@@ -187,6 +187,7 @@
     margin: 0 1em auto 0;
     width: 100%;
     -moz-appearance: none;
+    appearance: none;
     -webkit-appearance: none;
     background: linear-gradient(to right, var(--stops)), var(--transparency);
     height: 2.2em;
@@ -214,9 +215,5 @@
 
   .color-slider::-moz-range-track {
     background: none;
-  }
-
-  .color-slider-label {
-    position: relative;
   }
 </style>

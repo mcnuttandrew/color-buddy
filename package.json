@@ -9,7 +9,7 @@
     "preview": "vite preview",
     "check": "svelte-check --tsconfig ./tsconfig.json",
     "types": "tsc --noEmit --watch",
-    "prep-data": "cp node_modules/vega-datasets/data/* public/data/"
+    "pre-build": "cp node_modules/vega-datasets/data/* public/data/"
   },
   "devDependencies": {
     "@sveltejs/vite-plugin-svelte": "^3.0.0",

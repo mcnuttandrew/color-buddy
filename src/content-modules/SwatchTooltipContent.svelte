@@ -26,7 +26,6 @@
       onColorChange={(color) => {
         const updatedColors = [...colors];
         updatedColors[idx] = color;
-        console.log(updatedColors);
         colorStore.setCurrentPalColors(updatedColors);
       }}
     />

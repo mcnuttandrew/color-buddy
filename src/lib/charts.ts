@@ -142,7 +142,7 @@ const scatterPlot = (_pal: Palette) => ({
   description:
     "A scatterplot showing body mass and flipper lengths of penguins.",
   data: {
-    url: "./penguins.json",
+    url: "data/penguins.json",
   },
   mark: "point",
   encoding: {
@@ -169,7 +169,7 @@ const map = (pal: Palette) => ({
   data: [
     {
       name: "counties",
-      url: "./us-10m.json",
+      url: "data/us-10m.json",
       format: { type: "topojson", feature: "counties" },
       transform: [
         {
@@ -211,7 +211,7 @@ const areaChart = (pal: Palette) => ({
   $schema: "https://vega.github.io/schema/vega-lite/v5.json",
   width: 300,
   height: 80,
-  data: { url: "penguins.json" },
+  data: { url: "data/penguins.json" },
   mark: { type: "area", opacity: 0.5 },
   transform: [
     { density: "Body Mass (g)", groupby: ["Species"], extent: [2500, 6500] },
@@ -225,7 +225,7 @@ const areaChart = (pal: Palette) => ({
 
 const stackedAreaChart = (pal: Palette) => ({
   $schema: "https://vega.github.io/schema/vega-lite/v5.json",
-  data: { url: "./barley.json" },
+  data: { url: "data/barley.json" },
   mark: "bar",
   encoding: {
     column: { field: "year" },
@@ -237,7 +237,7 @@ const stackedAreaChart = (pal: Palette) => ({
 
 const scatterPlotOrdinal = (_pal: Palette) => ({
   $schema: "https://vega.github.io/schema/vega-lite/v5.json",
-  data: { url: "./penguins.json" },
+  data: { url: "data/penguins.json" },
   mark: "point",
   encoding: {
     x: {

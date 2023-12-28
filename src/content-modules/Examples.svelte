@@ -12,11 +12,11 @@
   import CodeMirror from "svelte-codemirror-editor";
   import Tooltip from "../components/Tooltip.svelte";
   import Example from "../components/Example.svelte";
+  import SuggestExample from "./contextual-tools/SuggestExample.svelte";
 
   let modalState: "closed" | "input-svg" | "edit-colors" = "closed";
   let modifyingExample: number | false = false;
   $: bg = $colorStore.currentPal.background;
-  $: colors = $colorStore.currentPal.colors;
   let value = "";
 
   function detectColorsInSvgString(svgString: string) {
@@ -44,12 +44,12 @@
 </script>
 
 <div
-  class=" h-1/2 flex flex flex-wrap overflow-auto p-4"
+  class=" h-1/2 flex flex-wrap overflow-auto p-4"
   style={`background-color: ${bg.toHex()}`}
 >
   <div class="flex-col">
     {#each Object.keys($exampleStore.sections) as group}
-      <div>
+      <div class:text-white={bg.toChroma().luminance() < 0.5}>
         <label for={`${group}-checkbox`}>{group}</label>
         <input
           id={`${group}-checkbox`}

@@ -269,7 +269,12 @@
           stroke-width="1"
         />
         {#each Object.values(points) as point}
-          <text text-anchor={point.anchor} x={point.x} y={point.y}>
+          <text
+            text-anchor={point.anchor}
+            x={point.x}
+            y={point.y}
+            fill={bg.toChroma().luminance() > 0.5 ? "black" : "white"}
+          >
             {point.label}
           </text>
         {/each}

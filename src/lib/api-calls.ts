@@ -8,8 +8,12 @@ const palToString = (pal: Palette) => ({
   colors: pal.colors.map((x) => x.toHex()),
 });
 
-function openAIScaffold<A>(api: string, body: string): Promise<A[]> {
-  return fetch(`${api}?engine=openai`, {
+function openAIScaffold<A>(
+  api: string,
+  body: string,
+  parseAsJSON: boolean
+): Promise<A[]> {
+  return fetch(`/.netlify/functions/${api}?engine=openai`, {
     method: "POST",
     mode: "cors",
     cache: "no-cache",
@@ -25,14 +29,18 @@ function openAIScaffold<A>(api: string, body: string): Promise<A[]> {
       const result = x.choices
         .map((x: any) => x?.message?.content)
         .filter((x: any) => x)
-        .flatMap((x: any) => JSON.parse(x));
+        .flatMap((x: any) => (parseAsJSON ? JSON.parse(x) : x));
       // .filter((x: any) => typeof x === "string");
       return result;
     });
 }
 
-function googleScaffold<A>(api: string, body: string): Promise<A[]> {
-  return fetch(`${api}?engine=google`, {
+function googleScaffold<A>(
+  api: string,
+  body: string,
+  parseAsJSON: boolean
+): Promise<A[]> {
+  return fetch(`/.netlify/functions/${api}?engine=google`, {
     method: "POST",
     mode: "cors",
     cache: "no-cache",
@@ -48,7 +56,7 @@ function googleScaffold<A>(api: string, body: string): Promise<A[]> {
       const result = x?.response?.candidates
         .flatMap((x: any) => x.content?.parts?.flatMap((x: any) => x.text))
         .map((x: any) => x.replace(/\\n/g, "").replace(/\`/g, "").trim())
-        .flatMap((x: any) => JSON.parse(x));
+        .flatMap((x: any) => (parseAsJSON ? JSON.parse(x) : x));
 
       return result;
     });
@@ -69,8 +77,7 @@ export function suggestNameForPalette(
     colors: palette.colors.map((x) => toHex(x)),
     background: palette.background.toHex(),
   });
-  const scaffold = engineToScaffold[engine];
-  return scaffold<string>(`/.netlify/functions/suggest-name`, body);
+  return engineToScaffold[engine]<string>(`suggest-name`, body, true);
 }
 
 export function suggestAdditionsToPalette(
@@ -83,16 +90,15 @@ export function suggestAdditionsToPalette(
     name: palette.name,
   });
 
-  const scaffold = engineToScaffold[engine];
-  return scaffold<string>(`/.netlify/functions/get-color-suggestions`, body);
+  return engineToScaffold[engine]<string>(`get-color-suggestions`, body, true);
 }
 
 export function suggestPal(prompt: string, engine: Engine) {
   const body = JSON.stringify({ prompt });
-  const scaffold = engineToScaffold[engine];
-  return scaffold<{ colors: string[]; background: string }>(
-    `/.netlify/functions/suggest-a-pal`,
-    body
+  return engineToScaffold[engine]<{ colors: string[]; background: string }>(
+    `suggest-a-pal`,
+    body,
+    true
   );
 }
 
@@ -102,10 +108,10 @@ export function suggestAdjustments(
   engine: Engine
 ) {
   const body = JSON.stringify({ prompt, ...palToString(currentPal) });
-  const scaffold = engineToScaffold[engine];
-  return scaffold<{ background: string; colors: string[] }>(
-    `/.netlify/functions/suggest-adjustments`,
-    body
+  return engineToScaffold[engine]<{ background: string; colors: string[] }>(
+    `suggest-adjustments`,
+    body,
+    true
   );
 }
 
@@ -115,9 +121,18 @@ export function suggestContextualAdjustments(
   engine: Engine
 ) {
   const body = JSON.stringify({ prompt, ...palToString(currentPal) });
-  const scaffold = engineToScaffold[engine];
-  return scaffold<{ background: string; colors: string[] }>(
-    `/.netlify/functions/suggest-contextual-adjustments`,
-    body
+  return engineToScaffold[engine]<{ background: string; colors: string[] }>(
+    `suggest-contextual-adjustments`,
+    body,
+    true
+  );
+}
+
+export function suggestSVGImage(prompt: string, engine: Engine) {
+  const body = JSON.stringify({ prompt });
+  return engineToScaffold[engine]<{ svg: string }>(
+    `suggest-svg-img`,
+    body,
+    false
   );
 }

@@ -2,7 +2,7 @@ import { genericHandler } from "../utils";
 
 type promptInput = { inputColors: string[]; background: string };
 const prompt = (pal: promptInput) => `
-You are a color expert. You beautifully name color palettes. You take in a list of colors presented as hex code and return a name for the palette.
+You are a color expert. You expertly name color palettes. You take in a list of colors presented as hex code and return a name for the palette.
 
 For example:
 Palette: ["#000000", "#FF0000", "#00FF00", "#0000FF"]

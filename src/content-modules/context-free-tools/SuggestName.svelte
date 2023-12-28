@@ -13,7 +13,7 @@
   <div slot="content">
     <div class="">
       <button
-        class={AIButtonStyle}
+        class={buttonStyle}
         class:animate-pulse={requestState === "loading"}
         on:click={() => {
           if (requestState === "loading") return;
@@ -54,16 +54,9 @@
           </div>
         {/each}
       </div>
-      <!-- <button
-  on:click={() => {
-    nameSuggestions = ["red", "blue", "green"];
-  }}
->
-  fake it
-</button> -->
     </div>
   </div>
   <div slot="target" let:toggle>
-    <button class={buttonStyle} on:click={toggle}>Suggest a name</button>
+    <button class={AIButtonStyle} on:click={toggle}>Suggest a name</button>
   </div>
 </Tooltip>

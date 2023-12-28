@@ -9398,6 +9398,11 @@ vega-dataflow@^5.7.3, vega-dataflow@^5.7.5, vega-dataflow@~5.7.5:
     vega-loader "^4.5.1"
     vega-util "^1.17.1"
 
+vega-datasets@^2.7.0:
+  version "2.7.0"
+  resolved "https://registry.yarnpkg.com/vega-datasets/-/vega-datasets-2.7.0.tgz#458bec5e4ec1b506fc1ba63fed59ea86feaef764"
+  integrity sha512-dvHJFK9ousiblywNcRcJbedwbcAfVY/RH1UAqEWfvu4GZrXFibPlO+u8nP/onxDETcaHFDOGFs/+SK1P/sjjOQ==
+
 vega-embed@^6.23.0:
   version "6.23.0"
   resolved "https://registry.yarnpkg.com/vega-embed/-/vega-embed-6.23.0.tgz#640fe1cefef58a8a061da084ec804a1b4abbd5ef"

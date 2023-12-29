@@ -165,8 +165,8 @@ const scatterPlot = (_pal: Palette) => ({
 
 const map = (pal: Palette) => ({
   $schema: "https://vega.github.io/schema/vega/v5.json",
-  width: 300,
-  height: 300,
+  width: 250,
+  height: 250,
   autosize: "none",
   data: [
     {
@@ -213,8 +213,8 @@ const map = (pal: Palette) => ({
 
 const areaChart = (pal: Palette) => ({
   $schema: "https://vega.github.io/schema/vega-lite/v5.json",
-  width: 300,
-  height: 80,
+  width: 250,
+  height: 200,
   data: {
     url: !location.href.includes("localhost")
       ? "https://vega.github.io/editor/data/penguins.json"
@@ -240,7 +240,6 @@ const stackedAreaChart = (pal: Palette) => ({
   },
   mark: "bar",
   encoding: {
-    column: { field: "year" },
     x: { field: "yield", type: "quantitative", aggregate: "sum" },
     y: { field: "variety", type: "nominal" },
     color: { field: "site", type: "nominal" },

@@ -5,6 +5,7 @@
 html, body, #app {
     height: 100%;
     /* height: fit-content; */
+    overflow: none;
 }
 
 .example-container path {

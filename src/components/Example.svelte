@@ -54,24 +54,41 @@
   $: color = focusedColor !== false && colors[focusedColor];
 </script>
 
-<div bind:this={container} class="example-container">
-  {@html insertColorsToExample(
-    example,
-    colors.map((x) => x.toHex()),
-    bg.toHex()
-  )}
+<div class="">
+  <div bind:this={container} class="example-container">
+    {@html insertColorsToExample(
+      example,
+      colors.map((x) => x.toHex()),
+      bg.toHex()
+    )}
+  </div>
+  {#if color && focusedColor !== false}
+    <Tooltip
+      top={"0"}
+      initiallyOpen={true}
+      onClose={() => {
+        focusStore.clearColors();
+        focusedColor = false;
+      }}
+    >
+      <div slot="content" class="flex flex-col" let:onClick>
+        <SwatchTooltipContent
+          {color}
+          closeTooltip={onClick}
+          idx={focusedColor}
+        />
+      </div>
+    </Tooltip>
+  {/if}
 </div>
-{#if color}
-  <Tooltip
-    top={"0"}
-    initiallyOpen={true}
-    onClose={() => {
-      focusStore.clearColors();
-      focusedColor = false;
-    }}
-  >
-    <div slot="content" class="flex flex-col" let:onClick>
-      <SwatchTooltipContent {color} closeTooltip={onClick} idx={focusedColor} />
-    </div>
-  </Tooltip>
-{/if}
+
+<style>
+  .example-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 250px;
+    height: 250px;
+    /* overflow: visible; */
+  }
+</style>

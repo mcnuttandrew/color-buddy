@@ -135,3 +135,8 @@ export function makeExtents(arr: number[][]) {
 
 export const clamp = (n: number, min: number, max: number) =>
   Math.min(Math.max(n, min), max);
+
+export const toggleElement = (arr: number[], el: number) => {
+  const arrSet = new Set(arr);
+  return arrSet.has(el) ? arr.filter((x) => x !== el) : [...arr, el];
+};

@@ -43,72 +43,78 @@
   $: detectedColors = [] as string[];
 </script>
 
+<div class="flex items-center bg-slate-200 px-4">
+  {#each Object.keys($exampleStore.sections) as group}
+    <div class="mr-2">
+      <label for={`${group}-checkbox`}>{group}</label>
+      <input
+        id={`${group}-checkbox`}
+        type="checkbox"
+        bind:checked={$exampleStore.sections[group]}
+      />
+    </div>
+  {/each}
+  <button
+    class={buttonStyle}
+    on:click={() => {
+      modalState = "input-svg";
+    }}
+  >
+    Add Example
+  </button>
+</div>
 <div
-  class=" h-1/2 flex flex-wrap overflow-auto p-4"
-  style={`background-color: ${bg.toHex()}`}
+  class="flex flex-wrap overflow-auto p-4 w-full bg-slate-300"
+  style={`height: calc(100% - 100px)`}
 >
-  <div class="flex-col">
-    {#each Object.keys($exampleStore.sections) as group}
-      <div class:text-white={bg.toChroma().luminance() < 0.5}>
-        <label for={`${group}-checkbox`}>{group}</label>
-        <input
-          id={`${group}-checkbox`}
-          type="checkbox"
-          bind:checked={$exampleStore.sections[group]}
-        />
+  {#if $exampleStore.sections["custom"]}
+    {#each $exampleStore.examples as example, idx}
+      <div
+        class="flex flex-col border-2 border-dashed rounded w-min mr-4"
+        style="background: {bg.toHex()};"
+      >
+        <div class="flex">
+          <Example example={example.svg} />
+          <Tooltip>
+            <div slot="content" let:onClick>
+              <button
+                class={buttonStyle}
+                on:click={() => {
+                  value = example.svg;
+                  modalState = "input-svg";
+                  modifyingExample = idx;
+                }}
+              >
+                Edit
+              </button>
+              <button
+                class={buttonStyle}
+                on:click={() => {
+                  exampleStore.deleteExample(idx);
+                  onClick();
+                }}
+              >
+                Delete
+              </button>
+            </div>
+            <div slot="target" let:toggle>
+              <button class={buttonStyle} on:click={toggle}>⚙</button>
+            </div>
+          </Tooltip>
+        </div>
       </div>
     {/each}
-    <button
-      class={buttonStyle}
-      on:click={() => {
-        modalState = "input-svg";
-      }}
-    >
-      Add Example
-    </button>
-  </div>
+  {/if}
   {#if $exampleStore.sections.pages}
     <TinyWebpage />
     <TextBlock />
   {/if}
   {#each charts as { chart, group }}
     {#if $exampleStore.sections[group]}
-      <Vega spec={chart($colorStore.currentPal)} />
-    {/if}
-  {/each}
-  {#each $exampleStore.examples as example, idx}
-    <div class="flex flex-col border-2 border-dashed rounded w-min">
-      <div class="flex">
-        <Example example={example.svg} />
-        <Tooltip>
-          <div slot="content" let:onClick>
-            <button
-              class={buttonStyle}
-              on:click={() => {
-                value = example.svg;
-                modalState = "input-svg";
-                modifyingExample = idx;
-              }}
-            >
-              Edit
-            </button>
-            <button
-              class={buttonStyle}
-              on:click={() => {
-                exampleStore.deleteExample(idx);
-                onClick();
-              }}
-            >
-              Delete
-            </button>
-          </div>
-          <div slot="target" let:toggle>
-            <button class={buttonStyle} on:click={toggle}>⚙</button>
-          </div>
-        </Tooltip>
+      <div class="flex flex-col border-2 border-dashed rounded w-min mr-4">
+        <Vega spec={chart($colorStore.currentPal)} />
       </div>
-      <span>Number of colors supported {example.numColors}</span>
-    </div>
+    {/if}
   {/each}
 </div>
 {#if modalState !== "closed"}

@@ -213,20 +213,6 @@
 <!-- svelte-ignore a11y-no-static-element-interactions -->
 <!-- svelte-ignore a11y-no-static-element-interactions -->
 <div class="flex flex-col">
-  <select
-    value={colors[0] && colors[0].spaceName}
-    on:change={(e) => {
-      const newColors = colors.map((color) =>
-        // @ts-ignore
-        toColorSpace(color, e.target.value)
-      );
-      colorStore.setCurrentPalColors(newColors);
-    }}
-  >
-    {#each Object.entries(colorPickerConfig) as [space, { title }]}
-      <option value={space}>{title}</option>
-    {/each}
-  </select>
   <span>{config.xyTitle}</span>
   <div class="flex h-full">
     <div class="h-full py-4" style="max-height: {height}px">

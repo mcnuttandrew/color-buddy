@@ -12,6 +12,7 @@
   import OpposingColor from "./contextual-tools/OpposingColor.svelte";
   import AddColor from "./contextual-tools/AddColor.svelte";
   import Rotate from "./contextual-tools/Rotate.svelte";
+  import Deduplicate from "./contextual-tools/Deduplicate.svelte";
 
   $: focusedColors = $focusStore.focusedColors;
 </script>
@@ -37,6 +38,7 @@
       </div>
     {/if}
     <DeleteSelection />
+    <Deduplicate />
   </div>
 </div>
 

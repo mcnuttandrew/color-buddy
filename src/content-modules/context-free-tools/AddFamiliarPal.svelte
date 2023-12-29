@@ -1,5 +1,6 @@
 <script lang="ts">
   import { colorFromString } from "../../lib/Color";
+  import chroma from "chroma-js";
   import colorStore from "../../stores/color-store";
   import focusStore from "../../stores/focus-store";
   import { onMount } from "svelte";
@@ -48,46 +49,34 @@
         group: "vega",
       });
     });
-    Promise.all([
-      fetch("./brewer.json")
-        .then((x) => x.json())
-        .then((x) => {
-          const brewerPals = [] as any;
-          Object.entries(x).forEach(([schemeName, schemeSizes]) => {
-            Object.entries(schemeSizes as any).forEach(([size, colors]) => {
-              if (typeof colors === "string") return;
-              brewerPals.push({
-                name: `${schemeName}-${size}`,
-                colors: (colors as any).map((x: any) =>
-                  colorFromString(x, colorSpace)
-                ) as any,
-                background: colorFromString("#ffffff", colorSpace),
-                group: "brewer",
-              });
-            });
-          });
-          return brewerPals;
-        }),
-      fetch("./outfits.json")
-        .then((x) => x.json())
-        .then((x) => {
-          const outfitPals = [] as any;
-          x.forEach((outfit: any) => {
-            const colors = [outfit.fill1, outfit.fill2, outfit.fill3].map((x) =>
-              colorFromString(x, colorSpace)
-            );
-            outfitPals.push({
-              name: `${outfit.name}-${outfit.Category}`,
-              colors,
-              background: colorFromString("#ffffff", colorSpace),
-              group: "outfit",
-            });
-          });
-          return outfitPals;
-        }),
-    ]).then(([brewerPals, outfitPals]) => {
-      familiarPals = [...newPals, ...brewerPals, ...outfitPals];
+    Object.entries(chroma.brewer).forEach(([name, colors]) => {
+      newPals.push({
+        name,
+        colors: colors.map((x) => colorFromString(x, colorSpace)),
+        background: colorFromString("#ffffff", colorSpace),
+        group: "brewer",
+      });
     });
+    fetch("./outfits.json")
+      .then((x) => x.json())
+      .then((x) => {
+        const outfitPals = [] as any;
+        x.forEach((outfit: any) => {
+          const colors = [outfit.fill1, outfit.fill2, outfit.fill3].map((x) =>
+            colorFromString(x, colorSpace)
+          );
+          outfitPals.push({
+            name: `${outfit.name}-${outfit.Category}`,
+            colors,
+            background: colorFromString("#ffffff", colorSpace),
+            group: "outfit",
+          });
+        });
+        return outfitPals;
+      })
+      .then((outfitPals) => {
+        familiarPals = [...newPals, ...outfitPals];
+      });
   });
   let searchString = "";
   $: groups = familiarPals.reduce(
@@ -143,6 +132,8 @@
   </span>
 
   <span slot="target" let:toggle>
-    <button class={buttonStyle} on:click={toggle}>Add familiar pal</button>
+    <button class={buttonStyle} on:click={toggle}>
+      Start from familiar pal
+    </button>
   </span>
 </Tooltip>

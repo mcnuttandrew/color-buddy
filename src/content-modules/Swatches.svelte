@@ -26,45 +26,44 @@
 </script>
 
 <div class="h-full">
-  Swatches
-  <div class="h-full flex p-4" style={`background-color: ${bg.toHex()}`}>
+  <!-- Swatches -->
+  <div
+    class="flex flex-col p-4 h-full"
+    style={`background-color: ${bg.toHex()}; max-width: 600px`}
+  >
     {#each classes as { className, styleMap }, jdx}
-      <div class="flex flex-wrap">
+      <div class="flex justify-center flex-wrap">
         {#each colors as color, idx}
           <!-- svelte-ignore a11y-click-events-have-key-events -->
           <!-- svelte-ignore a11y-no-static-element-interactions -->
-          <div>
-            <Tooltip
-              top={"100px"}
-              onClose={() => {
-                focusStore.clearColors();
-              }}
-            >
-              <div slot="content" class="flex flex-col" let:onClick>
-                <SwatchTooltipContent {color} closeTooltip={onClick} {idx} />
-              </div>
-              <div
-                let:toggle
-                slot="target"
-                class={className}
-                style={styleMap(color)}
-                on:click={() => {
-                  toggle();
+          <Tooltip
+            top={"100px"}
+            onClose={() => {
+              focusStore.clearColors();
+            }}
+          >
+            <div slot="content" class="flex flex-col" let:onClick>
+              <SwatchTooltipContent {color} closeTooltip={onClick} {idx} />
+            </div>
+            <div
+              let:toggle
+              slot="target"
+              class={className}
+              style={styleMap(color)}
+              on:click={() => {
+                toggle();
 
-                  focusStore.addColor(idx);
-                }}
-                class:rotate-45={focusSet.has(idx)}
-              ></div>
-            </Tooltip>
-          </div>
+                focusStore.addColor(idx);
+              }}
+              class:rotate-45={focusSet.has(idx)}
+            ></div>
+          </Tooltip>
         {/each}
       </div>
     {/each}
-    <div class="flex flex-wrap">
+    <div class="flex flex-wrap justify-center">
       {#each colors as color}
-        <!-- svelte-ignore a11y-click-events-have-key-events -->
-        <!-- svelte-ignore a11y-no-static-element-interactions -->
-        <div style={`color: ${color.toHex()}`}>
+        <div style={`color: ${color.toHex()}`} class="mr-2">
           {color.toHex()}
         </div>
       {/each}

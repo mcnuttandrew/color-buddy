@@ -7,7 +7,8 @@
   $: colorSpace = $colorStore.currentPal.colors[0].spaceName;
   $: [zStep, xStep, yStep] = stepSize[colorSpace];
   function onKeyDown(e: any) {
-    if (e.target.tagName === "INPUT") {
+    const allowedTags = new Set(["input", "textarea"]);
+    if (allowedTags.has(e.target.tagName.toLowerCase())) {
       return;
     }
     const key = e.key.toLowerCase();
@@ -70,14 +71,13 @@
     }
 
     // COPY PASTE
-    if (key === "c" && e.metaKey) {
+    if (key === "c" && e.metaKey && $focusStore.focusedColors.length) {
       e.preventDefault();
       copiedData = $colorStore.currentPal.colors.filter((_, idx) =>
         focusedSet.has(idx)
       );
     }
     if (key === "v" && e.metaKey && copiedData.length) {
-      e.preventDefault();
       colorStore.setCurrentPalColors([
         ...$colorStore.currentPal.colors,
         ...copiedData,

@@ -1,9 +1,11 @@
 <script lang="ts">
   import colorStore from "../../stores/color-store";
-  import { avgColors, randColor } from "../../lib/utils";
+  import { avgColors, randColor, pick } from "../../lib/utils";
   import { buttonStyle } from "../../lib/styles";
+  import { toColorSpace } from "../../lib/Color";
 
   $: colors = $colorStore.currentPal.colors;
+  $: colorSpace = $colorStore.currentPal.colors[0]?.spaceName || "lab";
 </script>
 
 <div>
@@ -13,7 +15,9 @@
       if (colors.length < 2) {
         colorStore.addColorToCurrentPal(randColor());
       } else {
-        colorStore.addColorToCurrentPal(avgColors(colors));
+        const randColors = [pick(colors), pick(colors)];
+        const newColor = toColorSpace(avgColors(randColors, "lab"), colorSpace);
+        colorStore.addColorToCurrentPal(newColor);
       }
     }}
   >

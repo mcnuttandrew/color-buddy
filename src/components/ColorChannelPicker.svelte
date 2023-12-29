@@ -1,9 +1,9 @@
 <script lang="ts">
-  import { Color, colorFromChannels, toColorSpace } from "../lib/Color";
+  import { Color, colorFromChannels, colorFromString } from "../lib/Color";
   import ColorIO from "colorjs.io";
   export let color: Color;
   export let onColorChange: (color: Color) => void;
-  type ColorMode = "hsl" | "rgb" | "lab" | "hsv";
+  type ColorMode = "hsl" | "rgb" | "lab" | "hsv" | "hex";
   // type ColorMode = "lab";
   export let colorMode: ColorMode = "lab";
   // let colorMode: ColorMode = "lab";
@@ -47,6 +47,7 @@
     }
   }
   $: color &&
+    colorMode !== "hex" &&
     toColorIO()
       .to(colorModeMap[colorMode] || colorMode)
       .coords.forEach((val, idx) => {
@@ -95,28 +96,57 @@
     ret.push(steps);
     return ret;
   }
-  $: sliderSteps = color && buildSliderSteps();
+  $: sliderSteps = color && colorMode !== "hex" && buildSliderSteps();
+  let error = false;
 </script>
 
 <div class="flex flex-col w-44">
   <select bind:value={colorMode}>
-    {#each Object.keys(colorConfigs) as colorMode}
+    {#each [...Object.keys(colorConfigs), "hex"] as colorMode}
       <option value={colorMode}>{colorMode}</option>
     {/each}
   </select>
-  <div class="flex h-full pl-2 mr-2">
-    <div class="flex flex-col">
+  {#if colorMode !== "hex"}
+    <div class="flex h-full pl-2 mr-2">
       <div class="flex flex-col">
-        <div class="w-full">
-          {#each colorConfigs[colorMode] as channel, idx}
-            <div class="flex items-start flex-col mb-2">
-              <div class="flex">
-                <label class="block uppercase text-sm mt-2">
-                  <div class="flex w-full justify-between">
-                    <span>{channel.name} ({channel.min}-{channel.max})</span>
+        <div class="flex flex-col">
+          <div class="w-full">
+            {#each colorConfigs[colorMode] as channel, idx}
+              <div class="flex items-start flex-col mb-2">
+                <div class="flex">
+                  <label class="block uppercase text-sm mt-2">
+                    <div class="flex w-full justify-between">
+                      <span>{channel.name} ({channel.min}-{channel.max})</span>
+                      <input
+                        class="w-full h-4 text-right"
+                        type="number"
+                        value={channel.value}
+                        min={channel.min}
+                        max={channel.max}
+                        step={channel.step}
+                        on:change={(e) => {
+                          let values = [
+                            ...colorConfigs[colorMode].map((x) => x.value),
+                          ];
+                          // @ts-ignore
+                          values[idx] = Number(e.target.value);
+                          // @ts-ignore
+                          if (colorMode.includes("rgb")) {
+                            values = values.map((x) => x * 255);
+                          }
+                          if (colorMode === "hsl") {
+                            values[1] = values[1] / 100;
+                            values[2] = values[2] / 100;
+                          }
+                          const newColor = colorFromChannels(values, colorMode);
+                          onColorChange(newColor);
+                        }}
+                      />
+                    </div>
                     <input
-                      class="w-full h-4 text-right"
-                      type="number"
+                      class="color-slider"
+                      type="range"
+                      style={`--stops: ${sliderSteps[idx]}`}
                       value={channel.value}
                       min={channel.min}
                       max={channel.max}
@@ -127,7 +157,6 @@
                         ];
                         // @ts-ignore
                         values[idx] = Number(e.target.value);
-                        // @ts-ignore
                         if (colorMode.includes("rgb")) {
                           values = values.map((x) => x * 255);
                         }
@@ -135,45 +164,42 @@
                           values[1] = values[1] / 100;
                           values[2] = values[2] / 100;
                         }
+                        // @ts-ignore
                         const newColor = colorFromChannels(values, colorMode);
                         onColorChange(newColor);
                       }}
                     />
-                  </div>
-                  <input
-                    class="color-slider"
-                    type="range"
-                    style={`--stops: ${sliderSteps[idx]}`}
-                    value={channel.value}
-                    min={channel.min}
-                    max={channel.max}
-                    step={channel.step}
-                    on:change={(e) => {
-                      let values = [
-                        ...colorConfigs[colorMode].map((x) => x.value),
-                      ];
-                      // @ts-ignore
-                      values[idx] = Number(e.target.value);
-                      if (colorMode.includes("rgb")) {
-                        values = values.map((x) => x * 255);
-                      }
-                      if (colorMode === "hsl") {
-                        values[1] = values[1] / 100;
-                        values[2] = values[2] / 100;
-                      }
-                      // @ts-ignore
-                      const newColor = colorFromChannels(values, colorMode);
-                      onColorChange(newColor);
-                    }}
-                  />
-                </label>
+                  </label>
+                </div>
               </div>
-            </div>
-          {/each}
+            {/each}
+          </div>
         </div>
       </div>
     </div>
-  </div>
+  {:else}
+    <div>
+      <label for="hex">Set color using valid hex code</label>
+      <input
+        id="hex"
+        class="w-full"
+        value={color.toHex()}
+        on:change={(e) => {
+          try {
+            const newColor = colorFromString(e.target.value, color.spaceName);
+            onColorChange(newColor);
+            error = false;
+          } catch (e) {
+            console.error(e);
+            error = true;
+          }
+        }}
+      />
+      {#if error}
+        <div class="text-red-500">Error parsing hex</div>
+      {/if}
+    </div>
+  {/if}
 </div>
 
 <style>

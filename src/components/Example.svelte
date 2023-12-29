@@ -7,11 +7,19 @@
   import { idxToKey } from "../lib/charts";
   export let example: string;
   let focusedColor = false as false | number;
+  function countNumberOfExamplesInUse(example: string): number {
+    let inUse = 0;
+    while (example.match(new RegExp(idxToKey(inUse), "g"))) {
+      inUse++;
+    }
+    return inUse;
+  }
   function insertColorsToExample(
     example: string,
     colors: string[],
     bg: string
   ) {
+    const numInUse = countNumberOfExamplesInUse(example);
     let svg = example.replace("SaLmOn", bg);
     //   .replace("<svg", `<svg overflow="visible" `);
     if (!svg.match(/<svg[^>]*\sheight="([^"]*)"/)) {
@@ -20,33 +28,38 @@
     if (!svg.match(/<svg[^>]*\width="([^"]*)"/)) {
       svg = svg.replace("<svg", `<svg width="300px" `);
     }
-    return colors.reduce(
-      (acc, color, idx) => acc.replace(new RegExp(idxToKey(idx), "g"), color),
-      svg
-    );
+    for (let i = 0; i < numInUse; i++) {
+      svg = svg.replace(
+        new RegExp(idxToKey(i), "g"),
+        colors[i % colors.length]
+      );
+    }
+    return svg;
   }
   $: colors = $colorStore.currentPal.colors;
   $: bg = $colorStore.currentPal.background;
   $: colors, example, attachListeners();
   function onClick(e: any) {
     const colorIdx = colors.findIndex(
-      (x) => x.toHex() === e.target.getAttribute("fill")
+      (x) =>
+        x.toHex().toLowerCase() === e.target.getAttribute("fill")?.toLowerCase()
     );
     if (colorIdx > -1) {
       focusedColor = colorIdx;
     }
   }
 
+  const query = "path,circle,rect,line";
   async function attachListeners() {
     if (container) {
-      container.querySelectorAll("path").forEach((x) => {
+      container.querySelectorAll(query).forEach((x) => {
         x.removeEventListener("click", onClick);
       });
     }
 
     await tick();
 
-    container.querySelectorAll("path").forEach((x) => {
+    container.querySelectorAll(query).forEach((x) => {
       x.addEventListener("click", onClick);
     });
   }

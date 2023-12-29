@@ -4,15 +4,14 @@
 
 html, body, #app {
     height: 100%;
-    /* height: fit-content; */
     overflow: none;
 }
 
-.example-container path {
+.example-container path, .example-container circle, .example-container rect, .example-container line {
     cursor: pointer;
 }
 
-.example-container path:hover {
+.example-container path:hover, .example-container circle:hover, .example-container rect:hover, .example-container line:hover {
     stroke: black !important;
     stroke-width: 2px;
 }

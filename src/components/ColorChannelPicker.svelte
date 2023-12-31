@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Color, colorFromChannels } from "../lib/Color";
+  import { Color, colorFromChannels, colorPickerConfig } from "../lib/Color";
   import ColorIO from "colorjs.io";
   import chroma from "chroma-js";
   export let color: Color;
@@ -15,6 +15,7 @@
     step: number;
     value?: number;
   };
+
   $: colorConfigs =
     color &&
     ({
@@ -33,10 +34,20 @@
         { name: "a", min: -110, max: 110, step: 1 },
         { name: "b", min: -110, max: 110, step: 1 },
       ],
+      oklab: [
+        { name: "L", min: 0, max: 1, step: 0.01 },
+        { name: "a", min: -0.4, max: 0.4, step: 0.01 },
+        { name: "b", min: -0.4, max: 0.4, step: 0.01 },
+      ],
       hsv: [
         { name: "h", min: 0, max: 360, step: 1 },
         { name: "s", min: 0, max: 100, step: 1 },
         { name: "v", min: 0, max: 100, step: 1 },
+      ],
+      lch: [
+        { name: "L", min: 0, max: 100, step: 1 },
+        { name: "c", min: 0, max: 150, step: 1 },
+        { name: "h", min: 0, max: 360, step: 1 },
       ],
     } as Record<string, Channel[]>);
   const colorModeMap: any = { rgb: "srgb" };

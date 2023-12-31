@@ -158,6 +158,25 @@ export class OKLCH extends Color {
   }
 }
 
+export class JZAZBZ extends Color {
+  name: "JZAZBZ";
+  channels: { jz: number; az: number; bz: number };
+  constructor() {
+    super();
+    this.name = "JZAZBZ";
+    this.channels = { jz: 0, az: 0, bz: 0 };
+    this.chromaBind = (jz, az, bz) => {
+      const [l, a, b] = new ColorIO(this.toString()).to("lab").coords;
+      return chroma.lab(l, a, b);
+    };
+    this.spaceName = "jzazbz";
+  }
+  toString(): string {
+    const [jz, az, bz] = Object.values(this.channels);
+    return `color(jzazbz ${jz} ${az} ${bz})`;
+  }
+}
+
 export function colorFromString(
   colorString: string,
   colorSpace: keyof typeof colorDirectory = "lab"
@@ -186,12 +205,13 @@ export function toColorSpace(
 export const colorDirectory = {
   hsl: HSL,
   hsv: HSV,
+  jzazbz: JZAZBZ,
   lab: CIELAB,
   lch: LCH,
   oklab: OKLAB,
+  oklch: OKLCH,
   rgb: RGB,
   srgb: RGB,
-  oklch: OKLCH,
 };
 
 type ColorSpace = keyof typeof colorDirectory | string;
@@ -204,6 +224,7 @@ const domains = {
   hsl: { h: [0, 360], s: [0, 1], l: [0, 1] },
   lch: { l: [0, 100], c: [0, 150], h: [0, 360] },
   oklch: { l: [0, 1], c: [0, 0.4], h: [0, 360] },
+  jzazbz: { jz: [0, 1], az: [-0.5, 0.5], bz: [-0.5, 0.5] },
 } as Record<ColorSpace, Record<string, [number, number]>>;
 export const stepSize = {
   lab: [1, 1, 1],
@@ -214,6 +235,7 @@ export const stepSize = {
   hsl: [1, 0.01, 0.01],
   lch: [1, 1, 1],
   oklch: [0.01, 0.01, 1],
+  jzazbz: [0.01, 0.01, 0.01],
 } as Record<ColorSpace, [number, number, number]>;
 
 const dimensionToChannel = {
@@ -225,6 +247,7 @@ const dimensionToChannel = {
   hsl: { x: "s", y: "l", z: "h" },
   lch: { x: "c", y: "h", z: "l" },
   oklch: { x: "c", y: "h", z: "l" },
+  jzazbz: { x: "az", y: "bz", z: "jz" },
 } as Record<ColorSpace, Record<string, string>>;
 const xyTitles = {
   lab: "CIELAB: a* b*",
@@ -235,6 +258,7 @@ const xyTitles = {
   hsl: "HSL: Saturation Lightness",
   lch: "LCH: Chroma Hue",
   oklch: "OKLCH: Chroma Hue",
+  jzazbz: "JzAzBz: Az Bz",
 } as Record<ColorSpace, string>;
 const zTitles = {
   lab: "CIELAB: L*",
@@ -245,6 +269,7 @@ const zTitles = {
   hsl: "HSL: Hue",
   lch: "LCH: Lightness",
   oklch: "OKLCH: Lightness",
+  jzazbz: "JzAzBz: Jz",
 } as Record<ColorSpace, string>;
 const titleMap = {
   lab: "CIELAB",
@@ -255,6 +280,7 @@ const titleMap = {
   hsl: "HSL",
   lch: "LCH",
   oklch: "OKLCH",
+  jzazbz: "JzAzBz",
 } as Record<ColorSpace, string>;
 
 export const colorPickerConfig = Object.fromEntries(
@@ -271,6 +297,9 @@ export const colorPickerConfig = Object.fromEntries(
         xChannel: dimensionToChannel[name].x,
         yChannel: dimensionToChannel[name].y,
         zChannel: dimensionToChannel[name].z,
+        xStep: stepSize[name][1],
+        yStep: stepSize[name][2],
+        zStep: stepSize[name][0],
       },
     ];
   })

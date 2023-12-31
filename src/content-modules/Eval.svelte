@@ -1,12 +1,15 @@
 <script lang="ts">
   import colorStore from "../stores/color-store";
   import focusStore from "../stores/focus-store";
+  import { Color } from "../lib/Color";
+  import chroma from "chroma-js";
   import {
     computeStats,
     c3,
     colorNameDiscrimCheck,
     colorBlindCheck,
   } from "../lib/color-stats";
+  import { buttonStyle } from "../lib/styles";
   import Tooltip from "../components/Tooltip.svelte";
   import SwatchTooltipContent from "./SwatchTooltipContent.svelte";
   let metric: "dE" | "dE94" | "none" = "none";
@@ -21,11 +24,66 @@
 
   $: discrimCheck = colorNameDiscrimCheck(colorNames);
   $: blindCheck = colorBlindCheck(colors.map((x) => x.toChroma()));
+
+  function checkIfAColorIsCloseToAnUglyColor(colors: Color[]) {
+    const uglyColors = [
+      "#56FF00",
+      "#0010FF",
+      "#6A7E25",
+      "#FF00EF",
+      "#806E28",
+    ].map((x) => chroma(x));
+    return colors.filter((color) => {
+      const deltas = uglyColors.map((uglyColor) =>
+        chroma.deltaE(color.toChroma(), uglyColor)
+      );
+      return deltas.some((x) => x < 10);
+    });
+  }
+
+  $: uggos = checkIfAColorIsCloseToAnUglyColor(colors);
+  $: checks = [
+    {
+      name: "Colorblind",
+      check: blindCheck.length > 0,
+      message: `This palette is not colorblind friendly (for ${blindCheck.join(
+        ", "
+      )} specifically).`,
+    },
+    {
+      name: "Color name discrimination",
+      check: !discrimCheck,
+      message: discrimCheck,
+    },
+    {
+      name: "dE",
+      check: !stats?.dE.some((x) => x > 1),
+      message: "Some colors are too similar",
+    },
+    {
+      name: "max colors",
+      check: colors.length < 10,
+      message:
+        "This palette has too many colors and may be hard to discriminate in some contexts",
+    },
+    {
+      name: "ugly colors",
+      check: uggos.length === 0,
+      message: `This palette has some colors (specifically ${uggos
+        .map((x) => x.toHex())
+        .join(", ")}) that are close to what are known as ugly colors`,
+    },
+  ];
 </script>
 
-<div class="flex h-full p-4">
+<div class="flex h-full">
   <div class="flex">
-    <div class="flex flex-col flex-wrap">
+    <div class="flex flex-col flex-wrap mr-5 bg-slate-100 p-4">
+      <div>Colors</div>
+      <div class="flex justify-between w-full text-xs italic">
+        <span>Hex Value</span>
+        {#if colorNames[0]}<span>Inferred Color Name</span>{/if}
+      </div>
       {#each $colorStore.currentPal.colors as color, idx}
         <Tooltip
           top={"100px"}
@@ -44,13 +102,15 @@
               toggle();
               focusStore.addColor(idx);
             }}
-            class="w-40 h-8 flex justify-center items-center text-sm relative mt-2 mr-12 transition-all"
+            class="w-40 h-8 flex justify-center items-center text-sm relative mt-2 transition-all"
             class:text-white={color.toChroma().luminance() < 0.5}
             class:ml-5={$focusStore.focusedColors.includes(idx)}
+            class:mr-5={!$focusStore.focusedColors.includes(idx)}
             style="background-color: {color.toHex()}"
           >
-            <div>
-              {color.toHex()}{#if colorNames[idx]}—{colorNames[idx]?.word}{/if}
+            <div class="flex justify-between w-full px-2">
+              <span>{color.toHex()}</span>
+              {#if colorNames[idx]}<span>{colorNames[idx]?.word}</span>{/if}
             </div>
             {#if stats?.dE[idx]}
               <div
@@ -63,28 +123,46 @@
           </button>
         </Tooltip>
       {/each}
+      <div>
+        <span>Metric</span>
+        <select bind:value={metric}>
+          {#each ["dE", "dE94", "none"] as metric}
+            <option value={metric}>{metric}</option>
+          {/each}
+        </select>
+      </div>
     </div>
   </div>
-  <div class="flex">
+  <div class="flex flex-col ml-2">
     <div>
-      <span>Metric</span>
-      <select bind:value={metric}>
-        {#each ["dE", "dE94", "none"] as metric}
-          <option value={metric}>{metric}</option>
+      This is a <select>
+        {#each ["sequential", "diverging", "categorical"] as type}
+          <option value={type}>{type}</option>
         {/each}
       </select>
+      Palette
     </div>
-    <div>
-      {#if discrimCheck}
-        <div class="text-red-500">
-          {discrimCheck}
+    <div>Checks</div>
+    {#each checks as check}
+      <div
+        class="w-full rounded flex flex-col justify-between bg-slate-200 border-slate-700 border-2 mb-2 p-4"
+      >
+        <div class="font-bold flex">
+          {#if check.check}<div class="text-green-500 mr-2">✅</div>{:else}<div
+              class="text-red-500 mr-2"
+            >
+              ❌
+            </div>{/if}{check.name}
         </div>
-      {/if}
-      {#if blindCheck.length > 0}
-        <div class="text-red-500">
-          This palette is not colorblind friendly (for {blindCheck.join(", ")} specifically).
-        </div>
-      {/if}
-    </div>
+        {#if !check.check}
+          <div class="text-sm italic">{check.message}</div>
+          <div>
+            <button class={buttonStyle}>Ignore for this palette</button>
+            <button class={buttonStyle}>Ignore for a bit</button>
+            <button class={buttonStyle}>This is too restrictive</button>
+          </div>
+        {/if}
+      </div>
+    {/each}
   </div>
 </div>

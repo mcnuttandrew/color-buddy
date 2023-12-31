@@ -65,7 +65,7 @@
       memorizedColors = false;
     }}
   >
-    <div slot="content">
+    <div slot="content" class="flex flex-col">
       Rotate: {angle}
       <input min={0} max={360} step={1} type="range" bind:value={angle} />
       <span class="text-sm">

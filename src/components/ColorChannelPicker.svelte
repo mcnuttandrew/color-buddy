@@ -1,13 +1,11 @@
 <script lang="ts">
-  import { Color, colorFromChannels, colorPickerConfig } from "../lib/Color";
+  import { Color, colorFromChannels } from "../lib/Color";
   import ColorIO from "colorjs.io";
   import chroma from "chroma-js";
   export let color: Color;
   export let onColorChange: (color: Color) => void;
   type ColorMode = "hsl" | "rgb" | "lab" | "hsv" | "hex";
-  // type ColorMode = "lab";
   export let colorMode: ColorMode = "lab";
-  // let colorMode: ColorMode = "lab";
   type Channel = {
     name: string;
     min: number;
@@ -115,6 +113,22 @@
   }
   $: sliderSteps = color && colorMode !== "hex" && buildSliderSteps();
   let error = false;
+
+  function colorUpdate(e: any, idx: number) {
+    if (colorMode === "hex") {
+      return;
+    }
+    let values = [...colorConfigs[colorMode].map((x) => x.value)] as number[];
+    values[idx] = Number(e.target.value);
+    if (colorMode.includes("rgb")) {
+      values = values.map((x) => x * 255);
+    }
+    const newColor = colorFromChannels(
+      values as [number, number, number],
+      colorMode
+    );
+    onColorChange(newColor);
+  }
 </script>
 
 <div class="flex flex-col w-44">
@@ -141,23 +155,7 @@
                         min={channel.min}
                         max={channel.max}
                         step={channel.step}
-                        on:change={(e) => {
-                          let values = [
-                            ...colorConfigs[colorMode].map((x) => x.value),
-                          ];
-                          // @ts-ignore
-                          values[idx] = Number(e.target.value);
-                          // @ts-ignore
-                          if (colorMode.includes("rgb")) {
-                            values = values.map((x) => x * 255);
-                          }
-                          // if (colorMode === "hsl" || colorMode === "hsv") {
-                          //   values[1] = values[1] / 100;
-                          //   values[2] = values[2] / 100;
-                          // }
-                          const newColor = colorFromChannels(values, colorMode);
-                          onColorChange(newColor);
-                        }}
+                        on:input={(e) => colorUpdate(e, idx)}
                       />
                     </div>
                     <input
@@ -168,23 +166,8 @@
                       min={channel.min}
                       max={channel.max}
                       step={channel.step}
-                      on:change={(e) => {
-                        let values = [
-                          ...colorConfigs[colorMode].map((x) => x.value),
-                        ];
-                        // @ts-ignore
-                        values[idx] = Number(e.target.value);
-                        if (colorMode.includes("rgb")) {
-                          values = values.map((x) => x * 255);
-                        }
-                        // if (colorMode === "hsl" || colorMode === "hsv") {
-                        //   values[1] = values[1] / 100;
-                        //   values[2] = values[2] / 100;
-                        // }
-                        // @ts-ignore
-                        const newColor = colorFromChannels(values, colorMode);
-                        onColorChange(newColor);
-                      }}
+                      on:input={(e) => colorUpdate(e, idx)}
+                      on:input={(e) => colorUpdate(e, idx)}
                     />
                   </label>
                 </div>

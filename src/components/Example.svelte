@@ -66,15 +66,12 @@
   }
   let container: HTMLDivElement;
   $: color = focusedColor !== false && colors[focusedColor];
+  $: mappedColors = colors.map((x) => x.toHex());
 </script>
 
 <div class="relative">
   <div bind:this={container} class="example-container">
-    {@html insertColorsToExample(
-      example,
-      colors.map((x) => x.toHex()),
-      bg.toHex()
-    )}
+    {@html insertColorsToExample(example, mappedColors, bg.toHex())}
   </div>
   {#if color && focusedColor !== false}
     <Tooltip

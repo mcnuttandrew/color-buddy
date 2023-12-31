@@ -1,5 +1,6 @@
 <script lang="ts">
   import ColorChannelPicker from "../components/ColorChannelPicker.svelte";
+  import chroma from "chroma-js";
   import { Color } from "../lib/Color";
   import colorStore from "../stores/color-store";
   import focusStore from "../stores/focus-store";
@@ -16,22 +17,21 @@
     newArr[j] = temp;
     return newArr;
   };
+  function updateColor(color: Color) {
+    const updatedColors = [...colors];
+    updatedColors[idx] = color;
+    colorStore.setCurrentPalColors(updatedColors);
+  }
 </script>
 
-<div class="flex">
-  {#each ["lab", "hsv"] as colorMode}
-    <ColorChannelPicker
-      {color}
-      {colorMode}
-      onColorChange={(color) => {
-        const updatedColors = [...colors];
-        updatedColors[idx] = color;
-        colorStore.setCurrentPalColors(updatedColors);
-      }}
-    />
-  {/each}
-</div>
-<div class="flex">
+<div class="flex mb-2">
+  <input
+    value={color.toHex()}
+    on:change={(e) => {
+      const newColor = chroma(e.target.value);
+      updateColor(color.fromChroma(newColor));
+    }}
+  />
   {#if idx > 0}
     <button
       class="{buttonStyle} mr-2"
@@ -64,4 +64,17 @@
   >
     Delete
   </button>
+</div>
+<div class="flex">
+  {#each ["lab", "hsv"] as colorMode}
+    <ColorChannelPicker
+      {color}
+      {colorMode}
+      onColorChange={(color) => {
+        const updatedColors = [...colors];
+        updatedColors[idx] = color;
+        colorStore.setCurrentPalColors(updatedColors);
+      }}
+    />
+  {/each}
 </div>

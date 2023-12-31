@@ -124,7 +124,27 @@
       modalState = "closed";
     }}
   >
-    <div slot="header">Add an Example</div>
+    <div slot="header">
+      <div class="flex justify-between">
+        <div>Add an Example</div>
+        <button
+          class={buttonStyle}
+          on:click={() => {
+            fetch("./mondrian.svg")
+              .then((response) => response.text())
+              .then((text) => {
+                value = text;
+                modalState = "input-svg";
+              })
+              .catch((e) => {
+                console.error(e);
+              });
+          }}
+        >
+          Add a Mondrian
+        </button>
+      </div>
+    </div>
     <div class="h-96 overflow-auto" style="width: 700px;">
       {#if modalState === "input-svg"}
         <CodeMirror

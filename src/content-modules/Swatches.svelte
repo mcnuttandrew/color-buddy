@@ -8,22 +8,19 @@
   $: bg = $colorStore.currentPal.background;
   $: focusSet = new Set($focusStore.focusedColors);
 
-  let common = "cursor-pointer mr-2 mb-2 transition-transform";
+  let common = "cursor-pointer mr-2 mb-2 transition-all";
   let classes = [
     {
       className: `${common} w-14 h-14 `,
-      styleMap: (color: Color): string =>
-        `background-color: ${color.toHex()}; transition: background-color 0.2s ease-in-out`,
+      styleMap: (color: Color): string => `background-color: ${color.toHex()};`,
     },
     {
       className: `${common} w-8 h-8`,
-      styleMap: (color: Color): string =>
-        `background-color: ${color.toHex()}; transition: background-color 0.2s ease-in-out`,
+      styleMap: (color: Color): string => `background-color: ${color.toHex()};`,
     },
     {
       className: `${common} w-8 h-8 rounded-full`,
-      styleMap: (color: Color): string =>
-        `border: 4px solid ${color.toHex()}; transition: background-color 0.2s ease-in-out`,
+      styleMap: (color: Color): string => `border: 4px solid ${color.toHex()};`,
     },
   ];
 </script>

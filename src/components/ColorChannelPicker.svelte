@@ -1,11 +1,12 @@
 <script lang="ts">
-  import { Color, colorFromChannels } from "../lib/Color";
+  import { Color, colorFromChannels, toColorSpace } from "../lib/Color";
   import ColorIO from "colorjs.io";
   import chroma from "chroma-js";
   export let color: Color;
   export let onColorChange: (color: Color) => void;
   type ColorMode = "hsl" | "rgb" | "lab" | "hsv" | "hex";
   export let colorMode: ColorMode = "lab";
+  $: measuredColorMode = color.spaceName;
   type Channel = {
     name: string;
     min: number;
@@ -127,7 +128,8 @@
       values as [number, number, number],
       colorMode
     );
-    onColorChange(newColor);
+
+    onColorChange(toColorSpace(newColor, measuredColorMode));
   }
 </script>
 
@@ -189,7 +191,7 @@
           try {
             const chromaChannels = chroma(colorString)[color.spaceName]();
             const newColor = color.fromChannels(chromaChannels);
-            onColorChange(newColor);
+            onColorChange(toColorSpace(newColor, measuredColorMode));
             error = false;
           } catch (e) {
             console.error(e);

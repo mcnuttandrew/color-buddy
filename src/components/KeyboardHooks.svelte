@@ -5,10 +5,16 @@
   $: focusedSet = new Set($focusStore.focusedColors);
   $: copiedData = [] as Color[];
   $: colorSpace = $colorStore.currentPal.colors[0].spaceName;
-  $: [zStep, xStep, yStep] = stepSize[colorSpace];
+  $: [_zStep, xStep, yStep] = stepSize[colorSpace];
   function onKeyDown(e: any) {
-    const allowedTags = new Set(["input", "textarea"]);
-    if (allowedTags.has(e.target.tagName.toLowerCase())) {
+    if (e.target.tagName.toLowerCase() === "input") {
+      const isUIElement =
+        e.target.type === "number" || e.target.type === "range";
+      if (!isUIElement) {
+        return;
+      }
+    }
+    if (e.target.tagName.toLowerCase() === "textarea") {
       return;
     }
     const key = e.key.toLowerCase();

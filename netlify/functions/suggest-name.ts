@@ -3,12 +3,6 @@ import { genericHandler } from "../utils";
 type promptInput = { inputColors: string[]; background: string };
 const prompt = (pal: promptInput) => `
 You are a color expert. You expertly name color palettes. You take in a list of colors presented as hex code and return a name for the palette.
-
-For example:
-Palette: ["#000000", "#FF0000", "#00FF00", "#0000FF"]
-Background Color: "#FFFFFF" 
-Output: ["Color Wheel Basics", "Primary School", "RGB"]
-
 Present your names a list of JSON strings. They should have a type like string[]. Only respond with one array consisting of 4 name suggestions. Do not offer any other response.
 
 Palette: ${JSON.stringify(pal.inputColors)}

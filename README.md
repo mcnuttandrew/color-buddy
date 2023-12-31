@@ -29,7 +29,7 @@ First time you start it up you should also run `yarn prep data`
 - [ ] Controls explainer
 - [ ] Labels, tooltips, etc
 - [ ] Add color by name
-- [ ] Color channel controller polish
+- [x] Color channel controller polish
 - [x] Responsiveness
 - [x] Step needs to be adapted to small spaces
 - [x] Show select on eval

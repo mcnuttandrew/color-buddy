@@ -1,77 +1,71 @@
 <script lang="ts">
+  import Portal from "svelte-portal";
   export let top: string = "4rem";
   export let onClose: () => void = () => {};
   export let initiallyOpen: boolean = false;
-  export let xOrientation: "left" | "right" = "left";
   let tooltipOpen: boolean = initiallyOpen;
+  const query = "main *";
   function onClick() {
     tooltipOpen = false;
     onClose();
+    document.querySelectorAll(query).forEach((x) => {
+      x.removeEventListener("click", onClick);
+    });
   }
   function toggle() {
     tooltipOpen = !tooltipOpen;
   }
+  let target: HTMLElement;
+  $: boundingBox =
+    tooltipOpen &&
+    ((target?.getBoundingClientRect() || {
+      x: undefined,
+      y: undefined,
+    }) as { x?: number; y?: number });
+
+  $: tooltipOpen === true && attachListeners();
+  async function attachListeners() {
+    await new Promise((resolve) => setTimeout(resolve, 10));
+
+    document.querySelectorAll(query).forEach((x) => {
+      x.addEventListener("click", onClick);
+    });
+  }
 </script>
 
-<!-- svelte-ignore a11y-click-events-have-key-events -->
-<!-- svelte-ignore a11y-no-static-element-interactions -->
 {#if tooltipOpen}
-  <div
-    class="hidden-background"
-    on:click={() => {
-      tooltipOpen = false;
-      onClose();
-    }}
-  ></div>
+  <Portal target="body">
+    <div
+      class="absolute min-w-10"
+      style={`left: ${boundingBox.x}px; top: calc(${boundingBox.y}px + ${top}); z-index: 1000`}
+    >
+      <div class="relative">
+        <span
+          class="tooltip rounded shadow-lg p-4 bg-slate-100 text-black -mt-8 max-w-lg flex-wrap flex"
+          style={`top: ${top}`}
+        >
+          {#if tooltipOpen}
+            <span>
+              <slot name="content" {onClick}>
+                <span class="missing">No content</span>
+              </slot>
+            </span>
+          {/if}
+        </span>
+      </div>
+    </div>
+  </Portal>
 {/if}
-
-<div class="relative">
+<div bind:this={target}>
   <slot name="target" {toggle} />
-
-  <span
-    class="tooltip rounded shadow-lg p-4 bg-slate-100 text-black -mt-8 max-w-lg flex-wrap flex"
-    class:visibleTooltip={tooltipOpen}
-    class:orient-left={xOrientation === "left"}
-    class:orient-right={xOrientation === "right"}
-    style={`top: ${top}`}
-  >
-    {#if tooltipOpen}
-      <span>
-        <slot name="content" {onClick}>
-          <span class="missing">No content</span>
-        </slot>
-      </span>
-    {/if}
-  </span>
 </div>
 
 <style>
-  .tooltip {
-    @apply invisible absolute;
-  }
-
   .tooltip span:before {
     border-left: 10px solid transparent;
     border-right: 10px solid transparent;
-    content: "";
     display: block;
-    height: 0;
-    /* left: 2px; */
-    position: absolute;
     top: -10px;
-    width: 0;
-  }
-  span.tooltip.orient-left {
-    /* border-bottom: 10px solid #000; */
-    left: 10px;
-  }
-  span.tooltip.orient-right {
-    /* border-bottom: 10px solid #000; */
-    right: 10px;
-  }
-
-  .visibleTooltip {
-    @apply visible z-50;
   }
 
   .hidden-background {
@@ -82,6 +76,5 @@
     top: 0;
     background-color: red;
     opacity: 0;
-    z-index: 1;
   }
 </style>

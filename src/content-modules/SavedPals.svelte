@@ -87,7 +87,7 @@
                 {pal.name}
               </button>
             </div>
-            <Tooltip xOrientation="right">
+            <Tooltip>
               <div slot="content" let:onClick>
                 <button
                   class={buttonStyle}

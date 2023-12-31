@@ -2,7 +2,7 @@
   import colorStore from "./stores/color-store";
   import focusStore from "./stores/focus-store";
   import navStore from "./stores/nav-store";
-  import SavedPals from "./content-modules/SavedPals.svelte";
+  import LeftPanel from "./content-modules/LeftPanel.svelte";
   import ActionArea from "./content-modules/ActionArea.svelte";
   import Examples from "./content-modules/Examples.svelte";
   import Swatches from "./content-modules/Swatches.svelte";
@@ -13,7 +13,7 @@
 </script>
 
 <main class="flex h-full">
-  <SavedPals />
+  <LeftPanel />
   <div class="h-full flex flex-col grow main-content">
     <ActionArea />
     <div class="flex w-full grow overflow-auto">

@@ -49,6 +49,11 @@
         { name: "c", min: 0, max: 150, step: 1 },
         { name: "h", min: 0, max: 360, step: 1 },
       ],
+      jzazbz: [
+        { name: "jz", min: 0, max: 1, step: 0.01 },
+        { name: "az", min: -0.5, max: 0.5, step: 0.01 },
+        { name: "bz", min: -0.5, max: 0.5, step: 0.01 },
+      ],
     } as Record<string, Channel[]>);
   const colorModeMap: any = { rgb: "srgb" };
   function toColorIO() {

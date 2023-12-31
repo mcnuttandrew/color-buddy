@@ -1,5 +1,6 @@
 import type { Color as ChromaColor } from "chroma-js";
 import chroma from "chroma-js";
+import ColorIO from "colorjs.io";
 export class Color {
   name: string;
   channels: Record<string, number>;
@@ -34,7 +35,6 @@ export class Color {
     // @ts-ignore
     const channels = color[this.spaceName]();
     return this.fromChannels(channels);
-    // return this.chromaBind();
   }
   setChannel(channel: keyof typeof this.channels, value: number) {
     this.channels[channel] = value;
@@ -42,9 +42,8 @@ export class Color {
 
   fromString(colorString: string): Color {
     if (!colorString.startsWith(`${this.spaceName}(`)) {
-      // @ts-ignore
-      const chromaChannels = chroma(colorString)[this.spaceName]();
-      return this.fromChannels(chromaChannels);
+      const channels = new ColorIO(colorString).to(this.spaceName).coords;
+      return this.fromChannels(channels);
     }
     // extract the numbers from the string
     const regex = new RegExp(`${this.spaceName}\\((.*)% (.*) (.*)\\)`);
@@ -118,6 +117,10 @@ export class HSL extends Color {
     this.chromaBind = chroma.hsl;
     this.spaceName = "hsl";
   }
+  toString(): string {
+    const [h, s, l] = Object.values(this.channels);
+    return `hsl(${h} ${s}% ${l}%)`;
+  }
 }
 export class LCH extends Color {
   name: "LCH";
@@ -176,7 +179,8 @@ export function toColorSpace(
   if (color.spaceName === colorSpace) {
     return color;
   }
-  return new colorDirectory[colorSpace]().fromChroma(color.toChroma());
+  const channels = new ColorIO(color.toString()).to(colorSpace).coords;
+  return new colorDirectory[colorSpace]().fromChannels(channels);
 }
 
 export const colorDirectory = {

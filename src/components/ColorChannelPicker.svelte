@@ -1,6 +1,7 @@
 <script lang="ts">
-  import { Color, colorFromChannels, colorFromString } from "../lib/Color";
+  import { Color, colorFromChannels } from "../lib/Color";
   import ColorIO from "colorjs.io";
+  import chroma from "chroma-js";
   export let color: Color;
   export let onColorChange: (color: Color) => void;
   type ColorMode = "hsl" | "rgb" | "lab" | "hsv" | "hex";
@@ -134,10 +135,10 @@
                           if (colorMode.includes("rgb")) {
                             values = values.map((x) => x * 255);
                           }
-                          if (colorMode === "hsl") {
-                            values[1] = values[1] / 100;
-                            values[2] = values[2] / 100;
-                          }
+                          // if (colorMode === "hsl" || colorMode === "hsv") {
+                          //   values[1] = values[1] / 100;
+                          //   values[2] = values[2] / 100;
+                          // }
                           const newColor = colorFromChannels(values, colorMode);
                           onColorChange(newColor);
                         }}
@@ -160,10 +161,10 @@
                         if (colorMode.includes("rgb")) {
                           values = values.map((x) => x * 255);
                         }
-                        if (colorMode === "hsl") {
-                          values[1] = values[1] / 100;
-                          values[2] = values[2] / 100;
-                        }
+                        // if (colorMode === "hsl" || colorMode === "hsv") {
+                        //   values[1] = values[1] / 100;
+                        //   values[2] = values[2] / 100;
+                        // }
                         // @ts-ignore
                         const newColor = colorFromChannels(values, colorMode);
                         onColorChange(newColor);
@@ -185,8 +186,10 @@
         class="w-full"
         value={color.toHex()}
         on:change={(e) => {
+          const colorString = e.target.value;
           try {
-            const newColor = colorFromString(e.target.value, color.spaceName);
+            const chromaChannels = chroma(colorString)[color.spaceName]();
+            const newColor = color.fromChannels(chromaChannels);
             onColorChange(newColor);
             error = false;
           } catch (e) {

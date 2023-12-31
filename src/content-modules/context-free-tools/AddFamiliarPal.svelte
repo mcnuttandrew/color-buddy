@@ -132,8 +132,6 @@
   </span>
 
   <span slot="target" let:toggle>
-    <button class={buttonStyle} on:click={toggle}>
-      Start from familiar pal
-    </button>
+    <button class={buttonStyle} on:click={toggle}>From familiar pal</button>
   </span>
 </Tooltip>

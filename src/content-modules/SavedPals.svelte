@@ -3,7 +3,7 @@
   import SuggestName from "./context-free-tools/SuggestName.svelte";
   import AddFamiliarPal from "./context-free-tools/AddFamiliarPal.svelte";
   import SuggestColorPal from "./context-free-tools/SuggestColorPal.svelte";
-  import SuggestColors from "./context-free-tools/SuggestColors.svelte";
+
   import PalPreview from "../components/PalPreview.svelte";
   import Background from "./Background.svelte";
   import Sort from "./context-free-tools/Sort.svelte";
@@ -13,29 +13,37 @@
   import SetColorSpace from "./SetColorSpace.svelte";
 </script>
 
-<div class="bg-slate-400 p-2 w-96 h-full container">
-  <div class="text-4xl font-bold">Color Buddy</div>
-  <div class="flex justify-between z-50">
-    <div>
-      <button on:click={() => colorStore.undo()}>Undo</button>
-      <button on:click={() => colorStore.redo()}>Redo</button>
+<!-- left panel -->
+<div class="bg-slate-400 p-2 w-96 container flex flex-col h-full">
+  <section class="flex flex-col flex-none">
+    <div class="text-4xl font-bold">Color Buddy</div>
+    <div class="flex justify-between z-50">
+      <div>
+        <button on:click={() => colorStore.undo()}>Undo</button>
+        <button on:click={() => colorStore.redo()}>Redo</button>
+      </div>
+      <div>
+        {#each ["google", "openai"] as ai}
+          <button
+            class={buttonStyle}
+            class:font-bold={ai === $colorStore.engine}
+            on:click={() => {
+              colorStore.setEngine(ai);
+            }}
+          >
+            {ai}
+          </button>
+        {/each}
+      </div>
     </div>
-    <div>
-      {#each ["google", "openai"] as ai}
-        <button
-          class={buttonStyle}
-          class:font-bold={ai === $colorStore.engine}
-          on:click={() => {
-            colorStore.setEngine(ai);
-          }}
-        >
-          {ai}
-        </button>
-      {/each}
+    <div class="flex">
+      <span>New:</span>
+      <AddFamiliarPal />
+      <SuggestColorPal />
     </div>
-  </div>
+  </section>
 
-  <section class="mt-4 border-t-2 border-black">
+  <section class="mt-4 border-t-2 border-black flex flex-col flex-none">
     <div class="">
       <span class="italic">Current Pal:</span>
       <!-- svelte-ignore a11y-no-static-element-interactions -->
@@ -54,27 +62,20 @@
           </div>
         </div>
         <SuggestName />
+        <Sort />
       </div>
     </div>
     <PalPreview pal={$colorStore.currentPal} />
+
     <Background />
     <GetColorsFromString />
     <SetColorSpace />
-    <div class="mt-4 border-t-2 border-black">
-      <div class="italic">Global Actions</div>
-      <!-- <button class={buttonStyle} on:click={() => colorStore.createNewPal()}>
-        New Pal
-      </button> -->
-      <AddFamiliarPal />
-
-      <Sort />
-      <SuggestColorPal />
-      <SuggestColors />
-    </div>
   </section>
-  <section class="mt-4 border-t-2 border-black h-full max-h-full">
+  <section
+    class="mt-4 border-t-2 border-black flex flex-col flex-1 overflow-auto"
+  >
     <div class="italic">Saved Pals</div>
-    <div class="h-full overflow-auto">
+    <div class="overflow-auto">
       {#each $colorStore.palettes as pal}
         <div class="flex flex-col mt-2 h-fit">
           <div class="flex items-center justify-between">
@@ -86,7 +87,7 @@
                 {pal.name}
               </button>
             </div>
-            <Tooltip>
+            <Tooltip xOrientation="right">
               <div slot="content" let:onClick>
                 <button
                   class={buttonStyle}
@@ -104,9 +105,14 @@
                   Delete
                 </button>
               </div>
-              <div slot="target" let:toggle>
-                <button class={buttonStyle} on:click={toggle}>⚙</button>
-              </div>
+              <button
+                slot="target"
+                let:toggle
+                class={buttonStyle}
+                on:click={toggle}
+              >
+                ⚙
+              </button>
             </Tooltip>
           </div>
           <PalPreview {pal} />
@@ -118,6 +124,6 @@
 
 <style>
   .container {
-    min-width: 18rem;
+    min-width: 300px;
   }
 </style>

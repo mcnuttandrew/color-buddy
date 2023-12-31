@@ -2,6 +2,7 @@
   export let top: string = "4rem";
   export let onClose: () => void = () => {};
   export let initiallyOpen: boolean = false;
+  export let xOrientation: "left" | "right" = "left";
   let tooltipOpen: boolean = initiallyOpen;
   function onClick() {
     tooltipOpen = false;
@@ -25,13 +26,13 @@
 {/if}
 
 <div class="relative">
-  <slot name="target" {toggle}>
-    <span class="missing">No content</span>
-  </slot>
+  <slot name="target" {toggle} />
 
   <span
     class="tooltip rounded shadow-lg p-4 bg-slate-100 text-black -mt-8 max-w-lg flex-wrap flex"
     class:visibleTooltip={tooltipOpen}
+    class:orient-left={xOrientation === "left"}
+    class:orient-right={xOrientation === "right"}
     style={`top: ${top}`}
   >
     {#if tooltipOpen}
@@ -55,10 +56,18 @@
     content: "";
     display: block;
     height: 0;
-    left: 2px;
+    /* left: 2px; */
     position: absolute;
     top: -10px;
     width: 0;
+  }
+  span.tooltip.orient-left {
+    /* border-bottom: 10px solid #000; */
+    left: 10px;
+  }
+  span.tooltip.orient-right {
+    /* border-bottom: 10px solid #000; */
+    right: 10px;
   }
 
   .visibleTooltip {

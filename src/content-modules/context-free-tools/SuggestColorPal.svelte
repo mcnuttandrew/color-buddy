@@ -19,9 +19,7 @@
 
 <Tooltip>
   <span slot="target" let:toggle>
-    <button class={AIButtonStyle} on:click={toggle}>
-      Create pal from prompt
-    </button>
+    <button class={AIButtonStyle} on:click={toggle}>Pal from prompt</button>
   </span>
   <div slot="content" let:onClick>
     <div class="flex flex-col">

@@ -23,7 +23,7 @@
   $: blindCheck = colorBlindCheck(colors.map((x) => x.toChroma()));
 </script>
 
-<div class="flex h-full">
+<div class="flex h-full p-4">
   <div class="flex">
     <div class="flex flex-col flex-wrap">
       {#each $colorStore.currentPal.colors as color, idx}

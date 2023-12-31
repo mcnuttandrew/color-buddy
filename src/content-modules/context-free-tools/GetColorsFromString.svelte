@@ -21,7 +21,7 @@
   }
 </script>
 
-<div class="mt-5">
+<div class="">
   <label for="current-colors">Current Colors</label>
   <textarea
     id="current-colors"

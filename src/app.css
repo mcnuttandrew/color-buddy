@@ -2,9 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
-html, body, #app {
+html, body, #app, main {
     height: 100%;
-    overflow: none;
+    overflow: hidden;
 }
 
 .example-container path, .example-container circle, .example-container rect, .example-container line {
@@ -14,4 +14,26 @@ html, body, #app {
 .example-container path:hover, .example-container circle:hover, .example-container rect:hover, .example-container line:hover {
     stroke: black !important;
     stroke-width: 2px;
+}
+
+/* width */
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+    background: #888;
+    border-radius: 5px;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+    background: #000;
+    border-radius: 5px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+    background: #555;
 }

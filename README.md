@@ -17,7 +17,6 @@ First time you start it up you should also run `yarn prep data`
 - [ ] higher card. vis examples
 - [ ] order as diverging
 - [ ] Color correction
-- [ ] Responsiveness
 - [ ] Distribute radially
 - [ ] Rearrange some of the colors in the color area eg make rg on xy and b on z etc
 - [ ] "opposing color" to "Convert selection to opposing"
@@ -30,6 +29,8 @@ First time you start it up you should also run `yarn prep data`
 - [ ] Controls explainer
 - [ ] Labels, tooltips, etc
 - [ ] Add color by name
+- [ ] Color channel controller polish
+- [x] Responsiveness
 - [x] Step needs to be adapted to small spaces
 - [x] Show select on eval
 - [x] Minor: make axis numbers not too big

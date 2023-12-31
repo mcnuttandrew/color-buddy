@@ -13,33 +13,35 @@
   import AddColor from "./contextual-tools/AddColor.svelte";
   import Rotate from "./contextual-tools/Rotate.svelte";
   import Deduplicate from "./contextual-tools/Deduplicate.svelte";
+  import SuggestColors from "./context-free-tools/SuggestColors.svelte";
 
   $: focusedColors = $focusStore.focusedColors;
 </script>
 
-<div class="flex flex-col bg-slate-400 w-full p-2 h-12">
-  <div class="flex">
-    <AddColor />
-    <AdjustColor />
-    <OpposingColor />
+<div
+  class="flex bg-slate-400 p-2 h-12 flex-none items-center overflow-x-scroll overflow-y-hidden"
+>
+  <AddColor />
+  <SuggestColors />
+  <AdjustColor />
+  <OpposingColor />
 
-    <CreateAverage />
-    <SuggestionModificationToSelection />
-    <InterpolatePoints />
-    <DistributePoints />
-    <Rotate />
+  <CreateAverage />
+  <SuggestionModificationToSelection />
+  <InterpolatePoints />
+  <DistributePoints />
+  <Rotate />
 
-    <AlignSelection />
-    {#if focusedColors.length > 0}
-      <div>
-        <button class={buttonStyle} on:click={() => focusStore.clearColors()}>
-          Clear Selection
-        </button>
-      </div>
-    {/if}
-    <DeleteSelection />
-    <Deduplicate />
-  </div>
+  <AlignSelection />
+  {#if focusedColors.length > 0}
+    <div>
+      <button class={buttonStyle} on:click={() => focusStore.clearColors()}>
+        Clear Selection
+      </button>
+    </div>
+  {/if}
+  <DeleteSelection />
+  <Deduplicate />
 </div>
 
 <style>

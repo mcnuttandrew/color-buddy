@@ -37,7 +37,9 @@
   <Portal target="body">
     <div
       class="absolute min-w-10"
-      style={`left: ${boundingBox.x}px; top: calc(${boundingBox.y}px + ${top}); z-index: 1000`}
+      style={`left: ${boundingBox.x}px; top: calc(${boundingBox.y}px + ${
+        top === "top" ? "1px" : top
+      }); z-index: 1000`}
     >
       <div class="relative">
         <span

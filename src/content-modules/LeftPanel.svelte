@@ -8,7 +8,10 @@
   import Background from "./Background.svelte";
   import Sort from "./context-free-tools/Sort.svelte";
   import GetColorsFromString from "./context-free-tools/GetColorsFromString.svelte";
+  import PickAi from "./context-free-tools/PickAI.svelte";
   import { buttonStyle } from "../lib/styles";
+  import ShortCuts from "./context-free-tools/ShortCuts.svelte";
+
   import SavedPals from "./SavedPals.svelte";
   import SetColorSpace from "./SetColorSpace.svelte";
 </script>
@@ -19,35 +22,28 @@
     <div class="text-4xl font-bold">Color Buddy</div>
     <div class="flex justify-between z-50">
       <div>
-        <button on:click={() => colorStore.undo()}>Undo</button>
-        <button on:click={() => colorStore.redo()}>Redo</button>
+        <button class={buttonStyle} on:click={() => colorStore.undo()}>
+          Undo
+        </button>
+        <button class={buttonStyle} on:click={() => colorStore.redo()}>
+          Redo
+        </button>
       </div>
-      <div>
-        {#each ["google", "openai"] as ai}
-          <button
-            class={buttonStyle}
-            class:font-bold={ai === $colorStore.engine}
-            on:click={() => {
-              colorStore.setEngine(ai);
-            }}
-          >
-            {ai}
-          </button>
-        {/each}
-      </div>
+      <PickAi />
     </div>
     <div class="flex">
       <span>New:</span>
       <AddFamiliarPal />
       <SuggestColorPal />
     </div>
+    <ShortCuts />
   </section>
 
   <section class="mt-4 border-t-2 border-black flex flex-col flex-none">
     <div class="">
-      <span class="italic">Current Pal:</span>
       <!-- svelte-ignore a11y-no-static-element-interactions -->
       <div class="flex justify-between">
+        <span class="italic">Current Pal:</span>
         <div class="flex">
           <span>✎</span>
           <div
@@ -61,6 +57,8 @@
             {$colorStore.currentPal.name}
           </div>
         </div>
+      </div>
+      <div class="flex justify-between">
         <SuggestName />
         <Sort />
       </div>

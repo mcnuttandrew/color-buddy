@@ -68,7 +68,7 @@
   $: color = focusedColor !== false && colors[focusedColor];
 </script>
 
-<div class="">
+<div class="relative">
   <div bind:this={container} class="example-container">
     {@html insertColorsToExample(
       example,
@@ -78,7 +78,7 @@
   </div>
   {#if color && focusedColor !== false}
     <Tooltip
-      top={"0"}
+      top={"-20px"}
       initiallyOpen={true}
       onClose={() => {
         focusStore.clearColors();
@@ -101,8 +101,5 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 250px;
-    height: 250px;
-    /* overflow: visible; */
   }
 </style>

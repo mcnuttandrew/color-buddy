@@ -149,6 +149,7 @@
     centerTop: {
       x: (xScale.range()[1] - xScale.range()[0]) / 2,
       y: yScale.range()[0],
+      labelAdjust: { x: -5, y: 15 },
       anchor: "end",
       label: `${config.yChannel}: ${yScale.domain()[0].toFixed(1)}`,
     },
@@ -156,19 +157,34 @@
       x: (xScale.range()[1] - xScale.range()[0]) / 2,
       y: yScale.range()[1],
       anchor: "start",
+      labelAdjust: { x: 0, y: -3 },
       label: yScale.domain()[1].toFixed(1),
     },
     centerLeft: {
       x: xScale.range()[0],
       y: (yScale.range()[1] - yScale.range()[0]) / 2,
       anchor: "start",
+      labelAdjust: { x: 5, y: 15 },
       label: xScale.domain()[0].toFixed(1),
     },
     centerRight: {
       x: xScale.range()[1],
       y: (yScale.range()[1] - yScale.range()[0]) / 2,
       anchor: "end",
+      labelAdjust: { x: -5, y: 0 },
       label: `${config.xChannel}: ${xScale.domain()[1].toFixed(1)}`,
+    },
+  };
+  $: zPoints = {
+    top: {
+      y: zScale.range()[0] + 15,
+      label: `${config.zChannel.toUpperCase()}: ${zScale
+        .domain()[0]
+        .toFixed(1)}`,
+    },
+    bottom: {
+      y: zScale.range()[1] - 5,
+      label: zScale.domain()[1].toFixed(1),
     },
   };
   $: axisColor = bg.toChroma().luminance() > 0.5 ? "gray" : "white";
@@ -259,8 +275,8 @@
           {#each Object.values(points) as point}
             <text
               text-anchor={point.anchor}
-              x={point.x}
-              y={point.y}
+              x={point.x + point.labelAdjust.x}
+              y={point.y + point.labelAdjust.y}
               fill={bg.toChroma().luminance() > 0.5 ? "black" : "white"}
             >
               {point.label}
@@ -386,6 +402,16 @@
               on:touchend|preventDefault={rectMoveEnd}
               on:mouseup|preventDefault={rectMoveEnd}
             />
+            {#each Object.values(zPoints) as point}
+              <text
+                text-anchor={"middle"}
+                x={40}
+                y={point.y}
+                fill={bg.toChroma().luminance() > 0.5 ? "black" : "white"}
+              >
+                {point.label}
+              </text>
+            {/each}
             <!-- on:mousemove={(e) => {
               if (dragging) {
                 dragResponse(eventToColorZ)(e);

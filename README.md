@@ -26,9 +26,9 @@ First time you start it up you should also run `yarn prep data`
 - [ ] Make clicking and moving points smoother
 - [ ] Examples held as assets somewhere that are downloaded rather than components (for consistency)
 - [ ] Touch events polish, drag box in z channel should work
-- [ ] Controls explainer
 - [ ] Labels, tooltips, etc
 - [ ] Add color by name
+- [x] Controls explainer
 - [x] Color channel controller polish
 - [x] Responsiveness
 - [x] Step needs to be adapted to small spaces

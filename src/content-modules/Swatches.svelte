@@ -12,15 +12,18 @@
   let classes = [
     {
       className: `${common} w-14 h-14 `,
-      styleMap: (color: Color): string => `background-color: ${color.toHex()}`,
+      styleMap: (color: Color): string =>
+        `background-color: ${color.toHex()}; transition: background-color 0.2s ease-in-out`,
     },
     {
       className: `${common} w-8 h-8`,
-      styleMap: (color: Color): string => `background-color: ${color.toHex()}`,
+      styleMap: (color: Color): string =>
+        `background-color: ${color.toHex()}; transition: background-color 0.2s ease-in-out`,
     },
     {
       className: `${common} w-8 h-8 rounded-full`,
-      styleMap: (color: Color): string => `border: 4px solid ${color.toHex()}`,
+      styleMap: (color: Color): string =>
+        `border: 4px solid ${color.toHex()}; transition: background-color 0.2s ease-in-out`,
     },
   ];
 </script>

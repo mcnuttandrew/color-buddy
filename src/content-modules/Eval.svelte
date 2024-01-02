@@ -8,6 +8,8 @@
     c3,
     colorNameDiscrimCheck,
     colorBlindCheck,
+    colorNameSimple,
+    simpleDiscrim,
   } from "../lib/color-stats";
   import { buttonStyle, AIButtonStyle } from "../lib/styles";
   import Tooltip from "../components/Tooltip.svelte";
@@ -18,12 +20,15 @@
     colors.map((x) => x.toChroma()),
     metric
   );
-  $: colorNames = colors
-    .map((x) => c3?.colorIdentity(x.toHex()))
-    .flatMap((x) => x?.terms);
+  // $: colorNames = colors
+  //   .map((x) => c3?.colorIdentity(x.toHex()))
+  //   .flatMap((x) => x?.terms);
 
   $: discrimCheck = colorNameDiscrimCheck(colorNames);
   $: blindCheck = colorBlindCheck(colors.map((x) => x.toChroma()));
+
+  $: colorNames = colorNameSimple(colors);
+  $: simpleDiscrim(colors);
 
   function checkIfAColorIsCloseToAnUglyColor(colors: Color[]) {
     const uglyColors = [

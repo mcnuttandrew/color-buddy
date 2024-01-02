@@ -1,5 +1,8 @@
 import chroma from "chroma-js";
 import type { Color as ChromaColor } from "chroma-js";
+import { Color } from "./Color";
+import namer from "color-namer";
+import blinder from "color-blind";
 
 /////////////// MAUREEN'S CODE ///////////////////////
 
@@ -60,6 +63,49 @@ function deltaE94(c1: ChromaColor, c2: ChromaColor) {
   const fdH = Math.sqrt(da * da + db * db - dC * dC) / SH;
   const dE94 = Math.sqrt(fdL * fdL + fdC * fdC + fdH * fdH);
   return dE94;
+}
+
+function findSmallest<A>(arr: A[], accessor: (x: A) => number): A {
+  let smallest = arr[0];
+  for (let i = 1; i < arr.length; i++) {
+    if (accessor(arr[i]) < accessor(smallest)) smallest = arr[i];
+  }
+  return smallest;
+}
+
+// Simpler version of the color name stuff
+export function colorNameSimple(colors: Color[]) {
+  return colors
+    .map((x) => namer(x.toHex().toUpperCase()))
+    .map((guesses) =>
+      findSmallest<any>(
+        Object.values(guesses).map((x: any) => x[0]),
+        (x) => x.distance
+      )
+    )
+    .map((x) => ({ word: x.name }));
+  // console.log(names);
+}
+
+export function simpleDiscrim(colors: Color[]) {
+  const names = colorNameSimple(colors);
+  console.log(names);
+  const counts = names.reduce((acc, { word }) => {
+    if (!acc[word]) {
+      acc[word] = 0;
+    }
+    acc[word] += 1;
+    return acc;
+  }, {} as Record<string, number>);
+
+  const remaining = Object.entries(counts as Record<string, number>)
+    .filter((x) => x[1] > 1)
+    .map((x) => x[0]);
+  if (remaining.length === 0) {
+    return false;
+  }
+  const countsStr = remaining.map((x) => `${x} (${counts[x]})`);
+  return `Color Name discriminability check failed. The following color names are repeated: ${countsStr}`;
 }
 
 /////////// JEFF'S CODE ///////////////////////
@@ -358,8 +404,6 @@ c3_api();
 
 /////////// COLOR BLINDNESS CODE ///////////////////////
 // from: https://github.dev/gka/palettes
-
-import blinder from "color-blind";
 
 const blindnessTypes = ["deuteranopia", "protanopia", "tritanopia"];
 type BlindnessTypes = (typeof blindnessTypes)[number];

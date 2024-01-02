@@ -12,6 +12,7 @@ First time you start it up you should also run `yarn prep data`
 
 ## TODOS
 
+- [ ] AI Bugs from greg
 - [ ] Coat of paint
 - [ ] add color analysis
 - [ ] higher card. vis examples

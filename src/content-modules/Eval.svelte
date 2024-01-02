@@ -9,7 +9,7 @@
     colorNameDiscrimCheck,
     colorBlindCheck,
   } from "../lib/color-stats";
-  import { buttonStyle } from "../lib/styles";
+  import { buttonStyle, AIButtonStyle } from "../lib/styles";
   import Tooltip from "../components/Tooltip.svelte";
   import SwatchTooltipContent from "./SwatchTooltipContent.svelte";
   let metric: "dE" | "dE94" | "none" = "none";
@@ -40,31 +40,34 @@
       return deltas.some((x) => x < 10);
     });
   }
+  $: console.log(blindCheck);
 
   $: uggos = checkIfAColorIsCloseToAnUglyColor(colors);
   $: checks = [
-    {
-      name: "Colorblind",
-      check: blindCheck.length > 0,
-      message: `This palette is not colorblind friendly (for ${blindCheck.join(
-        ", "
-      )} specifically).`,
-    },
+    ...["deuteranopia", "protanopia", "tritanopia"].map((blindness) => ({
+      name: `Colorblind Friendly for ${blindness}`,
+      check: !blindCheck.includes(blindness),
+      message: `This palette is not colorblind friendly for ${blindness} color blindness.`,
+      taskTypes: ["sequential", "diverging", "categorical"],
+    })),
     {
       name: "Color name discrimination",
       check: !discrimCheck,
       message: discrimCheck,
+      taskTypes: ["sequential", "diverging", "categorical"],
     },
     {
       name: "dE",
       check: !stats?.dE.some((x) => x > 1),
       message: "Some colors are too similar",
+      taskTypes: ["sequential", "diverging", "categorical"],
     },
     {
       name: "max colors",
       check: colors.length < 10,
       message:
         "This palette has too many colors and may be hard to discriminate in some contexts",
+      taskTypes: ["sequential", "diverging", "categorical"],
     },
     {
       name: "ugly colors",
@@ -72,6 +75,7 @@
       message: `This palette has some colors (specifically ${uggos
         .map((x) => x.toHex())
         .join(", ")}) that are close to what are known as ugly colors`,
+      taskTypes: ["sequential", "diverging", "categorical"],
     },
   ];
 </script>
@@ -160,6 +164,7 @@
             <button class={buttonStyle}>Ignore for this palette</button>
             <button class={buttonStyle}>Ignore for a bit</button>
             <button class={buttonStyle}>This is too restrictive</button>
+            <button class={AIButtonStyle}>Attempt to fix with AI</button>
           </div>
         {/if}
       </div>

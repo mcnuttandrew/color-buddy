@@ -13,7 +13,7 @@
   import AddColor from "./contextual-tools/AddColor.svelte";
   import Rotate from "./contextual-tools/Rotate.svelte";
   import Deduplicate from "./contextual-tools/Deduplicate.svelte";
-  import SuggestColors from "./context-free-tools/SuggestColors.svelte";
+  // import SuggestColors from "./context-free-tools/SuggestColors.svelte";
 
   $: focusedColors = $focusStore.focusedColors;
 </script>
@@ -22,7 +22,6 @@
   class="flex bg-slate-400 p-2 h-12 flex-none items-center overflow-x-scroll overflow-y-hidden"
 >
   <AddColor />
-  <SuggestColors />
   <AdjustColor />
   <OpposingColor />
 

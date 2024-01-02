@@ -82,12 +82,14 @@ export function suggestNameForPalette(
 
 export function suggestAdditionsToPalette(
   palette: Palette,
-  engine: Engine
+  engine: Engine,
+  search: string
 ): Promise<string[]> {
   const body = JSON.stringify({
     colors: palette.colors.map((x) => toHex(x)),
     background: palette.background.toHex(),
     name: palette.name,
+    search,
   });
 
   return engineToScaffold[engine]<string>(`get-color-suggestions`, body, true);

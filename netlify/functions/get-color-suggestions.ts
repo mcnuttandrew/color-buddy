@@ -1,15 +1,23 @@
 import { genericHandler } from "../utils";
 
-type promptInput = { inputColors: string[]; background: string; name: string };
+type promptInput = {
+  inputColors: string[];
+  background: string;
+  name: string;
+  search: string;
+};
 const prompt = (pal: promptInput) => {
   const result = `
-You are a color expert. You make great suggestions on colors to add to color palettes. You take in a list of colors presented as hex code and return an array of colors that could be added. Your suggestions should enhance the palette.
+You are a color expert. You make great suggestions on colors to add to color palettes based on a user prompt. You take in a list of colors presented as hex code and return an array of colors that could be added. Your suggestions should enhance the palette.
 
 Present your names a list of JSON strings. They should have a type like string[]. Only respond with one array. Do not offer any other response
 
 Palette Name: ${pal.name}
 Palette: ${JSON.stringify(pal.inputColors)}
 Background Color: ${pal.background}
+
+Prompt: ${pal.search}
+
 Your response: \`\`\`json`;
   return result;
 };
@@ -33,5 +41,10 @@ export const handler = genericHandler<promptInput>(prompt, (x) => {
     throw new Error("No name");
   }
 
-  return { inputColors, background };
+  const search = input.search;
+  if (typeof search !== "string") {
+    throw new Error("No search");
+  }
+
+  return { inputColors, background, search, name };
 });

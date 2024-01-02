@@ -1,26 +1,159 @@
 <script lang="ts">
   import colorStore from "../../stores/color-store";
-  import { avgColors, randColor, pick } from "../../lib/utils";
+  import chroma from "chroma-js";
+  import { randColor } from "../../lib/utils";
   import { buttonStyle } from "../../lib/styles";
-  import { toColorSpace } from "../../lib/Color";
+  import { colorFromString } from "../../lib/Color";
+  import { suggestAdditionsToPalette } from "../../lib/api-calls";
+  import Tooltip from "../../components/Tooltip.svelte";
 
   $: colors = $colorStore.currentPal.colors;
-  $: colorSpace = $colorStore.currentPal.colors[0]?.spaceName || "lab";
+  $: colorSpace = colors[0]?.spaceName || "lab";
+
+  let suggestions = [randColor(), randColor(), randColor()].map((x) =>
+    x.toHex()
+  );
+
+  let searchedString = "";
+  let interpretations = [] as string[];
+  let requestState: "idle" | "loading" | "loaded" | "failed" = "idle";
+
+  function getColorForSearch() {
+    const allowedStates = new Set(["idle", "loaded", "failed"]);
+    if (!allowedStates.has(requestState)) {
+      return;
+    }
+    if (searchedString === "") {
+      return;
+    }
+    interpretations = [];
+
+    let validString = true;
+    try {
+      const newColor = chroma(searchedString).hex();
+      interpretations = [...interpretations, newColor];
+      requestState = "loaded";
+      return;
+    } catch (e) {
+      validString = false;
+    }
+
+    requestState = "loading";
+    suggestAdditionsToPalette(
+      $colorStore.currentPal,
+      $colorStore.engine,
+      searchedString
+    )
+      .then((x) => {
+        console.log("ai suggestions", x);
+        x.forEach((color) => {
+          if (!interpretations.includes(color)) {
+            interpretations.push(color);
+          }
+        });
+        requestState = "loaded";
+      })
+      .catch((e) => {
+        console.log(e);
+        requestState = "failed";
+      });
+  }
 </script>
 
-<div>
-  <button
-    class={buttonStyle}
-    on:click={() => {
-      if (colors.length < 2) {
-        colorStore.addColorToCurrentPal(randColor());
-      } else {
-        const randColors = [pick(colors), pick(colors)];
-        const newColor = toColorSpace(avgColors(randColors, "lab"), colorSpace);
-        colorStore.addColorToCurrentPal(newColor);
-      }
-    }}
-  >
-    Add Color
-  </button>
-</div>
+<Tooltip>
+  <div slot="content" class="max-w-xs">
+    <section>
+      <div class="flex w-full justify-between items-center">
+        <form on:submit|preventDefault={getColorForSearch}>
+          <label for="add-color-search">
+            <input
+              type="text"
+              id="add-color-search"
+              placeholder="Add a color like purple or red"
+              class="border-b-2 border-dotted border-black"
+              bind:value={searchedString}
+            />
+          </label>
+          <button class={buttonStyle}>Search</button>
+        </form>
+      </div>
+      {#if requestState === "loading"}
+        <div>loading...</div>
+      {/if}
+      {#if requestState === "failed"}
+        <div>Error try again or modify your color term</div>
+      {/if}
+      {#if requestState === "loaded"}
+        <div class="flex flex-wrap">
+          {#each interpretations as color}
+            <div
+              class=" {buttonStyle} h-12 flex justify-between items-center mb-2 flex-none"
+            >
+              <button
+                class="w-3 h-3 rounded-full mr-2"
+                style="background-color: {color}"
+                on:click={() => {
+                  const newColor = colorFromString(color, colorSpace);
+                  const newColors = [...colors, newColor];
+                  colorStore.setCurrentPalColors(newColors);
+                  interpretations = interpretations.filter((x) => x !== color);
+                }}
+              ></button>
+              <button
+                on:click={() => {
+                  interpretations = interpretations.filter((x) => x !== color);
+                }}
+              >
+                X
+              </button>
+            </div>
+          {/each}
+        </div>
+      {/if}
+    </section>
+
+    <section class="mt-4 border-t-2 border-black">
+      <span class="italic text-sm">Random Suggestions</span>
+      <div class="flex flex-wrap">
+        {#each suggestions as color}
+          <div
+            class=" {buttonStyle} h-12 flex justify-between items-center mb-2"
+          >
+            <button
+              class="w-3 h-3 rounded-full mr-2"
+              style="background-color: {color}"
+              on:click={() => {
+                const newColor = colorFromString(color, colorSpace);
+                const newColors = [...colors, newColor];
+                colorStore.setCurrentPalColors(newColors);
+                suggestions = suggestions.filter((x) => x !== color);
+              }}
+            ></button>
+            <button
+              on:click={() => {
+                suggestions = suggestions.filter((x) => x !== color);
+              }}
+            >
+              X
+            </button>
+          </div>
+        {/each}
+        <button
+          class={buttonStyle}
+          on:click={() => {
+            const newSuggestions = [...suggestions];
+            [randColor(), randColor(), randColor()].map((x) =>
+              newSuggestions.push(x.toHex())
+            );
+            suggestions = newSuggestions;
+          }}
+        >
+          +
+        </button>
+      </div>
+    </section>
+  </div>
+  <div slot="target" let:toggle>
+    <button class={buttonStyle} on:click={toggle}>Add color</button>
+  </div>
+</Tooltip>

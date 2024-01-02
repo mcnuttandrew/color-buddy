@@ -15,6 +15,33 @@
     name: "blank",
   };
   let palPrompt: string = "";
+
+  function makeRequest() {
+    const allowedStates = new Set(["idle", "loaded", "failed"]);
+    if (!allowedStates.has(requestState)) {
+      return;
+    }
+    requestState = "loading";
+    suggestPal(palPrompt, $colorStore.engine)
+      .then((suggestions) => {
+        if (suggestions.length === 0) {
+          requestState = "idle";
+          return;
+        }
+        const suggestion = suggestions[0];
+        newPal.colors = suggestion.colors.map((x) =>
+          colorFromString(x, colorSpace)
+        );
+        newPal.background = colorFromString(suggestion.background, colorSpace);
+        newPal.name = palPrompt;
+
+        requestState = "loaded";
+      })
+      .catch((e) => {
+        console.log(e);
+        requestState = "failed";
+      });
+  }
 </script>
 
 <Tooltip>
@@ -53,44 +80,15 @@
           </button>
         </div>
       {:else}
-        <input bind:value={palPrompt} id="pal-prompt" />
-        <button
-          class:pointer-events-none={requestState === "loading"}
-          class={buttonStyle}
-          on:click={() => {
-            if (requestState === "loading") return;
-            requestState = "loading";
-            suggestPal(palPrompt, $colorStore.engine)
-              .then((suggestions) => {
-                if (suggestions.length === 0) {
-                  //   alert("No suggestions found");
-                  requestState = "idle";
-                  return;
-                }
-                const suggestion = suggestions[0];
-                newPal.colors = suggestion.colors.map((x) =>
-                  colorFromString(x, colorSpace)
-                );
-                newPal.background = colorFromString(
-                  suggestion.background,
-                  colorSpace
-                );
-                newPal.name = palPrompt;
-
-                requestState = "loaded";
-              })
-              .catch((e) => {
-                console.log(e);
-                requestState = "failed";
-              });
-          }}
-        >
-          {#if requestState === "idle"}
-            Submit
-          {:else}
-            loading...
-          {/if}
-        </button>
+        <form on:submit|preventDefault={makeRequest}>
+          <input bind:value={palPrompt} id="pal-prompt" />
+          <button
+            class:pointer-events-none={requestState === "loading"}
+            class={buttonStyle}
+          >
+            {requestState === "loading" ? "loading..." : "Submit"}
+          </button>
+        </form>
         {#if requestState === "failed"}
           <div class="text-red-500">No suggestions found, please try again</div>
         {/if}

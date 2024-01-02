@@ -163,7 +163,7 @@
             <button class={buttonStyle}>Ignore for this palette</button>
             <button class={buttonStyle}>Ignore for a bit</button>
             <button class={buttonStyle}>This is too restrictive</button>
-            <button class={AIButtonStyle}>Attempt to fix with AI</button>
+            <button class={AIButtonStyle}>Generate Fix Suggestions</button>
           </div>
         {/if}
       </div>

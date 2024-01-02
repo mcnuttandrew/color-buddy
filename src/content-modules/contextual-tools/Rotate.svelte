@@ -3,7 +3,7 @@
   import colorStore from "../../stores/color-store";
   import focusStore from "../../stores/focus-store";
   import Tooltip from "../../components/Tooltip.svelte";
-  import { avgColors, draggable } from "../../lib/utils";
+  import { avgColors } from "../../lib/utils";
   import { buttonStyle } from "../../lib/styles";
 
   let isOpen = false;
@@ -13,20 +13,30 @@
 
   $: colorSpace = $colorStore.currentPal.colors[0].spaceName;
   $: angle, rotatePoints();
-  let memorizedColors: false | Color[] = false;
+  $: memorizedColors = false as false | Color[];
+  let rotationPoint = "avg" as number | "avg" | "zero";
   function rotatePoints() {
     if (!isOpen) {
       return;
     }
     if (!memorizedColors) {
       memorizedColors = [...colors];
+      angle = 0;
     }
     let localColors = memorizedColors;
-    const center = avgColors(
-      focusedColors.map((x) => localColors[x]),
-      colorSpace
-    );
-    const centerChannels = center.toChannels();
+
+    let centerChannels = [0, 0, 0];
+    if (rotationPoint === "avg") {
+      const clrs = focusedColors.map((x) => localColors[x]);
+      // @ts-ignore
+      let center = avgColors(clrs, colorSpace);
+      centerChannels = center.toChannels();
+    } else if (rotationPoint === "zero") {
+      centerChannels = [0, 0, 0];
+    } else {
+      centerChannels = localColors[rotationPoint].toChannels();
+    }
+
     const rotated = Object.fromEntries(
       focusedColors
         .map((x) => localColors[x])
@@ -56,6 +66,10 @@
     );
     colorStore.setCurrentPalColors(newColors);
   }
+
+  function setRotatePoint(point: typeof rotationPoint) {
+    rotationPoint = point;
+  }
 </script>
 
 {#if focusedColors.length > 1}
@@ -63,6 +77,7 @@
     onClose={() => {
       isOpen = false;
       memorizedColors = false;
+      angle = 0;
     }}
   >
     <div slot="content" class="flex flex-col">
@@ -71,6 +86,41 @@
       <span class="text-sm">
         Rotates about an average point of the selected colors.
       </span>
+      <div>Around which point?</div>
+      <div class="flex flex-wrap">
+        <button
+          on:click={() => setRotatePoint("avg")}
+          class={`${buttonStyle} mb-2`}
+          class:border-black={rotationPoint === "avg"}
+          class:border-2={rotationPoint === "avg"}
+        >
+          An average of the selected colors
+        </button>
+        <button
+          on:click={() => setRotatePoint("zero")}
+          class={`${buttonStyle} mb-2`}
+          class:border-black={rotationPoint === "zero"}
+          class:border-2={rotationPoint === "zero"}
+        >
+          Around zero
+        </button>
+        <div class="flex flex-wrap">
+          {#each focusedColors as colorIdx}
+            <button
+              class={`${buttonStyle} flex justify-center items-center`}
+              class:border-black={rotationPoint === colorIdx}
+              class:border-2={rotationPoint === colorIdx}
+              on:click={() => setRotatePoint(colorIdx)}
+            >
+              {colors[colorIdx].toHex()}
+              <span
+                style={`background-color: ${colors[colorIdx].toHex()}`}
+                class="rounded-full w-3 h-3 ml-2"
+              ></span>
+            </button>
+          {/each}
+        </div>
+      </div>
     </div>
     <span slot="target" let:toggle>
       <button

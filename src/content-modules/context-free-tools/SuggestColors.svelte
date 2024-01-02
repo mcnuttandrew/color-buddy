@@ -26,7 +26,7 @@
         {#each suggestions as color}
           <div class=" {buttonStyle} h-12 flex justify-between items-center">
             <button
-              class="w-6 h-6 rounded-full mr-2"
+              class="w-3 h-3 rounded-full mr-2"
               style="background-color: {color}"
               on:click={() => {
                 colorStore.setCurrentPalColors(

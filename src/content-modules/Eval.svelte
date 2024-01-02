@@ -40,7 +40,6 @@
       return deltas.some((x) => x < 10);
     });
   }
-  $: console.log(blindCheck);
 
   $: uggos = checkIfAColorIsCloseToAnUglyColor(colors);
   $: checks = [

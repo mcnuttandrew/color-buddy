@@ -8,6 +8,7 @@
 
   $: colors = $colorStore.currentPal.colors;
   $: focusedColors = $focusStore.focusedColors;
+  $: focusSet = new Set(focusedColors);
 </script>
 
 {#if focusedColors.length >= 1}
@@ -16,9 +17,9 @@
       <button
         class={buttonStyle}
         on:click={() => {
-          const newColor = opposingColor(colors[focusedColors[0]]);
-          const newColors = [...colors];
-          newColors[focusedColors[0]] = newColor;
+          const newColors = colors.map((color, idx) => {
+            return focusSet.has(idx) ? opposingColor(color) : color;
+          });
           colorStore.setCurrentPalColors(newColors);
         }}
       >

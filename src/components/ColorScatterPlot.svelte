@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { fly } from "svelte/transition";
   import type { Palette } from "../stores/color-store";
   import {
     Color,
@@ -301,26 +302,22 @@
             class:cursor-pointer={dragging}
           />
 
-          {#each deDup(colors) as color, i (color)}
+          {#each deDup(colors) as color, i (color.toHex())}
             <!-- svelte-ignore a11y-no-static-element-interactions -->
             <!-- svelte-ignore a11y-click-events-have-key-events -->
             <circle
+              cx={xScale(color.toChannels()[1])}
+              cy={yScale(color.toChannels()[2])}
               on:mousedown|preventDefault={startDrag(true)}
               on:touchstart|preventDefault={startDrag(true)}
-              on:touchend|preventDefault={() => {
-                onFocusedColorsChange([i]);
-              }}
+              on:touchend|preventDefault={() => onFocusedColorsChange([i])}
               pointer-events={!focusSet.has(i) ? "all" : "none"}
-              class="cursor-pointer transition-all"
-              transform={`translate(${xScale(color.toChannels()[1])}, ${yScale(
-                color.toChannels()[2]
-              )})`}
+              class="cursor-pointer"
               r={10 + (focusSet.has(i) ? 5 : 0)}
               fill={color.toHex()}
               on:click={(e) => {
                 if (e.metaKey || e.shiftKey) {
                   // toggle i in focusColors
-
                   onFocusedColorsChange(toggleElement(focusedColors, i));
                 } else {
                   onFocusedColorsChange([i]);
@@ -466,3 +463,11 @@
     </div>
   </div>
 </div>
+
+<style>
+  circle {
+    transition: all 0.2s ease-in-out;
+    -webkit-transition: all 0.2s ease-in-out;
+    -moz-transition: all 0.2s ease-in-out;
+  }
+</style>

@@ -10,6 +10,7 @@
     colorBlindCheck,
     colorNameSimple,
     simpleDiscrim,
+    checkJNDs,
   } from "../lib/color-stats";
   import { buttonStyle, AIButtonStyle } from "../lib/styles";
   import Tooltip from "../components/Tooltip.svelte";
@@ -24,11 +25,12 @@
   //   .map((x) => c3?.colorIdentity(x.toHex()))
   //   .flatMap((x) => x?.terms);
 
-  $: discrimCheck = colorNameDiscrimCheck(colorNames);
+  // $: discrimCheck = colorNameDiscrimCheck(colorNames);
   $: blindCheck = colorBlindCheck(colors.map((x) => x.toChroma()));
 
   $: colorNames = colorNameSimple(colors);
-  $: simpleDiscrim(colors);
+  $: discrimCheck = simpleDiscrim(colors);
+  $: jnds = checkJNDs(colors);
 
   function checkIfAColorIsCloseToAnUglyColor(colors: Color[]) {
     const uglyColors = [
@@ -46,6 +48,17 @@
     });
   }
 
+  function uniqueJNDColors(key: string) {
+    const uniqueColors = new Set<string>();
+    jnds
+      .filter((x) => x[0] === key)
+      .forEach(([_key, A, B]) => {
+        uniqueColors.add(A.toHex());
+        uniqueColors.add(B.toHex());
+      });
+    return [...uniqueColors].join(", ");
+  }
+
   $: uggos = checkIfAColorIsCloseToAnUglyColor(colors);
   $: checks = [
     ...["deuteranopia", "protanopia", "tritanopia"].map((blindness) => ({
@@ -57,7 +70,7 @@
     {
       name: "Color name discrimination",
       check: !discrimCheck,
-      message: discrimCheck,
+      message: discrimCheck as string,
       taskTypes: ["sequential", "diverging", "categorical"],
     },
     {
@@ -81,7 +94,50 @@
         .join(", ")}) that are close to what are known as ugly colors`,
       taskTypes: ["sequential", "diverging", "categorical"],
     },
+    ...["thin", "medium", "wide"].map((key) => {
+      return {
+        name: `${key} Discrim`,
+        check: jnds.filter((x) => x[0] === key).length === 0,
+        message: `This palette has some colors (${uniqueJNDColors(
+          key
+        )}) that are close  to each other in perceptual space and will not be resolvable for ${key} areas`,
+        taskTypes: ["sequential", "diverging", "categorical"],
+      };
+    }),
   ];
+
+  $: colorsToIssues = colors.map((x) => {
+    const hex = `${x.toHex()}`;
+    return checks.filter(
+      (check) => !check.check && check.message.includes(hex)
+    );
+  });
+
+  type ParseBlock = { content: string; type: "text" | "color" };
+  function splitMessageIntoTextAndColors(message: string): ParseBlock[] {
+    const output = [] as ParseBlock[];
+    let currentTextBlock = "";
+    let idx = 0;
+    while (idx < message.length) {
+      if (message[idx] === "#") {
+        if (currentTextBlock.length > 0) {
+          output.push({ content: currentTextBlock, type: "text" });
+          currentTextBlock = "";
+        }
+        let color = message.slice(idx, idx + 7);
+        output.push({ content: color, type: "color" });
+        idx += 6;
+      } else {
+        currentTextBlock += message[idx];
+      }
+      idx++;
+    }
+    if (currentTextBlock.length > 0) {
+      output.push({ content: currentTextBlock, type: "text" });
+    }
+
+    return output;
+  }
 </script>
 
 <div class="flex h-full">
@@ -110,15 +166,22 @@
               toggle();
               focusStore.addColor(idx);
             }}
-            class="w-40 h-8 flex justify-center items-center text-sm relative mt-2 transition-all"
+            class="w-40 flex flex-col justify-center items-center text-sm relative mt-2 transition-all"
             class:text-white={color.toChroma().luminance() < 0.5}
             class:ml-5={$focusStore.focusedColors.includes(idx)}
             class:mr-5={!$focusStore.focusedColors.includes(idx)}
-            style="background-color: {color.toHex()}"
+            style="background-color: {color.toHex()}; min-height: 40px"
           >
-            <div class="flex justify-between w-full px-2">
-              <span>{color.toHex()}</span>
-              {#if colorNames[idx]}<span>{colorNames[idx]?.word}</span>{/if}
+            <div class="flex justify-between w-full px-2 items-center">
+              <span class="flex flex-col items-start">
+                <span>{color.toHex()}</span>
+                <span>
+                  {#each colorsToIssues[idx] as _i}❌{/each}
+                </span>
+              </span>
+              {#if colorNames[idx]}<span class="text-right">
+                  {colorNames[idx]?.word}
+                </span>{/if}
             </div>
             {#if stats?.dE[idx]}
               <div
@@ -163,7 +226,24 @@
             </div>{/if}{check.name}
         </div>
         {#if !check.check}
-          <div class="text-sm italic">{check.message}</div>
+          <div class="text-sm italic">
+            {#each splitMessageIntoTextAndColors(check.message) as block}
+              {#if block.type === "text"}
+                <span>{block.content}</span>
+              {:else}
+                <button
+                  on:click={() => {
+                    const idx = colors.findIndex(
+                      (x) => x.toHex() === block.content
+                    );
+                    focusStore.toggleColor(idx);
+                  }}
+                  style={`background-color: ${block.content}; top: -3px`}
+                  class="rounded-full w-3 h-3 ml-1 mr-1 inline-block cursor-pointer relative"
+                ></button>
+              {/if}
+            {/each}
+          </div>
           <div>
             <button class={buttonStyle}>Ignore for this palette</button>
             <button class={buttonStyle}>Ignore for a bit</button>

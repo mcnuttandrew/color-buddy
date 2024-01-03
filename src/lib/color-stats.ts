@@ -1,6 +1,6 @@
 import chroma from "chroma-js";
 import type { Color as ChromaColor } from "chroma-js";
-import { Color } from "./Color";
+import { Color, toColorSpace } from "./Color";
 import namer from "color-namer";
 import blinder from "color-blind";
 
@@ -76,36 +76,98 @@ function findSmallest<A>(arr: A[], accessor: (x: A) => number): A {
 // Simpler version of the color name stuff
 export function colorNameSimple(colors: Color[]) {
   return colors
-    .map((x) => namer(x.toHex().toUpperCase()))
+    .map((x) => namer(x.toHex().toUpperCase()), { exclude: ["ntc"] })
     .map((guesses) =>
       findSmallest<any>(
         Object.values(guesses).map((x: any) => x[0]),
         (x) => x.distance
       )
     )
-    .map((x) => ({ word: x.name }));
-  // console.log(names);
+    .map((x) => ({ word: x.name, hex: x.hex }));
 }
 
 export function simpleDiscrim(colors: Color[]) {
   const names = colorNameSimple(colors);
-  console.log(names);
-  const counts = names.reduce((acc, { word }) => {
-    if (!acc[word]) {
-      acc[word] = 0;
+  const counts = names.reduce((acc, x) => {
+    if (!acc[x.word]) {
+      acc[x.word] = [];
     }
-    acc[word] += 1;
+    acc[x.word].push(x);
     return acc;
-  }, {} as Record<string, number>);
+  }, {} as Record<string, (typeof names)[0][]>);
 
-  const remaining = Object.entries(counts as Record<string, number>)
-    .filter((x) => x[1] > 1)
-    .map((x) => x[0]);
+  const remaining = Object.entries(counts)
+    .filter((x) => x[1].length > 1)
+    .map(([x, y]) => [x, y.map((el) => el.hex).join(", ")]);
+  // .map((x) => x[0]);
   if (remaining.length === 0) {
     return false;
   }
-  const countsStr = remaining.map((x) => `${x} (${counts[x]})`);
+
+  const countsStr = remaining
+    .map(([word, vals]) => `${word} (${vals})`)
+    .join(", ");
   return `Color Name discriminability check failed. The following color names are repeated: ${countsStr}`;
+}
+
+/////////// CONOR'S d3-jnd lib ///////////////////////
+// see https://github.com/connorgr/d3-jnd/blob/master/src/jnd.js for details
+
+const A = { l: 10.16, a: 10.68, b: 10.7 };
+const B = { l: 1.5, a: 3.08, b: 5.74 };
+const nd = (p: number, s: number) => ({
+  l: p * (A.l + B.l / s),
+  a: p * (A.a + B.a / s),
+  b: p * (A.b + B.b / s),
+});
+
+const sMap = {
+  thin: 0.1,
+  medium: 0.5,
+  wide: 1.0,
+  default: 0.1,
+};
+const pMap = {
+  conservative: 0.8,
+  default: 0.5,
+};
+type pType = keyof typeof pMap | number;
+type sType = keyof typeof sMap | number;
+export default function jndLabInterval(p: pType, s: sType) {
+  const pVal = typeof p === "number" ? p : pMap[p] || pMap["default"];
+  const sVal = typeof s === "number" ? s : sMap[s] || sMap["default"];
+  return nd(pVal, sVal);
+}
+
+function noticeablyDifferent(
+  c1: Color,
+  c2: Color,
+  s: sType = 0.1,
+  p: pType = 0.5
+) {
+  var jnd = jndLabInterval(p, s);
+  const [l1, a1, b1] = toColorSpace(c1, "lab").toChannels();
+  const [l2, a2, b2] = toColorSpace(c2, "lab").toChannels();
+
+  return (
+    Math.abs(l1 - l2) >= jnd.l ||
+    Math.abs(a1 - a2) >= jnd.a ||
+    Math.abs(b1 - b2) >= jnd.b
+  );
+}
+
+export function checkJNDs(colors: Color[]) {
+  const invalid = [] as any[];
+  for (let i = 0; i < colors.length; i++) {
+    for (let j = i + 1; j < colors.length; j++) {
+      Object.keys(sMap).forEach((s) => {
+        if (!noticeablyDifferent(colors[i], colors[j], s, "default")) {
+          invalid.push([s, colors[i], colors[j]]);
+        }
+      });
+    }
+  }
+  return invalid;
 }
 
 /////////// JEFF'S CODE ///////////////////////
@@ -426,7 +488,6 @@ function checkType(colors: ChromaColor[], type: BlindnessTypes) {
   let smallestPerceivableDistance = 9;
   let k = colors.length;
   if (!k) {
-    // console.log('no colors', type);
     return true;
   }
   // compute distances between colors

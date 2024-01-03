@@ -1,5 +1,6 @@
 <script lang="ts">
   import colorStore from "../stores/color-store";
+  import focusStore from "../stores/focus-store";
 
   import PalPreview from "../components/PalPreview.svelte";
   import { buttonStyle } from "../lib/styles";
@@ -13,7 +14,10 @@
         <div>
           <button
             class={buttonStyle}
-            on:click={() => colorStore.startUsingPal(pal.name)}
+            on:click={() => {
+              focusStore.clearColors();
+              colorStore.startUsingPal(pal.name);
+            }}
           >
             {pal.name}
           </button>

@@ -13,6 +13,7 @@ First time you start it up you should also run `yarn prep data`
 ## TODOS
 
 - [ ] AI Bugs from greg
+- [ ] Eval response options
 - [ ] Coat of paint
 - [ ] add color analysis
 - [ ] higher card. vis examples
@@ -24,11 +25,10 @@ First time you start it up you should also run `yarn prep data`
 - [ ] Insert color theory options, eg insert opposing, inserting analogous color, etc, mine from the adobe picker
 - [ ] NTH: Rest of basic geometry manipulations: flip (horizontal, vertical), scale
 - [ ] Meta: figure out all the other features in maureen's setup
-- [ ] Make clicking and moving points smoother
 - [ ] Examples held as assets somewhere that are downloaded rather than components (for consistency)
 - [ ] Touch events polish, drag box in z channel should work
 - [ ] Labels, tooltips, etc
-- [ ] Add color by name
+- [x] Add color by name
 - [x] Controls explainer
 - [x] Color channel controller polish
 - [x] Responsiveness

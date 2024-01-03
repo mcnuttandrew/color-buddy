@@ -1,6 +1,7 @@
 import chroma from "chroma-js";
 import type { Color as ChromaColor } from "chroma-js";
 import { Color, toColorSpace } from "./Color";
+import type { Palette } from "../stores/color-store";
 import namer from "color-namer";
 import blinder from "color-blind";
 
@@ -83,7 +84,7 @@ export function colorNameSimple(colors: Color[]) {
         (x) => x.distance
       )
     )
-    .map((x) => ({ word: x.name, hex: x.hex }));
+    .map((x, idx) => ({ word: titleCase(x.name), hex: colors[idx].toHex() }));
 }
 
 export function simpleDiscrim(colors: Color[]) {
@@ -108,6 +109,13 @@ export function simpleDiscrim(colors: Color[]) {
     .map(([word, vals]) => `${word} (${vals})`)
     .join(", ");
   return `Color Name discriminability check failed. The following color names are repeated: ${countsStr}`;
+}
+
+function titleCase(str: string) {
+  return str
+    .split(" ")
+    .map((x) => x[0].toUpperCase() + x.slice(1))
+    .join(" ");
 }
 
 /////////// CONOR'S d3-jnd lib ///////////////////////
@@ -156,7 +164,9 @@ function noticeablyDifferent(
   );
 }
 
-export function checkJNDs(colors: Color[]) {
+export function checkJNDs(
+  colors: Color[]
+): [keyof typeof sMap, Color, Color][] {
   const invalid = [] as any[];
   for (let i = 0; i < colors.length; i++) {
     for (let j = i + 1; j < colors.length; j++) {
@@ -504,18 +514,141 @@ function checkType(colors: ChromaColor[], type: BlindnessTypes) {
         distanceNorm / distanceSim > ratioThreshold &&
         distanceSim < smallestPerceivableDistance;
       if (isNotOk) {
-        // console.log(type, colors[a],colors[b],aSim+'',bSim+'', distanceNorm, distanceSim, distanceNorm/distanceSim);
       }
       // count combinations that are problematic
       if (isNotOk) notok++;
       // else ok++;
     }
   }
-  // console.log(type, notok/(ok+notok));
   // compute share of problematic colorss
   return notok === 0;
 }
 
 function difference(colorA: ChromaColor, colorB: ChromaColor) {
   return 0.5 * (chroma.deltaE(colorA, colorB) + chroma.deltaE(colorB, colorA));
+}
+
+// my code
+
+function checkIfAColorIsCloseToAnUglyColor(colors: Color[]) {
+  const uglyColors = [
+    "#56FF00",
+    "#0010FF",
+    "#6A7E25",
+    "#FF00EF",
+    "#806E28",
+  ].map((x) => chroma(x));
+  return colors.filter((color) => {
+    const deltas = uglyColors.map((uglyColor) =>
+      chroma.deltaE(color.toChroma(), uglyColor)
+    );
+    return deltas.some((x) => x < 10);
+  });
+}
+
+function uniqueJNDColors(key: string, jnds: ReturnType<typeof checkJNDs>) {
+  const uniqueColors = new Set<string>();
+  jnds
+    .filter((x) => x[0] === key)
+    .forEach(([_key, A, B]) => {
+      uniqueColors.add(A.toHex());
+      uniqueColors.add(B.toHex());
+    });
+  return [...uniqueColors].join(", ");
+}
+const hexJoin = (colors: Color[]) => colors.map((x) => x.toHex()).join(", ");
+
+export function checkPal(Pal: Palette, metric: "dE94" | "dE" | "none") {
+  const colors = Pal.colors;
+  const blindCheck = colorBlindCheck(colors.map((x) => x.toChroma()));
+  const discrimCheck = simpleDiscrim(colors);
+  const jnds = checkJNDs(colors);
+  const uggos = checkIfAColorIsCloseToAnUglyColor(colors);
+  const stats = computeStats(
+    colors.map((x) => x.toChroma()),
+    metric
+  );
+  const colorsCloseToBackground = colors.filter(
+    (x) => chroma.deltaE(x.toChroma(), Pal.background.toChroma()) < 10
+  );
+  return [
+    ...["deuteranopia", "protanopia", "tritanopia"].map((blindness) => ({
+      name: `Colorblind Friendly for ${blindness}`,
+      check: !blindCheck.includes(blindness),
+      message: `This palette is not colorblind friendly for ${blindness} color blindness.`,
+      taskTypes: ["sequential", "diverging", "categorical"],
+    })),
+    {
+      name: "Color name discrimination",
+      check: !discrimCheck,
+      message: discrimCheck as string,
+      taskTypes: ["sequential", "diverging", "categorical"],
+    },
+    {
+      name: "dE",
+      check: !stats?.dE.some((x) => x > 1),
+      message: "Some colors are too similar",
+      taskTypes: ["sequential", "diverging", "categorical"],
+    },
+    {
+      name: "max colors",
+      check: colors.length < 10,
+      message:
+        "This palette has too many colors and may be hard to discriminate in some contexts",
+      taskTypes: ["sequential", "diverging", "categorical"],
+    },
+    {
+      name: "ugly colors",
+      check: uggos.length === 0,
+      message: `This palette has some colors (specifically ${hexJoin(
+        uggos
+      )}) that are close to what are known as ugly colors`,
+      taskTypes: ["sequential", "diverging", "categorical"],
+    },
+    {
+      name: "all colors differentiable from background",
+      check: colorsCloseToBackground.length === 0,
+      message: `This palette has some colors (${hexJoin(
+        colorsCloseToBackground
+      )}) that are close to the background color`,
+      taskTypes: ["sequential", "diverging", "categorical"],
+    },
+    ...["thin", "medium", "wide"].map((key) => {
+      return {
+        name: `${key} Discrim`,
+        check: jnds.filter((x) => x[0] === key).length === 0,
+        message: `This palette has some colors (${uniqueJNDColors(
+          key,
+          jnds
+        )}) that are close  to each other in perceptual space and will not be resolvable for ${key} areas`,
+        taskTypes: ["sequential", "diverging", "categorical"],
+      };
+    }),
+  ];
+}
+
+type ParseBlock = { content: string; type: "text" | "color" };
+export function splitMessageIntoTextAndColors(message: string): ParseBlock[] {
+  const output = [] as ParseBlock[];
+  let currentTextBlock = "";
+  let idx = 0;
+  while (idx < message.length) {
+    if (message[idx] === "#") {
+      if (currentTextBlock.length > 0) {
+        output.push({ content: currentTextBlock, type: "text" });
+        currentTextBlock = "";
+      }
+      let color = message.slice(idx, idx + 7);
+      output.push({ content: color, type: "color" });
+      idx += 6;
+    } else {
+      currentTextBlock += message[idx];
+    }
+    idx++;
+  }
+  if (currentTextBlock.length > 0) {
+    output.push({ content: currentTextBlock, type: "text" });
+  }
+
+  return output;
 }

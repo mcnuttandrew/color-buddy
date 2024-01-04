@@ -5,6 +5,7 @@
   import focusStore from "../../stores/focus-store";
   import Tooltip from "../../components/Tooltip.svelte";
   import { buttonStyle } from "../../lib/styles";
+  import PalPreview from "../../components/PalPreview.svelte";
   const interpolationSchemes = ["linear", "quadratic"];
 
   $: focusedColors = $focusStore.focusedColors;
@@ -14,7 +15,15 @@
   let numPoints = 1;
   $: pointA = colors[focusedColors[0]];
   $: pointB = colors[focusedColors[1]];
-
+  $: tempPal = numPoints &&
+    colorSpace &&
+    interpolationScheme &&
+    pointA &&
+    pointB && {
+      name: $colorStore.currentPal.name,
+      background: $colorStore.currentPal.background,
+      colors: [pointA, ...createInterpolatedPoints(), pointB],
+    };
   function createInterpolatedPoints() {
     const points: Color[] = [];
     for (let i = 0; i < numPoints + 1; i++) {
@@ -74,18 +83,6 @@
       </div>
 
       <div class="flex justify-between items-center w-full transition-all">
-        <div>
-          From <div
-            class="h-5 w-5 rounded-full"
-            style="background-color: {pointA.toHex()}"
-          ></div>
-        </div>
-        <div>
-          To <div
-            class="h-5 w-5 rounded-full"
-            style="background-color: {pointB.toHex()}"
-          ></div>
-        </div>
         <button
           class={buttonStyle}
           on:click={() => {
@@ -95,6 +92,7 @@
           flip points
         </button>
       </div>
+      <PalPreview pal={tempPal} />
       <button
         class="{buttonStyle} mt-5"
         on:click={() => {

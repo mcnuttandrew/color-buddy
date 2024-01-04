@@ -21,7 +21,6 @@ First time you start it up you should also run `yarn prep data`
 - [ ] add color analysis
 - [ ] higher card. vis examples
 - [ ] order as diverging
-- [ ] Color correction
 - [ ] Distribute radially
 - [ ] Rearrange some of the colors in the color area eg make rg on xy and b on z etc
 - [ ] "opposing color" to "Convert selection to opposing"

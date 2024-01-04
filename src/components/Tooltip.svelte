@@ -43,15 +43,11 @@
     >
       <div class="relative">
         <span
-          class="tooltip rounded shadow-lg p-4 bg-slate-100 text-black -mt-8 max-w-lg flex-wrap flex"
+          class="tooltip rounded shadow-lg p-4 bg-slate-100 text-black max-w-lg flex-wrap flex"
           style={`top: ${top}`}
         >
           {#if tooltipOpen}
-            <span>
-              <slot name="content" {onClick}>
-                <span class="missing">No content</span>
-              </slot>
-            </span>
+            <slot name="content" {onClick} />
           {/if}
         </span>
       </div>

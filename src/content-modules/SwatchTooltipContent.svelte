@@ -78,3 +78,9 @@
     />
   {/each}
 </div>
+
+<style>
+  input {
+    width: 100px;
+  }
+</style>

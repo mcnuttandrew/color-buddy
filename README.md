@@ -12,7 +12,9 @@ First time you start it up you should also run `yarn prep data`
 
 ## TODOS
 
-- [ ] AI Bugs from greg, those appear to be from openAI fucking up the other night?
+- [ ] A (default) example showing annotated math stuff
+- [ ] SVG Upload
+- [ ] Vega/Vega-Lite Specification
 - [ ] Bug: changing the color frame fucks everything up???? (particularly for HSV/HSL)
 - [ ] Eval response options
 - [ ] Coat of paint

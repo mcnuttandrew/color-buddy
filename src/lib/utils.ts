@@ -140,3 +140,11 @@ export const toggleElement = (arr: number[], el: number) => {
   const arrSet = new Set(arr);
   return arrSet.has(el) ? arr.filter((x) => x !== el) : [...arr, el];
 };
+
+export const swap = (arr: any[], i: number, j: number) => {
+  const newArr = [...arr];
+  const temp = newArr[i];
+  newArr[i] = newArr[j];
+  newArr[j] = temp;
+  return newArr;
+};

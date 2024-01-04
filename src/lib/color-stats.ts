@@ -114,6 +114,7 @@ export function simpleDiscrim(colors: Color[]) {
 function titleCase(str: string) {
   return str
     .split(" ")
+    .filter((x) => x.length > 0)
     .map((x) => x[0].toUpperCase() + x.slice(1))
     .join(" ");
 }

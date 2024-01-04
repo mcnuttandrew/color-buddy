@@ -59,24 +59,5 @@
   </Portal>
 {/if}
 <div bind:this={target}>
-  <slot name="target" {toggle} />
+  <slot name="target" {toggle} {tooltipOpen} />
 </div>
-
-<style>
-  .tooltip span:before {
-    border-left: 10px solid transparent;
-    border-right: 10px solid transparent;
-    display: block;
-    top: -10px;
-  }
-
-  .hidden-background {
-    position: fixed;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    top: 0;
-    background-color: red;
-    opacity: 0;
-  }
-</style>

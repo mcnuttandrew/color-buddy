@@ -32,13 +32,7 @@
   <Rotate />
 
   <AlignSelection />
-  {#if focusedColors.length > 0}
-    <div>
-      <button class={buttonStyle} on:click={() => focusStore.clearColors()}>
-        Clear Selection
-      </button>
-    </div>
-  {/if}
+
   <DeleteSelection />
   <Deduplicate />
 </div>

@@ -12,7 +12,8 @@ First time you start it up you should also run `yarn prep data`
 
 ## TODOS
 
-- [ ] AI Bugs from greg
+- [ ] AI Bugs from greg, those appear to be from openAI fucking up the other night?
+- [ ] Bug: changing the color frame fucks everything up???? (particularly for HSV/HSL)
 - [ ] Eval response options
 - [ ] Coat of paint
 - [ ] add color analysis

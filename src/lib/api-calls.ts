@@ -2,7 +2,7 @@ import { Color } from "./Color";
 import type { Palette } from "../stores/color-store";
 
 type Engine = "openai" | "google";
-
+type SimplePal = { background: string; colors: string[] };
 const palToString = (pal: Palette) => ({
   background: pal.background.toHex(),
   colors: pal.colors.map((x) => x.toHex()),
@@ -26,12 +26,10 @@ function openAIScaffold<A>(
     .then((response) => response.json())
     .then((x: any) => {
       console.log(x);
-      const result = x.choices
+      return x.choices
         .map((x: any) => x?.message?.content)
         .filter((x: any) => x)
         .flatMap((x: any) => (parseAsJSON ? JSON.parse(x) : x));
-      // .filter((x: any) => typeof x === "string");
-      return result;
     });
 }
 
@@ -53,12 +51,10 @@ function googleScaffold<A>(
     .then((response) => response.json())
     .then((x: any) => {
       console.log(x);
-      const result = x?.response?.candidates
+      return x?.response?.candidates
         .flatMap((x: any) => x.content?.parts?.flatMap((x: any) => x.text))
         .map((x: any) => x.replace(/\\n/g, "").replace(/\`/g, "").trim())
         .flatMap((x: any) => (parseAsJSON ? JSON.parse(x) : x));
-
-      return result;
     });
 }
 
@@ -73,10 +69,7 @@ export function suggestNameForPalette(
   palette: Palette,
   engine: Engine
 ): Promise<string[]> {
-  const body = JSON.stringify({
-    colors: palette.colors.map((x) => toHex(x)),
-    background: palette.background.toHex(),
-  });
+  const body = JSON.stringify({ ...palToString(palette) });
   return engineToScaffold[engine]<string>(`suggest-name`, body, true);
 }
 
@@ -86,8 +79,7 @@ export function suggestAdditionsToPalette(
   search: string
 ): Promise<string[]> {
   const body = JSON.stringify({
-    colors: palette.colors.map((x) => toHex(x)),
-    background: palette.background.toHex(),
+    ...palToString(palette),
     name: palette.name,
     search,
   });
@@ -97,11 +89,7 @@ export function suggestAdditionsToPalette(
 
 export function suggestPal(prompt: string, engine: Engine) {
   const body = JSON.stringify({ prompt });
-  return engineToScaffold[engine]<{ colors: string[]; background: string }>(
-    `suggest-a-pal`,
-    body,
-    true
-  );
+  return engineToScaffold[engine]<SimplePal>(`suggest-a-pal`, body, true);
 }
 
 export function suggestAdjustments(
@@ -110,11 +98,7 @@ export function suggestAdjustments(
   engine: Engine
 ) {
   const body = JSON.stringify({ prompt, ...palToString(currentPal) });
-  return engineToScaffold[engine]<{ background: string; colors: string[] }>(
-    `suggest-adjustments`,
-    body,
-    true
-  );
+  return engineToScaffold[engine]<SimplePal>(`suggest-adjustments`, body, true);
 }
 
 export function suggestContextualAdjustments(
@@ -123,7 +107,7 @@ export function suggestContextualAdjustments(
   engine: Engine
 ) {
   const body = JSON.stringify({ prompt, ...palToString(currentPal) });
-  return engineToScaffold[engine]<{ background: string; colors: string[] }>(
+  return engineToScaffold[engine]<SimplePal>(
     `suggest-contextual-adjustments`,
     body,
     true
@@ -137,4 +121,9 @@ export function suggestSVGImage(prompt: string, engine: Engine) {
     body,
     false
   );
+}
+
+export function suggestFix(currentPal: Palette, error: string, engine: Engine) {
+  const body = JSON.stringify({ ...palToString(currentPal), error });
+  return engineToScaffold[engine]<SimplePal>(`suggest-fix`, body, true);
 }

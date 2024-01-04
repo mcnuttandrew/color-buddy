@@ -128,6 +128,7 @@ function createStore() {
       }),
 
     setPalettes: simpleSet("palettes"),
+    setCurrentPal: simpleSet("currentPal"),
     setCurrentPalColors: (colors: Color[]) => palUp((n) => ({ ...n, colors })),
     startUsingPal: (palName: string) => {
       persistUpdate((n) => {

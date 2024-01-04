@@ -30,7 +30,7 @@
 
 <div class="flex h-full">
   <div class="flex">
-    <div class="flex flex-col flex-wrap mr-5 bg-slate-100 p-4">
+    <div class="flex flex-col overflow-auto mr-5 bg-slate-100 p-4">
       <div>Colors</div>
       <div class="flex justify-between w-full text-xs italic">
         <span>Hex Value</span>
@@ -63,8 +63,22 @@
             <div class="flex justify-between w-full px-2 items-center">
               <span class="flex flex-col items-start">
                 <span>{color.toHex()}</span>
-                <span>
-                  {#each colorsToIssues[idx] as _i}❌{/each}
+                <span class="flex">
+                  {#each colorsToIssues[idx] as check}
+                    <Tooltip>
+                      <div slot="content" class="flex flex-col">
+                        <div class="font-bold">{check.name}</div>
+                        <div class="text-sm">{check.message}</div>
+                      </div>
+                      <button
+                        slot="target"
+                        let:toggle
+                        on:click|stopPropagation={toggle}
+                      >
+                        ❌
+                      </button>
+                    </Tooltip>
+                  {/each}
                 </span>
               </span>
               {#if colorNames[idx]}<span class="text-right">
@@ -111,7 +125,9 @@
               </div>{:else}<div class="text-red-500 mr-2">
                 ❌
               </div>{/if}{check.name}
-            <EvalResponse />
+            {#if !check.check}
+              <EvalResponse {check} />
+            {/if}
           </div>
           {#if !check.check}
             <div class="text-sm italic">

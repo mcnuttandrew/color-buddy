@@ -57,26 +57,49 @@
         group: "brewer",
       });
     });
-    fetch("./outfits.json")
-      .then((x) => x.json())
-      .then((x) => {
-        const outfitPals = [] as any;
-        x.forEach((outfit: any) => {
-          const colors = [outfit.fill1, outfit.fill2, outfit.fill3].map((x) =>
-            colorFromString(x, colorSpace)
+    Promise.all([
+      // fetch("./outfits.json")
+      //   .then((x) => x.json())
+      //   .then((x) => {
+      //     const outfitPals = [] as any;
+      //     x.forEach((outfit: any) => {
+      //       const colors = [outfit.fill1, outfit.fill2, outfit.fill3].map((x) =>
+      //         colorFromString(x, colorSpace)
+      //       );
+      //       outfitPals.push({
+      //         name: `${outfit.name}-${outfit.Category}`,
+      //         colors,
+      //         background: colorFromString("#ffffff", colorSpace),
+      //         group: "outfit",
+      //       });
+      //     });
+      //     return outfitPals;
+      //   }),
+      fetch("./tableau-colors.json")
+        .then((x) => x.json())
+        .then((x) => {
+          const newPals = [] as any;
+          Object.entries(x as Record<string, string[]>).forEach(
+            ([name, colors]) => {
+              newPals.push({
+                name,
+                colors: colors.map((x: string) =>
+                  colorFromString(x, colorSpace)
+                ),
+                background: colorFromString("#ffffff", colorSpace),
+                group: "tableau",
+              });
+            }
           );
-          outfitPals.push({
-            name: `${outfit.name}-${outfit.Category}`,
-            colors,
-            background: colorFromString("#ffffff", colorSpace),
-            group: "outfit",
-          });
-        });
-        return outfitPals;
-      })
-      .then((outfitPals) => {
-        familiarPals = [...newPals, ...outfitPals];
-      });
+          return newPals;
+        }),
+    ]).then(([tableauPals]) => {
+      familiarPals = [
+        ...newPals,
+        // ...outfitPals,
+        ...tableauPals,
+      ];
+    });
   });
   let searchString = "";
   $: groups = familiarPals.reduce(

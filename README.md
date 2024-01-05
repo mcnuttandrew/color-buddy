@@ -28,8 +28,9 @@ First time you start it up you should also run `yarn prep data`
 - [ ] NTH: Rest of basic geometry manipulations: flip (horizontal, vertical), scale
 - [ ] Meta: figure out all the other features in maureen's setup
 - [ ] Examples held as assets somewhere that are downloaded rather than components (for consistency)
-- [ ] Touch events polish, drag box in z channel should work
 - [ ] Labels, tooltips, etc
+- [x] Touch events polish
+- [x] drag box in z channel should work
 - [x] Add color by name
 - [x] Controls explainer
 - [x] Color channel controller polish

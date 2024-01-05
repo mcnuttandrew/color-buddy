@@ -2,6 +2,7 @@
   import colorStore from "../stores/color-store";
   import { colorPickerConfig, toColorSpace } from "../lib/Color";
   $: colors = $colorStore.currentPal.colors;
+  const notAllowed = new Set(["rgb", "hsv", "hsl"]);
 </script>
 
 <div class="w-full flex flex-col">
@@ -17,7 +18,7 @@
       colorStore.setCurrentPalColors(newColors);
     }}
   >
-    {#each Object.entries(colorPickerConfig) as [space, { title }]}
+    {#each Object.entries(colorPickerConfig).filter((x) => !notAllowed.has(x[0])) as [space, { title }]}
       <option value={space}>{title}</option>
     {/each}
   </select>

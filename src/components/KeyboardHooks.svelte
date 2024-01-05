@@ -78,7 +78,6 @@
 
     // COPY PASTE
     if (key === "c" && e.metaKey && $focusStore.focusedColors.length) {
-      e.preventDefault();
       copiedData = $colorStore.currentPal.colors.filter((_, idx) =>
         focusedSet.has(idx)
       );

@@ -19,6 +19,7 @@
     <div class="flex w-full grow overflow-auto">
       <div style="margin-top: 43px;" class="flex flex-col p-2 h-full">
         <ColorScatterPlot
+          scatterPlotMode="moving"
           colorSpace={$colorStore.currentPal.colors[0].spaceName}
           Pal={$colorStore.currentPal}
           focusedColors={$focusStore.focusedColors}

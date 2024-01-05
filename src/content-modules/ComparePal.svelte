@@ -23,6 +23,7 @@
   </select>
   {#if ComparisonPal !== undefined}
     <ColorScatterPlot
+      scatterPlotMode="looking"
       Pal={ComparisonPal}
       colorSpace={$colorStore.currentPal.colors[0].spaceName}
       focusedColors={[]}

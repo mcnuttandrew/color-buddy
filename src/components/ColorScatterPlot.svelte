@@ -10,6 +10,9 @@
   import { scaleLinear } from "d3-scale";
   import DoubleRangeSlider from "../components/DoubleRangeSlider.svelte";
   import VerticalDoubleRangeSlider from "../components/VerticalDoubleRangeSlider.svelte";
+  import Tooltip from "./Tooltip.svelte";
+
+  export let scatterPlotMode: "moving" | "looking";
 
   export let Pal: Palette;
   export let focusedColors: number[];
@@ -111,6 +114,7 @@
   let isMainBoxDrag = true;
   let isPointDrag = false;
   const startDrag = (isXYDrag: boolean, idx?: number) => (e: any) => {
+    if (scatterPlotMode !== "moving") return;
     const targetIsPoint = typeof idx === "number";
     let target = e.target;
     isPointDrag = false;
@@ -148,6 +152,7 @@
     return { x, y };
   };
   const rectMoveResponse = (isZ: boolean) => (e: any) => {
+    if (scatterPlotMode !== "moving") return;
     const { x, y } = toXY(e);
     if (dragging && focusedColors.length > 0) {
       dragResponse(isZ ? eventToColorZ : eventToColorXY)(e);
@@ -158,7 +163,8 @@
   };
 
   const rectMoveEnd = (isZ: boolean) => (e: any) => {
-    if (dragBox && dragging) {
+    if (scatterPlotMode !== "moving") return;
+    if (!isPointDrag && dragBox && dragging) {
       (isZ ? selectColorsFromDragZ : selectColorsFromDrag)(dragBox, dragging);
     }
     const { x, y } = toXY(e);
@@ -169,6 +175,7 @@
     dragging = false;
     dragBox = false;
   };
+
   function selectColorsFromDrag(
     dragBox: { x: number; y: number },
     dragging: { x: number; y: number }
@@ -244,6 +251,8 @@
     },
   };
   $: axisColor = bg.toChroma().luminance() > 0.5 ? "gray" : "white";
+
+  let hoveredPoint: Color | false = false;
 </script>
 
 <!-- svelte-ignore a11y-no-static-element-interactions -->
@@ -323,25 +332,47 @@
           {#each deDup(colors) as color, i (color.toHex())}
             <!-- svelte-ignore a11y-no-static-element-interactions -->
             <!-- svelte-ignore a11y-click-events-have-key-events -->
-            <circle
-              cx={xScale(color.toChannels()[1])}
-              cy={yScale(color.toChannels()[2])}
-              on:mousedown|preventDefault={startDrag(true, i)}
-              on:touchstart|preventDefault={startDrag(true, i)}
-              on:touchend|preventDefault={() => onFocusedColorsChange([i])}
-              pointer-events={!focusSet.has(i) ? "all" : "none"}
-              class="cursor-pointer"
-              r={10 + (isPointDrag ? 0 : focusSet.has(i) ? 5 : 0)}
-              fill={color.toHex()}
-              on:click={(e) => {
-                if (e.metaKey || e.shiftKey) {
-                  onFocusedColorsChange(toggleElement(focusedColors, i));
-                } else {
-                  onFocusedColorsChange([i]);
-                }
-              }}
-            />
+            <!-- svelte-ignore a11y-mouse-events-have-key-events -->
+            {#if scatterPlotMode === "moving"}
+              <circle
+                cx={xScale(color.toChannels()[1])}
+                cy={yScale(color.toChannels()[2])}
+                on:mousedown|preventDefault={startDrag(true, i)}
+                on:touchstart|preventDefault={startDrag(true, i)}
+                on:touchend|preventDefault={() => onFocusedColorsChange([i])}
+                pointer-events={!focusSet.has(i) ? "all" : "none"}
+                class="cursor-pointer"
+                r={10 + (focusSet.has(i) ? 5 : 0)}
+                fill={color.toHex()}
+                on:click={(e) => {
+                  if (e.metaKey || e.shiftKey) {
+                    onFocusedColorsChange(toggleElement(focusedColors, i));
+                  } else {
+                    onFocusedColorsChange([i]);
+                  }
+                }}
+              />
+            {/if}
+            {#if scatterPlotMode === "looking"}
+              <circle
+                cx={xScale(color.toChannels()[1])}
+                cy={yScale(color.toChannels()[2])}
+                on:mouseenter={() => {
+                  hoveredPoint = color;
+                }}
+                r={10}
+                fill={color.toHex()}
+              />
+            {/if}
           {/each}
+          {#if scatterPlotMode === "looking" && hoveredPoint}
+            <g
+              transform={`translate(${xScale(hoveredPoint.toChannels()[1])},
+                ${yScale(hoveredPoint.toChannels()[2])})`}
+            >
+              <text>{hoveredPoint.toHex()}</text>
+            </g>
+          {/if}
           <text
             x={xScale(bg.toChannels()[1])}
             y={yScale(bg.toChannels()[2])}
@@ -363,7 +394,7 @@
               class="pointer-events-none"
             />
           {/if}
-          {#if pickedColors.length && !isPointDrag}
+          {#if pickedColors.length}
             <rect
               x={xPos - 5}
               y={yPos - 5}
@@ -454,7 +485,7 @@
                 class="pointer-events-none"
               />
             {/if}
-            {#if pickedColors.length && !isPointDrag}
+            {#if pickedColors.length}
               <rect
                 x={5}
                 y={zPos - 5}

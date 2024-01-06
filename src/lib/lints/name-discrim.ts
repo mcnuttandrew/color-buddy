@@ -1,0 +1,135 @@
+import namer from "color-namer";
+import { ColorLint } from "./ColorLint";
+import type { TaskType } from "./ColorLint";
+import { Color, toColorSpace, colorPickerConfig } from "../Color";
+
+function findSmallest<A>(arr: A[], accessor: (x: A) => number): A {
+  let smallest = arr[0];
+  for (let i = 1; i < arr.length; i++) {
+    if (accessor(arr[i]) < accessor(smallest)) smallest = arr[i];
+  }
+  return smallest;
+}
+
+function titleCase(str: string) {
+  return str
+    .split(" ")
+    .filter((x) => x.length > 0)
+    .map((x) => x[0].toUpperCase() + x.slice(1))
+    .join(" ");
+}
+
+// Simpler version of the color name stuff
+export function colorNameSimple(colors: Color[]) {
+  return colors.map((x) => ({ word: getName(x), hex: x.toHex() }));
+}
+
+function simpleDiscrim(colors: Color[]) {
+  const names = colorNameSimple(colors);
+  const counts = names.reduce((acc, x) => {
+    if (!acc[x.word]) {
+      acc[x.word] = [];
+    }
+    acc[x.word].push(x);
+    return acc;
+  }, {} as Record<string, (typeof names)[0][]>);
+
+  const remaining = Object.entries(counts)
+    .filter((x) => x[1].length > 1)
+    .map(([x, y]) => [x, y.map((el) => el.hex).join(", ")]);
+  // .map((x) => x[0]);
+  if (remaining.length === 0) {
+    return false;
+  }
+
+  const countsStr = remaining
+    .map(([word, vals]) => `${word} (${vals})`)
+    .join(", ");
+  return `Color Name discriminability check failed. The following color names are repeated: ${countsStr}`;
+}
+
+const nameCache = new Map<string, string>();
+export const getName = (color: Color) => {
+  const hex = color.toHex().toUpperCase();
+  if (nameCache.has(hex)) {
+    return nameCache.get(hex)!;
+  }
+  const name = namer(hex, { exclude: ["ntc"] });
+  const guess = findSmallest<any>(
+    Object.values(name).map((x: any) => x[0]),
+    (x) => x.distance
+  );
+  const result = titleCase(guess.name);
+  nameCache.set(hex, result);
+  return result;
+};
+const clampToChannel = (x: number, channel: "x" | "y" | "z") => {
+  const domain = colorPickerConfig.lab[`${channel}Domain`].sort();
+  return Math.max(domain[0], Math.min(domain[1], x));
+};
+function suggestFixForColorsWithCommonNames(colors: Color[]): Color[] {
+  let colorsHaveSameName = true;
+  let newColors = [...colors].map((x) => toColorSpace(x, "lab"));
+  while (colorsHaveSameName) {
+    // bump the colors around randomly, except the first one
+    for (let i = 1; i < newColors.length; i++) {
+      let coords = newColors[i].toChannels();
+      coords[0] = coords[0] + (Math.random() - 0.5);
+      coords[1] = coords[1] + (Math.random() - 0.5);
+      coords[2] = coords[2] + (Math.random() - 0.5);
+      coords = coords.map((x, i) =>
+        clampToChannel(x, "xyz"[i] as "x" | "y" | "z")
+      ) as [number, number, number];
+      const color = newColors[i].fromChannels(coords);
+      newColors[i] = color;
+    }
+
+    // check if any colors have the same name
+    const seenColors = new Set<string>();
+    colorsHaveSameName = newColors.some((color, i) => {
+      const name = getName(color);
+      if (seenColors.has(name)) {
+        return true;
+      }
+      seenColors.add(name);
+      return false;
+    });
+  }
+  return newColors;
+}
+
+function buildFix(colors: Color[]): Color[] {
+  const colorNamesByIndex = colors.reduce((acc, color, index) => {
+    const name = getName(color);
+    acc[name] = (acc[name] || []).concat(index);
+    return acc;
+  }, {} as Record<string, number[]>);
+  const newColors = [...colors];
+  Object.values(colorNamesByIndex).forEach((indices) => {
+    const localColors = indices.map((i) => newColors[i]);
+    const updatedColors = suggestFixForColorsWithCommonNames(localColors);
+    indices.forEach((i, j) => {
+      newColors[i] = updatedColors[j];
+    });
+  });
+  return newColors;
+}
+
+export default class ColorNameDiscriminability extends ColorLint<
+  string,
+  false
+> {
+  name = "Color Name Discriminability";
+  taskTypes = ["sequential", "diverging", "categorical"] as TaskType[];
+  _runCheck() {
+    const { colors } = this.palette;
+    const passCheck = simpleDiscrim(colors);
+    return { passCheck: !passCheck, data: passCheck || "" };
+  }
+  buildMessage(): string {
+    return this.checkData;
+  }
+  async suggestFix() {
+    return { ...this.palette, colors: buildFix(this.palette.colors) };
+  }
+}

@@ -15,6 +15,8 @@
     { pos: 1, name: "Right", op: Math.max },
     { pos: 2, name: "Top", op: Math.min },
     { pos: 2, name: "Bottom", op: Math.max },
+    { pos: 0, name: "Z Top", op: Math.min },
+    { pos: 0, name: "Z Bottom", op: Math.max },
   ];
 
   const mapFocusedColors = (fn: (color: [number, number, number]) => any) =>

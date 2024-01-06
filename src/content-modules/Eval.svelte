@@ -3,10 +3,10 @@
   import focusStore from "../stores/focus-store";
   import {
     computeStats,
-    checkPal,
-    colorNameSimple,
     splitMessageIntoTextAndColors,
   } from "../lib/color-stats";
+  import { runLintChecks } from "../lib/linter";
+  import { colorNameSimple } from "../lib/lints/name-discrim";
   import EvalResponse from "./contextual-tools/EvalResponse.svelte";
   import Tooltip from "../components/Tooltip.svelte";
   import SwatchTooltipContent from "./SwatchTooltipContent.svelte";
@@ -18,12 +18,12 @@
   );
 
   $: colorNames = colorNameSimple(colors);
-  $: checks = checkPal($colorStore.currentPal, metric);
+  $: checks = runLintChecks($colorStore.currentPal);
 
   $: colorsToIssues = colors.map((x) => {
     const hex = `${x.toHex()}`;
     return checks.filter(
-      (check) => !check.check && check.message.includes(hex)
+      (check) => !check.passes && check.message.includes(hex)
     );
   });
 </script>
@@ -116,20 +116,20 @@
       Palette
     </div>
     <div>Checks</div>
-    <div class="overflow-auto h-full">
+    <div class="overflow-auto h-full max-w-md">
       {#each checks as check}
         <div class="w-full rounded flex flex-col justify-between py-1">
-          <div class="flex" class:font-bold={!check.check}>
-            {#if check.check}<div class="text-green-500 mr-2">
+          <div class="flex" class:font-bold={!check.passes}>
+            {#if check.passes}<div class="text-green-500 mr-2">
                 ✅
               </div>{:else}<div class="text-red-500 mr-2">
                 ❌
               </div>{/if}{check.name}
-            {#if !check.check}
+            {#if !check.passes}
               <EvalResponse {check} />
             {/if}
           </div>
-          {#if !check.check}
+          {#if !check.passes}
             <div class="text-sm italic">
               {#each splitMessageIntoTextAndColors(check.message) as block}
                 {#if block.type === "text"}

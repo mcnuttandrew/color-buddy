@@ -449,6 +449,7 @@
             />
             {#each Object.values(zPoints) as point}
               <text
+                pointer-events="none"
                 text-anchor={"middle"}
                 x={40}
                 y={point.y}

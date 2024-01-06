@@ -184,6 +184,14 @@ export function colorFromString(
   return new colorDirectory[colorSpace]().fromString(colorString);
 }
 
+export function colorFromHex(
+  hex: string,
+  colorSpace: keyof typeof colorDirectory
+): Color {
+  const color = chroma(hex);
+  return new colorDirectory[colorSpace]().fromChroma(color);
+}
+
 export function colorFromChannels(
   channels: [number, number, number],
   colorSpace: keyof typeof colorDirectory

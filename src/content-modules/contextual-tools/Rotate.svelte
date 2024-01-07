@@ -6,6 +6,7 @@
   import { avgColors } from "../../lib/utils";
   import { buttonStyle } from "../../lib/styles";
 
+  let axis = "z" as "x" | "y" | "z";
   let isOpen = false;
   $: focusedColors = $focusStore.focusedColors;
   $: colors = $colorStore.currentPal.colors;
@@ -44,10 +45,18 @@
           const color = toColorSpace(localColor, colorSpace);
           const channels = color.toChannels();
           //   https://math.stackexchange.com/questions/4354438/how-to-rotate-a-point-on-a-cartesian-plane-around-something-other-than-the-origi
-          const x1 = channels[1];
-          const y1 = channels[2];
-          const xc = centerChannels[1];
-          const yc = centerChannels[2];
+          const channelMap = {
+            x: [0, 2],
+            y: [0, 1],
+            z: [1, 2],
+          };
+          const channelA = channelMap[axis][0];
+          const channelB = channelMap[axis][1];
+
+          const x1 = channels[channelA];
+          const y1 = channels[channelB];
+          const xc = centerChannels[channelA];
+          const yc = centerChannels[channelB];
           const radAngle = (angle / 360) * Math.PI * 2;
           const x3 =
             Math.cos(radAngle) * (x1 - xc) -
@@ -57,7 +66,19 @@
             Math.sin(radAngle) * (x1 - xc) +
             Math.cos(radAngle) * (y1 - yc) +
             yc;
-          return colorFromChannels([channels[0], x3, y3], colorSpace);
+          let newChannels = [0, 0, 0] as [number, number, number];
+          switch (axis) {
+            case "x":
+              newChannels = [x3, channels[1], y3];
+              break;
+            case "y":
+              newChannels = [x3, y3, channels[2]];
+              break;
+            case "z":
+              newChannels = [channels[0], x3, y3];
+              break;
+          }
+          return colorFromChannels(newChannels, colorSpace);
         })
         .map((x, y) => [y, x])
     );
@@ -119,6 +140,15 @@
               ></span>
             </button>
           {/each}
+        </div>
+        <div class="flex">
+          Rotate about the
+          <select bind:value={axis} class="mx-1">
+            {#each ["x", "y", "z"] as axis}
+              <option value={axis}>{axis}</option>
+            {/each}
+          </select>
+          Axis
         </div>
       </div>
     </div>

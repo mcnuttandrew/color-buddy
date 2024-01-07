@@ -1,21 +1,15 @@
 <script lang="ts">
-  import focusStore from "../stores/focus-store";
-
   import DeleteSelection from "./contextual-tools/DeleteSelection.svelte";
   import AlignSelection from "./contextual-tools/AlignSelection.svelte";
   import CreateAverage from "./contextual-tools/CreateAverage.svelte";
   import SuggestionModificationToSelection from "./contextual-tools/SuggestionModificationToSelection.svelte";
   import InterpolatePoints from "./contextual-tools/InterpolatePoints.svelte";
   import DistributePoints from "./contextual-tools/DistributePoints.svelte";
-  import { buttonStyle } from "../lib/styles";
   import AdjustColor from "./contextual-tools/AdjustColor.svelte";
   import OpposingColor from "./contextual-tools/OpposingColor.svelte";
   import AddColor from "./contextual-tools/AddColor.svelte";
   import Rotate from "./contextual-tools/Rotate.svelte";
   import Deduplicate from "./contextual-tools/Deduplicate.svelte";
-  // import SuggestColors from "./context-free-tools/SuggestColors.svelte";
-
-  $: focusedColors = $focusStore.focusedColors;
 </script>
 
 <div
@@ -36,9 +30,3 @@
   <DeleteSelection />
   <Deduplicate />
 </div>
-
-<style>
-  .action-area {
-    min-width: 300px;
-  }
-</style>

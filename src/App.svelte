@@ -10,6 +10,8 @@
   import KeyboardHooks from "./components/KeyboardHooks.svelte";
   import ComparePal from "./content-modules/ComparePal.svelte";
   import ColorScatterPlot from "./components/ColorScatterPlot.svelte";
+
+  const tabs = ["examples", "compare", "eval"] as const;
 </script>
 
 <main class="flex h-full">
@@ -36,7 +38,7 @@
           class="bg-slate-100 flex justify-center"
         >
           <ul class="inline-flex">
-            {#each ["examples", "compare", "eval"] as tab}
+            {#each tabs as tab}
               <li>
                 <button
                   class="h-6 px-2 transition-colors duration-150 border border-slate-500 focus:shadow-outline uppercase italic"

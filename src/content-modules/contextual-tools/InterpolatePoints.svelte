@@ -1,5 +1,6 @@
 <script lang="ts">
   import { Color, colorFromChannels, toColorSpace } from "../../lib/Color";
+  import type { Palette } from "../../stores/color-store";
   import ColorIO from "colorjs.io";
   import colorStore from "../../stores/color-store";
   import focusStore from "../../stores/focus-store";
@@ -15,15 +16,14 @@
   let numPoints = 1;
   $: pointA = colors[focusedColors[0]];
   $: pointB = colors[focusedColors[1]];
-  $: tempPal = numPoints &&
+  $: tempPal = (numPoints &&
     colorSpace &&
     interpolationScheme &&
     pointA &&
     pointB && {
-      name: $colorStore.currentPal.name,
-      background: $colorStore.currentPal.background,
+      ...$colorStore.currentPal,
       colors: [pointA, ...createInterpolatedPoints(), pointB],
-    };
+    }) as Palette;
   function createInterpolatedPoints() {
     const points: Color[] = [];
     for (let i = 0; i < numPoints + 1; i++) {

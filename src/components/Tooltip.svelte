@@ -34,7 +34,7 @@
   }
 </script>
 
-{#if tooltipOpen}
+{#if tooltipOpen && boundingBox}
   <Portal target="body">
     <div
       class="absolute min-w-10"

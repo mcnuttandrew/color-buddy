@@ -20,6 +20,7 @@
           class="mb-2"
           value={bg.toHex()}
           on:change={(e) => {
+            // @ts-ignore
             const newColor = chroma(e.target.value);
             colorStore.setBackground(bg.fromChroma(newColor));
           }}

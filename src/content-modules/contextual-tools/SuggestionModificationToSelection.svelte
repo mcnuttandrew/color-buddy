@@ -21,6 +21,7 @@
       colors: colors.map((x) => colorFromString(x, colorSpace)),
       name: "mods",
       background: $colorStore.currentPal.background,
+      type: $colorStore.currentPal.type,
     };
   }
 
@@ -30,9 +31,8 @@
       palPrompt,
       selectedColors.length
         ? {
+            ...$colorStore.currentPal,
             colors: selectedColors.map((x) => colorFromString(x, colorSpace)),
-            background: $colorStore.currentPal.background,
-            name: $colorStore.currentPal.name,
           }
         : $colorStore.currentPal,
       $colorStore.engine

@@ -1,5 +1,6 @@
 import chroma from "chroma-js";
 import { Color, colorFromString, colorFromChannels } from "./Color";
+import type { PalType } from "../stores/color-store";
 export const insert = (arr: Color[], newItem: Color, index?: number) => {
   if (index === undefined) {
     return [...arr, newItem];
@@ -77,9 +78,13 @@ export function draggable(node: any) {
     x = event.clientX;
     y = event.clientY;
     node.dispatchEvent(new CustomEvent("dragstart", { detail: { x, y } }));
+    // @ts-ignore
     window.addEventListener("mousemove", handleMousemove);
+    // @ts-ignore
     window.addEventListener("mouseup", handleMouseup);
+    // @ts-ignore
     window.addEventListener("touchmove", handleMousemove);
+    // @ts-ignore
     window.addEventListener("touchend", handleMouseup);
   }
   function handleMousemove(event: {
@@ -109,9 +114,13 @@ export function draggable(node: any) {
         detail: { x, y },
       })
     );
+    // @ts-ignore
     window.removeEventListener("mousemove", handleMousemove);
+    // @ts-ignore
     window.removeEventListener("mouseup", handleMouseup);
+    // @ts-ignore
     window.removeEventListener("touchmove", handleMousemove);
+    // @ts-ignore
     window.removeEventListener("touchend", handleMouseup);
   }
   node.addEventListener("mousedown", handleMousedown);
@@ -148,3 +157,59 @@ export const swap = (arr: any[], i: number, j: number) => {
   newArr[j] = temp;
   return newArr;
 };
+
+const colorBrewerTypeMap = {
+  diverging: [
+    "Spectral",
+    "RdYlGn",
+    "RdBu",
+    "PiYG",
+    "PRGn",
+    "RdYlBu",
+    "BrBG",
+    "RdGy",
+    "PuOr",
+  ],
+
+  categorical: [
+    "Set2",
+    "Accent",
+    "Set1",
+    "Set3",
+    "Dark2",
+    "Paired",
+    "Pastel2",
+    "Pastel1",
+  ],
+
+  sequential: [
+    "OrRd",
+    "PuBu",
+    "BuPu",
+    "Oranges",
+    "BuGn",
+    "YlOrBr",
+    "YlGn",
+    "Reds",
+    "RdPu",
+    "Greens",
+    "YlGnBu",
+    "Purples",
+    "GnBu",
+    "Greys",
+    "YlOrRd",
+    "PuRd",
+    "Blues",
+    "PuBuGn",
+    "viridis",
+  ],
+};
+export const colorBrewerMapToType = Object.entries(colorBrewerTypeMap).reduce(
+  (acc, [type, maps]) => {
+    maps.forEach((map) => {
+      acc[map.toLowerCase()] = type.toLowerCase();
+    });
+    return acc;
+  },
+  {} as Record<string, PalType>
+);

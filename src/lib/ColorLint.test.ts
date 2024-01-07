@@ -13,6 +13,7 @@ function makePalFromHexes(hexes: string[]): Palette {
     colors: hexes.map((hex) => colorFromHex(hex, "lab")),
     background: colorFromHex("#ffffff", "lab"),
     name: "test",
+    type: "categorical",
   };
 }
 

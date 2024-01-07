@@ -18,7 +18,10 @@
   );
 
   $: colorNames = colorNameSimple(colors);
-  $: checks = runLintChecks($colorStore.currentPal);
+  $: palType = $colorStore.currentPal.type;
+  $: checks = runLintChecks($colorStore.currentPal).filter((x) =>
+    x.taskTypes.includes(palType)
+  );
 
   $: colorsToIssues = colors.map((x) => {
     const hex = `${x.toHex()}`;
@@ -108,7 +111,13 @@
   </div>
   <div class="flex flex-col ml-2">
     <div>
-      This is a <select>
+      This is a <select
+        value={palType}
+        on:change={(e) => {
+          // @ts-ignore
+          colorStore.setCurrentPalType(e.target.value);
+        }}
+      >
         {#each ["sequential", "diverging", "categorical"] as type}
           <option value={type}>{type}</option>
         {/each}

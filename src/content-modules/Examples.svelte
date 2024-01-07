@@ -12,7 +12,6 @@
   import CodeMirror from "svelte-codemirror-editor";
   import Tooltip from "../components/Tooltip.svelte";
   import Example from "../components/Example.svelte";
-  import SuggestExample from "./contextual-tools/SuggestExample.svelte";
 
   let modalState: "closed" | "input-svg" | "edit-colors" = "closed";
   let modifyingExample: number | false = false;

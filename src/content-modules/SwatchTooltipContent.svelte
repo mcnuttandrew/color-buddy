@@ -15,12 +15,14 @@
     updatedColors[idx] = color;
     colorStore.setCurrentPalColors(updatedColors);
   }
+  const modes = ["lab", "hsv"] as const;
 </script>
 
 <div class="flex mb-2">
   <input
     value={color.toHex()}
     on:change={(e) => {
+      // @ts-ignore
       const newColor = chroma(e.target.value);
       updateColor(color.fromChroma(newColor));
     }}
@@ -38,7 +40,7 @@
   </button>
 </div>
 <div class="flex">
-  {#each ["lab", "hsv"] as colorMode}
+  {#each modes as colorMode}
     <ColorChannelPicker
       {color}
       {colorMode}

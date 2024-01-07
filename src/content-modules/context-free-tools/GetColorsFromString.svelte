@@ -29,6 +29,7 @@
     style="min-height: {2 * Math.ceil(colors.length / 3)}em;"
     value={colors.map((color) => color.toHex()).join(", ")}
     on:change={(e) => {
+      // @ts-ignore
       processBodyInput(e.target.value);
     }}
   />

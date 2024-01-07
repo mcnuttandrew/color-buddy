@@ -55,7 +55,14 @@ export function checkJNDs(
   for (let i = 0; i < colors.length; i++) {
     for (let j = i + 1; j < colors.length; j++) {
       Object.keys(sMap).forEach((s) => {
-        if (!noticeablyDifferent(colors[i], colors[j], s, "default")) {
+        if (
+          !noticeablyDifferent(
+            colors[i],
+            colors[j],
+            s as keyof typeof sMap,
+            "default"
+          )
+        ) {
           invalid.push([s, colors[i], colors[j]]);
         }
       });

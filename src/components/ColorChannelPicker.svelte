@@ -96,10 +96,12 @@
       let interpolationOptions = { space: spaceId, steps: 10 };
 
       if (name[0].toLowerCase() === "h") {
+        // @ts-ignore
         interpolationOptions.hue = "raw";
       }
 
       let steps = ColorIO.steps(color1, color2, interpolationOptions);
+      // @ts-ignore
       ret.push(steps.map((c) => c.display()).join(", "));
     }
 
@@ -107,12 +109,13 @@
     let color1 = new ColorIO(spaceId, coords, 0);
     let color2 = new ColorIO(spaceId, coords, 1);
     let steps = ColorIO.steps(color1, color2, { steps: 10 })
+      // @ts-ignore
       .map((c) => c.display())
       .join(", ");
     ret.push(steps);
     return ret;
   }
-  $: sliderSteps = color && colorMode !== "hex" && buildSliderSteps();
+  $: sliderSteps = color && colorMode !== "hex" && (buildSliderSteps() as any);
   let error = false;
 
   function colorUpdate(e: any, idx: number) {
@@ -187,8 +190,10 @@
         class="w-full"
         value={color.toHex()}
         on:change={(e) => {
+          // @ts-ignore
           const colorString = e.target.value;
           try {
+            // @ts-ignore
             const chromaChannels = chroma(colorString)[color.spaceName]();
             const newColor = color.fromChannels(chromaChannels);
             onColorChange(toColorSpace(newColor, measuredColorMode));

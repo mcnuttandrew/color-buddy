@@ -13,6 +13,7 @@
     colors: [],
     background: colorFromString("#000000", colorSpace),
     name: "blank",
+    type: "categorical",
   };
   let palPrompt: string = "";
 

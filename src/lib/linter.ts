@@ -8,6 +8,7 @@ import Blinds from "./lints/blind-check";
 import ColorSimilarity from "./lints/color-similarity";
 import BackgroundDifferentiability from "./lints/background-differentiability";
 import UglyColors from "./lints/ugly-colors";
+import SequentialOrder from "./lints/sequential-order";
 
 export function runLintChecks(palette: Palette): ColorLint<any, any>[] {
   return [
@@ -18,5 +19,6 @@ export function runLintChecks(palette: Palette): ColorLint<any, any>[] {
     new ColorSimilarity(palette),
     new BackgroundDifferentiability(palette),
     new UglyColors(palette),
+    new SequentialOrder(palette),
   ];
 }

@@ -1,7 +1,7 @@
 import namer from "color-namer";
 import { ColorLint } from "./ColorLint";
 import type { TaskType } from "./ColorLint";
-import { Color, toColorSpace, colorPickerConfig } from "../Color";
+import { Color, toColorSpace, colorPickerConfig, colorFromHex } from "../Color";
 
 function findSmallest<A>(arr: A[], accessor: (x: A) => number): A {
   let smallest = arr[0];
@@ -54,7 +54,7 @@ export const getName = (color: Color) => {
   if (nameCache.has(hex)) {
     return nameCache.get(hex)!;
   }
-  const name = namer(hex, { exclude: ["ntc"] });
+  const name = namer(hex, { pick: ["html"] });
   const guess = findSmallest<any>(
     Object.values(name).map((x: any) => x[0]),
     (x) => x.distance
@@ -63,39 +63,14 @@ export const getName = (color: Color) => {
   nameCache.set(hex, result);
   return result;
 };
-const clampToChannel = (x: number, channel: "x" | "y" | "z") => {
-  const domain = colorPickerConfig.lab[`${channel}Domain`].sort();
-  return Math.max(domain[0], Math.min(domain[1], x));
-};
-function suggestFixForColorsWithCommonNames(colors: Color[]): Color[] {
-  let colorsHaveSameName = true;
-  let newColors = [...colors].map((x) => toColorSpace(x, "lab"));
-  while (colorsHaveSameName) {
-    // bump the colors around randomly, except the first one
-    for (let i = 1; i < newColors.length; i++) {
-      let coords = newColors[i].toChannels();
-      coords[0] = coords[0] + (Math.random() - 0.5);
-      coords[1] = coords[1] + (Math.random() - 0.5);
-      coords[2] = coords[2] + (Math.random() - 0.5);
-      coords = coords.map((x, i) =>
-        clampToChannel(x, "xyz"[i] as "x" | "y" | "z")
-      ) as [number, number, number];
-      const color = newColors[i].fromChannels(coords);
-      newColors[i] = color;
-    }
 
-    // check if any colors have the same name
-    const seenColors = new Set<string>();
-    colorsHaveSameName = newColors.some((color, i) => {
-      const name = getName(color);
-      if (seenColors.has(name)) {
-        return true;
-      }
-      seenColors.add(name);
-      return false;
-    });
-  }
-  return newColors;
+function suggestFixForColorsWithCommonNames(colors: Color[]): Color[] {
+  const hex = colors[0].toHex().toUpperCase();
+  let guesses = { ...namer(hex, { pick: ["html"] }) };
+  return [...colors].map((color, idx) => {
+    const newColor = guesses.html[idx];
+    return colorFromHex(newColor.hex, color.spaceName);
+  });
 }
 
 function buildFix(colors: Color[]): Color[] {
@@ -105,13 +80,15 @@ function buildFix(colors: Color[]): Color[] {
     return acc;
   }, {} as Record<string, number[]>);
   const newColors = [...colors];
-  Object.values(colorNamesByIndex).forEach((indices) => {
-    const localColors = indices.map((i) => newColors[i]);
-    const updatedColors = suggestFixForColorsWithCommonNames(localColors);
-    indices.forEach((i, j) => {
-      newColors[i] = updatedColors[j];
+  Object.values(colorNamesByIndex)
+    .filter((x) => x.length > 1)
+    .forEach((indices) => {
+      const localColors = indices.map((i) => newColors[i]);
+      const updatedColors = suggestFixForColorsWithCommonNames(localColors);
+      indices.forEach((i, j) => {
+        newColors[i] = updatedColors[j];
+      });
     });
-  });
   return newColors;
 }
 

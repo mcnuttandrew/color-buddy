@@ -9,6 +9,12 @@ import blinder from "color-blind";
 // https://github.dev/gka/palettes
 
 const blindnessTypes = ["deuteranopia", "protanopia", "tritanopia"];
+const blindnessLabels: Record<string, string> = {
+  deuteranopia: "(ie can't see green)",
+  protanopia: "(ie can't see red)",
+  tritanopia: "(ie can't see blue)",
+};
+
 type BlindnessTypes = (typeof blindnessTypes)[number];
 export function colorBlindCheck(colors: ChromaColor[]): string[] {
   const invalid = [];
@@ -73,7 +79,7 @@ const checks = ["deuteranopia", "protanopia", "tritanopia"].map((key) => {
       const pairs = this.checkData
         .map(([a, b]) => `(${colors[a]} and ${colors[b]})`)
         .join(", ");
-      return `This palette is not colorblind friendly for ${key} color blindness. The following pairs are undifferentiable: ${pairs}`;
+      return `This palette is not colorblind friendly for ${key} color blindness ${blindnessLabels[key]}. The following pairs are undifferentiable: ${pairs}`;
     }
   };
 });

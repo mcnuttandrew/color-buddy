@@ -22,6 +22,7 @@
       name: "mods",
       background: $colorStore.currentPal.background,
       type: $colorStore.currentPal.type,
+      evalConfig: {},
     };
   }
 

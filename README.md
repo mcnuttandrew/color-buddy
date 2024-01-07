@@ -29,6 +29,7 @@ First time you start it up you should also run `yarn prep data`
 - [ ] Meta: figure out all the other features in maureen's setup
 - [ ] Examples held as assets somewhere that are downloaded rather than components (for consistency)
 - [ ] Labels, tooltips, etc
+- [x] Make it possible to ignore / dismiss lints
 - [x] Touch events polish
 - [x] drag box in z channel should work
 - [x] Add color by name

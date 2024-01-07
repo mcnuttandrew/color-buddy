@@ -34,6 +34,7 @@
         background: colorFromString("#ffffff", colorSpace),
         group: "vega",
         type: "categorical",
+        evalConfig: {},
       });
     });
     Object.entries(chroma.brewer).forEach(([name, colors]) => {
@@ -46,6 +47,7 @@
         background: colorFromString("#ffffff", colorSpace),
         group: "brewer",
         type: colorBrewerMapToType[name.toLowerCase()],
+        evalConfig: {},
       });
     });
     familiarPals = newPals;

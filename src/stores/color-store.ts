@@ -5,8 +5,14 @@ import fits from "../assets/outfits.json";
 import { pick, deDup } from "../lib/utils";
 const outfitToPal = (x: any) => [x.fill1, x.fill2, x.fill3];
 const outfits = fits.map((x) => outfitToPal(x));
-type PalType = "sequential" | "diverging" | "categorical";
-type Pal<A> = { colors: A[]; name: string; background: A; type: PalType };
+export type PalType = "sequential" | "diverging" | "categorical";
+type Pal<A> = {
+  colors: A[];
+  name: string;
+  background: A;
+  type: PalType;
+  evalConfig: Record<string, any>;
+};
 export type Palette = Pal<Color>;
 
 interface StoreData {
@@ -28,18 +34,21 @@ const InitialStore: StorageData = {
       colors: pick(outfits),
       background: "#ffffff",
       type: "categorical",
+      evalConfig: {},
     },
     {
       name: "Example 2",
       colors: pick(outfits),
       background: "#ffffff",
       type: "categorical",
+      evalConfig: {},
     },
     {
       name: "Example 3",
       colors: pick(outfits),
       background: "#ffffff",
       type: "categorical",
+      evalConfig: {},
     },
   ],
   currentPal: {
@@ -47,6 +56,7 @@ const InitialStore: StorageData = {
     colors: pick(outfits),
     background: "#ffffff",
     type: "categorical",
+    evalConfig: {},
   },
   engine: "google",
 };
@@ -58,12 +68,14 @@ function convertStoreHexToColor(store: StorageData): StoreData {
       background: colorFromString(x.background, "lab"),
       colors: x.colors.map((y) => colorFromString(y, "lab")),
       type: x.type,
+      evalConfig: x.evalConfig,
     })),
     currentPal: {
       background: colorFromString(store.currentPal.background, "lab"),
       name: store.currentPal.name,
       colors: store.currentPal.colors.map((y) => colorFromString(y, "lab")),
       type: store.currentPal.type,
+      evalConfig: store.currentPal.evalConfig,
     },
     engine: store.engine,
   };
@@ -76,12 +88,14 @@ function convertStoreColorToHex(store: StoreData): StorageData {
       background: x.background.toHex(),
       colors: x.colors.map((y) => y.toHex()),
       type: x.type,
+      evalConfig: x.evalConfig,
     })),
     currentPal: {
       background: store.currentPal.background.toHex(),
       name: store.currentPal.name,
       colors: store.currentPal.colors.map((y) => y.toHex()),
       type: store.currentPal.type,
+      evalConfig: store.currentPal.evalConfig,
     },
     engine: store.engine,
   };
@@ -170,6 +184,7 @@ function createStore() {
           name: "Untitled",
           background: colorFromString("#ffffff", "lab"),
           type: "categorical",
+          evalConfig: {},
         },
         palettes: insertPalette(n.palettes, n.currentPal),
       })),
@@ -211,7 +226,9 @@ function createStore() {
         ),
       })),
     setCurrentPalName: (name: string) => palUp((n) => ({ ...n, name })),
-    setCurrentPalType: (type: PalTypes) => palUp((n) => ({ ...n, type })),
+    setCurrentPalType: (type: PalType) => palUp((n) => ({ ...n, type })),
+    setCurrentPalEvalConfig: (evalConfig: Record<string, any>) =>
+      palUp((n) => ({ ...n, evalConfig })),
     addColorToCurrentPal: (color: Color) =>
       palUp((n) => ({
         ...n,

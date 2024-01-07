@@ -6,7 +6,7 @@
   import type { Palette } from "../../stores/color-store";
   import PalPreview from "../../components/PalPreview.svelte";
 
-  import { buttonStyle, AIButtonStyle } from "../../lib/styles";
+  import { buttonStyle } from "../../lib/styles";
   let requestState: "idle" | "loading" | "loaded" | "failed" = "idle";
   export let check: ColorLint<any, any>;
 
@@ -25,13 +25,25 @@
         requestState = "failed";
       });
   }
+  $: evalConfig = $colorStore.currentPal.evalConfig;
 </script>
 
 <Tooltip positionAlongRightEdge={true}>
   <div slot="content" let:onClick>
-    <button class={buttonStyle}>Ignore for this palette</button>
-    <button class={buttonStyle}>Ignore for a bit</button>
-    <button class={buttonStyle}>This is too restrictive</button>
+    <button
+      class={buttonStyle}
+      on:click={() => {
+        colorStore.setCurrentPalEvalConfig({
+          ...evalConfig,
+          [check.name]: { ignore: true },
+        });
+      }}
+    >
+      Ignore for this palette
+    </button>
+    {#if check.hasParam}
+      <button class={buttonStyle}>This is too restrictive</button>
+    {/if}
     <button class={buttonStyle} on:click={() => proposeFix()}>
       Try to fix
     </button>

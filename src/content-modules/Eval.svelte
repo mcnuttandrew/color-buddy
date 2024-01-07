@@ -7,6 +7,7 @@
   } from "../lib/color-stats";
   import { runLintChecks } from "../lib/linter";
   import { colorNameSimple } from "../lib/lints/name-discrim";
+  import { buttonStyle } from "../lib/styles";
   import EvalResponse from "./contextual-tools/EvalResponse.svelte";
   import Tooltip from "../components/Tooltip.svelte";
   import SwatchTooltipContent from "./SwatchTooltipContent.svelte";
@@ -19,6 +20,7 @@
 
   $: colorNames = colorNameSimple(colors);
   $: palType = $colorStore.currentPal.type;
+  $: evalConfig = $colorStore.currentPal.evalConfig;
   $: checks = runLintChecks($colorStore.currentPal).filter((x) =>
     x.taskTypes.includes(palType)
   );
@@ -68,19 +70,21 @@
                 <span>{color.toHex()}</span>
                 <span class="flex">
                   {#each colorsToIssues[idx] as check}
-                    <Tooltip>
-                      <div slot="content" class="flex flex-col">
-                        <div class="font-bold">{check.name}</div>
-                        <div class="text-sm">{check.message}</div>
-                      </div>
-                      <button
-                        slot="target"
-                        let:toggle
-                        on:click|stopPropagation={toggle}
-                      >
-                        ❌
-                      </button>
-                    </Tooltip>
+                    {#if !evalConfig[check.name]?.ignore}
+                      <Tooltip>
+                        <div slot="content" class="flex flex-col">
+                          <div class="font-bold">{check.name}</div>
+                          <div class="text-sm">{check.message}</div>
+                        </div>
+                        <button
+                          slot="target"
+                          let:toggle
+                          on:click|stopPropagation={toggle}
+                        >
+                          ❌
+                        </button>
+                      </Tooltip>
+                    {/if}
                   {/each}
                 </span>
               </span>
@@ -127,40 +131,75 @@
     <div>Checks</div>
     <div class="overflow-auto h-full max-w-md">
       {#each checks as check}
-        <div class="w-full rounded flex flex-col justify-between py-1">
-          <div class="flex" class:font-bold={!check.passes}>
-            {#if check.passes}<div class="text-green-500 mr-2">
-                ✅
-              </div>{:else}<div class="text-red-500 mr-2">
-                ❌
-              </div>{/if}{check.name}
+        {#if evalConfig[check.name]?.ignore}
+          <div class="text-xs">
+            "{check.name}" Ignored for this palette
+            <button
+              class={buttonStyle}
+              on:click={() => {
+                colorStore.setCurrentPalEvalConfig({
+                  ...evalConfig,
+                  [check.name]: { ignore: false },
+                });
+              }}
+            >
+              renable
+            </button>
+          </div>
+        {:else if evalConfig[check.name]?.ignoreUntil}
+          <div class="text-xs">
+            "{check.name}" Ignored until{" "}
+            {new Date(evalConfig[check.name]?.ignoreUntil).toLocaleString()}
+            <button
+              class={buttonStyle}
+              on:click={() => {
+                colorStore.setCurrentPalEvalConfig({
+                  ...evalConfig,
+                  [check.name]: { ignoreUntil: false },
+                });
+              }}
+            >
+              renable
+            </button>
+          </div>
+        {:else}
+          <div class="w-full rounded flex flex-col justify-between py-1">
+            <div class="flex" class:font-bold={!check.passes}>
+              {#if check.passes}<div class="text-green-500">✅</div>{:else}<div
+                  class="text-red-500"
+                >
+                  ❌
+                </div>{/if}
+              {#if !check.passes}
+                <EvalResponse {check} />
+              {/if}{check.name}
+            </div>
             {#if !check.passes}
-              <EvalResponse {check} />
+              <div class="text-sm italic">
+                {#each splitMessageIntoTextAndColors(check.message) as block}
+                  {#if block.type === "text"}
+                    <span>{block.content}</span>
+                  {:else}
+                    <button
+                      on:click={() => {
+                        const hexes = colors.map((x) =>
+                          x.toHex().toLowerCase()
+                        );
+                        const idx = hexes.findIndex(
+                          (x) => x === block.content.toLowerCase()
+                        );
+                        if (idx === -1) return;
+                        focusStore.toggleColor(idx);
+                      }}
+                      style={`background-color: ${block.content}; top: -3px`}
+                      class="rounded-full w-3 h-3 ml-1 mr-1 inline-block cursor-pointer relative"
+                    ></button>
+                  {/if}
+                {/each}
+              </div>
             {/if}
           </div>
-          {#if !check.passes}
-            <div class="text-sm italic">
-              {#each splitMessageIntoTextAndColors(check.message) as block}
-                {#if block.type === "text"}
-                  <span>{block.content}</span>
-                {:else}
-                  <button
-                    on:click={() => {
-                      const hexes = colors.map((x) => x.toHex().toLowerCase());
-                      const idx = hexes.findIndex(
-                        (x) => x === block.content.toLowerCase()
-                      );
-                      if (idx === -1) return;
-                      focusStore.toggleColor(idx);
-                    }}
-                    style={`background-color: ${block.content}; top: -3px`}
-                    class="rounded-full w-3 h-3 ml-1 mr-1 inline-block cursor-pointer relative"
-                  ></button>
-                {/if}
-              {/each}
-            </div>
-          {/if}
-        </div>
+        {/if}
       {/each}
     </div>
   </div>

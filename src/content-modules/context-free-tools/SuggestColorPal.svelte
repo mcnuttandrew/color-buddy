@@ -14,6 +14,7 @@
     background: colorFromString("#000000", colorSpace),
     name: "blank",
     type: "categorical",
+    evalConfig: {},
   };
   let palPrompt: string = "";
 

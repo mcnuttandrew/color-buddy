@@ -211,5 +211,5 @@ export const colorBrewerMapToType = Object.entries(colorBrewerTypeMap).reduce(
     });
     return acc;
   },
-  {} as Record<string, PalType>
-);
+  {} as any
+) as Record<string, PalType>;

@@ -20,6 +20,7 @@ function checkIfAColorIsCloseToAnUglyColor(colors: Color[]) {
 export default class UglyColors extends ColorLint<Color[], false> {
   name = "Palette does not have ugly colors";
   taskTypes = ["sequential", "diverging", "categorical"] as TaskType[];
+  level: "error" | "warning" = "warning";
   _runCheck() {
     const { colors } = this.palette;
     const data = checkIfAColorIsCloseToAnUglyColor(colors);

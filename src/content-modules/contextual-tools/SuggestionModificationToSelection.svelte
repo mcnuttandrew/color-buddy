@@ -5,7 +5,7 @@
   import { colorFromString } from "../../lib/Color";
   import { suggestContextualAdjustments } from "../../lib/api-calls";
   import { buttonStyle, AIButtonStyle } from "../../lib/styles";
-  import PalPreview from "../../components/PalPreview.svelte";
+  import PalDiff from "../../components/PalDiff.svelte";
 
   let requestState: "idle" | "loading" | "loaded" | "failed" = "idle";
   $: colorSpace = $colorStore.currentPal.colors[0]?.spaceName || "lab";
@@ -91,14 +91,12 @@
       </label>
       {#if requestState === "loaded"}
         <div>
-          Old
-          <PalPreview
-            pal={selectedColors.length
+          <PalDiff
+            beforePal={selectedColors.length
               ? toPal(selectedColors)
               : $colorStore.currentPal}
+            afterPal={toPal(suggestedColors)}
           />
-          New
-          <PalPreview pal={toPal(suggestedColors)} />
         </div>
         <div class="flex justify-between">
           <button class={buttonStyle} on:click={() => useSuggestion(onClick)}>

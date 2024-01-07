@@ -4,7 +4,7 @@
   import focusStore from "../../stores/focus-store";
   import { ColorLint } from "../../lib/lints/ColorLint";
   import type { Palette } from "../../stores/color-store";
-  import PalPreview from "../../components/PalPreview.svelte";
+  import PalDiff from "../../components/PalDiff.svelte";
 
   import { buttonStyle } from "../../lib/styles";
   let requestState: "idle" | "loading" | "loaded" | "failed" = "idle";
@@ -53,7 +53,7 @@
       <div>Failed to generate suggestions</div>
     {:else if requestState === "loaded" && suggestion}
       <div class="flex flex-col">
-        <PalPreview pal={suggestion} />
+        <PalDiff beforePal={$colorStore.currentPal} afterPal={suggestion} />
         <div class="flex justify-between">
           <button
             class={buttonStyle}

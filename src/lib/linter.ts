@@ -9,6 +9,7 @@ import ColorSimilarity from "./lints/color-similarity";
 import BackgroundDifferentiability from "./lints/background-differentiability";
 import UglyColors from "./lints/ugly-colors";
 import SequentialOrder from "./lints/sequential-order";
+import AvoidExtremes from "./lints/avoid-extremes";
 
 export function runLintChecks(palette: Palette): ColorLint<any, any>[] {
   return [
@@ -20,5 +21,6 @@ export function runLintChecks(palette: Palette): ColorLint<any, any>[] {
     new BackgroundDifferentiability(palette),
     new UglyColors(palette),
     new SequentialOrder(palette),
+    new AvoidExtremes(palette),
   ];
 }

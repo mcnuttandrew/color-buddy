@@ -31,6 +31,11 @@
       (check) => !check.passes && check.message.includes(hex)
     );
   });
+
+  const checkLevelToSymbol = {
+    error: "❌",
+    warning: "⚠️",
+  } as any;
 </script>
 
 <div class="flex h-full">
@@ -81,7 +86,7 @@
                           let:toggle
                           on:click|stopPropagation={toggle}
                         >
-                          ❌
+                          {checkLevelToSymbol[check.level]}
                         </button>
                       </Tooltip>
                     {/if}
@@ -168,7 +173,7 @@
               {#if check.passes}<div class="text-green-500">✅</div>{:else}<div
                   class="text-red-500"
                 >
-                  ❌
+                  {checkLevelToSymbol[check.level]}
                 </div>{/if}
               {#if !check.passes}
                 <EvalResponse {check} />

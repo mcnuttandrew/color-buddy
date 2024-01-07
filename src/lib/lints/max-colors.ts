@@ -7,6 +7,8 @@ export default class MaxColors extends ColorLint<number, number> {
   taskTypes = ["sequential", "diverging", "categorical"] as TaskType[];
   hasParam = true;
   param = defaultMaxColors;
+  level: "error" | "warning" = "warning";
+
   _runCheck() {
     const { colors } = this.palette;
     const numColors = colors.length;

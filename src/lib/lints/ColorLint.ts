@@ -33,6 +33,7 @@ export class ColorLint<CheckData, ParamType> {
   message: string;
   hasParam: boolean = false;
   param?: ParamType;
+  level: "error" | "warning" = "error";
 
   constructor(Palette: Palette) {
     this.name = "";

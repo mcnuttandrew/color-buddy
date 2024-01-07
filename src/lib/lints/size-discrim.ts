@@ -97,7 +97,7 @@ const Discrims = ["thin", "medium", "wide"].map((key) => {
     buildMessage() {
       const jnds = this.checkData;
       const invalid = uniqueJNDColors(key, jnds);
-      return `This palette has some colors (${invalid}) that are close  to each other in perceptual space and will not be resolvable for ${key} areas`;
+      return `This palette has some colors (${invalid}) that are close to each other in perceptual space and will not be resolvable for ${key} areas`;
     }
   };
 });

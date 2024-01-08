@@ -1,6 +1,6 @@
 <script lang="ts">
   import Portal from "svelte-portal";
-  export let top: string = "4rem";
+  export let top: string = "2rem";
   export let onClose: () => void = () => {};
   export let initiallyOpen: boolean = false;
   export let positionAlongRightEdge: boolean = false;
@@ -32,15 +32,18 @@
       x.addEventListener("click", onClick);
     });
   }
+  $: topString = boundingBox
+    ? top
+      ? `calc(${boundingBox.y}px + ${top})`
+      : `${boundingBox.y}px`
+    : "0";
 </script>
 
 {#if tooltipOpen && boundingBox}
   <Portal target="body">
     <div
       class="absolute min-w-10"
-      style={`left: ${boundingBox.x}px; top: calc(${boundingBox.y}px + ${
-        top === "top" ? "1px" : top
-      }); z-index: 1000`}
+      style={`left: ${boundingBox.x}px; top: ${topString}; z-index: 1000`}
     >
       <div class="relative" class:right-edge={positionAlongRightEdge}>
         <span
@@ -60,6 +63,6 @@
 
 <style>
   .right-edge {
-    right: 100%;
+    right: calc(100% - 2rem);
   }
 </style>

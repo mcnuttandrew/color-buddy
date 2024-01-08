@@ -5,12 +5,15 @@
     colorFromChannels,
     toColorSpace,
     colorPickerConfig,
+    colorFromHex,
   } from "../lib/Color";
   import { makeExtents, deDup, toggleElement } from "../lib/utils";
   import { scaleLinear } from "d3-scale";
   import DoubleRangeSlider from "../components/DoubleRangeSlider.svelte";
   import VerticalDoubleRangeSlider from "../components/VerticalDoubleRangeSlider.svelte";
-  import Tooltip from "./Tooltip.svelte";
+  import Tooltip from "../components/Tooltip.svelte";
+  import blind from "color-blind";
+  import { buttonStyle } from "../lib/styles";
 
   export let scatterPlotMode: "moving" | "looking";
 
@@ -22,6 +25,15 @@
   export let onColorsChange: (color: Color[]) => void;
   export let onFocusedColorsChange: (color: number[]) => void;
   export let colorSpace: any;
+
+  $: selectedBlindType = "none";
+  $: blindColors =
+    selectedBlindType === "none"
+      ? []
+      : Pal.colors
+          .map((x) => blind[selectedBlindType](x.toHex()))
+          .map((x) => colorFromHex(x, colorSpace));
+
   $: focusSet = new Set(focusedColors);
 
   const margin = { top: 15, right: 15, bottom: 15, left: 15 };
@@ -253,13 +265,33 @@
   $: axisColor = bg.toChroma().luminance() > 0.5 ? "gray" : "white";
 
   let hoveredPoint: Color | false = false;
+  $: x = (point: Color) => xScale(point.toChannels()[1]);
+  $: y = (point: Color) => yScale(point.toChannels()[2]);
+  $: z = (point: Color) => zScale(point.toChannels()[0]);
 </script>
 
 <!-- svelte-ignore a11y-no-static-element-interactions -->
 <!-- svelte-ignore a11y-no-static-element-interactions -->
 <div class="flex">
   <div class="flex flex-col">
-    <span>{config.xyTitle}</span>
+    <span class="flex w-full justify-between">
+      {config.xyTitle}
+      <Tooltip>
+        <div slot="content">
+          <select bind:value={selectedBlindType}>
+            <!-- {#each ["none", ...Object.keys(blind)] as blindType}
+              <option value={blindType}>{blindType}</option>
+            {/each} -->
+            {#each ["none", "deuteranopia", "protanopia", "tritanopia"] as blindType}
+              <option value={blindType}>{blindType}</option>
+            {/each}
+          </select>
+        </div>
+        <button slot="target" let:toggle on:click={toggle} class={buttonStyle}>
+          blind sim
+        </button>
+      </Tooltip>
+    </span>
     <div class="flex h-full">
       <div class="h-full py-4" style="max-height: {height}px">
         <VerticalDoubleRangeSlider
@@ -329,7 +361,7 @@
             class:cursor-pointer={dragging}
           />
 
-          {#each deDup(colors) as color, i (color.toHex())}
+          {#each colors as color, i}
             <!-- svelte-ignore a11y-no-static-element-interactions -->
             <!-- svelte-ignore a11y-click-events-have-key-events -->
             <!-- svelte-ignore a11y-mouse-events-have-key-events -->
@@ -355,8 +387,8 @@
             {/if}
             {#if scatterPlotMode === "looking"}
               <circle
-                cx={xScale(color.toChannels()[1])}
-                cy={yScale(color.toChannels()[2])}
+                cx={x(color)}
+                cy={y(color)}
                 on:mouseenter={() => {
                   hoveredPoint = color;
                 }}
@@ -364,6 +396,38 @@
                 fill={color.toHex()}
               />
             {/if}
+            <!-- {#if !color.inGamut()}
+              <g
+                pointer-events="none"
+                transform={`translate(${x(color)} ${y(color)})`}
+              >
+                <line stroke="black" x1={-7} y1={-7} x2={7} y2={7}></line>
+                <line stroke="black" x1={-7} y1={7} x2={7} y2={-7}></line>
+              </g>
+            {/if} -->
+          {/each}
+          {#each blindColors as blindColor, i}
+            <!-- svelte-ignore a11y-click-events-have-key-events -->
+            <circle
+              cx={x(blindColor)}
+              cy={y(blindColor)}
+              stroke={blindColor.toHex()}
+              fill={"none"}
+              r={10}
+              stroke-width="4"
+              on:mousedown|preventDefault={startDrag(true, i)}
+              on:touchstart|preventDefault={startDrag(true, i)}
+              on:touchend|preventDefault={() => onFocusedColorsChange([i])}
+              pointer-events={!focusSet.has(i) ? "all" : "none"}
+              class="cursor-pointer"
+              on:click={(e) => {
+                if (e.metaKey || e.shiftKey) {
+                  onFocusedColorsChange(toggleElement(focusedColors, i));
+                } else {
+                  onFocusedColorsChange([i]);
+                }
+              }}
+            />
           {/each}
           {#if scatterPlotMode === "looking" && hoveredPoint}
             <g
@@ -464,10 +528,28 @@
               <rect
                 x={10 - (focusSet.has(i) ? 5 : 0)}
                 class="cursor-pointer color-bricks"
-                y={zScale(color.toChannels()[0])}
+                y={z(color)}
                 width={80 - 10 * 2 + (focusSet.has(i) ? 10 : 0)}
                 height={5}
                 fill={color.toHex()}
+                on:click={() =>
+                  onFocusedColorsChange(toggleElement(focusedColors, i))}
+                on:mousedown|preventDefault={startDrag(false, i)}
+                on:touchstart|preventDefault={startDrag(false, i)}
+                on:touchend|preventDefault={() => onFocusedColorsChange([i])}
+              />
+            {/each}
+            <!-- svelte-ignore a11y-click-events-have-key-events -->
+            {#each blindColors as color, i}
+              <!-- svelte-ignore a11y-click-events-have-key-events -->
+              <rect
+                x={10 - (focusSet.has(i) ? 5 : 0)}
+                class="cursor-pointer color-bricks"
+                y={z(color)}
+                width={80 - 10 * 2 + (focusSet.has(i) ? 10 : 0)}
+                height={5}
+                stroke={color.toHex()}
+                fill={"none"}
                 on:click={() =>
                   onFocusedColorsChange(toggleElement(focusedColors, i))}
                 on:mousedown|preventDefault={startDrag(false, i)}
@@ -523,8 +605,8 @@
 
 <style>
   circle {
-    transition: all 0.2s ease-in-out;
-    -webkit-transition: all 0.2s ease-in-out;
-    -moz-transition: all 0.2s ease-in-out;
+    transition: r 0.2s ease-in-out;
+    -webkit-transition: r 0.2s ease-in-out;
+    -moz-transition: r 0.2s ease-in-out;
   }
 </style>

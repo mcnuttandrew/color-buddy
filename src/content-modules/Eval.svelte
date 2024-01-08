@@ -62,7 +62,7 @@
             let:toggle
             on:click={() => {
               toggle();
-              focusStore.addColor(idx);
+              focusStore.setColors([idx]);
             }}
             class="w-48 flex flex-col justify-center items-center text-sm relative mt-2 transition-all"
             class:text-white={color.toChroma().luminance() < 0.5}
@@ -194,7 +194,7 @@
                           (x) => x === block.content.toLowerCase()
                         );
                         if (idx === -1) return;
-                        focusStore.toggleColor(idx);
+                        focusStore.setColors([idx]);
                       }}
                       style={`background-color: ${block.content}; top: -3px`}
                       class="rounded-full w-3 h-3 ml-1 mr-1 inline-block cursor-pointer relative"

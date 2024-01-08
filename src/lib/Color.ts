@@ -39,6 +39,15 @@ export class Color {
   setChannel(channel: keyof typeof this.channels, value: number) {
     this.channels[channel] = value;
   }
+  inGamut(): boolean {
+    // return new ColorIO(this.spaceName, this.toChannels()).inGamut();
+    const x = this.toHex();
+    const y = colorFromHex(x, this.spaceName).toHex();
+    return x === y;
+  }
+  toColorIO(): ColorIO {
+    return new ColorIO(this.toString());
+  }
 
   fromString(colorString: string): Color {
     if (!colorString.startsWith(`${this.spaceName}(`)) {
@@ -188,8 +197,10 @@ export function colorFromHex(
   hex: string,
   colorSpace: keyof typeof colorDirectory
 ): Color {
-  const color = chroma(hex);
-  return new colorDirectory[colorSpace]().fromChroma(color);
+  const color = new ColorIO(hex).to(colorSpace);
+  return new colorDirectory[colorSpace]().fromChannels(color.coords);
+  // const color = chroma(hex);
+  // return new colorDirectory[colorSpace]().fromChroma(color);
 }
 
 export function colorFromChannels(

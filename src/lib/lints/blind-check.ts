@@ -2,6 +2,8 @@ import { ColorLint } from "./ColorLint";
 import type { TaskType } from "./ColorLint";
 import type { Color as ChromaColor } from "chroma-js";
 import chroma from "chroma-js";
+import ColorIO from "colorjs.io";
+import { Color, colorFromHex } from "../Color";
 
 import blinder from "color-blind";
 
@@ -28,7 +30,40 @@ export function colorBlindSim(color: string, type: BlindnessTypes) {
   return blinder[type](chroma(color).hex());
 }
 
-function checkType(colors: ChromaColor[], type: BlindnessTypes) {
+// function checkType(colors: ChromaColor[], type: BlindnessTypes) {
+//   let notOK = 0;
+//   let notOKColorIndexes: [number, number][] = [];
+//   let ratioThreshold = 5;
+//   let smallestPerceivableDistance = 9;
+//   let k = colors.length;
+//   if (!k) {
+//     return { pass: true, notOKColorIndexes };
+//   }
+//   // compute distances between colors
+//   for (let a = 0; a < k; a++) {
+//     for (let b = a + 1; b < k; b++) {
+//       let colorA = chroma(colors[a]);
+//       let colorB = chroma(colors[b]);
+//       let distanceNorm = difference(colorA, colorB);
+//       if (distanceNorm < smallestPerceivableDistance) continue;
+//       let aSim = blinder[type](colorA.hex());
+//       let bSim = blinder[type](colorB.hex());
+//       let distanceSim = difference(aSim, bSim);
+//       let isNotOk =
+//         distanceNorm / distanceSim > ratioThreshold &&
+//         distanceSim < smallestPerceivableDistance;
+//       // count combinations that are problematic
+//       if (isNotOk) {
+//         notOK++;
+//         notOKColorIndexes.push([a, b]);
+//       }
+//     }
+//   }
+//   // compute share of problematic colors
+//   return { pass: notOK === 0, notOKColorIndexes };
+// }
+
+function checkType(colors: Color[], type: BlindnessTypes) {
   let notOK = 0;
   let notOKColorIndexes: [number, number][] = [];
   let ratioThreshold = 5;
@@ -40,12 +75,18 @@ function checkType(colors: ChromaColor[], type: BlindnessTypes) {
   // compute distances between colors
   for (let a = 0; a < k; a++) {
     for (let b = a + 1; b < k; b++) {
-      let colorA = chroma(colors[a]);
-      let colorB = chroma(colors[b]);
-      let distanceNorm = difference(colorA, colorB);
+      let colorA = colors[a];
+      let colorB = colors[b];
+      let distanceNorm = difference(colorA.toColorIO(), colorB.toColorIO());
       if (distanceNorm < smallestPerceivableDistance) continue;
-      let aSim = blinder[type](colorA.hex());
-      let bSim = blinder[type](colorB.hex());
+      let aSim = colorFromHex(
+        blinder[type](colorA.toHex()),
+        colorA.spaceName
+      ).toColorIO();
+      let bSim = colorFromHex(
+        blinder[type](colorB.toHex()),
+        colorB.spaceName
+      ).toColorIO();
       let distanceSim = difference(aSim, bSim);
       let isNotOk =
         distanceNorm / distanceSim > ratioThreshold &&
@@ -61,8 +102,12 @@ function checkType(colors: ChromaColor[], type: BlindnessTypes) {
   return { pass: notOK === 0, notOKColorIndexes };
 }
 
-function difference(colorA: ChromaColor, colorB: ChromaColor) {
-  return 0.5 * (chroma.deltaE(colorA, colorB) + chroma.deltaE(colorB, colorA));
+// function difference(colorA: ChromaColor, colorB: ChromaColor) {
+//   return 0.5 * (chroma.deltaE(colorA, colorB) + chroma.deltaE(colorB, colorA));
+// }
+
+function difference(colorA: ColorIO, colorB: ColorIO) {
+  return 0.5 * (colorA.deltaE(colorB, "2000") + colorB.deltaE(colorA, "2000"));
 }
 
 const checks = ["deuteranopia", "protanopia", "tritanopia"].map((key) => {
@@ -70,7 +115,8 @@ const checks = ["deuteranopia", "protanopia", "tritanopia"].map((key) => {
     name = `Colorblind Friendly for ${key}`;
     taskTypes = ["sequential", "diverging", "categorical"] as TaskType[];
     _runCheck() {
-      const colors = this.palette.colors.map((x) => x.toChroma());
+      // const colors = this.palette.colors.map((x) => x.toChroma());
+      const colors = this.palette.colors;
       const { pass, notOKColorIndexes } = checkType(colors, key);
       return { passCheck: pass, data: notOKColorIndexes };
     }

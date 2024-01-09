@@ -31,7 +31,7 @@ function jndLabInterval(p: pType, s: sType) {
   return nd(pVal, sVal);
 }
 
-function noticeablyDifferent(
+export function noticeablyDifferent(
   c1: Color,
   c2: Color,
   s: sType = 0.1,
@@ -50,7 +50,7 @@ function noticeablyDifferent(
 
 export function checkJNDs(
   colors: Color[]
-): [keyof typeof sMap, Color, Color][] {
+): [keyof typeof sMap, Color, Color, number, number][] {
   const invalid = [] as any[];
   for (let i = 0; i < colors.length; i++) {
     for (let j = i + 1; j < colors.length; j++) {
@@ -63,7 +63,7 @@ export function checkJNDs(
             "default"
           )
         ) {
-          invalid.push([s, colors[i], colors[j]]);
+          invalid.push([s, colors[i], colors[j], i, j]);
         }
       });
     }

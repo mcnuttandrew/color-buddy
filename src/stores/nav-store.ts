@@ -3,11 +3,13 @@ import { writable } from "svelte/store";
 interface StoreData {
   route: "examples" | "compare" | "eval";
   comparePal: string | undefined;
+  colorSim: "deuteranopia" | "protanopia" | "tritanopia" | "none";
 }
 
 const InitialStore: StoreData = {
   route: "examples",
   comparePal: undefined,
+  colorSim: "none",
 };
 const storeName = "color-pal-nav-store";
 
@@ -32,6 +34,8 @@ function createStore() {
     setComparePal: (comparePal: StoreData["comparePal"]) =>
       persistUpdate((old) => ({ ...old, comparePal })),
     reset: () => set({ ...InitialStore }),
+    setColorSim: (colorSim: StoreData["colorSim"]) =>
+      persistUpdate((old) => ({ ...old, colorSim })),
   };
 }
 

@@ -10,11 +10,13 @@
   import AddColor from "./contextual-tools/AddColor.svelte";
   import Rotate from "./contextual-tools/Rotate.svelte";
   import Deduplicate from "./contextual-tools/Deduplicate.svelte";
+  import SetSimulation from "./context-free-tools/SetSimulation.svelte";
 </script>
 
 <div
   class="flex bg-slate-400 p-2 h-12 flex-none items-center overflow-x-scroll overflow-y-hidden"
 >
+  <SetSimulation />
   <AddColor />
   <AdjustColor />
   <OpposingColor />

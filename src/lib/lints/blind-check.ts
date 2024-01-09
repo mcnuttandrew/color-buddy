@@ -1,70 +1,41 @@
 import { ColorLint } from "./ColorLint";
 import type { TaskType } from "./ColorLint";
-import type { Color as ChromaColor } from "chroma-js";
-import chroma from "chroma-js";
 import ColorIO from "colorjs.io";
 import { Color, colorFromHex } from "../Color";
+import simulate_cvd from "../blindness";
+import blind from "color-blind";
 
-import blinder from "color-blind";
-
-// drawn from
-// https://github.dev/gka/palettes
-
-const blindnessTypes = ["deuteranopia", "protanopia", "tritanopia"];
-const blindnessLabels: Record<string, string> = {
+const blindnessTypes = ["deuteranopia", "protanopia", "tritanopia"] as const;
+const blindnessLabels: Record<(typeof blindnessTypes)[number], string> = {
   deuteranopia: "(ie can't see green)",
   protanopia: "(ie can't see red)",
   tritanopia: "(ie can't see blue)",
 };
 
 type BlindnessTypes = (typeof blindnessTypes)[number];
-export function colorBlindCheck(colors: ChromaColor[]): string[] {
-  const invalid = [];
-  for (let i = 0; i < blindnessTypes.length; i++) {
-    if (!checkType(colors, blindnessTypes[i])) invalid.push(blindnessTypes[i]);
+
+function indexesWithSmallDeltaE(colors: Color[]) {
+  let indexes: [number, number][] = [];
+  for (let i = 0; i < colors.length; i++) {
+    for (let j = i + 1; j < colors.length; j++) {
+      const deltaE = difference(colors[i].toColorIO(), colors[j].toColorIO());
+      if (deltaE < 9) {
+        indexes.push([i, j]);
+      }
+    }
   }
-  return invalid;
+  return indexes;
 }
-
-export function colorBlindSim(color: string, type: BlindnessTypes) {
-  return blinder[type](chroma(color).hex());
-}
-
-// function checkType(colors: ChromaColor[], type: BlindnessTypes) {
-//   let notOK = 0;
-//   let notOKColorIndexes: [number, number][] = [];
-//   let ratioThreshold = 5;
-//   let smallestPerceivableDistance = 9;
-//   let k = colors.length;
-//   if (!k) {
-//     return { pass: true, notOKColorIndexes };
-//   }
-//   // compute distances between colors
-//   for (let a = 0; a < k; a++) {
-//     for (let b = a + 1; b < k; b++) {
-//       let colorA = chroma(colors[a]);
-//       let colorB = chroma(colors[b]);
-//       let distanceNorm = difference(colorA, colorB);
-//       if (distanceNorm < smallestPerceivableDistance) continue;
-//       let aSim = blinder[type](colorA.hex());
-//       let bSim = blinder[type](colorB.hex());
-//       let distanceSim = difference(aSim, bSim);
-//       let isNotOk =
-//         distanceNorm / distanceSim > ratioThreshold &&
-//         distanceSim < smallestPerceivableDistance;
-//       // count combinations that are problematic
-//       if (isNotOk) {
-//         notOK++;
-//         notOKColorIndexes.push([a, b]);
-//       }
-//     }
-//   }
-//   // compute share of problematic colors
-//   return { pass: notOK === 0, notOKColorIndexes };
-// }
 
 function checkType(colors: Color[], type: BlindnessTypes) {
-  let notOK = 0;
+  const blindColors = colors.map((x) => simulate_cvd(type, x));
+  let notOKColorIndexes: [number, number][] =
+    indexesWithSmallDeltaE(blindColors);
+  return { pass: notOKColorIndexes.length === 0, notOKColorIndexes };
+}
+
+// adapted from https://github.dev/gka/palettes
+function checkTypeA(colors: Color[], type: BlindnessTypes) {
   let notOKColorIndexes: [number, number][] = [];
   let ratioThreshold = 5;
   let smallestPerceivableDistance = 9;
@@ -72,50 +43,38 @@ function checkType(colors: Color[], type: BlindnessTypes) {
   if (!k) {
     return { pass: true, notOKColorIndexes };
   }
+
   // compute distances between colors
   for (let a = 0; a < k; a++) {
     for (let b = a + 1; b < k; b++) {
-      let colorA = colors[a];
-      let colorB = colors[b];
+      let [colorA, colorB] = [a, b].map((x) => colors[x]);
       let distanceNorm = difference(colorA.toColorIO(), colorB.toColorIO());
       if (distanceNorm < smallestPerceivableDistance) continue;
-      let aSim = colorFromHex(
-        blinder[type](colorA.toHex()),
-        colorA.spaceName
-      ).toColorIO();
-      let bSim = colorFromHex(
-        blinder[type](colorB.toHex()),
-        colorB.spaceName
-      ).toColorIO();
+      let aSim = colorFromHex(blind[type](colorA.toHex()), "lab").toColorIO();
+      let bSim = colorFromHex(blind[type](colorB.toHex()), "lab").toColorIO();
       let distanceSim = difference(aSim, bSim);
       let isNotOk =
         distanceNorm / distanceSim > ratioThreshold &&
         distanceSim < smallestPerceivableDistance;
       // count combinations that are problematic
       if (isNotOk) {
-        notOK++;
         notOKColorIndexes.push([a, b]);
       }
     }
   }
   // compute share of problematic colors
-  return { pass: notOK === 0, notOKColorIndexes };
+  return { pass: notOKColorIndexes.length === 0, notOKColorIndexes };
 }
-
-// function difference(colorA: ChromaColor, colorB: ChromaColor) {
-//   return 0.5 * (chroma.deltaE(colorA, colorB) + chroma.deltaE(colorB, colorA));
-// }
 
 function difference(colorA: ColorIO, colorB: ColorIO) {
   return 0.5 * (colorA.deltaE(colorB, "2000") + colorB.deltaE(colorA, "2000"));
 }
 
-const checks = ["deuteranopia", "protanopia", "tritanopia"].map((key) => {
+const checks = blindnessTypes.map((key) => {
   return class ColorBlindCheck extends ColorLint<[number, number][], false> {
     name = `Colorblind Friendly for ${key}`;
     taskTypes = ["sequential", "diverging", "categorical"] as TaskType[];
     _runCheck() {
-      // const colors = this.palette.colors.map((x) => x.toChroma());
       const colors = this.palette.colors;
       const { pass, notOKColorIndexes } = checkType(colors, key);
       return { passCheck: pass, data: notOKColorIndexes };

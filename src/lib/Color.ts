@@ -83,7 +83,7 @@ export class CIELAB extends Color {
     this.spaceName = "lab";
   }
   toString(): string {
-    const [L, a, b] = Object.values(this.channels);
+    const [L, a, b] = Object.values(this.channels).map((x) => x || 0);
     // .map((x) => x.toPrecision(1));
     return `lab(${L}% ${a} ${b})`;
   }
@@ -127,7 +127,7 @@ export class HSL extends Color {
     this.spaceName = "hsl";
   }
   toString(): string {
-    const [h, s, l] = Object.values(this.channels);
+    const [h, s, l] = Object.values(this.channels).map((x) => x || 0);
     return `hsl(${h} ${s}% ${l}%)`;
   }
 }
@@ -235,7 +235,7 @@ export const colorDirectory = {
 
 type ColorSpace = keyof typeof colorDirectory | string;
 const domains = {
-  lab: { a: [-100, 100], b: [-100, 100], l: [0, 100] },
+  lab: { a: [-110, 110], b: [-110, 110], l: [0, 100] },
   oklab: { a: [-0.4, 0.4], b: [-0.4, 0.4], l: [0, 1] },
   rgb: { r: [0, 255], g: [0, 255], b: [0, 255] },
   // srgb: { r: [0, 255], g: [255, 0], b: [0, 255] },

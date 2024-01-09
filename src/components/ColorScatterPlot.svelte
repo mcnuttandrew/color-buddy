@@ -5,15 +5,13 @@
     colorFromChannels,
     toColorSpace,
     colorPickerConfig,
-    colorFromHex,
   } from "../lib/Color";
   import { makeExtents, deDup, toggleElement } from "../lib/utils";
+  import navStore from "../stores/nav-store";
   import { scaleLinear } from "d3-scale";
   import DoubleRangeSlider from "../components/DoubleRangeSlider.svelte";
   import VerticalDoubleRangeSlider from "../components/VerticalDoubleRangeSlider.svelte";
-  import Tooltip from "../components/Tooltip.svelte";
-  import blind from "color-blind";
-  import { buttonStyle } from "../lib/styles";
+  import simulate_cvd from "../lib/blindness";
 
   export let scatterPlotMode: "moving" | "looking";
 
@@ -26,13 +24,11 @@
   export let onFocusedColorsChange: (color: number[]) => void;
   export let colorSpace: any;
 
-  $: selectedBlindType = "none";
+  $: selectedBlindType = $navStore.colorSim;
   $: blindColors =
     selectedBlindType === "none"
       ? []
-      : Pal.colors
-          .map((x) => blind[selectedBlindType](x.toHex()))
-          .map((x) => colorFromHex(x, colorSpace));
+      : Pal.colors.map((x) => simulate_cvd(selectedBlindType as any, x));
 
   $: focusSet = new Set(focusedColors);
 
@@ -274,24 +270,7 @@
 <!-- svelte-ignore a11y-no-static-element-interactions -->
 <div class="flex">
   <div class="flex flex-col">
-    <span class="flex w-full justify-between">
-      {config.xyTitle}
-      <Tooltip>
-        <div slot="content">
-          <select bind:value={selectedBlindType}>
-            <!-- {#each ["none", ...Object.keys(blind)] as blindType}
-              <option value={blindType}>{blindType}</option>
-            {/each} -->
-            {#each ["none", "deuteranopia", "protanopia", "tritanopia"] as blindType}
-              <option value={blindType}>{blindType}</option>
-            {/each}
-          </select>
-        </div>
-        <button slot="target" let:toggle on:click={toggle} class={buttonStyle}>
-          blind sim
-        </button>
-      </Tooltip>
-    </span>
+    {config.xyTitle}
     <div class="flex h-full">
       <div class="h-full py-4" style="max-height: {height}px">
         <VerticalDoubleRangeSlider

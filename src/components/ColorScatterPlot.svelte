@@ -57,18 +57,21 @@
   $: xScale = scaleLinear()
     .domain([domainXScale(extents.x[0]), domainXScale(extents.x[1])])
     .range([0, plotWidth]);
+  $: xNonDimScale = scaleLinear().domain([0, 1]).range(xScale.domain());
 
   $: yRange = config.yDomain;
   $: domainYScale = scaleLinear().domain([0, 1]).range(yRange);
   $: yScale = scaleLinear()
     .domain([domainYScale(extents.y[0]), domainYScale(extents.y[1])])
     .range([0, plotHeight]);
+  $: yNonDimScale = scaleLinear().domain([0, 1]).range(yScale.domain());
 
   $: zRange = config.zDomain;
   $: domainLScale = scaleLinear().domain([0, 1]).range(zRange);
   $: zScale = scaleLinear()
     .domain([domainLScale(extents.z[0]), domainLScale(extents.z[1])])
     .range([0, plotHeight]);
+  $: [zMin, zMax] = zScale.domain();
 
   let dragging: false | { x: number; y: number } = false;
   let dragBox: false | { x: number; y: number } = false;
@@ -264,6 +267,9 @@
   $: x = (point: Color) => xScale(point.toChannels()[1]);
   $: y = (point: Color) => yScale(point.toChannels()[2]);
   $: z = (point: Color) => zScale(point.toChannels()[0]);
+
+  const avgNums = (nums: number[]) =>
+    nums.reduce((acc, x) => acc + x, 0) / nums.length;
 </script>
 
 <!-- svelte-ignore a11y-no-static-element-interactions -->
@@ -286,15 +292,39 @@
         on:touchend={stopDrag}
       >
         <g transform={`translate(${margin.left}, ${margin.top})`}>
-          <rect
-            x={0}
-            y={0}
-            width={xScale.range()[1]}
-            height={yScale.range()[1]}
-            fill={bg.toHex()}
-            stroke={axisColor}
-            stroke-width="1"
-          />
+          {#if dragging && focusedColors.length}
+            {#each [...new Array(50)] as _, i}
+              {#each [...new Array(50)] as _, j}
+                <rect
+                  x={xScale(xNonDimScale(i / 50))}
+                  y={yScale(yNonDimScale(j / 50))}
+                  width={plotWidth / 50}
+                  height={plotHeight / 50}
+                  opacity="0.9"
+                  fill={colorFromChannels(
+                    [
+                      avgNums(
+                        focusedColors.map((x) => colors[x].toChannels()[0])
+                      ),
+                      xNonDimScale(i / 50),
+                      yNonDimScale(j / 50),
+                    ],
+                    colorSpace
+                  ).toHex()}
+                />
+              {/each}
+            {/each}
+          {:else}
+            <rect
+              x={0}
+              y={0}
+              width={xScale.range()[1]}
+              height={yScale.range()[1]}
+              fill={bg.toHex()}
+              stroke={axisColor}
+              stroke-width="1"
+            />
+          {/if}
           <line
             x1={points.centerTop.x}
             y1={points.centerTop.y}

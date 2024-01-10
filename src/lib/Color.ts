@@ -235,7 +235,7 @@ export const colorDirectory = {
 
 type ColorSpace = keyof typeof colorDirectory | string;
 const domains = {
-  lab: { a: [-110, 110], b: [-110, 110], l: [0, 100] },
+  lab: { a: [-125, 125], b: [-125, 125], l: [0, 100] },
   oklab: { a: [-0.4, 0.4], b: [-0.4, 0.4], l: [0, 1] },
   rgb: { r: [0, 255], g: [0, 255], b: [0, 255] },
   // srgb: { r: [0, 255], g: [255, 0], b: [0, 255] },

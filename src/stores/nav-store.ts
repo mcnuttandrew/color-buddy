@@ -4,12 +4,14 @@ interface StoreData {
   route: "examples" | "compare" | "eval";
   comparePal: string | undefined;
   colorSim: "deuteranopia" | "protanopia" | "tritanopia" | "none";
+  includeQuotes: boolean;
 }
 
 const InitialStore: StoreData = {
   route: "examples",
   comparePal: undefined,
   colorSim: "none",
+  includeQuotes: false,
 };
 const storeName = "color-pal-nav-store";
 
@@ -36,6 +38,8 @@ function createStore() {
     reset: () => set({ ...InitialStore }),
     setColorSim: (colorSim: StoreData["colorSim"]) =>
       persistUpdate((old) => ({ ...old, colorSim })),
+    setIncludeQuotes: (includeQuotes: StoreData["includeQuotes"]) =>
+      persistUpdate((old) => ({ ...old, includeQuotes })),
   };
 }
 

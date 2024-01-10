@@ -1,9 +1,14 @@
 import "./app.css";
 import App from "./App.svelte";
 
-const targetElement = document.getElementById("app");
-const app = new App({
-  target: targetElement ? targetElement : document.body,
-});
+let app;
+try {
+  const targetElement = document.getElementById("app");
+  app = new App({
+    target: targetElement ? targetElement : document.body,
+  });
+} catch (error) {
+  console.error(error);
+}
 
 export default app;

@@ -15,16 +15,18 @@ const InitialStore: StoreData = {
 };
 const storeName = "color-pal-nav-store";
 
+const addDefaults = (store: StoreData): StoreData => {
+  return {
+    ...InitialStore,
+    ...store,
+  };
+};
+
 function createStore() {
-  const storeData: StoreData = JSON.parse(
-    localStorage.getItem(storeName) || JSON.stringify(InitialStore)
+  const storeData: StoreData = addDefaults(
+    JSON.parse(localStorage.getItem(storeName) || JSON.stringify(InitialStore))
   );
-  Object.keys(InitialStore).forEach((key) => {
-    if (!(key in storeData)) {
-      const Key: keyof StoreData = key as any;
-      (storeData as any)[Key] = InitialStore[Key] as any;
-    }
-  });
+
   localStorage.setItem(storeName, JSON.stringify(storeData));
   const { subscribe, set, update } = writable<StoreData>(storeData);
   const persistUpdate = (updateFunc: (old: StoreData) => StoreData) =>

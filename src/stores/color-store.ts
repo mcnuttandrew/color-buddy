@@ -111,46 +111,32 @@ function insertPalette(palettes: Palette[], pal: Palette): Palette[] {
 }
 
 // install defaults if not present
-function addDefaults(store: Partial<StoreData>): StoreData {
-  const storeData = { ...store };
+function addDefaults(store: Partial<StorageData>): StorageData {
   // check if the base store objects work right
-  Object.keys(InitialStore).forEach((key) => {
-    if (!(key in storeData)) {
-      storeData[key as keyof StoreData] = InitialStore[
-        key as keyof StorageData
-      ] as any;
-    }
-  });
-  const palKeys = Object.keys(InitialStore.currentPal);
-
-  // check current pal
-  palKeys
-    .filter((key) => !(key in storeData.currentPal!))
-    .forEach((key) => {
-      const palKey = key as keyof Palette;
-      storeData.currentPal![palKey] = InitialStore.currentPal[palKey] as any;
-    });
+  const storeData = { ...InitialStore, ...store };
+  // check if the current pal works right
+  storeData.currentPal = {
+    ...InitialStore.currentPal,
+    ...storeData.currentPal,
+  };
 
   // also check all of the palettes
-  (storeData.palettes || []).forEach((pal) =>
-    palKeys
-      .filter((key) => !(key in pal))
-      .forEach((key) => {
-        const palKey = key as keyof Palette;
-        pal[palKey] = InitialStore.currentPal[palKey] as any;
-      })
-  );
+  storeData.palettes = storeData.palettes!.map((pal) => ({
+    ...InitialStore.currentPal,
+    ...pal,
+  }));
 
-  return storeData as StoreData;
+  return storeData as StorageData;
 }
 
 function createStore() {
   let storeData: StoreData = convertStoreHexToColor(
-    JSON.parse(
-      localStorage.getItem("color-pal") || JSON.stringify(InitialStore)
+    addDefaults(
+      JSON.parse(
+        localStorage.getItem("color-pal") || JSON.stringify(InitialStore)
+      )
     )
   );
-  storeData = addDefaults(storeData);
 
   // persist new store to storage
   localStorage.setItem(

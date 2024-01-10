@@ -116,11 +116,20 @@ function createStore() {
       localStorage.getItem("color-pal") || JSON.stringify(InitialStore)
     )
   );
-
+  // install defaults if not present
+  Object.keys(InitialStore).forEach((key) => {
+    if (!(key in storeData)) {
+      storeData[key as keyof StoreData] = InitialStore[
+        key as keyof StorageData
+      ] as any;
+    }
+  });
+  // persist new store to storage
   localStorage.setItem(
     "color-pal",
     JSON.stringify(convertStoreColorToHex(storeData))
   );
+  // create store
   const { subscribe, set, update } = writable<StoreData>(storeData);
   let undoStack: StoreData[] = [];
   let redoStack: StoreData[] = [];

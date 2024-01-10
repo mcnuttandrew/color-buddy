@@ -20,6 +20,13 @@ const InitialStore: StoreData = {
 const storeName = "color-pal-examples";
 function createStore() {
   const storeData: StoreData = JSON.parse(JSON.stringify(InitialStore));
+  // install defaults if not present
+  Object.keys(InitialStore).forEach((key) => {
+    if (!(key in storeData)) {
+      const Key: keyof StoreData = key as any;
+      storeData[Key] = InitialStore[Key] as any;
+    }
+  });
 
   const { subscribe, set, update } = writable<StoreData>(storeData);
   idb.get(storeName).then((x) => {

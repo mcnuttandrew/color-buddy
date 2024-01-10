@@ -1,20 +1,25 @@
 import type { Color as ChromaColor } from "chroma-js";
 import chroma from "chroma-js";
 import ColorIO from "colorjs.io";
+
+const hexCache = new Map<string, string>();
 export class Color {
-  name: string;
-  channels: Record<string, number>;
-  chromaBind: typeof chroma.lab;
-  spaceName: keyof typeof colorDirectory;
-  constructor() {
-    this.name = "";
-    this.channels = {};
-    this.chromaBind = chroma.rgb;
-    this.spaceName = "rgb";
-  }
+  name: string = "";
+  channels: Record<string, number> = {};
+  chromaBind: typeof chroma.lab = chroma.rgb;
+  spaceName: keyof typeof colorDirectory = "rgb";
 
   toHex(): string {
-    return this.chromaBind(...this.toChannels()).hex();
+    const str = this.toString();
+    if (hexCache.has(str)) {
+      return hexCache.get(str) as string;
+    }
+    const newHex = this.toColorIO().to("srgb").toString({ format: "hex" });
+    // const oldHex = this.chromaBind(...this.toChannels()).hex();
+    // console.log(newHex, oldHex);
+    // return this.chromaBind(...this.toChannels()).hex();
+    hexCache.set(str, newHex);
+    return newHex;
   }
   toString(): string {
     const channelsString = Object.values(this.channels)
@@ -70,18 +75,23 @@ export class Color {
     });
     return newColor;
   }
+  luminance(): number {
+    return chroma(this.toHex()).luminance();
+  }
+  deltaE(color: Color): number {
+    return chroma.deltaE(this.toChroma(), color.toChroma());
+  }
+  symmetricDeltaE(color: Color): number {
+    return 0.5 * (this.deltaE(color) + color.deltaE(this));
+  }
 }
 
 export class CIELAB extends Color {
-  name: "CIELAB";
-  channels: { L: number; a: number; b: number };
-  constructor() {
-    super();
-    this.name = "CIELAB";
-    this.channels = { L: 0, a: 0, b: 0 };
-    this.chromaBind = chroma.lab;
-    this.spaceName = "lab";
-  }
+  name = "CIELAB";
+  channels = { L: 0, a: 0, b: 0 };
+  chromaBind = chroma.lab;
+  spaceName = "lab" as const;
+
   toString(): string {
     const [L, a, b] = Object.values(this.channels).map((x) => x || 0);
     // .map((x) => x.toPrecision(1));
@@ -89,15 +99,10 @@ export class CIELAB extends Color {
   }
 }
 export class HSV extends Color {
-  name: "HSV";
-  channels: { h: number; s: number; v: number };
-  constructor() {
-    super();
-    this.name = "HSV";
-    this.channels = { h: 0, s: 0, v: 0 };
-    this.chromaBind = chroma.hsv;
-    this.spaceName = "hsv";
-  }
+  name = "HSV";
+  channels = { h: 0, s: 0, v: 0 };
+  chromaBind = chroma.hsv;
+  spaceName = "hsv" as const;
   toString(): string {
     const [h, s, v] = Object.values(this.channels);
     return `color(hsv ${h} ${s} ${v})`;
@@ -105,80 +110,54 @@ export class HSV extends Color {
 }
 
 export class RGB extends Color {
-  name: "RGB";
-  channels: { r: number; g: number; b: number };
-  constructor() {
-    super();
-    this.name = "RGB";
-    this.channels = { r: 0, g: 0, b: 0 };
-    this.chromaBind = chroma.rgb;
-    this.spaceName = "rgb";
-  }
+  name = "RGB";
+  channels = { r: 0, g: 0, b: 0 };
+  chromaBind = chroma.rgb;
+  spaceName = "rgb" as const;
 }
 
 export class HSL extends Color {
-  name: "HSL";
-  channels: { h: number; s: number; l: number };
-  constructor() {
-    super();
-    this.name = "HSL";
-    this.channels = { h: 0, s: 0, l: 0 };
-    this.chromaBind = chroma.hsl;
-    this.spaceName = "hsl";
-  }
+  name = "HSL";
+  channels = { h: 0, s: 0, l: 0 };
+  chromaBind = chroma.hsl;
+  spaceName = "hsl" as const;
+
   toString(): string {
     const [h, s, l] = Object.values(this.channels).map((x) => x || 0);
     return `hsl(${h} ${s}% ${l}%)`;
   }
 }
 export class LCH extends Color {
-  name: "LCH";
-  channels: { l: number; c: number; h: number };
-  constructor() {
-    super();
-    this.name = "LCH";
-    this.channels = { l: 0, c: 0, h: 0 };
-    this.chromaBind = chroma.lch;
-    this.spaceName = "lch";
-  }
+  name = "LCH";
+  channels = { l: 0, c: 0, h: 0 };
+  chromaBind = chroma.lch;
+  spaceName = "lch" as const;
 }
 
 export class OKLAB extends Color {
-  name: "OKLAB";
-  channels: { l: number; a: number; b: number };
-  constructor() {
-    super();
-    this.name = "OKLAB";
-    this.channels = { l: 0, a: 0, b: 0 };
-    this.chromaBind = chroma.oklab;
-    this.spaceName = "oklab";
-  }
+  name = "OKLAB";
+  channels = { l: 0, a: 0, b: 0 };
+  chromaBind = chroma.oklab;
+  spaceName = "oklab" as const;
 }
 
 export class OKLCH extends Color {
-  name: "OKLCH";
-  channels: { l: number; c: number; h: number };
-  constructor() {
-    super();
-    this.name = "OKLCH";
-    this.channels = { l: 0, c: 0, h: 0 };
-    this.chromaBind = chroma.oklch;
-    this.spaceName = "oklch";
-  }
+  name = "OKLCH";
+  channels = { l: 0, c: 0, h: 0 };
+  chromaBind = chroma.oklch;
+  spaceName = "oklch" as const;
 }
 
 export class JZAZBZ extends Color {
-  name: "JZAZBZ";
-  channels: { jz: number; az: number; bz: number };
+  name = "JZAZBZ";
+  channels = { jz: 0, az: 0, bz: 0 };
+  spaceName = "jzazbz" as const;
   constructor() {
     super();
-    this.name = "JZAZBZ";
-    this.channels = { jz: 0, az: 0, bz: 0 };
     this.chromaBind = (jz, az, bz) => {
       const [l, a, b] = new ColorIO(this.toString()).to("lab").coords;
       return chroma.lab(l, a, b);
     };
-    this.spaceName = "jzazbz";
   }
   toString(): string {
     const [jz, az, bz] = Object.values(this.channels);
@@ -193,12 +172,18 @@ export function colorFromString(
   return new colorDirectory[colorSpace]().fromString(colorString);
 }
 
+const colorHexCache = new Map<string, Color>();
 export function colorFromHex(
   hex: string,
   colorSpace: keyof typeof colorDirectory
 ): Color {
+  if (colorHexCache.has(hex)) {
+    return { ...colorHexCache.get(hex) } as Color;
+  }
   const color = new ColorIO(hex).to(colorSpace);
-  return new colorDirectory[colorSpace]().fromChannels(color.coords);
+  const outColor = new colorDirectory[colorSpace]().fromChannels(color.coords);
+  colorHexCache.set(hex, outColor);
+  return outColor;
   // const color = chroma(hex);
   // return new colorDirectory[colorSpace]().fromChroma(color);
 }

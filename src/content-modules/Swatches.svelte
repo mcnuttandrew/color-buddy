@@ -33,10 +33,7 @@
   style={`background-color: ${bg.toHex()}; max-width: 600px`}
 >
   <div class="flex mb-2 justify-between items-center">
-    <span
-      class="text-sm flex flex-col"
-      class:text-white={bg.toChroma().luminance() < 0.5}
-    >
+    <span class="text-sm flex flex-col" class:text-white={bg.luminance() < 0.5}>
       <span>Click to modify colors</span>
       <span>Hold shift to select multiple</span>
     </span>

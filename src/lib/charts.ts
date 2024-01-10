@@ -32,8 +32,7 @@ export function buildTheme(pal: Palette): any {
 
   const fontStandard = "Montserrat, sans-serif UI";
   const fontTitle = "wf_standard-font, helvetica, arial, sans-serif";
-  const basicColor =
-    pal.background.toChroma().luminance() > 0.5 ? "#000000" : "#ffffff";
+  const basicColor = pal.background.luminance() > 0.5 ? "#000000" : "#ffffff";
   // const secondLevelElementColor = "#605E5C";
   // const backgroundColor = pal.background.toHex();
   const backgroundColor = "SaLmOn";

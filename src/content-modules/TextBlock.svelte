@@ -15,9 +15,7 @@
           ...colors.map(
             (color) =>
               `background-color: ${color.toHex()}; 
-                color: ${
-                  color.toChroma().luminance() > 0.5 ? "white" : "black"
-                };`
+                color: ${color.luminance() > 0.5 ? "white" : "black"};`
           ),
           ...new Array(20).map(() => ""),
         ];
@@ -28,7 +26,7 @@
 <p
   class="max-w-sm flex flex-wrap text-sm"
   style="background-color: {bg.toHex()};"
-  class:text-white={bg.toChroma().luminance() < 0.5}
+  class:text-white={bg.luminance() < 0.5}
 >
   {#each wordBreakDown as { word, style }}
     <span {style} class="mr-1 transition-all">{` ${word} `}</span>

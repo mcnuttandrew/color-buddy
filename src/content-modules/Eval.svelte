@@ -70,7 +70,7 @@
               focusStore.setColors([idx]);
             }}
             class="w-48 flex flex-col justify-center items-center text-sm mt-2 transition-all relative"
-            class:text-white={color.toChroma().luminance() < 0.5}
+            class:text-white={color.luminance() < 0.5}
             class:ml-5={$focusStore.focusedColors.includes(idx)}
             class:mr-5={!$focusStore.focusedColors.includes(idx)}
             style="min-height: 40px"

@@ -261,7 +261,7 @@
       label: zScale.domain()[1].toFixed(1),
     },
   };
-  $: axisColor = bg.toChroma().luminance() > 0.5 ? "gray" : "white";
+  $: axisColor = bg.luminance() > 0.5 ? "gray" : "white";
 
   let hoveredPoint: Color | false = false;
   $: x = (point: Color) => xScale(point.toChannels()[1]);
@@ -270,6 +270,8 @@
 
   const avgNums = (nums: number[]) =>
     nums.reduce((acc, x) => acc + x, 0) / nums.length;
+
+  const bgResolution = 25;
 </script>
 
 <!-- svelte-ignore a11y-no-static-element-interactions -->
@@ -292,39 +294,30 @@
         on:touchend={stopDrag}
       >
         <g transform={`translate(${margin.left}, ${margin.top})`}>
-          {#if dragging && focusedColors.length}
-            {#each [...new Array(50)] as _, i}
-              {#each [...new Array(50)] as _, j}
-                <rect
-                  x={xScale(xNonDimScale(i / 50))}
-                  y={yScale(yNonDimScale(j / 50))}
-                  width={plotWidth / 50}
-                  height={plotHeight / 50}
-                  opacity="0.9"
-                  fill={colorFromChannels(
-                    [
-                      avgNums(
-                        focusedColors.map((x) => colors[x].toChannels()[0])
-                      ),
-                      xNonDimScale(i / 50),
-                      yNonDimScale(j / 50),
-                    ],
-                    colorSpace
-                  ).toHex()}
-                />
-              {/each}
+          {#each [...new Array(bgResolution)] as _, i}
+            {#each [...new Array(bgResolution)] as _, j}
+              <rect
+                x={xScale(xNonDimScale(i / bgResolution))}
+                y={yScale(yNonDimScale(j / bgResolution))}
+                width={plotWidth / bgResolution}
+                height={plotHeight / bgResolution}
+                opacity="1"
+                fill={dragging && focusedColors.length
+                  ? colorFromChannels(
+                      [
+                        avgNums(
+                          focusedColors.map((x) => colors[x].toChannels()[0])
+                        ),
+                        xNonDimScale(i / bgResolution),
+                        yNonDimScale(j / bgResolution),
+                      ],
+                      colorSpace
+                    ).toHex()
+                  : bg.toHex()}
+              />
             {/each}
-          {:else}
-            <rect
-              x={0}
-              y={0}
-              width={xScale.range()[1]}
-              height={yScale.range()[1]}
-              fill={bg.toHex()}
-              stroke={axisColor}
-              stroke-width="1"
-            />
-          {/if}
+          {/each}
+
           <line
             x1={points.centerTop.x}
             y1={points.centerTop.y}
@@ -346,7 +339,7 @@
               text-anchor={point.anchor}
               x={point.x + point.labelAdjust.x}
               y={point.y + point.labelAdjust.y}
-              fill={bg.toChroma().luminance() > 0.5 ? "black" : "white"}
+              fill={bg.luminance() > 0.5 ? "black" : "white"}
             >
               {point.label}
             </text>
@@ -449,7 +442,7 @@
           <text
             x={xScale(bg.toChannels()[1])}
             y={yScale(bg.toChannels()[2])}
-            fill={bg.toChroma().luminance() > 0.5 ? "black" : "white"}
+            fill={bg.luminance() > 0.5 ? "black" : "white"}
             text-anchor="middle"
             alignment-baseline="middle"
             class="pointer-events-none"
@@ -526,7 +519,7 @@
                 text-anchor={"middle"}
                 x={40}
                 y={point.y}
-                fill={bg.toChroma().luminance() > 0.5 ? "black" : "white"}
+                fill={bg.luminance() > 0.5 ? "black" : "white"}
               >
                 {point.label}
               </text>

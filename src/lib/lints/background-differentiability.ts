@@ -28,19 +28,21 @@ export default class BackgroundDifferentiability extends ColorLint<
   }
   async suggestFix() {
     const { colors, background } = this.palette;
-    const backgroundL = background.toChroma().get("lab.l");
+    const backgroundL = background.toColorIO().to("lab").coords[0];
+    const bgCloserToWhite = backgroundL > 50;
+    const clamp = (x: number) => Math.max(0, Math.min(100, x));
+    const newL = clamp(
+      !bgCloserToWhite ? backgroundL * 1.5 : backgroundL * 0.5
+    );
     const newColors = colors.map((x, idx) => {
-      if (this.checkData.includes(idx)) {
-        const color = colors[idx];
-        const colorSpace = color.spaceName;
-        const newColor = toColorSpace(color, "lab");
-        const [l] = newColor.toChannels();
-        const dir = Math.min(l, 100) >= Math.min(backgroundL, 100) ? -1 : 1;
-        newColor.setChannel("L", Math.min(l + dir * 5, 100));
-        const el = toColorSpace(newColor, colorSpace);
-        return el;
+      if (!this.checkData.includes(idx)) {
+        return x;
       }
-      return x;
+      const color = colors[idx];
+      const colorSpace = color.spaceName;
+      const newColor = toColorSpace(color, "lab");
+      const [_l, a, b] = newColor.toChannels();
+      return toColorSpace(newColor.fromChannels([newL, a, b]), colorSpace);
     });
     return { ...this.palette, colors: newColors };
   }

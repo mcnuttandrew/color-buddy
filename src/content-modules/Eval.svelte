@@ -1,16 +1,19 @@
 <script lang="ts">
   import colorStore from "../stores/color-store";
   import focusStore from "../stores/focus-store";
-  import {
-    computeStats,
-    splitMessageIntoTextAndColors,
-  } from "../lib/color-stats";
+  import navStore from "../stores/nav-store";
+  import { computeStats } from "../lib/color-stats";
   import { runLintChecks } from "../lib/linter";
   import { colorNameSimple } from "../lib/lints/name-discrim";
   import { buttonStyle } from "../lib/styles";
   import EvalResponse from "./contextual-tools/EvalResponse.svelte";
   import Tooltip from "../components/Tooltip.svelte";
   import SwatchTooltipContent from "./SwatchTooltipContent.svelte";
+  import ExplanationViewer from "../components/ExplanationViewer.svelte";
+  import simulate_cvd from "../lib/blindness";
+
+  $: selectedBlindType = $navStore.colorSim;
+
   let metric: "dE" | "dE94" | "none" = "none";
   $: colors = $colorStore.currentPal.colors;
   $: stats = computeStats(
@@ -42,6 +45,9 @@
   <div class="flex">
     <div class="flex flex-col overflow-auto mr-5 bg-slate-100 p-4">
       <div>Colors</div>
+      {#if selectedBlindType !== "none"}
+        <div class="text-xs">Blindness Sim: {selectedBlindType}</div>
+      {/if}
       <div class="flex justify-between w-full text-xs italic">
         <span>Hex Value</span>
         {#if colorNames[0]}<span>Inferred Color Name</span>{/if}
@@ -64,13 +70,28 @@
               toggle();
               focusStore.setColors([idx]);
             }}
-            class="w-48 flex flex-col justify-center items-center text-sm relative mt-2 transition-all"
+            class="w-48 flex flex-col justify-center items-center text-sm mt-2 transition-all relative"
             class:text-white={color.toChroma().luminance() < 0.5}
             class:ml-5={$focusStore.focusedColors.includes(idx)}
             class:mr-5={!$focusStore.focusedColors.includes(idx)}
-            style="background-color: {color.toHex()}; min-height: 40px"
+            style="min-height: 40px"
           >
-            <div class="flex justify-between w-full px-2 items-center">
+            <div class="w-full flex h-full absolute">
+              <div
+                class="grow h-full"
+                style="background-color: {color.toHex()}"
+              ></div>
+              {#if selectedBlindType !== "none"}
+                <div
+                  class="grow h-full"
+                  style={`background-color: ${simulate_cvd(
+                    selectedBlindType,
+                    color
+                  ).toHex()}`}
+                ></div>
+              {/if}
+            </div>
+            <div class="flex justify-between w-full px-2 items-center z-10">
               <span class="flex flex-col items-start">
                 <span>{color.toHex()}</span>
                 <span class="flex">
@@ -79,7 +100,7 @@
                       <Tooltip>
                         <div slot="content" class="flex flex-col">
                           <div class="font-bold">{check.name}</div>
-                          <div class="text-sm">{check.message}</div>
+                          <ExplanationViewer {check} />
                         </div>
                         <button
                           slot="target"
@@ -151,22 +172,6 @@
               renable
             </button>
           </div>
-        {:else if evalConfig[check.name]?.ignoreUntil}
-          <div class="text-xs">
-            "{check.name}" Ignored until{" "}
-            {new Date(evalConfig[check.name]?.ignoreUntil).toLocaleString()}
-            <button
-              class={buttonStyle}
-              on:click={() => {
-                colorStore.setCurrentPalEvalConfig({
-                  ...evalConfig,
-                  [check.name]: { ignoreUntil: false },
-                });
-              }}
-            >
-              renable
-            </button>
-          </div>
         {:else}
           <div class="w-full rounded flex flex-col justify-between py-1">
             <div class="flex" class:font-bold={!check.passes}>
@@ -180,28 +185,7 @@
               {/if}{check.name}
             </div>
             {#if !check.passes}
-              <div class="text-sm italic">
-                {#each splitMessageIntoTextAndColors(check.message) as block}
-                  {#if block.type === "text"}
-                    <span>{block.content}</span>
-                  {:else}
-                    <button
-                      on:click={() => {
-                        const hexes = colors.map((x) =>
-                          x.toHex().toLowerCase()
-                        );
-                        const idx = hexes.findIndex(
-                          (x) => x === block.content.toLowerCase()
-                        );
-                        if (idx === -1) return;
-                        focusStore.setColors([idx]);
-                      }}
-                      style={`background-color: ${block.content}; top: -3px`}
-                      class="rounded-full w-3 h-3 ml-1 mr-1 inline-block cursor-pointer relative"
-                    ></button>
-                  {/if}
-                {/each}
-              </div>
+              <ExplanationViewer {check} />
             {/if}
           </div>
         {/if}

@@ -33,8 +33,11 @@
   style={`background-color: ${bg.toHex()}; max-width: 600px`}
 >
   <div class="flex mb-2 justify-between items-center">
-    <span class="text-sm flex flex-col">
-      <span>Click to modify colors,</span>
+    <span
+      class="text-sm flex flex-col"
+      class:text-white={bg.toChroma().luminance() < 0.5}
+    >
+      <span>Click to modify colors</span>
       <span>Hold shift to select multiple</span>
     </span>
     {#if focused.length === 1}
@@ -74,7 +77,7 @@
       </button>
     {/if}
   </div>
-  {#each classes as { className, styleMap }, jdx}
+  {#each classes as { className, styleMap }}
     <div class="flex justify-center flex-wrap">
       {#each colors as color, idx}
         <Tooltip top={"100px"}>

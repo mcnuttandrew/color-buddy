@@ -80,7 +80,7 @@
   {#each classes as { className, styleMap }}
     <div class="flex justify-center flex-wrap">
       {#each colors as color, idx}
-        <Tooltip top={"100px"}>
+        <Tooltip allowDrag={true}>
           <div slot="content" class="flex flex-col" let:onClick>
             <SwatchTooltipContent {color} closeTooltip={onClick} {idx} />
           </div>

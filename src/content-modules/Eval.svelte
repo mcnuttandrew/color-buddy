@@ -54,10 +54,9 @@
       </div>
       {#each colors as color, idx}
         <Tooltip
-          top={"100px"}
-          onClose={() => {
-            focusStore.clearColors();
-          }}
+          allowDrag={true}
+          onClose={() => focusStore.clearColors()}
+          top="50px"
         >
           <div slot="content" class="flex flex-col" let:onClick>
             <SwatchTooltipContent {color} closeTooltip={onClick} {idx} />

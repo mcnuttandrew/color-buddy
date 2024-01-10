@@ -76,6 +76,7 @@
   {#if color && focusedColor !== false}
     <Tooltip
       top={"-20px"}
+      allowDrag={true}
       initiallyOpen={true}
       onClose={() => {
         focusStore.clearColors();

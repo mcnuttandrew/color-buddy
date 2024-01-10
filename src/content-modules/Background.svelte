@@ -14,7 +14,7 @@
   <h1>Background</h1>
   <div>
     <!-- svelte-ignore a11y-click-events-have-key-events -->
-    <Tooltip top={"75px"}>
+    <Tooltip top={"75px"} allowDrag={true}>
       <div slot="content" class="flex flex-col" let:onClick>
         <input
           class="mb-2"

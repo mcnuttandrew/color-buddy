@@ -4,6 +4,8 @@
   export let onClose: () => void = () => {};
   export let initiallyOpen: boolean = false;
   export let positionAlongRightEdge: boolean = false;
+  export let allowDrag: boolean = false;
+  import { draggable } from "../lib/utils";
   let tooltipOpen: boolean = initiallyOpen;
   const query = "main *";
   function onClick() {
@@ -37,18 +39,31 @@
       ? `calc(${boundingBox.y}px + ${top})`
       : `${boundingBox.y}px`
     : "0";
+  $: leftString = boundingBox ? `${boundingBox.x}px` : "0";
 </script>
 
 {#if tooltipOpen && boundingBox}
   <Portal target="body">
     <div
       class="absolute min-w-10"
-      style={`left: ${boundingBox.x}px; top: ${topString}; z-index: 1000`}
+      style={`left: ${leftString}; top: ${topString}; z-index: 1000`}
     >
       <div class="relative" class:right-edge={positionAlongRightEdge}>
         <span
           class="tooltip rounded shadow-lg p-4 bg-slate-100 text-black max-w-lg flex-wrap flex"
         >
+          {#if allowDrag}
+            <div
+              class="absolute cursor-move w-12 h-12 bg-slate-100 rounded-full grab-handle"
+              use:draggable
+              on:dragmove|preventDefault={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                leftString = `${e.detail.x - 20}px`;
+                topString = `${e.detail.y - 20}px`;
+              }}
+            ></div>
+          {/if}
           {#if tooltipOpen}
             <slot name="content" {onClick} />
           {/if}
@@ -64,5 +79,11 @@
 <style>
   .right-edge {
     right: calc(100% - 2rem);
+  }
+
+  .grab-handle {
+    cursor: grab;
+    left: -30px;
+    top: -30px;
   }
 </style>

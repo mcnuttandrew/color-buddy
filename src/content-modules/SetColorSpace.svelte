@@ -1,7 +1,7 @@
 <script lang="ts">
   import colorStore from "../stores/color-store";
-  import { colorPickerConfig, toColorSpace } from "../lib/Color";
-  $: colors = $colorStore.currentPal.colors;
+  import { colorPickerConfig } from "../lib/Color";
+  $: colorSpace = $colorStore.currentPal.colorSpace;
   const notAllowed = new Set(["rgb", "hsv", "hsl"]);
 </script>
 
@@ -9,13 +9,10 @@
   <label for="color-space-select">Color Space</label>
   <select
     id="color-space-select"
-    value={colors[0] && colors[0].spaceName}
+    value={colorSpace}
     on:change={(e) => {
-      const newColors = colors.map((color) =>
-        // @ts-ignore
-        toColorSpace(color, e.target.value)
-      );
-      colorStore.setCurrentPalColors(newColors);
+      // @ts-ignore
+      colorStore.setColorSpace(e.target.value);
     }}
   >
     {#each Object.entries(colorPickerConfig).filter((x) => !notAllowed.has(x[0])) as [space, { title }]}

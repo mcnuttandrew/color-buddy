@@ -12,7 +12,7 @@
   $: colors = $colorStore.currentPal.colors;
   $: angle = 0;
 
-  $: colorSpace = $colorStore.currentPal.colors[0].spaceName;
+  $: colorSpace = $colorStore.currentPal.colorSpace;
   $: angle, rotatePoints();
   $: memorizedColors = false as false | Color[];
   let rotationPoint = "avg" as number | "avg" | "zero";

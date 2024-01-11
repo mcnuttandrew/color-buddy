@@ -9,7 +9,7 @@
   $: focusedColors = $focusStore.focusedColors;
   $: focusSet = new Set(focusedColors);
   $: focusLabs = focusedColors.map((idx) => colors[idx].toChannels());
-  $: colorSpace = $colorStore.currentPal.colors[0]?.spaceName || "lab";
+  $: colorSpace = $colorStore.currentPal.colorSpace;
   const ALIGNS = [
     { pos: 1, name: "Left", op: Math.min },
     { pos: 1, name: "Right", op: Math.max },

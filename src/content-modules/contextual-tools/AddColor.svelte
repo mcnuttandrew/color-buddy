@@ -8,7 +8,7 @@
   import Tooltip from "../../components/Tooltip.svelte";
 
   $: colors = $colorStore.currentPal.colors;
-  $: colorSpace = colors[0]?.spaceName || "lab";
+  $: colorSpace = $colorStore.currentPal.colorSpace;
 
   let suggestions = [randColor(), randColor(), randColor()].map((x) =>
     x.toHex()

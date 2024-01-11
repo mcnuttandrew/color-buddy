@@ -7,7 +7,7 @@
   import PalPreview from "../../components/PalPreview.svelte";
   import { buttonStyle, AIButtonStyle } from "../../lib/styles";
 
-  $: colorSpace = $colorStore.currentPal.colors[0]?.spaceName || "lab";
+  $: colorSpace = $colorStore.currentPal.colorSpace;
   let requestState: "idle" | "loading" | "loaded" | "failed" = "idle";
   let newPal: Palette = {
     colors: [],
@@ -15,6 +15,7 @@
     name: "blank",
     type: "categorical",
     evalConfig: {},
+    colorSpace,
   };
   let palPrompt: string = "";
 

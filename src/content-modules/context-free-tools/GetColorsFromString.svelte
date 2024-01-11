@@ -4,7 +4,7 @@
   import navStore from "../../stores/nav-store";
   $: colors = $colorStore.currentPal.colors;
   let state: "idle" | "error" = "idle";
-  $: colorSpace = $colorStore.currentPal.colors[0]?.spaceName || "lab";
+  $: colorSpace = $colorStore.currentPal.colorSpace;
 
   function processBodyInput(body: string) {
     try {

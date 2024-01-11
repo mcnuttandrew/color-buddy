@@ -8,7 +8,7 @@
   import PalDiff from "../../components/PalDiff.svelte";
 
   let requestState: "idle" | "loading" | "loaded" | "failed" = "idle";
-  $: colorSpace = $colorStore.currentPal.colors[0]?.spaceName || "lab";
+  $: colorSpace = $colorStore.currentPal.colorSpace;
   $: colors = $colorStore.currentPal.colors;
   $: selectedColors = $focusStore.focusedColors
     .map((x) => colors[x]?.toHex())
@@ -23,6 +23,7 @@
       background: $colorStore.currentPal.background,
       type: $colorStore.currentPal.type,
       evalConfig: {},
+      colorSpace,
     };
   }
 

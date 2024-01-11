@@ -22,8 +22,9 @@ export class Color {
   }
   toString(): string {
     const channelsString = Object.values(this.channels)
-      // .map((x) => x.toPrecision(4))
-      .join(",");
+      .map((x) => x || 0)
+      .map((x) => (x < 1e-7 ? 0 : x))
+      .join(", ");
     return `${this.spaceName}(${channelsString})`;
   }
   getChannel(channel: keyof typeof this.channels): number {
@@ -41,7 +42,10 @@ export class Color {
   inGamut(): boolean {
     // return new ColorIO(this.spaceName, this.toChannels()).inGamut();
     const x = this.toHex();
-    const y = colorFromHex(x, this.spaceName).toHex();
+    const y = colorFromHex(x, "srgb").toHex();
+    // if (x !== y) {
+    //   console.log("x", x, "y", y);
+    // }
     return x === y;
   }
   toColorIO(): ColorIO {
@@ -53,14 +57,19 @@ export class Color {
       const channels = new ColorIO(colorString).to(this.spaceName).coords;
       return this.fromChannels(channels);
     }
-    // extract the numbers from the string
-    const regex = new RegExp(`${this.spaceName}\\((.*)% (.*) (.*)\\)`);
-    const match = colorString.match(regex);
-    if (!match) {
-      throw new Error(`Invalid color string: ${colorString}`);
-    }
-    const [_, ...channels] = match;
-    return this.fromChannels([+channels[0], +channels[1], +channels[2]]);
+    return this.fromChannels(stringToChannels(this.spaceName, colorString));
+    // // extract the numbers from the string
+    // // const regex = new RegExp(`${this.spaceName}\\((.*)% (.*) (.*)\\)`);
+    // const regex = new RegExp(
+    //   `${this.spaceName}\\((.*?)(%|,)(.*?) (.*?)(%|,) (.*?)\\)\\)`
+    // );
+    // const match = colorString.match(regex);
+    // if (!match) {
+    //   throw new Error(`Invalid color string: ${colorString}`);
+    // }
+    // const [_, ...channels] = match;
+    // console.log(channels);
+    // return this.fromChannels([+channels[0], +channels[1], +channels[2]]);
   }
   fromChannels(channels: [number, number, number]): Color {
     const newColor = new (this.constructor as typeof Color)();
@@ -81,6 +90,35 @@ export class Color {
   copy(): Color {
     return this.fromChannels(this.toChannels());
   }
+}
+
+export function stringToChannels(spaceName: string, str: string) {
+  // const regex = new RegExp(
+  //   `${spaceName}\\((.*?)(%|,)(.*?) (.*?)(%|,) (.*?)\\)\\)`
+  // );
+  let temp = str
+    .replace(`${spaceName}(`, "")
+    .replace(")", "")
+    .replace(/%/g, "")
+    .replace(/,/g, " ")
+    .trim()
+    .split(" ")
+    .filter((x) => x.length);
+  const allNumbers = temp.every((x) => !isNaN(+x));
+
+  if (!(temp.length === 3 && allNumbers)) {
+    throw new Error(`Invalid color string: ${str}`);
+  }
+  return temp.map((x) => Number(x) * 1) as [number, number, number];
+  // console.log(temp);
+  // const regex = new RegExp(/(\-?\d+(?:\.\d+)?%){3}/);
+  // const match = str.match(regex);
+  // console.log(str, match, regex);
+  // if (!match) {
+  //   throw new Error(`Invalid color string: ${str}`);
+  // }
+  // const [_, ...channels] = match;
+  // return channels.map((x) => +x) as [number, number, number];
 }
 
 export class CIELAB extends Color {

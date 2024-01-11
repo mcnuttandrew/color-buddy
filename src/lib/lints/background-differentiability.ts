@@ -26,7 +26,7 @@ export default class BackgroundDifferentiability extends ColorLint<
     return `This palette has some colors (${str}) that are close to the background color`;
   }
   async suggestFix() {
-    const { colors, background } = this.palette;
+    const { colors, background, colorSpace } = this.palette;
     const backgroundL = background.toColorIO().to("lab").coords[0];
     const bgCloserToWhite = backgroundL > 50;
     const clamp = (x: number) => Math.max(0, Math.min(100, x));
@@ -38,7 +38,6 @@ export default class BackgroundDifferentiability extends ColorLint<
         return x;
       }
       const color = colors[idx];
-      const colorSpace = color.spaceName;
       const newColor = toColorSpace(color, "lab");
       const [_l, a, b] = newColor.toChannels();
       return toColorSpace(newColor.fromChannels([newL, a, b]), colorSpace);

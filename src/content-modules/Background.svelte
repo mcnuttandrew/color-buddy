@@ -5,7 +5,7 @@
   import ColorChannelPicker from "../components/ColorChannelPicker.svelte";
   import Tooltip from "../components/Tooltip.svelte";
   $: bg = $colorStore.currentPal.background;
-  $: colorSpace = $colorStore.currentPal.colors[0].spaceName || "lab";
+  $: colorSpace = $colorStore.currentPal.colorSpace;
   function onChange(color: Color) {
     colorStore.setBackground(color);
   }

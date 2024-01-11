@@ -4,7 +4,7 @@
   import focusStore from "../stores/focus-store";
   $: focusedSet = new Set($focusStore.focusedColors);
   $: copiedData = [] as Color[];
-  $: colorSpace = $colorStore.currentPal.colors[0].spaceName;
+  $: colorSpace = $colorStore.currentPal.colorSpace;
   $: [_zStep, xStep, yStep] = stepSize[colorSpace];
   function onKeyDown(e: any) {
     if (e.target.tagName.toLowerCase() === "input") {

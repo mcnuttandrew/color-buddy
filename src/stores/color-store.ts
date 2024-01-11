@@ -147,15 +147,30 @@ function createStore() {
   const { subscribe, set, update } = writable<StoreData>(storeData);
   let undoStack: StoreData[] = [];
   let redoStack: StoreData[] = [];
+  // special logic to enable not capturing too many steps via dragging
+  let pausePersistance = false;
+  let lastStore: StoreData = storeData;
+  const save = (store: StoreData) =>
+    localStorage.setItem(
+      "color-pal",
+      JSON.stringify(convertStoreColorToHex(store))
+    );
   const persistUpdate = (updateFunc: (old: StoreData) => StoreData) =>
     update((oldStore) => {
+      console.log(
+        "persist update",
+        pausePersistance,
+        undoStack.length,
+        redoStack.length
+      );
+      if (pausePersistance) {
+        lastStore = oldStore;
+        return updateFunc(oldStore);
+      }
       undoStack.push(oldStore);
       redoStack = [];
       const newVal: StoreData = updateFunc(oldStore);
-      localStorage.setItem(
-        "color-pal",
-        JSON.stringify(convertStoreColorToHex(newVal))
-      );
+      save(newVal);
       return newVal;
     });
   const palUp = (updateFunc: (old: Palette) => Palette) =>
@@ -170,20 +185,40 @@ function createStore() {
   const doSort = (comparator: (a: Color, b: Color) => number) => () =>
     palUp((n) => ({ ...n, colors: n.colors.sort(comparator) }));
 
+  const saveUpdate = (updateFunc: (old: StoreData) => StoreData) =>
+    update((oldStore) => {
+      const newVal = updateFunc(oldStore);
+      save(newVal);
+      return newVal;
+    });
+
   return {
     subscribe,
     undo: () =>
-      simpleUpdate((currentVal) => {
+      saveUpdate((currentVal) => {
         if (undoStack.length === 0) return currentVal;
         redoStack.push(currentVal);
         return undoStack.pop()!;
       }),
     redo: () =>
-      simpleUpdate((currentVal) => {
+      saveUpdate((currentVal) => {
         if (redoStack.length === 0) return currentVal;
         undoStack.push(currentVal);
         return redoStack.pop()!;
       }),
+    pausePersistance: () =>
+      simpleUpdate((currentVal) => {
+        lastStore = currentVal;
+        undoStack.push(currentVal);
+        redoStack = [];
+        pausePersistance = true;
+        return currentVal;
+      }),
+    resumePersistance: () => {
+      pausePersistance = false;
+      persistUpdate(() => lastStore);
+      undoStack.pop();
+    },
 
     setPalettes: simpleSet("palettes"),
     setCurrentPal: simpleSet("currentPal"),

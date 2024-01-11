@@ -29,6 +29,8 @@
           width={450}
           onColorsChange={(x) => colorStore.setCurrentPalColors(x)}
           onFocusedColorsChange={(x) => focusStore.setColors(x)}
+          startDragging={() => colorStore.pausePersistance()}
+          stopDragging={() => colorStore.resumePersistance()}
         />
         <Swatches />
       </div>

@@ -22,6 +22,8 @@
   export let height = 256;
   export let onColorsChange: (color: Color[]) => void;
   export let onFocusedColorsChange: (color: number[]) => void;
+  export let startDragging: () => void;
+  export let stopDragging: () => void;
   export let colorSpace: any;
 
   $: selectedBlindType = $navStore.colorSim;
@@ -126,6 +128,8 @@
   let isPointDrag = false;
   const startDrag = (isXYDrag: boolean, idx?: number) => (e: any) => {
     if (scatterPlotMode !== "moving") return;
+
+    startDragging();
     const targetIsPoint = typeof idx === "number";
     let target = e.target;
     isPointDrag = false;
@@ -174,6 +178,7 @@
   };
 
   const rectMoveEnd = (isZ: boolean) => (e: any) => {
+    stopDragging();
     if (scatterPlotMode !== "moving") return;
     if (!isPointDrag && dragBox && dragging) {
       (isZ ? selectColorsFromDragZ : selectColorsFromDrag)(dragBox, dragging);

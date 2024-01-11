@@ -1,4 +1,5 @@
 <script lang="ts">
+  // @ts-nocheck
   import { draggable, clamp } from "../lib/utils";
   // from https://github.com/mhkeller/svelte-double-range-slider/tree/master
   export let start = 0;

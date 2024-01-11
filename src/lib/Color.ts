@@ -36,11 +36,6 @@ export class Color {
   toChannels(): [number, number, number] {
     return Object.values(this.channels) as [number, number, number];
   }
-  fromChroma(color: ChromaColor): Color {
-    // @ts-ignore
-    const channels = color[this.spaceName]();
-    return this.fromChannels(channels);
-  }
   setChannel(channel: keyof typeof this.channels, value: number) {
     this.channels[channel] = value;
   }
@@ -83,6 +78,9 @@ export class Color {
   }
   symmetricDeltaE(color: Color): number {
     return 0.5 * (this.deltaE(color) + color.deltaE(this));
+  }
+  copy(): Color {
+    return this.fromChannels(this.toChannels());
   }
 }
 
@@ -178,14 +176,12 @@ export function colorFromHex(
   colorSpace: keyof typeof colorDirectory
 ): Color {
   if (colorHexCache.has(hex)) {
-    return { ...colorHexCache.get(hex) } as Color;
+    return colorHexCache.get(hex)!.copy() as Color;
   }
   const color = new ColorIO(hex).to(colorSpace);
   const outColor = new colorDirectory[colorSpace]().fromChannels(color.coords);
   colorHexCache.set(hex, outColor);
   return outColor;
-  // const color = chroma(hex);
-  // return new colorDirectory[colorSpace]().fromChroma(color);
 }
 
 export function colorFromChannels(

@@ -25,8 +25,8 @@ function AIFix(palette: Palette, message: string, engine: string) {
 }
 
 export class ColorLint<CheckData, ParamType> {
-  name: string;
-  taskTypes: TaskType[];
+  name: string = "";
+  taskTypes: TaskType[] = [];
   passes: boolean;
   checkData: CheckData;
   palette: Palette;
@@ -36,8 +36,6 @@ export class ColorLint<CheckData, ParamType> {
   level: "error" | "warning" = "error";
 
   constructor(Palette: Palette) {
-    this.name = "";
-    this.taskTypes = [];
     this.palette = Palette;
     const { passCheck, data } = this._runCheck();
     this.passes = passCheck;
@@ -51,10 +49,6 @@ export class ColorLint<CheckData, ParamType> {
   // Fail Message
   buildMessage(): string {
     return "";
-  }
-
-  suggestVisualAnnotation(): Annotation[] {
-    return [];
   }
 
   increaseParam() {

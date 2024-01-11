@@ -1,4 +1,5 @@
 <script lang="ts">
+  // @ts-nocheck
   import { draggable, clamp } from "../lib/utils";
   // from https://svelte.dev/repl/75d34e46cbe64bb68b7c2ac2c61931ce?version=4.2.8
   export let start = 0;

@@ -1,4 +1,5 @@
 <script lang="ts">
+  // @ts-nocheck
   import Portal from "svelte-portal";
   export let top: string = "2rem";
   export let onClose: () => void = () => {};

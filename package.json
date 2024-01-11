@@ -10,7 +10,8 @@
     "check": "svelte-check --tsconfig ./tsconfig.json",
     "types": "tsc --noEmit --watch",
     "prep-data": "cp node_modules/vega-datasets/data/* public/data/",
-    "test": "vitest"
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "devDependencies": {
     "@sveltejs/vite-plugin-svelte": "^3.0.0",

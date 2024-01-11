@@ -1,6 +1,5 @@
 import { ColorLint } from "./ColorLint";
 import type { TaskType } from "./ColorLint";
-import chroma from "chroma-js";
 import { Color, toColorSpace } from "../Color";
 
 const hexJoin = (colors: Color[]) => colors.map((x) => x.toHex()).join(", ");
@@ -14,7 +13,7 @@ export default class BackgroundDifferentiability extends ColorLint<
   _runCheck() {
     const { colors, background } = this.palette;
     const colorsCloseToBackground = colors.reduce((acc, x, idx) => {
-      const pass = chroma.deltaE(x.toChroma(), background.toChroma()) < 10;
+      const pass = x.symmetricDeltaE(background) < 15;
       return pass ? [...acc, idx] : acc;
     }, [] as number[]);
 

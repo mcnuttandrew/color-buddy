@@ -21,11 +21,11 @@ function makePalFromHexes(hexes: string[]): Palette {
 const unique = <T>(arr: T[]): T[] => [...new Set(arr)];
 
 test("ColorLint - ColorNameDiscriminability", async () => {
-  const examplePal = makePalFromHexes(["#006cc6", "#005ebe"]);
+  const examplePal = makePalFromHexes(["#5260d1", "#005ebe"]);
   const exampleLint = new ColorNameDiscriminability(examplePal);
   expect(exampleLint.passes).toBe(false);
   expect(exampleLint.message).toBe(
-    "Color Name discriminability check failed. The following color names are repeated: Denim (#006cc6, #005ebe)"
+    "Color Name discriminability check failed. The following color names are repeated: Royalblue (#5260d1, #005ebe)"
   );
   const fix = await exampleLint.suggestFix();
   const oldColorNames = unique<string>(
@@ -34,7 +34,6 @@ test("ColorLint - ColorNameDiscriminability", async () => {
   expect(oldColorNames.length).toBe(1);
   const colorNames = unique<string>(fix.colors.map((x) => getName(x)));
   expect(colorNames.length).toBe(2);
-  expect(exampleLint.suggestVisualAnnotation()).toStrictEqual([]);
 });
 
 test("ColorLint - MaxColors", async () => {
@@ -46,7 +45,6 @@ test("ColorLint - MaxColors", async () => {
   );
   const fix = await exampleLint.suggestFix();
   expect(fix.colors.length).toBe(9);
-  expect(exampleLint.suggestVisualAnnotation()).toStrictEqual([]);
 });
 
 test("ColorLint - ColorBlind", async () => {
@@ -76,18 +74,7 @@ test("ColorLint - ColorBlind", async () => {
   expect(exampleLint3.message).toMatchSnapshot();
 });
 
-const ughWhat = [
-  "#00ffff",
-  "#ffb282",
-  "#ffebc7",
-  "#ffaa8a",
-  "#00faff",
-  "#ffc7c3",
-  "#00e4ff",
-  "#fdfdfc",
-  "#ffc89e",
-  "#00ffff",
-];
+const ughWhat = ["#00ffff", "#00faff", "#00e4ff", "#fdfdfc", "#00ffff"];
 test("ColorLint - BackgroundDifferentiability", async () => {
   const examplePal = makePalFromHexes(ughWhat);
   const exampleLint = new BackgroundDifferentiability(examplePal);
@@ -102,7 +89,7 @@ test("ColorLint - BackgroundDifferentiability", async () => {
   const exampleLint2 = new BackgroundDifferentiability(examplePal);
   expect(exampleLint2.passes).toBe(false);
   expect(exampleLint2.message).toBe(
-    "This palette has some colors (#00faff, #00e4ff) that are close to the background color"
+    "This palette has some colors (#0ff, #00faff, #00e4ff, #0ff) that are close to the background color"
   );
   const fix2 = await exampleLint2.suggestFix();
   expect(fix2.colors.map((x) => x.toHex())).toMatchSnapshot();

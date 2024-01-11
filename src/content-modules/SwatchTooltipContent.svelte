@@ -1,7 +1,7 @@
 <script lang="ts">
   import ColorChannelPicker from "../components/ColorChannelPicker.svelte";
   import chroma from "chroma-js";
-  import { Color } from "../lib/Color";
+  import { Color, colorFromHex } from "../lib/Color";
   import colorStore from "../stores/color-store";
   import focusStore from "../stores/focus-store";
   import { buttonStyle } from "../lib/styles";
@@ -9,6 +9,7 @@
   export let color: Color;
   export let closeTooltip: () => void;
   $: colors = $colorStore.currentPal.colors;
+  $: colorSpace = colors[0].spaceName || "lab";
 
   function updateColor(color: Color) {
     const updatedColors = [...colors];
@@ -24,7 +25,7 @@
     on:change={(e) => {
       // @ts-ignore
       const newColor = chroma(e.target.value);
-      updateColor(color.fromChroma(newColor));
+      updateColor(colorFromHex(newColor.hex(), colorSpace));
     }}
   />
 

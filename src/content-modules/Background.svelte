@@ -1,10 +1,11 @@
 <script lang="ts">
   import colorStore from "../stores/color-store";
   import chroma from "chroma-js";
-  import { Color } from "../lib/Color";
+  import { Color, colorFromHex } from "../lib/Color";
   import ColorChannelPicker from "../components/ColorChannelPicker.svelte";
   import Tooltip from "../components/Tooltip.svelte";
   $: bg = $colorStore.currentPal.background;
+  $: colorSpace = $colorStore.currentPal.colors[0].spaceName || "lab";
   function onChange(color: Color) {
     colorStore.setBackground(color);
   }
@@ -22,7 +23,7 @@
           on:change={(e) => {
             // @ts-ignore
             const newColor = chroma(e.target.value);
-            colorStore.setBackground(bg.fromChroma(newColor));
+            colorStore.setBackground(colorFromHex(newColor.hex(), colorSpace));
           }}
         />
         <ColorChannelPicker color={bg} onColorChange={onChange} />

@@ -157,12 +157,6 @@ function createStore() {
     );
   const persistUpdate = (updateFunc: (old: StoreData) => StoreData) =>
     update((oldStore) => {
-      console.log(
-        "persist update",
-        pausePersistance,
-        undoStack.length,
-        redoStack.length
-      );
       if (pausePersistance) {
         lastStore = oldStore;
         return updateFunc(oldStore);

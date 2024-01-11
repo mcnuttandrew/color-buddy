@@ -16,7 +16,6 @@ export class Color {
     }
     const newHex = this.toColorIO().to("srgb").toString({ format: "hex" });
     // const oldHex = this.chromaBind(...this.toChannels()).hex();
-    // console.log(newHex, oldHex);
     // return this.chromaBind(...this.toChannels()).hex();
     hexCache.set(str, newHex);
     return newHex;

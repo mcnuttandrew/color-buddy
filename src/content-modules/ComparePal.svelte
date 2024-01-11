@@ -31,6 +31,8 @@
       width={450}
       onColorsChange={() => {}}
       onFocusedColorsChange={() => {}}
+      startDragging={() => {}}
+      stopDragging={() => {}}
     />
   {/if}
 </div>

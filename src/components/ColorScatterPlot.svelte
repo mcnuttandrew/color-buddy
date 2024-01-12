@@ -403,7 +403,7 @@
                 fill={color.toHex()}
               />
             {/if}
-            {#if !color.inGamut()}
+            <!-- {#if !color.inGamut()}
               <g
                 pointer-events="none"
                 transform={`translate(${x(color)} ${y(color)})`}
@@ -411,7 +411,7 @@
                 <line stroke="black" x1={-7} y1={-7} x2={7} y2={7}></line>
                 <line stroke="black" x1={-7} y1={7} x2={7} y2={-7}></line>
               </g>
-            {/if}
+            {/if} -->
           {/each}
           {#each blindColors as blindColor, i}
             <!-- svelte-ignore a11y-click-events-have-key-events -->

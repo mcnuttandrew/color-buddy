@@ -58,18 +58,6 @@ export class Color {
       return this.fromChannels(channels);
     }
     return this.fromChannels(stringToChannels(this.spaceName, colorString));
-    // // extract the numbers from the string
-    // // const regex = new RegExp(`${this.spaceName}\\((.*)% (.*) (.*)\\)`);
-    // const regex = new RegExp(
-    //   `${this.spaceName}\\((.*?)(%|,)(.*?) (.*?)(%|,) (.*?)\\)\\)`
-    // );
-    // const match = colorString.match(regex);
-    // if (!match) {
-    //   throw new Error(`Invalid color string: ${colorString}`);
-    // }
-    // const [_, ...channels] = match;
-    // console.log(channels);
-    // return this.fromChannels([+channels[0], +channels[1], +channels[2]]);
   }
   fromChannels(channels: [number, number, number]): Color {
     const newColor = new (this.constructor as typeof Color)();

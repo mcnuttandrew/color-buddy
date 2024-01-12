@@ -14,7 +14,7 @@
     group: string;
   }
   $: familiarPals = [] as ExtendedPal[];
-  $: colorSpace = $colorStore.currentPal.colors[0]?.spaceName || "lab";
+  $: colorSpace = $colorStore.currentPal.colorSpace;
 
   onMount(() => {
     const toHex = (x: string) => {
@@ -35,6 +35,7 @@
         group: "vega",
         type: "categorical",
         evalConfig: {},
+        colorSpace,
       });
     });
     Object.entries(chroma.brewer).forEach(([name, colors]) => {
@@ -48,6 +49,7 @@
         group: "brewer",
         type: colorBrewerMapToType[name.toLowerCase()],
         evalConfig: {},
+        colorSpace,
       });
     });
     familiarPals = newPals;

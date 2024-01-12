@@ -8,7 +8,7 @@
 
   $: colors = $colorStore.currentPal.colors;
   $: focusedColors = $focusStore.focusedColors;
-  $: colorSpace = $colorStore.currentPal.colors[0]?.spaceName || "lab";
+  $: colorSpace = $colorStore.currentPal.colorSpace;
 
   function actionOnColor(idx: number, action: (Color: Color) => any) {
     const newColor = action(colors[idx]);

@@ -1,17 +1,28 @@
 import { writable } from "svelte/store";
-import { Color, colorFromString } from "../lib/Color";
+import { Color, colorFromString, toColorSpace } from "../lib/Color";
 import ColorIO from "colorjs.io";
 import fits from "../assets/outfits.json";
 import { pick, deDup } from "../lib/utils";
 const outfitToPal = (x: any) => [x.fill1, x.fill2, x.fill3];
 const outfits = fits.map((x) => outfitToPal(x));
 export type PalType = "sequential" | "diverging" | "categorical";
+type ColorSpace =
+  | "lab"
+  | "hsl"
+  | "hsv"
+  | "jzazbz"
+  | "lch"
+  | "oklab"
+  | "oklch"
+  | "rgb"
+  | "srgb";
 type Pal<A> = {
   colors: A[];
   name: string;
   background: A;
   type: PalType;
   evalConfig: Record<string, any>;
+  colorSpace: ColorSpace;
 };
 export type Palette = Pal<Color>;
 
@@ -35,6 +46,7 @@ const InitialStore: StorageData = {
       background: "#ffffff",
       type: "categorical",
       evalConfig: {},
+      colorSpace: "lab",
     },
     {
       name: "Example 2",
@@ -42,6 +54,7 @@ const InitialStore: StorageData = {
       background: "#ffffff",
       type: "categorical",
       evalConfig: {},
+      colorSpace: "lab",
     },
     {
       name: "Example 3",
@@ -49,6 +62,7 @@ const InitialStore: StorageData = {
       background: "#ffffff",
       type: "categorical",
       evalConfig: {},
+      colorSpace: "lab",
     },
   ],
   currentPal: {
@@ -57,25 +71,23 @@ const InitialStore: StorageData = {
     background: "#ffffff",
     type: "categorical",
     evalConfig: {},
+    colorSpace: "lab",
   },
   engine: "google",
 };
 
 function convertStoreHexToColor(store: StorageData): StoreData {
+  const space = store.currentPal.colorSpace;
   return {
     palettes: store.palettes.map((x) => ({
-      name: x.name,
-      background: colorFromString(x.background, "lab"),
-      colors: x.colors.map((y) => colorFromString(y, "lab")),
-      type: x.type,
-      evalConfig: x.evalConfig,
+      ...x,
+      background: colorFromString(x.background, x.colorSpace),
+      colors: x.colors.map((y) => colorFromString(y, x.colorSpace)),
     })),
     currentPal: {
-      background: colorFromString(store.currentPal.background, "lab"),
-      name: store.currentPal.name,
-      colors: store.currentPal.colors.map((y) => colorFromString(y, "lab")),
-      type: store.currentPal.type,
-      evalConfig: store.currentPal.evalConfig,
+      ...store.currentPal,
+      background: colorFromString(store.currentPal.background, space),
+      colors: store.currentPal.colors.map((y) => colorFromString(y, space)),
     },
     engine: store.engine,
   };
@@ -84,18 +96,14 @@ function convertStoreHexToColor(store: StorageData): StoreData {
 function convertStoreColorToHex(store: StoreData): StorageData {
   return {
     palettes: store.palettes.map((x) => ({
-      name: x.name,
-      background: x.background.toHex(),
-      colors: x.colors.map((y) => y.toHex()),
-      type: x.type,
-      evalConfig: x.evalConfig,
+      ...x,
+      background: x.background.toString(),
+      colors: x.colors.map((y) => y.toString()),
     })),
     currentPal: {
-      background: store.currentPal.background.toHex(),
-      name: store.currentPal.name,
-      colors: store.currentPal.colors.map((y) => y.toHex()),
-      type: store.currentPal.type,
-      evalConfig: store.currentPal.evalConfig,
+      ...store.currentPal,
+      background: store.currentPal.background.toString(),
+      colors: store.currentPal.colors.map((y) => y.toString()),
     },
     engine: store.engine,
   };
@@ -237,6 +245,7 @@ function createStore() {
           background: colorFromString("#ffffff", "lab"),
           type: "categorical",
           evalConfig: {},
+          colorSpace: "lab",
         },
         palettes: insertPalette(n.palettes, n.currentPal),
       })),
@@ -290,6 +299,13 @@ function createStore() {
       palUp((n) => ({ ...n, background: color })),
     reset: () => set({ ...convertStoreHexToColor(InitialStore) }),
     setEngine: simpleSet("engine"),
+    setColorSpace: (colorSpace: ColorSpace) =>
+      palUp((n) => ({
+        ...n,
+        colorSpace,
+        background: toColorSpace(n.background, colorSpace),
+        colors: n.colors.map((x) => toColorSpace(x, colorSpace)),
+      })),
   };
 }
 

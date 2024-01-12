@@ -7,7 +7,7 @@
 
   $: colors = $colorStore.currentPal.colors;
   $: focusedColors = $focusStore.focusedColors;
-  $: colorSpace = $colorStore.currentPal.colors[0]?.spaceName || "lab";
+  $: colorSpace = $colorStore.currentPal.colorSpace;
 
   type Direction = "horizontal" | "vertical" | "in z space";
   function distributePoints(direction: Direction) {

@@ -15,6 +15,7 @@ function makePalFromHexes(hexes: string[]): Palette {
     name: "test",
     type: "categorical",
     evalConfig: {},
+    colorSpace: "lab",
   };
 }
 

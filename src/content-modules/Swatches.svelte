@@ -14,16 +14,16 @@
   let common = "cursor-pointer mr-2 mb-2 transition-all";
   let classes = [
     {
-      className: `${common} w-14 h-14 `,
+      className: `${common} w-8 h-8 `,
       styleMap: (color: Color): string => `background-color: ${color.toHex()};`,
     },
     {
-      className: `${common} w-8 h-8`,
+      className: `${common} w-6 h-6`,
       styleMap: (color: Color): string => `background-color: ${color.toHex()};`,
     },
     {
-      className: `${common} w-8 h-8 rounded-full`,
-      styleMap: (color: Color): string => `border: 4px solid ${color.toHex()};`,
+      className: `${common} w-4 h-4 rounded-full`,
+      styleMap: (color: Color): string => `border: 2px solid ${color.toHex()};`,
     },
   ];
 </script>
@@ -86,7 +86,7 @@
             let:tooltipOpen
             slot="target"
             class={className}
-            style={styleMap(color)}
+            style={`${styleMap(color)}`}
             on:click={(e) => {
               const isFocused = focusSet.has(idx);
               const shiftKey = e.shiftKey;
@@ -104,7 +104,6 @@
                   focusStore.clearColors();
                 }
               } else if (tooltipOpen && !isFocused) {
-                console.log("C");
                 if (shiftKey) {
                   focusStore.addColor(idx);
                 } else {
@@ -126,8 +125,12 @@
     </div>
   {/each}
   <div class="flex flex-wrap justify-center">
-    {#each colors as color}
-      <div style={`color: ${color.toHex()}`} class="mr-2">
+    {#each colors as color, i}
+      <div
+        style={`color: ${color.toHex()}`}
+        class="mr-2"
+        class:mt-2={focusSet.has(i)}
+      >
         {color.toHex()}
       </div>
     {/each}

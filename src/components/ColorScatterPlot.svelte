@@ -9,10 +9,9 @@
   import { makeExtents, deDup, toggleElement } from "../lib/utils";
   import navStore from "../stores/nav-store";
   import { scaleLinear } from "d3-scale";
-  import DoubleRangeSlider from "../components/DoubleRangeSlider.svelte";
-  import VerticalDoubleRangeSlider from "../components/VerticalDoubleRangeSlider.svelte";
   import simulate_cvd from "../lib/blindness";
   import ColorScatterPlotXyGuides from "./ColorScatterPlotXYGuides.svelte";
+  import ColorScatterPlotZGuide from "./ColorScatterPlotZGuide.svelte";
 
   export let scatterPlotMode: "moving" | "looking";
 
@@ -38,7 +37,11 @@
   const margin = { top: 15, right: 15, bottom: 15, left: 15 };
   const plotWidth = width - margin.left - margin.right;
   const plotHeight = height - margin.top - margin.bottom;
-  let extents = { x: [0, 1], y: [0, 1], z: [0, 1] };
+  $: extents = {
+    x: $navStore.xZoom,
+    y: $navStore.yZoom,
+    z: $navStore.zZoom,
+  };
   $: pickedColors = focusedColors.map((x) => colors[x].toChannels());
   $: selectionExtents = makeExtents(pickedColors);
   $: xPos = xScale(selectionExtents.x[0] - 7.5);
@@ -58,13 +61,27 @@
   $: xRange = config.xDomain;
   $: domainXScale = scaleLinear().domain([0, 1]).range(xRange);
   $: xScale = scaleLinear()
-    .domain([domainXScale(extents.x[0]), domainXScale(extents.x[1])])
+    .domain([
+      xRange[0] > xRange[1]
+        ? domainXScale(extents.x[1])
+        : domainXScale(extents.x[0]),
+      xRange[0] > xRange[1]
+        ? domainXScale(extents.x[0])
+        : domainXScale(extents.x[1]),
+    ])
     .range([0, plotWidth]);
 
   $: yRange = config.yDomain;
   $: domainYScale = scaleLinear().domain([0, 1]).range(yRange);
   $: yScale = scaleLinear()
-    .domain([domainYScale(extents.y[0]), domainYScale(extents.y[1])])
+    .domain([
+      yRange[0] > yRange[1]
+        ? domainYScale(extents.y[1])
+        : domainYScale(extents.y[0]),
+      yRange[0] > yRange[1]
+        ? domainYScale(extents.y[0])
+        : domainYScale(extents.y[1]),
+    ])
     .range([0, plotHeight]);
 
   $: zRange = config.zDomain;
@@ -72,7 +89,6 @@
   $: zScale = scaleLinear()
     .domain([domainLScale(extents.z[0]), domainLScale(extents.z[1])])
     .range([0, plotHeight]);
-  $: [zMin, zMax] = zScale.domain();
 
   let dragging: false | { x: number; y: number } = false;
   let dragBox: false | { x: number; y: number } = false;
@@ -223,18 +239,6 @@
     onFocusedColorsChange([...newFocusedColors]);
   }
 
-  $: zPoints = {
-    top: {
-      y: zScale.range()[0] + 15,
-      label: `${config.zChannel.toUpperCase()}: ${zScale
-        .domain()[0]
-        .toFixed(1)}`,
-    },
-    bottom: {
-      y: zScale.range()[1] - 5,
-      label: zScale.domain()[1].toFixed(1),
-    },
-  };
   // $: axisColor = bg.luminance() > 0.5 ? "gray" : "white";
   $: luminance = bg.toChroma().luminance();
   $: axisColor = luminance > 0.4 ? "#00000022" : "#ffffff55";
@@ -249,19 +253,17 @@
 
 <!-- svelte-ignore a11y-no-static-element-interactions -->
 <!-- svelte-ignore a11y-no-static-element-interactions -->
-<div class="flex">
+<div class="flex" style="background: {bg.toHex()}">
   <div class="flex flex-col">
-    {config.xyTitle}
+    <span class="text-2xl" style="color: {textColor}">
+      {config.title}
+    </span>
     <div class="flex h-full">
-      <div class="h-full py-4" style="max-height: {height}px">
-        <VerticalDoubleRangeSlider
-          bind:start={extents.y[0]}
-          bind:end={extents.y[1]}
-        />
-      </div>
+      <div class="h-full py-4" style="max-height: {height}px"></div>
       <svg
         {width}
         {height}
+        class="ml-2"
         on:mouseleave={stopDrag}
         on:mouseup={stopDrag}
         on:touchend={stopDrag}
@@ -336,7 +338,7 @@
                 fill={color.toHex()}
               />
             {/if}
-            <!-- {#if !color.inGamut()}
+            {#if !color.inGamut()}
               <g
                 pointer-events="none"
                 transform={`translate(${x(color)} ${y(color)})`}
@@ -344,7 +346,7 @@
                 <line stroke="black" x1={-7} y1={-7} x2={7} y2={7}></line>
                 <line stroke="black" x1={-7} y1={7} x2={7} y2={-7}></line>
               </g>
-            {/if} -->
+            {/if}
           {/each}
           {#each blindColors as blindColor, i}
             <!-- svelte-ignore a11y-click-events-have-key-events -->
@@ -409,19 +411,16 @@
               fill-opacity="0"
               pointer-events="none"
               stroke-dasharray="5,5"
-              stroke-width="2"
+              stroke-width="1"
               cursor="grab"
             />
           {/if}
         </g>
       </svg>
     </div>
-    <div style="width: {width}px;" class="w-full px-4 ml-5">
-      <DoubleRangeSlider bind:start={extents.x[0]} bind:end={extents.x[1]} />
-    </div>
   </div>
   <div class="h-full">
-    <span>{config.zTitle}</span>
+    <span class=" text-xl opacity-0">{config.zTitle}</span>
     <!-- svelte-ignore a11y-no-static-element-interactions -->
     <div class="flex h-full">
       <div class="flex flex-col">
@@ -433,6 +432,14 @@
           on:touchend={stopDrag}
         >
           <!-- svelte-ignore a11y-no-static-element-interactions -->
+          <ColorScatterPlotZGuide
+            dragging={!!dragging}
+            {yScale}
+            {zScale}
+            {textColor}
+            {colorSpace}
+            {axisColor}
+          />
           <g transform={`translate(${margin.left}, ${margin.top})`}>
             <!-- svelte-ignore a11y-no-static-element-interactions -->
             <rect
@@ -440,9 +447,8 @@
               y={0}
               width={80}
               height={yScale.range()[1]}
-              fill={bg.toHex()}
-              stroke="gray"
-              stroke-width="1"
+              fill="white"
+              opacity="0"
               class:cursor-pointer={dragging}
               on:touchstart|preventDefault={startDrag(false)}
               on:mousedown|preventDefault={startDrag(false)}
@@ -451,17 +457,7 @@
               on:touchend|preventDefault={rectMoveEnd(true)}
               on:mouseup|preventDefault={rectMoveEnd(true)}
             />
-            {#each Object.values(zPoints) as point}
-              <text
-                pointer-events="none"
-                text-anchor={"middle"}
-                x={40}
-                y={point.y}
-                fill={textColor}
-              >
-                {point.label}
-              </text>
-            {/each}
+
             {#each deDup(colors) as color, i}
               <!-- svelte-ignore a11y-no-static-element-interactions -->
               <!-- svelte-ignore a11y-click-events-have-key-events -->
@@ -503,8 +499,7 @@
                 y={Math.min(dragging.y, dragBox.y) - parentPos.y}
                 width={80 - 10}
                 height={Math.abs(dragging.y - dragBox.y)}
-                fill="steelblue"
-                fill-opacity="0.5"
+                fill={selectionColor}
                 class="pointer-events-none"
               />
             {/if}
@@ -514,30 +509,17 @@
                 y={zPos - 5}
                 width={80 - 10}
                 height={selectionDepth + 15}
-                stroke="steelblue"
+                stroke={selectionColor}
                 fill="white"
                 fill-opacity="0"
                 pointer-events="none"
                 stroke-dasharray="5,5"
-                stroke-width="2"
+                stroke-width="1"
                 cursor="grab"
               />
             {/if}
           </g>
         </svg>
-        <button
-          on:click={() => {
-            extents = { x: [0, 1], y: [0, 1], z: [0, 1] };
-          }}
-        >
-          Reset
-        </button>
-      </div>
-      <div class="py-4" style="height: {height}px">
-        <VerticalDoubleRangeSlider
-          bind:start={extents.z[0]}
-          bind:end={extents.z[1]}
-        />
       </div>
     </div>
   </div>

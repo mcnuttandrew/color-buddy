@@ -20,7 +20,7 @@ The 2D graph displays hue/chroma graph and the 1D graph displays lightness. You 
 
 - [x] Reduce the visual impact of the axes and labels by making them transparent gray. Set the colors, made them adaptive, set the luminance flip to .3 (50% visually)
 - [x] Flip the Y axis (zero at the bottom)
-- [ ] Make the labels integers for CIELAB
+- [x] Make the labels integers for CIELAB
 - [x] Make the axis scale sliders less visualy prominent.
 - [ ] Consider removing the axis sliders, replace them with zoom controls in the same panel as the background color selection. Changing these values is rare, they don't need to take up so much UX space.
 - [ ] The 2D graph should always be a centered hue/chroma graph. CIELAB and CIELCH would therefore use the same graph. Leave the LAB vs LCH distinction for slider based editing.
@@ -59,12 +59,12 @@ To raise the sliders, you need to click on one of the examples that are displaye
 - [ ] Eval response options
 - [ ] higher card. vis examples
 - [ ] Distribute radially
-- [ ] Rearrange some of the colors in the color area eg make rg on xy and b on z etc
-- [ ] "opposing color" to "Convert selection to opposing"
+- [?] Rearrange some of the colors in the color area eg make rg on xy and b on z etc
 - [ ] Insert color theory options, eg insert opposing, inserting analogous color, etc, mine from the adobe picker
 - [ ] NTH: Rest of basic geometry manipulations: flip (horizontal, vertical), scale
 - [ ] Examples held as assets somewhere that are downloaded rather than components (for consistency)
 - [ ] Labels, tooltips, etc
+- [x] "opposing color" to "Convert selection to opposing"
 - [x] Meta: figure out all the other features in maureen's setup
 - [x] order as diverging
 - [x] Make it possible to ignore / dismiss lints

@@ -11,6 +11,7 @@
   import PickAi from "./context-free-tools/PickAI.svelte";
   import { buttonStyle } from "../lib/styles";
   import ShortCuts from "./context-free-tools/ShortCuts.svelte";
+  import Zoom from "./context-free-tools/Zoom.svelte";
 
   import SavedPals from "./SavedPals.svelte";
   import SetColorSpace from "./SetColorSpace.svelte";
@@ -66,6 +67,7 @@
     <PalPreview pal={$colorStore.currentPal} />
 
     <Background />
+    <Zoom />
     <GetColorsFromString />
     <SetColorSpace />
   </section>

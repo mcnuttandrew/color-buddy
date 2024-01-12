@@ -16,6 +16,7 @@ export class Color {
   xyTitle: string = "";
   zTitle: string = "";
   dimensionToChannel: Record<"x" | "y" | "z", string> = { x: "", y: "", z: "" };
+  axisLabel: (num: number) => string = (x) => x.toFixed(1).toString();
 
   constructor() {
     this.domains = {};
@@ -131,6 +132,7 @@ export class CIELAB extends Color {
   xyTitle: string = "CIELAB: a* b*";
   zTitle: string = "CIELAB: L*";
   dimensionToChannel = { x: "a", y: "b", z: "L" };
+  axisLabel = (num: number) => `${Math.round(num)}`;
 
   toString(): string {
     const [L, a, b] = Object.values(this.channels).map((x) => x || 0);
@@ -164,6 +166,7 @@ export class RGB extends Color {
   xyTitle: string = "RGB: Green Blue";
   zTitle: string = "RGB: Red";
   dimensionToChannel = { x: "g", y: "b", z: "r" };
+  axisLabel = (num: number) => `${Math.round(num)}`;
 }
 
 export class HSL extends Color {
@@ -192,6 +195,7 @@ export class LCH extends Color {
   xyTitle: string = "LCH: Chroma Hue";
   zTitle: string = "LCH: Lightness";
   dimensionToChannel = { x: "c", y: "h", z: "l" };
+  axisLabel = (num: number) => `${Math.round(num)}`;
 }
 
 export class OKLAB extends Color {
@@ -312,6 +316,7 @@ export const colorPickerConfig = Object.fromEntries(
         xStep: exampleColor.stepSize[1],
         yStep: exampleColor.stepSize[2],
         zStep: exampleColor.stepSize[0],
+        axisLabel: exampleColor.axisLabel,
       },
     ];
   })

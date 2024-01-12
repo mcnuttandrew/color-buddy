@@ -19,7 +19,7 @@ The basic UX for editing has the following components
 The 2D graph displays hue/chroma graph and the 1D graph displays lightness. You can map any of a number of colorspaces onto this pair of graphs. (in the code, the lightness graph is "Z"). I propose the following changes
 
 - [x] Reduce the visual impact of the axes and labels by making them transparent gray. Set the colors, made them adaptive, set the luminance flip to .3 (50% visually)
-- [ ] Flip the Y axis (zero at the bottom)
+- [x] Flip the Y axis (zero at the bottom)
 - [ ] Make the labels integers for CIELAB
 - [x] Make the axis scale sliders less visualy prominent.
 - [ ] Consider removing the axis sliders, replace them with zoom controls in the same panel as the background color selection. Changing these values is rare, they don't need to take up so much UX space.

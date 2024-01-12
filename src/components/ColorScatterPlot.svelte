@@ -12,6 +12,7 @@
   import DoubleRangeSlider from "../components/DoubleRangeSlider.svelte";
   import VerticalDoubleRangeSlider from "../components/VerticalDoubleRangeSlider.svelte";
   import simulate_cvd from "../lib/blindness";
+  import ColorScatterPlotXyGuides from "./ColorScatterPlotXYGuides.svelte";
 
   export let scatterPlotMode: "moving" | "looking";
 
@@ -59,14 +60,12 @@
   $: xScale = scaleLinear()
     .domain([domainXScale(extents.x[0]), domainXScale(extents.x[1])])
     .range([0, plotWidth]);
-  $: xNonDimScale = scaleLinear().domain([0, 1]).range(xScale.domain());
 
   $: yRange = config.yDomain;
   $: domainYScale = scaleLinear().domain([0, 1]).range(yRange);
   $: yScale = scaleLinear()
     .domain([domainYScale(extents.y[0]), domainYScale(extents.y[1])])
     .range([0, plotHeight]);
-  $: yNonDimScale = scaleLinear().domain([0, 1]).range(yScale.domain());
 
   $: zRange = config.zDomain;
   $: domainLScale = scaleLinear().domain([0, 1]).range(zRange);
@@ -224,36 +223,6 @@
     onFocusedColorsChange([...newFocusedColors]);
   }
 
-  $: points = {
-    centerTop: {
-      x: (xScale.range()[1] - xScale.range()[0]) / 2,
-      y: yScale.range()[0],
-      labelAdjust: { x: -5, y: 15 },
-      anchor: "end",
-      label: `${config.yChannel}: ${yScale.domain()[0].toFixed(1)}`,
-    },
-    centerBottom: {
-      x: (xScale.range()[1] - xScale.range()[0]) / 2,
-      y: yScale.range()[1],
-      anchor: "start",
-      labelAdjust: { x: 0, y: -3 },
-      label: yScale.domain()[1].toFixed(1),
-    },
-    centerLeft: {
-      x: xScale.range()[0],
-      y: (yScale.range()[1] - yScale.range()[0]) / 2,
-      anchor: "start",
-      labelAdjust: { x: 5, y: 15 },
-      label: xScale.domain()[0].toFixed(1),
-    },
-    centerRight: {
-      x: xScale.range()[1],
-      y: (yScale.range()[1] - yScale.range()[0]) / 2,
-      anchor: "end",
-      labelAdjust: { x: -5, y: 0 },
-      label: `${config.xChannel}: ${xScale.domain()[1].toFixed(1)}`,
-    },
-  };
   $: zPoints = {
     top: {
       y: zScale.range()[0] + 15,
@@ -276,11 +245,6 @@
   $: x = (point: Color) => xScale(point.toChannels()[1]);
   $: y = (point: Color) => yScale(point.toChannels()[2]);
   $: z = (point: Color) => zScale(point.toChannels()[0]);
-
-  const avgNums = (nums: number[]) =>
-    nums.reduce((acc, x) => acc + x, 0) / nums.length;
-
-  const bgResolution = 25;
 </script>
 
 <!-- svelte-ignore a11y-no-static-element-interactions -->
@@ -302,58 +266,17 @@
         on:mouseup={stopDrag}
         on:touchend={stopDrag}
       >
-        <!-- colorful background select -->
-        <g transform={`translate(${margin.left}, ${margin.top})`}>
-          {#each [...new Array(bgResolution)] as _, i}
-            {#each [...new Array(bgResolution)] as _, j}
-              <rect
-                x={xScale(xNonDimScale(i / bgResolution))}
-                y={yScale(yNonDimScale(j / bgResolution))}
-                width={plotWidth / bgResolution}
-                height={plotHeight / bgResolution}
-                opacity="1"
-                fill={dragging && focusedColors.length === 1
-                  ? colorFromChannels(
-                      [
-                        avgNums(
-                          focusedColors.map((x) => colors[x].toChannels()[0])
-                        ),
-                        xNonDimScale(i / bgResolution),
-                        yNonDimScale(j / bgResolution),
-                      ],
-                      colorSpace
-                    ).toHex()
-                  : bg.toHex()}
-              />
-            {/each}
-          {/each}
-
-          <line
-            x1={points.centerTop.x}
-            y1={points.centerTop.y}
-            x2={points.centerBottom.x}
-            y2={points.centerBottom.y}
-            stroke={axisColor}
-            stroke-width="1"
+        <g transform={`translate(${margin.left}, ${margin.top}`}>
+          <ColorScatterPlotXyGuides
+            {xScale}
+            {yScale}
+            {plotHeight}
+            {plotWidth}
+            {axisColor}
+            {textColor}
+            {colorSpace}
+            dragging={!!dragging}
           />
-          <line
-            x1={points.centerLeft.x}
-            y1={points.centerLeft.y}
-            x2={points.centerRight.x}
-            y2={points.centerRight.y}
-            stroke={axisColor}
-            stroke-width="1"
-          />
-          {#each Object.values(points) as point}
-            <text
-              text-anchor={point.anchor}
-              x={point.x + point.labelAdjust.x}
-              y={point.y + point.labelAdjust.y}
-              fill={textColor}
-            >
-              {point.label}
-            </text>
-          {/each}
 
           <!-- svelte-ignore a11y-no-static-element-interactions -->
           <!-- svelte-ignore a11y-click-events-have-key-events -->

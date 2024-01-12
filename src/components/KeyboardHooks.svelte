@@ -1,11 +1,12 @@
 <script lang="ts">
-  import { Color, stepSize } from "../lib/Color";
+  import { Color, colorPickerConfig } from "../lib/Color";
   import colorStore from "../stores/color-store";
   import focusStore from "../stores/focus-store";
   $: focusedSet = new Set($focusStore.focusedColors);
   $: copiedData = [] as Color[];
   $: colorSpace = $colorStore.currentPal.colorSpace;
-  $: [_zStep, xStep, yStep] = stepSize[colorSpace];
+  $: xStep = colorPickerConfig[colorSpace].xStep;
+  $: yStep = colorPickerConfig[colorSpace].yStep;
   function onKeyDown(e: any) {
     if (e.target.tagName.toLowerCase() === "input") {
       const isUIElement =

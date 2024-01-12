@@ -81,10 +81,7 @@ export class Color {
 }
 
 export function stringToChannels(spaceName: string, str: string) {
-  // const regex = new RegExp(
-  //   `${spaceName}\\((.*?)(%|,)(.*?) (.*?)(%|,) (.*?)\\)\\)`
-  // );
-  let temp = str
+  let channels = str
     .replace(`${spaceName}(`, "")
     .replace(")", "")
     .replace(/%/g, "")
@@ -92,21 +89,12 @@ export function stringToChannels(spaceName: string, str: string) {
     .trim()
     .split(" ")
     .filter((x) => x.length);
-  const allNumbers = temp.every((x) => !isNaN(+x));
+  const allNumbers = channels.every((x) => !isNaN(+x));
 
-  if (!(temp.length === 3 && allNumbers)) {
+  if (!(channels.length === 3 && allNumbers)) {
     throw new Error(`Invalid color string: ${str}`);
   }
-  return temp.map((x) => Number(x) * 1) as [number, number, number];
-  // console.log(temp);
-  // const regex = new RegExp(/(\-?\d+(?:\.\d+)?%){3}/);
-  // const match = str.match(regex);
-  // console.log(str, match, regex);
-  // if (!match) {
-  //   throw new Error(`Invalid color string: ${str}`);
-  // }
-  // const [_, ...channels] = match;
-  // return channels.map((x) => +x) as [number, number, number];
+  return channels.map((x) => Number(x) * 1) as [number, number, number];
 }
 
 export class CIELAB extends Color {

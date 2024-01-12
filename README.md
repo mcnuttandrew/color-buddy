@@ -51,6 +51,7 @@ To raise the sliders, you need to click on one of the examples that are displaye
 
 ## TODOS
 
+- [ ] Chore: clean up the color store, many unnecessary methods. Extract some common types into a top level location (like types.ts type thing)
 - [ ] A (default) example showing annotated math stuff
 - [ ] SVG Upload
 - [ ] Vega/Vega-Lite Specification

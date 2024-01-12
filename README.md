@@ -57,18 +57,16 @@ To raise the sliders, you need to click on one of the examples that are displaye
 - [ ] Vega/Vega-Lite Specification
 - [ ] Bug: changing the color frame fucks everything up???? (particularly for HSV/HSL)
 - [ ] Eval response options
-- [ ] Coat of paint
-- [ ] add color analysis
 - [ ] higher card. vis examples
-- [ ] order as diverging
 - [ ] Distribute radially
 - [ ] Rearrange some of the colors in the color area eg make rg on xy and b on z etc
 - [ ] "opposing color" to "Convert selection to opposing"
 - [ ] Insert color theory options, eg insert opposing, inserting analogous color, etc, mine from the adobe picker
 - [ ] NTH: Rest of basic geometry manipulations: flip (horizontal, vertical), scale
-- [ ] Meta: figure out all the other features in maureen's setup
 - [ ] Examples held as assets somewhere that are downloaded rather than components (for consistency)
 - [ ] Labels, tooltips, etc
+- [x] Meta: figure out all the other features in maureen's setup
+- [x] order as diverging
 - [x] Make it possible to ignore / dismiss lints
 - [x] Touch events polish
 - [x] drag box in z channel should work

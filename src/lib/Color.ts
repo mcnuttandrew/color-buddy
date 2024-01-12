@@ -80,7 +80,12 @@ export class Color {
   }
 }
 
+const colorStringCache = new Map<string, [number, number, number]>();
 export function stringToChannels(spaceName: string, str: string) {
+  const key = `${spaceName}(${str})`;
+  if (colorStringCache.has(key)) {
+    return colorStringCache.get(key)!;
+  }
   let channels = str
     .replace(`${spaceName}(`, "")
     .replace(")", "")
@@ -94,7 +99,9 @@ export function stringToChannels(spaceName: string, str: string) {
   if (!(channels.length === 3 && allNumbers)) {
     throw new Error(`Invalid color string: ${str}`);
   }
-  return channels.map((x) => Number(x) * 1) as [number, number, number];
+  const result = channels.map((x) => Number(x) * 1) as [number, number, number];
+  colorStringCache.set(key, result);
+  return result;
 }
 
 export class CIELAB extends Color {

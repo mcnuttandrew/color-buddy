@@ -266,7 +266,11 @@
       label: zScale.domain()[1].toFixed(1),
     },
   };
-  $: axisColor = bg.luminance() > 0.5 ? "gray" : "white";
+  // $: axisColor = bg.luminance() > 0.5 ? "gray" : "white";
+  $: luminance = bg.toChroma().luminance();
+  $: axisColor = luminance > 0.4 ? "#00000022" : "#ffffff55";
+  $: textColor = luminance > 0.4 ? "#00000066" : "#ffffffaa";
+  $: selectionColor = luminance > 0.35 ? "#55330066" : "#ffeeccaa";
 
   let hoveredPoint: Color | false = false;
   $: x = (point: Color) => xScale(point.toChannels()[1]);
@@ -298,6 +302,7 @@
         on:mouseup={stopDrag}
         on:touchend={stopDrag}
       >
+        <!-- colorful background select -->
         <g transform={`translate(${margin.left}, ${margin.top})`}>
           {#each [...new Array(bgResolution)] as _, i}
             {#each [...new Array(bgResolution)] as _, j}
@@ -307,7 +312,7 @@
                 width={plotWidth / bgResolution}
                 height={plotHeight / bgResolution}
                 opacity="1"
-                fill={dragging && focusedColors.length
+                fill={dragging && focusedColors.length === 1
                   ? colorFromChannels(
                       [
                         avgNums(
@@ -344,7 +349,7 @@
               text-anchor={point.anchor}
               x={point.x + point.labelAdjust.x}
               y={point.y + point.labelAdjust.y}
-              fill={bg.luminance() > 0.5 ? "black" : "white"}
+              fill={textColor}
             >
               {point.label}
             </text>
@@ -383,6 +388,11 @@
                 class="cursor-pointer"
                 r={10 + (focusSet.has(i) ? 5 : 0)}
                 fill={color.toHex()}
+                stroke={focusedColors.length === 1 &&
+                focusedColors[0] === i &&
+                dragging
+                  ? axisColor
+                  : color.toHex()}
                 on:click={(e) => {
                   if (e.metaKey || e.shiftKey) {
                     onFocusedColorsChange(toggleElement(focusedColors, i));
@@ -441,13 +451,13 @@
               transform={`translate(${xScale(hoveredPoint.toChannels()[1])},
                 ${yScale(hoveredPoint.toChannels()[2])})`}
             >
-              <text>{hoveredPoint.toHex()}</text>
+              <text fill={textColor}>{hoveredPoint.toHex()}</text>
             </g>
           {/if}
           <text
             x={xScale(bg.toChannels()[1])}
             y={yScale(bg.toChannels()[2])}
-            fill={bg.luminance() > 0.5 ? "black" : "white"}
+            fill={textColor}
             text-anchor="middle"
             alignment-baseline="middle"
             class="pointer-events-none"
@@ -460,18 +470,18 @@
               y={Math.min(dragging.y, dragBox.y) - parentPos.y}
               width={Math.abs(dragging.x - dragBox.x)}
               height={Math.abs(dragging.y - dragBox.y)}
-              fill="steelblue"
+              fill={selectionColor}
               fill-opacity="0.5"
               class="pointer-events-none"
             />
           {/if}
-          {#if pickedColors.length}
+          {#if pickedColors.length > 1}
             <rect
               x={xPos - 5}
               y={yPos - 5}
               width={selectionWidth + 10}
               height={selectionHeight + 10}
-              stroke="steelblue"
+              stroke={selectionColor}
               fill="white"
               fill-opacity="0"
               pointer-events="none"
@@ -524,7 +534,7 @@
                 text-anchor={"middle"}
                 x={40}
                 y={point.y}
-                fill={bg.luminance() > 0.5 ? "black" : "white"}
+                fill={textColor}
               >
                 {point.label}
               </text>

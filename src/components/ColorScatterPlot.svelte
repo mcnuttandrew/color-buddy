@@ -268,7 +268,7 @@
         on:mouseup={stopDrag}
         on:touchend={stopDrag}
       >
-        <g transform={`translate(${margin.left}, ${margin.top}`}>
+        <g transform={`translate(${margin.left}, ${margin.top})`}>
           <ColorScatterPlotXyGuides
             {xScale}
             {yScale}

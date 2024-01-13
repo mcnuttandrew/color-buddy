@@ -112,7 +112,7 @@
               <button
                 class="{buttonStyle} "
                 on:click={() => {
-                  colorStore.createNewPalWithExplicitPal(pal);
+                  colorStore.createNewPal(pal);
                   onClick();
                   focusStore.clearColors();
                 }}
@@ -127,6 +127,6 @@
   </span>
 
   <span slot="target" let:toggle>
-    <button class={buttonStyle} on:click={toggle}>From familiar pal</button>
+    <button class={buttonStyle} on:click={toggle}>New</button>
   </span>
 </Tooltip>

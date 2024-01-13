@@ -45,7 +45,6 @@
   function onToggle(group: string) {
     exampleStore.toggleSection(group as keyof typeof $exampleStore.sections);
   }
-  $: console.log(sections);
 </script>
 
 <div class="flex items-center bg-slate-200 px-4">

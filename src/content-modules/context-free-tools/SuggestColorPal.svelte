@@ -1,6 +1,7 @@
 <script lang="ts">
   import Tooltip from "../../components/Tooltip.svelte";
   import colorStore from "../../stores/color-store";
+  import navStore from "../../stores/nav-store";
   import { colorFromString } from "../../lib/Color";
   import { suggestPal } from "../../lib/api-calls";
   import type { Palette } from "../../stores/color-store";
@@ -25,7 +26,7 @@
       return;
     }
     requestState = "loading";
-    suggestPal(palPrompt, $colorStore.engine)
+    suggestPal(palPrompt, $navStore.engine)
       .then((suggestions) => {
         if (suggestions.length === 0) {
           requestState = "idle";
@@ -65,7 +66,7 @@
           <button
             class={buttonStyle}
             on:click={() => {
-              colorStore.createNewPalWithExplicitPal(newPal);
+              colorStore.createNewPal(newPal);
               requestState = "idle";
               palPrompt = "";
               onClick();

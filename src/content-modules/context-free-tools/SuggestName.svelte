@@ -1,5 +1,6 @@
 <script lang="ts">
   import colorStore from "../../stores/color-store";
+  import navStore from "../../stores/nav-store";
   import Tooltip from "../../components/Tooltip.svelte";
   import { AIButtonStyle, buttonStyle } from "../../lib/styles";
 
@@ -18,7 +19,7 @@
         on:click={() => {
           if (requestState === "loading") return;
           requestState = "loading";
-          suggestNameForPalette($colorStore.currentPal, $colorStore.engine)
+          suggestNameForPalette($colorStore.currentPal, $navStore.engine)
             .then((x) => {
               nameSuggestions = x;
               requestState = "idle";

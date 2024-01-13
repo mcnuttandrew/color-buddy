@@ -8,7 +8,7 @@
   import Background from "./Background.svelte";
   import Sort from "./context-free-tools/Sort.svelte";
   import GetColorsFromString from "./context-free-tools/GetColorsFromString.svelte";
-  import PickAi from "./context-free-tools/PickAI.svelte";
+  import Config from "./context-free-tools/Config.svelte";
   import { buttonStyle } from "../lib/styles";
   import ShortCuts from "./context-free-tools/ShortCuts.svelte";
   import Zoom from "./context-free-tools/Zoom.svelte";
@@ -30,14 +30,13 @@
           Redo
         </button>
       </div>
-      <PickAi />
+      <Config />
     </div>
     <div class="flex">
-      <span>New:</span>
       <AddFamiliarPal />
       <SuggestColorPal />
+      <ShortCuts />
     </div>
-    <ShortCuts />
   </section>
 
   <section class="mt-4 border-t-2 border-black flex flex-col flex-none">

@@ -5,21 +5,38 @@
   const spaces = ["lab", "lch", "hsl", "hsv"];
   let selectedColorSpace: (typeof spaces)[number] = "lab";
   let selectedLetter = "a";
+  $: colors = $colorStore.currentPal.colors;
+
+  function sortByChannel(colorSpace: string, channel: number) {
+    const newSort = [...colors].sort((a, b) => {
+      const aVal = a.toColorIO().to(colorSpace).coords[channel];
+      const bVal = a.toColorIO().to(colorSpace).coords[channel];
+      return aVal - bVal;
+    });
+    colorStore.setSort(newSort);
+  }
 </script>
 
 <Tooltip>
   <span slot="content" let:onClick>
-    <button class={buttonStyle} on:click={() => colorStore.randomizeOrder()}>
+    <button
+      class={buttonStyle}
+      on:click={() =>
+        colorStore.setSort([...colors].sort(() => Math.random() - 0.5))}
+    >
       Randomize order
     </button>
-    <button class={buttonStyle} on:click={() => colorStore.reverseSort()}>
+    <button
+      class={buttonStyle}
+      on:click={() => colorStore.setSort([...colors].reverse())}
+    >
       Reverse order
     </button>
     <div>
       <button
         class={buttonStyle}
         on:click={() =>
-          colorStore.sortByChannel(
+          sortByChannel(
             selectedColorSpace,
             selectedColorSpace.indexOf(selectedLetter)
           )}

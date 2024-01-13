@@ -8,6 +8,8 @@ interface StoreData {
   xZoom: [number, number];
   yZoom: [number, number];
   zZoom: [number, number];
+  engine: "openai" | "google";
+  showColorBackground: boolean;
 }
 
 const InitialStore: StoreData = {
@@ -18,15 +20,15 @@ const InitialStore: StoreData = {
   xZoom: [0, 1],
   yZoom: [0, 1],
   zZoom: [0, 1],
+  engine: "openai",
+  showColorBackground: true,
 };
 const storeName = "color-pal-nav-store";
 
-const addDefaults = (store: StoreData): StoreData => {
-  return {
-    ...InitialStore,
-    ...store,
-  };
-};
+const addDefaults = (store: StoreData): StoreData => ({
+  ...InitialStore,
+  ...store,
+});
 
 function createStore() {
   const storeData: StoreData = addDefaults(
@@ -35,7 +37,7 @@ function createStore() {
 
   localStorage.setItem(storeName, JSON.stringify(storeData));
   const { subscribe, set, update } = writable<StoreData>(storeData);
-  const persistUpdate = (updateFunc: (old: StoreData) => StoreData) =>
+  const persist = (updateFunc: (old: StoreData) => StoreData) =>
     update((oldStore) => {
       const newVal: StoreData = updateFunc(oldStore);
       localStorage.setItem(storeName, JSON.stringify(newVal));
@@ -45,16 +47,20 @@ function createStore() {
   return {
     subscribe,
     setRoute: (route: StoreData["route"]) =>
-      persistUpdate((old) => ({ ...old, route })),
+      persist((old) => ({ ...old, route })),
     setComparePal: (comparePal: StoreData["comparePal"]) =>
-      persistUpdate((old) => ({ ...old, comparePal })),
+      persist((old) => ({ ...old, comparePal })),
     reset: () => set({ ...InitialStore }),
     setColorSim: (colorSim: StoreData["colorSim"]) =>
-      persistUpdate((old) => ({ ...old, colorSim })),
+      persist((old) => ({ ...old, colorSim })),
     setIncludeQuotes: (includeQuotes: StoreData["includeQuotes"]) =>
-      persistUpdate((old) => ({ ...old, includeQuotes })),
+      persist((old) => ({ ...old, includeQuotes })),
     setZoom: (axis: "x" | "y" | "z", zoom: [number, number]) =>
-      persistUpdate((old) => ({ ...old, [axis + "Zoom"]: zoom })),
+      persist((old) => ({ ...old, [axis + "Zoom"]: zoom })),
+    setEngine: (engine: StoreData["engine"]) =>
+      persist((old) => ({ ...old, engine })),
+    setShowColorBackground: (n: StoreData["showColorBackground"]) =>
+      persist((old) => ({ ...old, showColorBackground: n })),
   };
 }
 

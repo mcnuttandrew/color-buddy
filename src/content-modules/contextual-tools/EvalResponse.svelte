@@ -2,6 +2,7 @@
   import Tooltip from "../../components/Tooltip.svelte";
   import colorStore from "../../stores/color-store";
   import focusStore from "../../stores/focus-store";
+  import navStore from "../../stores/nav-store";
   import { ColorLint } from "../../lib/lints/ColorLint";
   import type { Palette } from "../../stores/color-store";
   import PalDiff from "../../components/PalDiff.svelte";
@@ -15,7 +16,7 @@
   function proposeFix() {
     requestState = "loading";
     check
-      .suggestFix($colorStore.engine)
+      .suggestFix($navStore.engine)
       .then((x) => {
         suggestion = x;
         requestState = "loaded";

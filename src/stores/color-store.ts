@@ -29,13 +29,11 @@ export type Palette = Pal<Color>;
 interface StoreData {
   palettes: Pal<Color>[];
   currentPal: Pal<Color>;
-  engine: "openai" | "google";
 }
 
 interface StorageData {
   palettes: Pal<string>[];
   currentPal: Pal<string>;
-  engine: "openai" | "google";
 }
 
 const InitialStore: StorageData = {
@@ -73,7 +71,6 @@ const InitialStore: StorageData = {
     evalConfig: {},
     colorSpace: "lab",
   },
-  engine: "google",
 };
 
 function convertStoreHexToColor(store: StorageData): StoreData {
@@ -89,7 +86,6 @@ function convertStoreHexToColor(store: StorageData): StoreData {
       background: colorFromString(store.currentPal.background, space),
       colors: store.currentPal.colors.map((y) => colorFromString(y, space)),
     },
-    engine: store.engine,
   };
 }
 
@@ -105,7 +101,6 @@ function convertStoreColorToHex(store: StoreData): StorageData {
       background: store.currentPal.background.toString(),
       colors: store.currentPal.colors.map((y) => y.toString()),
     },
-    engine: store.engine,
   };
 }
 
@@ -178,14 +173,14 @@ function createStore() {
   const palUp = (updateFunc: (old: Palette) => Palette) =>
     persistUpdate((n) => ({ ...n, currentPal: updateFunc(n.currentPal) }));
 
+  const palsUp = (updateFunc: (old: Palette[]) => Palette[]) =>
+    persistUpdate((n) => ({ ...n, palettes: updateFunc(n.palettes) }));
+
   const simpleUpdate = (updateFunc: (old: StoreData) => StoreData) =>
     update((oldStore) => updateFunc(oldStore));
 
   const simpleSet = (key: keyof StoreData) => (val: any) =>
     persistUpdate((n) => ({ ...n, [key]: val }));
-
-  const doSort = (comparator: (a: Color, b: Color) => number) => () =>
-    palUp((n) => ({ ...n, colors: n.colors.sort(comparator) }));
 
   const saveUpdate = (updateFunc: (old: StoreData) => StoreData) =>
     update((oldStore) => {
@@ -236,69 +231,26 @@ function createStore() {
         return { ...n, currentPal: newPal, palettes: updatedPals };
       });
     },
-    createNewPal: () =>
-      persistUpdate((n) => ({
-        ...n,
-        currentPal: {
-          colors: pick(outfits).map((x: string) => colorFromString(x, "lab")),
-          name: "Untitled",
-          background: colorFromString("#ffffff", "lab"),
-          type: "categorical",
-          evalConfig: {},
-          colorSpace: "lab",
-        },
-        palettes: insertPalette(n.palettes, n.currentPal),
-      })),
-    createNewPalWithExplicitPal: (newPal: Palette) =>
+    createNewPal: (newPal: Palette) =>
       persistUpdate((n) => ({
         ...n,
         currentPal: newPal,
         palettes: insertPalette(n.palettes, n.currentPal),
       })),
-    removePal: (pal: string) =>
-      persistUpdate((n) => ({
-        ...n,
-        palettes: n.palettes.filter((x) => x.name !== pal),
-      })),
+    removePal: (pal: string) => palsUp((n) => n.filter((x) => x.name !== pal)),
     copyPal: (pal: string) =>
-      persistUpdate((n) => ({
-        ...n,
-        palettes: insertPalette(
-          n.palettes,
-          n.palettes.find((x) => x.name === pal)!
-        ),
-      })),
+      palsUp((n) => insertPalette(n, n.find((x) => x.name === pal)!)),
     setSort: (sort: Color[]) => palUp((n) => ({ ...n, colors: deDup(sort) })),
-
-    randomizeOrder: doSort(() => Math.random() - 0.5),
-    sortByChannel: (colorSpace: string, channel: number) =>
-      doSort((a, b) => {
-        const aVal = new ColorIO(a.toHex()).to(colorSpace).coords[channel];
-        const bVal = new ColorIO(b.toHex()).to(colorSpace).coords[channel];
-        return aVal - bVal;
-      })(),
-    reverseSort: () => palUp((n) => ({ ...n, colors: n.colors.reverse() })),
-
-    replaceColor: (oldColor: Color, newColor: Color) =>
-      palUp((n) => ({
-        ...n,
-        colors: n.colors.map((x) =>
-          x.toHex() === oldColor.toHex() ? newColor : x
-        ),
-      })),
     setCurrentPalName: (name: string) => palUp((n) => ({ ...n, name })),
     setCurrentPalType: (type: PalType) => palUp((n) => ({ ...n, type })),
     setCurrentPalEvalConfig: (evalConfig: Record<string, any>) =>
       palUp((n) => ({ ...n, evalConfig })),
     addColorToCurrentPal: (color: Color) =>
-      palUp((n) => ({
-        ...n,
-        colors: [...n.colors, color],
-      })),
+      palUp((n) => ({ ...n, colors: [...n.colors, color] })),
     setBackground: (color: Color) =>
       palUp((n) => ({ ...n, background: color })),
     reset: () => set({ ...convertStoreHexToColor(InitialStore) }),
-    setEngine: simpleSet("engine"),
+
     setColorSpace: (colorSpace: ColorSpace) =>
       palUp((n) => ({
         ...n,

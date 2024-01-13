@@ -1,5 +1,6 @@
 <script lang="ts">
   import colorStore from "../../stores/color-store";
+  import navStore from "../../stores/nav-store";
   import chroma from "chroma-js";
   import { randColor } from "../../lib/utils";
   import { buttonStyle } from "../../lib/styles";
@@ -41,7 +42,7 @@
     requestState = "loading";
     suggestAdditionsToPalette(
       $colorStore.currentPal,
-      $colorStore.engine,
+      $navStore.engine,
       searchedString
     )
       .then((x) => {

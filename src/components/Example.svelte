@@ -52,6 +52,9 @@
 
   const query = "path,circle,rect,line";
   async function attachListeners() {
+    if (!container) {
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+    }
     if (container) {
       container.querySelectorAll(query).forEach((x) => {
         x.removeEventListener("click", onClick);

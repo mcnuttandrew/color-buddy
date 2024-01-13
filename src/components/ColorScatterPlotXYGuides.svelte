@@ -2,6 +2,7 @@
   import { colorPickerConfig, colorFromChannels } from "../lib/Color";
   import focusStore from "../stores/focus-store";
   import colorStore from "../stores/color-store";
+  import navStore from "../stores/nav-store";
   import { scaleLinear } from "d3-scale";
   export let xScale: any;
   export let yScale: any;
@@ -68,18 +69,20 @@
 </script>
 
 <!-- colorful background select -->
-{#each [...new Array(bgResolution)] as _, i}
-  {#each [...new Array(bgResolution)] as _, j}
-    <rect
-      x={xScale(xNonDimScale(i / bgResolution))}
-      y={yScale(yNonDimScale(j / bgResolution))}
-      width={plotWidth / bgResolution}
-      height={plotHeight / bgResolution}
-      opacity="1"
-      fill={fillColor(i, j)}
-    />
+{#if $navStore.showColorBackground}
+  {#each [...new Array(bgResolution)] as _, i}
+    {#each [...new Array(bgResolution)] as _, j}
+      <rect
+        x={xScale(xNonDimScale(i / bgResolution))}
+        y={yScale(yNonDimScale(j / bgResolution))}
+        width={plotWidth / bgResolution}
+        height={plotHeight / bgResolution}
+        opacity="1"
+        fill={fillColor(i, j)}
+      />
+    {/each}
   {/each}
-{/each}
+{/if}
 
 <line
   x1={points.centerTop.x}

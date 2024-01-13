@@ -4,33 +4,34 @@ import * as idb from "idb-keyval";
 type Example = { svg: string; numColors: number };
 interface StoreData {
   examples: Example[];
-  sections: Record<string, boolean>;
+  sections: typeof InitialSections;
 }
-
+const InitialSections = {
+  pages: true,
+  ordinal: true,
+  categorical: true,
+  custom: true,
+  swatches: true,
+};
 const InitialStore: StoreData = {
   examples: [],
-  sections: {
-    pages: true,
-    ordinal: true,
-    categorical: true,
-    custom: true,
-  },
+  sections: InitialSections,
 };
 
 const storeName = "color-pal-examples";
 function createStore() {
-  const storeData: StoreData = JSON.parse(JSON.stringify(InitialStore));
-  // install defaults if not present
-  Object.keys(InitialStore).forEach((key) => {
-    if (!(key in storeData)) {
-      const Key: keyof StoreData = key as any;
-      storeData[Key] = InitialStore[Key] as any;
-    }
-  });
+  let storeData: StoreData = JSON.parse(JSON.stringify(InitialStore));
 
   const { subscribe, set, update } = writable<StoreData>(storeData);
   idb.get(storeName).then((x) => {
-    if (x) set(x);
+    if (x) {
+      const newStore = {
+        ...InitialStore,
+        ...x,
+        sections: { ...InitialSections, ...(x.sections || {}) },
+      };
+      set(newStore);
+    }
   });
   const persistUpdate = (updateFunc: (old: StoreData) => StoreData) =>
     update((oldStore) => {

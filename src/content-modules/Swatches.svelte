@@ -33,11 +33,11 @@
   style={`background-color: ${bg.toHex()}; max-width: 600px`}
 >
   <div class="flex mb-2 justify-between items-center">
-    <span class="text-sm flex flex-col" class:text-white={bg.luminance() < 0.5}>
+    <!-- <span class="text-sm flex flex-col" class:text-white={bg.luminance() < 0.5}>
       <span>Click to modify colors</span>
       <span>Hold shift to select multiple</span>
-    </span>
-    {#if focused.length === 1}
+    </span> -->
+    <!-- {#if focused.length === 1}
       {#if focused[0] > 0}
         <button
           class="{buttonStyle} mr-2"
@@ -62,8 +62,8 @@
           Move backward
         </button>
       {/if}
-    {/if}
-    {#if focused.length > 0}
+    {/if} -->
+    <!-- {#if focused.length > 0}
       <button
         class={buttonStyle}
         on:click={() => {
@@ -72,7 +72,7 @@
       >
         Clear Selection
       </button>
-    {/if}
+    {/if} -->
   </div>
   {#each classes as { className, styleMap }}
     <div class="flex justify-center flex-wrap">

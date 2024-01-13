@@ -12,6 +12,7 @@
   import CodeMirror from "svelte-codemirror-editor";
   import Tooltip from "../components/Tooltip.svelte";
   import Example from "../components/Example.svelte";
+  import Swatches from "../content-modules/Swatches.svelte";
 
   let modalState: "closed" | "input-svg" | "edit-colors" = "closed";
   let modifyingExample: number | false = false;
@@ -103,6 +104,9 @@
         </div>
       </div>
     {/each}
+  {/if}
+  {#if $exampleStore.sections["swatches"]}
+    <Swatches />
   {/if}
   {#if $exampleStore.sections.pages}
     <TinyWebpage />

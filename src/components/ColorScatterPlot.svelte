@@ -379,12 +379,20 @@
               <text fill={textColor}>{hoveredPoint.toHex()}</text>
             </g>
           {/if}
+          <circle
+            cx={x(bg)}
+            cy={y(bg)}
+            r={15}
+            stroke={axisColor}
+            fill={bg.toHex()}
+          />
           <text
             x={xScale(bg.toChannels()[1])}
             y={yScale(bg.toChannels()[2])}
             fill={textColor}
+            font-size={12}
             text-anchor="middle"
-            alignment-baseline="middle"
+            dominant-baseline="central"
             class="pointer-events-none"
           >
             BG
@@ -431,9 +439,7 @@
           on:mouseup={stopDrag}
           on:touchend={stopDrag}
         >
-          <!-- svelte-ignore a11y-no-static-element-interactions -->
           <ColorScatterPlotZGuide
-            dragging={!!dragging}
             {yScale}
             {zScale}
             {textColor}
@@ -463,7 +469,7 @@
               <!-- svelte-ignore a11y-click-events-have-key-events -->
               <rect
                 x={10 - (focusSet.has(i) ? 5 : 0)}
-                class="cursor-pointer color-bricks"
+                class="cursor-pointer"
                 y={z(color)}
                 width={80 - 10 * 2 + (focusSet.has(i) ? 10 : 0)}
                 height={5}
@@ -480,7 +486,7 @@
               <!-- svelte-ignore a11y-click-events-have-key-events -->
               <rect
                 x={10 - (focusSet.has(i) ? 5 : 0)}
-                class="cursor-pointer color-bricks"
+                class="cursor-pointer"
                 y={z(color)}
                 width={80 - 10 * 2 + (focusSet.has(i) ? 10 : 0)}
                 height={5}
@@ -530,5 +536,9 @@
     transition: r 0.2s ease-in-out;
     -webkit-transition: r 0.2s ease-in-out;
     -moz-transition: r 0.2s ease-in-out;
+  }
+
+  svg {
+    overflow: visible;
   }
 </style>

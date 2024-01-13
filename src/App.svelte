@@ -5,7 +5,6 @@
   import LeftPanel from "./content-modules/LeftPanel.svelte";
   import ActionArea from "./content-modules/ActionArea.svelte";
   import Examples from "./content-modules/Examples.svelte";
-  import Swatches from "./content-modules/Swatches.svelte";
   import Eval from "./content-modules/Eval.svelte";
   import KeyboardHooks from "./components/KeyboardHooks.svelte";
   import ComparePal from "./content-modules/ComparePal.svelte";
@@ -32,7 +31,6 @@
           startDragging={() => colorStore.pausePersistance()}
           stopDragging={() => colorStore.resumePersistance()}
         />
-        <Swatches />
       </div>
       <div class="grow">
         <nav

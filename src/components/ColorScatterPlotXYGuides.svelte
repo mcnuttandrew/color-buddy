@@ -2,7 +2,7 @@
   import { colorPickerConfig, colorFromChannels } from "../lib/Color";
   import focusStore from "../stores/focus-store";
   import colorStore from "../stores/color-store";
-  import navStore from "../stores/nav-store";
+  import configStore from "../stores/config-store";
   import { scaleLinear } from "d3-scale";
   export let xScale: any;
   export let yScale: any;
@@ -69,7 +69,7 @@
 </script>
 
 <!-- colorful background select -->
-{#if $navStore.showColorBackground}
+{#if $configStore.showColorBackground}
   {#each [...new Array(bgResolution)] as _, i}
     {#each [...new Array(bgResolution)] as _, j}
       <rect

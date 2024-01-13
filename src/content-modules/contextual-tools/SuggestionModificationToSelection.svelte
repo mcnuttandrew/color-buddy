@@ -2,7 +2,7 @@
   import Tooltip from "../../components/Tooltip.svelte";
   import colorStore from "../../stores/color-store";
   import focusStore from "../../stores/focus-store";
-  import navStore from "../../stores/nav-store";
+  import configStore from "../../stores/config-store";
   import { colorFromString } from "../../lib/Color";
   import { suggestContextualAdjustments } from "../../lib/api-calls";
   import { buttonStyle, AIButtonStyle } from "../../lib/styles";
@@ -36,7 +36,7 @@
           colors: selectedColors.map((x) => colorFromString(x, colorSpace)),
         }
       : $colorStore.currentPal;
-    suggestContextualAdjustments(palPrompt, pal, $navStore.engine)
+    suggestContextualAdjustments(palPrompt, pal, $configStore.engine)
       .then((suggestions) => {
         if (suggestions.length === 0) {
           requestState = "idle";

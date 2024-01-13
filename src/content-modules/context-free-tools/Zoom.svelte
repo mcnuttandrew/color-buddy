@@ -3,15 +3,15 @@
   import { buttonStyle } from "../../lib/styles";
   import { colorPickerConfig } from "../../lib/Color";
   import DoubleRangeSlider from "../../components/DoubleRangeSlider.svelte";
-  import navStore from "../../stores/nav-store";
+  import configStore from "../../stores/config-store";
   import colorStore from "../../stores/color-store";
 
-  $: xZoom = $navStore.xZoom;
-  $: xZoom && navStore.setZoom("x", xZoom);
-  $: yZoom = $navStore.yZoom;
-  $: yZoom && navStore.setZoom("y", yZoom);
-  $: zZoom = $navStore.zZoom;
-  $: zZoom && navStore.setZoom("z", zZoom);
+  $: xZoom = $configStore.xZoom;
+  $: xZoom && configStore.setZoom("x", xZoom);
+  $: yZoom = $configStore.yZoom;
+  $: yZoom && configStore.setZoom("y", yZoom);
+  $: zZoom = $configStore.zZoom;
+  $: zZoom && configStore.setZoom("z", zZoom);
 
   $: colorSpace = $colorStore.currentPal.colorSpace;
   $: config = colorPickerConfig[colorSpace as keyof typeof colorPickerConfig];
@@ -41,9 +41,9 @@
     </div>
     <button
       on:click={() => {
-        navStore.setZoom("x", [0, 1]);
-        navStore.setZoom("y", [0, 1]);
-        navStore.setZoom("z", [0, 1]);
+        configStore.setZoom("x", [0, 1]);
+        configStore.setZoom("y", [0, 1]);
+        configStore.setZoom("z", [0, 1]);
       }}
     >
       Reset

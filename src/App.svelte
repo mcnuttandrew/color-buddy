@@ -1,7 +1,7 @@
 <script lang="ts">
   import colorStore from "./stores/color-store";
   import focusStore from "./stores/focus-store";
-  import navStore from "./stores/nav-store";
+  import configStore from "./stores/config-store";
   import LeftPanel from "./content-modules/LeftPanel.svelte";
   import ActionArea from "./content-modules/ActionArea.svelte";
   import Examples from "./content-modules/Examples.svelte";
@@ -42,12 +42,12 @@
               <li>
                 <button
                   class="h-6 px-2 transition-colors duration-150 border border-slate-500 focus:shadow-outline uppercase italic"
-                  class:bg-slate-500={$navStore.route === tab}
-                  class:bg-white={$navStore.route !== tab}
-                  class:text-white={$navStore.route === tab}
+                  class:bg-slate-500={$configStore.route === tab}
+                  class:bg-white={$configStore.route !== tab}
+                  class:text-white={$configStore.route === tab}
                   class:rounded-r-lg={tab === "eval"}
                   class:rounded-l-lg={tab === "examples"}
-                  on:click={() => navStore.setRoute(tab)}
+                  on:click={() => configStore.setRoute(tab)}
                 >
                   {tab}
                 </button>
@@ -56,9 +56,9 @@
           </ul>
         </nav>
 
-        {#if $navStore.route === "examples"}
+        {#if $configStore.route === "examples"}
           <Examples />
-        {:else if $navStore.route === "compare"}
+        {:else if $configStore.route === "compare"}
           <ComparePal />
         {:else}
           <Eval />

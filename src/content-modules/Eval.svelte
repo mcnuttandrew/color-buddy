@@ -1,7 +1,7 @@
 <script lang="ts">
   import colorStore from "../stores/color-store";
   import focusStore from "../stores/focus-store";
-  import navStore from "../stores/nav-store";
+  import configStore from "../stores/config-store";
   import { computeStats } from "../lib/color-stats";
   import { runLintChecks } from "../lib/linter";
   import { colorNameSimple } from "../lib/lints/name-discrim";
@@ -12,7 +12,7 @@
   import ExplanationViewer from "../components/ExplanationViewer.svelte";
   import simulate_cvd from "../lib/blindness";
 
-  $: selectedBlindType = $navStore.colorSim;
+  $: selectedBlindType = $configStore.colorSim;
 
   let metric: "dE" | "dE94" | "none" = "none";
   $: colors = $colorStore.currentPal.colors;

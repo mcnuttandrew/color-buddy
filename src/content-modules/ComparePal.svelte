@@ -1,20 +1,20 @@
 <script lang="ts">
   import colorStore from "../stores/color-store";
-  import navStore from "../stores/nav-store";
+  import configStore from "../stores/config-store";
   import ColorScatterPlot from "../components/ColorScatterPlot.svelte";
 
   $: ComparisonPal = $colorStore.palettes.find(
-    (x) => x.name === $navStore.comparePal
+    (x) => x.name === $configStore.comparePal
   );
 </script>
 
 <div class="flex flex-col">
-  <select value={$navStore.comparePal}>
+  <select value={$configStore.comparePal}>
     {#each $colorStore.palettes as pal}
       <option
         value={pal.name}
         on:click={() => {
-          navStore.setComparePal(pal.name);
+          configStore.setComparePal(pal.name);
         }}
       >
         {pal.name}

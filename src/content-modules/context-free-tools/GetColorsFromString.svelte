@@ -1,7 +1,7 @@
 <script lang="ts">
   import { colorFromString } from "../../lib/Color";
   import colorStore from "../../stores/color-store";
-  import navStore from "../../stores/nav-store";
+  import configStore from "../../stores/config-store";
   $: colors = $colorStore.currentPal.colors;
   let state: "idle" | "error" = "idle";
   $: colorSpace = $colorStore.currentPal.colorSpace;
@@ -21,7 +21,7 @@
       return;
     }
   }
-  $: includeQuotes = $navStore.includeQuotes;
+  $: includeQuotes = $configStore.includeQuotes;
 </script>
 
 <div class="">
@@ -35,7 +35,7 @@
         id="include-quotes"
         class="mr-2"
         checked={includeQuotes}
-        on:change={() => navStore.setIncludeQuotes(!includeQuotes)}
+        on:change={() => configStore.setIncludeQuotes(!includeQuotes)}
       />
     </div>
   </div>

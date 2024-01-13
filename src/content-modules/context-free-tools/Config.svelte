@@ -1,8 +1,9 @@
 <script lang="ts">
-  import navStore from "../../stores/nav-store";
+  import configStore from "../../stores/config-store";
   import Tooltip from "../../components/Tooltip.svelte";
   import { buttonStyle } from "../../lib/styles";
   const aiModes = ["google", "openai"] as const;
+  $: showBg = $configStore.showColorBackground;
 </script>
 
 <Tooltip>
@@ -15,8 +16,8 @@
       {#each aiModes as ai}
         <button
           class={buttonStyle}
-          class:font-bold={ai === $navStore.engine}
-          on:click={() => navStore.setEngine(ai)}
+          class:font-bold={ai === $configStore.engine}
+          on:click={() => configStore.setEngine(ai)}
         >
           {ai}
         </button>
@@ -26,9 +27,8 @@
     <div>
       <input
         type="checkbox"
-        checked={$navStore.showColorBackground}
-        on:change={() =>
-          navStore.setShowColorBackground(!navStore.showColorBackground)}
+        checked={showBg}
+        on:change={() => configStore.setShowColorBackground(!showBg)}
       />
     </div>
   </div>

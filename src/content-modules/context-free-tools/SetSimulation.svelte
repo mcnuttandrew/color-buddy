@@ -1,7 +1,7 @@
 <script lang="ts">
   import { buttonStyle } from "../../lib/styles";
   import Tooltip from "../../components/Tooltip.svelte";
-  import navStore from "../../stores/nav-store";
+  import configStore from "../../stores/config-store";
 </script>
 
 <Tooltip>
@@ -10,10 +10,10 @@
       <label>
         <input
           type="radio"
-          checked={$navStore.colorSim === value}
+          checked={$configStore.colorSim === value}
           on:change={(e) => {
             // @ts-ignore
-            navStore.setColorSim(e.target.value);
+            configStore.setColorSim(e.target.value);
           }}
           name="amount"
           {value}
@@ -23,6 +23,6 @@
     {/each}
   </div>
   <button slot="target" let:toggle on:click={toggle} class={buttonStyle}>
-    Blind Sim: {#if $navStore.colorSim !== "none"}{$navStore.colorSim}{/if}
+    Blind Sim: {#if $configStore.colorSim !== "none"}{$configStore.colorSim}{/if}
   </button>
 </Tooltip>

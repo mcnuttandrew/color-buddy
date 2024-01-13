@@ -1,7 +1,7 @@
 <script lang="ts">
   import Tooltip from "../../components/Tooltip.svelte";
   import colorStore from "../../stores/color-store";
-  import navStore from "../../stores/nav-store";
+  import configStore from "../../stores/config-store";
   import { colorFromString } from "../../lib/Color";
   import { suggestPal } from "../../lib/api-calls";
   import type { Palette } from "../../stores/color-store";
@@ -26,7 +26,7 @@
       return;
     }
     requestState = "loading";
-    suggestPal(palPrompt, $navStore.engine)
+    suggestPal(palPrompt, $configStore.engine)
       .then((suggestions) => {
         if (suggestions.length === 0) {
           requestState = "idle";

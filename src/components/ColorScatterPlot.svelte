@@ -7,7 +7,7 @@
     colorPickerConfig,
   } from "../lib/Color";
   import { makeExtents, deDup, toggleElement } from "../lib/utils";
-  import navStore from "../stores/nav-store";
+  import configStore from "../stores/config-store";
   import { scaleLinear } from "d3-scale";
   import simulate_cvd from "../lib/blindness";
   import ColorScatterPlotXyGuides from "./ColorScatterPlotXYGuides.svelte";
@@ -26,7 +26,7 @@
   export let stopDragging: () => void;
   export let colorSpace: any;
 
-  $: selectedBlindType = $navStore.colorSim;
+  $: selectedBlindType = $configStore.colorSim;
   $: blindColors =
     selectedBlindType === "none"
       ? []
@@ -38,9 +38,9 @@
   const plotWidth = width - margin.left - margin.right;
   const plotHeight = height - margin.top - margin.bottom;
   $: extents = {
-    x: $navStore.xZoom,
-    y: $navStore.yZoom,
-    z: $navStore.zZoom,
+    x: $configStore.xZoom,
+    y: $configStore.yZoom,
+    z: $configStore.zZoom,
   };
   $: pickedColors = focusedColors.map((x) => colors[x].toChannels());
   $: selectionExtents = makeExtents(pickedColors);

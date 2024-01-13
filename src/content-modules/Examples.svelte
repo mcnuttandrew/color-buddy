@@ -12,6 +12,7 @@
   import CodeMirror from "svelte-codemirror-editor";
   import Tooltip from "../components/Tooltip.svelte";
   import Example from "../components/Example.svelte";
+  import Swatches from "../content-modules/Swatches.svelte";
 
   let modalState: "closed" | "input-svg" | "edit-colors" = "closed";
   let modifyingExample: number | false = false;
@@ -40,6 +41,11 @@
   }
 
   $: detectedColors = [] as string[];
+  $: sections = $exampleStore.sections as any;
+  function onToggle(group: string) {
+    exampleStore.toggleSection(group as keyof typeof $exampleStore.sections);
+  }
+  $: console.log(sections);
 </script>
 
 <div class="flex items-center bg-slate-200 px-4">
@@ -49,7 +55,8 @@
       <input
         id={`${group}-checkbox`}
         type="checkbox"
-        bind:checked={$exampleStore.sections[group]}
+        checked={sections[group]}
+        on:change={(e) => onToggle(group)}
       />
     </div>
   {/each}
@@ -104,12 +111,15 @@
       </div>
     {/each}
   {/if}
+  {#if $exampleStore.sections["swatches"]}
+    <Swatches />
+  {/if}
   {#if $exampleStore.sections.pages}
     <TinyWebpage />
     <TextBlock />
   {/if}
   {#each charts as { chart, group }}
-    {#if $exampleStore.sections[group]}
+    {#if sections[group]}
       <div class="flex flex-col border-2 border-dashed rounded w-min mr-4">
         <Vega spec={chart($colorStore.currentPal)} />
       </div>

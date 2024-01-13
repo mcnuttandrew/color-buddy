@@ -5,6 +5,9 @@ interface StoreData {
   comparePal: string | undefined;
   colorSim: "deuteranopia" | "protanopia" | "tritanopia" | "none";
   includeQuotes: boolean;
+  xZoom: [number, number];
+  yZoom: [number, number];
+  zZoom: [number, number];
 }
 
 const InitialStore: StoreData = {
@@ -12,6 +15,9 @@ const InitialStore: StoreData = {
   comparePal: undefined,
   colorSim: "none",
   includeQuotes: false,
+  xZoom: [0, 1],
+  yZoom: [0, 1],
+  zZoom: [0, 1],
 };
 const storeName = "color-pal-nav-store";
 
@@ -47,6 +53,8 @@ function createStore() {
       persistUpdate((old) => ({ ...old, colorSim })),
     setIncludeQuotes: (includeQuotes: StoreData["includeQuotes"]) =>
       persistUpdate((old) => ({ ...old, includeQuotes })),
+    setZoom: (axis: "x" | "y" | "z", zoom: [number, number]) =>
+      persistUpdate((old) => ({ ...old, [axis + "Zoom"]: zoom })),
   };
 }
 

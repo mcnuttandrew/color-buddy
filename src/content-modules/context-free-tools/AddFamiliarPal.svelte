@@ -39,9 +39,6 @@
       });
     });
     Object.entries(chroma.brewer).forEach(([name, colors]) => {
-      if (!colorBrewerMapToType[name.toLowerCase()]) {
-        console.log(name);
-      }
       newPals.push({
         name,
         colors: colors.map((x) => colorFromString(x, colorSpace)),

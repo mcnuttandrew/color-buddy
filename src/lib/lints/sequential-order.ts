@@ -3,8 +3,7 @@ import type { TaskType } from "./ColorLint";
 import ColorIO from "colorjs.io";
 import { Color } from "../Color";
 
-const getLightness = (color: Color) =>
-  new ColorIO(color.toHex()).to("lab").coords[0];
+const getLightness = (color: Color) => color.toColorIO().to("lab").coords[0];
 export default class SequentialOrder extends ColorLint<boolean, false> {
   name = "Sequential Palettes should be ordered by lightness";
   taskTypes = ["sequential"] as TaskType[];

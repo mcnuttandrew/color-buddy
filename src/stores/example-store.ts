@@ -44,6 +44,11 @@ function createStore() {
     subscribe,
     set: (newStore: StoreData) => persistUpdate(() => newStore),
     reset: () => persistUpdate(() => ({ ...InitialStore })),
+    toggleSection: (section: keyof typeof InitialSections) =>
+      persistUpdate((old) => ({
+        ...old,
+        sections: { ...old.sections, [section]: !old.sections[section] },
+      })),
     updateExample: (example: Example, idx: number) =>
       persistUpdate((old) => {
         const newExamples = [...old.examples];

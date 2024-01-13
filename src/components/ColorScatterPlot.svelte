@@ -239,8 +239,7 @@
     onFocusedColorsChange([...newFocusedColors]);
   }
 
-  // $: axisColor = bg.luminance() > 0.5 ? "gray" : "white";
-  $: luminance = bg.toChroma().luminance();
+  $: luminance = bg.luminance();
   $: axisColor = luminance > 0.4 ? "#00000022" : "#ffffff55";
   $: textColor = luminance > 0.4 ? "#00000066" : "#ffffffaa";
   $: selectionColor = luminance > 0.35 ? "#55330066" : "#ffeeccaa";
@@ -254,7 +253,7 @@
 <!-- svelte-ignore a11y-no-static-element-interactions -->
 <!-- svelte-ignore a11y-no-static-element-interactions -->
 <div class="flex" style="background: {bg.toHex()}">
-  <div class="flex flex-col">
+  <div class="flex flex-col items-center">
     <span class="text-2xl" style="color: {textColor}">
       {config.title}
     </span>
@@ -298,6 +297,22 @@
             class:cursor-pointer={dragging}
           />
 
+          <!-- background circle -->
+          <g
+            transform={`translate(${x(bg)}, ${y(bg)})`}
+            class="pointer-events-none"
+          >
+            <circle r={15} stroke={axisColor} fill={bg.toHex()} />
+            <text
+              fill={textColor}
+              font-size={12}
+              text-anchor="middle"
+              dominant-baseline="central"
+            >
+              BG
+            </text>
+          </g>
+          <!-- main colors -->
           {#each colors as color, i}
             <!-- svelte-ignore a11y-no-static-element-interactions -->
             <!-- svelte-ignore a11y-click-events-have-key-events -->
@@ -343,8 +358,22 @@
                 pointer-events="none"
                 transform={`translate(${x(color)} ${y(color)})`}
               >
-                <line stroke="black" x1={-7} y1={-7} x2={7} y2={7}></line>
-                <line stroke="black" x1={-7} y1={7} x2={7} y2={-7}></line>
+                <line
+                  pointer-events="none"
+                  stroke="black"
+                  x1={-7}
+                  y1={-7}
+                  x2={7}
+                  y2={7}
+                ></line>
+                <line
+                  pointer-events="none"
+                  stroke="black"
+                  x1={-7}
+                  y1={7}
+                  x2={7}
+                  y2={-7}
+                ></line>
               </g>
             {/if}
           {/each}
@@ -379,24 +408,7 @@
               <text fill={textColor}>{hoveredPoint.toHex()}</text>
             </g>
           {/if}
-          <circle
-            cx={x(bg)}
-            cy={y(bg)}
-            r={15}
-            stroke={axisColor}
-            fill={bg.toHex()}
-          />
-          <text
-            x={xScale(bg.toChannels()[1])}
-            y={yScale(bg.toChannels()[2])}
-            fill={textColor}
-            font-size={12}
-            text-anchor="middle"
-            dominant-baseline="central"
-            class="pointer-events-none"
-          >
-            BG
-          </text>
+
           {#if dragging && dragBox && isMainBoxDrag}
             <rect
               x={Math.min(dragging.x, dragBox.x) - parentPos.x}
@@ -435,6 +447,7 @@
         <svg
           {height}
           width={80 + margin.left + margin.right}
+          class="mt-3"
           on:mouseleave={stopDrag}
           on:mouseup={stopDrag}
           on:touchend={stopDrag}

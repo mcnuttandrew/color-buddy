@@ -5,6 +5,7 @@ import ColorIO from "colorjs.io";
 type Domain = Record<string, [number, number]>;
 type Channels = [number, number, number];
 const hexCache = new Map<string, string>();
+const cssColorCache = new Map<string, string>();
 export class Color {
   name: string = "";
   channels: Record<string, number> = {};
@@ -54,12 +55,17 @@ export class Color {
   }
   inGamut(): boolean {
     // return new ColorIO(this.spaceName, this.toChannels()).inGamut();
-    const x = this.toHex();
-    const y = colorFromHex(x, "srgb").toHex();
-    // if (x !== y) {
-    //   console.log("x", x, "y", y);
-    // }
-    return x === y;
+    let clr = this.toColorIO().to("srgb", { inGamut: false });
+    let cssColor = clr.display();
+    // cssColor.color.inGamut();
+    return cssColor.color.inGamut();
+
+    // const x = this.toHex();
+    // const y = colorFromHex(x, "srgb").toHex();
+    // // if (x !== y) {
+    // //   console.log("x", x, "y", y);
+    // // }
+    // return x === y;
   }
   toColorIO(): ColorIO {
     try {

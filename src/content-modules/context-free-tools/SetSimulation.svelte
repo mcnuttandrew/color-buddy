@@ -23,6 +23,6 @@
     {/each}
   </div>
   <button slot="target" let:toggle on:click={toggle} class={buttonStyle}>
-    Blind Sim: {#if $configStore.colorSim !== "none"}{$configStore.colorSim}{/if}
+    Blind Sim: {$configStore.colorSim}
   </button>
 </Tooltip>

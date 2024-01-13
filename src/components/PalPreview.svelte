@@ -6,7 +6,7 @@
 </script>
 
 <div
-  class="flex flex-wrap rounded p-2"
+  class="flex flex-wrap rounded p-2 grow"
   style="background-color: {pal.background.toHex()};"
 >
   {#each deDup(pal.colors) as color (color.toHex())}

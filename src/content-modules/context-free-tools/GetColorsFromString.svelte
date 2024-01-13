@@ -24,7 +24,7 @@
   $: includeQuotes = $configStore.includeQuotes;
 </script>
 
-<div class="">
+<div class="mt-2">
   <div class="flex justify-between w-full">
     <label for="current-colors">Current Colors</label>
     <!-- switch for including quotes -->

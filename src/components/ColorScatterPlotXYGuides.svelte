@@ -54,7 +54,6 @@
   const bgResolution = 25;
   const avgNums = (nums: number[]) =>
     nums.reduce((acc, x) => acc + x, 0) / nums.length;
-  $: bg = $colorStore.currentPal.background;
   $: fillColor = (i: number, j: number) => {
     if (dragging && focusedColors.length === 1) {
       const avgColor = [
@@ -64,7 +63,7 @@
       ] as [number, number, number];
       return colorFromChannels(avgColor, colorSpace as any).toHex();
     }
-    return bg.toHex();
+    return "#ffffff00";
   };
 </script>
 

@@ -6,9 +6,12 @@
   $: ComparisonPal = $colorStore.palettes.find(
     (x) => x.name === $configStore.comparePal
   );
+  $: bg = ComparisonPal?.background.toHex() || "white";
+  $: colorSpace = ComparisonPal?.colorSpace || "lab";
+  $: console.log(bg);
 </script>
 
-<div class="flex flex-col">
+<div class="flex flex-col" style={`background: ${bg}`}>
   <select value={$configStore.comparePal}>
     {#each $colorStore.palettes as pal}
       <option
@@ -25,7 +28,7 @@
     <ColorScatterPlot
       scatterPlotMode="looking"
       Pal={ComparisonPal}
-      colorSpace={$colorStore.currentPal.colors[0].spaceName}
+      {colorSpace}
       focusedColors={[]}
       height={450}
       width={450}

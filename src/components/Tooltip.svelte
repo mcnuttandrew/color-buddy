@@ -1,6 +1,7 @@
 <script lang="ts">
   // @ts-nocheck
   import Portal from "svelte-portal";
+  import configStore from "../stores/config-store";
   export let top: string = "2rem";
   export let onClose: () => void = () => {};
   export let initiallyOpen: boolean = false;
@@ -35,12 +36,20 @@
       x.addEventListener("click", onClick);
     });
   }
-  $: topString = boundingBox
-    ? top
-      ? `calc(${boundingBox.y}px + ${top})`
-      : `${boundingBox.y}px`
-    : "0";
-  $: leftString = boundingBox ? `${boundingBox.x}px` : "0";
+  $: topString =
+    allowDrag && $configStore.tooltipXY
+      ? $configStore.tooltipXY[1]
+      : boundingBox
+        ? top
+          ? `calc(${boundingBox.y}px + ${top})`
+          : `${boundingBox.y}px`
+        : "0";
+  $: leftString =
+    allowDrag && $configStore.tooltipXY
+      ? $configStore.tooltipXY[0]
+      : boundingBox
+        ? `${boundingBox.x}px`
+        : "0";
 </script>
 
 {#if tooltipOpen && boundingBox}
@@ -51,7 +60,8 @@
     >
       <div class="relative" class:right-edge={positionAlongRightEdge}>
         <span
-          class="tooltip rounded shadow-lg p-4 bg-slate-100 text-black max-w-lg flex-wrap flex"
+          class="tooltip rounded shadow-lg p-4 bg-slate-100 text-black flex-wrap flex"
+          class:p-4={true}
         >
           {#if allowDrag}
             <div
@@ -62,6 +72,7 @@
                 e.stopPropagation();
                 leftString = `${e.detail.x - 20}px`;
                 topString = `${e.detail.y - 20}px`;
+                configStore.setTooltipXY([leftString, topString]);
               }}
             ></div>
           {/if}

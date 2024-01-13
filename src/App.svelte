@@ -37,7 +37,7 @@
         <div class="flex flex-col h-full">
           <ColorScatterPlot
             scatterPlotMode="moving"
-            colorSpace={$colorStore.currentPal.colors[0].spaceName}
+            colorSpace={$colorStore.currentPal.colorSpace}
             Pal={$colorStore.currentPal}
             focusedColors={$focusStore.focusedColors}
             height={450}
@@ -71,7 +71,11 @@
             </div>
             <!-- overview / preview -->
             <div class="flex w-full items-center">
-              <PalPreview pal={$colorStore.currentPal} />
+              <PalPreview
+                highlightSelected={true}
+                pal={$colorStore.currentPal}
+                allowModification={true}
+              />
               <div class="pl-2">
                 <Sort />
               </div>

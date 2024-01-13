@@ -8,7 +8,6 @@
   );
   $: bg = ComparisonPal?.background.toHex() || "white";
   $: colorSpace = ComparisonPal?.colorSpace || "lab";
-  $: console.log(bg);
 </script>
 
 <div class="flex flex-col" style={`background: ${bg}`}>

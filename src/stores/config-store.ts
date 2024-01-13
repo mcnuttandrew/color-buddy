@@ -10,6 +10,7 @@ interface StoreData {
   zZoom: [number, number];
   engine: "openai" | "google";
   showColorBackground: boolean;
+  tooltipXY?: [string, string];
 }
 
 const InitialStore: StoreData = {
@@ -22,6 +23,7 @@ const InitialStore: StoreData = {
   zZoom: [0, 1],
   engine: "openai",
   showColorBackground: true,
+  tooltipXY: undefined,
 };
 const storeName = "color-pal-nav-store";
 
@@ -61,6 +63,8 @@ function createStore() {
       persist((old) => ({ ...old, engine })),
     setShowColorBackground: (n: StoreData["showColorBackground"]) =>
       persist((old) => ({ ...old, showColorBackground: n })),
+    setTooltipXY: (xy: StoreData["tooltipXY"]) =>
+      persist((old) => ({ ...old, tooltipXY: xy })),
   };
 }
 

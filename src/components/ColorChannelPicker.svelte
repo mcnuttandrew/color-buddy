@@ -1,11 +1,14 @@
 <script lang="ts">
-  import { Color, colorFromChannels, toColorSpace } from "../lib/Color";
+  import {
+    Color,
+    colorFromChannels,
+    toColorSpace,
+    colorPickerConfig,
+  } from "../lib/Color";
   import ColorIO from "colorjs.io";
-  import chroma from "chroma-js";
   export let color: Color;
   export let onColorChange: (color: Color) => void;
-  type ColorMode = "hsl" | "rgb" | "lab" | "hsv" | "hex";
-  export let colorMode: ColorMode = "lab";
+  export let colorMode: any = "lab";
   $: measuredColorMode = color.spaceName;
   type Channel = {
     name: string;
@@ -63,7 +66,6 @@
     }
   }
   $: color &&
-    colorMode !== "hex" &&
     toColorIO()
       .to(colorModeMap[colorMode] || colorMode)
       .coords.forEach((val, idx) => {
@@ -115,13 +117,9 @@
     ret.push(steps);
     return ret;
   }
-  $: sliderSteps = color && colorMode !== "hex" && (buildSliderSteps() as any);
-  let error = false;
+  $: sliderSteps = color && (buildSliderSteps() as any);
 
   function colorUpdate(e: any, idx: number) {
-    if (colorMode === "hex") {
-      return;
-    }
     let values = [...colorConfigs[colorMode].map((x) => x.value)] as number[];
     values[idx] = Number(e.target.value);
     if (colorMode.includes("rgb")) {
@@ -134,81 +132,56 @@
 
     onColorChange(toColorSpace(newColor, measuredColorMode));
   }
+
+  $: formatter = (x: number) =>
+    Number(colorPickerConfig[colorMode].axisLabel(x));
 </script>
 
-<div class="flex flex-col w-44">
+<div class="flex flex-col">
   <select bind:value={colorMode}>
     {#each [...Object.keys(colorConfigs), "hex"] as colorMode}
       <option value={colorMode}>{colorMode}</option>
     {/each}
   </select>
-  {#if colorMode !== "hex"}
-    <div class="flex h-full pl-2 mr-2">
+  <div class="flex h-full pl-2 mr-2">
+    <div class="flex flex-col">
       <div class="flex flex-col">
-        <div class="flex flex-col">
-          <div class="w-full">
-            {#each colorConfigs[colorMode] as channel, idx}
-              <div class="flex items-start flex-col mb-2">
-                <div class="flex">
-                  <label class="block uppercase text-sm mt-2">
-                    <div class="flex w-full justify-between">
-                      <span>{channel.name} ({channel.min}-{channel.max})</span>
-                      <input
-                        class="w-full h-4 text-right"
-                        type="number"
-                        value={channel.value}
-                        min={channel.min}
-                        max={channel.max}
-                        step={channel.step}
-                        on:input={(e) => colorUpdate(e, idx)}
-                      />
-                    </div>
+        <div class="w-full">
+          {#each colorConfigs[colorMode] as channel, idx}
+            <div class="flex items-start flex-col mb-2">
+              <div class="flex">
+                <label class="block uppercase text-sm mt-2">
+                  <div class="flex w-full justify-between">
+                    <span>{channel.name} ({channel.min}-{channel.max})</span>
                     <input
-                      class="color-slider"
-                      type="range"
-                      style={`--stops: ${sliderSteps[idx]}`}
-                      value={channel.value}
+                      class="w-full h-4 text-right"
+                      type="number"
+                      value={formatter(channel.value)}
                       min={channel.min}
                       max={channel.max}
                       step={channel.step}
                       on:input={(e) => colorUpdate(e, idx)}
-                      on:input={(e) => colorUpdate(e, idx)}
                     />
-                  </label>
-                </div>
+                  </div>
+                  <input
+                    class="color-slider"
+                    type="range"
+                    style={`--stops: ${sliderSteps[idx]}`}
+                    value={channel.value}
+                    min={channel.min}
+                    max={channel.max}
+                    step={channel.step}
+                    on:input={(e) => colorUpdate(e, idx)}
+                    on:input={(e) => colorUpdate(e, idx)}
+                  />
+                </label>
               </div>
-            {/each}
-          </div>
+            </div>
+          {/each}
         </div>
       </div>
     </div>
-  {:else}
-    <div>
-      <label for="hex">Set color using valid hex code</label>
-      <input
-        id="hex"
-        class="w-full"
-        value={color.toHex()}
-        on:change={(e) => {
-          // @ts-ignore
-          const colorString = e.target.value;
-          try {
-            // @ts-ignore
-            const chromaChannels = chroma(colorString)[color.spaceName]();
-            const newColor = color.fromChannels(chromaChannels);
-            onColorChange(toColorSpace(newColor, measuredColorMode));
-            error = false;
-          } catch (e) {
-            console.error(e);
-            error = true;
-          }
-        }}
-      />
-      {#if error}
-        <div class="text-red-500">Error parsing hex</div>
-      {/if}
-    </div>
-  {/if}
+  </div>
 </div>
 
 <style>
@@ -228,6 +201,7 @@
     height: 2.2em;
     border-radius: 0.3em;
     box-shadow: 0 0 1px rgba(0, 0, 0, 0.5);
+    min-width: 300px;
   }
 
   .color-slider::-webkit-slider-thumb {

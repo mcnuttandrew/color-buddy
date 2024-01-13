@@ -37,42 +37,6 @@
       <span>Click to modify colors</span>
       <span>Hold shift to select multiple</span>
     </span> -->
-    <!-- {#if focused.length === 1}
-      {#if focused[0] > 0}
-        <button
-          class="{buttonStyle} mr-2"
-          on:click|stopPropagation|preventDefault={() => {
-            let idx = focused[0];
-            colorStore.setSort(swap(colors, idx, idx - 1));
-            focusStore.setColors([idx - 1]);
-          }}
-        >
-          Move forward
-        </button>
-      {/if}
-      {#if focused[0] < colors.length - 1}
-        <button
-          class="{buttonStyle} mr-2"
-          on:click|stopPropagation|preventDefault={() => {
-            let idx = focused[0];
-            colorStore.setSort(swap(colors, idx, idx + 1));
-            focusStore.setColors([idx + 1]);
-          }}
-        >
-          Move backward
-        </button>
-      {/if}
-    {/if} -->
-    <!-- {#if focused.length > 0}
-      <button
-        class={buttonStyle}
-        on:click={() => {
-          focusStore.clearColors();
-        }}
-      >
-        Clear Selection
-      </button>
-    {/if} -->
   </div>
   {#each classes as { className, styleMap }}
     <div class="flex justify-center flex-wrap">

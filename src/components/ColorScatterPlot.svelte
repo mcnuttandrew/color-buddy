@@ -44,8 +44,11 @@
   };
   $: pickedColors = focusedColors.map((x) => colors[x].toChannels());
   $: selectionExtents = makeExtents(pickedColors);
-  $: xPos = xScale(selectionExtents.x[0] - 7.5);
-  $: yPos = yScale(selectionExtents.y[0] - 7.5);
+
+  $: config = colorPickerConfig[colorSpace];
+
+  $: xPos = xScale(selectionExtents.x[0]) - 15;
+  $: yPos = yScale(selectionExtents.y[0]) - 15;
   $: zPos = zScale(selectionExtents.z[0]);
   $: selectionWidth =
     xScale(selectionExtents.x[1]) - xScale(selectionExtents.x[0]) + 30;
@@ -54,7 +57,6 @@
   $: selectionDepth =
     zScale(selectionExtents.z[1]) - zScale(selectionExtents.z[0]);
 
-  $: config = colorPickerConfig[colorSpace];
   $: bg = Pal.background;
   $: colors = Pal.colors.map((x) => toColorSpace(x, colorSpace));
 
@@ -252,7 +254,7 @@
 
 <!-- svelte-ignore a11y-no-static-element-interactions -->
 <!-- svelte-ignore a11y-no-static-element-interactions -->
-<div class="flex" style="background: {bg.toHex()}">
+<div class="flex" style="background: {bg.toDisplay()}">
   <div class="flex flex-col items-center">
     <span class="text-2xl" style="color: {textColor}">
       {config.title}
@@ -302,7 +304,7 @@
             transform={`translate(${x(bg)}, ${y(bg)})`}
             class="pointer-events-none"
           >
-            <circle r={15} stroke={axisColor} fill={bg.toHex()} />
+            <circle r={15} stroke={axisColor} fill={bg.toDisplay()} />
             <text
               fill={textColor}
               font-size={12}
@@ -327,12 +329,12 @@
                 pointer-events={!focusSet.has(i) ? "all" : "none"}
                 class="cursor-pointer"
                 r={10 + (focusSet.has(i) ? 5 : 0)}
-                fill={color.toHex()}
+                fill={color.toDisplay()}
                 stroke={focusedColors.length === 1 &&
                 focusedColors[0] === i &&
                 dragging
                   ? axisColor
-                  : color.toHex()}
+                  : color.toDisplay()}
                 on:click={(e) => {
                   if (e.metaKey || e.shiftKey) {
                     onFocusedColorsChange(toggleElement(focusedColors, i));
@@ -350,7 +352,7 @@
                   hoveredPoint = color;
                 }}
                 r={10}
-                fill={color.toHex()}
+                fill={color.toDisplay()}
               />
             {/if}
             {#if !color.inGamut()}
@@ -382,7 +384,7 @@
             <circle
               cx={x(blindColor)}
               cy={y(blindColor)}
-              stroke={blindColor.toHex()}
+              stroke={blindColor.toDisplay()}
               fill={"none"}
               r={10}
               stroke-width="4"
@@ -405,7 +407,7 @@
               transform={`translate(${xScale(hoveredPoint.toChannels()[1])},
                 ${yScale(hoveredPoint.toChannels()[2])})`}
             >
-              <text fill={textColor}>{hoveredPoint.toHex()}</text>
+              <text fill={textColor}>{hoveredPoint.toDisplay()}</text>
             </g>
           {/if}
 
@@ -422,6 +424,7 @@
           {/if}
           {#if pickedColors.length > 1}
             <rect
+              class="fuck"
               x={xPos - 5}
               y={yPos - 5}
               width={selectionWidth + 10}
@@ -486,7 +489,7 @@
                 y={z(color)}
                 width={80 - 10 * 2 + (focusSet.has(i) ? 10 : 0)}
                 height={5}
-                fill={color.toHex()}
+                fill={color.toDisplay()}
                 on:click={() =>
                   onFocusedColorsChange(toggleElement(focusedColors, i))}
                 on:mousedown|preventDefault={startDrag(false, i)}
@@ -503,7 +506,7 @@
                 y={z(color)}
                 width={80 - 10 * 2 + (focusSet.has(i) ? 10 : 0)}
                 height={5}
-                stroke={color.toHex()}
+                stroke={color.toDisplay()}
                 fill={"none"}
                 on:click={() =>
                   onFocusedColorsChange(toggleElement(focusedColors, i))}

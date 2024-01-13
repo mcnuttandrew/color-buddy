@@ -4,23 +4,28 @@
   import Tooltip from "../../components/Tooltip.svelte";
   import { buttonStyle } from "../../lib/styles";
   $: colorSpace = $colorStore.currentPal.colorSpace;
-  const notAllowed = new Set(["rgb", "hsv", "hsl", "srgb", "lch", "oklch"]);
+  // const notAllowed = new Set(["rgb", "hsv", "hsl", "srgb", "lch", "oklch"]);
+  const notAllowed = new Set(["rgb", "lch", "oklch", "srgb"]);
   const onChange = (e: any) => colorStore.setColorSpace(e);
-  $: options = Object.entries(colorPickerConfig)
-    .sort()
-    .filter((x) => !notAllowed.has(x[0].toLowerCase()));
+  // $: options = Object.entries(colorPickerConfig)
+  //   .sort()
+  //   .filter((x) => !notAllowed.has(x[0].toLowerCase()));
+  $: options = Object.keys(colorPickerConfig)
+    .filter((x) => !notAllowed.has(x))
+    .sort();
+  // .filter((x) => !notAllowed.has(x[0].toLowerCase()));
 </script>
 
 <Tooltip>
   <div slot="content" class="flex flex-col" let:onClick>
     <div>Set Color Space</div>
-    {#each options as [space, { title }]}
+    {#each options as space}
       <button
         class={buttonStyle}
         class:font-bold={space === colorSpace}
         on:click={() => onChange(space)}
       >
-        {title}
+        {space}
       </button>
     {/each}
   </div>

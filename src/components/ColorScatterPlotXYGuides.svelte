@@ -61,7 +61,7 @@
         xNonDimScale(i / bgResolution),
         yNonDimScale(j / bgResolution),
       ] as [number, number, number];
-      return colorFromChannels(avgColor, colorSpace as any).toHex();
+      return colorFromChannels(avgColor, colorSpace as any).toDisplay();
     }
     return "#ffffff00";
   };

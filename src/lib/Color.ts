@@ -37,7 +37,7 @@ export class Color {
   toString(): string {
     const channelsString = Object.values(this.channels)
       .map((x) => x || 0)
-      .map((x) => (x < 1e-7 ? 0 : x))
+      .map((x) => (x < 1e-5 ? 0 : x))
       .join(", ");
     return `${this.spaceName}(${channelsString})`;
   }
@@ -53,12 +53,17 @@ export class Color {
   setChannel(channel: keyof typeof this.channels, value: number) {
     this.channels[channel] = value;
   }
+  toDisplay(): string {
+    return this.toHex();
+    // return this.toColorIO().display();
+  }
   inGamut(): boolean {
-    // return new ColorIO(this.spaceName, this.toChannels()).inGamut();
-    let clr = this.toColorIO().to("srgb", { inGamut: false });
-    let cssColor = clr.display();
-    // cssColor.color.inGamut();
-    return cssColor.color.inGamut();
+    return this.toColorIO().inGamut("srgb");
+    // // return new ColorIO(this.spaceName, this.toChannels()).inGamut();
+    // let clr = this.toColorIO().to("srgb", { inGamut: false });
+    // let cssColor = clr.display();
+    // // cssColor.color.inGamut();
+    // return cssColor.color.inGamut();
 
     // const x = this.toHex();
     // const y = colorFromHex(x, "srgb").toHex();
@@ -71,7 +76,7 @@ export class Color {
     try {
       return new ColorIO(this.toString());
     } catch (e) {
-      console.log("error", e);
+      console.log("error", e, this.toString());
       return new ColorIO("black");
     }
   }
@@ -101,6 +106,9 @@ export class Color {
   }
   copy(): Color {
     return this.fromChannels(this.toChannels());
+  }
+  toColorSpace(colorSpace: keyof typeof colorDirectory): Color {
+    return toColorSpace(this, colorSpace);
   }
 }
 
@@ -141,7 +149,9 @@ export class CIELAB extends Color {
   axisLabel = (num: number) => `${Math.round(num)}`;
 
   toString(): string {
-    const [L, a, b] = Object.values(this.channels).map((x) => x || 0);
+    const [L, a, b] = Object.values(this.channels)
+      .map((x) => x || 0)
+      .map((x) => (x < 1e-5 ? 0 : x));
     // .map((x) => x.toPrecision(1));
     return `lab(${L}% ${a} ${b})`;
   }
@@ -149,15 +159,17 @@ export class CIELAB extends Color {
 export class HSV extends Color {
   name = "HSV";
   channels = { h: 0, s: 0, v: 0 };
-  domains = { h: [0, 360], s: [0, 1], v: [0, 1] } as Domain;
+  domains = { h: [0, 360], s: [0, 100], v: [0, 100] } as Domain;
   chromaBind = chroma.hsv;
   spaceName = "hsv" as const;
-  stepSize: Channels = [1, 0.01, 0.01];
+  stepSize: Channels = [1, 1, 1];
   xyTitle: string = "HSV: Saturation Value";
   zTitle: string = "HSV: Hue";
   dimensionToChannel = { x: "s", y: "v", z: "h" };
   toString(): string {
-    const [h, s, v] = Object.values(this.channels);
+    const [h, s, v] = Object.values(this.channels).map((x) =>
+      x < 1e-5 ? 0 : x
+    );
     return `color(hsv ${h} ${s} ${v})`;
   }
 }
@@ -166,13 +178,19 @@ export class RGB extends Color {
   name = "RGB";
   channels = { r: 0, g: 0, b: 0 };
   chromaBind = chroma.rgb;
-  spaceName = "rgb" as const;
+  spaceName = "srgb" as const;
   domains = { r: [0, 255], g: [0, 255], b: [0, 255] } as Domain;
   stepSize: Channels = [1, 1, 1];
   xyTitle: string = "RGB: Green Blue";
   zTitle: string = "RGB: Red";
   dimensionToChannel = { x: "g", y: "b", z: "r" };
   axisLabel = (num: number) => `${Math.round(num)}`;
+  toString(): string {
+    const [r, g, b] = Object.values(this.channels).map((x) =>
+      x < 1e-5 ? 0 : x
+    );
+    return `rgb(${r} ${g} ${b})`;
+  }
 }
 
 export class HSL extends Color {
@@ -180,8 +198,8 @@ export class HSL extends Color {
   channels = { h: 0, s: 0, l: 0 };
   chromaBind = chroma.hsl;
   spaceName = "hsl" as const;
-  domains = { h: [0, 360], s: [0, 1], l: [0, 1] } as Domain;
-  stepSize: Channels = [1, 0.01, 0.01];
+  domains = { h: [0, 360], s: [0, 100], l: [0, 100] } as Domain;
+  stepSize: Channels = [1, 1, 1];
   xyTitle: string = "HSL: Saturation Lightness";
   zTitle: string = "HSL: Hue";
   dimensionToChannel = { x: "s", y: "l", z: "h" };
@@ -285,7 +303,7 @@ export function toColorSpace(
   if (color.spaceName === colorSpace) {
     return color;
   }
-  const channels = color.toColorIO().to(colorSpace).coords;
+  const channels = color.toColorIO().to(colorSpace, { inGamut: true }).coords;
   return new colorDirectory[colorSpace]().fromChannels(channels);
 }
 
@@ -297,7 +315,7 @@ export const colorDirectory = {
   lch: LCH,
   oklab: OKLAB,
   oklch: OKLCH,
-  rgb: RGB,
+  // rgb: RGB,
   srgb: RGB,
 };
 

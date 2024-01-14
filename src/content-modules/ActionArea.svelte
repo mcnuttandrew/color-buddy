@@ -10,6 +10,7 @@
   import AddColor from "./contextual-tools/AddColor.svelte";
   import Rotate from "./contextual-tools/Rotate.svelte";
   import Deduplicate from "./contextual-tools/Deduplicate.svelte";
+  import ClipToGamut from "./contextual-tools/ClipToGamut.svelte";
 </script>
 
 <div
@@ -17,6 +18,7 @@
 >
   <AddColor />
   <AdjustColor />
+  <ClipToGamut />
   <OpposingColor />
 
   <CreateAverage />

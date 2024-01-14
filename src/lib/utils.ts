@@ -213,3 +213,35 @@ export const colorBrewerMapToType = Object.entries(colorBrewerTypeMap).reduce(
   },
   {} as any
 ) as Record<string, PalType>;
+
+export function makePosAndSizes(
+  pickedColors: [number, number, number][],
+  xScale: any,
+  yScale: any,
+  zScale: any
+) {
+  const selectionExtents = makeExtents(pickedColors);
+  const makePos = (key: keyof typeof selectionExtents, scale: any) => {
+    const [a, b] = scale.domain();
+    return scale(selectionExtents[key][a > b ? 1 : 0]);
+  };
+  const diff = (key: keyof typeof selectionExtents, scale: any) => {
+    const [a, b] = selectionExtents[key];
+    return Math.abs(scale(a) - scale(b));
+  };
+
+  let xPos = makePos("x", xScale) - 15;
+  let yPos = makePos("y", yScale) - 15;
+  let zPos = makePos("z", zScale);
+
+  let selectionWidth = diff("x", xScale) + 30;
+  let selectionHeight = diff("y", yScale) + 30;
+  let selectionDepth = diff("z", zScale);
+  return { xPos, yPos, zPos, selectionWidth, selectionHeight, selectionDepth };
+}
+
+export const clampToRange = (val: number, range: number[]) => {
+  const min = Math.min(...range);
+  const max = Math.max(...range);
+  return Math.min(Math.max(val, min), max);
+};

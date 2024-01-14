@@ -6,12 +6,18 @@
     toColorSpace,
     colorPickerConfig,
   } from "../lib/Color";
-  import { makeExtents, deDup, toggleElement } from "../lib/utils";
+  import {
+    makePosAndSizes,
+    deDup,
+    toggleElement,
+    clampToRange,
+  } from "../lib/utils";
   import configStore from "../stores/config-store";
   import { scaleLinear } from "d3-scale";
   import simulate_cvd from "../lib/blindness";
   import ColorScatterPlotXyGuides from "./ColorScatterPlotXYGuides.svelte";
   import ColorScatterPlotZGuide from "./ColorScatterPlotZGuide.svelte";
+  import GamutMarker from "./GamutMarker.svelte";
 
   export let scatterPlotMode: "moving" | "looking";
 
@@ -43,47 +49,24 @@
     z: $configStore.zZoom,
   };
   $: pickedColors = focusedColors.map((x) => colors[x].toChannels());
-  $: selectionExtents = makeExtents(pickedColors);
-
   $: config = colorPickerConfig[colorSpace];
-
-  $: xPos = xScale(selectionExtents.x[0]) - 15;
-  $: yPos = yScale(selectionExtents.y[0]) - 15;
-  $: zPos = zScale(selectionExtents.z[0]);
-  $: selectionWidth =
-    xScale(selectionExtents.x[1]) - xScale(selectionExtents.x[0]) + 30;
-  $: selectionHeight =
-    yScale(selectionExtents.y[1]) - yScale(selectionExtents.y[0]) + 30;
-  $: selectionDepth =
-    zScale(selectionExtents.z[1]) - zScale(selectionExtents.z[0]);
-
   $: bg = Pal.background;
   $: colors = Pal.colors.map((x) => toColorSpace(x, colorSpace));
 
   $: xRange = config.xDomain;
   $: domainXScale = scaleLinear().domain([0, 1]).range(xRange);
+  const makeDomain = (range: number[], extent: number[], scale: any) => [
+    range[0] > range[1] ? scale(extent[1]) : scale(extent[0]),
+    range[0] > range[1] ? scale(extent[0]) : scale(extent[1]),
+  ];
   $: xScale = scaleLinear()
-    .domain([
-      xRange[0] > xRange[1]
-        ? domainXScale(extents.x[1])
-        : domainXScale(extents.x[0]),
-      xRange[0] > xRange[1]
-        ? domainXScale(extents.x[0])
-        : domainXScale(extents.x[1]),
-    ])
+    .domain(makeDomain(xRange, extents.x, domainXScale))
     .range([0, plotWidth]);
 
   $: yRange = config.yDomain;
   $: domainYScale = scaleLinear().domain([0, 1]).range(yRange);
   $: yScale = scaleLinear()
-    .domain([
-      yRange[0] > yRange[1]
-        ? domainYScale(extents.y[1])
-        : domainYScale(extents.y[0]),
-      yRange[0] > yRange[1]
-        ? domainYScale(extents.y[0])
-        : domainYScale(extents.y[1]),
-    ])
+    .domain(makeDomain(yRange, extents.y, domainYScale))
     .range([0, plotHeight]);
 
   $: zRange = config.zDomain;
@@ -92,14 +75,12 @@
     .domain([domainLScale(extents.z[0]), domainLScale(extents.z[1])])
     .range([0, plotHeight]);
 
+  $: pos = makePosAndSizes(pickedColors, xScale, yScale, zScale);
+
   let dragging: false | { x: number; y: number } = false;
   let dragBox: false | { x: number; y: number } = false;
   let parentPos = { x: 0, y: 0 };
-  const clampToRange = (val: number, range: number[]) => {
-    const min = Math.min(...range);
-    const max = Math.max(...range);
-    return Math.min(Math.max(val, min), max);
-  };
+
   const eventToColorXY = (
     e: any,
     color: Color,
@@ -149,9 +130,11 @@
     startDragging();
     const targetIsPoint = typeof idx === "number";
     let target = e.target;
+    const isMetaKey = e.metaKey || e.shiftKey;
     isPointDrag = false;
     if (targetIsPoint && !focusSet.has(idx)) {
-      onFocusedColorsChange([idx]);
+      const newSet = isMetaKey ? [...focusSet, idx] : [idx];
+      onFocusedColorsChange(newSet);
       isPointDrag = true;
     }
 
@@ -247,9 +230,43 @@
   $: selectionColor = luminance > 0.35 ? "#55330066" : "#ffeeccaa";
 
   let hoveredPoint: Color | false = false;
+  let hoverPoint = (x: typeof hoveredPoint) => (hoveredPoint = x);
   $: x = (point: Color) => xScale(point.toChannels()[1]);
   $: y = (point: Color) => yScale(point.toChannels()[2]);
   $: z = (point: Color) => zScale(point.toChannels()[0]);
+
+  function shiftClickOnElement(e: any, i: number) {
+    if (e.metaKey || e.shiftKey) {
+      onFocusedColorsChange(toggleElement(focusedColors, i));
+    } else {
+      onFocusedColorsChange([i]);
+    }
+  }
+
+  let CircleProps = (color: Color) => ({
+    cx: x(color),
+    cy: y(color),
+    r: 10,
+    class: "cursor-pointer",
+    fill: color.toDisplay(),
+  });
+  let RectProps = (color: Color, i: number) => ({
+    y: z(color),
+    class: "cursor-pointer",
+    fill: color.toDisplay(),
+    x: 10 - (focusSet.has(i) ? 5 : 0),
+    height: 5,
+    width: 80 - 10 * 2 + (focusSet.has(i) ? 10 : 0),
+  });
+  $: SelectionBoxStyles = {
+    fill: "white",
+    "fill-opacity": "0",
+    "pointer-events": "none",
+    "stroke-dasharray": "5,5",
+    "stroke-width": "1",
+    cursor: "grab",
+    stroke: selectionColor,
+  };
 </script>
 
 <!-- svelte-ignore a11y-no-static-element-interactions -->
@@ -321,87 +338,46 @@
             <!-- svelte-ignore a11y-mouse-events-have-key-events -->
             {#if scatterPlotMode === "moving"}
               <circle
-                cx={xScale(color.toChannels()[1])}
-                cy={yScale(color.toChannels()[2])}
+                {...CircleProps(color)}
                 on:mousedown|preventDefault={startDrag(true, i)}
                 on:touchstart|preventDefault={startDrag(true, i)}
                 on:touchend|preventDefault={() => onFocusedColorsChange([i])}
                 pointer-events={!focusSet.has(i) ? "all" : "none"}
-                class="cursor-pointer"
                 r={10 + (focusSet.has(i) ? 5 : 0)}
-                fill={color.toDisplay()}
                 stroke={focusedColors.length === 1 &&
                 focusedColors[0] === i &&
                 dragging
                   ? axisColor
                   : color.toDisplay()}
-                on:click={(e) => {
-                  if (e.metaKey || e.shiftKey) {
-                    onFocusedColorsChange(toggleElement(focusedColors, i));
-                  } else {
-                    onFocusedColorsChange([i]);
-                  }
-                }}
+                on:click={(e) => shiftClickOnElement(e, i)}
               />
             {/if}
             {#if scatterPlotMode === "looking"}
               <circle
-                cx={x(color)}
-                cy={y(color)}
-                on:mouseenter={() => {
-                  hoveredPoint = color;
-                }}
-                r={10}
-                fill={color.toDisplay()}
+                {...CircleProps(color)}
+                on:mouseenter={() => hoverPoint(color)}
               />
             {/if}
             {#if !color.inGamut()}
-              <g
-                pointer-events="none"
-                transform={`translate(${x(color)} ${y(color)})`}
-              >
-                <line
-                  pointer-events="none"
-                  stroke="black"
-                  x1={-7}
-                  y1={-7}
-                  x2={7}
-                  y2={7}
-                ></line>
-                <line
-                  pointer-events="none"
-                  stroke="black"
-                  x1={-7}
-                  y1={7}
-                  x2={7}
-                  y2={-7}
-                ></line>
-              </g>
+              <GamutMarker xPos={x(color)} yPos={y(color)} />
             {/if}
           {/each}
           {#each blindColors as blindColor, i}
             <!-- svelte-ignore a11y-click-events-have-key-events -->
             <circle
-              cx={x(blindColor)}
-              cy={y(blindColor)}
+              {...CircleProps(blindColor)}
+              class="cursor-pointer"
               stroke={blindColor.toDisplay()}
               fill={"none"}
-              r={10}
               stroke-width="4"
               on:mousedown|preventDefault={startDrag(true, i)}
               on:touchstart|preventDefault={startDrag(true, i)}
               on:touchend|preventDefault={() => onFocusedColorsChange([i])}
               pointer-events={!focusSet.has(i) ? "all" : "none"}
-              class="cursor-pointer"
-              on:click={(e) => {
-                if (e.metaKey || e.shiftKey) {
-                  onFocusedColorsChange(toggleElement(focusedColors, i));
-                } else {
-                  onFocusedColorsChange([i]);
-                }
-              }}
+              on:click={(e) => shiftClickOnElement(e, i)}
             />
           {/each}
+          <!-- simple tooltip -->
           {#if scatterPlotMode === "looking" && hoveredPoint}
             <g
               transform={`translate(${xScale(hoveredPoint.toChannels()[1])},
@@ -411,6 +387,7 @@
             </g>
           {/if}
 
+          <!-- selection box -->
           {#if dragging && dragBox && isMainBoxDrag}
             <rect
               x={Math.min(dragging.x, dragBox.x) - parentPos.x}
@@ -424,18 +401,11 @@
           {/if}
           {#if pickedColors.length > 1}
             <rect
-              class="fuck"
-              x={xPos - 5}
-              y={yPos - 5}
-              width={selectionWidth + 10}
-              height={selectionHeight + 10}
-              stroke={selectionColor}
-              fill="white"
-              fill-opacity="0"
-              pointer-events="none"
-              stroke-dasharray="5,5"
-              stroke-width="1"
-              cursor="grab"
+              x={pos.xPos - 5}
+              y={pos.yPos - 5}
+              width={pos.selectionWidth + 10}
+              height={pos.selectionHeight + 10}
+              {...SelectionBoxStyles}
             />
           {/if}
         </g>
@@ -481,40 +451,28 @@
             />
 
             {#each deDup(colors) as color, i}
-              <!-- svelte-ignore a11y-no-static-element-interactions -->
               <!-- svelte-ignore a11y-click-events-have-key-events -->
               <rect
-                x={10 - (focusSet.has(i) ? 5 : 0)}
-                class="cursor-pointer"
-                y={z(color)}
-                width={80 - 10 * 2 + (focusSet.has(i) ? 10 : 0)}
-                height={5}
-                fill={color.toDisplay()}
-                on:click={() =>
-                  onFocusedColorsChange(toggleElement(focusedColors, i))}
+                {...RectProps(color, i)}
+                on:click={(e) => shiftClickOnElement(e, i)}
                 on:mousedown|preventDefault={startDrag(false, i)}
                 on:touchstart|preventDefault={startDrag(false, i)}
                 on:touchend|preventDefault={() => onFocusedColorsChange([i])}
               />
             {/each}
-            <!-- svelte-ignore a11y-click-events-have-key-events -->
             {#each blindColors as color, i}
               <!-- svelte-ignore a11y-click-events-have-key-events -->
               <rect
-                x={10 - (focusSet.has(i) ? 5 : 0)}
-                class="cursor-pointer"
-                y={z(color)}
-                width={80 - 10 * 2 + (focusSet.has(i) ? 10 : 0)}
-                height={5}
+                {...RectProps(color, i)}
                 stroke={color.toDisplay()}
                 fill={"none"}
-                on:click={() =>
-                  onFocusedColorsChange(toggleElement(focusedColors, i))}
+                on:click={(e) => shiftClickOnElement(e, i)}
                 on:mousedown|preventDefault={startDrag(false, i)}
                 on:touchstart|preventDefault={startDrag(false, i)}
                 on:touchend|preventDefault={() => onFocusedColorsChange([i])}
               />
             {/each}
+            <!-- selection box -->
             {#if dragging && dragBox && !isMainBoxDrag}
               <rect
                 x={5}
@@ -528,16 +486,10 @@
             {#if pickedColors.length}
               <rect
                 x={5}
-                y={zPos - 5}
+                y={pos.zPos - 5}
                 width={80 - 10}
-                height={selectionDepth + 15}
-                stroke={selectionColor}
-                fill="white"
-                fill-opacity="0"
-                pointer-events="none"
-                stroke-dasharray="5,5"
-                stroke-width="1"
-                cursor="grab"
+                height={pos.selectionDepth + 15}
+                {...SelectionBoxStyles}
               />
             {/if}
           </g>

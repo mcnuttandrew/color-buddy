@@ -47,6 +47,7 @@
         on:click|stopPropagation|preventDefault={() => {
           colorStore.setSort(swap(colors, idx, idx - 1));
           focusStore.setColors([idx - 1]);
+          idx = idx - 1;
         }}
       >
         Move forward
@@ -58,6 +59,7 @@
         on:click|stopPropagation|preventDefault={() => {
           colorStore.setSort(swap(colors, idx, idx + 1));
           focusStore.setColors([idx + 1]);
+          idx = idx + 1;
         }}
       >
         Move backward

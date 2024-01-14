@@ -1,6 +1,5 @@
 import { writable } from "svelte/store";
 import { Color, colorFromString, toColorSpace } from "../lib/Color";
-import ColorIO from "colorjs.io";
 import fits from "../assets/outfits.json";
 import { pick, deDup } from "../lib/utils";
 const outfitToPal = (x: any) => [x.fill1, x.fill2, x.fill3];

@@ -95,6 +95,7 @@
 
 {#if focusedColors.length > 1}
   <Tooltip
+    customClass="w-96"
     onClose={() => {
       isOpen = false;
       memorizedColors = false;

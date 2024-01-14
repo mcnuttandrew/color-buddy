@@ -8,6 +8,7 @@
   export let positionAlongRightEdge: boolean = false;
   export let allowDrag: boolean = false;
   import { draggable } from "../lib/utils";
+  export let customClass: string = "";
   let tooltipOpen: boolean = initiallyOpen;
   const query = "main *";
   function onClick() {
@@ -60,7 +61,7 @@
     >
       <div class="relative" class:right-edge={positionAlongRightEdge}>
         <span
-          class="tooltip rounded shadow-lg p-4 bg-slate-100 text-black flex-wrap flex"
+          class="tooltip rounded shadow-lg p-4 bg-slate-100 text-black flex-wrap flex {customClass}"
           class:p-4={true}
         >
           {#if allowDrag}

@@ -126,7 +126,7 @@
   let isPointDrag = false;
   const startDrag = (isXYDrag: boolean, idx?: number) => (e: any) => {
     if (scatterPlotMode !== "moving") return;
-
+    // console.log("start drag", e.target);
     startDragging();
     const targetIsPoint = typeof idx === "number";
     let target = e.target;
@@ -167,7 +167,8 @@
     return { x, y };
   };
   const rectMoveResponse = (isZ: boolean) => (e: any) => {
-    if (scatterPlotMode !== "moving") return;
+    // console.log("rect move response");
+    if (!dragging || scatterPlotMode !== "moving") return;
     const { x, y } = toXY(e);
     if (dragging && focusedColors.length > 0) {
       dragResponse(isZ ? eventToColorZ : eventToColorXY)(e);
@@ -178,6 +179,7 @@
   };
 
   const rectMoveEnd = (isZ: boolean) => (e: any) => {
+    // console.log("rect move end");
     stopDragging();
     if (scatterPlotMode !== "moving") return;
     if (!isPointDrag && dragBox && dragging) {
@@ -192,14 +194,22 @@
     dragBox = false;
   };
 
-  function selectColorsFromDrag(
+  const dragExtent = (
     dragBox: { x: number; y: number },
     dragging: { x: number; y: number }
-  ) {
+  ) => {
     const xMin = Math.min(dragging.x, dragBox.x) - parentPos.x;
     const xMax = Math.max(dragging.x, dragBox.x) - parentPos.x;
     const yMin = Math.min(dragging.y, dragBox.y) - parentPos.y;
     const yMax = Math.max(dragging.y, dragBox.y) - parentPos.y;
+    return { xMin, xMax, yMin, yMax };
+  };
+  function selectColorsFromDrag(
+    dragBox: { x: number; y: number },
+    dragging: { x: number; y: number }
+  ) {
+    const { xMin, xMax, yMin, yMax } = dragExtent(dragBox, dragging);
+
     const newFocusedColors = colors
       .map((color, idx) => {
         const [_l, a, b] = color.toChannels();
@@ -213,8 +223,7 @@
     dragBox: { x: number; y: number },
     dragging: { x: number; y: number }
   ) {
-    const yMin = Math.min(dragging.y, dragBox.y) - parentPos.y;
-    const yMax = Math.max(dragging.y, dragBox.y) - parentPos.y;
+    const { yMin, yMax } = dragExtent(dragBox, dragging);
     const newFocusedColors = colors
       .map((color, idx) => {
         const y = zScale(color.toChannels()[0]);
@@ -339,7 +348,7 @@
             {#if scatterPlotMode === "moving"}
               <circle
                 {...CircleProps(color)}
-                on:mousedown|preventDefault={startDrag(true, i)}
+                on:mousedown|preventDefault={(e) => startDrag(true, i)(e)}
                 on:touchstart|preventDefault={startDrag(true, i)}
                 on:touchend|preventDefault={() => onFocusedColorsChange([i])}
                 pointer-events={!focusSet.has(i) ? "all" : "none"}

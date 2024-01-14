@@ -53,7 +53,10 @@
   const query = "path,circle,rect,line";
   async function attachListeners() {
     if (!container) {
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      await new Promise((resolve) => setTimeout(resolve, 3000));
+    }
+    if (!container) {
+      return;
     }
     if (container) {
       container.querySelectorAll(query).forEach((x) => {

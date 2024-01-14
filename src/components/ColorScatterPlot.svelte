@@ -413,7 +413,7 @@
     </div>
   </div>
   <div class="h-full">
-    <span class=" text-xl opacity-0">{config.zTitle}</span>
+    <span class=" text-xl opacity-0">X</span>
     <!-- svelte-ignore a11y-no-static-element-interactions -->
     <div class="flex h-full">
       <div class="flex flex-col">

@@ -21,7 +21,7 @@
     colorStore.setCurrentPalColors(newColors);
   }
 
-  $: outOfGamutColors = colors.map((x) => x.inGamut());
+  $: outOfGamutColors = [...colors].map((x) => x.inGamut());
 </script>
 
 {#if outOfGamutColors.length >= 1}

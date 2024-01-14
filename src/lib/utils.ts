@@ -12,10 +12,6 @@ export const replaceVal = (arr: Color[], newItem: Color, index: number) => {
   return [...arr.slice(0, index), newItem, ...arr.slice(index + 1)];
 };
 
-export const randChan = () => Math.floor(Math.random() * 255);
-export const randColor = () =>
-  colorFromString(`rgb(${randChan()},${randChan()},${randChan()})`, "lab");
-
 // seeded random
 export const seededPick = (seedInit: number) => {
   var seed = seedInit;

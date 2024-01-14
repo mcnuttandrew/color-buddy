@@ -2,18 +2,27 @@
   import colorStore from "../../stores/color-store";
   import configStore from "../../stores/config-store";
   import chroma from "chroma-js";
-  import { randColor } from "../../lib/utils";
   import { buttonStyle } from "../../lib/styles";
   import { colorFromString } from "../../lib/Color";
   import { suggestAdditionsToPalette } from "../../lib/api-calls";
   import Tooltip from "../../components/Tooltip.svelte";
 
+  const randChan = () => Math.floor(Math.random() * 255);
+  const randColor = (colorSpace: any) =>
+    colorFromString(
+      `rgb(${randChan()},${randChan()},${randChan()})`,
+      "srgb"
+    ).toColorSpace(colorSpace || "lab");
+
   $: colors = $colorStore.currentPal.colors;
   $: colorSpace = $colorStore.currentPal.colorSpace;
+  $: console.log("colorSpace", colorSpace);
 
-  let suggestions = [randColor(), randColor(), randColor()].map((x) =>
-    x.toHex()
-  );
+  let suggestions = [
+    randColor(colorSpace),
+    randColor(colorSpace),
+    randColor(colorSpace),
+  ].map((x) => x.toHex());
 
   let searchedString = "";
   let interpretations = [] as string[];
@@ -95,6 +104,7 @@
                 style="background-color: {color}"
                 on:click={() => {
                   const newColor = colorFromString(color, colorSpace);
+                  console.log(newColor.toHex(), color);
                   const newColors = [...colors, newColor];
                   colorStore.setCurrentPalColors(newColors);
                   interpretations = interpretations.filter((x) => x !== color);

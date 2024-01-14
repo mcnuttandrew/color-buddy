@@ -3,11 +3,13 @@
   import type { Palette } from "../stores/color-store";
   import Tooltip from "./Tooltip.svelte";
   import SwatchTooltipContent from "../content-modules/SwatchTooltipContent.svelte";
+  import { toggleElement } from "../lib/utils";
   export let pal: Palette;
   export let allowModification: boolean = false;
   export let highlightSelected: boolean = false;
 
-  $: focusedColors = new Set($focusStore.focusedColors);
+  $: focusColors = $focusStore.focusedColors;
+  $: focusSet = new Set($focusStore.focusedColors);
 </script>
 
 <div
@@ -23,13 +25,15 @@
         <button
           slot="target"
           let:toggle
-          on:click={() => {
-            focusStore.setColors([idx]);
+          on:click={(e) => {
+            const isMeta = e.metaKey || e.ctrlKey;
+            const newColors = isMeta ? toggleElement(focusColors, idx) : [idx];
+            focusStore.setColors(newColors);
             toggle();
           }}
           class={"w-6 h-6 mx-2 rounded-full transition-all"}
-          class:w-8={highlightSelected && focusedColors.has(idx)}
-          class:h-8={highlightSelected && focusedColors.has(idx)}
+          class:w-8={highlightSelected && focusSet.has(idx)}
+          class:h-8={highlightSelected && focusSet.has(idx)}
           style="background-color: {color.toDisplay()}"
         ></button>
       </Tooltip>

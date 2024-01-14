@@ -19,4 +19,8 @@ test("Color string extractor works", () => {
   ).toStrictEqual([
     1.000000009791752, -3.3637913787742946e-8, 6.836016341882356e-8,
   ]);
+
+  expect(stringToChannels("rgb", "rgb(86,17,229)")).toStrictEqual([
+    86, 17, 229,
+  ]);
 });

@@ -82,11 +82,15 @@ export class Color {
   }
 
   fromString(colorString: string): Color {
-    if (!colorString.startsWith(`${this.spaceName}(`)) {
-      const channels = new ColorIO(colorString).to(this.spaceName).coords;
-      return this.fromChannels(channels);
-    }
-    return this.fromChannels(stringToChannels(this.spaceName, colorString));
+    // const isTargetSpace = colorString.startsWith(`${this.spaceName}(`);
+    // const isHex = colorString.startsWith("#");
+    // const channels =
+    //   isTargetSpace || isHex
+    //     ? new ColorIO(colorString).to(this.spaceName).coords
+    //     : stringToChannels(this.spaceName, colorString);
+    console.log("colorString", colorString, this.spaceName);
+    const channels = new ColorIO(colorString).to(this.spaceName).coords;
+    return this.fromChannels(channels);
   }
   fromChannels(channels: Channels): Color {
     const newColor = new (this.constructor as typeof Color)();
@@ -125,11 +129,15 @@ export function stringToChannels(spaceName: string, str: string) {
     .replace(/,/g, " ")
     .trim()
     .split(" ")
-    .filter((x) => x.length);
+    .filter((x) => x.length)
+    .map((x) => (isNaN(+x) ? 0 : Number(x)));
   const allNumbers = channels.every((x) => !isNaN(+x));
 
   if (!(channels.length === 3 && allNumbers)) {
-    throw new Error(`Invalid color string: ${str}`);
+    const chans = channels.map((x) => Number(x)).join(",");
+    throw new Error(
+      `Invalid color string: ${str} ([${chans}] - ${spaceName}) `
+    );
   }
   const result = channels.map((x) => Number(x) * 1) as Channels;
   colorStringCache.set(key, result);
@@ -272,7 +280,9 @@ export function colorFromString(
   colorString: string,
   colorSpace: keyof typeof colorDirectory = "lab"
 ): Color {
-  return new colorDirectory[colorSpace]().fromString(colorString);
+  const result = new colorDirectory[colorSpace]().fromString(colorString);
+  console.log(colorString, result.toString());
+  return result;
 }
 
 const colorHexCache = new Map<string, Color>();
@@ -303,7 +313,15 @@ export function toColorSpace(
   if (color.spaceName === colorSpace) {
     return color;
   }
-  const channels = color.toColorIO().to(colorSpace, { inGamut: true }).coords;
+  // const channels = color.toColorIO().to(colorSpace, { inGamut: true }).coords;
+  const channels = color.toColorIO().to(colorSpace).coords;
+  console.log(
+    "channels",
+    channels,
+    color.toChannels(),
+    color.spaceName,
+    colorSpace
+  );
   return new colorDirectory[colorSpace]().fromChannels(channels);
 }
 

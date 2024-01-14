@@ -235,7 +235,7 @@
   $: y = (point: Color) => yScale(point.toChannels()[2]);
   $: z = (point: Color) => zScale(point.toChannels()[0]);
 
-  function shiftClickOnElement(e: any, i: number) {
+  function clickResponse(e: any, i: number) {
     if (e.metaKey || e.shiftKey) {
       onFocusedColorsChange(toggleElement(focusedColors, i));
     } else {
@@ -349,7 +349,7 @@
                 dragging
                   ? axisColor
                   : color.toDisplay()}
-                on:click={(e) => shiftClickOnElement(e, i)}
+                on:click={(e) => clickResponse(e, i)}
               />
             {/if}
             {#if scatterPlotMode === "looking"}
@@ -374,7 +374,7 @@
               on:touchstart|preventDefault={startDrag(true, i)}
               on:touchend|preventDefault={() => onFocusedColorsChange([i])}
               pointer-events={!focusSet.has(i) ? "all" : "none"}
-              on:click={(e) => shiftClickOnElement(e, i)}
+              on:click={(e) => clickResponse(e, i)}
             />
           {/each}
           <!-- simple tooltip -->
@@ -454,7 +454,7 @@
               <!-- svelte-ignore a11y-click-events-have-key-events -->
               <rect
                 {...RectProps(color, i)}
-                on:click={(e) => shiftClickOnElement(e, i)}
+                on:click={(e) => clickResponse(e, i)}
                 on:mousedown|preventDefault={startDrag(false, i)}
                 on:touchstart|preventDefault={startDrag(false, i)}
                 on:touchend|preventDefault={() => onFocusedColorsChange([i])}
@@ -466,7 +466,7 @@
                 {...RectProps(color, i)}
                 stroke={color.toDisplay()}
                 fill={"none"}
-                on:click={(e) => shiftClickOnElement(e, i)}
+                on:click={(e) => clickResponse(e, i)}
                 on:mousedown|preventDefault={startDrag(false, i)}
                 on:touchstart|preventDefault={startDrag(false, i)}
                 on:touchend|preventDefault={() => onFocusedColorsChange([i])}

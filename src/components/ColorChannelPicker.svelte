@@ -129,8 +129,8 @@
       values as [number, number, number],
       colorMode
     );
-
-    onColorChange(toColorSpace(newColor, measuredColorMode));
+    const outColor = toColorSpace(newColor, measuredColorMode);
+    onColorChange(outColor);
   }
 
   $: formatter = (x: number) =>

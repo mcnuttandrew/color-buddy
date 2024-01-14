@@ -16,7 +16,6 @@
 
   $: colors = $colorStore.currentPal.colors;
   $: colorSpace = $colorStore.currentPal.colorSpace;
-  $: console.log("colorSpace", colorSpace);
 
   let suggestions = [
     randColor(colorSpace),

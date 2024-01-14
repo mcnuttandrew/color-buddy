@@ -88,7 +88,6 @@ export class Color {
     //   isTargetSpace || isHex
     //     ? new ColorIO(colorString).to(this.spaceName).coords
     //     : stringToChannels(this.spaceName, colorString);
-    console.log("colorString", colorString, this.spaceName);
     const channels = new ColorIO(colorString).to(this.spaceName).coords;
     return this.fromChannels(channels);
   }
@@ -157,9 +156,9 @@ export class CIELAB extends Color {
   axisLabel = (num: number) => `${Math.round(num)}`;
 
   toString(): string {
-    const [L, a, b] = Object.values(this.channels)
-      .map((x) => x || 0)
-      .map((x) => (x < 1e-5 ? 0 : x));
+    const [L, a, b] = Object.values(this.channels).map((x) => x || 0);
+
+    // .map((x) => (x < 1e-5 ? 0 : x));
     // .map((x) => x.toPrecision(1));
     return `lab(${L}% ${a} ${b})`;
   }
@@ -167,17 +166,15 @@ export class CIELAB extends Color {
 export class HSV extends Color {
   name = "HSV";
   channels = { h: 0, s: 0, v: 0 };
-  domains = { h: [0, 360], s: [0, 100], v: [0, 100] } as Domain;
+  domains = { h: [0, 360], s: [0, 1], v: [0, 1] } as Domain;
   chromaBind = chroma.hsv;
   spaceName = "hsv" as const;
-  stepSize: Channels = [1, 1, 1];
+  stepSize: Channels = [1, 0.01, 0.01];
   xyTitle: string = "HSV: Saturation Value";
   zTitle: string = "HSV: Hue";
   dimensionToChannel = { x: "s", y: "v", z: "h" };
   toString(): string {
-    const [h, s, v] = Object.values(this.channels).map((x) =>
-      x < 1e-5 ? 0 : x
-    );
+    const [h, s, v] = Object.values(this.channels);
     return `color(hsv ${h} ${s} ${v})`;
   }
 }
@@ -281,7 +278,6 @@ export function colorFromString(
   colorSpace: keyof typeof colorDirectory = "lab"
 ): Color {
   const result = new colorDirectory[colorSpace]().fromString(colorString);
-  console.log(colorString, result.toString());
   return result;
 }
 
@@ -313,15 +309,9 @@ export function toColorSpace(
   if (color.spaceName === colorSpace) {
     return color;
   }
-  // const channels = color.toColorIO().to(colorSpace, { inGamut: true }).coords;
-  const channels = color.toColorIO().to(colorSpace).coords;
-  console.log(
-    "channels",
-    channels,
-    color.toChannels(),
-    color.spaceName,
-    colorSpace
-  );
+  const channels = color.toColorIO().to(colorSpace, { inGamut: true }).coords;
+  // const channels = color.toColorIO().to(colorSpace).coords;
+
   return new colorDirectory[colorSpace]().fromChannels(channels);
 }
 

@@ -5,8 +5,11 @@
   $: focusedSet = new Set($focusStore.focusedColors);
   $: copiedData = [] as Color[];
   $: colorSpace = $colorStore.currentPal.colorSpace;
-  $: xStep = colorPickerConfig[colorSpace].xStep;
-  $: yStep = colorPickerConfig[colorSpace].yStep;
+  $: config = colorPickerConfig[colorSpace];
+  $: xStep = config.xStep;
+  $: yStep = config.yStep;
+  $: xDomain = config.xDomain;
+  $: yDomain = config.yDomain;
   function onKeyDown(e: any) {
     if (e.target.tagName.toLowerCase() === "input") {
       const isUIElement =
@@ -47,6 +50,8 @@
     const arrows = new Set(["arrowup", "arrowdown", "arrowleft", "arrowright"]);
     if (arrows.has(key) && $focusStore.focusedColors.length > 0) {
       const verticalDirs = new Set(["arrowup", "arrowdown"]);
+      const verticalDir = xDomain[1] < xDomain[0] ? 1 : -1;
+      const horizontalDir = yDomain[1] < yDomain[0] ? 1 : -1;
       let step = verticalDirs.has(key) ? yStep : xStep;
       if (e.metaKey || e.shiftKey) {
         step *= 10;
@@ -60,16 +65,16 @@
         const [l, a, b] = color.toChannels();
         const channels = Object.keys(color.channels);
         if (key === "arrowdown") {
-          color.setChannel(channels[2], b + step);
+          color.setChannel(channels[2], b + verticalDir * step);
         }
         if (key === "arrowup") {
-          color.setChannel(channels[2], b - step);
+          color.setChannel(channels[2], b - verticalDir * step);
         }
         if (key === "arrowleft") {
-          color.setChannel(channels[1], a - step);
+          color.setChannel(channels[1], a - horizontalDir * step);
         }
         if (key === "arrowright") {
-          color.setChannel(channels[1], a + step);
+          color.setChannel(channels[1], a + horizontalDir * step);
         }
         return color;
       });

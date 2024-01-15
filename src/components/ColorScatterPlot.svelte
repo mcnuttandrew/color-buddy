@@ -56,8 +56,10 @@
   $: xRange = config.xDomain;
   $: domainXScale = scaleLinear().domain([0, 1]).range(xRange);
   const makeDomain = (range: number[], extent: number[], scale: any) => [
-    range[0] > range[1] ? scale(extent[1]) : scale(extent[0]),
-    range[0] > range[1] ? scale(extent[0]) : scale(extent[1]),
+    // range[0] > range[1] ? scale(extent[1]) : scale(extent[0]),
+    // range[0] > range[1] ? scale(extent[0]) : scale(extent[1]),
+    scale(extent[0]),
+    scale(extent[1]),
   ];
   $: xScale = scaleLinear()
     .domain(makeDomain(xRange, extents.x, domainXScale))
@@ -459,10 +461,11 @@
               on:mouseup|preventDefault={rectMoveEnd(true)}
             />
 
-            {#each deDup(colors) as color, i}
+            {#each colors as color, i}
               <!-- svelte-ignore a11y-click-events-have-key-events -->
               <rect
                 {...RectProps(color, i)}
+                pointer-events={!focusSet.has(i) ? "all" : "none"}
                 on:click={(e) => clickResponse(e, i)}
                 on:mousedown|preventDefault={startDrag(false, i)}
                 on:touchstart|preventDefault={startDrag(false, i)}
@@ -475,6 +478,7 @@
                 {...RectProps(color, i)}
                 stroke={color.toDisplay()}
                 fill={"none"}
+                pointer-events={!focusSet.has(i) ? "all" : "none"}
                 on:click={(e) => clickResponse(e, i)}
                 on:mousedown|preventDefault={startDrag(false, i)}
                 on:touchstart|preventDefault={startDrag(false, i)}

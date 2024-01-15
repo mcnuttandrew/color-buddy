@@ -76,8 +76,8 @@
         y={yScale(yNonDimScale(j / bgResolution))}
         width={plotWidth / bgResolution}
         height={plotHeight / bgResolution}
-        opacity="1"
-        class="transition-all duration-500 ease-in-out"
+        opacity={dragging && focusedColors.length === 1 ? 1 : 0}
+        class="transition-opacity duration-500 ease-in-out"
         fill={fillColor(i, j)}
       />
     {/each}

@@ -164,7 +164,7 @@ export class CIELAB extends Color {
 export class HSV extends Color {
   name = "HSV";
   channels = { h: 0, s: 0, v: 0 };
-  domains = { h: [0, 360], s: [0, 1], v: [0, 1] } as Domain;
+  domains = { h: [0, 360], s: [0, 100], v: [0, 100] } as Domain;
   chromaBind = chroma.hsv;
   spaceName = "hsv" as const;
   dimensionToChannel = { x: "s", y: "v", z: "h" };

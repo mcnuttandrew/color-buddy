@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { colorFromString } from "../lib/Color";
+  import type { Palette } from "../stores/color-store";
   import chroma from "chroma-js";
   import exampleStore from "../stores/example-store";
   import colorStore from "../stores/color-store";
@@ -17,6 +19,7 @@
   let modalState: "closed" | "input-svg" | "edit-colors" = "closed";
   let modifyingExample: number | false = false;
   $: bg = $colorStore.currentPal.background;
+  $: colorSpace = $colorStore.currentPal.colorSpace as any;
   let value = "";
 
   function detectColorsInSvgString(svgString: string) {
@@ -44,6 +47,18 @@
   $: sections = $exampleStore.sections as any;
   function onToggle(group: string) {
     exampleStore.toggleSection(group as keyof typeof $exampleStore.sections);
+  }
+
+  function createNewPal() {
+    const newPal: Palette = {
+      colors: detectedColors.map((x) => colorFromString(x, colorSpace)),
+      background: bg,
+      name: "New Palette",
+      type: "categorical",
+      evalConfig: {},
+      colorSpace: "lab",
+    };
+    colorStore.createNewPal(newPal);
   }
 </script>
 
@@ -86,6 +101,7 @@
                 class={buttonStyle}
                 on:click={() => {
                   value = example.svg;
+                  console.log(value);
                   modalState = "input-svg";
                   modifyingExample = idx;
                 }}
@@ -135,22 +151,24 @@
     <div slot="header">
       <div class="flex justify-between">
         <div>Add an Example</div>
-        <button
-          class={buttonStyle}
-          on:click={() => {
-            fetch("./mondrian.svg")
-              .then((response) => response.text())
-              .then((text) => {
-                value = text;
-                modalState = "input-svg";
-              })
-              .catch((e) => {
-                console.error(e);
-              });
-          }}
-        >
-          Add a Mondrian
-        </button>
+        {#if modalState === "input-svg"}
+          <button
+            class={buttonStyle}
+            on:click={() => {
+              fetch("./mondrian.svg")
+                .then((response) => response.text())
+                .then((text) => {
+                  value = text;
+                  modalState = "input-svg";
+                })
+                .catch((e) => {
+                  console.error(e);
+                });
+            }}
+          >
+            Demo: Add a Mondrian
+          </button>
+        {/if}
       </div>
     </div>
     <div class="h-96 overflow-auto" style="width: 700px;">
@@ -209,6 +227,17 @@
           }}
         >
           {modifyingExample ? "Update" : "Add"} Example
+        </button>
+        <button
+          class={buttonStyle}
+          on:click={() => {
+            modalState = "input-svg";
+          }}
+        >
+          Back to editing SVG
+        </button>
+        <button class={buttonStyle} on:click={createNewPal}>
+          Use identified colors as new palette
         </button>
       {/if}
       {#if modalState === "input-svg"}

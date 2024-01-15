@@ -6,7 +6,7 @@
 
 <Tooltip>
   <div slot="content">
-    {#each ["none", "deuteranopia", "protanopia", "tritanopia"] as value}
+    {#each ["none", "deuteranopia", "protanopia", "tritanopia", "black-and-white"] as value}
       <label>
         <input
           type="radio"
@@ -23,6 +23,6 @@
     {/each}
   </div>
   <button slot="target" let:toggle on:click={toggle} class={buttonStyle}>
-    Blind Sim: {$configStore.colorSim}
+    Simulation: {$configStore.colorSim}
   </button>
 </Tooltip>

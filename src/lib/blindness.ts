@@ -1,6 +1,8 @@
 import ColorIO from "colorjs.io";
 import { Color } from "./Color";
 
+type Channels = [number, number, number];
+
 // found at https://daltonlens.org/opensource-cvd-simulation/#Why-simulate-color-vision-deficiencies-(CVD)?
 // derived from https://github.com/DaltonLens/libDaltonLens/blob/master/libDaltonLens.c
 
@@ -106,7 +108,7 @@ const deficiencyToMapBrettel = {
 function dl_simulate_cvd_brettel1997(
   deficiency: DLDeficiency,
   severity: number,
-  color: [number, number, number]
+  color: Channels
 ) {
   let params: DLBrettel1997Params = deficiencyToMapBrettel[deficiency];
 
@@ -181,7 +183,7 @@ const deficiencyToMap = {
 function dl_simulate_cvd_vienot1999(
   deficiency: DLDeficiency,
   severity: number,
-  color: [number, number, number]
+  color: Channels
 ) {
   let rgbCvd_from_rgb: number[] = deficiencyToMap[deficiency];
 
@@ -209,13 +211,24 @@ function dl_simulate_cvd_vienot1999(
   return rgb_cvd;
 }
 
+function blackAndWhite(color: Channels): Channels {
+  const [r, g, b] = color;
+  // https://stackoverflow.com/questions/687261/converting-rgb-to-grayscale-intensity
+  const y = 0.2126 * r + 0.7152 * g + 0.0722 * b;
+
+  return [y, y, y];
+}
+
 function dl_simulate_cvd(
-  deficiency: DLDeficiency,
+  deficiency: DLDeficiency | "black-and-white",
   severity: number,
-  color: [number, number, number]
-): [number, number, number] {
+  color: Channels
+): Channels {
   // Viénot 1999 is not accurate for tritanopia, so use Brettel in that case.
   // Otherwise use Viénot 1999 because it's a bit faster.
+  if (deficiency == "black-and-white") {
+    return blackAndWhite(color);
+  }
   if (deficiency == "tritanopia") {
     return dl_simulate_cvd_brettel1997(deficiency, severity, color) as [
       number,

@@ -29,7 +29,7 @@
   <button
     let:toggle
     slot="target"
-    class={`${buttonStyle} flex items-center justify-center`}
+    class={`${buttonStyle} flex items-center justify-center this-button top-0.5 relative`}
     on:click={() => {
       toggle();
     }}

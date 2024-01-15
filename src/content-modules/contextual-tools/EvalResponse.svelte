@@ -15,16 +15,22 @@
 
   function proposeFix() {
     requestState = "loading";
-    check
-      .suggestFix($configStore.engine)
-      .then((x) => {
+    let hasRetried = false;
+    const getFix = () =>
+      check.suggestFix($configStore.engine).then((x) => {
         suggestion = x;
         requestState = "loaded";
-      })
-      .catch((e) => {
-        console.log(e);
-        requestState = "failed";
       });
+
+    getFix().catch((e) => {
+      console.log(e);
+      if (!hasRetried) {
+        requestState = "failed";
+      } else {
+        hasRetried = true;
+        return getFix();
+      }
+    });
   }
   $: evalConfig = $colorStore.currentPal.evalConfig;
 </script>

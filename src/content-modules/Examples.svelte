@@ -19,7 +19,7 @@
   let modalState: "closed" | "input-svg" | "edit-colors" = "closed";
   let modifyingExample: number | false = false;
   $: bg = $colorStore.currentPal.background;
-  $: colorSpace = $colorStore.currentPal.colorSpace as any;
+  $: colorSpace = $colorStore.currentPal.colorSpace;
   let value = "";
 
   function detectColorsInSvgString(svgString: string) {
@@ -101,7 +101,6 @@
                 class={buttonStyle}
                 on:click={() => {
                   value = example.svg;
-                  console.log(value);
                   modalState = "input-svg";
                   modifyingExample = idx;
                 }}

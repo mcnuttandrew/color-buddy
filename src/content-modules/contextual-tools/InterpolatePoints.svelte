@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Color, colorFromChannels, toColorSpace } from "../../lib/Color";
+  import { Color, colorFromChannels } from "../../lib/Color";
   import type { Palette } from "../../stores/color-store";
   import ColorIO from "colorjs.io";
   import colorStore from "../../stores/color-store";
@@ -33,15 +33,11 @@
       }
 
       if (t === 0 || t === 1) continue;
-      const adjustedSpace = colorSpace === "rgb" ? "srgb" : colorSpace;
-      const space = pointA.spaceName === "rgb" ? "srgb" : pointA.spaceName;
-      const [x1, x2, x3] = new ColorIO(space, pointA.toChannels()).to(
-        adjustedSpace
-      ).coords;
-      const bSpace = pointB.spaceName === "rgb" ? "srgb" : pointB.spaceName;
-      const [y1, y2, y3] = new ColorIO(bSpace, pointB.toChannels()).to(
-        adjustedSpace
-      ).coords;
+      const spaceOverWrite = { rgb: "srgb" } as any;
+      const adjustedSpace = spaceOverWrite[colorSpace] || colorSpace;
+      const space = spaceOverWrite[pointA.spaceName] || pointA.spaceName;
+      const [x1, x2, x3] = pointA.toColorIO().to(adjustedSpace).coords;
+      const [y1, y2, y3] = pointB.toColorIO().to(adjustedSpace).coords;
       const lab = [
         x1 * (1 - t) + y1 * t,
         x2 * (1 - t) + y2 * t,

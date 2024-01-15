@@ -8,7 +8,7 @@
 </script>
 
 <div class="overflow-auto">
-  {#each $colorStore.palettes as pal}
+  {#each $colorStore.palettes as pal, i}
     <div class="flex flex-col mt-2 h-fit">
       <div class="flex items-center justify-between">
         <div>
@@ -33,7 +33,7 @@
             <button
               class={buttonStyle}
               on:click={() => {
-                colorStore.removePal(pal.name);
+                colorStore.removePal(i);
                 onClick();
               }}
             >

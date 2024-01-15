@@ -5,7 +5,6 @@ import ColorIO from "colorjs.io";
 type Domain = Record<string, [number, number]>;
 type Channels = [number, number, number];
 const hexCache = new Map<string, string>();
-const cssColorCache = new Map<string, string>();
 export class Color {
   name: string = "";
   channels: Record<string, number> = {};
@@ -304,7 +303,7 @@ export const colorDirectory = {
   lch: LCH,
   oklab: OKLAB,
   oklch: OKLCH,
-  // rgb: RGB,
+  rgb: RGB,
   srgb: RGB,
 };
 

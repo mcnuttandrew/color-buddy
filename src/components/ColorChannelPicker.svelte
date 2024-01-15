@@ -133,8 +133,7 @@
     onColorChange(outColor);
   }
 
-  $: formatter = (x: number) =>
-    Number(colorPickerConfig[colorMode].axisLabel(x));
+  $: formatter = (x: any) => Number(colorPickerConfig[colorMode].axisLabel(x));
 </script>
 
 <div class="flex flex-col">

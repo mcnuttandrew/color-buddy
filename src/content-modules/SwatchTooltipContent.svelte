@@ -10,7 +10,7 @@
   export let color: Color;
   export let closeTooltip: () => void;
   $: colors = $colorStore.currentPal.colors;
-  $: colorSpace = $colorStore.currentPal.colorSpace as any;
+  $: colorSpace = $colorStore.currentPal.colorSpace;
 
   function updateColor(color: Color) {
     const updatedColors = [...colors];

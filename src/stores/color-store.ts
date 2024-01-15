@@ -77,13 +77,15 @@ function convertStoreHexToColor(store: StorageData): StoreData {
   return {
     palettes: store.palettes.map((x) => ({
       ...x,
-      background: colorFromString(x.background, x.colorSpace),
-      colors: x.colors.map((y) => colorFromString(y, x.colorSpace)),
+      background: colorFromString(x.background, x.colorSpace as any),
+      colors: x.colors.map((y) => colorFromString(y, x.colorSpace as any)),
     })),
     currentPal: {
       ...store.currentPal,
-      background: colorFromString(store.currentPal.background, space),
-      colors: store.currentPal.colors.map((y) => colorFromString(y, space)),
+      background: colorFromString(store.currentPal.background, space as any),
+      colors: store.currentPal.colors.map((y) =>
+        colorFromString(y, space as any)
+      ),
     },
   };
 }
@@ -236,7 +238,8 @@ function createStore() {
         currentPal: newPal,
         palettes: insertPalette(n.palettes, n.currentPal),
       })),
-    removePal: (pal: string) => palsUp((n) => n.filter((x) => x.name !== pal)),
+    removePal: (index: number) =>
+      palsUp((n) => n.filter((_x, idx) => idx !== index)),
     copyPal: (pal: string) =>
       palsUp((n) => insertPalette(n, n.find((x) => x.name === pal)!)),
     setSort: (sort: Color[]) => palUp((n) => ({ ...n, colors: deDup(sort) })),

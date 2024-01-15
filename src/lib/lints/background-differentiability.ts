@@ -40,7 +40,10 @@ export default class BackgroundDifferentiability extends ColorLint<
       const color = colors[idx];
       const newColor = toColorSpace(color, "lab");
       const [_l, a, b] = newColor.toChannels();
-      return toColorSpace(newColor.fromChannels([newL, a, b]), colorSpace);
+      return toColorSpace(
+        newColor.fromChannels([newL, a, b]),
+        colorSpace as any
+      );
     });
     return { ...this.palette, colors: newColors };
   }

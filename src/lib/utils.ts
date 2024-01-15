@@ -39,9 +39,9 @@ export function avgColors(
   ] as ColorChannels);
   const avgColor = sumColor.map((x) => x / colors.length) as ColorChannels;
   if (avgColor.some((x) => isNaN(x))) {
-    return colorFromString("#000000", colorSpace);
+    return colorFromString("#000000", colorSpace as any);
   }
-  return colorFromChannels(avgColor, colorSpace);
+  return colorFromChannels(avgColor, colorSpace as any);
 }
 
 export function opposingColor(color: Color): Color {

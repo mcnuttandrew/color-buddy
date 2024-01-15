@@ -152,9 +152,11 @@
           class={buttonStyle}
           on:click={() => {
             const newSuggestions = [...suggestions];
-            [randColor(), randColor(), randColor()].map((x) =>
-              newSuggestions.push(x.toHex())
-            );
+            [
+              randColor(colorSpace),
+              randColor(colorSpace),
+              randColor(colorSpace),
+            ].map((x) => newSuggestions.push(x.toHex()));
             suggestions = newSuggestions;
           }}
         >

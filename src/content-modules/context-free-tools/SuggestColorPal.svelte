@@ -9,15 +9,9 @@
   import { buttonStyle, AIButtonStyle } from "../../lib/styles";
 
   $: colorSpace = $colorStore.currentPal.colorSpace;
+  $: console.log(colorSpace);
   let requestState: "idle" | "loading" | "loaded" | "failed" = "idle";
-  let newPal: Palette = {
-    colors: [],
-    background: colorFromString("#000000", colorSpace),
-    name: "blank",
-    type: "categorical",
-    evalConfig: {},
-    colorSpace,
-  };
+  let newPal: Palette | undefined = undefined;
   let palPrompt: string = "";
 
   function makeRequest() {
@@ -33,11 +27,16 @@
           return;
         }
         const suggestion = suggestions[0];
-        newPal.colors = suggestion.colors.map((x) =>
-          colorFromString(x, colorSpace)
-        );
-        newPal.background = colorFromString(suggestion.background, colorSpace);
-        newPal.name = palPrompt;
+        newPal = {
+          colors: suggestion.colors.map((x) =>
+            colorFromString(x, colorSpace as any)
+          ),
+          background: colorFromString(suggestion.background, colorSpace as any),
+          name: palPrompt,
+          type: "categorical",
+          evalConfig: {},
+          colorSpace: colorSpace as any,
+        };
 
         requestState = "loaded";
       })
@@ -60,12 +59,13 @@
           (e.g. "Color Wheel Basics" or "Mystic River")
         </div>
       </label>
-      {#if requestState === "loaded"}
+      {#if requestState === "loaded" && newPal}
         <PalPreview pal={newPal} />
         <div class="flex justify-between">
           <button
             class={buttonStyle}
             on:click={() => {
+              if (!newPal) return;
               colorStore.createNewPal(newPal);
               requestState = "idle";
               palPrompt = "";

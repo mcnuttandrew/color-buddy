@@ -10,13 +10,21 @@
     let idx = 0;
     while (idx < message.length) {
       if (message[idx] === "#") {
+        const allowedChars = new Set("0123456789abcdefABCDEF");
+        let hexLength = 0;
+        while (
+          allowedChars.has(message[idx + hexLength + 1]) &&
+          hexLength < 7
+        ) {
+          hexLength++;
+        }
         if (currentTextBlock.length > 0) {
           output.push({ content: currentTextBlock, type: "text" });
           currentTextBlock = "";
         }
-        let color = message.slice(idx, idx + 7);
+        let color = message.slice(idx, idx + hexLength + 1);
         output.push({ content: color, type: "color" });
-        idx += 6;
+        idx += hexLength;
       } else {
         currentTextBlock += message[idx];
       }

@@ -51,12 +51,15 @@ To raise the sliders, you need to click on one of the examples that are displaye
 
 ## TODOS
 
-- [ ] Chore: clean up the color store, many unnecessary methods. Extract some common types into a top level location (like types.ts type thing)
+- [ ] Make keyboard short cut (option+up/down) for the z-direction
+- [ ] Polar stuff
+- [x] Chore: clean up the color store, many unnecessary methods.
+- [ ] Chore: Extract some common types into a top level location (like types.ts type thing)
 - [ ] A (default) example showing annotated math stuff
 - [ ] SVG Upload
 - [ ] Vega/Vega-Lite Specification
-- [ ] Bug: changing the color frame fucks everything up???? (particularly for HSV/HSL)
-- [ ] Eval response options
+- [x] Bug: changing the color frame fucks everything up???? (particularly for HSV/HSL)
+- [x] Eval response options
 - [ ] higher card. vis examples
 - [ ] Distribute radially
 - [?] Rearrange some of the colors in the color area eg make rg on xy and b on z etc

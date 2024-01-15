@@ -77,6 +77,7 @@
         width={plotWidth / bgResolution}
         height={plotHeight / bgResolution}
         opacity="1"
+        class="transition-all duration-500 ease-in-out"
         fill={fillColor(i, j)}
       />
     {/each}

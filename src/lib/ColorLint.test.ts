@@ -39,10 +39,10 @@ test("ColorLint - ColorNameDiscriminability", async () => {
 
 test("ColorLint - MaxColors", async () => {
   const examplePal = makePalFromHexes([...new Array(15)].map(() => "#006cc6"));
-  const exampleLint = new MaxColors(examplePal);
+  const exampleLint = new MaxColors(examplePal).run();
   expect(exampleLint.passes).toBe(false);
   expect(exampleLint.message).toBe(
-    "This palette has too many colors (15) and may be hard to discriminate in some contexts"
+    "This palette has too many colors (15) and may be hard to discriminate in some contexts. Maximum: 10."
   );
   const fix = await exampleLint.suggestFix();
   expect(fix.colors.length).toBe(9);

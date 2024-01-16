@@ -46,15 +46,15 @@ To raise the sliders, you need to click on one of the examples that are displaye
 - [ ] Once this is done, it make sense to show a tooltip that displays a pair of values as you hover over the graph. (maybe also the hex?)
 - [ ] There should be an add color button that adds the current state of the sliders.
 - [ ] A single selection sets the sliders. Multi-select does not
-- [ ] Might then make sense to move the graph colorspace, range and background color controls into this area.
-- [ ] As a short term improvement, raise the sliders when you click on a color in the graphs.
+- [x] Might then make sense to move the graph colorspace, range and background color controls into this area.
+- [x] As a short term improvement, raise the sliders when you click on a color in the graphs.
 
 ## TODOS
 
 - [ ] Make keyboard short cut (option+up/down) for the z-direction
 - [ ] Polar stuff
 - [ ] Chore: Extract some common types into a top level location (like types.ts type thing)
-- [ ] Examples: A (default) example showing annotated math stuff
+- [x] Examples: A (default) example showing annotated math stuff
 - [ ] Examples: SVG Upload
 - [ ] Examples: Vega/Vega-Lite Specification
 - [ ] Examples: Examples held as assets somewhere that are downloaded rather than components (for consistency)

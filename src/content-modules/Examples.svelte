@@ -6,8 +6,6 @@
   import colorStore from "../stores/color-store";
   import { charts, idxToKey } from "../lib/charts";
   import Vega from "../components/Vega.svelte";
-  import TinyWebpage from "../content-modules/TinyWebpage.svelte";
-  import TextBlock from "../content-modules/TextBlock.svelte";
   import Modal from "../components/Modal.svelte";
   import { buttonStyle } from "../lib/styles";
   import { xml } from "@codemirror/lang-xml";
@@ -24,7 +22,9 @@
 
   function detectColorsInSvgString(svgString: string) {
     const colors = new Set<string>();
-    const regex = /#[0-9a-f]{6}/gi;
+    //  match hex or rgb(255, 255, 255)
+    const regex = /#(?:[0-9a-fA-F]{3}){1,2}|rgb\((?:\d{1,3},\s*){2}\d{1,3}\)/g;
+
     let match;
     while ((match = regex.exec(svgString))) {
       colors.add(match[0]);
@@ -60,6 +60,13 @@
     };
     colorStore.createNewPal(newPal);
   }
+  const DEMOS = [
+    { title: "Mondrian", filename: "./mondrian.svg" },
+    { title: "Annotated R2", filename: "./r2.svg" },
+    { title: "Annotated Fourier", filename: "./fourier.svg" },
+    { title: "VIS Logo", filename: "./vis-logo.svg" },
+    { title: "Holy Grail Layout", filename: "./HolyGrail.svg" },
+  ];
 </script>
 
 <div class="flex items-center bg-slate-200 px-4">
@@ -128,10 +135,6 @@
   {#if $exampleStore.sections["swatches"]}
     <Swatches />
   {/if}
-  {#if $exampleStore.sections.pages}
-    <TinyWebpage />
-    <TextBlock />
-  {/if}
   {#each charts as { chart, group }}
     {#if sections[group]}
       <div class="flex flex-col border-2 border-dashed rounded w-min mr-4">
@@ -150,27 +153,32 @@
     <div slot="header">
       <div class="flex justify-between">
         <div>Add an Example</div>
-        {#if modalState === "input-svg"}
-          <button
-            class={buttonStyle}
-            on:click={() => {
-              fetch("./mondrian.svg")
-                .then((response) => response.text())
-                .then((text) => {
-                  value = text;
-                  modalState = "input-svg";
-                })
-                .catch((e) => {
-                  console.error(e);
-                });
-            }}
-          >
-            Demo: Add a Mondrian
-          </button>
-        {/if}
       </div>
     </div>
     <div class="h-96 overflow-auto" style="width: 700px;">
+      <div>
+        Demos:
+        {#if modalState === "input-svg"}
+          {#each DEMOS as demo}
+            <button
+              class={buttonStyle}
+              on:click={() => {
+                fetch(demo.filename)
+                  .then((response) => response.text())
+                  .then((text) => {
+                    value = text;
+                    modalState = "input-svg";
+                  })
+                  .catch((e) => {
+                    console.error(e);
+                  });
+              }}
+            >
+              {demo.title}
+            </button>
+          {/each}
+        {/if}
+      </div>
       {#if modalState === "input-svg"}
         <CodeMirror
           bind:value
@@ -178,6 +186,7 @@
           placeholder={"Paste in some SVG text here"}
         />
       {/if}
+
       {#if modalState === "edit-colors"}
         <div>
           <h3>

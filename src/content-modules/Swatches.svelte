@@ -16,14 +16,17 @@
     {
       className: `${common} w-8 h-8 `,
       styleMap: (color: Color): string => `background-color: ${color.toHex()};`,
+      selectionClass: "rotate-12",
     },
     {
       className: `${common} w-6 h-6`,
       styleMap: (color: Color): string => `background-color: ${color.toHex()};`,
+      selectionClass: "rotate-12",
     },
     {
       className: `${common} w-4 h-4 rounded-full`,
       styleMap: (color: Color): string => `border: 2px solid ${color.toHex()};`,
+      selectionClass: "relative top-1 left-1",
     },
   ];
 </script>
@@ -38,7 +41,7 @@
       <span>Hold shift to select multiple</span>
     </span> -->
   </div>
-  {#each classes as { className, styleMap }}
+  {#each classes as { className, styleMap, selectionClass }}
     <div class="flex justify-center flex-wrap">
       {#each colors as color, idx}
         <Tooltip top={"100px"} allowDrag={true}>
@@ -49,7 +52,7 @@
             let:toggle
             let:tooltipOpen
             slot="target"
-            class={className}
+            class={`${className} ${focusSet.has(idx) ? selectionClass : ""}`}
             style={`${styleMap(color)}`}
             on:click={(e) => {
               const isFocused = focusSet.has(idx);
@@ -82,7 +85,6 @@
                 }
               }
             }}
-            class:rotate-45={focusSet.has(idx)}
           ></button>
         </Tooltip>
       {/each}
@@ -91,9 +93,10 @@
   <div class="flex flex-wrap justify-center">
     {#each colors as color, i}
       <div
-        style={`color: ${color.toHex()}`}
+        style={`color: ${color.toHex()}; transform: rotate(${
+          focusSet.has(i) ? 10 : 0
+        }deg)`}
         class="mr-2"
-        class:mt-2={focusSet.has(i)}
       >
         {color.toHex()}
       </div>

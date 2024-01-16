@@ -55,19 +55,19 @@ export class Color {
     // return this.toColorIO().display();
   }
   inGamut(): boolean {
-    return this.toColorIO().inGamut("srgb");
+    // return this.toColorIO().inGamut("srgb");
     // // return new ColorIO(this.spaceName, this.toChannels()).inGamut();
     // let clr = this.toColorIO().to("srgb", { inGamut: false });
     // let cssColor = clr.display();
     // // cssColor.color.inGamut();
     // return cssColor.color.inGamut();
 
-    // const x = this.toHex();
-    // const y = colorFromHex(x, "srgb").toHex();
-    // // if (x !== y) {
-    // //   console.log("x", x, "y", y);
-    // // }
-    // return x === y;
+    const x = this.toHex();
+    const y = this.toColorIO().to("srgb").toString({ format: "hex" });
+    if (x !== y) {
+      console.log("x", x, "y", y);
+    }
+    return x === y;
   }
   toColorIO(): ColorIO {
     try {

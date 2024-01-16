@@ -9,7 +9,6 @@
   import { buttonStyle, AIButtonStyle } from "../../lib/styles";
 
   $: colorSpace = $colorStore.currentPal.colorSpace;
-  $: console.log(colorSpace);
   let requestState: "idle" | "loading" | "loaded" | "failed" = "idle";
   let newPal: Palette | undefined = undefined;
   let palPrompt: string = "";

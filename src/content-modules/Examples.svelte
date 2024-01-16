@@ -71,7 +71,10 @@
     value = text;
   }
 
-  $: examples = $exampleStore.examples.filter((x: any) => {
+  $: exampleShowMap = $exampleStore.examples.map((x: any) => {
+    if (x.hidden) {
+      return false;
+    }
     if (sections.svg && x?.svg) {
       return true;
     }
@@ -79,7 +82,15 @@
       return true;
     }
     return false;
-  }) as any;
+  });
+  $: examples = $exampleStore.examples as any;
+
+  $: numberHidden = $exampleStore.examples.filter((x: any) => x.hidden).length;
+
+  const withFx = (fx: () => void) => (func: any) => (_e: any) => {
+    func();
+    fx();
+  };
 </script>
 
 <div class="flex items-center bg-slate-200 px-4">
@@ -106,8 +117,16 @@
     class={buttonStyle}
     on:click={() => exampleStore.restoreDefaultExamples()}
   >
-    Restore default examples
+    Reset to defaults
   </button>
+  {#if numberHidden > 0}
+    <button
+      class={buttonStyle}
+      on:click={() => exampleStore.restoreHiddenExamples()}
+    >
+      Restore hidden examples
+    </button>
+  {/if}
 </div>
 <div
   class="flex flex-wrap overflow-auto p-4 w-full bg-slate-300"
@@ -118,41 +137,48 @@
   {/if}
 
   {#each examples as example, idx}
-    <div
-      class="flex flex-col border-2 border-dashed rounded w-min mr-4"
-      style="background: {bg.toHex()};"
-    >
-      <div class="flex">
-        {#if example.svg}
-          <Example example={example.svg} />
-        {/if}
-        {#if example.vega}
-          <Vega spec={example.vega} />
-        {/if}
-        <Tooltip>
-          <div slot="content" let:onClick>
-            <button
-              class={buttonStyle}
-              on:click={() => clickExample(example, idx)}
-            >
-              Edit
-            </button>
-            <button
-              class={buttonStyle}
-              on:click={() => {
-                exampleStore.deleteExample(idx);
-                onClick();
-              }}
-            >
-              Delete
-            </button>
-          </div>
-          <div slot="target" let:toggle>
-            <button class={buttonStyle} on:click={toggle}>⚙</button>
-          </div>
-        </Tooltip>
+    {#if exampleShowMap[idx]}
+      <div
+        class="flex flex-col border-2 border-dashed rounded w-min mr-4"
+        style="background: {bg.toHex()};"
+      >
+        <div class="flex">
+          {#if example.svg}
+            <Example example={example.svg} />
+          {/if}
+          {#if example.vega}
+            <Vega spec={example.vega} />
+          {/if}
+          <Tooltip>
+            <div slot="content" let:onClick>
+              <button
+                class={buttonStyle}
+                on:click={() => clickExample(example, idx)}
+              >
+                Edit
+              </button>
+              <button
+                class={buttonStyle}
+                on:click={withFx(onClick)(() =>
+                  exampleStore.deleteExample(idx)
+                )}
+              >
+                Delete
+              </button>
+              <button
+                class={buttonStyle}
+                on:click={withFx(onClick)(() => exampleStore.toggleHidden(idx))}
+              >
+                Hide
+              </button>
+            </div>
+            <div slot="target" let:toggle>
+              <button class={buttonStyle} on:click={toggle}>⚙</button>
+            </div>
+          </Tooltip>
+        </div>
       </div>
-    </div>
+    {/if}
   {/each}
 </div>
 {#if modalState !== "closed"}

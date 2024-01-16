@@ -2,7 +2,9 @@ import { writable } from "svelte/store";
 import * as idb from "idb-keyval";
 import { idxToKey } from "../lib/charts";
 
-type Example = { svg: string; numColors: number } | { vega: string };
+type Example =
+  | { svg: string; hidden?: boolean }
+  | { vega: string; hidden?: boolean };
 interface StoreData {
   examples: Example[];
   sections: typeof InitialSections;
@@ -84,14 +86,13 @@ async function buildAllExamples() {
   for (const demo of DEMOS) {
     try {
       const text = await fetch(demo.filename).then((x) => x.text());
-      const example = {} as any;
+      const example = { hidden: false } as any;
       if (demo.type === "vega") {
         example.vega = text;
       } else {
         const colors = detectColorsInSvgString(text);
         store.addExample(example);
         example.svg = modifySVGForExampleStore(text, colors);
-        example.numColors = colors.length;
       }
       builtExamples.push(example);
     } catch (e) {
@@ -161,6 +162,17 @@ function createStore() {
       const examples = await buildAllExamples();
       persistUpdate((old) => ({ ...old, examples }));
     },
+    restoreHiddenExamples: () =>
+      persistUpdate((old) => ({
+        ...old,
+        examples: old.examples.map((x) => ({ ...x, hidden: false })),
+      })),
+    toggleHidden: (idx: number) =>
+      persistUpdate((old) => {
+        const newExamples = [...old.examples];
+        newExamples[idx].hidden = !newExamples[idx].hidden;
+        return { ...old, examples: newExamples };
+      }),
   };
 }
 

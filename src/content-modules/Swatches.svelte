@@ -92,14 +92,22 @@
   {/each}
   <div class="flex flex-wrap justify-center">
     {#each colors as color, i}
-      <div
+      <button
         style={`color: ${color.toHex()}; transform: rotate(${
           focusSet.has(i) ? 10 : 0
         }deg)`}
         class="mr-2"
+        on:click={(e) => {
+          const isMeta = e.metaKey || e.shiftKey;
+          if (isMeta) {
+            focusStore.toggleColor(i);
+          } else {
+            focusStore.setColors(focusSet.has(i) ? [] : [i]);
+          }
+        }}
       >
         {color.toHex()}
-      </div>
+      </button>
     {/each}
   </div>
 </div>

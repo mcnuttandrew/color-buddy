@@ -2,9 +2,12 @@
   import { colorFromString } from "../lib/Color";
   import type { Palette } from "../stores/color-store";
   import chroma from "chroma-js";
-  import exampleStore from "../stores/example-store";
+  import exampleStore, {
+    DEMOS,
+    detectColorsInSvgString,
+    modifySVGForExampleStore,
+  } from "../stores/example-store";
   import colorStore from "../stores/color-store";
-  import { charts, idxToKey } from "../lib/charts";
   import Vega from "../components/Vega.svelte";
   import Modal from "../components/Modal.svelte";
   import { buttonStyle } from "../lib/styles";
@@ -14,34 +17,12 @@
   import Example from "../components/Example.svelte";
   import Swatches from "../content-modules/Swatches.svelte";
 
-  let modalState: "closed" | "input-svg" | "edit-colors" = "closed";
+  let modalState: "closed" | "input-svg" | "input-vega" | "edit-colors" =
+    "closed";
   let modifyingExample: number | false = false;
   $: bg = $colorStore.currentPal.background;
   $: colorSpace = $colorStore.currentPal.colorSpace;
   let value = "";
-
-  function detectColorsInSvgString(svgString: string) {
-    const colors = new Set<string>();
-    //  match hex or rgb(255, 255, 255)
-    const regex = /#(?:[0-9a-fA-F]{3}){1,2}|rgb\((?:\d{1,3},\s*){2}\d{1,3}\)/g;
-
-    let match;
-    while ((match = regex.exec(svgString))) {
-      colors.add(match[0]);
-    }
-    return Array.from(colors);
-  }
-
-  function modifySVGForExampleStore(
-    svgString: string,
-    targetedColors: string[]
-  ) {
-    let svg = svgString;
-    targetedColors.forEach((color, idx) => {
-      svg = svg.replace(new RegExp(color, "g"), idxToKey(idx));
-    });
-    return svg;
-  }
 
   $: detectedColors = [] as string[];
   $: sections = $exampleStore.sections as any;
@@ -60,17 +41,49 @@
     };
     colorStore.createNewPal(newPal);
   }
-  const DEMOS = [
-    { title: "Mondrian", filename: "./mondrian.svg" },
-    { title: "Annotated R2", filename: "./r2.svg" },
-    { title: "Annotated Fourier", filename: "./fourier.svg" },
-    { title: "VIS Logo", filename: "./vis-logo.svg" },
-    { title: "Holy Grail Layout", filename: "./HolyGrail.svg" },
-  ];
+
+  let validJSON = false;
+  $: {
+    if (modalState === "input-vega") {
+      try {
+        JSON.parse(value);
+        validJSON = true;
+      } catch (e) {
+        validJSON = false;
+      }
+    }
+  }
+  function clickExample(example: { svg?: string; vega?: string }, idx: number) {
+    if (example.svg) {
+      value = example.svg;
+      modalState = "input-svg";
+    }
+    if (example.vega) {
+      value = example.vega;
+      modalState = "input-vega";
+    }
+    modifyingExample = idx;
+  }
+
+  async function fileUpload(e: any) {
+    const file = e.target.files[0];
+    const text = await file.text();
+    value = text;
+  }
+
+  $: examples = $exampleStore.examples.filter((x: any) => {
+    if (sections.svg && x?.svg) {
+      return true;
+    }
+    if (sections.vega && x.vega) {
+      return true;
+    }
+    return false;
+  }) as any;
 </script>
 
 <div class="flex items-center bg-slate-200 px-4">
-  {#each Object.keys($exampleStore.sections) as group}
+  {#each Object.keys(sections) as group}
     <div class="mr-2">
       <label for={`${group}-checkbox`}>{group}</label>
       <input
@@ -89,58 +102,57 @@
   >
     Add Example
   </button>
+  <button
+    class={buttonStyle}
+    on:click={() => exampleStore.restoreDefaultExamples()}
+  >
+    Restore default examples
+  </button>
 </div>
 <div
   class="flex flex-wrap overflow-auto p-4 w-full bg-slate-300"
   style={`height: calc(100% - 100px)`}
 >
-  {#if $exampleStore.sections["custom"]}
-    {#each $exampleStore.examples as example, idx}
-      <div
-        class="flex flex-col border-2 border-dashed rounded w-min mr-4"
-        style="background: {bg.toHex()};"
-      >
-        <div class="flex">
-          <Example example={example.svg} />
-          <Tooltip>
-            <div slot="content" let:onClick>
-              <button
-                class={buttonStyle}
-                on:click={() => {
-                  value = example.svg;
-                  modalState = "input-svg";
-                  modifyingExample = idx;
-                }}
-              >
-                Edit
-              </button>
-              <button
-                class={buttonStyle}
-                on:click={() => {
-                  exampleStore.deleteExample(idx);
-                  onClick();
-                }}
-              >
-                Delete
-              </button>
-            </div>
-            <div slot="target" let:toggle>
-              <button class={buttonStyle} on:click={toggle}>⚙</button>
-            </div>
-          </Tooltip>
-        </div>
-      </div>
-    {/each}
-  {/if}
   {#if $exampleStore.sections["swatches"]}
     <Swatches />
   {/if}
-  {#each charts as { chart, group }}
-    {#if sections[group]}
-      <div class="flex flex-col border-2 border-dashed rounded w-min mr-4">
-        <Vega spec={chart($colorStore.currentPal)} />
+
+  {#each examples as example, idx}
+    <div
+      class="flex flex-col border-2 border-dashed rounded w-min mr-4"
+      style="background: {bg.toHex()};"
+    >
+      <div class="flex">
+        {#if example.svg}
+          <Example example={example.svg} />
+        {/if}
+        {#if example.vega}
+          <Vega spec={example.vega} />
+        {/if}
+        <Tooltip>
+          <div slot="content" let:onClick>
+            <button
+              class={buttonStyle}
+              on:click={() => clickExample(example, idx)}
+            >
+              Edit
+            </button>
+            <button
+              class={buttonStyle}
+              on:click={() => {
+                exampleStore.deleteExample(idx);
+                onClick();
+              }}
+            >
+              Delete
+            </button>
+          </div>
+          <div slot="target" let:toggle>
+            <button class={buttonStyle} on:click={toggle}>⚙</button>
+          </div>
+        </Tooltip>
       </div>
-    {/if}
+    </div>
   {/each}
 </div>
 {#if modalState !== "closed"}
@@ -153,21 +165,38 @@
     <div slot="header">
       <div class="flex justify-between">
         <div>Add an Example</div>
+        <div>
+          {#each ["svg", "vega (or vega-lite)"] as mode}
+            <button
+              class={buttonStyle}
+              class:font-bold={(modalState === "input-svg" && mode === "svg") ||
+                (modalState === "input-vega" && mode === "vega (or vega-lite)")}
+              on:click={() => {
+                modalState = mode === "svg" ? "input-svg" : "input-vega";
+              }}
+            >
+              {mode}
+            </button>
+          {/each}
+        </div>
       </div>
     </div>
     <div class="h-96 overflow-auto" style="width: 700px;">
       <div>
-        Demos:
-        {#if modalState === "input-svg"}
-          {#each DEMOS as demo}
+        {#if modalState === "input-svg" || modalState === "input-vega"}
+          Demos:
+          {#each DEMOS.filter((demo) => {
+            return modalState === "input-svg" ? demo.type === "svg" : demo.type === "vega";
+          }) as demo}
             <button
               class={buttonStyle}
               on:click={() => {
+                let initialMode = modalState;
                 fetch(demo.filename)
                   .then((response) => response.text())
                   .then((text) => {
                     value = text;
-                    modalState = "input-svg";
+                    modalState = initialMode;
                   })
                   .catch((e) => {
                     console.error(e);
@@ -184,6 +213,26 @@
           bind:value
           lang={xml()}
           placeholder={"Paste in some SVG text here"}
+        />
+        <div>
+          <input
+            accept="image/svg"
+            id="fileUpload"
+            name="fileUpload"
+            type="file"
+            on:change={(e) => fileUpload(e)}
+          />
+          <label for="fileUpload">Or upload a file</label>
+        </div>
+      {/if}
+
+      {#if modalState === "input-vega"}
+        {#if !validJSON}
+          <div class="text-red-500">Invalid JSON</div>
+        {/if}
+        <CodeMirror
+          bind:value
+          placeholder={"Paste in a valid vega or vega-lite program here"}
         />
       {/if}
 
@@ -252,12 +301,29 @@
         <button
           class={buttonStyle}
           on:click={() => {
-            //   exampleStore.addExample(value);
             modalState = "edit-colors";
             detectedColors = detectColorsInSvgString(value);
           }}
         >
           Mark Colors
+        </button>
+      {/if}
+      {#if modalState === "input-vega"}
+        <button
+          class={buttonStyle}
+          on:click={() => {
+            const example = { vega: value };
+            if (modifyingExample !== false) {
+              exampleStore.updateExample(example, modifyingExample);
+            } else {
+              exampleStore.addExample(example);
+            }
+            modalState = "closed";
+            value = "";
+            modifyingExample = false;
+          }}
+        >
+          {modifyingExample ? "Update" : "Add"} Example
         </button>
       {/if}
     </div>

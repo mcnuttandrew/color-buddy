@@ -54,15 +54,15 @@ To raise the sliders, you need to click on one of the examples that are displaye
 - [ ] Make keyboard short cut (option+up/down) for the z-direction
 - [ ] Polar stuff
 - [ ] Chore: Extract some common types into a top level location (like types.ts type thing)
-- [x] Examples: A (default) example showing annotated math stuff
-- [ ] Examples: SVG Upload
-- [ ] Examples: Vega/Vega-Lite Specification
-- [ ] Examples: Examples held as assets somewhere that are downloaded rather than components (for consistency)
-- [ ] Examples: higher card. vis examples
 - [?] Rearrange some of the colors in the color area eg make rg on xy and b on z etc
 - [ ] Insert color theory options, eg insert opposing, inserting analogous color, etc, mine from the adobe picker
 - [ ] Labels, tooltips, etc
 - [ ] Nice to have: Rest of basic geometry manipulations: flip (horizontal, vertical), scale, Distribute radially
+- [x] Examples: A (default) example showing annotated math stuff
+- [x] Examples: SVG Upload
+- [x] Examples: Vega/Vega-Lite Specification
+- [x] Examples: Examples held as assets somewhere that are downloaded rather than components (for consistency)
+- [x] Examples: higher card. vis examples
 - [x] Black and white simulation
 - [x] Chore: clean up the color store, many unnecessary methods.
 - [x] Bug: changing the color frame fucks everything up???? (particularly for HSV/HSL)

@@ -109,212 +109,137 @@ export function buildTheme(pal: Palette): any {
   };
 }
 
-const groupedBarChart = (_pal: Palette) => ({
-  height: 150,
-  width: 150,
-  $schema: "https://vega.github.io/schema/vega-lite/v5.json",
-  data: {
-    values: [
-      { category: "A", group: "x", value: 0.1 },
-      { category: "A", group: "y", value: 0.6 },
-      { category: "A", group: "z", value: 0.9 },
-      { category: "B", group: "x", value: 0.7 },
-      { category: "B", group: "y", value: 0.2 },
-      { category: "B", group: "z", value: 1.1 },
-      { category: "C", group: "x", value: 0.6 },
-      { category: "C", group: "y", value: 0.1 },
-      { category: "C", group: "z", value: 0.2 },
-    ],
-  },
-  mark: "bar",
-  encoding: {
-    x: { field: "category" },
-    y: { field: "value", type: "quantitative" },
-    xOffset: { field: "group" },
-    color: { field: "group" },
-  },
-});
-const scatterPlot = (_pal: Palette) => ({
-  height: 150,
-  width: 150,
-  $schema: "https://vega.github.io/schema/vega-lite/v5.json",
-  description:
-    "A scatterplot showing body mass and flipper lengths of penguins.",
-  data: {
-    url: !location.href.includes("localhost")
-      ? "https://vega.github.io/editor/data/penguins.json"
-      : "data/penguins.json",
-  },
-  mark: "point",
-  encoding: {
-    x: {
-      field: "Flipper Length (mm)",
-      type: "quantitative",
-      scale: { zero: false },
-    },
-    y: {
-      field: "Body Mass (g)",
-      type: "quantitative",
-      scale: { zero: false },
-    },
-    color: { field: "Species", type: "nominal" },
-    shape: { field: "Species", type: "nominal" },
-  },
-});
+// const groupedBarChart = () => ();
+// const scatterPlot = () => ();
 
-const map = (pal: Palette) => ({
-  $schema: "https://vega.github.io/schema/vega/v5.json",
-  width: 250,
-  height: 250,
-  autosize: "none",
-  data: [
-    {
-      name: "counties",
-      url: !location.href.includes("localhost")
-        ? "https://vega.github.io/editor/data/us-10m.json"
-        : "data/us-10m.json",
-      format: { type: "topojson", feature: "counties" },
-      transform: [
-        {
-          type: "formula",
-          expr: `datum.id - (parseInt(datum.id/${pal.colors.length + 5}) * ${
-            pal.colors.length
-          })`,
-          as: "mod",
-        },
-      ],
-    },
-  ],
-  projections: [
-    { name: "projection", type: "albersUsa", translate: [0, 400], scale: 2900 },
-  ],
+// const map = () => ();
 
-  scales: [
-    {
-      name: "color",
-      type: "ordinal",
-      domain: { data: "counties", field: "mod" },
-      range: pal.colors.map((_x, idx) => idxToKey(idx)),
-    },
-  ],
+// const areaChart = () => ();
 
-  marks: [
-    {
-      type: "shape",
-      from: { data: "counties" },
-      encode: {
-        update: { fill: { scale: "color", field: "mod" } },
-      },
-      transform: [{ type: "geoshape", projection: "projection" }],
-    },
-  ],
-});
+// const stackedAreaChart = () => ();
+// url: !location.href.includes("localhost")
+//   ? "https://vega.github.io/editor/data/penguins.json"
+//   : "data/penguins.json",
 
-const areaChart = (pal: Palette) => ({
-  $schema: "https://vega.github.io/schema/vega-lite/v5.json",
-  width: 250,
-  height: 200,
-  data: {
-    url: !location.href.includes("localhost")
-      ? "https://vega.github.io/editor/data/penguins.json"
-      : "data/penguins.json",
-  },
-  mark: { type: "area", opacity: 0.5 },
-  transform: [
-    { density: "Body Mass (g)", groupby: ["Species"], extent: [2500, 6500] },
-  ],
-  encoding: {
-    x: { field: "value", type: "quantitative", title: "Body Mass (g)" },
-    y: { field: "density", type: "quantitative", stack: null },
-    color: { field: "Species", type: "nominal" },
-  },
-});
+// const scatterPlotOrdinal = () => ();
 
-const stackedAreaChart = (pal: Palette) => ({
-  $schema: "https://vega.github.io/schema/vega-lite/v5.json",
-  data: {
-    url: !location.href.includes("localhost")
-      ? "https://vega.github.io/editor/data/barley.json"
-      : "data/barley.json",
-  },
-  mark: "bar",
-  encoding: {
-    x: { field: "yield", type: "quantitative", aggregate: "sum" },
-    y: { field: "variety", type: "nominal" },
-    color: { field: "site", type: "nominal" },
-  },
-});
-
-const scatterPlotOrdinal = (_pal: Palette) => ({
-  $schema: "https://vega.github.io/schema/vega-lite/v5.json",
-  data: {
-    url: !location.href.includes("localhost")
-      ? "https://vega.github.io/editor/data/penguins.json"
-      : "data/penguins.json",
-  },
-  mark: "point",
-  encoding: {
-    x: {
-      field: "Flipper Length (mm)",
-      type: "quantitative",
-      scale: { zero: false },
-    },
-    y: {
-      field: "Body Mass (g)",
-      type: "quantitative",
-      scale: { zero: false },
-    },
-    color: { field: "Flipper Length (mm)", type: "ordinal", legend: null },
-    shape: { field: "Species", type: "nominal" },
-  },
-});
-
-const heatmap = (_pal: Palette) => ({
-  $schema: "https://vega.github.io/schema/vega-lite/v5.json",
-  data: {
-    values: [
-      { x: 0, y: 0, value: -10 },
-      { x: 1, y: 0, value: -5 },
-      { x: 2, y: 0, value: 0 },
-      { x: 3, y: 0, value: 5 },
-      { x: 0, y: 1, value: -5 },
-      { x: 1, y: 1, value: 0 },
-      { x: 2, y: 1, value: 5 },
-      { x: 3, y: 1, value: 10 },
-      { x: 0, y: 2, value: 0 },
-      { x: 1, y: 2, value: 5 },
-      { x: 2, y: 2, value: 10 },
-      { x: 3, y: 2, value: 15 },
-    ],
-  },
-  mark: "rect",
-  encoding: {
-    x: { field: "x", type: "ordinal" },
-    y: { field: "y", type: "ordinal" },
-    color: { field: "value", type: "ordinal", bin: true },
-  },
-});
+// const heatmap = () => ();
 
 export const charts = [
   // groupedBarChart, //
   // { group: "categorical", chart: scatterPlot },
-  { group: "categorical", chart: map },
-  { group: "categorical", chart: areaChart },
-  { group: "categorical", chart: stackedAreaChart },
-  { group: "ordinal", chart: scatterPlotOrdinal },
-  { group: "ordinal", chart: heatmap },
+  // { group: "categorical", chart: map },
+  // { group: "categorical", chart: areaChart },
+  // { group: "categorical", chart: stackedAreaChart },
+  // { group: "ordinal", chart: scatterPlotOrdinal },
+  // { group: "ordinal", chart: heatmap },
+];
+
+const vegaDatasets = [
+  "7zip.png",
+  "airports.csv",
+  "annual-precip.json",
+  "anscombe.json",
+  "barley.json",
+  "birdstrikes.csv",
+  "budget.json",
+  "budgets.json",
+  "burtin.json",
+  "cars.json",
+  "co2-concentration.csv",
+  "countries.json",
+  "crimea.json",
+  "disasters.csv",
+  "driving.json",
+  "earthquakes.json",
+  "ffox.png",
+  "flare-dependencies.json",
+  "flare.json",
+  "flights-10k.json",
+  "flights-200k.arrow",
+  "flights-200k.json",
+  "flights-20k.json",
+  "flights-2k.json",
+  "flights-3m.csv",
+  "flights-5k.json",
+  "flights-airport.csv",
+  "football.json",
+  "gapminder-health-income.csv",
+  "gapminder.json",
+  "gimp.png",
+  "github.csv",
+  "income.json",
+  "iowa-electricity.csv",
+  "jobs.json",
+  "la-riots.csv",
+  "londonBoroughs.json",
+  "londonCentroids.json",
+  "londonTubeLines.json",
+  "lookup_groups.csv",
+  "lookup_people.csv",
+  "miserables.json",
+  "monarchs.json",
+  "movies.json",
+  "normal-2d.json",
+  "obesity.json",
+  "ohlc.json",
+  "penguins.json",
+  "platformer-terrain.json",
+  "points.json",
+  "political-contributions.json",
+  "population.json",
+  "population_engineers_hurricanes.csv",
+  "seattle-weather-hourly-normals.csv",
+  "seattle-weather.csv",
+  "sp500-2000.csv",
+  "sp500.csv",
+  "stocks.csv",
+  "udistrict.json",
+  "unemployment-across-industries.json",
+  "unemployment.tsv",
+  "uniform-2d.json",
+  "us-10m.json",
+  "us-employment.csv",
+  "us-state-capitals.json",
+  "volcano.json",
+  "weather.csv",
+  "weather.json",
+  "wheat.json",
+  "windvectors.csv",
+  "world-110m.json",
+  "zipcodes.csv",
 ];
 
 const results: Record<string, string> = {};
-export async function getSVG(localSpec: any, pal: Palette) {
+export async function getSVG(localSpec: string, pal: Palette) {
   const newKey =
     pal.colors.length + pal.background.toHex() + JSON.stringify(localSpec);
   if (results[newKey]) return results[newKey];
   const theme = buildTheme(pal);
-  let spec = localSpec;
+  let spec: any;
+  try {
+    spec = JSON.parse(localSpec);
+  } catch (e) {
+    console.error(e, localSpec);
+    return "";
+  }
   if (spec.$schema.includes("vega-lite")) {
     spec = vegaLite.compile(spec, { config: theme }).spec;
   }
+  // // url: !location.href.includes("localhost")
+  //   ? "https://vega.github.io/editor/data/penguins.json"
+  //   : "data/penguins.json",
+  const matchedDataset = vegaDatasets.find((x) => spec.data?.url?.includes(x));
+  if (matchedDataset) {
+    const isLocal = location.href.includes("localhost");
+    if (isLocal) {
+      spec.data.url = `data/${matchedDataset}`;
+    }
+    if (!isLocal && spec.data.url === `data/${matchedDataset}`) {
+      spec.data.url = `https://vega.github.io/editor/data/${matchedDataset}`;
+    }
+  }
+
   const runtime = vega.parse(spec, theme);
   const view = await new vega.View(runtime, { renderer: "svg" }).runAsync();
   return await view.toSVG().then((x) => {

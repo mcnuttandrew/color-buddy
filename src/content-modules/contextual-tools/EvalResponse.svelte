@@ -33,10 +33,27 @@
     });
   }
   $: evalConfig = $colorStore.currentPal.evalConfig;
+  function updateEvalConfig(
+    checkName: string,
+    value: any,
+    formatter: any = (x) => x
+  ) {
+    let val = value;
+    if (val.target.value) {
+      val = formatter(val.target.value);
+    }
+    colorStore.setCurrentPalEvalConfig({
+      ...evalConfig,
+      [checkName]: { ...evalConfig[checkName], val },
+    });
+  }
 </script>
 
 <Tooltip positionAlongRightEdge={true}>
   <div slot="content" let:onClick>
+    <button class={buttonStyle} on:click={() => proposeFix()}>
+      Try to fix
+    </button>
     <button
       class={buttonStyle}
       on:click={() => {
@@ -48,12 +65,32 @@
     >
       Ignore for this palette
     </button>
-    {#if check.hasParam}
-      <button class={buttonStyle}>This is too restrictive</button>
+    {#if check.paramOptions.type !== "none"}
+      <div>
+        <div>Adjust check parameter</div>
+        {#if check.paramOptions.type === "number"}
+          <input
+            min={check.paramOptions.min}
+            max={check.paramOptions.max}
+            type="number"
+            step={check.paramOptions.step}
+            value={check.config.val}
+            on:change={(e) => updateEvalConfig(check.name, e, (x) => Number(x))}
+          />
+        {/if}
+        {#if check.paramOptions.type === "enum"}
+          <select
+            value={check.config.val}
+            on:change={(e) => updateEvalConfig(check.name, e)}
+          >
+            {#each check.paramOptions.options as option}
+              <option value={option}>{option}</option>
+            {/each}
+          </select>
+        {/if}
+      </div>
     {/if}
-    <button class={buttonStyle} on:click={() => proposeFix()}>
-      Try to fix
-    </button>
+
     {#if requestState === "loading"}
       <div>Loading...</div>
     {:else if requestState === "failed"}

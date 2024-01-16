@@ -153,6 +153,16 @@
       </select>
       Palette
     </div>
+    {#if Object.keys($colorStore.currentPal.evalConfig)}
+      <button
+        class={buttonStyle}
+        on:click={() => {
+          colorStore.setCurrentPalEvalConfig({});
+        }}
+      >
+        Restore Defaults
+      </button>
+    {/if}
     <div>Checks</div>
     <div class="overflow-auto h-full max-w-md">
       {#each checks as check}

@@ -11,6 +11,7 @@ import UglyColors from "./lints/ugly-colors";
 import SequentialOrder from "./lints/sequential-order";
 import AvoidExtremes from "./lints/avoid-extremes";
 import DivergingOrder from "./lints/diverging-order";
+import BackgroundContrast from "./lints/contrast";
 
 export function runLintChecks(palette: Palette): ColorLint<any, any>[] {
   return [
@@ -24,5 +25,6 @@ export function runLintChecks(palette: Palette): ColorLint<any, any>[] {
     new SequentialOrder(palette),
     new AvoidExtremes(palette),
     new DivergingOrder(palette),
-  ];
+    new BackgroundContrast(palette),
+  ].map((x) => x.run());
 }

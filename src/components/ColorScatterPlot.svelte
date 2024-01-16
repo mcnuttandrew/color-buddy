@@ -6,12 +6,7 @@
     toColorSpace,
     colorPickerConfig,
   } from "../lib/Color";
-  import {
-    makePosAndSizes,
-    deDup,
-    toggleElement,
-    clampToRange,
-  } from "../lib/utils";
+  import { makePosAndSizes, toggleElement, clampToRange } from "../lib/utils";
   import configStore from "../stores/config-store";
   import { scaleLinear } from "d3-scale";
   import simulate_cvd from "../lib/blindness";
@@ -282,7 +277,7 @@
 
 <!-- svelte-ignore a11y-no-static-element-interactions -->
 <!-- svelte-ignore a11y-no-static-element-interactions -->
-<div class="flex" style="background: {bg.toDisplay()}">
+<div class="flex pb-2" style="background: {bg.toDisplay()}">
   <div class="flex flex-col items-center">
     <span class="text-2xl" style="color: {textColor}">
       {config.title}
@@ -431,7 +426,7 @@
         <svg
           {height}
           width={80 + margin.left + margin.right}
-          class="mt-3"
+          class="mt-1"
           on:mouseleave={stopDrag}
           on:mouseup={stopDrag}
           on:touchend={stopDrag}
@@ -442,14 +437,15 @@
             {textColor}
             {colorSpace}
             {axisColor}
+            {margin}
           />
           <g transform={`translate(${margin.left}, ${margin.top})`}>
             <!-- svelte-ignore a11y-no-static-element-interactions -->
             <rect
               x={0}
-              y={0}
+              y={-20}
               width={80}
-              height={yScale.range()[1]}
+              height={yScale.range()[1] + 40}
               fill="white"
               opacity="0"
               class:cursor-pointer={dragging}

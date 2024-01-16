@@ -23,7 +23,7 @@ const unique = <T>(arr: T[]): T[] => [...new Set(arr)];
 
 test("ColorLint - ColorNameDiscriminability", async () => {
   const examplePal = makePalFromHexes(["#5260d1", "#005ebe"]);
-  const exampleLint = new ColorNameDiscriminability(examplePal);
+  const exampleLint = new ColorNameDiscriminability(examplePal).run();
   expect(exampleLint.passes).toBe(false);
   expect(exampleLint.message).toBe(
     "Color Name discriminability check failed. The following color names are repeated: Royalblue (#5260d1, #005ebe)"
@@ -62,15 +62,15 @@ test("ColorLint - ColorBlind", async () => {
     "#00becf",
   ];
   const examplePal = makePalFromHexes(tableau10);
-  const exampleLint1 = new ColorBlind[0](examplePal);
+  const exampleLint1 = new ColorBlind[0](examplePal).run();
   expect(exampleLint1.passes).toBe(false);
   expect(exampleLint1.message).toMatchSnapshot();
 
-  const exampleLint2 = new ColorBlind[1](examplePal);
+  const exampleLint2 = new ColorBlind[1](examplePal).run();
   expect(exampleLint2.passes).toBe(false);
   expect(exampleLint2.message).toMatchSnapshot();
 
-  const exampleLint3 = new ColorBlind[2](examplePal);
+  const exampleLint3 = new ColorBlind[2](examplePal).run();
   expect(exampleLint3.passes).toBe(false);
   expect(exampleLint3.message).toMatchSnapshot();
 });
@@ -78,7 +78,7 @@ test("ColorLint - ColorBlind", async () => {
 const ughWhat = ["#00ffff", "#00faff", "#00e4ff", "#fdfdfc", "#00ffff"];
 test("ColorLint - BackgroundDifferentiability", async () => {
   const examplePal = makePalFromHexes(ughWhat);
-  const exampleLint = new BackgroundDifferentiability(examplePal);
+  const exampleLint = new BackgroundDifferentiability(examplePal).run();
   expect(exampleLint.passes).toBe(false);
   expect(exampleLint.message).toBe(
     "This palette has some colors (#fdfdfc) that are close to the background color"
@@ -87,7 +87,7 @@ test("ColorLint - BackgroundDifferentiability", async () => {
   expect(fix.colors.map((x) => x.toHex())).toMatchSnapshot();
 
   examplePal.background = colorFromHex("#00e4ff", "lab");
-  const exampleLint2 = new BackgroundDifferentiability(examplePal);
+  const exampleLint2 = new BackgroundDifferentiability(examplePal).run();
   expect(exampleLint2.passes).toBe(false);
   expect(exampleLint2.message).toBe(
     "This palette has some colors (#0ff, #00faff, #00e4ff, #0ff) that are close to the background color"

@@ -51,13 +51,14 @@ To raise the sliders, you need to click on one of the examples that are displaye
 
 ## TODOS
 
-- [ ] Make keyboard short cut (option+up/down) for the z-direction
+- [ ] Minor: Make keyboard short cut (option+up/down) for the z-direction
 - [ ] Polar stuff
 - [ ] Chore: Extract some common types into a top level location (like types.ts type thing)
 - [?] Rearrange some of the colors in the color area eg make rg on xy and b on z etc
 - [ ] Insert color theory options, eg insert opposing, inserting analogous color, etc, mine from the adobe picker
 - [ ] Labels, tooltips, etc
 - [ ] Nice to have: Rest of basic geometry manipulations: flip (horizontal, vertical), scale, Distribute radially
+- [x] Make lints have configurable parameters
 - [x] Examples: A (default) example showing annotated math stuff
 - [x] Examples: SVG Upload
 - [x] Examples: Vega/Vega-Lite Specification

@@ -3,20 +3,13 @@ import { suggestFix } from "../api-calls";
 import { colorFromHex } from "../Color";
 
 export type TaskType = "sequential" | "diverging" | "categorical";
-type Annotation =
-  | { type: "line"; points: { x: number; y: number }[] }
-  | { type: "point"; x: number; y: number; color: string };
-
-// example usage
-// const checks = [..., new ColorNameDiscriminability(pal), ...];
-// const suggestions = checks.filter((check) => !check.passCheck).map((check) => check.suggestFix());
 
 function AIFix(palette: Palette, message: string, engine: string) {
+  const colorSpace = palette.colorSpace;
   return suggestFix(palette, message, engine as any).then((x) => {
     if (x.length === 0) {
       throw new Error("No suggestions");
     }
-    const colorSpace = palette.colors[0].spaceName;
     return {
       ...palette,
       colors: x[0].colors.map((x) => colorFromHex(x, colorSpace)),
@@ -30,17 +23,48 @@ export class ColorLint<CheckData, ParamType> {
   passes: boolean;
   checkData: CheckData;
   palette: Palette;
-  message: string;
+  message: string = "";
   hasParam: boolean = false;
-  param?: ParamType;
+  config: { val?: ParamType } = {};
+  defaultParam: ParamType = false as any;
+  paramOptions:
+    | { type: "number"; min: number; max: number; step: number }
+    | { type: "enum"; options: string[] }
+    | { type: "none" } = { type: "none" };
   level: "error" | "warning" = "error";
 
   constructor(Palette: Palette) {
     this.palette = Palette;
+    this.checkData = undefined as CheckData;
+    this.passes = false;
+  }
+
+  copy() {
+    const copy = new ColorLint<CheckData, ParamType>(this.palette);
+    copy.name = this.name;
+    copy.taskTypes = this.taskTypes;
+    copy.passes = this.passes;
+    copy.checkData = this.checkData;
+    copy.message = this.message;
+    copy.hasParam = this.hasParam;
+    copy.config = this.config;
+    copy.defaultParam = this.defaultParam;
+    copy.level = this.level;
+    return copy;
+  }
+
+  run() {
+    const { evalConfig } = this.palette;
+    this.config = {
+      ...evalConfig[this.name],
+      val: evalConfig[this.name]?.val || this.defaultParam,
+    };
+
     const { passCheck, data } = this._runCheck();
     this.passes = passCheck;
     this.checkData = data as CheckData;
     this.message = this.buildMessage();
+    return this;
   }
 
   _runCheck(): { passCheck: boolean; data: CheckData } {
@@ -49,12 +73,6 @@ export class ColorLint<CheckData, ParamType> {
   // Fail Message
   buildMessage(): string {
     return "";
-  }
-
-  increaseParam() {
-    if (!this.hasParam) {
-      throw new Error("Cannot increase param on lint without param");
-    }
   }
 
   async suggestFix(engine?: string) {

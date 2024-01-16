@@ -1,7 +1,7 @@
 import namer from "color-namer";
 import { ColorLint } from "./ColorLint";
 import type { TaskType } from "./ColorLint";
-import { Color, toColorSpace, colorPickerConfig, colorFromHex } from "../Color";
+import { Color, colorFromHex } from "../Color";
 
 function findSmallest<A>(arr: A[], accessor: (x: A) => number): A {
   let smallest = arr[0];

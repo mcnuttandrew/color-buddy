@@ -6,18 +6,24 @@
   export let textColor: string;
   export let colorSpace: string;
   export let axisColor: string;
+  export let margin: {
+    left: number;
+    right: number;
+    top: number;
+    bottom: number;
+  };
 
   $: config = colorPickerConfig[colorSpace];
 
   $: zPoints = {
     top: {
-      y: zScale.range()[0] + 0,
+      y: zScale.range()[0] + 8,
       label: `${config.zChannel.toUpperCase()}: ${zScale
         .domain()[0]
         .toFixed(1)}`,
     },
     bottom: {
-      y: zScale.range()[1] + 15,
+      y: zScale.range()[1] + 30,
       label: zScale.domain()[1].toFixed(1),
     },
   };
@@ -26,9 +32,9 @@
 
 <line
   x1={10}
-  y1={0}
+  y1={margin.top}
   x2={10}
-  y2={plotHeight}
+  y2={plotHeight + margin.top}
   stroke={axisColor}
   stroke-width="1"
 />

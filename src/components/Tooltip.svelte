@@ -37,20 +37,23 @@
       x.addEventListener("click", onClick);
     });
   }
-  $: topString =
-    allowDrag && $configStore.tooltipXY
-      ? $configStore.tooltipXY[1]
-      : boundingBox
-        ? top
-          ? `calc(${boundingBox.y}px + ${top})`
-          : `${boundingBox.y}px`
-        : "0";
-  $: leftString =
-    allowDrag && $configStore.tooltipXY
-      ? $configStore.tooltipXY[0]
-      : boundingBox
-        ? `${boundingBox.x}px`
-        : "0";
+  $: topString = boundingBox
+    ? top
+      ? `calc(${boundingBox.y}px + ${top})`
+      : `${boundingBox.y}px`
+    : "0";
+  $: leftString = boundingBox ? `${boundingBox.x}px` : "0";
+  $: {
+    if (boundingBox.y + 300 > window.screen.height) {
+      topString = `${window.screen.height - 300}px`;
+    }
+  }
+  $: {
+    if (allowDrag && $configStore.tooltipXY) {
+      topString = $configStore.tooltipXY[1];
+      leftString = $configStore.tooltipXY[0];
+    }
+  }
 </script>
 
 {#if tooltipOpen && boundingBox}

@@ -2,12 +2,17 @@ import { ColorLint } from "./ColorLint";
 import type { TaskType } from "./ColorLint";
 import { computeStats } from "../color-stats";
 
-const defaultParamValue = 10;
 export default class ColorSimilarity extends ColorLint<number[], number> {
-  name = "Colors are differentiable in order";
+  name = "Colors are differentiable in order (dE units)";
   taskTypes = ["sequential", "diverging", "categorical"] as TaskType[];
   hasParam = true;
-  param = defaultParamValue;
+  defaultParam: number = 10;
+  paramOptions: { type: "number"; min: number; max: number; step: number } = {
+    type: "number",
+    min: 10,
+    max: 100,
+    step: 1,
+  };
   _runCheck() {
     const { colors } = this.palette;
     const data = computeStats(
@@ -16,7 +21,7 @@ export default class ColorSimilarity extends ColorLint<number[], number> {
     );
     const failingIndexes =
       data?.dE.reduce((acc, x, idx) => {
-        if (x < (this.param || defaultParamValue)) {
+        if (x < this.config.val!) {
           return [...acc, idx];
         }
         return acc;
@@ -34,8 +39,5 @@ export default class ColorSimilarity extends ColorLint<number[], number> {
       })
       .join(", ");
     return `Some colors are too similar based on dE scores: ${pairs}`;
-  }
-  increaseParam(): void {
-    this.param = this.param + 5;
   }
 }

@@ -36,11 +36,12 @@
   function updateEvalConfig(
     checkName: string,
     value: any,
-    formatter: any = (x) => x
+    formatter: "number" | "string"
   ) {
     let val = value;
     if (val.target.value) {
-      val = formatter(val.target.value);
+      val =
+        formatter === "number" ? Number(val.target.value) : val.target.value;
     }
     colorStore.setCurrentPalEvalConfig({
       ...evalConfig,
@@ -75,13 +76,13 @@
             type="number"
             step={check.paramOptions.step}
             value={check.config.val}
-            on:change={(e) => updateEvalConfig(check.name, e, (x) => Number(x))}
+            on:change={(e) => updateEvalConfig(check.name, e, "number")}
           />
         {/if}
         {#if check.paramOptions.type === "enum"}
           <select
             value={check.config.val}
-            on:change={(e) => updateEvalConfig(check.name, e)}
+            on:change={(e) => updateEvalConfig(check.name, e, "string")}
           >
             {#each check.paramOptions.options as option}
               <option value={option}>{option}</option>

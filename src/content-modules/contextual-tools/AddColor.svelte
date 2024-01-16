@@ -8,20 +8,19 @@
   import Tooltip from "../../components/Tooltip.svelte";
 
   const randChan = () => Math.floor(Math.random() * 255);
-  const randColor = (colorSpace: any) =>
-    colorFromString(
-      `rgb(${randChan()},${randChan()},${randChan()})`,
-      "srgb"
-    ).toColorSpace(colorSpace || "lab");
+  function componentToHex(c: number): string {
+    var hex = c.toString(16);
+    return hex.length == 1 ? "0" + hex : hex;
+  }
+  const randColor = () =>
+    `#${[randChan(), randChan(), randChan()]
+      .map((x) => componentToHex(x))
+      .join("")}`;
 
   $: colors = $colorStore.currentPal.colors;
   $: colorSpace = $colorStore.currentPal.colorSpace;
 
-  let suggestions = [
-    randColor(colorSpace),
-    randColor(colorSpace),
-    randColor(colorSpace),
-  ].map((x) => x.toHex());
+  let suggestions = [randColor(), randColor(), randColor()];
 
   let searchedString = "";
   let interpretations = [] as string[];
@@ -152,11 +151,9 @@
           class={buttonStyle}
           on:click={() => {
             const newSuggestions = [...suggestions];
-            [
-              randColor(colorSpace),
-              randColor(colorSpace),
-              randColor(colorSpace),
-            ].map((x) => newSuggestions.push(x.toHex()));
+            [randColor(), randColor(), randColor()].map((x) =>
+              newSuggestions.push(x)
+            );
             suggestions = newSuggestions;
           }}
         >

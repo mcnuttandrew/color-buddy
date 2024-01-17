@@ -5,10 +5,19 @@
 
   $: colors = $colorStore.currentPal.colors;
 
+  const clamp = (x: number, min: number, max: number) =>
+    Math.min(Math.max(x, min), max);
+
   function clipToGamut() {
     const newColors = colors.map((x) => {
       if (x.inGamut()) {
-        return x;
+        const channels = Object.entries(x.domains).map(([key, domain]) => {
+          const [min, max] = domain.sort();
+          return clamp(x.channels[key], min, max);
+        });
+        return x.fromChannels(channels as [number, number, number]);
+
+        // return x;
       } else {
         const newChannels = x
           .toColorIO()

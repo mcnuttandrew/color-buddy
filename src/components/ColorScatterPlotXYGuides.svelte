@@ -25,7 +25,7 @@
     centerTop: {
       x: (xScale.range()[1] - xScale.range()[0]) / 2,
       y: yScale.range()[0],
-      labelAdjust: { x: 0, y: -5 },
+      labelAdjust: { x: 0, y: -3 },
       anchor: "middle",
       label: `${config.yChannel}: ${axisFormatter(yScale.domain()[0])}`,
     },

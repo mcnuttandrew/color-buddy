@@ -492,7 +492,7 @@
                 class="pointer-events-none"
               />
             {/if}
-            {#if pickedColors.length}
+            {#if pickedColors.length && focusedColors.length > 1}
               <rect
                 x={5}
                 y={pos.zPos - 5}
@@ -515,7 +515,7 @@
     -moz-transition: r 0.2s ease-in-out;
   }
 
-  svg {
+  /* svg {
     overflow: visible;
-  }
+  } */
 </style>

@@ -17,7 +17,7 @@
 
   $: zPoints = {
     top: {
-      y: zScale.range()[0] + 8,
+      y: zScale.range()[0] + 15,
       label: `${config.zChannel.toUpperCase()}: ${zScale
         .domain()[0]
         .toFixed(1)}`,

@@ -1,27 +1,24 @@
 <script lang="ts">
-  import colorStore from "../stores/color-store";
   import chroma from "chroma-js";
   import { Color, colorFromHex } from "../lib/Color";
   import ColorChannelPicker from "../components/ColorChannelPicker.svelte";
   import Tooltip from "../components/Tooltip.svelte";
   import { buttonStyle } from "../lib/styles";
-  $: bg = $colorStore.currentPal.background;
+  export let onChange: (color: Color) => void;
+  export let bg: Color;
+  export let colorSpace: any;
   $: bgHex = bg.toHex();
-  $: colorSpace = $colorStore.currentPal.colorSpace;
-  function onChange(color: Color) {
-    colorStore.setBackground(color);
-  }
 </script>
 
 <Tooltip top={"75px"} allowDrag={true}>
-  <div slot="content" class="flex flex-col" let:onClick>
+  <div slot="content" class="flex flex-col">
     <input
       class="mb-2"
       value={bgHex}
       on:change={(e) => {
         // @ts-ignore
         const newColor = chroma(e.target.value);
-        colorStore.setBackground(colorFromHex(newColor.hex(), colorSpace));
+        onChange(colorFromHex(newColor.hex(), colorSpace));
       }}
     />
     <ColorChannelPicker color={bg} onColorChange={onChange} />

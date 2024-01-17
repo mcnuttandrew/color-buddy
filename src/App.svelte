@@ -31,8 +31,6 @@
         <div class="w-full flex bg-slate-100 px-2 py-3">
           <SetSimulation />
           <Zoom />
-          <Background />
-          <SetColorSpace />
         </div>
         <div class="flex flex-col h-full">
           <ColorScatterPlot
@@ -47,6 +45,17 @@
             startDragging={() => colorStore.pausePersistance()}
             stopDragging={() => colorStore.resumePersistance()}
           />
+          <div class="flex">
+            <Background
+              onChange={(bg) => colorStore.setBackground(bg)}
+              bg={$colorStore.currentPal.background}
+              colorSpace={$colorStore.currentPal.colorSpace}
+            />
+            <SetColorSpace
+              colorSpace={$colorStore.currentPal.colorSpace}
+              onChange={(space) => colorStore.setColorSpace(space)}
+            />
+          </div>
           <div class="flex flex-col pl-2">
             <!-- naming stuff -->
             <div class="flex justify-between">

@@ -1,9 +1,12 @@
 <script lang="ts">
-  import { colorFromHex, colorFromString } from "../lib/Color";
+  import { colorFromHex } from "../lib/Color";
   import colorStore from "../stores/color-store";
   import configStore from "../stores/config-store";
   import focusStore from "../stores/focus-store";
   import ColorScatterPlot from "../components/ColorScatterPlot.svelte";
+  import Background from "./Background.svelte";
+
+  import SetColorSpace from "./contextual-tools/SetColorSpace.svelte";
 
   $: ComparisonPal = $colorStore.palettes.find(
     (x) => x.name === $configStore.comparePal
@@ -23,13 +26,15 @@
 
 <div class="flex flex-col" style={`background: ${bg}`}>
   <select value={$configStore.comparePal}>
-    {#each [$colorStore.currentPal, ...$colorStore.palettes] as pal}
+    {#each [$colorStore.currentPal, ...$colorStore.palettes] as pal, idx}
       <option
         value={pal.name}
         on:click={() => {
           configStore.setComparePal(pal.name);
         }}
       >
+        {#if idx === 0}THE CURRENT PALETTE:
+        {/if}
         {pal.name}
       </option>
     {/each}
@@ -49,19 +54,18 @@
     />
   {/if}
 </div>
-<div class="bg-white">
-  <label>
-    Color Space:
-    <select bind:value={colorSpace}>
-      {#each ["lab", "oklab", "hsl", "hsv", "jzazbz"] as space}
-        <option value={space}>
-          {space}
-        </option>
-      {/each}
-    </select>
-  </label>
-  <label>
-    Background:
-    <input type="color" bind:value={bg} />
-  </label>
+<div class="flex">
+  <Background
+    onChange={(background) => {
+      bg = background.toHex();
+    }}
+    bg={colorFromHex(bg, colorSpace)}
+    {colorSpace}
+  />
+  <SetColorSpace
+    {colorSpace}
+    onChange={(space) => {
+      colorSpace = space;
+    }}
+  />
 </div>

@@ -16,6 +16,7 @@ export class Color {
   channelNames: string[] = [];
   dimensionToChannel: Record<"x" | "y" | "z", string> = { x: "", y: "", z: "" };
   axisLabel: (num: number) => string = (x) => x.toFixed(1).toString();
+  isPolar = false;
 
   constructor() {
     this.domains = {};
@@ -154,7 +155,7 @@ export class CIELAB extends Color {
   chromaBind = chroma.lab;
   spaceName = "lab" as const;
   stepSize: Channels = [1, 1, 1];
-  dimensionToChannel = { x: "L", y: "b", z: "a" };
+  dimensionToChannel = { x: "a", y: "b", z: "L" };
   axisLabel = (num: number) => `${Math.round(num)}`;
 
   toString(): string {
@@ -198,9 +199,10 @@ export class HSL extends Color {
   channels = { h: 0, s: 0, l: 0 };
   chromaBind = chroma.hsl;
   spaceName = "hsl" as const;
-  domains = { h: [0, 360], s: [0, 100], l: [0, 100] } as Domain;
+  domains = { h: [0, 360], s: [0, 100], l: [100, 0] } as Domain;
   stepSize: Channels = [1, 1, 1];
-  dimensionToChannel = { x: "s", y: "l", z: "h" };
+  dimensionToChannel = { x: "l", y: "h", z: "s" };
+  isPolar = true;
 
   toString(): string {
     const [h, s, l] = this.stringChannels();
@@ -325,20 +327,21 @@ export const colorPickerConfig = Object.fromEntries(
     return [
       name,
       {
+        axisLabel: exampleColor.axisLabel,
+        isPolar: exampleColor.isPolar,
         title: exampleColor.name,
-        xDomain: exampleColor.domains[x],
-        yDomain: exampleColor.domains[y],
-        zDomain: exampleColor.domains[z],
         xChannel: x,
         xChannelIndex: exampleColor.channelNames.indexOf(x),
+        xDomain: exampleColor.domains[x],
+        xStep: exampleColor.stepSize[1],
         yChannel: y,
         yChannelIndex: exampleColor.channelNames.indexOf(y),
+        yDomain: exampleColor.domains[y],
+        yStep: exampleColor.stepSize[2],
         zChannel: z,
         zChannelIndex: exampleColor.channelNames.indexOf(z),
-        xStep: exampleColor.stepSize[1],
-        yStep: exampleColor.stepSize[2],
+        zDomain: exampleColor.domains[z],
         zStep: exampleColor.stepSize[0],
-        axisLabel: exampleColor.axisLabel,
       },
     ];
   })

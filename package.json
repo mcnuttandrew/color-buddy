@@ -39,6 +39,7 @@
     "color-namer": "^1.4.0",
     "colorjs.io": "^0.4.5",
     "d3-scale": "^4.0.2",
+    "d3-shape": "^3.2.0",
     "idb-keyval": "^6.2.1",
     "openai": "^4.21.0",
     "svelte-codemirror-editor": "^1.2.0",

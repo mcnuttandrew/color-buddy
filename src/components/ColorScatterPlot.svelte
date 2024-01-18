@@ -11,6 +11,7 @@
   import { scaleLinear } from "d3-scale";
   import simulate_cvd from "../lib/blindness";
   import ColorScatterPlotXyGuides from "./ColorScatterPlotXYGuides.svelte";
+  import ColorScatterPlotPolarGuide from "./ColorScatterPlotPolarGuide.svelte";
   import ColorScatterPlotZGuide from "./ColorScatterPlotZGuide.svelte";
   import GamutMarker from "./GamutMarker.svelte";
 
@@ -43,36 +44,40 @@
     y: $configStore.yZoom,
     z: $configStore.zZoom,
   };
-  $: pickedColors = focusedColors.map((x) => colors[x].toChannels());
+  $: pickedColors = focusedColors.map((el) => [
+    x(colors[el]),
+    y(colors[el]),
+    z(colors[el]),
+  ]);
   $: config = colorPickerConfig[colorSpace];
   $: bg = Pal.background;
   $: colors = Pal.colors.map((x) => toColorSpace(x, colorSpace));
 
-  $: xRange = config.xDomain;
-  $: domainXScale = scaleLinear().domain([0, 1]).range(xRange);
-
+  $: domainXScale = scaleLinear().domain([0, 1]).range(config.xDomain);
   $: xScale = scaleLinear()
     .domain([domainXScale(extents.x[0]), domainXScale(extents.x[1])])
     .range([0, plotWidth]);
 
-  $: yRange = config.yDomain;
-  $: domainYScale = scaleLinear().domain([0, 1]).range(yRange);
+  $: rScale = scaleLinear()
+    .domain([domainXScale(extents.x[0]), domainXScale(extents.x[1])])
+    .range([0, plotWidth / 2]);
+
+  $: domainYScale = scaleLinear().domain([0, 1]).range(config.yDomain);
   $: yScale = scaleLinear()
     .domain([domainYScale(extents.y[0]), domainYScale(extents.y[1])])
     .range([0, plotHeight]);
 
-  $: zRange = config.zDomain;
-  $: domainLScale = scaleLinear().domain([0, 1]).range(zRange);
+  $: domainZScale = scaleLinear().domain([0, 1]).range(config.zDomain);
   $: zScale = scaleLinear()
-    .domain([domainLScale(extents.z[0]), domainLScale(extents.z[1])])
+    .domain([domainZScale(extents.z[0]), domainZScale(extents.z[1])])
     .range([0, plotHeight]);
 
-  $: miniConfig = {
-    xIdx: config.xChannelIndex,
-    yIdx: config.yChannelIndex,
-    zIdx: config.zChannelIndex,
-  };
-  $: pos = makePosAndSizes(pickedColors, xScale, yScale, zScale, miniConfig);
+  $: angleScale = scaleLinear()
+    .domain([0, 360])
+    .range([0, 2 * Math.PI]);
+
+  // bound box for selected colors
+  $: pos = makePosAndSizes(pickedColors);
 
   let dragging: false | { x: number; y: number } = false;
   let dragBox: false | { x: number; y: number } = false;
@@ -86,23 +91,27 @@
     if (!dragging || dragging.x === undefined || dragging.y === undefined)
       return color;
 
-    const { x, y } = toXY(e);
-
+    const values = toXY(e);
     const screenPosDelta = {
-      x: x - dragging.x,
-      y: y - dragging.y,
+      x: values.x - dragging.x,
+      y: values.y - dragging.y,
     };
-    const { xIdx, yIdx } = miniConfig;
-    const coords = originalColor.toChannels();
-    coords[xIdx] = clampToRange(
-      xScale.invert(xScale(coords[xIdx]) + screenPosDelta.x),
-      xRange
-    );
-    coords[yIdx] = clampToRange(
-      yScale.invert(yScale(coords[yIdx]) + screenPosDelta.y),
-      yRange
-    );
 
+    const xClamp = (v: number) => clampToRange(v, config.xDomain);
+    const yClamp = (v: number) => clampToRange(v, config.yDomain);
+    // screen coordinates
+    const newPos = [
+      x(originalColor) + screenPosDelta.x,
+      y(originalColor) + screenPosDelta.y,
+    ];
+    // color space coordinates
+    const newVal = [
+      xClamp(xInv(newPos[0], newPos[1])),
+      yClamp(yInv(newPos[0], newPos[1])),
+    ];
+    const coords = originalColor.toChannels();
+    coords[config.xChannelIndex] = newVal[0];
+    coords[config.yChannelIndex] = newVal[1];
     return colorFromChannels(coords, colorSpace);
   };
 
@@ -111,11 +120,10 @@
       return color;
 
     const screenPosDelta = toXY(e).y - dragging.y;
-    const { zIdx } = miniConfig;
     const coords = originalColor.toChannels();
-    coords[zIdx] = clampToRange(
-      zScale.invert(zScale(coords[zIdx]) + screenPosDelta),
-      zRange
+    const zClamp = (v: number) => clampToRange(v, config.zDomain);
+    coords[config.zChannelIndex] = zClamp(
+      zInv(z(originalColor) + screenPosDelta)
     );
 
     return colorFromChannels(coords, colorSpace);
@@ -216,11 +224,17 @@
   ) {
     const { xMin, xMax, yMin, yMax } = dragExtent(dragBox, dragging);
 
+    // check if selected in screen space
     const newFocusedColors = colors
       .map((color, idx) => {
-        const [_l, a, b] = color.toChannels();
-        const [x, y] = [xScale(a), yScale(b)];
-        return xMin <= x && x <= xMax && yMin <= y && y <= yMax ? idx : -1;
+        let [xVal, yVal] = [x(color), y(color)];
+        if (config.isPolar) {
+          xVal += plotWidth / 2;
+          yVal += plotHeight / 2;
+        }
+        const inXBound = xMin <= xVal && xVal <= xMax;
+        const inYBound = yMin <= yVal && yVal <= yMax;
+        return inXBound && inYBound ? idx : -1;
       })
       .filter((x) => x !== -1);
     onFocusedColorsChange([...newFocusedColors]);
@@ -232,7 +246,7 @@
     const { yMin, yMax } = dragExtent(dragBox, dragging);
     const newFocusedColors = colors
       .map((color, idx) => {
-        const y = zScale(color.toChannels()[0]);
+        const y = z(color);
         return yMin <= y && y <= yMax ? idx : -1;
       })
       .filter((x) => x !== -1);
@@ -246,9 +260,39 @@
 
   let hoveredPoint: Color | false = false;
   let hoverPoint = (x: typeof hoveredPoint) => (hoveredPoint = x);
-  $: x = (point: Color) => xScale(point.toChannels()[config.xChannelIndex]);
-  $: y = (point: Color) => yScale(point.toChannels()[config.yChannelIndex]);
-  $: z = (point: Color) => zScale(point.toChannels()[config.zChannelIndex]);
+  // coordinate transforms
+  // color space -> screen
+  type Channels = [number, number, number];
+  // slight indirection to make these mappings more re-usable
+  $: xPre = config.isPolar
+    ? (coords: Channels) => {
+        const r = rScale(coords[config.xChannelIndex]);
+        const theta = angleScale(coords[config.yChannelIndex]);
+        return r * Math.cos(theta);
+      }
+    : (coords: Channels) => xScale(coords[config.xChannelIndex]);
+  $: yPre = config.isPolar
+    ? (coords: Channels) => {
+        const r = rScale(coords[config.xChannelIndex]);
+        const theta = angleScale(coords[config.yChannelIndex]);
+        return r * Math.sin(theta);
+      }
+    : (coords: Channels) => yScale(coords[config.yChannelIndex]);
+  $: zPre = (coords: Channels) => zScale(coords[config.zChannelIndex]);
+  $: x = (color: Color) => xPre(color.toChannels());
+  $: y = (color: Color) => yPre(color.toChannels());
+  $: z = (color: Color) => zPre(color.toChannels());
+  // screen -> color space
+  $: xInv = config.isPolar
+    ? (x: number, y: number) => rScale.invert(Math.sqrt(x * x + y * y))
+    : (x: number) => xScale.invert(x);
+  $: yInv = config.isPolar
+    ? (x: number, y: number) => {
+        const angle = angleScale.invert(Math.atan2(y, x)) % 360;
+        return angle < 0 ? angle + 360 : angle;
+      }
+    : (x: number, y: number) => yScale.invert(y);
+  $: zInv = (z: number) => zScale.invert(z);
 
   function clickResponse(e: any, i: number) {
     if (e.metaKey || e.shiftKey) {
@@ -282,6 +326,17 @@
     cursor: "grab",
     stroke: selectionColor,
   };
+  $: guideProps = {
+    xScale,
+    yScale,
+    rScale,
+    plotHeight,
+    plotWidth,
+    axisColor,
+    textColor,
+    colorSpace,
+    dragging: !!dragging,
+  };
 </script>
 
 <!-- svelte-ignore a11y-no-static-element-interactions -->
@@ -302,16 +357,11 @@
         on:touchend={stopDrag}
       >
         <g transform={`translate(${margin.left}, ${margin.top})`}>
-          <ColorScatterPlotXyGuides
-            {xScale}
-            {yScale}
-            {plotHeight}
-            {plotWidth}
-            {axisColor}
-            {textColor}
-            {colorSpace}
-            dragging={!!dragging}
-          />
+          {#if config.isPolar}
+            <ColorScatterPlotPolarGuide {...guideProps} />
+          {:else}
+            <ColorScatterPlotXyGuides {...guideProps} />
+          {/if}
 
           <!-- svelte-ignore a11y-no-static-element-interactions -->
           <!-- svelte-ignore a11y-click-events-have-key-events -->
@@ -331,78 +381,93 @@
             class:cursor-pointer={dragging}
           />
 
-          <!-- background circle -->
           <g
-            transform={`translate(${x(bg)}, ${y(bg)})`}
-            class="pointer-events-none"
+            transform={config.isPolar
+              ? `translate(${plotWidth / 2}, ${plotHeight / 2})`
+              : ""}
           >
-            <circle r={15} stroke={axisColor} fill={bg.toDisplay()} />
-            <text
-              fill={textColor}
-              font-size={12}
-              text-anchor="middle"
-              dominant-baseline="central"
+            <!-- background circle -->
+            <g
+              transform={`translate(${x(bg)}, ${y(bg)})`}
+              class="pointer-events-none"
             >
-              BG
-            </text>
-          </g>
-          <!-- main colors -->
-          {#each colors as color, i}
-            <!-- svelte-ignore a11y-no-static-element-interactions -->
-            <!-- svelte-ignore a11y-click-events-have-key-events -->
-            <!-- svelte-ignore a11y-mouse-events-have-key-events -->
-            {#if scatterPlotMode === "moving"}
+              <circle r={15} stroke={axisColor} fill={bg.toDisplay()} />
+              <text
+                fill={textColor}
+                font-size={12}
+                text-anchor="middle"
+                dominant-baseline="central"
+              >
+                BG
+              </text>
+            </g>
+            <!-- main colors -->
+            {#each colors as color, i}
+              <!-- svelte-ignore a11y-no-static-element-interactions -->
+              <!-- svelte-ignore a11y-click-events-have-key-events -->
+              <!-- svelte-ignore a11y-mouse-events-have-key-events -->
+              {#if scatterPlotMode === "moving"}
+                <circle
+                  {...CircleProps(color)}
+                  on:mousedown|preventDefault={(e) => startDrag(true, i)(e)}
+                  on:touchstart|preventDefault={startDrag(true, i)}
+                  on:touchend|preventDefault={() => onFocusedColorsChange([i])}
+                  on:mouseenter={() => hoverPoint(color)}
+                  pointer-events={!focusSet.has(i) ? "all" : "none"}
+                  r={10 + (focusSet.has(i) ? 5 : 0)}
+                  stroke={focusedColors.length === 1 &&
+                  focusedColors[0] === i &&
+                  dragging
+                    ? axisColor
+                    : color.toDisplay()}
+                  on:click={(e) => clickResponse(e, i)}
+                />
+              {/if}
+              {#if scatterPlotMode === "looking"}
+                <circle
+                  {...CircleProps(color)}
+                  on:mouseenter={() => hoverPoint(color)}
+                />
+              {/if}
+              {#if !color.inGamut()}
+                <GamutMarker xPos={x(color)} yPos={y(color)} />
+              {/if}
+            {/each}
+            {#each blindColors as blindColor, i}
+              <!-- svelte-ignore a11y-click-events-have-key-events -->
               <circle
-                {...CircleProps(color)}
-                on:mousedown|preventDefault={(e) => startDrag(true, i)(e)}
+                {...CircleProps(blindColor)}
+                class="cursor-pointer"
+                stroke={blindColor.toDisplay()}
+                fill={"none"}
+                stroke-width="4"
+                on:mousedown|preventDefault={startDrag(true, i)}
                 on:touchstart|preventDefault={startDrag(true, i)}
                 on:touchend|preventDefault={() => onFocusedColorsChange([i])}
-                on:mouseenter={() => hoverPoint(color)}
                 pointer-events={!focusSet.has(i) ? "all" : "none"}
-                r={10 + (focusSet.has(i) ? 5 : 0)}
-                stroke={focusedColors.length === 1 &&
-                focusedColors[0] === i &&
-                dragging
-                  ? axisColor
-                  : color.toDisplay()}
                 on:click={(e) => clickResponse(e, i)}
               />
+            {/each}
+            <!-- simple tooltip -->
+            {#if hoveredPoint}
+              <g
+                transform={`translate(${x(hoveredPoint) + 5}, ${
+                  y(hoveredPoint) - 5
+                })`}
+              >
+                <text fill={textColor}>{hoveredPoint.toDisplay()}</text>
+              </g>
             {/if}
-            {#if scatterPlotMode === "looking"}
-              <circle
-                {...CircleProps(color)}
-                on:mouseenter={() => hoverPoint(color)}
+            {#if pickedColors.length > 1}
+              <rect
+                x={pos.xPos - 5}
+                y={pos.yPos - 5}
+                width={pos.selectionWidth + 10}
+                height={pos.selectionHeight + 10}
+                {...SelectionBoxStyles}
               />
             {/if}
-            {#if !color.inGamut()}
-              <GamutMarker xPos={x(color)} yPos={y(color)} />
-            {/if}
-          {/each}
-          {#each blindColors as blindColor, i}
-            <!-- svelte-ignore a11y-click-events-have-key-events -->
-            <circle
-              {...CircleProps(blindColor)}
-              class="cursor-pointer"
-              stroke={blindColor.toDisplay()}
-              fill={"none"}
-              stroke-width="4"
-              on:mousedown|preventDefault={startDrag(true, i)}
-              on:touchstart|preventDefault={startDrag(true, i)}
-              on:touchend|preventDefault={() => onFocusedColorsChange([i])}
-              pointer-events={!focusSet.has(i) ? "all" : "none"}
-              on:click={(e) => clickResponse(e, i)}
-            />
-          {/each}
-          <!-- simple tooltip -->
-          {#if hoveredPoint}
-            <g
-              transform={`translate(${x(hoveredPoint) + 5}, ${
-                y(hoveredPoint) - 5
-              })`}
-            >
-              <text fill={textColor}>{hoveredPoint.toDisplay()}</text>
-            </g>
-          {/if}
+          </g>
 
           <!-- selection box -->
           {#if dragging && dragBox && isMainBoxDrag}
@@ -416,20 +481,12 @@
               class="pointer-events-none"
             />
           {/if}
-          {#if pickedColors.length > 1}
-            <rect
-              x={pos.xPos - 5}
-              y={pos.yPos - 5}
-              width={pos.selectionWidth + 10}
-              height={pos.selectionHeight + 10}
-              {...SelectionBoxStyles}
-            />
-          {/if}
         </g>
       </svg>
     </div>
   </div>
   <div class="h-full">
+    <!-- invisible space inserter -->
     <span class=" text-xl opacity-0">X</span>
     <!-- svelte-ignore a11y-no-static-element-interactions -->
     <div class="flex h-full">
@@ -526,7 +583,7 @@
     -moz-transition: r 0.2s ease-in-out;
   }
 
-  /* svg {
+  svg {
     overflow: visible;
-  } */
+  }
 </style>

@@ -1,7 +1,7 @@
 <script lang="ts">
   import { colorFromString } from "../../lib/Color";
   import chroma from "chroma-js";
-  import colorStore from "../../stores/color-store";
+  import colorStore, { newGenericPal } from "../../stores/color-store";
   import focusStore from "../../stores/focus-store";
   import { onMount } from "svelte";
   import type { Palette } from "../../stores/color-store";
@@ -87,11 +87,28 @@
     },
     {} as Record<string, ExtendedPal[]>
   );
+
+  function newPalFromBlank() {
+    const pal = newGenericPal("new palette") as any;
+    pal.colors = pal.colors.map((x: string) => colorFromString(x, colorSpace));
+    pal.background = colorFromString("#ffffff", colorSpace);
+    pal.colorSpace = colorSpace;
+    const newPal = pal as Palette;
+
+    colorStore.createNewPal(newPal);
+  }
 </script>
 
 <Tooltip>
   <span slot="content" let:onClick>
-    <input bind:value={searchString} placeholder="Search for palettes" />
+    <div class="flex">
+      <input bind:value={searchString} placeholder="Search for palettes" />
+      <div>
+        <button class={buttonStyle} on:click={() => newPalFromBlank()}>
+          New blank
+        </button>
+      </div>
+    </div>
     <div class="max-h-48 overflow-y-scroll">
       {#each Object.entries(groups) as [group, pals]}
         <div class="font-bold">{group}</div>

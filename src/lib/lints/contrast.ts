@@ -25,7 +25,7 @@ export default class BackgroundContrast extends ColorLint<Color[], Algorithm> {
     const { background } = this.palette;
     const bg = background.toColorIO();
     const failingColors = this.palette.colors.filter((x) => {
-      const contrast = x.toColorIO().contrast(bg, this.config.val!);
+      const contrast = Math.abs(x.toColorIO().contrast(bg, this.config.val!));
       return contrast < 4.5;
     });
     return {

@@ -35,32 +35,22 @@ interface StorageData {
   currentPal: Pal<string>;
 }
 
+export function newGenericPal(name: string): Pal<string> {
+  return {
+    name,
+    colors: pick(outfits),
+    background: "#ffffff",
+    type: "categorical",
+    evalConfig: {},
+    colorSpace: "lab",
+  };
+}
+
 const InitialStore: StorageData = {
   palettes: [
-    {
-      name: "Example 1",
-      colors: pick(outfits),
-      background: "#ffffff",
-      type: "categorical",
-      evalConfig: {},
-      colorSpace: "lab",
-    },
-    {
-      name: "Example 2",
-      colors: pick(outfits),
-      background: "#ffffff",
-      type: "categorical",
-      evalConfig: {},
-      colorSpace: "lab",
-    },
-    {
-      name: "Example 3",
-      colors: pick(outfits),
-      background: "#ffffff",
-      type: "categorical",
-      evalConfig: {},
-      colorSpace: "lab",
-    },
+    newGenericPal("Example 1"),
+    newGenericPal("Example 2"),
+    newGenericPal("Example 3"),
   ],
   currentPal: {
     name: "Untitled",

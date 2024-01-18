@@ -54,18 +54,14 @@
   const bgResolution = 25;
   const avgNums = (nums: number[]) =>
     nums.reduce((acc, x) => acc + x, 0) / nums.length;
+  $: fColors = focusedColors.map((x) => colors[x].toChannels());
   $: fillColor = (i: number, j: number) => {
-    if (dragging && focusedColors.length === 1) {
-      const coords = [0, 0, 0] as [number, number, number];
-      coords[config.xChannelIndex] = xNonDimScale(i / bgResolution);
-      coords[config.yChannelIndex] = yNonDimScale(j / bgResolution);
-      const avgZChannel = avgNums(
-        focusedColors.map((x) => colors[x].toChannels()[config.zChannelIndex])
-      );
-      coords[config.zChannelIndex] = avgZChannel;
-      return colorFromChannels(coords, colorSpace as any).toDisplay();
-    }
-    return "#ffffff00";
+    const coords = [0, 0, 0] as [number, number, number];
+    coords[config.xChannelIndex] = xNonDimScale(i / bgResolution);
+    coords[config.yChannelIndex] = yNonDimScale(j / bgResolution);
+    const avgZChannel = avgNums(fColors.map((x) => x[config.zChannelIndex]));
+    coords[config.zChannelIndex] = avgZChannel;
+    return colorFromChannels(coords, colorSpace as any).toDisplay();
   };
 </script>
 

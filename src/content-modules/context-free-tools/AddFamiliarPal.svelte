@@ -100,7 +100,7 @@
 </script>
 
 <Tooltip>
-  <span slot="content" let:onClick>
+  <span slot="content" let:onClick class="max-w-lg">
     <div class="flex">
       <input bind:value={searchString} placeholder="Search for palettes" />
       <div>

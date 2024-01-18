@@ -17,13 +17,9 @@
   export let textColor: string;
 
   $: config = colorPickerConfig[colorSpace as keyof typeof colorPickerConfig];
-  //   $: xNonDimScale = scaleLinear().domain([0, 1]).range(xScale.domain());
-  //   $: yNonDimScale = scaleLinear().domain([0, 1]).range(yScale.domain());
   $: rNonDimScale = scaleLinear().domain([0, 1]).range(rScale.domain());
   $: focusedColors = $focusStore.focusedColors;
   $: colors = $colorStore.currentPal.colors;
-  //   $: axisFormatter =
-  //     colorPickerConfig[colorSpace as keyof typeof colorPickerConfig].axisLabel;
 
   $: points = {
     centerTop: {
@@ -31,28 +27,24 @@
       y: yScale.range()[0],
       labelAdjust: { x: 0, y: -3 },
       anchor: "middle",
-      // label: `${config.yChannel}: ${axisFormatter(yScale.domain()[0])}`,
     },
     centerBottom: {
       x: (xScale.range()[1] - xScale.range()[0]) / 2,
       y: yScale.range()[1],
       anchor: "middle",
       labelAdjust: { x: 0, y: 15 },
-      // label: axisFormatter(yScale.domain()[1]),
     },
     centerLeft: {
       x: xScale.range()[0],
       y: (yScale.range()[1] - yScale.range()[0]) / 2,
       anchor: "start",
       labelAdjust: { x: 5, y: -3 },
-      // label: axisFormatter(xScale.domain()[0]),
     },
     centerRight: {
       x: xScale.range()[1],
       y: (yScale.range()[1] - yScale.range()[0]) / 2,
       anchor: "end",
       labelAdjust: { x: -5, y: -3 },
-      // label: `${config.xChannel}: ${axisFormatter(xScale.domain()[1])}`,
     },
   };
   $: miniConfig = {
@@ -60,27 +52,20 @@
     yIdx: config.yChannelIndex,
     zIdx: config.zChannelIndex,
   };
-  // $:    { xIdx, yIdx, zIdx } = miniConfig;
   const angleBgResolution = 30;
   const rBgResolution = 5;
   const avgNums = (nums: number[]) =>
     nums.reduce((acc, x) => acc + x, 0) / nums.length;
+  $: fColors = focusedColors.map((x) => colors[x].toChannels());
   $: fillColor = (i: number, j: number) => {
     const { xIdx, yIdx, zIdx } = miniConfig;
-    if (dragging && focusedColors.length === 1) {
-      const coords = [0, 0, 0] as [number, number, number];
-      const angle = (j / angleBgResolution) * 360;
-      const r = rNonDimScale(i / rBgResolution);
-      coords[xIdx] = r;
-      coords[yIdx] = angle;
-      const avgZChannel = avgNums(
-        focusedColors.map((x) => colors[x].toChannels()[zIdx])
-      );
-      //   const avgZChannel = avgNums(colors.map((x) => x.toChannels()[zIdx]));
-      coords[zIdx] = avgZChannel;
-      return colorFromChannels(coords, colorSpace as any).toDisplay();
-    }
-    return "#ffffff00";
+    const coords = [0, 0, 0] as [number, number, number];
+    const angle = (j / angleBgResolution) * 360;
+    const r = rNonDimScale(i / rBgResolution);
+    coords[xIdx] = r;
+    coords[yIdx] = angle;
+    coords[zIdx] = avgNums(fColors.map((x) => x[zIdx]));
+    return colorFromChannels(coords, colorSpace as any).toDisplay();
   };
   $: arcScale = arc();
   $: angleScale = scaleLinear()

@@ -329,7 +329,6 @@
   $: guideProps = {
     xScale,
     yScale,
-    rScale,
     plotHeight,
     plotWidth,
     axisColor,
@@ -358,7 +357,7 @@
       >
         <g transform={`translate(${margin.left}, ${margin.top})`}>
           {#if config.isPolar}
-            <ColorScatterPlotPolarGuide {...guideProps} />
+            <ColorScatterPlotPolarGuide {...guideProps} {rScale} />
           {:else}
             <ColorScatterPlotXyGuides {...guideProps} />
           {/if}
@@ -583,7 +582,7 @@
     -moz-transition: r 0.2s ease-in-out;
   }
 
-  svg {
+  /* svg {
     overflow: visible;
-  }
+  } */
 </style>

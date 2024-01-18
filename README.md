@@ -31,9 +31,9 @@ The 2D graph displays hue/chroma graph and the 1D graph displays lightness. You 
 Click to select, drag or shift click to multi-select
 
 - [x] Show the selection bounding box only on multi-select. Make it thinner and a lighter
-- [ ] **Bug** a single click in the 1D graph selects and immediately deselects the color.
+- [x] **Bug** a single click in the 1D graph selects and immediately deselects the color.
 - [x] **Bug** shift click doesn't do multi-select for me.
-- [ ] I would add a deselect when you click in the white space, either a single click or the start of a new area select (this may also be a bug)
+- [x] I would add a deselect when you click in the white space, either a single click or the start of a new area select (this may also be a bug)
 - [ ] There needs to be feedback when you drag out of gamut
 - [x] Undo for dragging is too granular. Undo should undo the entire drag.
 
@@ -43,9 +43,9 @@ To raise the sliders, you need to click on one of the examples that are displaye
 
 - [x] I'd move the examples into the example pane, use the space to permanently display the sliders, make them longer
 - [x] Always display the hex values of the state of the sliders.
-- [ ] Once this is done, it make sense to show a tooltip that displays a pair of values as you hover over the graph. (maybe also the hex?)
-- [ ] There should be an add color button that adds the current state of the sliders.
-- [ ] A single selection sets the sliders. Multi-select does not
+- [x] Once this is done, it make sense to show a tooltip that displays a pair of values as you hover over the graph. (maybe also the hex?)
+- [x] (na) There should be an add color button that adds the current state of the sliders.
+- [?] A single selection sets the sliders. Multi-select does not
 - [x] Might then make sense to move the graph colorspace, range and background color controls into this area.
 - [x] As a short term improvement, raise the sliders when you click on a color in the graphs.
 
@@ -53,9 +53,9 @@ To raise the sliders, you need to click on one of the examples that are displaye
 
 - [x] New "blank" button
 - [ ] Minor: Make keyboard short cut (option+up/down) for the z-direction
-- [ ] Polar stuff
 - [ ] Chore: Extract some common types into a top level location (like types.ts type thing)
-- [?] Rearrange some of the colors in the color area eg make rg on xy and b on z etc
+- [ ] Chore: Rearrange some of the colors in the color area eg make rg on xy and b on z etc, blocking polar stuff
+- [ ] Polar stuff
 - [ ] Insert color theory options, eg insert opposing, inserting analogous color, etc, mine from the adobe picker
 - [ ] Labels, tooltips, etc
 - [ ] Nice to have: Rest of basic geometry manipulations: flip (horizontal, vertical), scale, Distribute radially

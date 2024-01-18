@@ -10,29 +10,43 @@
   $: focusedColors = $focusStore.focusedColors;
   $: colorSpace = $colorStore.currentPal.colorSpace;
 
-  function actionOnColor(idx: number, action: (Color: Color) => any) {
-    const newColor = action(colors[idx]);
+  type ColorEffect = (color: Color) => [number, number, number];
+  function actionOnColor(idx: number, action: ColorEffect) {
+    const channels = action(colors[idx]);
+    console.log(channels);
     const newColors = [...colors];
-    newColors[idx] = newColor;
+    newColors[idx] = colorFromChannels(channels, colorSpace);
     colorStore.setCurrentPalColors(newColors);
   }
+  const actions: { name: string; effect: ColorEffect }[] = [
+    {
+      name: "Lighten",
+      effect: (color) => color.toColorIO().set("lch.l", (l) => l * 1.2).coords,
+    },
+    {
+      name: "Darken",
+      effect: (color) => color.toColorIO().set("lch.l", (l) => l * 0.8).coords,
+    },
+    {
+      name: "Saturate",
+      effect: (color) => color.toColorIO().set("lch.c", (c) => c * 1.2).coords,
+    },
+    {
+      name: "Desaturate",
+      effect: (color) => color.toColorIO().set("lch.c", (c) => c * 0.8).coords,
+    },
+  ];
 </script>
 
 {#if focusedColors.length === 1}
   <Tooltip>
     <div slot="content">
-      {#each ["brighten", "darken", "saturate", "desaturate"] as action}
+      {#each actions as action}
         <button
           class={buttonStyle}
-          on:click={() => {
-            actionOnColor(focusedColors[0], (color) => {
-              // @ts-ignore
-              const chromaColor = color.toChroma()[action]();
-              return colorFromChannels(chromaColor.lab(), colorSpace);
-            });
-          }}
+          on:click={() => actionOnColor(focusedColors[0], action.effect)}
         >
-          {action[0].toUpperCase()}{action.slice(1)}
+          {action.name}
         </button>
       {/each}
     </div>

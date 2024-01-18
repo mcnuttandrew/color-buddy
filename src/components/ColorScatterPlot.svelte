@@ -348,6 +348,7 @@
                 on:mousedown|preventDefault={(e) => startDrag(true, i)(e)}
                 on:touchstart|preventDefault={startDrag(true, i)}
                 on:touchend|preventDefault={() => onFocusedColorsChange([i])}
+                on:mouseenter={() => hoverPoint(color)}
                 pointer-events={!focusSet.has(i) ? "all" : "none"}
                 r={10 + (focusSet.has(i) ? 5 : 0)}
                 stroke={focusedColors.length === 1 &&
@@ -384,10 +385,11 @@
             />
           {/each}
           <!-- simple tooltip -->
-          {#if scatterPlotMode === "looking" && hoveredPoint}
+          {#if hoveredPoint}
             <g
-              transform={`translate(${xScale(hoveredPoint.toChannels()[1])},
-                ${yScale(hoveredPoint.toChannels()[2])})`}
+              transform={`translate(${x(hoveredPoint) + 5}, ${
+                y(hoveredPoint) - 5
+              })`}
             >
               <text fill={textColor}>{hoveredPoint.toDisplay()}</text>
             </g>

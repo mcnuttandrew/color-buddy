@@ -100,7 +100,7 @@
         >
           <ul class="inline-flex">
             {#each tabs as tab}
-              <li>
+              <li class="py-3">
                 <button
                   class="h-6 px-2 transition-colors duration-150 border border-slate-500 focus:shadow-outline uppercase italic"
                   class:bg-slate-500={$configStore.route === tab}

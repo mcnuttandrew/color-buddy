@@ -45,9 +45,6 @@
   <div class="flex">
     <div class="flex flex-col overflow-auto mr-5 bg-slate-100 p-4">
       <div>Colors</div>
-      {#if selectedBlindType !== "none"}
-        <div class="text-xs">Blindness Sim: {selectedBlindType}</div>
-      {/if}
       <div class="flex justify-between w-full text-xs italic">
         <span>Hex Value</span>
         {#if colorNames[0]}<span>Inferred Color Name</span>{/if}
@@ -75,7 +72,7 @@
             class:mr-5={!$focusStore.focusedColors.includes(idx)}
             style="min-height: 40px"
           >
-            <div class="w-full flex h-full absolute">
+            <div class="w-full flex flex-col h-full absolute">
               <div
                 class="grow h-full"
                 style="background-color: {color.toHex()}"

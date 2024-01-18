@@ -123,6 +123,7 @@
   let isPointDrag = false;
   const startDrag = (isXYDrag: boolean, idx?: number) => (e: any) => {
     if (scatterPlotMode !== "moving") return;
+    hoveredPoint = false;
     // console.log("start drag", e.target);
     startDragging();
     const targetIsPoint = typeof idx === "number";

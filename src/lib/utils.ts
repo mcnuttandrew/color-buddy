@@ -211,17 +211,11 @@ function makeExtents(arr: number[][]) {
   ) as { x: number[]; y: number[]; z: number[] };
 }
 
-export function makePosAndSizes(
-  pickedColors: number[][],
-  config: (typeof colorPickerConfig)[string]
-) {
+// works over screen space coordinates
+export function makePosAndSizes(pickedColors: number[][]) {
   const selectionExtents = makeExtents(pickedColors);
-  console.log(selectionExtents, pickedColors);
-  const makePos = (key: keyof typeof selectionExtents) => {
-    // const [a, b] = config[`${key}Domain`];
-    // return selectionExtents[key][a > b ? 1 : 0];
-    return selectionExtents[key][0];
-  };
+  const makePos = (key: keyof typeof selectionExtents) =>
+    selectionExtents[key][0];
   const diff = (key: keyof typeof selectionExtents) => {
     const [a, b] = selectionExtents[key];
     return Math.abs(a - b);
@@ -233,13 +227,6 @@ export function makePosAndSizes(
   let selectionWidth = diff("x") + 30;
   let selectionHeight = diff("y") + 30;
   let selectionDepth = diff("z");
-  // let xPos = makePos("x");
-  // let yPos = makePos("y");
-  // let zPos = makePos("z");
-
-  // let selectionWidth = diff("x");
-  // let selectionHeight = diff("y");
-  // let selectionDepth = diff("z");
   return { xPos, yPos, zPos, selectionWidth, selectionHeight, selectionDepth };
 }
 

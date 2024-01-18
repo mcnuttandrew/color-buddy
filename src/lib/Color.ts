@@ -13,6 +13,7 @@ export class Color {
   spaceName: keyof typeof colorDirectory = "rgb";
   domains: Domain;
   stepSize: Channels = [1, 1, 1];
+  channelNames: string[] = [];
   dimensionToChannel: Record<"x" | "y" | "z", string> = { x: "", y: "", z: "" };
   axisLabel: (num: number) => string = (x) => x.toFixed(1).toString();
 
@@ -147,12 +148,13 @@ export function stringToChannels(spaceName: string, str: string) {
 
 export class CIELAB extends Color {
   name = "CIELAB";
+  channelNames = ["L", "a", "b"];
   channels = { L: 0, a: 0, b: 0 };
   domains = { L: [100, 0], a: [-125, 125], b: [125, -125] } as Domain;
   chromaBind = chroma.lab;
   spaceName = "lab" as const;
   stepSize: Channels = [1, 1, 1];
-  dimensionToChannel = { x: "a", y: "b", z: "L" };
+  dimensionToChannel = { x: "L", y: "b", z: "a" };
   axisLabel = (num: number) => `${Math.round(num)}`;
 
   toString(): string {
@@ -162,6 +164,7 @@ export class CIELAB extends Color {
 }
 export class HSV extends Color {
   name = "HSV";
+  channelNames = ["h", "s", "v"];
   channels = { h: 0, s: 0, v: 0 };
   domains = { h: [0, 360], s: [0, 100], v: [0, 100] } as Domain;
   chromaBind = chroma.hsv;
@@ -175,6 +178,7 @@ export class HSV extends Color {
 
 export class RGB extends Color {
   name = "RGB";
+  channelNames = ["r", "g", "b"];
   channels = { r: 0, g: 0, b: 0 };
   chromaBind = chroma.rgb;
   spaceName = "srgb" as const;
@@ -190,6 +194,7 @@ export class RGB extends Color {
 
 export class HSL extends Color {
   name = "HSL";
+  channelNames = ["h", "s", "l"];
   channels = { h: 0, s: 0, l: 0 };
   chromaBind = chroma.hsl;
   spaceName = "hsl" as const;
@@ -204,6 +209,7 @@ export class HSL extends Color {
 }
 export class LCH extends Color {
   name = "LCH";
+  channelNames = ["l", "c", "h"];
   channels = { l: 0, c: 0, h: 0 };
   chromaBind = chroma.lch;
   spaceName = "lch" as const;
@@ -215,6 +221,7 @@ export class LCH extends Color {
 
 export class OKLAB extends Color {
   name = "OKLAB";
+  channelNames = ["l", "a", "b"];
   channels = { l: 0, a: 0, b: 0 };
   chromaBind = chroma.oklab;
   spaceName = "oklab" as const;
@@ -225,6 +232,7 @@ export class OKLAB extends Color {
 
 export class OKLCH extends Color {
   name = "OKLCH";
+  channelNames = ["l", "c", "h"];
   channels = { l: 0, c: 0, h: 0 };
   chromaBind = chroma.oklch;
   spaceName = "oklch" as const;
@@ -235,6 +243,7 @@ export class OKLCH extends Color {
 
 export class JZAZBZ extends Color {
   name = "JZAZBZ";
+  channelNames = ["jz", "az", "bz"];
   channels = { jz: 0, az: 0, bz: 0 };
   spaceName = "jzazbz" as const;
   domains = { jz: [1, 0], az: [-0.5, 0.5], bz: [0.5, -0.5] } as Domain;
@@ -312,17 +321,20 @@ type ColorSpace = keyof typeof colorDirectory | string;
 export const colorPickerConfig = Object.fromEntries(
   (Object.keys(colorDirectory) as ColorSpace[]).map((name: ColorSpace) => {
     const exampleColor = new (colorDirectory as any)[name]() as Color;
-    const dimensionToChannel = exampleColor.dimensionToChannel;
+    const { x, y, z } = exampleColor.dimensionToChannel;
     return [
       name,
       {
         title: exampleColor.name,
-        xDomain: exampleColor.domains[dimensionToChannel.x],
-        yDomain: exampleColor.domains[dimensionToChannel.y],
-        zDomain: exampleColor.domains[dimensionToChannel.z],
-        xChannel: dimensionToChannel.x,
-        yChannel: dimensionToChannel.y,
-        zChannel: dimensionToChannel.z,
+        xDomain: exampleColor.domains[x],
+        yDomain: exampleColor.domains[y],
+        zDomain: exampleColor.domains[z],
+        xChannel: x,
+        xChannelIndex: exampleColor.channelNames.indexOf(x),
+        yChannel: y,
+        yChannelIndex: exampleColor.channelNames.indexOf(y),
+        zChannel: z,
+        zChannelIndex: exampleColor.channelNames.indexOf(z),
         xStep: exampleColor.stepSize[1],
         yStep: exampleColor.stepSize[2],
         zStep: exampleColor.stepSize[0],

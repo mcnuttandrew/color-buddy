@@ -45,10 +45,9 @@ export function avgColors(
 }
 
 export function opposingColor(color: Color): Color {
-  const c = color.toChroma().hsl();
-  const channels = c.map((x, i) => (i === 0 ? (x + 180) % 360 : x));
-  const chromaColor = chroma.hsl(channels[0], channels[1], channels[2]);
-  return colorFromChannels(chromaColor.lab(), "lab");
+  const [h, s, l] = color.toColorIO().to("hsl").coords;
+  const channels = [(h + 180) % 360, s, l] as [number, number, number];
+  return colorFromChannels(channels, "hsl").toColorSpace(color.spaceName);
 }
 
 export function deDup(arr: Color[]): Color[] {
@@ -130,11 +129,15 @@ export function draggable(node: any) {
 }
 
 const extent = (arr: number[]) => [Math.min(...arr), Math.max(...arr)];
-export function makeExtents(arr: number[][]) {
+function makeExtents(
+  arr: number[][],
+  config: { xIdx: number; yIdx: number; zIdx: number }
+) {
+  const { xIdx, yIdx, zIdx } = config;
   return {
-    x: extent(arr.map((x) => x[1])),
-    y: extent(arr.map((x) => x[2])),
-    z: extent(arr.map((x) => x[0])),
+    x: extent(arr.map((x) => x[xIdx])),
+    y: extent(arr.map((x) => x[yIdx])),
+    z: extent(arr.map((x) => x[zIdx])),
   };
 }
 
@@ -214,9 +217,10 @@ export function makePosAndSizes(
   pickedColors: [number, number, number][],
   xScale: any,
   yScale: any,
-  zScale: any
+  zScale: any,
+  config: { xIdx: number; yIdx: number; zIdx: number }
 ) {
-  const selectionExtents = makeExtents(pickedColors);
+  const selectionExtents = makeExtents(pickedColors, config);
   const makePos = (key: keyof typeof selectionExtents, scale: any) => {
     const [a, b] = scale.domain();
     return scale(selectionExtents[key][a > b ? 1 : 0]);

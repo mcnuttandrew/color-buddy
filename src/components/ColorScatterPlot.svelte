@@ -50,20 +50,15 @@
 
   $: xRange = config.xDomain;
   $: domainXScale = scaleLinear().domain([0, 1]).range(xRange);
-  const makeDomain = (range: number[], extent: number[], scale: any) => [
-    // range[0] > range[1] ? scale(extent[1]) : scale(extent[0]),
-    // range[0] > range[1] ? scale(extent[0]) : scale(extent[1]),
-    scale(extent[0]),
-    scale(extent[1]),
-  ];
+
   $: xScale = scaleLinear()
-    .domain(makeDomain(xRange, extents.x, domainXScale))
+    .domain([domainXScale(extents.x[0]), domainXScale(extents.x[1])])
     .range([0, plotWidth]);
 
   $: yRange = config.yDomain;
   $: domainYScale = scaleLinear().domain([0, 1]).range(yRange);
   $: yScale = scaleLinear()
-    .domain(makeDomain(yRange, extents.y, domainYScale))
+    .domain([domainYScale(extents.y[0]), domainYScale(extents.y[1])])
     .range([0, plotHeight]);
 
   $: zRange = config.zDomain;
@@ -72,7 +67,12 @@
     .domain([domainLScale(extents.z[0]), domainLScale(extents.z[1])])
     .range([0, plotHeight]);
 
-  $: pos = makePosAndSizes(pickedColors, xScale, yScale, zScale);
+  $: miniConfig = {
+    xIdx: config.xChannelIndex,
+    yIdx: config.yChannelIndex,
+    zIdx: config.zChannelIndex,
+  };
+  $: pos = makePosAndSizes(pickedColors, xScale, yScale, zScale, miniConfig);
 
   let dragging: false | { x: number; y: number } = false;
   let dragBox: false | { x: number; y: number } = false;
@@ -92,14 +92,18 @@
       x: x - dragging.x,
       y: y - dragging.y,
     };
-    const [l, a, b] = originalColor.toChannels();
-    const newX = xScale.invert(xScale(a) + screenPosDelta.x);
-    const newY = yScale.invert(yScale(b) + screenPosDelta.y);
-
-    return colorFromChannels(
-      [l, clampToRange(newX, xRange), clampToRange(newY, yRange)],
-      colorSpace
+    const { xIdx, yIdx } = miniConfig;
+    const coords = originalColor.toChannels();
+    coords[xIdx] = clampToRange(
+      xScale.invert(xScale(coords[xIdx]) + screenPosDelta.x),
+      xRange
     );
+    coords[yIdx] = clampToRange(
+      yScale.invert(yScale(coords[yIdx]) + screenPosDelta.y),
+      yRange
+    );
+
+    return colorFromChannels(coords, colorSpace);
   };
 
   const eventToColorZ = (e: any, color: Color, originalColor: Color): Color => {
@@ -107,10 +111,14 @@
       return color;
 
     const screenPosDelta = toXY(e).y - dragging.y;
-    const [l, a, b] = originalColor.toChannels();
-    const newZ = zScale.invert(zScale(l) + screenPosDelta);
+    const { zIdx } = miniConfig;
+    const coords = originalColor.toChannels();
+    coords[zIdx] = clampToRange(
+      zScale.invert(zScale(coords[zIdx]) + screenPosDelta),
+      zRange
+    );
 
-    return colorFromChannels([clampToRange(newZ, zRange), a, b], colorSpace);
+    return colorFromChannels(coords, colorSpace);
   };
 
   function stopDrag() {
@@ -238,9 +246,9 @@
 
   let hoveredPoint: Color | false = false;
   let hoverPoint = (x: typeof hoveredPoint) => (hoveredPoint = x);
-  $: x = (point: Color) => xScale(point.toChannels()[1]);
-  $: y = (point: Color) => yScale(point.toChannels()[2]);
-  $: z = (point: Color) => zScale(point.toChannels()[0]);
+  $: x = (point: Color) => xScale(point.toChannels()[config.xChannelIndex]);
+  $: y = (point: Color) => yScale(point.toChannels()[config.yChannelIndex]);
+  $: z = (point: Color) => zScale(point.toChannels()[config.zChannelIndex]);
 
   function clickResponse(e: any, i: number) {
     if (e.metaKey || e.shiftKey) {

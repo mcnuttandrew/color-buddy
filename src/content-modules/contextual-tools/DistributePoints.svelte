@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { colorFromChannels } from "../../lib/Color";
+  import { colorFromChannels, colorPickerConfig } from "../../lib/Color";
   import colorStore from "../../stores/color-store";
   import focusStore from "../../stores/focus-store";
   import Tooltip from "../../components/Tooltip.svelte";
@@ -8,6 +8,7 @@
   $: colors = $colorStore.currentPal.colors;
   $: focusedColors = $focusStore.focusedColors;
   $: colorSpace = $colorStore.currentPal.colorSpace;
+  $: config = colorPickerConfig[colorSpace];
 
   type Direction = "horizontal" | "vertical" | "in z space";
   function distributePoints(direction: Direction) {
@@ -28,12 +29,15 @@
     let newPoints = sortedIndexes.map((colorIdx, arrIdx) => {
       const t = arrIdx / numPoints;
       const newPoint = colors.at(colorIdx)!.toChannels() as Channels;
+      const xIdx = config.xChannelIndex;
+      const yIdx = config.yChannelIndex;
+      const zIdx = config.zChannelIndex;
       if (direction === "horizontal") {
-        newPoint[1] = minPoint[1] * (1 - t) + maxPoint[1] * t;
+        newPoint[xIdx] = minPoint[xIdx] * (1 - t) + maxPoint[xIdx] * t;
       } else if (direction === "in z space") {
-        newPoint[0] = minPoint[0] * (1 - t) + maxPoint[0] * t;
+        newPoint[zIdx] = minPoint[zIdx] * (1 - t) + maxPoint[zIdx] * t;
       } else {
-        newPoint[2] = minPoint[2] * (1 - t) + maxPoint[2] * t;
+        newPoint[yIdx] = minPoint[yIdx] * (1 - t) + maxPoint[yIdx] * t;
       }
       return newPoint as Channels;
     });

@@ -1,5 +1,9 @@
-import chroma from "chroma-js";
-import { Color, colorFromString, colorFromChannels } from "./Color";
+import {
+  Color,
+  colorFromString,
+  colorFromChannels,
+  colorPickerConfig,
+} from "./Color";
 import type { PalType } from "../stores/color-store";
 export const insert = (arr: Color[], newItem: Color, index?: number) => {
   if (index === undefined) {
@@ -45,10 +49,9 @@ export function avgColors(
 }
 
 export function opposingColor(color: Color): Color {
-  const c = color.toChroma().hsl();
-  const channels = c.map((x, i) => (i === 0 ? (x + 180) % 360 : x));
-  const chromaColor = chroma.hsl(channels[0], channels[1], channels[2]);
-  return colorFromChannels(chromaColor.lab(), "lab");
+  const [h, s, l] = color.toColorIO().to("hsl").coords;
+  const channels = [(h + 180) % 360, s, l] as [number, number, number];
+  return colorFromChannels(channels, "hsl").toColorSpace(color.spaceName);
 }
 
 export function deDup(arr: Color[]): Color[] {
@@ -129,15 +132,6 @@ export function draggable(node: any) {
   };
 }
 
-const extent = (arr: number[]) => [Math.min(...arr), Math.max(...arr)];
-export function makeExtents(arr: number[][]) {
-  return {
-    x: extent(arr.map((x) => x[1])),
-    y: extent(arr.map((x) => x[2])),
-    z: extent(arr.map((x) => x[0])),
-  };
-}
-
 export const clamp = (n: number, min: number, max: number) =>
   Math.min(Math.max(n, min), max);
 
@@ -210,29 +204,29 @@ export const colorBrewerMapToType = Object.entries(colorBrewerTypeMap).reduce(
   {} as any
 ) as Record<string, PalType>;
 
-export function makePosAndSizes(
-  pickedColors: [number, number, number][],
-  xScale: any,
-  yScale: any,
-  zScale: any
-) {
+const extent = (arr: number[]) => [Math.min(...arr), Math.max(...arr)];
+function makeExtents(arr: number[][]) {
+  return Object.fromEntries(
+    ["x", "y", "z"].map((key, idx) => [key, extent(arr.map((el) => el[idx]))])
+  ) as { x: number[]; y: number[]; z: number[] };
+}
+
+// works over screen space coordinates
+export function makePosAndSizes(pickedColors: number[][]) {
   const selectionExtents = makeExtents(pickedColors);
-  const makePos = (key: keyof typeof selectionExtents, scale: any) => {
-    const [a, b] = scale.domain();
-    return scale(selectionExtents[key][a > b ? 1 : 0]);
-  };
-  const diff = (key: keyof typeof selectionExtents, scale: any) => {
+  const makePos = (key: keyof typeof selectionExtents) =>
+    selectionExtents[key][0];
+  const diff = (key: keyof typeof selectionExtents) => {
     const [a, b] = selectionExtents[key];
-    return Math.abs(scale(a) - scale(b));
+    return Math.abs(a - b);
   };
 
-  let xPos = makePos("x", xScale) - 15;
-  let yPos = makePos("y", yScale) - 15;
-  let zPos = makePos("z", zScale);
-
-  let selectionWidth = diff("x", xScale) + 30;
-  let selectionHeight = diff("y", yScale) + 30;
-  let selectionDepth = diff("z", zScale);
+  let xPos = makePos("x") - 15;
+  let yPos = makePos("y") - 15;
+  let zPos = makePos("z");
+  let selectionWidth = diff("x") + 30;
+  let selectionHeight = diff("y") + 30;
+  let selectionDepth = diff("z");
   return { xPos, yPos, zPos, selectionWidth, selectionHeight, selectionDepth };
 }
 

@@ -62,19 +62,20 @@
         if (!focusSet.has(idx)) {
           return color;
         }
-        const [l, a, b] = color.toChannels();
-        const channels = Object.keys(color.channels);
+        const channels = color.toChannels();
+        const xVal = channels[config.xChannelIndex];
+        const yVal = channels[config.yChannelIndex];
         if (key === "arrowdown") {
-          color.setChannel(channels[2], b + verticalDir * step);
+          color.setChannel(config.yChannel, yVal + verticalDir * step);
         }
         if (key === "arrowup") {
-          color.setChannel(channels[2], b - verticalDir * step);
+          color.setChannel(config.yChannel, yVal - verticalDir * step);
         }
         if (key === "arrowleft") {
-          color.setChannel(channels[1], a - horizontalDir * step);
+          color.setChannel(config.xChannel, xVal - horizontalDir * step);
         }
         if (key === "arrowright") {
-          color.setChannel(channels[1], a + horizontalDir * step);
+          color.setChannel(config.xChannel, xVal + horizontalDir * step);
         }
         return color;
       });

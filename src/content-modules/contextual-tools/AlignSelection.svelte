@@ -34,12 +34,12 @@
           on:click={() => {
             const newCoordinate = op(...focusLabs.map((x) => x[pos]));
             colorStore.setCurrentPalColors(
-              mapFocusedColors(([l, a, b]) => {
+              mapFocusedColors(([a, b, c]) => {
                 return colorFromChannels(
                   [
-                    pos === 0 ? newCoordinate : l,
-                    pos === 1 ? newCoordinate : a,
-                    pos === 2 ? newCoordinate : b,
+                    pos === 0 ? newCoordinate : a,
+                    pos === 1 ? newCoordinate : b,
+                    pos === 2 ? newCoordinate : c,
                   ],
                   colorSpace
                 );

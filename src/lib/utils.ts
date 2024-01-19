@@ -48,18 +48,30 @@ export function avgColors(
   return colorFromChannels(avgColor, colorSpace as any);
 }
 
-export function opposingColor(color: Color): Color {
-  const [h, s, l] = color.toColorIO().to("hsl").coords;
-  const channels = [(h + 180) % 360, s, l] as [number, number, number];
-  return colorFromChannels(channels, "hsl").toColorSpace(color.spaceName);
-}
-
 export function deDup(arr: Color[]): Color[] {
   const seen = new Set();
   return arr.filter((item) => {
     const k = item.toHex();
     return seen.has(k) ? false : seen.add(k);
   });
+}
+
+export function clipToGamut(color: Color): [number, number, number] {
+  if (color.inGamut()) {
+    console.log("branch a");
+    const channels = Object.entries(color.domains).map(([key, domain]) => {
+      const [min, max] = domain.sort();
+      return clamp(color.channels[key], min, max);
+    });
+    return channels as [number, number, number];
+  } else {
+    const newChannels = color
+      .toColorIO()
+      .to("srgb")
+      .toGamut()
+      .to(color.spaceName).coords;
+    return newChannels;
+  }
 }
 
 export function draggable(node: any) {

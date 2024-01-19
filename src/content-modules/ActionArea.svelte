@@ -6,11 +6,9 @@
   import InterpolatePoints from "./contextual-tools/InterpolatePoints.svelte";
   import DistributePoints from "./contextual-tools/DistributePoints.svelte";
   import AdjustColor from "./contextual-tools/AdjustColor.svelte";
-  import OpposingColor from "./contextual-tools/OpposingColor.svelte";
   import AddColor from "./contextual-tools/AddColor.svelte";
   import Rotate from "./contextual-tools/Rotate.svelte";
   import Deduplicate from "./contextual-tools/Deduplicate.svelte";
-  import ClipToGamut from "./contextual-tools/ClipToGamut.svelte";
 </script>
 
 <div
@@ -18,8 +16,6 @@
 >
   <AddColor />
   <AdjustColor />
-  <ClipToGamut />
-  <OpposingColor />
 
   <CreateAverage />
   <SuggestionModificationToSelection />

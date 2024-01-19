@@ -1,6 +1,19 @@
 import { Color } from "./Color";
 import type { Palette } from "../stores/color-store";
 
+// import using `?worker` suffix
+import ViteWorker from "./heavy-computation.worker?worker";
+
+// instantiate the worker
+const tsWorker = new ViteWorker();
+
+// send and receive messages from the worker
+tsWorker.postMessage({ type: "test", content: "hellow" });
+
+tsWorker.addEventListener("message", (msg: MessageEvent<string>) => {
+  console.log(msg.data); // how now, brown cow?
+});
+
 type Engine = "openai" | "google";
 type SimplePal = { background: string; colors: string[] };
 const palToString = (pal: Palette) => ({

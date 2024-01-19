@@ -51,7 +51,7 @@ To raise the sliders, you need to click on one of the examples that are displaye
 
 ## TODOS
 
-- [x] New "blank" button
+- [x] New "blank" button.
 - [ ] Minor: Make keyboard short cut (option+up/down) for the z-direction
 - [ ] Chore: Extract some common types into a top level location (like types.ts type thing)
 - [x] Chore: Rearrange some of the colors in the color area eg make rg on xy and b on z etc, blocking polar stuff

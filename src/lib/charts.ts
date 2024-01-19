@@ -204,7 +204,7 @@ export async function getSVG(localSpec: string, pal: Palette) {
   //   ? "https://vega.github.io/editor/data/penguins.json"
   //   : "data/penguins.json",
   const matchedDataset = vegaDatasets.find((x) => spec.data?.url?.includes(x));
-  console.log("asd", matchedDataset);
+  console.log("asd", matchedDataset, spec.data?.url, vegaDatasets);
   if (matchedDataset) {
     console.log("XXXX", matchedDataset);
     if (location.href.includes("localhost")) {

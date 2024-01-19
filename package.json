@@ -10,6 +10,7 @@
     "check": "svelte-check --tsconfig ./tsconfig.json",
     "types": "tsc --noEmit --watch",
     "prep-data": "cp node_modules/vega-datasets/data/* public/data/",
+    "build-data": "mkdir data && cp node_modules/vega-datasets/data/* ./data/",
     "test": "vitest run",
     "test:watch": "vitest"
   },

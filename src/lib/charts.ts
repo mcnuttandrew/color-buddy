@@ -191,25 +191,21 @@ export async function getSVG(localSpec: string, pal: Palette) {
   if (results[newKey]) return results[newKey];
   const theme = buildTheme(pal);
   let spec: any;
+
+  const cleanSpec = vegaDatasets.reduce((acc, x) => {
+    const breakKey = `url": "data/${x}`;
+    const joinKey = `url": "https://vega.github.io/editor/data/${x}`;
+    return acc.split(breakKey).join(joinKey);
+  }, localSpec);
+
   try {
-    spec = JSON.parse(localSpec);
+    spec = JSON.parse(cleanSpec);
   } catch (e) {
-    console.error(e, localSpec);
+    console.error(e, cleanSpec);
     return "";
   }
   if (spec.$schema.includes("vega-lite")) {
     spec = vegaLite.compile(spec, { config: theme }).spec;
-  }
-  // // url: !location.href.includes("localhost")
-  //   ? "https://vega.github.io/editor/data/penguins.json"
-  //   : "data/penguins.json",
-  const matchedDataset = vegaDatasets.find((x) => spec.data?.url?.includes(x));
-  if (matchedDataset) {
-    if (location.href.includes("localhost")) {
-      spec.data.url = `data/${matchedDataset}`;
-    } else {
-      spec.data.url = `https://vega.github.io/editor/data/${matchedDataset}`;
-    }
   }
 
   const runtime = vega.parse(spec, theme);

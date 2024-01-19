@@ -19,7 +19,7 @@
     focusedColors.length >= 2 &&
     open && {
       ...$colorStore.currentPal,
-      colors: createInterpolation(true),
+      colors: createInterpolation(),
     }) as Palette;
   function createInterpolatedPoints(pointA: Color, pointB: Color) {
     const points: Color[] = [];

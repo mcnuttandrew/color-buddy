@@ -111,7 +111,7 @@
       modalState = "input-svg";
     }}
   >
-    Add Example
+    Use Example
   </button>
   <button
     class={buttonStyle}
@@ -268,26 +268,48 @@
             We detect the following colors, remove any that you do NOT want to
             be replaced in the editor
           </h3>
-          <div class="flex flex-col">
-            {#each detectedColors as color}
-              <div class="flex">
-                <div
-                  class="w-24 h-8"
-                  class:text-white={chroma(color).luminance() < 0.5}
-                  style="background-color: {color};"
-                >
-                  {color}
+          <div class="flex">
+            <div class="flex flex-col">
+              {#each detectedColors as color, idx}
+                <div class="flex">
+                  <div
+                    class="w-24 h-8"
+                    class:text-white={chroma(color).luminance() < 0.5}
+                    style="background-color: {color};"
+                  >
+                    {color}
+                  </div>
+                  <button
+                    class={buttonStyle}
+                    on:click={() => {
+                      detectedColors = detectedColors.filter(
+                        (x) => x !== color
+                      );
+                    }}
+                  >
+                    Remove
+                  </button>
+                  {#if idx}
+                    <button
+                      class={buttonStyle}
+                      on:click={() => {
+                        detectedColors = [
+                          ...detectedColors.slice(0, idx - 1),
+                          detectedColors[idx],
+                          detectedColors[idx - 1],
+                          ...detectedColors.slice(idx + 1),
+                        ];
+                      }}
+                    >
+                      Move up
+                    </button>
+                  {/if}
                 </div>
-                <button
-                  class={buttonStyle}
-                  on:click={() => {
-                    detectedColors = detectedColors.filter((x) => x !== color);
-                  }}
-                >
-                  Remove
-                </button>
-              </div>
-            {/each}
+              {/each}
+            </div>
+            <div>
+              {@html value}
+            </div>
           </div>
         </div>
       {/if}

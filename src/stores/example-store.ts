@@ -52,6 +52,11 @@ export const DEMOS = [
     title: "Stacked Area Chart",
     filename: "./examples/stacked-area-chart.json",
   },
+  {
+    type: "vega",
+    title: "Line Chart",
+    filename: "./examples/line-chart.json",
+  },
 ];
 
 export function modifySVGForExampleStore(

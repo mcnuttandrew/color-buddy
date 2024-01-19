@@ -1,15 +1,10 @@
 <script lang="ts">
   import colorStore from "../stores/color-store";
-  import SuggestName from "./context-free-tools/SuggestName.svelte";
   import AddFamiliarPal from "./context-free-tools/AddFamiliarPal.svelte";
   import SuggestColorPal from "./context-free-tools/SuggestColorPal.svelte";
 
-  import PalPreview from "../components/PalPreview.svelte";
-  import Sort from "./context-free-tools/Sort.svelte";
-  import GetColorsFromString from "./context-free-tools/GetColorsFromString.svelte";
   import Config from "./context-free-tools/Config.svelte";
   import { buttonStyle } from "../lib/styles";
-  import ShortCuts from "./context-free-tools/ShortCuts.svelte";
 
   import SavedPals from "./SavedPals.svelte";
 </script>
@@ -31,8 +26,20 @@
     </div>
     <div class="flex">
       <AddFamiliarPal />
+      <button
+        class={buttonStyle}
+        on:click={() => {
+          const newPal = {
+            ...$colorStore.currentPal,
+            name: `${$colorStore.currentPal.name} copy`,
+            colors: [...$colorStore.currentPal.colors],
+          };
+          colorStore.createNewPal(newPal);
+        }}
+      >
+        Save
+      </button>
       <SuggestColorPal />
-      <ShortCuts />
     </div>
   </section>
 

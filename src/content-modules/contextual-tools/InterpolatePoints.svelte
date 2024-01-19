@@ -7,30 +7,23 @@
   import Tooltip from "../../components/Tooltip.svelte";
   import { buttonStyle } from "../../lib/styles";
   import PalPreview from "../../components/PalPreview.svelte";
-  const interpolationSchemes = ["linear", "quadratic"];
 
   $: focusedColors = $focusStore.focusedColors;
   $: colors = $colorStore.currentPal.colors;
   let colorSpace = "lab";
-  let interpolationScheme = "linear";
   let numPoints = 1;
-  $: pointA = colors[focusedColors[0]];
-  $: pointB = colors[focusedColors[1]];
+  let open = false;
   $: tempPal = (numPoints &&
     colorSpace &&
-    interpolationScheme &&
-    pointA &&
-    pointB && {
+    focusedColors.length >= 2 &&
+    open && {
       ...$colorStore.currentPal,
-      colors: [pointA, ...createInterpolatedPoints(), pointB],
+      colors: createInterpolation(true),
     }) as Palette;
-  function createInterpolatedPoints() {
+  function createInterpolatedPoints(pointA: Color, pointB: Color) {
     const points: Color[] = [];
     for (let i = 0; i < numPoints + 1; i++) {
       let t = i / (numPoints + 1);
-      if (interpolationScheme === "quadratic") {
-        t = t * t;
-      }
 
       if (t === 0 || t === 1) continue;
       const spaceOverWrite = { rgb: "srgb" } as any;
@@ -48,10 +41,27 @@
     }
     return points;
   }
+  function createInterpolation(forPreview: boolean): Color[] {
+    const newColors = [];
+    for (let idx = 0; idx < focusedColors.length - 1; idx++) {
+      const pointA = colors[focusedColors[idx]];
+      const pointB = colors[focusedColors[idx + 1]];
+      const newPoints = createInterpolatedPoints(pointA, pointB);
+      if (forPreview) {
+        newColors.push(pointA, ...newPoints);
+      } else {
+        newColors.push(...newPoints);
+      }
+    }
+    if (forPreview) {
+      newColors.push(colors[focusedColors[focusedColors.length - 1]]);
+    }
+    return newColors;
+  }
 </script>
 
-{#if focusedColors.length === 2}
-  <Tooltip>
+{#if focusedColors.length >= 2}
+  <Tooltip onClose={() => (open = false)}>
     <div slot="content" class="w-60">
       <div class="flex justify-between">
         <label for="color-space-select">Color Space</label>
@@ -69,16 +79,8 @@
           {/each}
         </select>
       </div>
-      <div class="flex justify-between">
-        <label for="interpolate-scheme">Scheme</label>
-        <select id="interpolate-scheme" bind:value={interpolationScheme}>
-          {#each interpolationSchemes as scheme}
-            <option value={scheme}>{scheme}</option>
-          {/each}
-        </select>
-      </div>
 
-      <div class="flex justify-between items-center w-full transition-all">
+      <!-- <div class="flex justify-between items-center w-full transition-all">
         <button
           class={buttonStyle}
           on:click={() => {
@@ -87,22 +89,35 @@
         >
           flip points
         </button>
-      </div>
+      </div> -->
       <PalPreview pal={tempPal} />
       <button
         class="{buttonStyle} mt-5"
         on:click={() => {
           let newColors = [...colors];
-          const newPoints = createInterpolatedPoints();
+          const newPoints = createInterpolation(false);
           newColors = [...newColors, ...newPoints];
           colorStore.setCurrentPalColors(newColors);
+          // also focus all of the new points
+          focusStore.setColors([
+            ...focusedColors,
+            ...newPoints.map((_, idx) => colors.length + idx),
+          ]);
         }}
       >
         Add points
       </button>
     </div>
     <span slot="target" let:toggle>
-      <button class={buttonStyle} on:click={toggle}>Interpolate</button>
+      <button
+        class={buttonStyle}
+        on:click={() => {
+          open = !open;
+          toggle();
+        }}
+      >
+        Interpolate
+      </button>
     </span>
   </Tooltip>
 {/if}

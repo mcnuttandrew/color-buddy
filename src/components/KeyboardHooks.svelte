@@ -81,6 +81,17 @@
       colorStore.setCurrentPalColors(newColors);
     }
 
+    // SAVE BY DUPLICATING PALETTE
+    if (key === "s" && metaKey) {
+      e.preventDefault();
+      const newPal = {
+        ...$colorStore.currentPal,
+        name: `${$colorStore.currentPal.name} copy`,
+        colors: [...$colorStore.currentPal.colors],
+      };
+      colorStore.createNewPal(newPal);
+    }
+
     // COPY PASTE
     if (key === "c" && metaKey && $focusStore.focusedColors.length) {
       copiedData = $colorStore.currentPal.colors.filter((_, idx) =>

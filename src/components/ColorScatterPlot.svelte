@@ -144,7 +144,7 @@
     startDragging();
     const targetIsPoint = typeof idx === "number";
     let target = e.target;
-    const isMetaKey = e.metaKey || e.shiftKey;
+    const isMetaKey = e.metaKey || e.shiftKey || e.ctrlKey;
     isPointDrag = false;
     if (targetIsPoint && !focusSet.has(idx)) {
       const newSet = isMetaKey ? [...focusSet, idx] : [idx];

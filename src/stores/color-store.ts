@@ -101,7 +101,7 @@ function insertPalette(palettes: Palette[], pal: Palette): Palette[] {
     0
   );
   const name = nameCount === 0 ? pal.name : `${pal.name} ${nameCount}`;
-  return [...palettes, { ...pal, name }];
+  return [{ ...pal, name }, ...palettes];
 }
 
 // install defaults if not present

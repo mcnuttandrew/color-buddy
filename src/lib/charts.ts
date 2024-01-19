@@ -109,32 +109,6 @@ export function buildTheme(pal: Palette): any {
   };
 }
 
-// const groupedBarChart = () => ();
-// const scatterPlot = () => ();
-
-// const map = () => ();
-
-// const areaChart = () => ();
-
-// const stackedAreaChart = () => ();
-// url: !location.href.includes("localhost")
-//   ? "https://vega.github.io/editor/data/penguins.json"
-//   : "data/penguins.json",
-
-// const scatterPlotOrdinal = () => ();
-
-// const heatmap = () => ();
-
-export const charts = [
-  // groupedBarChart, //
-  // { group: "categorical", chart: scatterPlot },
-  // { group: "categorical", chart: map },
-  // { group: "categorical", chart: areaChart },
-  // { group: "categorical", chart: stackedAreaChart },
-  // { group: "ordinal", chart: scatterPlotOrdinal },
-  // { group: "ordinal", chart: heatmap },
-];
-
 const vegaDatasets = [
   "7zip.png",
   "airports.csv",
@@ -231,11 +205,9 @@ export async function getSVG(localSpec: string, pal: Palette) {
   //   : "data/penguins.json",
   const matchedDataset = vegaDatasets.find((x) => spec.data?.url?.includes(x));
   if (matchedDataset) {
-    const isLocal = location.href.includes("localhost");
-    if (isLocal) {
+    if (location.href.includes("localhost")) {
       spec.data.url = `data/${matchedDataset}`;
-    }
-    if (!isLocal && spec.data.url === `data/${matchedDataset}`) {
+    } else {
       spec.data.url = `https://vega.github.io/editor/data/${matchedDataset}`;
     }
   }

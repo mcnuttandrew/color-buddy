@@ -9,6 +9,7 @@
   import PalPreview from "../../components/PalPreview.svelte";
 
   $: focusedColors = $focusStore.focusedColors;
+  $: focusSet = new Set(focusedColors);
   $: colors = $colorStore.currentPal.colors;
   let colorSpace = "lab";
   let numPoints = 1;
@@ -41,21 +42,15 @@
     }
     return points;
   }
-  function createInterpolation(forPreview: boolean): Color[] {
+  function createInterpolation(): Color[] {
     const newColors = [];
     for (let idx = 0; idx < focusedColors.length - 1; idx++) {
       const pointA = colors[focusedColors[idx]];
       const pointB = colors[focusedColors[idx + 1]];
       const newPoints = createInterpolatedPoints(pointA, pointB);
-      if (forPreview) {
-        newColors.push(pointA, ...newPoints);
-      } else {
-        newColors.push(...newPoints);
-      }
+      newColors.push(pointA, ...newPoints);
     }
-    if (forPreview) {
-      newColors.push(colors[focusedColors[focusedColors.length - 1]]);
-    }
+    newColors.push(colors[focusedColors[focusedColors.length - 1]]);
     return newColors;
   }
 </script>
@@ -94,15 +89,13 @@
       <button
         class="{buttonStyle} mt-5"
         on:click={() => {
-          let newColors = [...colors];
-          const newPoints = createInterpolation(false);
+          let newColors = [...colors].filter((_, idx) => !focusSet.has(idx));
+          const offset = newColors.length;
+          const newPoints = createInterpolation();
           newColors = [...newColors, ...newPoints];
           colorStore.setCurrentPalColors(newColors);
           // also focus all of the new points
-          focusStore.setColors([
-            ...focusedColors,
-            ...newPoints.map((_, idx) => colors.length + idx),
-          ]);
+          focusStore.setColors([...newPoints.map((_, idx) => offset + idx)]);
         }}
       >
         Add points

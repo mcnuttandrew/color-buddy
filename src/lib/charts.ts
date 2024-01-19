@@ -192,16 +192,16 @@ export async function getSVG(localSpec: string, pal: Palette) {
   const theme = buildTheme(pal);
   let spec: any;
 
-  const cleanSpec = vegaDatasets.reduce((acc, x) => {
-    const breakKey = `url": "data/${x}`;
-    const joinKey = `url": "https://vega.github.io/editor/data/${x}`;
-    return acc.split(breakKey).join(joinKey);
-  }, localSpec);
+  // const cleanSpec = vegaDatasets.reduce((acc, x) => {
+  //   const breakKey = `url": "data/${x}`;
+  //   const joinKey = `url": "https://vega.github.io/editor/data/${x}`;
+  //   return acc.split(breakKey).join(joinKey);
+  // }, localSpec);
 
   try {
-    spec = JSON.parse(cleanSpec);
+    spec = JSON.parse(localSpec);
   } catch (e) {
-    console.error(e, cleanSpec);
+    console.error(e, localSpec);
     return "";
   }
   if (spec.$schema.includes("vega-lite")) {

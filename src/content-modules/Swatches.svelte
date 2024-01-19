@@ -98,7 +98,7 @@
         }deg)`}
         class="mr-2"
         on:click={(e) => {
-          const isMeta = e.metaKey || e.shiftKey;
+          const isMeta = e.metaKey || e.shiftKey || e.ctrlKey;
           if (isMeta) {
             focusStore.toggleColor(i);
           } else {

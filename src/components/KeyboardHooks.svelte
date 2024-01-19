@@ -22,15 +22,13 @@
       return;
     }
     const key = e.key.toLowerCase();
+    const metaKey = e.metaKey || e.ctrlKey;
     // UNDO REDO
-    if (key === "z" && e.metaKey) {
+    if (key === "z" && metaKey) {
       e.preventDefault();
       colorStore.undo();
     }
-    if (
-      (key === "y" && e.metaKey) ||
-      (key === "z" && e.metaKey && e.shiftKey)
-    ) {
+    if ((key === "y" && metaKey) || (key === "z" && metaKey && e.shiftKey)) {
       e.preventDefault();
       colorStore.redo();
     }
@@ -53,7 +51,7 @@
       const verticalDir = xDomain[1] < xDomain[0] ? 1 : -1;
       const horizontalDir = yDomain[1] < yDomain[0] ? 1 : -1;
       let step = verticalDirs.has(key) ? yStep : xStep;
-      if (e.metaKey || e.shiftKey) {
+      if (metaKey || e.shiftKey) {
         step *= 10;
       }
       e.preventDefault();
@@ -84,12 +82,12 @@
     }
 
     // COPY PASTE
-    if (key === "c" && e.metaKey && $focusStore.focusedColors.length) {
+    if (key === "c" && metaKey && $focusStore.focusedColors.length) {
       copiedData = $colorStore.currentPal.colors.filter((_, idx) =>
         focusedSet.has(idx)
       );
     }
-    if (key === "v" && e.metaKey && copiedData.length) {
+    if (key === "v" && metaKey && copiedData.length) {
       colorStore.setCurrentPalColors([
         ...$colorStore.currentPal.colors,
         ...copiedData,

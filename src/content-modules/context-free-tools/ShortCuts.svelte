@@ -1,7 +1,8 @@
 <script lang="ts">
   import Tooltip from "../../components/Tooltip.svelte";
   import { buttonStyle } from "../../lib/styles";
-  const metaKey = navigator.platform.match("Mac") ? "⌘" : "ctrl";
+  const isMac = navigator.userAgent.indexOf("Mac OS X") !== -1;
+  const metaKey = isMac ? "⌘" : "ctrl";
   const shortCuts = [
     { name: "Undo", shortcut: `${metaKey}+z` },
     { name: "Redo", shortcut: `${metaKey}+y` },

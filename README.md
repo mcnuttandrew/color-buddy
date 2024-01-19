@@ -54,8 +54,8 @@ To raise the sliders, you need to click on one of the examples that are displaye
 - [x] New "blank" button
 - [ ] Minor: Make keyboard short cut (option+up/down) for the z-direction
 - [ ] Chore: Extract some common types into a top level location (like types.ts type thing)
-- [ ] Chore: Rearrange some of the colors in the color area eg make rg on xy and b on z etc, blocking polar stuff
-- [ ] Polar stuff
+- [x] Chore: Rearrange some of the colors in the color area eg make rg on xy and b on z etc, blocking polar stuff
+- x] Polar stuff
 - [ ] Insert color theory options, eg insert opposing, inserting analogous color, etc, mine from the adobe picker
 - [ ] Labels, tooltips, etc
 - [ ] Nice to have: Rest of basic geometry manipulations: flip (horizontal, vertical), scale, Distribute radially

@@ -19,6 +19,8 @@
   import SuggestName from "./content-modules/context-free-tools/SuggestName.svelte";
   import GetColorsFromString from "./content-modules/context-free-tools/GetColorsFromString.svelte";
 
+  import ContentEditable from "./components/ContentEditable.svelte";
+
   const tabs = ["examples", "compare", "eval"] as const;
 </script>
 
@@ -63,17 +65,10 @@
                 <span class="italic">Current Pal:</span>
                 <div class="flex">
                   <span>✎</span>
-                  <!-- svelte-ignore a11y-no-static-element-interactions -->
-                  <div
-                    class=""
-                    on:keyup={(e) => {
-                      // @ts-ignore
-                      colorStore.setCurrentPalName(e.target.textContent);
-                    }}
-                    contenteditable="true"
-                  >
-                    {$colorStore.currentPal.name}
-                  </div>
+                  <ContentEditable
+                    onChange={(x) => colorStore.setCurrentPalName(x)}
+                    value={$colorStore.currentPal.name}
+                  />
                 </div>
               </div>
               <SuggestName />

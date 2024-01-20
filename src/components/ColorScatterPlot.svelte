@@ -39,11 +39,10 @@
     y: $configStore.yZoom,
     z: $configStore.zZoom,
   };
-  $: pickedColors = focusedColors.map((el) => [
-    x(colors[el]),
-    y(colors[el]),
-    z(colors[el]),
-  ]);
+  $: pickedColors = focusedColors
+    .map((x) => colors[x])
+    .filter((x) => x)
+    .map((el) => [x(el), y(el), z(el)]);
   $: config = colorPickerConfig[colorSpace];
   $: bg = Pal.background;
   $: colors = Pal.colors.map((x) => Color.toColorSpace(x, colorSpace));

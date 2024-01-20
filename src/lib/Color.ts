@@ -3,6 +3,7 @@ import ColorIO from "colorjs.io";
 type Domain = Record<string, [number, number]>;
 type Channels = [number, number, number];
 const hexCache = new Map<string, string>();
+const stringChannelsCache = new Map<string, Channels>();
 export class Color {
   name: string = "";
   channels: Record<string, number> = {};
@@ -14,6 +15,7 @@ export class Color {
   axisLabel: (num: number) => string = (x) => x.toFixed(1).toString();
   isPolar = false;
   cachedColorIO: ColorIO | null = null;
+  cachedInGamut: boolean | null = null;
 
   constructor() {
     this.domains = {};
@@ -52,6 +54,9 @@ export class Color {
     // return this.toColorIO().display();
   }
   inGamut(): boolean {
+    if (this.cachedInGamut !== null) {
+      return this.cachedInGamut;
+    }
     // return this.toColorIO().inGamut("srgb");
     // // return new ColorIO(this.spaceName, this.toChannels()).inGamut();
     // let clr = this.toColorIO().to("srgb", { inGamut: false });
@@ -64,7 +69,9 @@ export class Color {
     if (x !== y) {
       console.log("x", x, "y", y);
     }
-    return x === y;
+    const result = x === y;
+    this.cachedInGamut = result;
+    return result;
   }
   toColorIO(): ColorIO {
     if (this.cachedColorIO) {
@@ -81,6 +88,9 @@ export class Color {
   }
 
   fromString(colorString: string): Color {
+    if (stringChannelsCache.has(colorString)) {
+      return this.fromChannels(stringChannelsCache.get(colorString)!);
+    }
     // const isTargetSpace = colorString.startsWith(`${this.spaceName}(`);
     // const isHex = colorString.startsWith("#");
     // const channels =
@@ -98,6 +108,7 @@ export class Color {
         channels = [0, 0, 0];
       }
     }
+    stringChannelsCache.set(colorString, channels);
     return this.fromChannels(channels);
   }
   fromChannels(channels: Channels): Color {

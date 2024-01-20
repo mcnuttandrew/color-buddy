@@ -1,17 +1,16 @@
 import { ColorLint } from "./ColorLint";
 import type { TaskType } from "./ColorLint";
-import chroma from "chroma-js";
-import { Color } from "../Color";
+import { Color, colorFromString } from "../Color";
 
 const hexJoin = (colors: Color[]) => colors.map((x) => x.toHex()).join(", ");
 
 const uggos = ["#56FF00", "#0010FF", "#6A7E25", "#FF00EF", "#806E28"];
+const uglyColors = uggos.map((x) => colorFromString(x, "lab"));
 const uggoSet = new Set(uggos);
 function checkIfAColorIsCloseToAnUglyColor(colors: Color[]) {
-  const uglyColors = uggos.map((x) => chroma(x));
   return colors.filter((color) => {
     const deltas = uglyColors.map((uglyColor) =>
-      chroma.deltaE(color.toChroma(), uglyColor)
+      uglyColor.symmetricDeltaE(color)
     );
     return deltas.some((x) => x < 10);
   });

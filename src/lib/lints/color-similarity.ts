@@ -15,10 +15,7 @@ export default class ColorSimilarity extends ColorLint<number[], number> {
   };
   _runCheck() {
     const { colors } = this.palette;
-    const data = computeStats(
-      colors.map((x) => x.toChroma()),
-      "dE"
-    );
+    const data = computeStats(colors, "dE");
     const failingIndexes =
       data?.dE.reduce((acc, x, idx) => {
         if (x < this.config.val!) {

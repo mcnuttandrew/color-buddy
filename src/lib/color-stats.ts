@@ -1,14 +1,9 @@
-import chroma from "chroma-js";
-import type { Color as ChromaColor } from "chroma-js";
-import { Color, toColorSpace } from "./Color";
+import { Color } from "./Color";
 import type { Palette } from "../stores/color-store";
 
 /////////////// MAUREEN'S CODE ///////////////////////
 
-export function computeStats(
-  colors: ChromaColor[],
-  dE_type: "dE94" | "dE" | "none"
-) {
+export function computeStats(colors: Color[], dE_type: "dE94" | "dE" | "none") {
   if (dE_type == "none") return null;
   const stats = { dE: [] as number[], minE: 0, maxE: 0, aveE: 0, totalE: 0 };
   let prev = colors[0];
@@ -29,10 +24,10 @@ export function computeStats(
   stats.totalE = Math.round(total);
   return stats;
 }
-//color differences between chroma.js colors the basic one.
-export function deltaE(c1: ChromaColor, c2: ChromaColor) {
-  const lab1 = c1.lab();
-  const lab2 = c2.lab();
+//color differences between colors the basic one.
+export function deltaE(c1: Color, c2: Color) {
+  const lab1 = c1.toColorSpace("lab").toChannels();
+  const lab2 = c2.toColorSpace("lab").toChannels();
   const dL = lab1[0] - lab2[0];
   const da = lab1[1] - lab2[1];
   const db = lab1[2] - lab2[2];
@@ -41,9 +36,9 @@ export function deltaE(c1: ChromaColor, c2: ChromaColor) {
 }
 
 //A somewhat better one. But, note this is an asymmetric function, deltaE94(c1,c2) != deltaE94(c2,c1)
-function deltaE94(c1: ChromaColor, c2: ChromaColor) {
-  const lab1 = c1.lab(); //.lch() returns the wrong h
-  const lab2 = c2.lab();
+function deltaE94(c1: Color, c2: Color) {
+  const lab1 = c1.toColorSpace("lab").toChannels(); //.lch() returns the wrong h
+  const lab2 = c2.toColorSpace("lab").toChannels();
   const C1 = Math.sqrt(lab1[1] * lab1[1] + lab1[2] * lab1[2]); //sqrt(a*a+b*b)
   const C2 = Math.sqrt(lab2[1] * lab2[1] + lab2[2] * lab2[2]); //sqrt(a*a+b*b)
   const da = lab1[1] - lab2[1];

@@ -4,7 +4,7 @@ import {
   colorFromChannels,
   colorPickerConfig,
 } from "./Color";
-import type { PalType } from "../stores/color-store";
+import type { PalType, Palette } from "../stores/color-store";
 export const insert = (arr: Color[], newItem: Color, index?: number) => {
   if (index === undefined) {
     return [...arr, newItem];
@@ -246,4 +246,35 @@ export const clampToRange = (val: number, range: number[]) => {
   const min = Math.min(...range);
   const max = Math.max(...range);
   return Math.min(Math.max(val, min), max);
+};
+
+export const toHex = (x: string) => {
+  let idx = 0;
+  const colors = [];
+  while (idx < x.length) {
+    colors.push(`#${x.slice(idx, idx + 6)}`);
+    idx += 6;
+  }
+  return colors;
+};
+
+export interface ExtendedPal extends Palette {
+  group: string;
+}
+export const makePal = (
+  name: string,
+  colors: string[],
+  colorSpace: any,
+  group: any,
+  type: any = "categorical"
+): ExtendedPal => {
+  return {
+    name,
+    colors: colors.map((x) => colorFromString(x, colorSpace)),
+    background: colorFromString("#ffffff", colorSpace),
+    group,
+    type,
+    evalConfig: {},
+    colorSpace,
+  };
 };

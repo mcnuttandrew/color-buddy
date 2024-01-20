@@ -1,6 +1,5 @@
 <script lang="ts">
-  import chroma from "chroma-js";
-  import { Color, colorFromHex } from "../lib/Color";
+  import { Color, colorFromString } from "../lib/Color";
   import ColorChannelPicker from "../components/ColorChannelPicker.svelte";
   import Tooltip from "../components/Tooltip.svelte";
   import { buttonStyle } from "../lib/styles";
@@ -17,8 +16,7 @@
       value={bgHex}
       on:change={(e) => {
         // @ts-ignore
-        const newColor = chroma(e.target.value);
-        onChange(colorFromHex(newColor.hex(), colorSpace));
+        onChange(colorFromString(e.target.value, colorSpace));
       }}
     />
     <ColorChannelPicker color={bg} onColorChange={onChange} />
@@ -27,9 +25,7 @@
     let:toggle
     slot="target"
     class={`${buttonStyle} flex items-center justify-center this-button top-0.5 relative`}
-    on:click={() => {
-      toggle();
-    }}
+    on:click={() => toggle()}
   >
     Background {bgHex}
     <div

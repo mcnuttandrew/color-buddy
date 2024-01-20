@@ -16,10 +16,7 @@
 
   let metric: "dE" | "dE94" | "none" = "none";
   $: colors = $colorStore.currentPal.colors;
-  $: stats = computeStats(
-    colors.map((x) => x.toChroma()),
-    metric
-  );
+  $: stats = computeStats(colors, metric);
 
   $: colorNames = colorNameSimple(colors);
   $: palType = $colorStore.currentPal.type;

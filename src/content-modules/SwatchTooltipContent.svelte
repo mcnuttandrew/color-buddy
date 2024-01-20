@@ -1,7 +1,6 @@
 <script lang="ts">
   import ColorChannelPicker from "../components/ColorChannelPicker.svelte";
-  import chroma from "chroma-js";
-  import { Color, colorFromHex } from "../lib/Color";
+  import { Color, colorFromString } from "../lib/Color";
   import colorStore from "../stores/color-store";
   import focusStore from "../stores/focus-store";
   import { buttonStyle } from "../lib/styles";
@@ -26,8 +25,7 @@
       value={color.toHex()}
       on:change={(e) => {
         // @ts-ignore
-        const newColor = chroma(e.target.value);
-        updateColor(colorFromHex(newColor.hex(), colorSpace));
+        updateColor(colorFromString(e.target.value, colorSpace));
       }}
     />
 

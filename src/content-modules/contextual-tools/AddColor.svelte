@@ -1,7 +1,6 @@
 <script lang="ts">
   import colorStore from "../../stores/color-store";
   import configStore from "../../stores/config-store";
-  import chroma from "chroma-js";
   import { buttonStyle } from "../../lib/styles";
   import { colorFromString } from "../../lib/Color";
   import { suggestAdditionsToPalette } from "../../lib/api-calls";
@@ -38,7 +37,7 @@
 
     let validString = true;
     try {
-      const newColor = chroma(searchedString).hex();
+      const newColor = colorFromString(searchedString, colorSpace).toHex();
       interpretations = [...interpretations, newColor];
       requestState = "loaded";
       return;

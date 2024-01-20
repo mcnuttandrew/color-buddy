@@ -1,5 +1,3 @@
-import type { Color as ChromaColor } from "chroma-js";
-import chroma from "chroma-js";
 import ColorIO from "colorjs.io";
 
 type Domain = Record<string, [number, number]>;
@@ -8,8 +6,6 @@ const hexCache = new Map<string, string>();
 export class Color {
   name: string = "";
   channels: Record<string, number> = {};
-  // todo finish removing chroma bind
-  chromaBind: typeof chroma.lab = chroma.rgb;
   spaceName: keyof typeof colorDirectory = "rgb";
   domains: Domain;
   stepSize: Channels = [1, 1, 1];
@@ -28,8 +24,6 @@ export class Color {
       return hexCache.get(str) as string;
     }
     const newHex = this.toColorIO().to("srgb").toString({ format: "hex" });
-    // const oldHex = this.chromaBind(...this.toChannels()).hex();
-    // return this.chromaBind(...this.toChannels()).hex();
     hexCache.set(str, newHex);
     return newHex;
   }
@@ -42,9 +36,6 @@ export class Color {
   }
   getChannel(channel: keyof typeof this.channels): number {
     return this.channels[channel];
-  }
-  toChroma(): ChromaColor {
-    return this.chromaBind(...this.toChannels());
   }
   toChannels(): Channels {
     return Object.values(this.channels) as Channels;
@@ -87,7 +78,17 @@ export class Color {
     //   isTargetSpace || isHex
     //     ? new ColorIO(colorString).to(this.spaceName).coords
     //     : stringToChannels(this.spaceName, colorString);
-    const channels = new ColorIO(colorString).to(this.spaceName).coords;
+    let channels: Channels;
+    try {
+      channels = new ColorIO(colorString).to(this.spaceName).coords;
+    } catch (e) {
+      try {
+        channels = new ColorIO(`#${colorString}`).to(this.spaceName).coords;
+      } catch (e) {
+        console.log("error", e, colorString);
+        channels = [0, 0, 0];
+      }
+    }
     return this.fromChannels(channels);
   }
   fromChannels(channels: Channels): Color {
@@ -98,10 +99,10 @@ export class Color {
     return newColor;
   }
   luminance(): number {
-    return chroma(this.toHex()).luminance();
+    return this.toColorIO().luminance;
   }
   deltaE(color: Color): number {
-    return chroma.deltaE(this.toChroma(), color.toChroma());
+    return this.toColorIO().deltaE(color.toColorIO(), "2000");
   }
   symmetricDeltaE(color: Color): number {
     return 0.5 * (this.deltaE(color) + color.deltaE(this));
@@ -152,7 +153,6 @@ export class CIELAB extends Color {
   channelNames = ["L", "a", "b"];
   channels = { L: 0, a: 0, b: 0 };
   domains = { L: [100, 0], a: [-125, 125], b: [125, -125] } as Domain;
-  chromaBind = chroma.lab;
   spaceName = "lab" as const;
   stepSize: Channels = [1, 1, 1];
   dimensionToChannel = { x: "a", y: "b", z: "L" };
@@ -169,7 +169,6 @@ export class HSV extends Color {
   isPolar = true;
   channels = { h: 0, s: 0, v: 0 };
   domains = { h: [0, 360], s: [0, 100], v: [0, 100] } as Domain;
-  chromaBind = chroma.hsv;
   spaceName = "hsv" as const;
   dimensionToChannel = { x: "v", y: "h", z: "s" };
   toString(): string {
@@ -182,7 +181,6 @@ export class RGB extends Color {
   name = "RGB";
   channelNames = ["r", "g", "b"];
   channels = { r: 0, g: 0, b: 0 };
-  chromaBind = chroma.rgb;
   spaceName = "srgb" as const;
   domains = { r: [0, 255], g: [0, 255], b: [0, 255] } as Domain;
   stepSize: Channels = [1, 1, 1];
@@ -198,7 +196,6 @@ export class HSL extends Color {
   name = "HSL";
   channelNames = ["h", "s", "l"];
   channels = { h: 0, s: 0, l: 0 };
-  chromaBind = chroma.hsl;
   spaceName = "hsl" as const;
   domains = { h: [0, 360], s: [0, 100], l: [100, 0] } as Domain;
   stepSize: Channels = [1, 1, 1];
@@ -214,7 +211,6 @@ export class LCH extends Color {
   name = "LCH";
   channelNames = ["l", "c", "h"];
   channels = { l: 0, c: 0, h: 0 };
-  chromaBind = chroma.lch;
   spaceName = "lch" as const;
   domains = { l: [100, 0], c: [0, 150], h: [360, 0] } as Domain;
   stepSize: Channels = [1, 1, 1];
@@ -226,7 +222,6 @@ export class OKLAB extends Color {
   name = "OKLAB";
   channelNames = ["l", "a", "b"];
   channels = { l: 0, a: 0, b: 0 };
-  chromaBind = chroma.oklab;
   spaceName = "oklab" as const;
   domains = { l: [1, 0], a: [-0.4, 0.4], b: [0.4, -0.4] } as Domain;
   stepSize: Channels = [0.01, 0.01, 0.01];
@@ -237,7 +232,6 @@ export class OKLCH extends Color {
   name = "OKLCH";
   channelNames = ["l", "c", "h"];
   channels = { l: 0, c: 0, h: 0 };
-  chromaBind = chroma.oklch;
   spaceName = "oklch" as const;
   domains = { l: [1, 0], c: [0, 0.4], h: [360, 0] } as Domain;
   stepSize: Channels = [0.01, 0.01, 1];
@@ -252,13 +246,7 @@ export class JZAZBZ extends Color {
   domains = { jz: [1, 0], az: [-0.5, 0.5], bz: [0.5, -0.5] } as Domain;
   stepSize: Channels = [0.01, 0.01, 0.01];
   dimensionToChannel = { x: "az", y: "bz", z: "jz" };
-  constructor() {
-    super();
-    this.chromaBind = (jz, az, bz) => {
-      const [l, a, b] = new ColorIO(this.toString()).to("lab").coords;
-      return chroma.lab(l, a, b);
-    };
-  }
+
   toString(): string {
     const [jz, az, bz] = Object.values(this.channels);
     return `color(jzazbz ${jz} ${az} ${bz})`;

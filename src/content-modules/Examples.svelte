@@ -1,7 +1,6 @@
 <script lang="ts">
   import { colorFromString } from "../lib/Color";
   import type { Palette } from "../stores/color-store";
-  import chroma from "chroma-js";
   import exampleStore, {
     DEMOS,
     detectColorsInSvgString,
@@ -274,7 +273,10 @@
                 <div class="flex">
                   <div
                     class="w-24 h-8"
-                    class:text-white={chroma(color).luminance() < 0.5}
+                    class:text-white={colorFromString(
+                      color,
+                      colorSpace
+                    ).luminance() < 0.5}
                     style="background-color: {color};"
                   >
                     {color}

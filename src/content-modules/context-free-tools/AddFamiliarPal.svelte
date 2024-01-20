@@ -1,6 +1,5 @@
 <script lang="ts">
   import { colorFromString } from "../../lib/Color";
-  import chroma from "chroma-js";
   import colorStore, { newGenericPal } from "../../stores/color-store";
   import focusStore from "../../stores/focus-store";
   import { onMount } from "svelte";
@@ -8,70 +7,27 @@
   import Tooltip from "../../components/Tooltip.svelte";
   import { VegaColors } from "../../lib/charts";
   import { buttonStyle } from "../../lib/styles";
-  import { colorBrewerMapToType } from "../../lib/utils";
+  import { makePal, toHex, colorBrewerMapToType } from "../../lib/utils";
+  import type { ExtendedPal } from "../../lib/utils";
 
-  interface ExtendedPal extends Palette {
-    group: string;
-  }
   $: familiarPals = [] as ExtendedPal[];
   $: colorSpace = $colorStore.currentPal.colorSpace;
 
-  onMount(() => {
-    const toHex = (x: string) => {
-      let idx = 0;
-      const colors = [];
-      while (idx < x.length) {
-        colors.push(colorFromString(`#${x.slice(idx, idx + 6)}`, colorSpace));
-        idx += 6;
-      }
-      return colors;
-    };
+  onMount(async () => {
     let newPals = [] as ExtendedPal[];
+
     Object.entries(VegaColors).forEach(([name, colors]) => {
-      newPals.push({
-        name,
-        colors: toHex(colors),
-        background: colorFromString("#ffffff", colorSpace),
-        group: "vega",
-        type: "categorical",
-        evalConfig: {},
-        colorSpace,
-      });
+      newPals.push(makePal(name, toHex(colors), colorSpace, "vega"));
     });
-    Object.entries(chroma.brewer).forEach(([name, colors]) => {
-      newPals.push({
-        name,
-        colors: colors.map((x) => colorFromString(x, colorSpace)),
-        background: colorFromString("#ffffff", colorSpace),
-        group: "brewer",
-        type: colorBrewerMapToType[name.toLowerCase()],
-        evalConfig: {},
-        colorSpace,
-      });
+
+    const get = (url: string) => fetch(url).then((x) => x.json());
+    const pals = await get("./pal-sets.json");
+    Object.entries(pals).forEach((x) => {
+      const type = colorBrewerMapToType[x[0].toLowerCase()];
+      const pal = makePal(x[0], x[1] as any, colorSpace, "ColorBrewer", type);
+      newPals.push(pal);
     });
     familiarPals = newPals;
-    // Promise.all([
-    //   fetch("./tableau-colors.json")
-    //     .then((x) => x.json())
-    //     .then((x) => {
-    //       const newPals = [] as any;
-    //       Object.entries(x as Record<string, string[]>).forEach(
-    //         ([name, colors]) => {
-    //           newPals.push({
-    //             name,
-    //             colors: colors.map((x: string) =>
-    //               colorFromString(x, colorSpace)
-    //             ),
-    //             background: colorFromString("#ffffff", colorSpace),
-    //             group: "tableau",
-    //           });
-    //         }
-    //       );
-    //       return newPals;
-    //     }),
-    // ]).then(([tableauPals]) => {
-    //   familiarPals = [...newPals, ...tableauPals];
-    // });
   });
   let searchString = "";
   $: groups = familiarPals.reduce(

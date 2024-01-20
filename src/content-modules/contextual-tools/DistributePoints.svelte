@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { colorFromChannels, colorPickerConfig } from "../../lib/Color";
+  import { Color, colorPickerConfig } from "../../lib/Color";
   import colorStore from "../../stores/color-store";
   import focusStore from "../../stores/focus-store";
   import Tooltip from "../../components/Tooltip.svelte";
@@ -47,7 +47,7 @@
 
     const newColors = [...colors].map((color, idx) => {
       const point = pointsByIndex[idx];
-      return point ? colorFromChannels(point, colorSpace) : color;
+      return point ? Color.colorFromChannels(point, colorSpace) : color;
     });
 
     colorStore.setCurrentPalColors(newColors);

@@ -3,7 +3,7 @@
   import colorStore from "../../stores/color-store";
   import focusStore from "../../stores/focus-store";
   import configStore from "../../stores/config-store";
-  import { colorFromString } from "../../lib/Color";
+  import { Color } from "../../lib/Color";
   import { suggestContextualAdjustments } from "../../lib/api-calls";
   import { buttonStyle, AIButtonStyle } from "../../lib/styles";
   import PalDiff from "../../components/PalDiff.svelte";
@@ -19,7 +19,7 @@
 
   function toPal(colors: string[]) {
     return {
-      colors: colors.map((x) => colorFromString(x, colorSpace)),
+      colors: colors.map((x) => Color.colorFromString(x, colorSpace)),
       name: "mods",
       background: $colorStore.currentPal.background,
       type: $colorStore.currentPal.type,
@@ -33,7 +33,9 @@
     const pal = selectedColors.length
       ? {
           ...$colorStore.currentPal,
-          colors: selectedColors.map((x) => colorFromString(x, colorSpace)),
+          colors: selectedColors.map((x) =>
+            Color.colorFromString(x, colorSpace)
+          ),
         }
       : $colorStore.currentPal;
     suggestContextualAdjustments(palPrompt, pal, $configStore.engine)
@@ -60,16 +62,18 @@
         const idx = selectedColors.indexOf(x.toHex());
         if (idx === -1) return x;
         usedSuggestions.add(idx);
-        return colorFromString(suggestedColors[idx], colorSpace);
+        return Color.colorFromString(suggestedColors[idx], colorSpace);
       });
       const unusedSuggestions = suggestedColors.filter(
         (_, idx) => !usedSuggestions.has(idx)
       );
       newColors = newColors.concat(
-        unusedSuggestions.map((x) => colorFromString(x, colorSpace))
+        unusedSuggestions.map((x) => Color.colorFromString(x, colorSpace))
       );
     } else {
-      newColors = suggestedColors.map((x) => colorFromString(x, colorSpace));
+      newColors = suggestedColors.map((x) =>
+        Color.colorFromString(x, colorSpace)
+      );
     }
     colorStore.setCurrentPalColors(newColors);
     onClick();

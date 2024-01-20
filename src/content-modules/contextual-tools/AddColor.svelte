@@ -2,7 +2,7 @@
   import colorStore from "../../stores/color-store";
   import configStore from "../../stores/config-store";
   import { buttonStyle } from "../../lib/styles";
-  import { colorFromString } from "../../lib/Color";
+  import { Color } from "../../lib/Color";
   import { suggestAdditionsToPalette } from "../../lib/api-calls";
   import Tooltip from "../../components/Tooltip.svelte";
 
@@ -37,7 +37,10 @@
 
     let validString = true;
     try {
-      const newColor = colorFromString(searchedString, colorSpace).toHex();
+      const newColor = Color.colorFromString(
+        searchedString,
+        colorSpace
+      ).toHex();
       interpretations = [...interpretations, newColor];
       requestState = "loaded";
       return;
@@ -100,7 +103,7 @@
                 class="w-3 h-3 rounded-full mr-2"
                 style="background-color: {color}"
                 on:click={() => {
-                  const newColor = colorFromString(color, colorSpace);
+                  const newColor = Color.colorFromString(color, colorSpace);
                   console.log(newColor.toHex(), color);
                   const newColors = [...colors, newColor];
                   colorStore.setCurrentPalColors(newColors);
@@ -131,7 +134,7 @@
               class="w-3 h-3 rounded-full mr-2"
               style="background-color: {color}"
               on:click={() => {
-                const newColor = colorFromString(color, colorSpace);
+                const newColor = Color.colorFromString(color, colorSpace);
                 const newColors = [...colors, newColor];
                 colorStore.setCurrentPalColors(newColors);
                 suggestions = suggestions.filter((x) => x !== color);

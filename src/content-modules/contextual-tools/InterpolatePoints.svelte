@@ -1,7 +1,6 @@
 <script lang="ts">
-  import { Color, colorFromChannels } from "../../lib/Color";
+  import { Color } from "../../lib/Color";
   import type { Palette } from "../../stores/color-store";
-  import ColorIO from "colorjs.io";
   import colorStore from "../../stores/color-store";
   import focusStore from "../../stores/focus-store";
   import Tooltip from "../../components/Tooltip.svelte";
@@ -37,8 +36,7 @@
         x2 * (1 - t) + y2 * t,
         x3 * (1 - t) + y3 * t,
       ] as [number, number, number];
-      const finalColor = new ColorIO(adjustedSpace, lab).to(space).coords;
-      points.push(colorFromChannels(finalColor, space));
+      points.push(Color.colorFromChannels(lab, "lab").toColorSpace(space));
     }
     return points;
   }

@@ -1,5 +1,5 @@
 import { writable } from "svelte/store";
-import { Color, colorFromString, toColorSpace } from "../lib/Color";
+import { Color } from "../lib/Color";
 import fits from "../assets/outfits.json";
 import { pick, deDup } from "../lib/utils";
 const outfitToPal = (x: any) => [x.fill1, x.fill2, x.fill3];
@@ -67,14 +67,19 @@ function convertStoreHexToColor(store: StorageData): StoreData {
   return {
     palettes: store.palettes.map((x) => ({
       ...x,
-      background: colorFromString(x.background, x.colorSpace as any),
-      colors: x.colors.map((y) => colorFromString(y, x.colorSpace as any)),
+      background: Color.colorFromString(x.background, x.colorSpace as any),
+      colors: x.colors.map((y) =>
+        Color.colorFromString(y, x.colorSpace as any)
+      ),
     })),
     currentPal: {
       ...store.currentPal,
-      background: colorFromString(store.currentPal.background, space as any),
+      background: Color.colorFromString(
+        store.currentPal.background,
+        space as any
+      ),
       colors: store.currentPal.colors.map((y) =>
-        colorFromString(y, space as any)
+        Color.colorFromString(y, space as any)
       ),
     },
   };
@@ -247,8 +252,8 @@ function createStore() {
       palUp((n) => ({
         ...n,
         colorSpace,
-        background: toColorSpace(n.background, colorSpace),
-        colors: n.colors.map((x) => toColorSpace(x, colorSpace)),
+        background: Color.toColorSpace(n.background, colorSpace),
+        colors: n.colors.map((x) => Color.toColorSpace(x, colorSpace)),
       })),
   };
 }

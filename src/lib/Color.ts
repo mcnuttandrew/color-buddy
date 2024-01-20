@@ -13,6 +13,7 @@ export class Color {
   dimensionToChannel: Record<"x" | "y" | "z", string> = { x: "", y: "", z: "" };
   axisLabel: (num: number) => string = (x) => x.toFixed(1).toString();
   isPolar = false;
+  cachedColorIO: ColorIO | null = null;
 
   constructor() {
     this.domains = {};
@@ -41,7 +42,10 @@ export class Color {
     return Object.values(this.channels) as Channels;
   }
   setChannel(channel: keyof typeof this.channels, value: number) {
-    this.channels[channel] = value;
+    const newColor = this.copy();
+    newColor.channels[channel] = value;
+    return newColor;
+    // this.channels[channel] = value;
   }
   toDisplay(): string {
     return this.toHex();
@@ -63,8 +67,13 @@ export class Color {
     return x === y;
   }
   toColorIO(): ColorIO {
+    if (this.cachedColorIO) {
+      return this.cachedColorIO;
+    }
     try {
-      return new ColorIO(this.toString());
+      const val = new ColorIO(this.toString());
+      this.cachedColorIO = val;
+      return val;
     } catch (e) {
       console.log("error", e, this.toString());
       return new ColorIO("black");
@@ -94,7 +103,8 @@ export class Color {
   fromChannels(channels: Channels): Color {
     const newColor = new (this.constructor as typeof Color)();
     Object.keys(this.channels).forEach((channel, i) => {
-      newColor.setChannel(channel, channels[i]);
+      newColor.channels[channel] = channels[i];
+      return newColor;
     });
     return newColor;
   }
@@ -118,10 +128,16 @@ export class Color {
       .map((x) => x || 0)
       .map((x) => x.toLocaleString("fullwide", { useGrouping: false }));
   }
+
+  static toColorSpace = toColorSpace;
+  static stringToChannels = stringToChannels;
+  static colorFromString = colorFromString;
+  static colorFromHex = colorFromHex;
+  static colorFromChannels = colorFromChannels;
 }
 
 const colorStringCache = new Map<string, Channels>();
-export function stringToChannels(spaceName: string, str: string) {
+function stringToChannels(spaceName: string, str: string) {
   const key = `${spaceName}(${str})`;
   if (colorStringCache.has(key)) {
     return colorStringCache.get(key)!;
@@ -148,7 +164,7 @@ export function stringToChannels(spaceName: string, str: string) {
   return result;
 }
 
-export class CIELAB extends Color {
+class CIELAB extends Color {
   name = "CIELAB";
   channelNames = ["L", "a", "b"];
   channels = { L: 0, a: 0, b: 0 };
@@ -163,7 +179,7 @@ export class CIELAB extends Color {
     return `lab(${L}% ${a} ${b})`;
   }
 }
-export class HSV extends Color {
+class HSV extends Color {
   name = "HSV";
   channelNames = ["h", "s", "v"];
   isPolar = true;
@@ -177,7 +193,7 @@ export class HSV extends Color {
   }
 }
 
-export class RGB extends Color {
+class RGB extends Color {
   name = "RGB";
   channelNames = ["r", "g", "b"];
   channels = { r: 0, g: 0, b: 0 };
@@ -192,7 +208,7 @@ export class RGB extends Color {
   }
 }
 
-export class HSL extends Color {
+class HSL extends Color {
   name = "HSL";
   channelNames = ["h", "s", "l"];
   channels = { h: 0, s: 0, l: 0 };
@@ -207,7 +223,7 @@ export class HSL extends Color {
     return `hsl(${h} ${s}% ${l}%)`;
   }
 }
-export class LCH extends Color {
+class LCH extends Color {
   name = "LCH";
   channelNames = ["l", "c", "h"];
   channels = { l: 0, c: 0, h: 0 };
@@ -218,7 +234,7 @@ export class LCH extends Color {
   axisLabel = (num: number) => `${Math.round(num)}`;
 }
 
-export class OKLAB extends Color {
+class OKLAB extends Color {
   name = "OKLAB";
   channelNames = ["l", "a", "b"];
   channels = { l: 0, a: 0, b: 0 };
@@ -228,7 +244,7 @@ export class OKLAB extends Color {
   dimensionToChannel = { x: "a", y: "b", z: "l" };
 }
 
-export class OKLCH extends Color {
+class OKLCH extends Color {
   name = "OKLCH";
   channelNames = ["l", "c", "h"];
   channels = { l: 0, c: 0, h: 0 };
@@ -238,7 +254,7 @@ export class OKLCH extends Color {
   dimensionToChannel = { x: "c", y: "h", z: "l" };
 }
 
-export class JZAZBZ extends Color {
+class JZAZBZ extends Color {
   name = "JZAZBZ";
   channelNames = ["jz", "az", "bz"];
   channels = { jz: 0, az: 0, bz: 0 };
@@ -253,7 +269,7 @@ export class JZAZBZ extends Color {
   }
 }
 
-export function colorFromString(
+function colorFromString(
   colorString: string,
   colorSpace: keyof typeof colorDirectory = "lab"
 ): Color {
@@ -262,7 +278,7 @@ export function colorFromString(
 }
 
 const colorHexCache = new Map<string, Color>();
-export function colorFromHex(
+function colorFromHex(
   hex: string,
   colorSpace: keyof typeof colorDirectory
 ): Color {
@@ -275,14 +291,14 @@ export function colorFromHex(
   return outColor;
 }
 
-export function colorFromChannels(
+function colorFromChannels(
   channels: Channels,
   colorSpace: keyof typeof colorDirectory
 ): Color {
   return new colorDirectory[colorSpace]().fromChannels(channels);
 }
 
-export function toColorSpace(
+function toColorSpace(
   color: Color,
   colorSpace: keyof typeof colorDirectory
 ): Color {
@@ -295,7 +311,7 @@ export function toColorSpace(
   return new colorDirectory[colorSpace]().fromChannels(channels);
 }
 
-export const colorDirectory = {
+const colorDirectory = {
   hsl: HSL,
   hsv: HSV,
   jzazbz: JZAZBZ,

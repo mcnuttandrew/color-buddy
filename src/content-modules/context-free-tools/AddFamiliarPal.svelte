@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { colorFromString } from "../../lib/Color";
+  import { Color } from "../../lib/Color";
   import colorStore, { newGenericPal } from "../../stores/color-store";
   import focusStore from "../../stores/focus-store";
   import { onMount } from "svelte";
@@ -7,7 +7,7 @@
   import Tooltip from "../../components/Tooltip.svelte";
   import { VegaColors } from "../../lib/charts";
   import { buttonStyle } from "../../lib/styles";
-  import { makePal, toHex, colorBrewerMapToType } from "../../lib/utils";
+  import { makePal, toHex } from "../../lib/utils";
   import type { ExtendedPal } from "../../lib/utils";
 
   $: familiarPals = [] as ExtendedPal[];
@@ -22,9 +22,8 @@
 
     const get = (url: string) => fetch(url).then((x) => x.json());
     const pals = await get("./pal-sets.json");
-    Object.entries(pals).forEach((x) => {
-      const type = colorBrewerMapToType[x[0].toLowerCase()];
-      const pal = makePal(x[0], x[1] as any, colorSpace, "ColorBrewer", type);
+    (Object.entries(pals) as any[]).forEach(([name, { type, colors }]) => {
+      const pal = makePal(name, colors, colorSpace, "ColorBrewer", type);
       newPals.push(pal);
     });
     familiarPals = newPals;
@@ -46,8 +45,10 @@
 
   function newPalFromBlank() {
     const pal = newGenericPal("new palette") as any;
-    pal.colors = pal.colors.map((x: string) => colorFromString(x, colorSpace));
-    pal.background = colorFromString("#ffffff", colorSpace);
+    pal.colors = pal.colors.map((x: string) =>
+      Color.colorFromString(x, colorSpace)
+    );
+    pal.background = Color.colorFromString("#ffffff", colorSpace);
     pal.colorSpace = colorSpace;
     const newPal = pal as Palette;
 

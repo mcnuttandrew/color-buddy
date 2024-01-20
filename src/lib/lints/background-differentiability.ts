@@ -1,6 +1,6 @@
 import { ColorLint } from "./ColorLint";
 import type { TaskType } from "./ColorLint";
-import { Color, toColorSpace } from "../Color";
+import { Color } from "../Color";
 
 const hexJoin = (colors: Color[]) => colors.map((x) => x.toHex()).join(", ");
 
@@ -38,9 +38,9 @@ export default class BackgroundDifferentiability extends ColorLint<
         return x;
       }
       const color = colors[idx];
-      const newColor = toColorSpace(color, "lab");
+      const newColor = Color.toColorSpace(color, "lab");
       const [_l, a, b] = newColor.toChannels();
-      return toColorSpace(
+      return Color.toColorSpace(
         newColor.fromChannels([newL, a, b]),
         colorSpace as any
       );

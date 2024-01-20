@@ -1,4 +1,4 @@
-import { Color, toColorSpace } from "../Color";
+import { Color } from "../Color";
 import { ColorLint } from "./ColorLint";
 import type { TaskType } from "./ColorLint";
 
@@ -38,8 +38,8 @@ export function noticeablyDifferent(
   p: pType = 0.5
 ) {
   var jnd = jndLabInterval(p, s);
-  const [l1, a1, b1] = toColorSpace(c1, "lab").toChannels();
-  const [l2, a2, b2] = toColorSpace(c2, "lab").toChannels();
+  const [l1, a1, b1] = Color.toColorSpace(c1, "lab").toChannels();
+  const [l2, a2, b2] = Color.toColorSpace(c2, "lab").toChannels();
 
   return (
     Math.abs(l1 - l2) >= jnd.l ||

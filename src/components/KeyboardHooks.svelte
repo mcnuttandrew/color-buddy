@@ -64,16 +64,16 @@
         const xVal = channels[config.xChannelIndex];
         const yVal = channels[config.yChannelIndex];
         if (key === "arrowdown") {
-          color.setChannel(config.yChannel, yVal + verticalDir * step);
+          return color.setChannel(config.yChannel, yVal + verticalDir * step);
         }
         if (key === "arrowup") {
-          color.setChannel(config.yChannel, yVal - verticalDir * step);
+          return color.setChannel(config.yChannel, yVal - verticalDir * step);
         }
         if (key === "arrowleft") {
-          color.setChannel(config.xChannel, xVal - horizontalDir * step);
+          return color.setChannel(config.xChannel, xVal - horizontalDir * step);
         }
         if (key === "arrowright") {
-          color.setChannel(config.xChannel, xVal + horizontalDir * step);
+          return color.setChannel(config.xChannel, xVal + horizontalDir * step);
         }
         return color;
       });

@@ -1,10 +1,5 @@
 <script lang="ts">
-  import {
-    Color,
-    colorFromChannels,
-    toColorSpace,
-    colorPickerConfig,
-  } from "../lib/Color";
+  import { Color, colorPickerConfig } from "../lib/Color";
   import ColorIO from "colorjs.io";
   export let color: Color;
   export let onColorChange: (color: Color) => void;
@@ -125,11 +120,11 @@
     if (colorMode.includes("rgb")) {
       values = values.map((x) => x * 255);
     }
-    const newColor = colorFromChannels(
+    const newColor = Color.colorFromChannels(
       values as [number, number, number],
       colorMode
     );
-    const outColor = toColorSpace(newColor, measuredColorMode);
+    const outColor = Color.toColorSpace(newColor, measuredColorMode);
     onColorChange(outColor);
   }
 

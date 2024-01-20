@@ -1,30 +1,6 @@
-import {
-  Color,
-  colorFromString,
-  colorFromChannels,
-  colorPickerConfig,
-} from "./Color";
+import { Color } from "./Color";
 import type { PalType, Palette } from "../stores/color-store";
-export const insert = (arr: Color[], newItem: Color, index?: number) => {
-  if (index === undefined) {
-    return [...arr, newItem];
-  }
-  return [...arr.slice(0, index), newItem, ...arr.slice(index)];
-};
 
-export const replaceVal = (arr: Color[], newItem: Color, index: number) => {
-  return [...arr.slice(0, index), newItem, ...arr.slice(index + 1)];
-};
-
-// seeded random
-export const seededPick = (seedInit: number) => {
-  var seed = seedInit;
-  function random() {
-    var x = Math.sin(seed++) * 10000;
-    return x - Math.floor(x);
-  }
-  return (arr: any[]) => arr[Math.floor(random() * arr.length)];
-};
 export const pick = (arr: any[]) => arr[Math.floor(Math.random() * arr.length)];
 
 export function avgColors(
@@ -32,7 +8,7 @@ export function avgColors(
   colorSpace: "rgb" | "hsl" | "lab" = "rgb"
 ): Color {
   if (colors.length === 0) {
-    return colorFromString("#000000", "lab");
+    return Color.colorFromString("#000000", "lab");
   }
 
   type ColorChannels = [number, number, number];
@@ -43,9 +19,9 @@ export function avgColors(
   ] as ColorChannels);
   const avgColor = sumColor.map((x) => x / colors.length) as ColorChannels;
   if (avgColor.some((x) => isNaN(x))) {
-    return colorFromString("#000000", colorSpace as any);
+    return Color.colorFromString("#000000", colorSpace as any);
   }
-  return colorFromChannels(avgColor, colorSpace as any);
+  return Color.colorFromChannels(avgColor, colorSpace as any);
 }
 
 export function deDup(arr: Color[]): Color[] {
@@ -160,62 +136,6 @@ export const swap = (arr: any[], i: number, j: number) => {
   return newArr;
 };
 
-const colorBrewerTypeMap = {
-  diverging: [
-    "Spectral",
-    "RdYlGn",
-    "RdBu",
-    "PiYG",
-    "PRGn",
-    "RdYlBu",
-    "BrBG",
-    "RdGy",
-    "PuOr",
-  ],
-
-  categorical: [
-    "Set2",
-    "Accent",
-    "Set1",
-    "Set3",
-    "Dark2",
-    "Paired",
-    "Pastel2",
-    "Pastel1",
-  ],
-
-  sequential: [
-    "OrRd",
-    "PuBu",
-    "BuPu",
-    "Oranges",
-    "BuGn",
-    "YlOrBr",
-    "YlGn",
-    "Reds",
-    "RdPu",
-    "Greens",
-    "YlGnBu",
-    "Purples",
-    "GnBu",
-    "Greys",
-    "YlOrRd",
-    "PuRd",
-    "Blues",
-    "PuBuGn",
-    "viridis",
-  ],
-};
-export const colorBrewerMapToType = Object.entries(colorBrewerTypeMap).reduce(
-  (acc, [type, maps]) => {
-    maps.forEach((map) => {
-      acc[map.toLowerCase()] = type.toLowerCase();
-    });
-    return acc;
-  },
-  {} as any
-) as Record<string, PalType>;
-
 const extent = (arr: number[]) => [Math.min(...arr), Math.max(...arr)];
 function makeExtents(arr: number[][]) {
   return Object.fromEntries(
@@ -270,8 +190,8 @@ export const makePal = (
 ): ExtendedPal => {
   return {
     name,
-    colors: colors.map((x) => colorFromString(x, colorSpace)),
-    background: colorFromString("#ffffff", colorSpace),
+    colors: colors.map((x) => Color.colorFromString(x, colorSpace)),
+    background: Color.colorFromString("#ffffff", colorSpace),
     group,
     type,
     evalConfig: {},

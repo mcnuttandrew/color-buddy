@@ -2,7 +2,7 @@
   import Tooltip from "../../components/Tooltip.svelte";
   import colorStore from "../../stores/color-store";
   import configStore from "../../stores/config-store";
-  import { colorFromString } from "../../lib/Color";
+  import { Color } from "../../lib/Color";
   import { suggestPal } from "../../lib/api-calls";
   import type { Palette } from "../../stores/color-store";
   import PalPreview from "../../components/PalPreview.svelte";
@@ -28,9 +28,12 @@
         const suggestion = suggestions[0];
         newPal = {
           colors: suggestion.colors.map((x) =>
-            colorFromString(x, colorSpace as any)
+            Color.colorFromString(x, colorSpace as any)
           ),
-          background: colorFromString(suggestion.background, colorSpace as any),
+          background: Color.colorFromString(
+            suggestion.background,
+            colorSpace as any
+          ),
           name: palPrompt,
           type: "categorical",
           evalConfig: {},

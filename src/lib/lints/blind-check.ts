@@ -1,9 +1,8 @@
 import { ColorLint } from "./ColorLint";
 import type { TaskType } from "./ColorLint";
-import ColorIO from "colorjs.io";
-import { Color, colorFromHex } from "../Color";
+import { Color } from "../Color";
 import simulate_cvd from "../blindness";
-import blind from "color-blind";
+// import blind from "color-blind";
 
 const blindnessTypes = ["deuteranopia", "protanopia", "tritanopia"] as const;
 const blindnessLabels: Record<(typeof blindnessTypes)[number], string> = {
@@ -18,7 +17,8 @@ function indexesWithSmallDeltaE(colors: Color[]) {
   let indexes: [number, number][] = [];
   for (let i = 0; i < colors.length; i++) {
     for (let j = i + 1; j < colors.length; j++) {
-      const deltaE = difference(colors[i].toColorIO(), colors[j].toColorIO());
+      const deltaE = colors[i].symmetricDeltaE(colors[j]);
+      // const deltaE = difference(colors[i].toColorIO(), colors[j].toColorIO());
       if (deltaE < 9) {
         indexes.push([i, j]);
       }
@@ -48,11 +48,13 @@ function checkTypeA(colors: Color[], type: BlindnessTypes) {
   for (let a = 0; a < k; a++) {
     for (let b = a + 1; b < k; b++) {
       let [colorA, colorB] = [a, b].map((x) => colors[x]);
-      let distanceNorm = difference(colorA.toColorIO(), colorB.toColorIO());
+      // let distanceNorm = difference(colorA.toColorIO(), colorB.toColorIO());
+      let distanceNorm = colorA.symmetricDeltaE(colorB);
       if (distanceNorm < smallestPerceivableDistance) continue;
-      let aSim = colorFromHex(blind[type](colorA.toHex()), "lab").toColorIO();
-      let bSim = colorFromHex(blind[type](colorB.toHex()), "lab").toColorIO();
-      let distanceSim = difference(aSim, bSim);
+      // let aSim = Color.colorFromHex(blind[type](colorA.toHex()), "lab").toColorIO();
+      // let bSim = Color.colorFromHex(blind[type](colorB.toHex()), "lab").toColorIO();
+      // let distanceSim = difference(aSim, bSim);
+      let distanceSim = colorA.symmetricDeltaE(colorB);
       let isNotOk =
         distanceNorm / distanceSim > ratioThreshold &&
         distanceSim < smallestPerceivableDistance;
@@ -66,9 +68,9 @@ function checkTypeA(colors: Color[], type: BlindnessTypes) {
   return { pass: notOKColorIndexes.length === 0, notOKColorIndexes };
 }
 
-function difference(colorA: ColorIO, colorB: ColorIO) {
-  return 0.5 * (colorA.deltaE(colorB, "2000") + colorB.deltaE(colorA, "2000"));
-}
+// function difference(colorA: ColorIO, colorB: ColorIO) {
+//   return 0.5 * (colorA.deltaE(colorB, "2000") + colorB.deltaE(colorA, "2000"));
+// }
 
 const checks = blindnessTypes.map((key) => {
   return class ColorBlindCheck extends ColorLint<[number, number][], false> {

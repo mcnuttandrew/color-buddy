@@ -1,7 +1,7 @@
 import namer from "color-namer";
 import { ColorLint } from "./ColorLint";
 import type { TaskType } from "./ColorLint";
-import { Color, colorFromHex } from "../Color";
+import { Color } from "../Color";
 
 function findSmallest<A>(arr: A[], accessor: (x: A) => number): A {
   let smallest = arr[0];
@@ -69,7 +69,7 @@ function suggestFixForColorsWithCommonNames(colors: Color[]): Color[] {
   let guesses = { ...namer(hex, { pick: ["html"] }) };
   return [...colors].map((color, idx) => {
     const newColor = guesses.html[idx];
-    return colorFromHex(newColor.hex, color.spaceName);
+    return Color.colorFromHex(newColor.hex, color.spaceName);
   });
 }
 

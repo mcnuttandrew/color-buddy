@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Color, colorFromChannels } from "../../lib/Color";
+  import { Color } from "../../lib/Color";
   import colorStore from "../../stores/color-store";
   import focusStore from "../../stores/focus-store";
   import Tooltip from "../../components/Tooltip.svelte";
@@ -16,7 +16,7 @@
     const newColors = [...colors];
     focusedColors.forEach((idx) => {
       const channels = action(colors[idx]);
-      newColors[idx] = colorFromChannels(channels, colorSpace);
+      newColors[idx] = Color.colorFromChannels(channels, colorSpace);
     });
     colorStore.setCurrentPalColors(newColors);
   }

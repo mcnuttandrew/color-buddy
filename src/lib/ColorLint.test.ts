@@ -1,6 +1,6 @@
 import { expect, test } from "vitest";
 
-import { colorFromHex } from "./Color";
+import { Color } from "./Color";
 import type { Palette } from "../stores/color-store";
 
 import ColorNameDiscriminability, { getName } from "./lints/name-discrim";
@@ -10,8 +10,8 @@ import BackgroundDifferentiability from "./lints/background-differentiability";
 
 function makePalFromHexes(hexes: string[]): Palette {
   return {
-    colors: hexes.map((hex) => colorFromHex(hex, "lab")),
-    background: colorFromHex("#ffffff", "lab"),
+    colors: hexes.map((hex) => Color.colorFromHex(hex, "lab")),
+    background: Color.colorFromHex("#ffffff", "lab"),
     name: "test",
     type: "categorical",
     evalConfig: {},
@@ -86,7 +86,7 @@ test("ColorLint - BackgroundDifferentiability", async () => {
   const fix = await exampleLint.suggestFix();
   expect(fix.colors.map((x) => x.toHex())).toMatchSnapshot();
 
-  examplePal.background = colorFromHex("#00e4ff", "lab");
+  examplePal.background = Color.colorFromHex("#00e4ff", "lab");
   const exampleLint2 = new BackgroundDifferentiability(examplePal).run();
   expect(exampleLint2.passes).toBe(false);
   expect(exampleLint2.message).toBe(

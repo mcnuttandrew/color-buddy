@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { colorFromString } from "../../lib/Color";
+  import { Color } from "../../lib/Color";
   import colorStore from "../../stores/color-store";
   import configStore from "../../stores/config-store";
   $: colors = $colorStore.currentPal.colors;
@@ -12,7 +12,7 @@
         .split(",")
         .map((x) => x.replace(/"/g, "").trim())
         .filter((x) => x.length > 0)
-        .map((x) => colorFromString(x, colorSpace));
+        .map((x) => Color.colorFromString(x, colorSpace));
       colorStore.setCurrentPalColors(newColors);
       state = "idle";
     } catch (e) {

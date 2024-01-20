@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { toColorSpace, colorFromChannels, Color } from "../../lib/Color";
+  import { Color } from "../../lib/Color";
   import colorStore from "../../stores/color-store";
   import focusStore from "../../stores/focus-store";
   import Tooltip from "../../components/Tooltip.svelte";
@@ -42,7 +42,7 @@
       focusedColors
         .map((x) => localColors[x])
         .map((localColor) => {
-          const color = toColorSpace(localColor, colorSpace);
+          const color = Color.toColorSpace(localColor, colorSpace);
           const channels = color.toChannels();
           //   https://math.stackexchange.com/questions/4354438/how-to-rotate-a-point-on-a-cartesian-plane-around-something-other-than-the-origi
           const channelMap = {
@@ -78,7 +78,7 @@
               newChannels = [channels[0], x3, y3];
               break;
           }
-          return colorFromChannels(newChannels, colorSpace);
+          return Color.colorFromChannels(newChannels, colorSpace);
         })
         .map((x, y) => [y, x])
     );

@@ -1,11 +1,11 @@
 import { ColorLint } from "./ColorLint";
 import type { TaskType } from "./ColorLint";
-import { Color, colorFromString } from "../Color";
+import { Color } from "../Color";
 
 const hexJoin = (colors: Color[]) => colors.map((x) => x.toHex()).join(", ");
 
 const uggos = ["#56FF00", "#0010FF", "#6A7E25", "#FF00EF", "#806E28"];
-const uglyColors = uggos.map((x) => colorFromString(x, "lab"));
+const uglyColors = uggos.map((x) => Color.colorFromString(x, "lab"));
 const uggoSet = new Set(uggos);
 function checkIfAColorIsCloseToAnUglyColor(colors: Color[]) {
   return colors.filter((color) => {

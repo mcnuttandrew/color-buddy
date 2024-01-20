@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { colorFromString } from "../lib/Color";
+  import { Color } from "../lib/Color";
   import type { Palette } from "../stores/color-store";
   import exampleStore, {
     DEMOS,
@@ -31,7 +31,7 @@
 
   function createNewPal() {
     const newPal: Palette = {
-      colors: detectedColors.map((x) => colorFromString(x, colorSpace)),
+      colors: detectedColors.map((x) => Color.colorFromString(x, colorSpace)),
       background: bg,
       name: "New Palette",
       type: "categorical",
@@ -273,7 +273,7 @@
                 <div class="flex">
                   <div
                     class="w-24 h-8"
-                    class:text-white={colorFromString(
+                    class:text-white={Color.colorFromString(
                       color,
                       colorSpace
                     ).luminance() < 0.5}

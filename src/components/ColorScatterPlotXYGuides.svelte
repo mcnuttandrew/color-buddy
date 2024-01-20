@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { colorPickerConfig, colorFromChannels } from "../lib/Color";
+  import { colorPickerConfig, Color } from "../lib/Color";
   import focusStore from "../stores/focus-store";
   import colorStore from "../stores/color-store";
   import configStore from "../stores/config-store";
@@ -61,7 +61,7 @@
     coords[config.yChannelIndex] = yNonDimScale(j / bgResolution);
     const avgZChannel = avgNums(fColors.map((x) => x[config.zChannelIndex]));
     coords[config.zChannelIndex] = avgZChannel;
-    return colorFromChannels(coords, colorSpace as any).toDisplay();
+    return Color.colorFromChannels(coords, colorSpace as any).toDisplay();
   };
 </script>
 

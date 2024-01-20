@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { colorPickerConfig, colorFromChannels } from "../lib/Color";
+  import { colorPickerConfig, Color } from "../lib/Color";
   import { arc } from "d3-shape";
 
   import focusStore from "../stores/focus-store";
@@ -65,7 +65,7 @@
     coords[xIdx] = r;
     coords[yIdx] = angle;
     coords[zIdx] = avgNums(fColors.map((x) => x[zIdx]));
-    return colorFromChannels(coords, colorSpace as any).toDisplay();
+    return Color.colorFromChannels(coords, colorSpace as any).toDisplay();
   };
   $: arcScale = arc();
   $: angleScale = scaleLinear()

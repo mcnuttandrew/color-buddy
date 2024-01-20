@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { colorFromHex } from "../lib/Color";
+  import { Color } from "../lib/Color";
   import colorStore from "../stores/color-store";
   import configStore from "../stores/config-store";
   import focusStore from "../stores/focus-store";
@@ -26,7 +26,7 @@
   {#if ComparisonPal !== undefined}
     <ColorScatterPlot
       scatterPlotMode="looking"
-      Pal={{ ...ComparisonPal, background: colorFromHex(bg, colorSpace) }}
+      Pal={{ ...ComparisonPal, background: Color.colorFromHex(bg, colorSpace) }}
       {colorSpace}
       focusedColors={$focusStore.focusedColors}
       height={450}
@@ -67,7 +67,7 @@
     onChange={(background) => {
       bg = background.toHex();
     }}
-    bg={colorFromHex(bg, colorSpace)}
+    bg={Color.colorFromHex(bg, colorSpace)}
     {colorSpace}
   />
   <SetColorSpace

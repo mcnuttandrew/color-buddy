@@ -1,6 +1,6 @@
 <script lang="ts">
   import ColorChannelPicker from "../components/ColorChannelPicker.svelte";
-  import { Color, colorFromString } from "../lib/Color";
+  import { Color } from "../lib/Color";
   import colorStore from "../stores/color-store";
   import focusStore from "../stores/focus-store";
   import { buttonStyle } from "../lib/styles";
@@ -25,7 +25,7 @@
       value={color.toHex()}
       on:change={(e) => {
         // @ts-ignore
-        updateColor(colorFromString(e.target.value, colorSpace));
+        updateColor(Color.colorFromString(e.target.value, colorSpace));
       }}
     />
 

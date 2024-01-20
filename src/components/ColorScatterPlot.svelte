@@ -1,11 +1,6 @@
 <script lang="ts">
   import type { Palette } from "../stores/color-store";
-  import {
-    Color,
-    colorFromChannels,
-    toColorSpace,
-    colorPickerConfig,
-  } from "../lib/Color";
+  import { Color, colorPickerConfig } from "../lib/Color";
   import { makePosAndSizes, toggleElement, clampToRange } from "../lib/utils";
   import configStore from "../stores/config-store";
   import { scaleLinear } from "d3-scale";
@@ -51,7 +46,7 @@
   ]);
   $: config = colorPickerConfig[colorSpace];
   $: bg = Pal.background;
-  $: colors = Pal.colors.map((x) => toColorSpace(x, colorSpace));
+  $: colors = Pal.colors.map((x) => Color.toColorSpace(x, colorSpace));
 
   $: domainXScale = scaleLinear().domain([0, 1]).range(config.xDomain);
   $: xScale = scaleLinear()
@@ -112,7 +107,7 @@
     const coords = originalColor.toChannels();
     coords[config.xChannelIndex] = newVal[0];
     coords[config.yChannelIndex] = newVal[1];
-    return colorFromChannels(coords, colorSpace);
+    return Color.colorFromChannels(coords, colorSpace);
   };
 
   const eventToColorZ = (e: any, color: Color, originalColor: Color): Color => {
@@ -126,7 +121,7 @@
       zInv(z(originalColor) + screenPosDelta)
     );
 
-    return colorFromChannels(coords, colorSpace);
+    return Color.colorFromChannels(coords, colorSpace);
   };
 
   function stopDrag() {

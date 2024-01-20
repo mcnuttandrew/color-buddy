@@ -1,7 +1,7 @@
 <script lang="ts">
   import { tick } from "svelte";
   import colorStore from "../stores/color-store";
-  import { colorFromString } from "../lib/Color";
+  import { Color } from "../lib/Color";
   import Tooltip from "../components/Tooltip.svelte";
   import SwatchTooltipContent from "../content-modules/SwatchTooltipContent.svelte";
   import focusStore from "../stores/focus-store";
@@ -43,7 +43,9 @@
 
   function onClick(e: any) {
     const computedFill = window.getComputedStyle(e.target)["fill"];
-    const color = colorFromString(computedFill, "lab").toHex().toLowerCase();
+    const color = Color.colorFromString(computedFill, "lab")
+      .toHex()
+      .toLowerCase();
     const colorIdx = colors.findIndex((x) => x.toHex().toLowerCase() === color);
     if (colorIdx > -1) {
       focusedColor = colorIdx;

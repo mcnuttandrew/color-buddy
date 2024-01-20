@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Color, colorFromString } from "../lib/Color";
+  import { Color } from "../lib/Color";
   import ColorChannelPicker from "../components/ColorChannelPicker.svelte";
   import Tooltip from "../components/Tooltip.svelte";
   import { buttonStyle } from "../lib/styles";
@@ -16,7 +16,7 @@
       value={bgHex}
       on:change={(e) => {
         // @ts-ignore
-        onChange(colorFromString(e.target.value, colorSpace));
+        onChange(Color.colorFromString(e.target.value, colorSpace));
       }}
     />
     <ColorChannelPicker color={bg} onColorChange={onChange} />

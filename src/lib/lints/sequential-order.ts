@@ -1,6 +1,5 @@
 import { ColorLint } from "./ColorLint";
 import type { TaskType } from "./ColorLint";
-import ColorIO from "colorjs.io";
 import { Color } from "../Color";
 
 const getLightness = (color: Color) => color.toColorIO().to("lab").coords[0];

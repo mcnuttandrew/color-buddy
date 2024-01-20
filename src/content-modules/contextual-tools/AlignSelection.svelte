@@ -1,7 +1,7 @@
 <script lang="ts">
   import focusStore from "../../stores/focus-store";
   import colorStore from "../../stores/color-store";
-  import { colorFromChannels } from "../../lib/Color";
+  import { Color } from "../../lib/Color";
   import Tooltip from "../../components/Tooltip.svelte";
   import { buttonStyle } from "../../lib/styles";
 
@@ -35,7 +35,7 @@
             const newCoordinate = op(...focusLabs.map((x) => x[pos]));
             colorStore.setCurrentPalColors(
               mapFocusedColors(([a, b, c]) => {
-                return colorFromChannels(
+                return Color.colorFromChannels(
                   [
                     pos === 0 ? newCoordinate : a,
                     pos === 1 ? newCoordinate : b,

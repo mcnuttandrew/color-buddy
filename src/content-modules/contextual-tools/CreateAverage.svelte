@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { colorDirectory } from "../../lib/Color";
+  import { colorPickerConfig } from "../../lib/Color";
   import colorStore from "../../stores/color-store";
   import focusStore from "../../stores/focus-store";
   import Tooltip from "../../components/Tooltip.svelte";
@@ -21,7 +21,7 @@
   <Tooltip>
     <div slot="content">
       Create average in
-      {#each Object.keys(colorDirectory) as colorSpace}
+      {#each Object.keys(colorPickerConfig) as colorSpace}
         <button
           class={buttonStyle}
           on:click={() =>

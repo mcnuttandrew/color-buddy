@@ -1,6 +1,6 @@
 import type { Palette } from "../../stores/color-store";
 import { suggestFix } from "../api-calls";
-import { colorFromHex } from "../Color";
+import { Color } from "../Color";
 
 export type TaskType = "sequential" | "diverging" | "categorical";
 
@@ -12,7 +12,7 @@ function AIFix(palette: Palette, message: string, engine: string) {
     }
     return {
       ...palette,
-      colors: x[0].colors.map((x) => colorFromHex(x, colorSpace)),
+      colors: x[0].colors.map((x) => Color.colorFromHex(x, colorSpace)),
     };
   });
 }

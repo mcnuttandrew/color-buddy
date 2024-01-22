@@ -192,6 +192,20 @@
           >
             ignore all
           </button>
+          {#if checkGroup[1].some((x) => evalConfig[x.name]?.ignore)}
+            <button
+              class={buttonStyle}
+              on:click={() => {
+                const newEvalConfig = { ...evalConfig };
+                checkGroup[1].forEach((check) => {
+                  newEvalConfig[check.name] = { ignore: false };
+                });
+                colorStore.setCurrentPalEvalConfig(newEvalConfig);
+              }}
+            >
+              renable all
+            </button>
+          {/if}
         </div>
         {#each checkGroup[1] as check}
           {#if evalConfig[check.name]?.ignore}

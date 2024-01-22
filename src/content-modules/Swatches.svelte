@@ -96,7 +96,7 @@
         style={`color: ${color.toHex()}; transform: rotate(${
           focusSet.has(i) ? 10 : 0
         }deg)`}
-        class="mr-2"
+        class="mr-2 w-16"
         on:click={(e) => {
           const isMeta = e.metaKey || e.shiftKey || e.ctrlKey;
           if (isMeta) {

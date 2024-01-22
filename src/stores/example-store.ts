@@ -178,6 +178,15 @@ function createStore() {
         newExamples[idx].hidden = !newExamples[idx].hidden;
         return { ...old, examples: newExamples };
       }),
+    spotLight: (idx: number) =>
+      persistUpdate((old) => {
+        const newExamples = [...old.examples].map((x) => {
+          x.hidden = true;
+          return x;
+        });
+        newExamples[idx].hidden = false;
+        return { ...old, examples: newExamples };
+      }),
   };
 }
 

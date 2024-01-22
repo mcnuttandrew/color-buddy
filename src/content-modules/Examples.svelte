@@ -149,7 +149,7 @@
             <Vega spec={example.vega} />
           {/if}
           <Tooltip>
-            <div slot="content" let:onClick>
+            <div slot="content" let:onClick class="flex flex-col">
               <button
                 class={buttonStyle}
                 on:click={() => clickExample(example, idx)}
@@ -169,6 +169,12 @@
                 on:click={withFx(onClick)(() => exampleStore.toggleHidden(idx))}
               >
                 Hide
+              </button>
+              <button
+                class={buttonStyle}
+                on:click={withFx(onClick)(() => exampleStore.spotLight(idx))}
+              >
+                Show only this example
               </button>
             </div>
             <div slot="target" let:toggle>

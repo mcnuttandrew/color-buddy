@@ -20,6 +20,8 @@ export default class BackgroundContrast extends ColorLint<Color[], Algorithm> {
     options: ["APCA", "WCAG21", "Michelson", "Weber", "Lstar", "DeltaPhi"],
   };
   level: "error" | "warning" = "error";
+  group: string = "accessibility";
+  description: string = `All colors in a palette should have a sufficient contrast ratio with the background color. This is because if they are not, then they will not be differentiable from each other in some contexts.`;
 
   _runCheck() {
     const { background } = this.palette;

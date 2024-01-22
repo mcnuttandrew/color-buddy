@@ -6,6 +6,8 @@ const getLightness = (color: Color) => color.toColorIO().to("lab").coords[0];
 export default class SequentialOrder extends ColorLint<boolean, false> {
   name = "Sequential Palettes should be ordered by lightness";
   taskTypes = ["sequential"] as TaskType[];
+  group = "usability";
+  description = `Sequential palettes should be ordered by lightness. This is a defining property of a sequential palette and ensures that values are understood as having an increase (or decreasing) value.`;
   _runCheck() {
     const { colors } = this.palette;
     if (colors.length < 2) {

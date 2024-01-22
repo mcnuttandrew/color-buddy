@@ -64,13 +64,16 @@
           {/each}
         </select>
       </div>
-      <div class="flex justify-between">
-        <label for="interpolate-count">Num points to add</label>
-        <select id="interpolate-count" bind:value={numPoints}>
-          {#each [1, 2, 3, 4, 5, 6, 7, 8] as numPoints}
-            <option value={numPoints}>{numPoints}</option>
-          {/each}
-        </select>
+      <div class="flex-col items-center">
+        <label for="interpolate-count">Number of interpolation steps</label>
+        <input
+          id="interpolate-count"
+          class="h-4 w-full"
+          type="number"
+          min="1"
+          step="1"
+          bind:value={numPoints}
+        />
       </div>
 
       <!-- <div class="flex justify-between items-center w-full transition-all">
@@ -83,6 +86,7 @@
           flip points
         </button>
       </div> -->
+      <div>Preview</div>
       <PalPreview pal={tempPal} />
       <button
         class="{buttonStyle} mt-5"

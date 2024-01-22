@@ -6,20 +6,17 @@ const hexJoin = (colors: Color[]) => colors.map((x) => x.toHex()).join(", ");
 
 const uggos = ["#56FF00", "#0010FF", "#6A7E25", "#FF00EF", "#806E28"];
 const uglyColors = uggos.map((x) => Color.colorFromString(x, "lab"));
-const uggoSet = new Set(uggos);
-function checkIfAColorIsCloseToAnUglyColor(colors: Color[]) {
-  return colors.filter((color) => {
-    const deltas = uglyColors.map((uglyColor) =>
-      uglyColor.symmetricDeltaE(color)
-    );
-    return deltas.some((x) => x < 10);
-  });
-}
+const checkIfAColorIsCloseToAnUglyColor = (colors: Color[]) =>
+  colors.filter((color) =>
+    uglyColors.some((x) => x.symmetricDeltaE(color) < 10)
+  );
 
 export default class UglyColors extends ColorLint<Color[], false> {
   name = "Palette does not have ugly colors";
   taskTypes = ["sequential", "diverging", "categorical"] as TaskType[];
   level: "error" | "warning" = "warning";
+  group = "aesthetics";
+  description: string = `Colors that are close to what are known as ugly colors are sometimes advised against. See https://www.colourlovers.com/palette/1416250/The_Ugliest_Colors for more details.`;
   _runCheck() {
     const { colors } = this.palette;
     const data = checkIfAColorIsCloseToAnUglyColor(colors);
@@ -31,9 +28,12 @@ export default class UglyColors extends ColorLint<Color[], false> {
     return `This palette has some colors (specifically ${str}) that are close to what are known as ugly colors`;
   }
   async suggestFix() {
-    return {
-      ...this.palette,
-      colors: this.palette.colors.filter((x) => !uggoSet.has(x.toHex())),
-    };
+    const colors = [...this.palette.colors];
+
+    const uggColors = new Set(
+      checkIfAColorIsCloseToAnUglyColor(colors).map((x) => x.toHex())
+    );
+    const newColors = colors.filter((x) => !uggColors.has(x.toHex()));
+    return { ...this.palette, colors: newColors };
   }
 }

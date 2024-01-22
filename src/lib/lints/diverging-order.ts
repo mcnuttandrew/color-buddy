@@ -21,6 +21,8 @@ export default class SequentialOrder extends ColorLint<boolean, false> {
   name =
     "Diverging Palettes should have a middle color that is the lightest or darkest color";
   taskTypes = ["diverging"] as TaskType[];
+  group = "usability";
+  description: string = `Diverging palettes should have a middle color that is the lightest or darkest color. This is because if they are not, then they will not be differentiable from each other in some contexts.`;
   _runCheck() {
     const { colors } = this.palette;
     if (colors.length <= 2) {

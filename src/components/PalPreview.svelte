@@ -16,7 +16,7 @@
   class="flex flex-wrap rounded p-2 grow"
   style="background-color: {pal.background.toDisplay()};"
 >
-  {#each pal.colors as color, idx (idx)}
+  {#each pal.colors as color, idx}
     {#if allowModification}
       <Tooltip allowDrag={true}>
         <div slot="content" class="flex flex-col" let:onClick>

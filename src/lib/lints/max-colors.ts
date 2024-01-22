@@ -6,6 +6,8 @@ export default class MaxColors extends ColorLint<number, number> {
   taskTypes = ["sequential", "diverging", "categorical"] as TaskType[];
   hasParam = true;
   defaultParam = 10;
+  group = "aesthetics";
+  description: string = `Palettes should have a maximum number of colors. Higher numbers of colors can make it hard to identify specific values.`;
   paramOptions: { type: "number"; min: number; max: number; step: 1 } = {
     type: "number",
     min: 2,

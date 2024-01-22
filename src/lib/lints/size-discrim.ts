@@ -14,9 +14,9 @@ const nd = (p: number, s: number) => ({
 });
 
 const sMap = {
-  thin: 0.1,
-  medium: 0.5,
-  wide: 1.0,
+  Thin: 0.1,
+  Medium: 0.5,
+  Wide: 1.0,
   default: 0.1,
 };
 const pMap = {
@@ -82,13 +82,15 @@ function uniqueJNDColors(key: string, jnds: ReturnType<typeof checkJNDs>) {
   return [...uniqueColors].join(", ");
 }
 
-const Discrims = ["thin", "medium", "wide"].map((key) => {
+const Discrims = ["Thin", "Medium", "Wide"].map((key) => {
   return class SizeDiscrim extends ColorLint<
     ReturnType<typeof checkJNDs>,
     false
   > {
     name = `${key} Discriminability`;
     taskTypes = ["sequential", "diverging", "categorical"] as TaskType[];
+    group = "usability";
+    description: string = `Pairs of colors in a palette should be differentiable from each other in ${key} lines. `;
     _runCheck() {
       const jnds = checkJNDs(this.palette.colors);
       const passCheck = jnds.filter((x) => x[0] === key).length === 0;
@@ -97,7 +99,7 @@ const Discrims = ["thin", "medium", "wide"].map((key) => {
     buildMessage() {
       const jnds = this.checkData;
       const invalid = uniqueJNDColors(key, jnds);
-      return `This palette has some colors (${invalid}) that are close to each other in perceptual space and will not be resolvable for ${key} areas`;
+      return `This palette has some colors (${invalid}) that are close to each other in perceptual space and will not be resolvable for ${key} areas.`;
     }
   };
 });

@@ -76,6 +76,8 @@ const checks = blindnessTypes.map((key) => {
   return class ColorBlindCheck extends ColorLint<[number, number][], false> {
     name = `Colorblind Friendly for ${key}`;
     taskTypes = ["sequential", "diverging", "categorical"] as TaskType[];
+    group: string = "accessibility";
+    description: string = `All colors in a palette should be differentiable by people with ${blindnessLabels[key]}. This is because if they are not, then they will not be differentiable from each other in some contexts.`;
     _runCheck() {
       const colors = this.palette.colors;
       const { pass, notOKColorIndexes } = checkType(colors, key);

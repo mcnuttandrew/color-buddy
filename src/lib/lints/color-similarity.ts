@@ -7,6 +7,8 @@ export default class ColorSimilarity extends ColorLint<number[], number> {
   taskTypes = ["sequential", "diverging", "categorical"] as TaskType[];
   hasParam = true;
   defaultParam: number = 10;
+  group: string = "usability";
+  description: string = `Colors in a palette should be differentiable from each other. This is because if they are not, then they will not be differentiable from each other in some contexts.`;
   paramOptions: { type: "number"; min: number; max: number; step: number } = {
     type: "number",
     min: 10,

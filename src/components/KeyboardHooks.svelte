@@ -11,14 +11,15 @@
   $: xDomain = config.xDomain;
   $: yDomain = config.yDomain;
   function onKeyDown(e: any) {
-    if (e.target.tagName.toLowerCase() === "input") {
-      const isUIElement =
-        e.target.type === "number" || e.target.type === "range";
-      if (!isUIElement) {
+    const tagName = e.target.tagName.toLowerCase();
+    const tagType = e.target.type;
+    if (tagName === "input") {
+      const isUIElement = tagType === "number" || tagType === "range";
+      if (isUIElement) {
         return;
       }
     }
-    if (e.target.tagName.toLowerCase() === "textarea") {
+    if (tagName === "textarea") {
       return;
     }
     const key = e.key.toLowerCase();

@@ -10,6 +10,8 @@ export default class BackgroundDifferentiability extends ColorLint<
 > {
   name = "All colors differentiable from background";
   taskTypes = ["sequential", "diverging", "categorical"] as TaskType[];
+  group = "accessibility";
+  description: string = `All colors in a palette should be differentiable from the background color. This is because if they are not, then they will not be differentiable from each other in some contexts.`;
   _runCheck() {
     const { colors, background } = this.palette;
     const colorsCloseToBackground = colors.reduce((acc, x, idx) => {

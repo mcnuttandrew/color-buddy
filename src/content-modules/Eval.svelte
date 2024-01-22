@@ -2,6 +2,7 @@
   import colorStore from "../stores/color-store";
   import focusStore from "../stores/focus-store";
   import configStore from "../stores/config-store";
+  import { ColorLint } from "../lib/lints/ColorLint";
   import { computeStats } from "../lib/color-stats";
   import { runLintChecks } from "../lib/linter";
   import { colorNameSimple } from "../lib/lints/name-discrim";
@@ -25,6 +26,17 @@
     x.taskTypes.includes(palType)
   );
 
+  $: checkGroups = checks.reduce(
+    (acc, check) => {
+      if (!acc[check.group]) {
+        acc[check.group] = [];
+      }
+      acc[check.group].push(check);
+      return acc;
+    },
+    {} as Record<string, ColorLint<any, any>[]>
+  );
+
   $: colorsToIssues = colors.map((x) => {
     const hex = `${x.toHex()}`;
     return checks.filter(
@@ -36,6 +48,22 @@
     error: "❌",
     warning: "⚠️",
   } as any;
+  // more info symbol: ℹ️
+
+  const titleCase = (str: string) =>
+    str
+      .split(" ")
+      .map((x) => x[0].toUpperCase() + x.slice(1))
+      .join(" ");
+
+  const descriptions = {
+    sequential:
+      "Sequential palettes are used to represent a range of values. They are often used to represent quantitative data, such as temperature or elevation.",
+    diverging:
+      "Diverging palettes are used to represent a range of values around a central point. They are often used to represent quantitative data, such as temperature or elevation.",
+    categorical:
+      "Categorical palettes are used to represent a set of discrete values. They are often used to represent qualitative data, such as different types of land cover or different political parties.",
+  };
 </script>
 
 <div class="flex h-full">
@@ -145,54 +173,75 @@
           <option value={type}>{type}</option>
         {/each}
       </select>
-      Palette
+      palette. {descriptions[palType]}
     </div>
-    {#if Object.keys($colorStore.currentPal.evalConfig)}
-      <button
-        class={buttonStyle}
-        on:click={() => {
-          colorStore.setCurrentPalEvalConfig({});
-        }}
-      >
-        Restore Defaults
-      </button>
-    {/if}
-    <div>Checks</div>
+
     <div class="overflow-auto h-full max-w-md">
-      {#each checks as check}
-        {#if evalConfig[check.name]?.ignore}
-          <div class="text-xs">
-            "{check.name}" Ignored for this palette
-            <button
-              class={buttonStyle}
-              on:click={() => {
-                colorStore.setCurrentPalEvalConfig({
-                  ...evalConfig,
-                  [check.name]: { ignore: false },
-                });
-              }}
-            >
-              renable
-            </button>
-          </div>
-        {:else}
-          <div class="w-full rounded flex flex-col justify-between py-1">
-            <div class="flex" class:font-bold={!check.passes}>
-              {#if check.passes}<div class="text-green-500">✅</div>{:else}<div
-                  class="text-red-500"
-                >
-                  {checkLevelToSymbol[check.level]}
-                </div>{/if}
-              {#if !check.passes}
-                <EvalResponse {check} />
-              {/if}{check.name}
+      {#each Object.entries(checkGroups) as checkGroup}
+        <div class="flex mt-5">
+          <div class="font-bold mr-5">{titleCase(checkGroup[0])} Checks</div>
+          <button
+            class={buttonStyle}
+            on:click={() => {
+              const newEvalConfig = { ...evalConfig };
+              checkGroup[1].forEach((check) => {
+                newEvalConfig[check.name] = { ignore: true };
+              });
+              colorStore.setCurrentPalEvalConfig(newEvalConfig);
+            }}
+          >
+            ignore all
+          </button>
+        </div>
+        {#each checkGroup[1] as check}
+          {#if evalConfig[check.name]?.ignore}
+            <div class="text-xs">
+              Ignored "{check.name}"
+              <button
+                class={buttonStyle}
+                on:click={() => {
+                  colorStore.setCurrentPalEvalConfig({
+                    ...evalConfig,
+                    [check.name]: { ignore: false },
+                  });
+                }}
+              >
+                renable
+              </button>
             </div>
-            {#if !check.passes}
-              <ExplanationViewer {check} />
-            {/if}
-          </div>
-        {/if}
+          {:else}
+            <div class="w-full rounded flex flex-col justify-between py-1">
+              <div class="flex" class:font-bold={!check.passes}>
+                {#if check.passes}<div class="text-green-500">
+                    ✅
+                  </div>{:else}<div class="text-red-500">
+                    {checkLevelToSymbol[check.level]}
+                  </div>{/if}
+                <Tooltip>
+                  <div slot="content" class="flex flex-col">
+                    <div class="">{check.description}</div>
+                  </div>
+                  <button slot="target" let:toggle on:click={toggle}>ⓘ</button>
+                </Tooltip>
+                {#if !check.passes}
+                  <EvalResponse {check} />
+                {/if}{check.name}
+              </div>
+              {#if !check.passes}
+                <ExplanationViewer {check} />
+              {/if}
+            </div>
+          {/if}
+        {/each}
       {/each}
+      {#if Object.keys($colorStore.currentPal.evalConfig)}
+        <button
+          class={`${buttonStyle} mt-5`}
+          on:click={() => colorStore.setCurrentPalEvalConfig({})}
+        >
+          Restore Defaults
+        </button>
+      {/if}
     </div>
   </div>
 </div>

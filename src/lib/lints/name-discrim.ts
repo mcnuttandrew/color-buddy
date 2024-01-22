@@ -98,6 +98,9 @@ export default class ColorNameDiscriminability extends ColorLint<
 > {
   name = "Color Name Discriminability";
   taskTypes = ["sequential", "diverging", "categorical"] as TaskType[];
+  group = "usability";
+  description: string =
+    "Being able to identify colors by name is important for usability and for memorability. ";
   _runCheck() {
     const { colors } = this.palette;
     const passCheck = simpleDiscrim(colors);

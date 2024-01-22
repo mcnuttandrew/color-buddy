@@ -27,6 +27,8 @@ export class ColorLint<CheckData, ParamType> {
   hasParam: boolean = false;
   config: { val?: ParamType } = {};
   defaultParam: ParamType = false as any;
+  group: string = "";
+  description: string = "";
   paramOptions:
     | { type: "number"; min: number; max: number; step: number }
     | { type: "enum"; options: string[] }

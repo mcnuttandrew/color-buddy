@@ -74,7 +74,7 @@ const checks = blindnessTypes.map((key) => {
   return class ColorBlindCheck extends ColorLint<[number, number][], false> {
     name = `Colorblind Friendly for ${key}`;
     taskTypes = ["sequential", "diverging", "categorical"] as TaskType[];
-    _runCheck() {
+    async _runCheck() {
       const colors = this.palette.colors;
       const { pass, notOKColorIndexes } = checkType(colors, key);
       return { passCheck: pass, data: notOKColorIndexes };

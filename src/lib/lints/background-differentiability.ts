@@ -10,7 +10,7 @@ export default class BackgroundDifferentiability extends ColorLint<
 > {
   name = "All colors differentiable from background";
   taskTypes = ["sequential", "diverging", "categorical"] as TaskType[];
-  _runCheck() {
+  async _runCheck() {
     const { colors, background } = this.palette;
     const colorsCloseToBackground = colors.reduce((acc, x, idx) => {
       const pass = x.symmetricDeltaE(background) < 15;

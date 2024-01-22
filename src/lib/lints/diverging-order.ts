@@ -21,7 +21,7 @@ export default class SequentialOrder extends ColorLint<boolean, false> {
   name =
     "Diverging Palettes should have a middle color that is the lightest or darkest color";
   taskTypes = ["diverging"] as TaskType[];
-  _runCheck() {
+  async _runCheck() {
     const { colors } = this.palette;
     if (colors.length <= 2) {
       return { passCheck: true, data: false };

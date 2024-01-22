@@ -15,7 +15,7 @@ export default class ExtremeColors extends ColorLint<Color[], false> {
   taskTypes = ["sequential", "diverging", "categorical"] as TaskType[];
   level: "error" | "warning" = "warning";
 
-  _runCheck() {
+  async _runCheck() {
     const { colors } = this.palette;
     const extremes = findExtremeColors(colors);
     const passCheck = extremes.length === 0;

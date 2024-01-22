@@ -24,9 +24,11 @@
   $: colorNames = colorNameSimple(colors);
   $: palType = $colorStore.currentPal.type;
   $: evalConfig = $colorStore.currentPal.evalConfig;
-  $: checks = runLintChecks($colorStore.currentPal).filter((x) =>
-    x.taskTypes.includes(palType)
-  );
+  $: checks = [];
+  $: runLintChecks($colorStore.currentPal).then((result) => {
+    console.log(result);
+    checks = result.filter((x) => x.taskTypes.includes(palType));
+  });
 
   $: colorsToIssues = colors.map((x) => {
     const hex = `${x.toHex()}`;

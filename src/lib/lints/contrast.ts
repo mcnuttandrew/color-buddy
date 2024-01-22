@@ -21,7 +21,7 @@ export default class BackgroundContrast extends ColorLint<Color[], Algorithm> {
   };
   level: "error" | "warning" = "error";
 
-  _runCheck() {
+  async _runCheck() {
     const { background } = this.palette;
     const bg = background.toColorIO();
     const failingColors = this.palette.colors.filter((x) => {

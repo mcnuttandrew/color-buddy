@@ -2,6 +2,7 @@ import namer from "color-namer";
 import { ColorLint } from "./ColorLint";
 import type { TaskType } from "./ColorLint";
 import { Color, colorFromHex } from "../Color";
+import { colorName } from "../api-calls";
 
 function findSmallest<A>(arr: A[], accessor: (x: A) => number): A {
   let smallest = arr[0];
@@ -21,11 +22,14 @@ function titleCase(str: string) {
 
 // Simpler version of the color name stuff
 export function colorNameSimple(colors: Color[]) {
-  return colors.map((x) => ({ word: getName(x), hex: x.toHex() }));
+  // return colors.map((x) => ({ word: getName(x), hex: x.toHex() }));
+  return Promise.all(colors.map((x) => colorName(x))).then((names) =>
+    names.map((x, idx) => ({ word: x, hex: colors[idx].toHex() }))
+  );
 }
 
-function simpleDiscrim(colors: Color[]) {
-  const names = colorNameSimple(colors);
+async function simpleDiscrim(colors: Color[]) {
+  const names = await colorNameSimple(colors);
   const counts = names.reduce((acc, x) => {
     if (!acc[x.word]) {
       acc[x.word] = [];
@@ -98,9 +102,9 @@ export default class ColorNameDiscriminability extends ColorLint<
 > {
   name = "Color Name Discriminability";
   taskTypes = ["sequential", "diverging", "categorical"] as TaskType[];
-  _runCheck() {
+  async _runCheck() {
     const { colors } = this.palette;
-    const passCheck = simpleDiscrim(colors);
+    const passCheck = await simpleDiscrim(colors);
     return { passCheck: !passCheck, data: passCheck || "" };
   }
   buildMessage(): string {

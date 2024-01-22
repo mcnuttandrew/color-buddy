@@ -53,21 +53,21 @@ export class ColorLint<CheckData, ParamType> {
     return copy;
   }
 
-  run() {
+  async run() {
     const { evalConfig } = this.palette;
     this.config = {
       ...evalConfig[this.name],
       val: evalConfig[this.name]?.val || this.defaultParam,
     };
 
-    const { passCheck, data } = this._runCheck();
+    const { passCheck, data } = await this._runCheck();
     this.passes = passCheck;
     this.checkData = data as CheckData;
     this.message = this.buildMessage();
     return this;
   }
 
-  _runCheck(): { passCheck: boolean; data: CheckData } {
+  async _runCheck(): Promise<{ passCheck: boolean; data: CheckData }> {
     return { passCheck: true, data: {} as CheckData };
   }
   // Fail Message

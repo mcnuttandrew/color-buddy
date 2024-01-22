@@ -13,7 +13,7 @@ export default class ColorSimilarity extends ColorLint<number[], number> {
     max: 100,
     step: 1,
   };
-  _runCheck() {
+  async _runCheck() {
     const { colors } = this.palette;
     const data = computeStats(
       colors.map((x) => x.toChroma()),

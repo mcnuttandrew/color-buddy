@@ -8,11 +8,31 @@ import ViteWorker from "./heavy-computation.worker?worker";
 const tsWorker = new ViteWorker();
 
 // send and receive messages from the worker
-tsWorker.postMessage({ type: "test", content: "hellow" });
+const message = { type: "test", content: "hellow" };
+const randID = () => Math.random().toString(36).substring(7);
+function workerDispatch() {
+  const waitingCallbacks: { [key: string]: (msg: string) => void } = {};
+  tsWorker.addEventListener("message", (msg: MessageEvent<string>) => {
+    const { id, content } = msg.data;
+    if (waitingCallbacks[id]) {
+      waitingCallbacks[id](content);
+      delete waitingCallbacks[id];
+    }
+  });
 
-tsWorker.addEventListener("message", (msg: MessageEvent<string>) => {
-  console.log(msg.data); // how now, brown cow?
-});
+  return async function caller(msg: typeof message) {
+    const id = randID();
+    tsWorker.postMessage({ ...msg, id });
+    return new Promise<string>((resolve) => {
+      waitingCallbacks[id] = resolve;
+    });
+  };
+}
+const dispatch = workerDispatch();
+
+export function colorName(c: Color) {
+  return dispatch({ type: "color-name", content: c.toHex() });
+}
 
 type Engine = "openai" | "google";
 type SimplePal = { background: string; colors: string[] };

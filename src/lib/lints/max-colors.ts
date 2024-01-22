@@ -14,7 +14,7 @@ export default class MaxColors extends ColorLint<number, number> {
   };
   level: "error" | "warning" = "warning";
 
-  _runCheck() {
+  async _runCheck() {
     const { colors } = this.palette;
     const numColors = colors.length;
     return {

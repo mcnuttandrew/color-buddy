@@ -13,18 +13,21 @@ import AvoidExtremes from "./lints/avoid-extremes";
 import DivergingOrder from "./lints/diverging-order";
 import BackgroundContrast from "./lints/contrast";
 
-export function runLintChecks(palette: Palette): ColorLint<any, any>[] {
-  return [
-    new NameDiscrim(palette),
-    new MaxColors(palette),
-    ...Discrims.map((x) => new x(palette)),
-    ...Blinds.map((x) => new x(palette)),
-    new ColorSimilarity(palette),
-    new BackgroundDifferentiability(palette),
-    new UglyColors(palette),
-    new SequentialOrder(palette),
-    new AvoidExtremes(palette),
-    new DivergingOrder(palette),
-    new BackgroundContrast(palette),
-  ].map((x) => x.run());
+export async function runLintChecks(palette: Palette) {
+  const lints = Promise.all(
+    [
+      new NameDiscrim(palette),
+      new MaxColors(palette),
+      ...Discrims.map((x) => new x(palette)),
+      ...Blinds.map((x) => new x(palette)),
+      new ColorSimilarity(palette),
+      new BackgroundDifferentiability(palette),
+      new UglyColors(palette),
+      new SequentialOrder(palette),
+      new AvoidExtremes(palette),
+      new DivergingOrder(palette),
+      new BackgroundContrast(palette),
+    ].map(async (x) => await x.run())
+  );
+  return await lints;
 }

@@ -89,7 +89,7 @@ const Discrims = ["thin", "medium", "wide"].map((key) => {
   > {
     name = `${key} Discriminability`;
     taskTypes = ["sequential", "diverging", "categorical"] as TaskType[];
-    _runCheck() {
+    async _runCheck() {
       const jnds = checkJNDs(this.palette.colors);
       const passCheck = jnds.filter((x) => x[0] === key).length === 0;
       return { passCheck, data: jnds };

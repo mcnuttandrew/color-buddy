@@ -8,7 +8,7 @@ export default class ColorSimilarity extends ColorLint<number[], number> {
   hasParam = true;
   defaultParam: number = 10;
   group: string = "usability";
-  description: string = `Colors in a palette should be differentiable from each other. This is because if they are not, then they will not be differentiable from each other in some contexts.`;
+  description: string = `Opt for colors that are perceptually distinguishable in a logical sequence when designing visual elements like charts or graphs. This ensures that viewers can easily recognize the order or progression of data points. For categorical this means that when only a small number of colors are used, they should be as different as possible. For sequential and diverging, this means that the colors should be as different as possible in order.`;
   paramOptions: { type: "number"; min: number; max: number; step: number } = {
     type: "number",
     min: 10,

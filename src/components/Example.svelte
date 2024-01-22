@@ -21,7 +21,7 @@
     bg: string
   ) {
     const numInUse = countNumberOfExamplesInUse(example);
-    let svg = example.replace("SaLmOn", bg);
+    let svg = example.replace("rebekkablue", bg);
     //   .replace("<svg", `<svg overflow="visible" `);
     if (!svg.match(/<svg[^>]*\sheight="([^"]*)"/)) {
       svg = svg.replace("<svg", `<svg height="300px" `);

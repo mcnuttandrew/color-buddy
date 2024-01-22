@@ -35,7 +35,7 @@ export function buildTheme(pal: Palette): any {
   const basicColor = pal.background.luminance() > 0.5 ? "#000000" : "#ffffff";
   // const secondLevelElementColor = "#605E5C";
   // const backgroundColor = pal.background.toHex();
-  const backgroundColor = "SaLmOn";
+  const backgroundColor = "rebekkablue";
   // const backgroundSecondaryColor = "#C8C6C4";
 
   return {

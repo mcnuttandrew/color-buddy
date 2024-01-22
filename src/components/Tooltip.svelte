@@ -10,12 +10,16 @@
   import { draggable } from "../lib/utils";
   export let customClass: string = "";
   let tooltipOpen: boolean = initiallyOpen;
+
   const query = "main *";
   function onClick() {
     tooltipOpen = false;
     onClose();
     document.querySelectorAll(query).forEach((x) => {
       x.removeEventListener("click", onClick);
+      // remove select-none class
+      const newClass = x.getAttribute("class").replace("select-none", "");
+      x.setAttribute("class", newClass);
     });
   }
   function toggle() {
@@ -35,6 +39,8 @@
 
     document.querySelectorAll(query).forEach((x) => {
       x.addEventListener("click", onClick);
+      const newClass = x.getAttribute("class") + " select-none";
+      x.setAttribute("class", newClass);
     });
   }
   $: topString = boundingBox
@@ -49,9 +55,10 @@
     }
   }
   $: {
-    if (allowDrag && $configStore.tooltipXY) {
-      topString = $configStore.tooltipXY[1];
-      leftString = $configStore.tooltipXY[0];
+    if (tooltipOpen && allowDrag && $configStore.tooltipXY?.length) {
+      const [x, y] = $configStore.tooltipXY;
+      topString = y;
+      leftString = x;
     }
   }
 </script>

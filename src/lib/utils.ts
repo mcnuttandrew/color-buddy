@@ -211,7 +211,7 @@ const dragExtent = (
   return { xMin, xMax, yMin, yMax };
 };
 
-export function selectColorsFromDragZ(
+type selectColorsFromDrag = (
   dragBox: { x: number; y: number },
   dragging: { x: number; y: number },
   parentPos: { x: number; y: number },
@@ -224,32 +224,35 @@ export function selectColorsFromDragZ(
     y: (color: Color) => number;
     z: (color: Color) => number;
   }
-) {
+) => number[];
+
+const between = (x: number, a: number, b: number) => a <= x && x <= b;
+export const selectColorsFromDragZ: selectColorsFromDrag = (
+  dragBox,
+  dragging,
+  parentPos,
+  colors,
+  config
+) => {
   const { yMin, yMax } = dragExtent(dragBox, dragging, parentPos);
+  // magic offset required to make the selection box work
+  // dunno why
+  const magicOffset = 15;
   const newFocusedColors = colors
-    .map((color, idx) => {
-      const y = config.z(color);
-      return yMin <= y && y <= yMax ? idx : -1;
-    })
+    .map((color, idx) =>
+      between(config.z(color) + magicOffset, yMin, yMax) ? idx : -1
+    )
     .filter((x) => x !== -1);
   return [...newFocusedColors];
-  // onFocusedColorsChange([...newFocusedColors]);
-}
+};
 
-export function selectColorsFromDrag(
-  dragBox: { x: number; y: number },
-  dragging: { x: number; y: number },
-  parentPos: { x: number; y: number },
-  colors: Color[],
-  config: {
-    isPolar: boolean;
-    plotHeight: number;
-    plotWidth: number;
-    x: (color: Color) => number;
-    y: (color: Color) => number;
-    z: (color: Color) => number;
-  }
-) {
+export const selectColorsFromDrag: selectColorsFromDrag = (
+  dragBox,
+  dragging,
+  parentPos,
+  colors,
+  config
+) => {
   const { xMin, xMax, yMin, yMax } = dragExtent(dragBox, dragging, parentPos);
 
   // check if selected in screen space
@@ -260,13 +263,13 @@ export function selectColorsFromDrag(
         xVal += config.plotWidth / 2;
         yVal += config.plotHeight / 2;
       }
-      const inXBound = xMin <= xVal && xVal <= xMax;
-      const inYBound = yMin <= yVal && yVal <= yMax;
+      const inXBound = between(xVal, xMin, xMax);
+      const inYBound = between(yVal, yMin, yMax);
       return inXBound && inYBound ? idx : -1;
     })
     .filter((x) => x !== -1);
   return [...newFocusedColors];
-}
+};
 
 export const toXY = (e: any) => {
   const touches = e?.touches?.length ? e.touches : e?.changedTouches || [];
@@ -318,3 +321,66 @@ export function makeScales(
   const zInv = (z: number) => zScale.invert(z);
   return { x, y, z, xInv, yInv, zInv };
 }
+
+type dragEventToColor = (
+  e: any,
+  originalColor: Color,
+  originalPos: { x: number; y: number },
+  config: (typeof colorPickerConfig)[string],
+  scales: ReturnType<typeof makeScales>,
+  colorSpace: any,
+  dragDelta: { x: number; y: number }
+) => Color;
+export const dragEventToColorZ: dragEventToColor = (
+  e,
+  originalColor,
+  originalPos,
+  config,
+  scales,
+  colorSpace,
+  dragDelta
+) => {
+  const { zInv, z } = scales;
+  const screenPosDelta = toXY(e).y - originalPos.y + dragDelta.y;
+  const coords = originalColor.toChannels();
+  const zClamp = (v: number) => clampToRange(v, config.zDomain);
+  coords[config.zChannelIndex] = zClamp(
+    zInv(z(originalColor) + screenPosDelta)
+  );
+
+  return Color.colorFromChannels(coords, colorSpace);
+};
+
+export const dragEventToColorXY: dragEventToColor = (
+  e,
+  originalColor,
+  originalPos,
+  config,
+  scales,
+  colorSpace,
+  dragDelta
+) => {
+  const { x, y, xInv, yInv } = scales;
+  const values = toXY(e);
+  const screenPosDelta = {
+    x: values.x - originalPos.x + dragDelta.x,
+    y: values.y - originalPos.y + dragDelta.y,
+  };
+
+  const xClamp = (v: number) => clampToRange(v, config.xDomain);
+  const yClamp = (v: number) => clampToRange(v, config.yDomain);
+  // screen coordinates
+  const newPos = [
+    x(originalColor) + screenPosDelta.x,
+    y(originalColor) + screenPosDelta.y,
+  ];
+  // color space coordinates
+  const newVal = [
+    xClamp(xInv(newPos[0], newPos[1])),
+    yClamp(yInv(newPos[0], newPos[1])),
+  ];
+  const coords = originalColor.toChannels();
+  coords[config.xChannelIndex] = newVal[0];
+  coords[config.yChannelIndex] = newVal[1];
+  return Color.colorFromChannels(coords, colorSpace);
+};

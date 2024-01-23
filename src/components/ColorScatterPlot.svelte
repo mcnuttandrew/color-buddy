@@ -4,11 +4,12 @@
   import {
     makePosAndSizes,
     toggleElement,
-    clampToRange,
     selectColorsFromDragZ,
     selectColorsFromDrag,
     toXY,
     makeScales,
+    dragEventToColorZ,
+    dragEventToColorXY,
   } from "../lib/utils";
   import configStore from "../stores/config-store";
   import { scaleLinear } from "d3-scale";
@@ -82,141 +83,8 @@
   $: pos = makePosAndSizes(pickedColors);
 
   let dragging: false | { x: number; y: number } = false;
-  let dragBox: false | { x: number; y: number } = false;
-  let parentPos = { x: 0, y: 0 };
-
-  const eventToColorXY = (
-    e: any,
-    color: Color,
-    originalColor: Color
-  ): Color => {
-    if (!dragging || dragging.x === undefined || dragging.y === undefined)
-      return color;
-
-    const values = toXY(e);
-    const screenPosDelta = {
-      x: values.x - dragging.x,
-      y: values.y - dragging.y,
-    };
-
-    const xClamp = (v: number) => clampToRange(v, config.xDomain);
-    const yClamp = (v: number) => clampToRange(v, config.yDomain);
-    // screen coordinates
-    const newPos = [
-      x(originalColor) + screenPosDelta.x,
-      y(originalColor) + screenPosDelta.y,
-    ];
-    // color space coordinates
-    const newVal = [
-      xClamp(xInv(newPos[0], newPos[1])),
-      yClamp(yInv(newPos[0], newPos[1])),
-    ];
-    const coords = originalColor.toChannels();
-    coords[config.xChannelIndex] = newVal[0];
-    coords[config.yChannelIndex] = newVal[1];
-    return Color.colorFromChannels(coords, colorSpace);
-  };
-
-  const eventToColorZ = (e: any, color: Color, originalColor: Color): Color => {
-    if (!dragging || dragging.x === undefined || dragging.y === undefined)
-      return color;
-
-    const screenPosDelta = toXY(e).y - dragging.y;
-    const coords = originalColor.toChannels();
-    const zClamp = (v: number) => clampToRange(v, config.zDomain);
-    coords[config.zChannelIndex] = zClamp(
-      zInv(z(originalColor) + screenPosDelta)
-    );
-
-    return Color.colorFromChannels(coords, colorSpace);
-  };
-
-  function stopDrag() {
-    dragging = false;
-    dragBox = false;
-  }
 
   let originalColors = [] as Color[];
-  let isMainBoxDrag = true;
-  let isPointDrag = false;
-  const startDrag = (isXYDrag: boolean, idx?: number) => (e: any) => {
-    if (scatterPlotMode !== "moving") return;
-    hoveredPoint = false;
-    // console.log("start drag", e.target);
-    startDragging();
-    const targetIsPoint = typeof idx === "number";
-    let target = e.target;
-    const isMetaKey = e.metaKey || e.shiftKey || e.ctrlKey;
-    isPointDrag = false;
-    if (targetIsPoint && !focusSet.has(idx)) {
-      const newSet = isMetaKey ? [...focusSet, idx] : [idx];
-      onFocusedColorsChange(newSet);
-      isPointDrag = true;
-    }
-
-    isMainBoxDrag = isXYDrag;
-    parentPos = target.getBoundingClientRect();
-    const { x, y } = toXY(e);
-    dragging = { x, y };
-    originalColors = [...colors];
-
-    if (focusedColors.length === 0) {
-      dragBox = { x, y };
-    } else {
-      dragBox = false;
-    }
-  };
-
-  type Func = typeof eventToColorZ | typeof eventToColorZ;
-  const dragResponse = (func: Func) => (e: any) => {
-    const newColors = colors.map((color, idx) =>
-      focusSet.has(idx) ? func(e, color, originalColors[idx]) : color
-    );
-
-    onColorsChange(newColors);
-  };
-
-  const rectMoveResponse = (isZ: boolean) => (e: any) => {
-    // console.log("rect move response");
-    if (!dragging || scatterPlotMode !== "moving") return;
-    const { x, y } = toXY(e);
-    if (dragging && focusedColors.length > 0) {
-      dragResponse(isZ ? eventToColorZ : eventToColorXY)(e);
-    }
-    if (dragging && focusedColors.length === 0) {
-      dragBox = { x, y };
-    }
-  };
-
-  const rectMoveEnd = (isZ: boolean) => (e: any) => {
-    // console.log("rect move end");
-    stopDragging();
-    if (scatterPlotMode !== "moving") return;
-    if (!isPointDrag && dragBox && dragging) {
-      const dragResp = isZ ? selectColorsFromDragZ : selectColorsFromDrag;
-      const newFocus = dragResp(dragBox, dragging, parentPos, colors, {
-        x,
-        y,
-        z,
-        isPolar: config.isPolar,
-        plotHeight,
-        plotWidth,
-      });
-      onFocusedColorsChange(newFocus);
-    }
-    const xy = toXY(e);
-    if (
-      !isPointDrag &&
-      dragging &&
-      dragging.x === xy.x &&
-      dragging.y === xy.y
-    ) {
-      onFocusedColorsChange([]);
-    }
-
-    dragging = false;
-    dragBox = false;
-  };
 
   $: luminance = bg.luminance();
   $: axisColor = luminance > 0.4 ? "#00000022" : "#ffffff55";
@@ -225,8 +93,8 @@
 
   let hoveredPoint: Color | false = false;
   let hoverPoint = (x: typeof hoveredPoint) => (hoveredPoint = x);
+
   // coordinate transforms
-  // slight indirection to make these mappings more re-usable
   $: scales = makeScales(
     { rScale, angleScale, xScale, yScale, zScale },
     config
@@ -235,27 +103,15 @@
   $: x = scales.x;
   $: y = scales.y;
   $: z = scales.z;
-  // screen -> color space
-  $: xInv = scales.xInv;
-  $: yInv = scales.yInv;
-  $: zInv = scales.zInv;
 
-  function clickResponse(e: any, i: number) {
-    if (e.metaKey || e.shiftKey) {
-      onFocusedColorsChange(toggleElement(focusedColors, i));
-    } else {
-      onFocusedColorsChange([i]);
-    }
-  }
-
-  let CircleProps = (color: Color, i: number) => ({
+  $: CircleProps = (color: Color, i: number) => ({
     cx: x(color),
     cy: y(color),
     r: 10,
     class: "cursor-pointer",
     fill: color.toDisplay(),
   });
-  let RectProps = (color: Color, i: number) => ({
+  $: RectProps = (color: Color, i: number) => ({
     y: z(color),
     class: "cursor-pointer",
     fill: color.toDisplay(),
@@ -263,12 +119,12 @@
     height: 5,
     width: 80 - 10 * 2 + (focusSet.has(i) ? 10 : 0),
   });
-  $: SelectionBoxStyles = {
+  $: outerDottedBoxStyle = {
     fill: "white",
     "fill-opacity": "0",
-    "pointer-events": "none",
     "stroke-dasharray": "5,5",
     "stroke-width": "1",
+    "stroke-opacity": focusedColors.length > 1 ? "1" : "0",
     cursor: "grab",
     stroke: selectionColor,
   };
@@ -280,20 +136,123 @@
     axisColor,
     textColor,
     colorSpace,
-    dragging: !!dragging,
+    dragging: interactionMode === "drag",
   };
 
-  function dragStart() {}
-  function dragUpdate() {}
-  function dragEnd() {}
-  function selectionStart() {}
-  function selectionUpdate() {}
-  function selectionEnd() {}
-  const clickPoint = (i: number) => (e: any) => {
+  let interactionMode: "idle" | "drag" | "select" | "point-touch" = "idle";
+  let dragTargetPos = { x: 0, y: 0 };
+  let dragDelta = { x: 0, y: 0 };
+  function dragStart(e: any) {
+    startDragging();
+    interactionMode = "drag";
+    // console.log("drag start");
+    const { x, y } = toXY(e);
+    dragTargetPos = e.target.getBoundingClientRect();
+    dragDelta = { x: dragTargetPos.x - x, y: dragTargetPos.y - y };
+    originalColors = [...colors];
+  }
+
+  const dragUpdate = (isZ: boolean) => (e: any) => {
+    // console.log("drag update");
+    const dragToColor = isZ ? dragEventToColorZ : dragEventToColorXY;
+    const newColors = colors.map((color, idx) => {
+      if (!focusSet.has(idx)) {
+        return color;
+      }
+      return dragToColor(
+        e,
+        originalColors[idx],
+        dragTargetPos,
+        config,
+        scales,
+        colorSpace,
+        dragDelta
+      );
+    });
+
+    onColorsChange(newColors);
+  };
+  function dragEnd(e: any) {
+    interactionMode = "idle";
+    stopDragging();
+    // console.log("drag end");
+  }
+
+  let selectionMouseStart = { x: 0, y: 0 };
+  let selectionMouseCurrent = { x: 0, y: 0 };
+  let windowPos = { x: 0, y: 0 };
+  let selectionIsZ = false;
+  const selectionStart = (isZ: boolean) => (e: any) => {
+    selectionIsZ = isZ;
+    interactionMode = "select";
+    // console.log("selection start");
+    const { x, y } = toXY(e);
+    selectionMouseStart = { x, y };
+    selectionMouseCurrent = { x, y };
+    windowPos = e.target.getBoundingClientRect();
+  };
+  const selectionUpdate = (isZ: boolean) => (e: any) => {
+    // console.log("selection update");
+    const { x, y } = toXY(e);
+    selectionMouseCurrent = { x, y };
+  };
+  const selectionEnd = (isZ: boolean) => (e: any) => {
+    interactionMode = "idle";
+    const miniConfig = { isPolar: config.isPolar, plotHeight, plotWidth };
+    const resp = isZ ? selectColorsFromDragZ : selectColorsFromDrag;
+    const newFocus = resp(
+      selectionMouseStart,
+      selectionMouseCurrent,
+      windowPos,
+      colors,
+      { ...miniConfig, ...scales }
+    );
+    onFocusedColorsChange(newFocus);
+  };
+
+  const pointMouseUp = (i: number) => (e: any) => {
+    // console.log("point mouse up");
+    interactionMode = "idle";
     const isMeta = e.metaKey || e.shiftKey;
     const newElements = isMeta ? toggleElement(focusedColors, i) : [i];
 
     onFocusedColorsChange(newElements);
+  };
+
+  const switchToDragPoint = (i: number) => (e: any) => {
+    if (interactionMode !== "point-touch") return;
+    startDragging();
+    // console.log("switch to drag point");
+    onFocusedColorsChange([i]);
+    interactionMode = "drag";
+  };
+
+  const fillParamsXY = {
+    x: 0,
+    y: 0,
+    width,
+    height,
+    opacity: 0,
+    fill: "white",
+  };
+  const fillParamsZ = {
+    x: margin.left,
+    // y: margin.top,
+    y: 0,
+    width: 80,
+    height,
+    opacity: 0,
+    fill: "white",
+  };
+
+  $: selectionBoxStyle = {
+    x: Math.min(selectionMouseStart.x, selectionMouseCurrent.x) - windowPos.x,
+    y: Math.min(selectionMouseStart.y, selectionMouseCurrent.y) - windowPos.y,
+    width: Math.abs(selectionMouseStart.x - selectionMouseCurrent.x),
+    height: Math.abs(selectionMouseStart.y - selectionMouseCurrent.y),
+    fill: selectionColor,
+    "fill-opacity": "0.5",
+    class: "pointer-events-none",
   };
 </script>
 
@@ -314,16 +273,10 @@
             <ColorScatterPlotXyGuides {...guideProps} />
           {/if}
 
-          <!-- svelte-ignore a11y-no-static-element-interactions -->
-          <!-- svelte-ignore a11y-click-events-have-key-events -->
           <rect
-            x="0"
-            y="0"
-            {width}
-            {height}
-            opacity="0"
-            fill="white"
-            class:cursor-pointer={dragging}
+            {...fillParamsXY}
+            on:touchstart|preventDefault={selectionStart(false)}
+            on:mousedown|preventDefault={selectionStart(false)}
           />
 
           <g
@@ -332,10 +285,7 @@
               : ""}
           >
             <!-- background circle -->
-            <g
-              transform={`translate(${x(bg)}, ${y(bg)})`}
-              class="pointer-events-none"
-            >
+            <g transform={`translate(${x(bg)}, ${y(bg)})`}>
               <circle r={15} stroke={axisColor} fill={bg.toDisplay()} />
               <text
                 fill={textColor}
@@ -348,14 +298,16 @@
             </g>
             <!-- main colors -->
             {#each colors as color, i}
-              <!-- svelte-ignore a11y-no-static-element-interactions -->
-              <!-- svelte-ignore a11y-click-events-have-key-events -->
-              <!-- svelte-ignore a11y-mouse-events-have-key-events -->
               {#if scatterPlotMode === "moving"}
                 <circle
                   {...CircleProps(color, i)}
                   r={10 + (focusSet.has(i) ? 5 : 0)}
-                  on:click={clickPoint(i)}
+                  on:mousedown|preventDefault={(e) => {
+                    dragStart(e);
+                    interactionMode = "point-touch";
+                  }}
+                  on:mouseup|preventDefault={pointMouseUp(i)}
+                  on:mouseleave|preventDefault={switchToDragPoint(i)}
                 />
               {/if}
               {#if scatterPlotMode === "looking"}
@@ -369,13 +321,18 @@
               {/if}
             {/each}
             {#each blindColors as blindColor, i}
-              <!-- svelte-ignore a11y-click-events-have-key-events -->
               <circle
                 {...CircleProps(blindColor, i)}
                 class="cursor-pointer"
                 stroke={blindColor.toDisplay()}
                 fill={"none"}
                 stroke-width="4"
+                on:mousedown|preventDefault={(e) => {
+                  dragStart(e);
+                  interactionMode = "point-touch";
+                }}
+                on:mouseup|preventDefault={pointMouseUp(i)}
+                on:mouseleave|preventDefault={switchToDragPoint(i)}
               />
             {/each}
             <!-- simple tooltip -->
@@ -388,30 +345,45 @@
                 <text fill={textColor}>{hoveredPoint.toDisplay()}</text>
               </g>
             {/if}
-            {#if pickedColors.length > 1}
+            <!-- selection target -->
+            {#if focusedColors.length > 0}
               <rect
+                id="dotted-box"
                 x={pos.xPos - 5}
                 y={pos.yPos - 5}
                 width={pos.selectionWidth + 10}
                 height={pos.selectionHeight + 10}
-                {...SelectionBoxStyles}
+                {...outerDottedBoxStyle}
+                on:touchstart|preventDefault={(e) => dragStart(e)}
+                on:mousedown|preventDefault={(e) => dragStart(e)}
               />
             {/if}
           </g>
-
-          <!-- selection box -->
-          {#if dragging && dragBox && isMainBoxDrag}
-            <rect
-              x={Math.min(dragging.x, dragBox.x) - parentPos.x}
-              y={Math.min(dragging.y, dragBox.y) - parentPos.y}
-              width={Math.abs(dragging.x - dragBox.x)}
-              height={Math.abs(dragging.y - dragBox.y)}
-              fill={selectionColor}
-              fill-opacity="0.5"
-              class="pointer-events-none"
-            />
-          {/if}
         </g>
+        {#if interactionMode === "select"}
+          <!-- selecting box -->
+          {#if !selectionIsZ}
+            <rect {...selectionBoxStyle} />
+          {/if}
+          <!-- selection target -->
+          <rect
+            {...fillParamsXY}
+            on:touchmove|preventDefault={selectionUpdate(false)}
+            on:mousemove|preventDefault={selectionUpdate(false)}
+            on:touchend|preventDefault={selectionEnd(false)}
+            on:mouseup|preventDefault={selectionEnd(false)}
+          />
+        {/if}
+        {#if interactionMode === "drag"}
+          <!-- selection target -->
+          <rect
+            {...fillParamsXY}
+            on:touchmove|preventDefault={dragUpdate(false)}
+            on:mousemove|preventDefault={dragUpdate(false)}
+            on:touchend|preventDefault={(e) => dragEnd(e)}
+            on:mouseup|preventDefault={(e) => dragEnd(e)}
+          />
+        {/if}
       </svg>
     </div>
   </div>
@@ -421,85 +393,79 @@
     <!-- svelte-ignore a11y-no-static-element-interactions -->
     <div class="flex h-full">
       <div class="flex flex-col">
-        <svg
-          {height}
-          width={80 + margin.left + margin.right}
-          class="mt-1"
-          on:mouseleave={stopDrag}
-          on:mouseup={stopDrag}
-          on:touchend={stopDrag}
-        >
-          <ColorScatterPlotZGuide
-            {yScale}
-            {zScale}
-            {textColor}
-            {colorSpace}
-            {axisColor}
-            {margin}
+        <svg {height} width={80 + margin.left + margin.right} class="mt-1">
+          <ColorScatterPlotZGuide {...guideProps} {zScale} {margin} />
+          <rect
+            {...fillParamsZ}
+            on:touchstart|preventDefault={selectionStart(true)}
+            on:mousedown|preventDefault={selectionStart(true)}
           />
           <g transform={`translate(${margin.left}, ${margin.top})`}>
-            <!-- svelte-ignore a11y-no-static-element-interactions -->
-            <rect
-              x={0}
-              y={-20}
-              width={80}
-              height={yScale.range()[1] + 40}
-              fill="white"
-              opacity="0"
-              class:cursor-pointer={dragging}
-              on:touchstart|preventDefault={startDrag(false)}
-              on:mousedown|preventDefault={startDrag(false)}
-              on:touchmove|preventDefault={rectMoveResponse(true)}
-              on:mousemove|preventDefault={rectMoveResponse(true)}
-              on:touchend|preventDefault={rectMoveEnd(true)}
-              on:mouseup|preventDefault={rectMoveEnd(true)}
-            />
-
             {#each colors as color, i}
-              <!-- svelte-ignore a11y-click-events-have-key-events -->
               <rect
                 {...RectProps(color, i)}
-                pointer-events={!focusSet.has(i) ? "all" : "none"}
-                on:click={(e) => clickResponse(e, i)}
-                on:mousedown|preventDefault={startDrag(false, i)}
-                on:touchstart|preventDefault={startDrag(false, i)}
-                on:touchend|preventDefault={() => onFocusedColorsChange([i])}
+                on:mousedown|preventDefault={(e) => {
+                  dragStart(e);
+                  interactionMode = "point-touch";
+                }}
+                on:mouseup|preventDefault={pointMouseUp(i)}
+                on:mouseleave|preventDefault={switchToDragPoint(i)}
               />
             {/each}
             {#each blindColors as color, i}
-              <!-- svelte-ignore a11y-click-events-have-key-events -->
               <rect
                 {...RectProps(color, i)}
                 stroke={color.toDisplay()}
                 fill={"none"}
-                pointer-events={!focusSet.has(i) ? "all" : "none"}
-                on:click={(e) => clickResponse(e, i)}
-                on:mousedown|preventDefault={startDrag(false, i)}
-                on:touchstart|preventDefault={startDrag(false, i)}
-                on:touchend|preventDefault={() => onFocusedColorsChange([i])}
+                on:mousedown|preventDefault={(e) => {
+                  dragStart(e);
+                  interactionMode = "point-touch";
+                }}
+                on:mouseup|preventDefault={pointMouseUp(i)}
+                on:mouseleave|preventDefault={switchToDragPoint(i)}
               />
             {/each}
-            <!-- selection box -->
-            {#if dragging && dragBox && !isMainBoxDrag}
-              <rect
-                x={5}
-                y={Math.min(dragging.y, dragBox.y) - parentPos.y}
-                width={80 - 10}
-                height={Math.abs(dragging.y - dragBox.y)}
-                fill={selectionColor}
-                class="pointer-events-none"
-              />
-            {/if}
-            {#if pickedColors.length && focusedColors.length > 1}
+            <!-- selection target -->
+            {#if focusedColors.length > 0}
               <rect
                 x={5}
                 y={pos.zPos - 5}
                 width={80 - 10}
                 height={pos.selectionDepth + 15}
-                {...SelectionBoxStyles}
+                {...outerDottedBoxStyle}
+                on:touchstart|preventDefault={(e) => dragStart(e)}
+                on:mousedown|preventDefault={(e) => dragStart(e)}
               />
             {/if}
           </g>
+          {#if interactionMode === "select"}
+            <!-- selecting box -->
+            {#if selectionIsZ}
+              <rect
+                {...selectionBoxStyle}
+                x={margin.left + 5}
+                width={80 - 10}
+              />
+            {/if}
+            <!-- selection target -->
+            <rect
+              {...fillParamsZ}
+              on:touchmove|preventDefault={selectionUpdate(true)}
+              on:mousemove|preventDefault={selectionUpdate(true)}
+              on:touchend|preventDefault={selectionEnd(true)}
+              on:mouseup|preventDefault={selectionEnd(true)}
+            />
+          {/if}
+          {#if interactionMode === "drag"}
+            <!-- selection target -->
+            <rect
+              {...fillParamsZ}
+              on:touchmove|preventDefault={dragUpdate(true)}
+              on:mousemove|preventDefault={dragUpdate(true)}
+              on:touchend|preventDefault={(e) => dragEnd(e)}
+              on:mouseup|preventDefault={(e) => dragEnd(e)}
+            />
+          {/if}
         </svg>
       </div>
     </div>
@@ -512,8 +478,4 @@
     -webkit-transition: r 0.2s ease-in-out;
     -moz-transition: r 0.2s ease-in-out;
   }
-
-  /* svg {
-    overflow: visible;
-  } */
 </style>

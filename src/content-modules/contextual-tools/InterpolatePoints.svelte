@@ -3,8 +3,7 @@
   import type { Palette } from "../../stores/color-store";
   import colorStore from "../../stores/color-store";
   import focusStore from "../../stores/focus-store";
-  import Tooltip from "../../components/Tooltip.svelte";
-  import { buttonStyle } from "../../lib/styles";
+  import { buttonStyle, buttonStyleDisabled } from "../../lib/styles";
   import PalPreview from "../../components/PalPreview.svelte";
 
   $: focusedColors = $focusStore.focusedColors;
@@ -12,11 +11,9 @@
   $: colors = $colorStore.currentPal.colors;
   let colorSpace = "lab";
   let numPoints = 1;
-  let open = false;
   $: tempPal = (numPoints &&
     colorSpace &&
-    focusedColors.length >= 2 &&
-    open && {
+    focusedColors.length >= 2 && {
       ...$colorStore.currentPal,
       colors: createInterpolation(),
     }) as Palette;
@@ -42,52 +39,58 @@
   }
   function createInterpolation(): Color[] {
     const newColors = [];
-    for (let idx = 0; idx < focusedColors.length - 1; idx++) {
-      const pointA = colors[focusedColors[idx]];
-      const pointB = colors[focusedColors[idx + 1]];
+    const seenHexes = new Set<string>([]);
+    const deDuppedFocusedColors = focusedColors
+      .map((x) => [x, colors[x].toHex()] as [number, string])
+      .filter(([idx, hexColor]) => {
+        if (seenHexes.has(hexColor)) {
+          return false;
+        }
+        seenHexes.add(hexColor);
+        return true;
+      })
+      .map((x) => x[0]);
+    for (let idx = 0; idx < deDuppedFocusedColors.length - 1; idx++) {
+      const pointA = colors[deDuppedFocusedColors[idx]];
+      const pointB = colors[deDuppedFocusedColors[idx + 1]];
       const newPoints = createInterpolatedPoints(pointA, pointB);
       newColors.push(pointA, ...newPoints);
     }
-    newColors.push(colors[focusedColors[focusedColors.length - 1]]);
+    newColors.push(
+      colors[deDuppedFocusedColors[deDuppedFocusedColors.length - 1]]
+    );
     return newColors;
   }
 </script>
 
 {#if focusedColors.length >= 2}
-  <Tooltip onClose={() => (open = false)}>
-    <div slot="content" class="w-60">
-      <div class="flex justify-between">
-        <label for="color-space-select">Color Space</label>
-        <select id="color-space-select" bind:value={colorSpace}>
-          {#each ["lab", "lch", "hsl", "hsv", "oklab", "oklch", "rgb"] as space}
-            <option value={space}>{space}</option>
-          {/each}
-        </select>
-      </div>
-      <div class="flex-col items-center">
-        <label for="interpolate-count">Number of interpolation steps</label>
-        <input
-          id="interpolate-count"
-          class="h-4 w-full"
-          type="number"
-          min="1"
-          step="1"
-          bind:value={numPoints}
-        />
-      </div>
+  <div class="w-full border-t-2 border-black my-2"></div>
+  <div class="font-bold">Interpolate</div>
+  <div class="">
+    <div class="flex justify-between">
+      <label for="color-space-select">Color Space</label>
+      <select id="color-space-select" bind:value={colorSpace}>
+        {#each ["lab", "lch", "hsl", "hsv", "oklab", "oklch", "rgb"] as space}
+          <option value={space}>{space}</option>
+        {/each}
+      </select>
+    </div>
+    <div class="flex items-center justify-between">
+      <label class="whitespace-nowrap mr-2" for="interpolate-count">
+        Interpolation steps
+      </label>
+      <input
+        id="interpolate-count"
+        class="h-4 text-sm leading-6 w-16"
+        type="number"
+        min="1"
+        step="1"
+        bind:value={numPoints}
+      />
+    </div>
 
-      <!-- <div class="flex justify-between items-center w-full transition-all">
-        <button
-          class={buttonStyle}
-          on:click={() => {
-            focusStore.setColors([focusedColors[1], focusedColors[0]]);
-          }}
-        >
-          flip points
-        </button>
-      </div> -->
+    <div class="flex w-full justify-between items-baseline">
       <div>Preview</div>
-      <PalPreview pal={tempPal} />
       <button
         class="{buttonStyle} mt-5"
         on:click={() => {
@@ -103,16 +106,8 @@
         Add points
       </button>
     </div>
-    <span slot="target" let:toggle>
-      <button
-        class={buttonStyle}
-        on:click={() => {
-          open = !open;
-          toggle();
-        }}
-      >
-        Interpolate
-      </button>
-    </span>
-  </Tooltip>
+    {#if tempPal}
+      <PalPreview pal={tempPal} />
+    {/if}
+  </div>
 {/if}

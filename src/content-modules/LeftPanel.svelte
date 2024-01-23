@@ -1,19 +1,23 @@
 <script lang="ts">
   import colorStore from "../stores/color-store";
-  import AddFamiliarPal from "./context-free-tools/AddFamiliarPal.svelte";
-  import SuggestColorPal from "./context-free-tools/SuggestColorPal.svelte";
+  import configStore from "../stores/config-store";
+  import Nav from "../components/Nav.svelte";
 
   import Config from "./context-free-tools/Config.svelte";
+  import Controls from "./Controls.svelte";
   import { buttonStyle } from "../lib/styles";
 
   import SavedPals from "./SavedPals.svelte";
+  // friendly unicode symbols: [⚙, ⚙
 </script>
 
 <!-- left panel -->
-<div class="bg-slate-400 p-2 w-80 container flex flex-col h-full flex-none">
+<div class="bg-stone-200 w-80 container flex flex-col h-full flex-none">
+  <div class="text-4xl font-bold bg-stone-800 text-white px-2 py-1">
+    Color Buddy 𑁍
+  </div>
   <section class="flex flex-col flex-none">
-    <div class="text-4xl font-bold">Color Buddy</div>
-    <div class="flex justify-between z-50">
+    <div class="flex justify-between z-50 p-2">
       <div>
         <button class={buttonStyle} on:click={() => colorStore.undo()}>
           Undo
@@ -24,30 +28,25 @@
       </div>
       <Config />
     </div>
-    <div class="flex">
-      <AddFamiliarPal />
-      <button
-        class={buttonStyle}
-        on:click={() => {
-          const newPal = {
-            ...$colorStore.currentPal,
-            name: `${$colorStore.currentPal.name} copy`,
-            colors: [...$colorStore.currentPal.colors],
-          };
-          colorStore.createNewPal(newPal);
-        }}
-      >
-        Save
-      </button>
-      <SuggestColorPal />
-    </div>
   </section>
 
-  <section
-    class="mt-4 border-t-2 border-black flex flex-col flex-1 overflow-auto"
-  >
-    <div class="italic">Saved Pals</div>
-    <SavedPals />
+  <section class="flex flex-col flex-1 overflow-auto p-2">
+    <Nav
+      tabs={["saved-pals", "controls"]}
+      isTabSelected={(x) => $configStore.leftRoute === x}
+      selectTab={(x) => {
+        // @ts-ignore
+        configStore.setLeftRoute(x);
+      }}
+      className="w-full"
+    />
+
+    {#if $configStore.leftRoute === "saved-pals"}
+      <SavedPals />
+    {/if}
+    {#if $configStore.leftRoute === "controls"}
+      <Controls />
+    {/if}
   </section>
 </div>
 

@@ -12,7 +12,6 @@
   import { buttonStyle } from "../lib/styles";
   import { xml } from "@codemirror/lang-xml";
   import CodeMirror from "svelte-codemirror-editor";
-  import Tooltip from "../components/Tooltip.svelte";
   import Example from "../components/Example.svelte";
   import Swatches from "../content-modules/Swatches.svelte";
 
@@ -83,16 +82,10 @@
     return false;
   });
   $: examples = $exampleStore.examples as any;
-
   $: numberHidden = $exampleStore.examples.filter((x: any) => x.hidden).length;
-
-  const withFx = (fx: () => void) => (func: any) => (_e: any) => {
-    func();
-    fx();
-  };
 </script>
 
-<div class="flex items-center bg-slate-200 px-4">
+<div class="flex items-center bg-stone-300 px-4 py-2">
   {#each Object.keys(sections) as group}
     <div class="mr-2">
       <label for={`${group}-checkbox`}>{group}</label>
@@ -110,7 +103,7 @@
       modalState = "input-svg";
     }}
   >
-    Use Example
+    Add New Example
   </button>
   <button
     class={buttonStyle}
@@ -128,59 +121,54 @@
   {/if}
 </div>
 <div
-  class="flex flex-wrap overflow-auto p-4 w-full bg-slate-300"
+  class="flex flex-wrap overflow-auto p-4 w-full bg-stone-100"
   style={`height: calc(100% - 100px)`}
 >
   {#if $exampleStore.sections["swatches"]}
-    <Swatches />
+    <div class="mr-4 mb-2">
+      <Swatches />
+    </div>
   {/if}
 
   {#each examples as example, idx}
     {#if exampleShowMap[idx]}
       <div
-        class="flex flex-col border-2 border-dashed rounded w-min mr-4"
+        class="flex flex-col border-2 rounded w-min mr-4 mb-2"
         style="background: {bg.toHex()};"
       >
-        <div class="flex">
+        <div class="bg-stone-300 w-full flex-nowrap flex py-1">
+          <button
+            class={buttonStyle}
+            on:click={() => clickExample(example, idx)}
+          >
+            Edit
+          </button>
+          <button
+            class={buttonStyle}
+            on:click={() => exampleStore.deleteExample(idx)}
+          >
+            Delete
+          </button>
+          <button
+            class={buttonStyle}
+            on:click={() => exampleStore.toggleHidden(idx)}
+          >
+            Mute
+          </button>
+          <button
+            class={buttonStyle}
+            on:click={() => exampleStore.spotLight(idx)}
+          >
+            Solo
+          </button>
+        </div>
+        <div class="h-full flex justify-center items-center p-4">
           {#if example.svg}
             <Example example={example.svg} />
           {/if}
           {#if example.vega}
             <Vega spec={example.vega} />
           {/if}
-          <Tooltip>
-            <div slot="content" let:onClick class="flex flex-col">
-              <button
-                class={buttonStyle}
-                on:click={() => clickExample(example, idx)}
-              >
-                Edit
-              </button>
-              <button
-                class={buttonStyle}
-                on:click={withFx(onClick)(() =>
-                  exampleStore.deleteExample(idx)
-                )}
-              >
-                Delete
-              </button>
-              <button
-                class={buttonStyle}
-                on:click={withFx(onClick)(() => exampleStore.toggleHidden(idx))}
-              >
-                Hide
-              </button>
-              <button
-                class={buttonStyle}
-                on:click={withFx(onClick)(() => exampleStore.spotLight(idx))}
-              >
-                Show only this example
-              </button>
-            </div>
-            <div slot="target" let:toggle>
-              <button class={buttonStyle} on:click={toggle}>⚙</button>
-            </div>
-          </Tooltip>
         </div>
       </div>
     {/if}

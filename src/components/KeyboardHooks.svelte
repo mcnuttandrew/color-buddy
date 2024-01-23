@@ -14,7 +14,8 @@
     const tagName = e.target.tagName.toLowerCase();
     const tagType = e.target.type;
     if (tagName === "input") {
-      const isUIElement = tagType === "number" || tagType === "range";
+      const isUIElement =
+        tagType === "number" || tagType === "range" || tagType === "text";
       if (isUIElement) {
         return;
       }

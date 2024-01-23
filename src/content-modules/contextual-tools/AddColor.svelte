@@ -4,6 +4,7 @@
   import { buttonStyle } from "../../lib/styles";
   import { Color } from "../../lib/Color";
   import { suggestAdditionsToPalette } from "../../lib/api-calls";
+  import ColorButton from "../../components/ColorButton.svelte";
   import Tooltip from "../../components/Tooltip.svelte";
 
   const randChan = () => Math.floor(Math.random() * 255);
@@ -41,9 +42,13 @@
         searchedString,
         colorSpace
       ).toHex();
-      interpretations = [...interpretations, newColor];
-      requestState = "loaded";
-      return;
+      if (newColor === "#000") {
+        validString = false;
+      } else {
+        interpretations = [...interpretations, newColor];
+        requestState = "loaded";
+        return;
+      }
     } catch (e) {
       validString = false;
     }
@@ -68,103 +73,87 @@
         requestState = "failed";
       });
   }
+
+  function clickColor(color: string) {
+    const newColor = Color.colorFromString(color, colorSpace);
+    const newColors = [...colors, newColor];
+    colorStore.setCurrentPalColors(newColors);
+    suggestions = suggestions.filter((x) => x !== color);
+  }
 </script>
 
-<Tooltip>
-  <div slot="content" class="max-w-xs">
-    <section>
-      <div class="flex w-full justify-between items-center">
-        <form on:submit|preventDefault={getColorForSearch}>
-          <label for="add-color-search">
-            <input
-              type="text"
-              id="add-color-search"
-              placeholder="Add a color like purple or red"
-              class="border-b-2 border-dotted border-black"
-              bind:value={searchedString}
-            />
-          </label>
-          <button class={buttonStyle}>Search</button>
-        </form>
-      </div>
-      {#if requestState === "loading"}
-        <div>loading...</div>
-      {/if}
-      {#if requestState === "failed"}
-        <div>Error try again or modify your color term</div>
-      {/if}
-      {#if requestState === "loaded"}
-        <div class="flex flex-wrap">
-          {#each interpretations as color}
-            <div
-              class=" {buttonStyle} h-12 flex justify-between items-center mb-2 flex-none"
-            >
-              <button
-                class="w-3 h-3 rounded-full mr-2"
-                style="background-color: {color}"
-                on:click={() => {
-                  const newColor = Color.colorFromString(color, colorSpace);
-                  console.log(newColor.toHex(), color);
-                  const newColors = [...colors, newColor];
-                  colorStore.setCurrentPalColors(newColors);
-                  interpretations = interpretations.filter((x) => x !== color);
-                }}
-              ></button>
-              <button
-                on:click={() => {
-                  interpretations = interpretations.filter((x) => x !== color);
-                }}
-              >
-                X
-              </button>
-            </div>
-          {/each}
-        </div>
-      {/if}
-    </section>
-
-    <section class="mt-4 border-t-2 border-black">
-      <span class="italic text-sm">Random Suggestions</span>
-      <div class="flex flex-wrap">
-        {#each suggestions as color}
-          <div
-            class=" {buttonStyle} h-12 flex justify-between items-center mb-2"
-          >
-            <button
-              class="w-3 h-3 rounded-full mr-2"
-              style="background-color: {color}"
-              on:click={() => {
-                const newColor = Color.colorFromString(color, colorSpace);
-                const newColors = [...colors, newColor];
-                colorStore.setCurrentPalColors(newColors);
-                suggestions = suggestions.filter((x) => x !== color);
-              }}
-            ></button>
-            <button
-              on:click={() => {
-                suggestions = suggestions.filter((x) => x !== color);
-              }}
-            >
-              X
-            </button>
-          </div>
-        {/each}
-        <button
-          class={buttonStyle}
-          on:click={() => {
-            const newSuggestions = [...suggestions];
-            [randColor(), randColor(), randColor()].map((x) =>
-              newSuggestions.push(x)
-            );
-            suggestions = newSuggestions;
+<!-- <Tooltip> -->
+<!-- <div slot="content" class="max-w-xs"> -->
+<div class="w-full border-t-2 border-black my-2"></div>
+<div class="font-bold">Add Color</div>
+<section>
+  <div class="flex w-full justify-between items-center">
+    <form on:submit|preventDefault={getColorForSearch}>
+      <label for="add-color-search">
+        <input
+          type="text"
+          id="add-color-search"
+          placeholder="e.g. purple or red"
+          class="indent-2 text-sm leading-6"
+          bind:value={searchedString}
+        />
+      </label>
+      <button class={buttonStyle}>Search</button>
+    </form>
+  </div>
+  {#if requestState === "loading"}
+    <div>loading...</div>
+  {/if}
+  {#if requestState === "failed"}
+    <div class="text-sm text-red-800">
+      Error try again or modify your color term
+    </div>
+  {/if}
+  {#if requestState === "loaded"}
+    <div class="flex flex-wrap">
+      {#each interpretations as color}
+        <ColorButton
+          {color}
+          clickColor={() => {
+            const newColor = Color.colorFromString(color, colorSpace);
+            console.log(newColor.toHex(), color);
+            const newColors = [...colors, newColor];
+            colorStore.setCurrentPalColors(newColors);
+            interpretations = interpretations.filter((x) => x !== color);
+            searchedString = "";
           }}
-        >
-          +
-        </button>
-      </div>
-    </section>
+          removeColor={() => {
+            interpretations = interpretations.filter((x) => x !== color);
+          }}
+        />
+      {/each}
+    </div>
+  {/if}
+</section>
+
+<section class="mt-4">
+  <span class="italic text-sm">Random Suggestions</span>
+  <div class="flex flex-wrap">
+    {#each suggestions as color}
+      <ColorButton
+        {color}
+        {clickColor}
+        removeColor={() => {
+          suggestions = suggestions.filter((x) => x !== color);
+        }}
+      />
+    {/each}
+    <button
+      class={`${buttonStyle}`}
+      on:click={() => {
+        const newSuggestions = [...suggestions];
+        [randColor(), randColor(), randColor()].map((x) =>
+          newSuggestions.push(x)
+        );
+        suggestions = newSuggestions;
+      }}
+    >
+      +
+    </button>
   </div>
-  <div slot="target" let:toggle>
-    <button class={buttonStyle} on:click={toggle}>Add color</button>
-  </div>
-</Tooltip>
+</section>

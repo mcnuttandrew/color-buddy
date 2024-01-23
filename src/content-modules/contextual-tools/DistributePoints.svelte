@@ -2,8 +2,7 @@
   import { Color, colorPickerConfig } from "../../lib/Color";
   import colorStore from "../../stores/color-store";
   import focusStore from "../../stores/focus-store";
-  import Tooltip from "../../components/Tooltip.svelte";
-  import { buttonStyle } from "../../lib/styles";
+  import { buttonStyle, buttonStyleDisabled } from "../../lib/styles";
 
   $: colors = $colorStore.currentPal.colors;
   $: focusedColors = $focusStore.focusedColors;
@@ -56,19 +55,13 @@
 </script>
 
 {#if focusedColors.length > 2}
-  <Tooltip>
-    <div slot="content" class="w-40">
-      {#each directions as direction}
-        <button
-          class={buttonStyle}
-          on:click={() => distributePoints(direction)}
-        >
-          {direction}ly
-        </button>
-      {/each}
-    </div>
-    <div slot="target" let:toggle>
-      <button class={buttonStyle} on:click={toggle}>Distribute</button>
-    </div>
-  </Tooltip>
+  <div class="w-full border-t-2 border-black my-2"></div>
+  <div class="font-bold">Distribute</div>
+  <div class="flex flex-wrap">
+    {#each directions as direction}
+      <button class={buttonStyle} on:click={() => distributePoints(direction)}>
+        {direction}ly
+      </button>
+    {/each}
+  </div>
 {/if}

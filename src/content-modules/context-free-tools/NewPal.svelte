@@ -9,7 +9,9 @@
   import { buttonStyle } from "../../lib/styles";
   import { makePal, toHex } from "../../lib/utils";
   import type { ExtendedPal } from "../../lib/utils";
+  import SuggestColorPal from "./SuggestColorPal.svelte";
 
+  import MiniPalPreview from "../../components/MiniPalPreview.svelte";
   $: familiarPals = [] as ExtendedPal[];
   $: colorSpace = $colorStore.currentPal.colorSpace;
 
@@ -58,42 +60,30 @@
 
 <Tooltip>
   <span slot="content" let:onClick class="max-w-lg">
-    <div class="flex">
-      <input bind:value={searchString} placeholder="Search for palettes" />
-      <div>
-        <button class={buttonStyle} on:click={() => newPalFromBlank()}>
-          New blank
-        </button>
-      </div>
+    <div>
+      <button class={buttonStyle} on:click={() => newPalFromBlank()}>
+        New blank
+      </button>
     </div>
+    <div class="mt-5 border-t-2 border-black"></div>
+    <div class="font-bold">Generate a new palette using AI</div>
+    <SuggestColorPal />
+    <div class="mt-5 border-t-2 border-black"></div>
+    <div class="font-bold">Search for palettes from predefined examples</div>
+    <input bind:value={searchString} placeholder="Search" />
     <div class="max-h-48 overflow-y-scroll">
       {#each Object.entries(groups) as [group, pals]}
         <div class="font-bold">{group}</div>
         <div class="flex flex-wrap">
           {#each pals as pal}
-            <div class="relative mr-2 mb-2 flex justify-center items-center">
-              <div
-                class="w-full flex absolute top-0 opacity-50 pointer-events-none"
-              >
-                {#each pal.colors as color}
-                  <div
-                    class="h-6"
-                    style="background-color: {color.toHex()}; width: {100 /
-                      pal.colors.length}%"
-                  ></div>
-                {/each}
-              </div>
-              <button
-                class="{buttonStyle} "
-                on:click={() => {
-                  colorStore.createNewPal(pal);
-                  onClick();
-                  focusStore.clearColors();
-                }}
-              >
-                {pal.name}
-              </button>
-            </div>
+            <MiniPalPreview
+              {pal}
+              onClick={() => {
+                colorStore.createNewPal(pal);
+                onClick();
+                focusStore.clearColors();
+              }}
+            />
           {/each}
         </div>
       {/each}

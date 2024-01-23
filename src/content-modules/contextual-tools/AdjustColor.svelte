@@ -2,7 +2,6 @@
   import { Color } from "../../lib/Color";
   import colorStore from "../../stores/color-store";
   import focusStore from "../../stores/focus-store";
-  import Tooltip from "../../components/Tooltip.svelte";
   import { clipToGamut } from "../../lib/utils";
 
   import { buttonStyle } from "../../lib/styles";
@@ -23,7 +22,8 @@
   const actions: { name: string; effect: ColorEffect }[] = [
     {
       name: "Lighten",
-      effect: (color) => color.toColorIO().set("lch.l", (l) => l * 1.2).coords,
+      effect: (color) =>
+        color.toColorIO().set("lch.l", (l) => (l ? l * 1.2 : 5)).coords,
     },
     {
       name: "Darken",
@@ -31,7 +31,8 @@
     },
     {
       name: "Saturate",
-      effect: (color) => color.toColorIO().set("lch.c", (c) => c * 1.2).coords,
+      effect: (color) =>
+        color.toColorIO().set("lch.c", (c) => (c ? c * 1.2 : 5)).coords,
     },
     {
       name: "Desaturate",
@@ -50,19 +51,16 @@
 </script>
 
 {#if focusedColors.length >= 1}
-  <Tooltip>
-    <div slot="content">
-      {#each actions as action}
-        <button
-          class={buttonStyle}
-          on:click={() => actionOnColor(focusedColors, action.effect)}
-        >
-          {action.name}
-        </button>
-      {/each}
-    </div>
-    <div slot="target" let:toggle>
-      <button class={buttonStyle} on:click={toggle}>Adjust Color</button>
-    </div>
-  </Tooltip>
+  <div class="w-full border-t-2 border-black my-2"></div>
+  <div class="font-bold">Adjust selected colors</div>
+  <div>
+    {#each actions as action}
+      <button
+        class={buttonStyle}
+        on:click={() => actionOnColor(focusedColors, action.effect)}
+      >
+        {action.name}
+      </button>
+    {/each}
+  </div>
 {/if}

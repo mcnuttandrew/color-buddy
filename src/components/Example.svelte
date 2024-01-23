@@ -49,6 +49,7 @@
     const colorIdx = colors.findIndex((x) => x.toHex().toLowerCase() === color);
     if (colorIdx > -1) {
       focusedColor = colorIdx;
+      focusStore.setColors([colorIdx]);
     }
   }
 

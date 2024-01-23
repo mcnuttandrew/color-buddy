@@ -10,7 +10,7 @@
   function sortByChannel(colorSpace: string, channel: number) {
     const newSort = [...colors].sort((a, b) => {
       const aVal = a.toColorIO().to(colorSpace).coords[channel];
-      const bVal = a.toColorIO().to(colorSpace).coords[channel];
+      const bVal = b.toColorIO().to(colorSpace).coords[channel];
       return aVal - bVal;
     });
     colorStore.setSort(newSort);
@@ -32,7 +32,34 @@
     >
       Reverse order
     </button>
-    <div>
+    <div class="flex flex-col">
+      Sort By Channel:
+      <div class="flex">
+        <div>
+          Color Space:
+          <select
+            bind:value={selectedColorSpace}
+            on:click={(e) => e.stopPropagation()}
+            class="text-black"
+          >
+            {#each spaces as space}
+              <option value={space}>{space}</option>
+            {/each}
+          </select>
+        </div>
+        <div class="">
+          Channel:
+          <select
+            bind:value={selectedLetter}
+            on:click={(e) => e.stopPropagation()}
+            class="text-black"
+          >
+            {#each selectedColorSpace.split("") as letter}
+              <option value={letter}>{letter}</option>
+            {/each}
+          </select>
+        </div>
+      </div>
       <button
         class={buttonStyle}
         on:click={() =>
@@ -41,25 +68,7 @@
             selectedColorSpace.indexOf(selectedLetter)
           )}
       >
-        Sort by <select
-          bind:value={selectedLetter}
-          on:click={(e) => e.stopPropagation()}
-          class="text-black"
-        >
-          {#each selectedColorSpace.split("") as letter}
-            <option value={letter}>{letter}</option>
-          {/each}
-        </select>
-        in
-        <select
-          bind:value={selectedColorSpace}
-          on:click={(e) => e.stopPropagation()}
-          class="text-black"
-        >
-          {#each spaces as space}
-            <option value={space}>{space}</option>
-          {/each}
-        </select>
+        Do Sort
       </button>
     </div>
   </span>

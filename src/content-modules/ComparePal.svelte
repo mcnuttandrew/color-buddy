@@ -7,6 +7,7 @@
   import Background from "./Background.svelte";
   import { buttonStyle } from "../lib/styles";
   import Tooltip from "../components/Tooltip.svelte";
+  import MiniPalPreview from "../components/MiniPalPreview.svelte";
 
   import SetColorSpace from "./contextual-tools/SetColorSpace.svelte";
 
@@ -24,6 +25,9 @@
 
 <div class="flex flex-col" style={`background: ${bg}`}>
   {#if ComparisonPal !== undefined}
+    <div class="text-xl">
+      <span class="italic">Compare Pal: {compareName}</span>
+    </div>
     <ColorScatterPlot
       scatterPlotMode="looking"
       Pal={{ ...ComparisonPal, background: Color.colorFromHex(bg, colorSpace) }}
@@ -48,19 +52,23 @@
     <button class={buttonStyle} slot="target" let:toggle on:click={toggle}>
       Select comparison. Currently: {compareName || "none"}
     </button>
-    <div class="flex flex-wrap w-80" slot="content">
-      {#each [$colorStore.currentPal, ...$colorStore.palettes] as pal, idx}
-        <button
-          class={buttonStyle}
-          on:click={() => {
-            configStore.setComparePal(pal.name);
-          }}
-        >
-          {#if idx === 0}THE CURRENT PALETTE:
-          {/if}
-          {pal.name}
-        </button>
-      {/each}
+    <div class="flex flex-col w-80" slot="content">
+      <div class="flex flex-col">
+        Current Palette:
+        <MiniPalPreview
+          pal={$colorStore.currentPal}
+          onClick={() => configStore.setComparePal($colorStore.currentPal.name)}
+        />
+      </div>
+      <div>Other Saved Palettes:</div>
+      <div class="flex flex-wrap">
+        {#each [$colorStore.currentPal, ...$colorStore.palettes] as pal, idx}
+          <MiniPalPreview
+            {pal}
+            onClick={() => configStore.setComparePal(pal.name)}
+          />
+        {/each}
+      </div>
     </div>
   </Tooltip>
   <Background

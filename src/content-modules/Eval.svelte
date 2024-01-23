@@ -68,12 +68,7 @@
 
 <div class="flex h-full">
   <div class="flex">
-    <div class="flex flex-col overflow-auto mr-5 bg-slate-100 p-4">
-      <div>Colors</div>
-      <div class="flex justify-between w-full text-xs italic">
-        <span>Hex Value</span>
-        {#if colorNames[0]}<span>Inferred Color Name</span>{/if}
-      </div>
+    <div class="flex flex-col overflow-auto mr-5 bg-stone-100 px-4">
       {#each colors as color, idx}
         <Tooltip
           allowDrag={true}
@@ -115,29 +110,29 @@
             <div class="flex justify-between w-full px-2 items-center z-10">
               <span class="flex flex-col items-start">
                 <span>{color.toHex()}</span>
-                <span class="flex">
-                  {#each colorsToIssues[idx] as check}
-                    {#if !evalConfig[check.name]?.ignore}
-                      <Tooltip>
-                        <div slot="content" class="flex flex-col">
-                          <div class="font-bold">{check.name}</div>
-                          <ExplanationViewer {check} />
-                        </div>
-                        <button
-                          slot="target"
-                          let:toggle
-                          on:click|stopPropagation={toggle}
-                        >
-                          {checkLevelToSymbol[check.level]}
-                        </button>
-                      </Tooltip>
-                    {/if}
-                  {/each}
-                </span>
+                {#if colorNames[idx]}<span class="text-right text-xs">
+                    {colorNames[idx]?.word}
+                  </span>{/if}
               </span>
-              {#if colorNames[idx]}<span class="text-right">
-                  {colorNames[idx]?.word}
-                </span>{/if}
+              <span class="flex">
+                {#each colorsToIssues[idx] as check}
+                  {#if !evalConfig[check.name]?.ignore}
+                    <Tooltip>
+                      <div slot="content" class="flex flex-col max-w-lg">
+                        <div class="font-bold">{check.name}</div>
+                        <ExplanationViewer {check} />
+                      </div>
+                      <button
+                        slot="target"
+                        let:toggle
+                        on:click|stopPropagation={toggle}
+                      >
+                        {checkLevelToSymbol[check.level]}
+                      </button>
+                    </Tooltip>
+                  {/if}
+                {/each}
+              </span>
             </div>
             {#if stats?.dE[idx]}
               <div

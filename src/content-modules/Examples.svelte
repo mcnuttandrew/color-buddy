@@ -14,6 +14,7 @@
   import CodeMirror from "svelte-codemirror-editor";
   import Example from "../components/Example.svelte";
   import Swatches from "../content-modules/Swatches.svelte";
+  import Tooltip from "../components/Tooltip.svelte";
 
   let modalState: "closed" | "input-svg" | "input-vega" | "edit-colors" =
     "closed";
@@ -82,7 +83,9 @@
     return false;
   });
   $: examples = $exampleStore.examples as any;
-  $: numberHidden = $exampleStore.examples.filter((x: any) => x.hidden).length;
+  $: groupsHidden = Object.keys(sections).filter((x) => !sections[x]).length;
+  $: numberHidden =
+    $exampleStore.examples.filter((x: any) => x.hidden).length + groupsHidden;
 </script>
 
 <div class="flex items-center bg-stone-300 px-4 py-2">
@@ -105,19 +108,34 @@
   >
     Add New Example
   </button>
-  <button
-    class={buttonStyle}
-    on:click={() => exampleStore.restoreDefaultExamples()}
-  >
-    Reset to defaults
-  </button>
-  {#if numberHidden > 0}
+  <Tooltip>
+    <div slot="content" let:onClick class="max-w-md">
+      <div>
+        Are you sure you want to reset to the default examples? This will remove
+        any custom ones you've uploaded
+      </div>
+      <div class="flex justify-between">
+        <button
+          class={buttonStyle}
+          on:click={() => exampleStore.restoreHiddenExamples()}
+        >
+          Yes! Reset em now
+        </button>
+        <button class={buttonStyle} on:click={onClick}>No! Never mind</button>
+      </div>
+    </div>
     <button
+      slot="target"
+      let:toggle
       class={buttonStyle}
-      on:click={() => exampleStore.restoreHiddenExamples()}
+      on:click={toggle}
+      on:click={() => exampleStore.restoreDefaultExamples()}
     >
-      Restore hidden examples
+      Reset to defaults
     </button>
+  </Tooltip>
+  {#if numberHidden > 0}
+    <button class={buttonStyle}>Restore hidden examples</button>
   {/if}
 </div>
 <div
@@ -126,6 +144,24 @@
 >
   {#if $exampleStore.sections["swatches"]}
     <div class="mr-4 mb-2">
+      <div class="bg-stone-300 w-full flex-nowrap flex py-1">
+        <button
+          class={buttonStyle}
+          on:click={() => {
+            onToggle("swatches");
+          }}
+        >
+          Mute
+        </button>
+        <button
+          class={buttonStyle}
+          on:click={() => {
+            exampleStore.onlySwatches();
+          }}
+        >
+          Solo
+        </button>
+      </div>
       <Swatches />
     </div>
   {/if}
@@ -157,7 +193,7 @@
           </button>
           <button
             class={buttonStyle}
-            on:click={() => exampleStore.spotLight(idx)}
+            on:click={() => exampleStore.soloExample(idx)}
           >
             Solo
           </button>

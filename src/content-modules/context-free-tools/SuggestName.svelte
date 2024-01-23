@@ -6,41 +6,42 @@
 
   import { suggestNameForPalette } from "../../lib/api-calls";
 
+  function makeRequest() {
+    if (requestState === "loading") return;
+    requestState = "loading";
+    suggestNameForPalette($colorStore.currentPal, $configStore.engine)
+      .then((x) => {
+        nameSuggestions = x;
+        requestState = "idle";
+      })
+      .catch((e) => {
+        console.log(e);
+        requestState = "idle";
+      });
+  }
+
   let nameSuggestions: string[] = [];
   let requestState: "idle" | "loading" = "idle";
 </script>
 
 <Tooltip>
-  <div slot="content">
+  <div slot="content" let:onClick>
     <div class="">
-      <button
-        class={buttonStyle}
-        class:animate-pulse={requestState === "loading"}
-        on:click={() => {
-          if (requestState === "loading") return;
-          requestState = "loading";
-          suggestNameForPalette($colorStore.currentPal, $configStore.engine)
-            .then((x) => {
-              nameSuggestions = x;
-              requestState = "idle";
-            })
-            .catch((e) => {
-              console.log(e);
-              requestState = "idle";
-            });
-        }}
-      >
-        Generate Suggestions
-        {#if requestState === "loading"}(loading)
-        {/if}
-      </button>
+      {#if requestState === "loading"}
+        <div class:animate-pulse={requestState === "loading"}>
+          Generating Suggestions
+        </div>
+      {/if}
 
       <div class="flex flex-wrap items-start">
         {#each nameSuggestions as name}
-          <div class="ml-2 rounded bg-green-800 text-white">
+          <div class="ml-2 rounded bg-cyan-500 text-white">
             <button
               class="rounded p-2"
-              on:click={() => colorStore.setCurrentPalName(name)}
+              on:click={() => {
+                colorStore.setCurrentPalName(name);
+                onClick();
+              }}
             >
               {name}
             </button>
@@ -48,7 +49,7 @@
               on:click={() => {
                 nameSuggestions = nameSuggestions.filter((x) => x !== name);
               }}
-              class="rounded p-2 bg-amber-700"
+              class="rounded p-2 bg-amber-400"
             >
               X
             </button>
@@ -58,6 +59,14 @@
     </div>
   </div>
   <div slot="target" let:toggle>
-    <button class={AIButtonStyle} on:click={toggle}>Suggest a name</button>
+    <button
+      class={AIButtonStyle}
+      on:click={() => {
+        toggle();
+        makeRequest();
+      }}
+    >
+      Suggest a name
+    </button>
   </div>
 </Tooltip>

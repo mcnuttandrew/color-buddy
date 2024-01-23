@@ -170,6 +170,9 @@ function createStore() {
     restoreHiddenExamples: () =>
       persistUpdate((old) => ({
         ...old,
+        sections: Object.fromEntries(
+          Object.keys(old.sections).map((x) => [x, true])
+        ) as any,
         examples: old.examples.map((x) => ({ ...x, hidden: false })),
       })),
     toggleHidden: (idx: number) =>
@@ -178,13 +181,21 @@ function createStore() {
         newExamples[idx].hidden = !newExamples[idx].hidden;
         return { ...old, examples: newExamples };
       }),
-    spotLight: (idx: number) =>
+    soloExample: (idx: number) =>
       persistUpdate((old) => {
         const newExamples = [...old.examples].map((x) => {
           x.hidden = true;
           return x;
         });
         newExamples[idx].hidden = false;
+        return { ...old, examples: newExamples };
+      }),
+    onlySwatches: () =>
+      persistUpdate((old) => {
+        const newExamples = [...old.examples].map((x) => {
+          x.hidden = true;
+          return x;
+        });
         return { ...old, examples: newExamples };
       }),
   };

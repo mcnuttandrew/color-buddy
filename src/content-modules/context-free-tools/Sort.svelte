@@ -19,21 +19,8 @@
 
 <Tooltip>
   <span slot="content" let:onClick>
-    <button
-      class={buttonStyle}
-      on:click={() =>
-        colorStore.setSort([...colors].sort(() => Math.random() - 0.5))}
-    >
-      Randomize order
-    </button>
-    <button
-      class={buttonStyle}
-      on:click={() => colorStore.setSort([...colors].reverse())}
-    >
-      Reverse order
-    </button>
     <div class="flex flex-col">
-      Sort By Channel:
+      <div class="font-bold">Sort By Channel</div>
       <div class="flex">
         <div>
           Color Space:
@@ -71,6 +58,20 @@
         Do Sort
       </button>
     </div>
+    <div class="font-bold">Other Sorts</div>
+    <button
+      class={buttonStyle}
+      on:click={() =>
+        colorStore.setSort([...colors].sort(() => Math.random() - 0.5))}
+    >
+      Randomize order
+    </button>
+    <button
+      class={buttonStyle}
+      on:click={() => colorStore.setSort([...colors].reverse())}
+    >
+      Reverse order
+    </button>
   </span>
 
   <span slot="target" let:toggle>

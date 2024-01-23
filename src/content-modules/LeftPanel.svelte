@@ -8,7 +8,6 @@
   import { buttonStyle } from "../lib/styles";
 
   import SavedPals from "./SavedPals.svelte";
-  // friendly unicode symbols: [⚙, ⚙
 </script>
 
 <!-- left panel -->

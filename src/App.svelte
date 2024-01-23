@@ -7,7 +7,6 @@
   import Nav from "./components/Nav.svelte";
 
   import LeftPanel from "./content-modules/LeftPanel.svelte";
-  // import ActionArea from "./content-modules/ActionArea.svelte";
   import Examples from "./content-modules/Examples.svelte";
   import Eval from "./content-modules/Eval.svelte";
   import KeyboardHooks from "./components/KeyboardHooks.svelte";
@@ -31,7 +30,6 @@
 <main class="flex h-full">
   <LeftPanel />
   <div class="h-full flex flex-col grow main-content">
-    <!-- <ActionArea /> -->
     <div class="flex w-full grow overflow-auto">
       <div class="flex flex-col">
         <div class="w-full flex bg-stone-800 px-2 py-3 text-white">
@@ -92,19 +90,15 @@
               colorSpace={$colorStore.currentPal.colorSpace}
               onChange={(space) => colorStore.setColorSpace(space)}
             />
+            <Sort />
           </div>
           <div class="flex flex-col pl-2">
             <!-- overview / preview -->
-            <div class="flex w-full items-center">
-              <PalPreview
-                highlightSelected={true}
-                pal={$colorStore.currentPal}
-                allowModification={true}
-              />
-              <div class="pl-2">
-                <Sort />
-              </div>
-            </div>
+            <PalPreview
+              highlightSelected={true}
+              pal={$colorStore.currentPal}
+              allowModification={true}
+            />
             <GetColorsFromString />
           </div>
         </div>

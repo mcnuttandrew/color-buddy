@@ -50,10 +50,7 @@
 
 <div class="flex flex-col">
   <label for="pal-prompt">
-    <div>Name of new Palette</div>
-    <div class="text-sm italic">
-      (e.g. "Color Wheel Basics" or "Mystic River")
-    </div>
+    <div>Use the name of a new palette to generate a new palette</div>
   </label>
   {#if requestState === "loaded" && newPal}
     <PalPreview pal={newPal} />
@@ -65,7 +62,6 @@
           colorStore.createNewPal(newPal);
           requestState = "idle";
           palPrompt = "";
-          onClick();
         }}
       >
         Use
@@ -80,8 +76,13 @@
       </button>
     </div>
   {:else}
-    <form on:submit|preventDefault={makeRequest}>
-      <input bind:value={palPrompt} id="pal-prompt" />
+    <form on:submit|preventDefault={makeRequest} class="flex">
+      <input
+        bind:value={palPrompt}
+        id="pal-prompt"
+        class="leading-6 text-sm w-full"
+        placeholder="(e.g. 'Color Wheel Basics' or 'Mystic River')"
+      />
       <button
         class:pointer-events-none={requestState === "loading"}
         class={buttonStyle}

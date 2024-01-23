@@ -14,7 +14,7 @@
   $: colorSpace = $colorStore.currentPal.colorSpace;
   $: angle, rotatePoints();
   $: memorizedColors = false as false | Color[];
-  let rotationPoint = "zero" as number | "avg" | "zero";
+  let rotationPoint = "zero " as number | "avg" | "zero";
   function rotatePoints() {
     if (focusedColors.length === 0) {
       // memorizedColors = false;

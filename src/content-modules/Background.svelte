@@ -27,10 +27,11 @@
     class={`${buttonStyle} flex items-center justify-center this-button top-0.5 relative`}
     on:click={() => toggle()}
   >
-    Background {bgHex}
+    Background
     <div
       class={"h-3 w-3 rounded-full ml-2"}
       style={`background: ${bgHex}`}
     ></div>
+    {bgHex}
   </button>
 </Tooltip>

@@ -14,7 +14,7 @@
   export let colorSpace: string;
   export let dragging: boolean;
   export let axisColor: string;
-  export let textColor: string;
+  export const textColor: string = "";
 
   $: config = colorPickerConfig[colorSpace as keyof typeof colorPickerConfig];
   $: rNonDimScale = scaleLinear().domain([0, 1]).range(rScale.domain());

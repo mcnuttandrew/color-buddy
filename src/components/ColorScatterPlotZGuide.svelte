@@ -1,6 +1,6 @@
 <script lang="ts">
-  //   import colorStore from "../stores/color-store";
   import { colorPickerConfig } from "../lib/Color";
+  export let xScale: any;
   export let yScale: any;
   export let zScale: any;
   export let textColor: string;
@@ -12,7 +12,13 @@
     top: number;
     bottom: number;
   };
+  export let plotWidth: number;
+  export let plotHeight: number;
+  export let dragging: boolean;
 
+  // dummy variable to clear some warnings
+  let dumbVar = xScale || yScale || plotHeight || plotWidth || dragging;
+  $: dumbVar = !dumbVar;
   $: config = colorPickerConfig[colorSpace];
 
   $: zPoints = {
@@ -27,7 +33,6 @@
       label: zScale.domain()[1].toFixed(1),
     },
   };
-  $: plotHeight = yScale.range()[1];
 </script>
 
 <line

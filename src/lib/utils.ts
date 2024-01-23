@@ -1,4 +1,4 @@
-import { Color } from "./Color";
+import { Color, colorPickerConfig } from "./Color";
 import type { PalType, Palette } from "../stores/color-store";
 
 export const pick = (arr: any[]) => arr[Math.floor(Math.random() * arr.length)];
@@ -197,4 +197,190 @@ export const makePal = (
     evalConfig: {},
     colorSpace,
   };
+};
+
+const dragExtent = (
+  dragBox: { x: number; y: number },
+  dragging: { x: number; y: number },
+  parentPos: { x: number; y: number }
+) => {
+  const xMin = Math.min(dragging.x, dragBox.x) - parentPos.x;
+  const xMax = Math.max(dragging.x, dragBox.x) - parentPos.x;
+  const yMin = Math.min(dragging.y, dragBox.y) - parentPos.y;
+  const yMax = Math.max(dragging.y, dragBox.y) - parentPos.y;
+  return { xMin, xMax, yMin, yMax };
+};
+
+type selectColorsFromDrag = (
+  dragBox: { x: number; y: number },
+  dragging: { x: number; y: number },
+  parentPos: { x: number; y: number },
+  colors: Color[],
+  config: {
+    isPolar: boolean;
+    plotHeight: number;
+    plotWidth: number;
+    x: (color: Color) => number;
+    y: (color: Color) => number;
+    z: (color: Color) => number;
+  }
+) => number[];
+
+const between = (x: number, a: number, b: number) => a <= x && x <= b;
+export const selectColorsFromDragZ: selectColorsFromDrag = (
+  dragBox,
+  dragging,
+  parentPos,
+  colors,
+  config
+) => {
+  const { yMin, yMax } = dragExtent(dragBox, dragging, parentPos);
+  // magic offset required to make the selection box work
+  // dunno why
+  const magicOffset = 15;
+  const newFocusedColors = colors
+    .map((color, idx) =>
+      between(config.z(color) + magicOffset, yMin, yMax) ? idx : -1
+    )
+    .filter((x) => x !== -1);
+  return [...newFocusedColors];
+};
+
+export const selectColorsFromDrag: selectColorsFromDrag = (
+  dragBox,
+  dragging,
+  parentPos,
+  colors,
+  config
+) => {
+  const { xMin, xMax, yMin, yMax } = dragExtent(dragBox, dragging, parentPos);
+
+  // check if selected in screen space
+  const newFocusedColors = colors
+    .map((color, idx) => {
+      let [xVal, yVal] = [config.x(color), config.y(color)];
+      if (config.isPolar) {
+        xVal += config.plotWidth / 2;
+        yVal += config.plotHeight / 2;
+      }
+      const inXBound = between(xVal, xMin, xMax);
+      const inYBound = between(yVal, yMin, yMax);
+      return inXBound && inYBound ? idx : -1;
+    })
+    .filter((x) => x !== -1);
+  return [...newFocusedColors];
+};
+
+export const toXY = (e: any) => {
+  const touches = e?.touches?.length ? e.touches : e?.changedTouches || [];
+  const x = [...touches].at(0)?.clientX || e.clientX;
+  const y = [...touches].at(0)?.clientY || e.clientY;
+  return { x, y };
+};
+
+type Channels = [number, number, number];
+export function makeScales(
+  scales: {
+    rScale: any;
+    angleScale: any;
+    xScale: any;
+    yScale: any;
+    zScale: any;
+  },
+  config: (typeof colorPickerConfig)[string]
+) {
+  const { rScale, angleScale, xScale, yScale, zScale } = scales;
+  const xPre = config.isPolar
+    ? (coords: Channels) => {
+        const r = rScale(coords[config.xChannelIndex]);
+        const theta = angleScale(coords[config.yChannelIndex]);
+        return r * Math.cos(theta);
+      }
+    : (coords: Channels) => xScale(coords[config.xChannelIndex]);
+  const yPre = config.isPolar
+    ? (coords: Channels) => {
+        const r = rScale(coords[config.xChannelIndex]);
+        const theta = angleScale(coords[config.yChannelIndex]);
+        return r * Math.sin(theta);
+      }
+    : (coords: Channels) => yScale(coords[config.yChannelIndex]);
+  const zPre = (coords: Channels) => zScale(coords[config.zChannelIndex]);
+  const x = (color: Color) => xPre(color.toChannels());
+  const y = (color: Color) => yPre(color.toChannels());
+  const z = (color: Color) => zPre(color.toChannels());
+  // screen -> color space
+  const xInv = config.isPolar
+    ? (x: number, y: number) => rScale.invert(Math.sqrt(x * x + y * y))
+    : (x: number) => xScale.invert(x);
+  const yInv = config.isPolar
+    ? (x: number, y: number) => {
+        const angle = angleScale.invert(Math.atan2(y, x)) % 360;
+        return angle < 0 ? angle + 360 : angle;
+      }
+    : (x: number, y: number) => yScale.invert(y);
+  const zInv = (z: number) => zScale.invert(z);
+  return { x, y, z, xInv, yInv, zInv };
+}
+
+type dragEventToColor = (
+  e: any,
+  originalColor: Color,
+  originalPos: { x: number; y: number },
+  config: (typeof colorPickerConfig)[string],
+  scales: ReturnType<typeof makeScales>,
+  colorSpace: any,
+  dragDelta: { x: number; y: number }
+) => Color;
+export const dragEventToColorZ: dragEventToColor = (
+  e,
+  originalColor,
+  originalPos,
+  config,
+  scales,
+  colorSpace,
+  dragDelta
+) => {
+  const { zInv, z } = scales;
+  const screenPosDelta = toXY(e).y - originalPos.y + dragDelta.y;
+  const coords = originalColor.toChannels();
+  const zClamp = (v: number) => clampToRange(v, config.zDomain);
+  coords[config.zChannelIndex] = zClamp(
+    zInv(z(originalColor) + screenPosDelta)
+  );
+
+  return Color.colorFromChannels(coords, colorSpace);
+};
+
+export const dragEventToColorXY: dragEventToColor = (
+  e,
+  originalColor,
+  originalPos,
+  config,
+  scales,
+  colorSpace,
+  dragDelta
+) => {
+  const { x, y, xInv, yInv } = scales;
+  const values = toXY(e);
+  const screenPosDelta = {
+    x: values.x - originalPos.x + dragDelta.x,
+    y: values.y - originalPos.y + dragDelta.y,
+  };
+
+  const xClamp = (v: number) => clampToRange(v, config.xDomain);
+  const yClamp = (v: number) => clampToRange(v, config.yDomain);
+  // screen coordinates
+  const newPos = [
+    x(originalColor) + screenPosDelta.x,
+    y(originalColor) + screenPosDelta.y,
+  ];
+  // color space coordinates
+  const newVal = [
+    xClamp(xInv(newPos[0], newPos[1])),
+    yClamp(yInv(newPos[0], newPos[1])),
+  ];
+  const coords = originalColor.toChannels();
+  coords[config.xChannelIndex] = newVal[0];
+  coords[config.yChannelIndex] = newVal[1];
+  return Color.colorFromChannels(coords, colorSpace);
 };

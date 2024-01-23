@@ -1,7 +1,15 @@
 <script lang="ts">
   import type { Palette } from "../stores/color-store";
   import { Color, colorPickerConfig } from "../lib/Color";
-  import { makePosAndSizes, toggleElement, clampToRange } from "../lib/utils";
+  import {
+    makePosAndSizes,
+    toggleElement,
+    clampToRange,
+    selectColorsFromDragZ,
+    selectColorsFromDrag,
+    toXY,
+    makeScales,
+  } from "../lib/utils";
   import configStore from "../stores/config-store";
   import { scaleLinear } from "d3-scale";
   import simulate_cvd from "../lib/blindness";
@@ -168,12 +176,6 @@
     onColorsChange(newColors);
   };
 
-  const toXY = (e: any) => {
-    const touches = e?.touches?.length ? e.touches : e?.changedTouches || [];
-    const x = [...touches].at(0)?.clientX || e.clientX;
-    const y = [...touches].at(0)?.clientY || e.clientY;
-    return { x, y };
-  };
   const rectMoveResponse = (isZ: boolean) => (e: any) => {
     // console.log("rect move response");
     if (!dragging || scatterPlotMode !== "moving") return;
@@ -191,61 +193,30 @@
     stopDragging();
     if (scatterPlotMode !== "moving") return;
     if (!isPointDrag && dragBox && dragging) {
-      (isZ ? selectColorsFromDragZ : selectColorsFromDrag)(dragBox, dragging);
+      const dragResp = isZ ? selectColorsFromDragZ : selectColorsFromDrag;
+      const newFocus = dragResp(dragBox, dragging, parentPos, colors, {
+        x,
+        y,
+        z,
+        isPolar: config.isPolar,
+        plotHeight,
+        plotWidth,
+      });
+      onFocusedColorsChange(newFocus);
     }
-    const { x, y } = toXY(e);
-    if (!isPointDrag && dragging && dragging.x === x && dragging.y === y) {
+    const xy = toXY(e);
+    if (
+      !isPointDrag &&
+      dragging &&
+      dragging.x === xy.x &&
+      dragging.y === xy.y
+    ) {
       onFocusedColorsChange([]);
     }
 
     dragging = false;
     dragBox = false;
   };
-
-  const dragExtent = (
-    dragBox: { x: number; y: number },
-    dragging: { x: number; y: number }
-  ) => {
-    const xMin = Math.min(dragging.x, dragBox.x) - parentPos.x;
-    const xMax = Math.max(dragging.x, dragBox.x) - parentPos.x;
-    const yMin = Math.min(dragging.y, dragBox.y) - parentPos.y;
-    const yMax = Math.max(dragging.y, dragBox.y) - parentPos.y;
-    return { xMin, xMax, yMin, yMax };
-  };
-  function selectColorsFromDrag(
-    dragBox: { x: number; y: number },
-    dragging: { x: number; y: number }
-  ) {
-    const { xMin, xMax, yMin, yMax } = dragExtent(dragBox, dragging);
-
-    // check if selected in screen space
-    const newFocusedColors = colors
-      .map((color, idx) => {
-        let [xVal, yVal] = [x(color), y(color)];
-        if (config.isPolar) {
-          xVal += plotWidth / 2;
-          yVal += plotHeight / 2;
-        }
-        const inXBound = xMin <= xVal && xVal <= xMax;
-        const inYBound = yMin <= yVal && yVal <= yMax;
-        return inXBound && inYBound ? idx : -1;
-      })
-      .filter((x) => x !== -1);
-    onFocusedColorsChange([...newFocusedColors]);
-  }
-  function selectColorsFromDragZ(
-    dragBox: { x: number; y: number },
-    dragging: { x: number; y: number }
-  ) {
-    const { yMin, yMax } = dragExtent(dragBox, dragging);
-    const newFocusedColors = colors
-      .map((color, idx) => {
-        const y = z(color);
-        return yMin <= y && y <= yMax ? idx : -1;
-      })
-      .filter((x) => x !== -1);
-    onFocusedColorsChange([...newFocusedColors]);
-  }
 
   $: luminance = bg.luminance();
   $: axisColor = luminance > 0.4 ? "#00000022" : "#ffffff55";
@@ -255,38 +226,19 @@
   let hoveredPoint: Color | false = false;
   let hoverPoint = (x: typeof hoveredPoint) => (hoveredPoint = x);
   // coordinate transforms
-  // color space -> screen
-  type Channels = [number, number, number];
   // slight indirection to make these mappings more re-usable
-  $: xPre = config.isPolar
-    ? (coords: Channels) => {
-        const r = rScale(coords[config.xChannelIndex]);
-        const theta = angleScale(coords[config.yChannelIndex]);
-        return r * Math.cos(theta);
-      }
-    : (coords: Channels) => xScale(coords[config.xChannelIndex]);
-  $: yPre = config.isPolar
-    ? (coords: Channels) => {
-        const r = rScale(coords[config.xChannelIndex]);
-        const theta = angleScale(coords[config.yChannelIndex]);
-        return r * Math.sin(theta);
-      }
-    : (coords: Channels) => yScale(coords[config.yChannelIndex]);
-  $: zPre = (coords: Channels) => zScale(coords[config.zChannelIndex]);
-  $: x = (color: Color) => xPre(color.toChannels());
-  $: y = (color: Color) => yPre(color.toChannels());
-  $: z = (color: Color) => zPre(color.toChannels());
+  $: scales = makeScales(
+    { rScale, angleScale, xScale, yScale, zScale },
+    config
+  );
+  // color space -> screen
+  $: x = scales.x;
+  $: y = scales.y;
+  $: z = scales.z;
   // screen -> color space
-  $: xInv = config.isPolar
-    ? (x: number, y: number) => rScale.invert(Math.sqrt(x * x + y * y))
-    : (x: number) => xScale.invert(x);
-  $: yInv = config.isPolar
-    ? (x: number, y: number) => {
-        const angle = angleScale.invert(Math.atan2(y, x)) % 360;
-        return angle < 0 ? angle + 360 : angle;
-      }
-    : (x: number, y: number) => yScale.invert(y);
-  $: zInv = (z: number) => zScale.invert(z);
+  $: xInv = scales.xInv;
+  $: yInv = scales.yInv;
+  $: zInv = scales.zInv;
 
   function clickResponse(e: any, i: number) {
     if (e.metaKey || e.shiftKey) {
@@ -330,6 +282,13 @@
     colorSpace,
     dragging: !!dragging,
   };
+
+  function dragStart() {}
+  function dragUpdate() {}
+  function dragEnd() {}
+  function selectionStart() {}
+  function selectionUpdate() {}
+  function selectionEnd() {}
 </script>
 
 <!-- svelte-ignore a11y-no-static-element-interactions -->

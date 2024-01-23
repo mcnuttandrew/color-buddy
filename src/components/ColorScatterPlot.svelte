@@ -248,7 +248,7 @@
     }
   }
 
-  let CircleProps = (color: Color) => ({
+  let CircleProps = (color: Color, i: number) => ({
     cx: x(color),
     cy: y(color),
     r: 10,
@@ -289,6 +289,12 @@
   function selectionStart() {}
   function selectionUpdate() {}
   function selectionEnd() {}
+  const clickPoint = (i: number) => (e: any) => {
+    const isMeta = e.metaKey || e.shiftKey;
+    const newElements = isMeta ? toggleElement(focusedColors, i) : [i];
+
+    onFocusedColorsChange(newElements);
+  };
 </script>
 
 <!-- svelte-ignore a11y-no-static-element-interactions -->
@@ -300,14 +306,7 @@
     </span>
     <div class="flex h-full">
       <div class="h-full py-4" style="max-height: {height}px"></div>
-      <svg
-        {width}
-        {height}
-        class="ml-2"
-        on:mouseleave={stopDrag}
-        on:mouseup={stopDrag}
-        on:touchend={stopDrag}
-      >
+      <svg {width} {height} class="ml-2">
         <g transform={`translate(${margin.left}, ${margin.top})`}>
           {#if config.isPolar}
             <ColorScatterPlotPolarGuide {...guideProps} {rScale} />
@@ -318,12 +317,6 @@
           <!-- svelte-ignore a11y-no-static-element-interactions -->
           <!-- svelte-ignore a11y-click-events-have-key-events -->
           <rect
-            on:touchstart|preventDefault={startDrag(true)}
-            on:mousedown|preventDefault={startDrag(true)}
-            on:touchmove|preventDefault={rectMoveResponse(false)}
-            on:mousemove|preventDefault={rectMoveResponse(false)}
-            on:touchend|preventDefault={rectMoveEnd(false)}
-            on:mouseup|preventDefault={rectMoveEnd(false)}
             x="0"
             y="0"
             {width}
@@ -360,24 +353,14 @@
               <!-- svelte-ignore a11y-mouse-events-have-key-events -->
               {#if scatterPlotMode === "moving"}
                 <circle
-                  {...CircleProps(color)}
-                  on:mousedown|preventDefault={(e) => startDrag(true, i)(e)}
-                  on:touchstart|preventDefault={startDrag(true, i)}
-                  on:touchend|preventDefault={() => onFocusedColorsChange([i])}
-                  on:mouseenter={() => hoverPoint(color)}
-                  pointer-events={!focusSet.has(i) ? "all" : "none"}
+                  {...CircleProps(color, i)}
                   r={10 + (focusSet.has(i) ? 5 : 0)}
-                  stroke={focusedColors.length === 1 &&
-                  focusedColors[0] === i &&
-                  dragging
-                    ? axisColor
-                    : color.toDisplay()}
-                  on:click={(e) => clickResponse(e, i)}
+                  on:click={clickPoint(i)}
                 />
               {/if}
               {#if scatterPlotMode === "looking"}
                 <circle
-                  {...CircleProps(color)}
+                  {...CircleProps(color, i)}
                   on:mouseenter={() => hoverPoint(color)}
                 />
               {/if}
@@ -388,16 +371,11 @@
             {#each blindColors as blindColor, i}
               <!-- svelte-ignore a11y-click-events-have-key-events -->
               <circle
-                {...CircleProps(blindColor)}
+                {...CircleProps(blindColor, i)}
                 class="cursor-pointer"
                 stroke={blindColor.toDisplay()}
                 fill={"none"}
                 stroke-width="4"
-                on:mousedown|preventDefault={startDrag(true, i)}
-                on:touchstart|preventDefault={startDrag(true, i)}
-                on:touchend|preventDefault={() => onFocusedColorsChange([i])}
-                pointer-events={!focusSet.has(i) ? "all" : "none"}
-                on:click={(e) => clickResponse(e, i)}
               />
             {/each}
             <!-- simple tooltip -->

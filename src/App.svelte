@@ -108,7 +108,10 @@
           className="bg-stone-800 text-white h-12 items-center "
           {tabs}
           isTabSelected={(x) => $configStore.route === x}
-          selectTab={(x) => configStore.setRoute(x)}
+          selectTab={(x) => {
+            // @ts-ignore
+            configStore.setRoute(x);
+          }}
         />
 
         {#if $configStore.route === "examples"}

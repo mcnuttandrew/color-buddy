@@ -12,9 +12,9 @@
   let tooltipOpen: boolean = initiallyOpen;
 
   const query = "main *";
-  function onClick(e) {
-    e.preventDefault();
-    e.stopPropagation();
+  function onClick(e?: any) {
+    e?.preventDefault();
+    e?.stopPropagation();
 
     tooltipOpen = false;
     onClose();

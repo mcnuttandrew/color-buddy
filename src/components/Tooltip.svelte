@@ -12,13 +12,16 @@
   let tooltipOpen: boolean = initiallyOpen;
 
   const query = "main *";
-  function onClick() {
+  function onClick(e) {
+    e.preventDefault();
+    e.stopPropagation();
+
     tooltipOpen = false;
     onClose();
     document.querySelectorAll(query).forEach((x) => {
       x.removeEventListener("click", onClick);
       // remove select-none class
-      const newClass = x.getAttribute("class").replace("select-none", "");
+      const newClass = x?.getAttribute("class")?.replace("select-none", "");
       x.setAttribute("class", newClass);
     });
   }
@@ -35,7 +38,7 @@
 
   $: tooltipOpen === true && attachListeners();
   async function attachListeners() {
-    await new Promise((resolve) => setTimeout(resolve, 10));
+    await new Promise((resolve) => setTimeout(resolve, 100));
 
     document.querySelectorAll(query).forEach((x) => {
       x.addEventListener("click", onClick);

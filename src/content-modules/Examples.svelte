@@ -86,6 +86,19 @@
   $: groupsHidden = Object.keys(sections).filter((x) => !sections[x]).length;
   $: numberHidden =
     $exampleStore.examples.filter((x: any) => x.hidden).length + groupsHidden;
+
+  $: numToShow = $exampleStore.examples.filter((x: any) => {
+    if (x.hidden) {
+      return false;
+    }
+    if (sections.svg && x?.svg) {
+      return true;
+    }
+    if (sections.vega && x.vega) {
+      return true;
+    }
+    return false;
+  }).length;
 </script>
 
 <div class="flex items-center bg-stone-300 px-4 py-2">
@@ -117,7 +130,7 @@
       <div class="flex justify-between">
         <button
           class={buttonStyle}
-          on:click={() => exampleStore.restoreHiddenExamples()}
+          on:click={() => exampleStore.restoreDefaultExamples()}
         >
           Yes! Reset em now
         </button>
@@ -135,7 +148,12 @@
     </button>
   </Tooltip>
   {#if numberHidden > 0}
-    <button class={buttonStyle}>Restore hidden examples</button>
+    <button
+      class={buttonStyle}
+      on:click={() => exampleStore.restoreHiddenExamples()}
+    >
+      Restore hidden examples
+    </button>
   {/if}
 </div>
 <div
@@ -153,14 +171,16 @@
         >
           Mute
         </button>
-        <button
-          class={buttonStyle}
-          on:click={() => {
-            exampleStore.onlySwatches();
-          }}
-        >
-          Solo
-        </button>
+        {#if numToShow > 1}
+          <button
+            class={buttonStyle}
+            on:click={() => {
+              exampleStore.onlySwatches();
+            }}
+          >
+            Solo
+          </button>
+        {/if}
       </div>
       <Swatches />
     </div>
@@ -191,12 +211,14 @@
           >
             Mute
           </button>
-          <button
-            class={buttonStyle}
-            on:click={() => exampleStore.soloExample(idx)}
-          >
-            Solo
-          </button>
+          {#if numToShow > 1}
+            <button
+              class={buttonStyle}
+              on:click={() => exampleStore.soloExample(idx)}
+            >
+              Solo
+            </button>
+          {/if}
         </div>
         <div class="h-full flex justify-center items-center p-4">
           {#if example.svg}

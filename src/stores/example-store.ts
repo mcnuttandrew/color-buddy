@@ -20,6 +20,7 @@ const InitialStore: StoreData = {
 };
 
 export const DEMOS = [
+  { type: "svg", title: "Albers", filename: "./examples/albers.svg" },
   { type: "svg", title: "Holy Grail", filename: "./examples/HolyGrail.svg" },
   { type: "svg", title: "Fourier", filename: "./examples/fourier.svg" },
   { type: "svg", title: "Mondrian", filename: "./examples/mondrian.svg" },
@@ -183,23 +184,23 @@ function createStore() {
       }),
     soloExample: (idx: number) =>
       persistUpdate((old) => {
-        const newExamples = [...old.examples].map((x) => {
-          x.hidden = true;
-          return x;
-        });
+        const newExamples = hideAllExamples(old.examples);
         newExamples[idx].hidden = false;
-        return { ...old, examples: newExamples };
+        return {
+          ...old,
+          examples: newExamples,
+          sections: { ...old.sections, swatches: false },
+        };
       }),
     onlySwatches: () =>
       persistUpdate((old) => {
-        const newExamples = [...old.examples].map((x) => {
-          x.hidden = true;
-          return x;
-        });
-        return { ...old, examples: newExamples };
+        return { ...old, examples: hideAllExamples(old.examples) };
       }),
   };
 }
+
+const hideAllExamples = (examples: Example[]) =>
+  examples.map((example) => ({ ...example, hidden: true }));
 
 const store = createStore();
 

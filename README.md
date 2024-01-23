@@ -10,6 +10,22 @@ Use: should point to localhost:8888 if all is well
 
 First time you start it up you should also run `yarn prep data`
 
+# Todo bankruptcy
+
+- [ ] Minor: Make keyboard short cut (option+up/down) for the z-direction
+- [ ] Chore: Extract some common types into a top level location (like types.ts type thing)
+- [ ] Insert color theory options, eg insert opposing, inserting analogous color, etc, mine from the adobe picker
+- [ ] Labels, tooltips, etc
+- [ ] Nice to have: Rest of basic geometry manipulations: flip (horizontal, vertical), scale, Distribute radially
+- [ ] Bug report. If I am comparing a palette with itself and select a color in the main view, the color is not selected in the xy plot of the comparison panel. It is selected in the vertical only plot
+- [ ] For the palettes, a couple of ideas. Right now, feels like selecting a palette in the list reorders all the palettes, which is disorienting. I realize what you're doing in removing the palette I clicked on, adding the one I was editing. I think don't do this. Keep a fixed order (which I could change if I wanted to), and simply mark the palette that's being editing, don't remove it from the list. Similarly, if I copy a palette, put it right after the palette I copied, not up at the top. I also think adding a compact view of the palettes will eventually be necessary, so now might be the time to do it. Even as a default, would make the circles a bit smaller and pack them tighter. Or maybe make them tall rectangles that would pack even tighter.
+- [ ] Tool tip not staying put
+- [ ] Bug: Color channel usage slightly cursed (doesn't update positions correctly)
+- [ ] Add clone color (and similar buttons) to the tooltip, mostly for making interacting with the examples simpler
+- [ ] Direct manipulation new color add "puttin" mode on the scatterplot
+- [ ] Undo / redo stack size. Nice to have: summarize each action
+- [x] Albers color theory games style examples
+
 ## Direct manipulation bugs/improvement
 
 The basic UX for editing has the following components
@@ -52,14 +68,9 @@ To raise the sliders, you need to click on one of the examples that are displaye
 ## TODOS
 
 - [x] New "blank" button.
-- [ ] Too many menu options, refactor so that they have a logical and usable hierarchy
-- [ ] Minor: Make keyboard short cut (option+up/down) for the z-direction
-- [ ] Chore: Extract some common types into a top level location (like types.ts type thing)
+- [x] Too many menu options, refactor so that they have a logical and usable hierarchy
 - [x] Chore: Rearrange some of the colors in the color area eg make rg on xy and b on z etc, blocking polar stuff
 - [x] Polar stuff
-- [ ] Insert color theory options, eg insert opposing, inserting analogous color, etc, mine from the adobe picker
-- [ ] Labels, tooltips, etc
-- [ ] Nice to have: Rest of basic geometry manipulations: flip (horizontal, vertical), scale, Distribute radially
 - [x] Make lints have configurable parameters
 - [x] Examples: A (default) example showing annotated math stuff
 - [x] Examples: SVG Upload

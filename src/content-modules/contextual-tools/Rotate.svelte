@@ -27,6 +27,7 @@
     let localColors = memorizedColors;
 
     let centerChannels = [0, 0, 0];
+
     if (rotationPoint === "avg") {
       const clrs = focusedColors.map((x) => localColors[x]);
       // @ts-ignore
@@ -34,15 +35,16 @@
       centerChannels = center.toChannels();
     } else if (rotationPoint === "zero") {
       centerChannels = [0, 0, 0];
-    } else {
+    } else if (localColors[rotationPoint]) {
       centerChannels = localColors[rotationPoint].toChannels();
+    } else {
+      centerChannels = [0, 0, 0];
     }
 
     const rotated = Object.fromEntries(
       focusedColors
         .map((x) => localColors[x])
         .map((localColor) => {
-          console.log(localColor);
           const color = Color.toColorSpace(localColor, colorSpace);
           const channels = color.toChannels();
           //   https://math.stackexchange.com/questions/4354438/how-to-rotate-a-point-on-a-cartesian-plane-around-something-other-than-the-origi

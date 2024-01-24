@@ -2,7 +2,7 @@
   import { Color } from "../../lib/Color";
   import colorStore from "../../stores/color-store";
   import focusStore from "../../stores/focus-store";
-  import { clipToGamut } from "../../lib/utils";
+  import { clipToGamut, clamp } from "../../lib/utils";
 
   import { buttonStyle } from "../../lib/styles";
 
@@ -23,7 +23,8 @@
     {
       name: "Lighten",
       effect: (color) =>
-        color.toColorIO().set("lch.l", (l) => (l ? l * 1.2 : 5)).coords,
+        color.toColorIO().set("lch.l", (l) => clamp(l ? l * 1.2 : 5, 0, 100))
+          .coords,
     },
     {
       name: "Darken",
@@ -32,7 +33,8 @@
     {
       name: "Saturate",
       effect: (color) =>
-        color.toColorIO().set("lch.c", (c) => (c ? c * 1.2 : 5)).coords,
+        color.toColorIO().set("lch.c", (c) => clamp(c ? c * 1.2 : 5, 0, 150))
+          .coords,
     },
     {
       name: "Desaturate",

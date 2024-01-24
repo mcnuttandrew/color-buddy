@@ -19,7 +19,7 @@
 {#if focusedColors.length === 1}
   <div class="w-full border-t-2 border-black my-2"></div>
   <ColorChannelPicker
-    color={colors[focusedColors[0]]}
+    color={colors[focusedColors[0]].toColorSpace(colorSpace)}
     colorMode={colorSpace}
     onColorChange={(color) => {
       const updatedColors = [...colors];

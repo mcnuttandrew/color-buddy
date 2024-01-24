@@ -22,7 +22,7 @@
       }
     }
     // block code mirror editing
-    if (e.target.getAttribute("class").includes("cm-content")) {
+    if ((e.target.getAttribute("class") || "").includes("cm-content")) {
       return;
     }
     if (tagName === "textarea") {

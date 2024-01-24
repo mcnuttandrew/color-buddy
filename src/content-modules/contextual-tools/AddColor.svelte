@@ -85,7 +85,42 @@
 <!-- <Tooltip> -->
 <!-- <div slot="content" class="max-w-xs"> -->
 <div class="w-full border-t-2 border-black my-2"></div>
-<div class="font-bold">Add Color</div>
+<div class="flex w-full justify-between">
+  <div class="font-bold">Add Color</div>
+  <Tooltip>
+    <button
+      slot="target"
+      let:toggle
+      on:click={toggle}
+      class="{buttonStyle} italic text-sm"
+    >
+      More Suggestions
+    </button>
+    <div class="flex flex-wrap max-w-md" slot="content">
+      {#each suggestions as color}
+        <ColorButton
+          {color}
+          {clickColor}
+          removeColor={() => {
+            suggestions = suggestions.filter((x) => x !== color);
+          }}
+        />
+      {/each}
+      <button
+        class={`${buttonStyle}`}
+        on:click={() => {
+          const newSuggestions = [...suggestions];
+          [randColor(), randColor(), randColor()].map((x) =>
+            newSuggestions.push(x)
+          );
+          suggestions = newSuggestions;
+        }}
+      >
+        +
+      </button>
+    </div>
+  </Tooltip>
+</div>
 <section>
   <div class="flex w-full justify-between items-center">
     <form on:submit|preventDefault={getColorForSearch}>
@@ -129,31 +164,4 @@
       {/each}
     </div>
   {/if}
-</section>
-
-<section class="mt-4">
-  <span class="italic text-sm">Random Suggestions</span>
-  <div class="flex flex-wrap">
-    {#each suggestions as color}
-      <ColorButton
-        {color}
-        {clickColor}
-        removeColor={() => {
-          suggestions = suggestions.filter((x) => x !== color);
-        }}
-      />
-    {/each}
-    <button
-      class={`${buttonStyle}`}
-      on:click={() => {
-        const newSuggestions = [...suggestions];
-        [randColor(), randColor(), randColor()].map((x) =>
-          newSuggestions.push(x)
-        );
-        suggestions = newSuggestions;
-      }}
-    >
-      +
-    </button>
-  </div>
 </section>

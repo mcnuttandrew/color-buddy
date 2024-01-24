@@ -28,6 +28,7 @@ First time you start it up you should also run `yarn prep data`
 - [ ] XYY is probaably now possible
 - [ ] Bug: rotate in polar coordinates doesn't work right
 - [ ] Ad hoc lints seem possible, do a spike
+- [ ] Directional subtlies for aligns
 - [x] Similarly, would like to work through the various options for the examples. Delete, Edit, Hide (not Mute) seem good. If you're going to Hide, then ideally you provide a selective unhide (dropdown of names is the easiest) as well as the unhide all. Your Solo means "hide everything else" which I'm not convinced is worth a button. However, a "full screen" or "fit width" "fit height" options that scales it up and reduces the rest to thumbnails might be cool. And I'm sure there are a few more we'll discover as we work with it.
 - [x] Albers color theory games style examples
 

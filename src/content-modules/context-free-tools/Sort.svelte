@@ -5,7 +5,8 @@
   const spaces = ["lab", "lch", "hsl", "hsv"];
   let selectedColorSpace: (typeof spaces)[number] = "lab";
   let selectedLetter = "a";
-  $: colors = $colorStore.currentPal.colors;
+  $: currentPal = $colorStore.palettes[$colorStore.currentPal];
+  $: colors = currentPal.colors;
 
   function sortByChannel(colorSpace: string, channel: number) {
     const newSort = [...colors].sort((a, b) => {

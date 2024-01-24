@@ -8,8 +8,9 @@
   import PalDiff from "../../components/PalDiff.svelte";
 
   let requestState: "idle" | "loading" | "loaded" | "failed" = "idle";
-  $: colorSpace = $colorStore.currentPal.colorSpace;
-  $: colors = $colorStore.currentPal.colors;
+  $: currentPal = $colorStore.palettes[$colorStore.currentPal];
+  $: colorSpace = currentPal.colorSpace;
+  $: colors = currentPal.colors;
   $: selectedColors = $focusStore.focusedColors
     .map((x) => colors[x]?.toHex())
     .filter((x) => x !== undefined) as string[];
@@ -20,8 +21,8 @@
     return {
       colors: colors.map((x) => Color.colorFromString(x, colorSpace)),
       name: "mods",
-      background: $colorStore.currentPal.background,
-      type: $colorStore.currentPal.type,
+      background: currentPal.background,
+      type: currentPal.type,
       evalConfig: {},
       colorSpace,
     };
@@ -31,12 +32,12 @@
     requestState = "loading";
     const pal = selectedColors.length
       ? {
-          ...$colorStore.currentPal,
+          ...currentPal,
           colors: selectedColors.map((x) =>
             Color.colorFromString(x, colorSpace)
           ),
         }
-      : $colorStore.currentPal;
+      : currentPal;
     suggestContextualAdjustments(palPrompt, pal, $configStore.engine)
       .then((suggestions) => {
         if (suggestions.length === 0) {
@@ -88,9 +89,7 @@
     {#if requestState === "loaded"}
       <div>
         <PalDiff
-          beforePal={selectedColors.length
-            ? toPal(selectedColors)
-            : $colorStore.currentPal}
+          beforePal={selectedColors.length ? toPal(selectedColors) : currentPal}
           afterPal={toPal(suggestedColors)}
         />
       </div>

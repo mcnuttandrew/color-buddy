@@ -19,7 +19,8 @@
   $: config = colorPickerConfig[colorSpace as keyof typeof colorPickerConfig];
   $: rNonDimScale = scaleLinear().domain([0, 1]).range(rScale.domain());
   $: focusedColors = $focusStore.focusedColors;
-  $: colors = $colorStore.currentPal.colors;
+  $: currentPal = $colorStore.palettes[$colorStore.currentPal];
+  $: colors = currentPal.colors;
 
   $: points = {
     centerTop: {

@@ -4,7 +4,7 @@ interface StoreData {
   route: "examples" | "compare" | "eval";
   controlsOpen: boolean;
   savedPalsOpen: boolean;
-  comparePal: string | undefined;
+  comparePal: number | undefined;
   colorSim: "deuteranopia" | "protanopia" | "tritanopia" | "none";
   includeQuotes: boolean;
   xZoom: [number, number];

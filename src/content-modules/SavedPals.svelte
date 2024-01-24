@@ -3,6 +3,7 @@
   import focusStore from "../stores/focus-store";
 
   import PalPreview from "../components/PalPreview.svelte";
+
   import { buttonStyle } from "../lib/styles";
   import Tooltip from "../components/Tooltip.svelte";
 </script>
@@ -13,11 +14,14 @@
     <div class="flex flex-col mt-2 h-fit">
       <div class="flex items-center justify-between">
         <div>
+          {#if i === $colorStore.currentPal}
+            <span class="font-bold">Current Pal:</span>
+          {/if}
           <button
             class={buttonStyle}
             on:click={() => {
               focusStore.clearColors();
-              colorStore.startUsingPal(pal.name);
+              colorStore.startUsingPal(i);
             }}
           >
             {pal.name}
@@ -27,9 +31,9 @@
           <div slot="content" let:onClick>
             <button
               class={buttonStyle}
-              on:click={() => colorStore.copyPal(pal.name)}
+              on:click={() => colorStore.duplicatePal(i)}
             >
-              Copy
+              Duplicate
             </button>
             <button
               class={buttonStyle}

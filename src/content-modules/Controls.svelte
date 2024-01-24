@@ -11,8 +11,9 @@
   import Rotate from "./contextual-tools/Rotate.svelte";
   import ColorChannelPicker from "../components/ColorChannelPicker.svelte";
 
-  $: colors = $colorStore.currentPal.colors;
-  $: colorSpace = $colorStore.currentPal.colorSpace;
+  $: currentPal = $colorStore.palettes[$colorStore.currentPal];
+  $: colors = currentPal.colors;
+  $: colorSpace = currentPal.colorSpace;
   $: focusedColors = $focusStore.focusedColors;
 </script>
 

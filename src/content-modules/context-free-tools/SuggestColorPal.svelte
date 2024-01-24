@@ -7,7 +7,8 @@
   import PalPreview from "../../components/PalPreview.svelte";
   import { buttonStyle, AIButtonStyle } from "../../lib/styles";
 
-  $: colorSpace = $colorStore.currentPal.colorSpace;
+  $: currentPal = $colorStore.palettes[$colorStore.currentPal];
+  $: colorSpace = currentPal.colorSpace;
   let requestState: "idle" | "loading" | "loaded" | "failed" = "idle";
   let newPal: Palette | undefined = undefined;
   let palPrompt: string = "";

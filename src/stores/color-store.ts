@@ -27,12 +27,12 @@ export type Palette = Pal<Color>;
 
 interface StoreData {
   palettes: Pal<Color>[];
-  currentPal: Pal<Color>;
+  currentPal: number;
 }
 
 interface StorageData {
   palettes: Pal<string>[];
-  currentPal: Pal<string>;
+  currentPal: number;
 }
 
 export function newGenericPal(name: string): Pal<string> {
@@ -46,42 +46,27 @@ export function newGenericPal(name: string): Pal<string> {
   };
 }
 
+function stringPalToColorPal(pal: Pal<string>): Pal<Color> {
+  return {
+    ...pal,
+    background: Color.colorFromString(pal.background, pal.colorSpace),
+    colors: pal.colors.map((x) => Color.colorFromString(x, pal.colorSpace)),
+  };
+}
+
 const InitialStore: StorageData = {
   palettes: [
     newGenericPal("Example 1"),
     newGenericPal("Example 2"),
     newGenericPal("Example 3"),
   ],
-  currentPal: {
-    name: "Untitled",
-    colors: pick(outfits),
-    background: "#ffffff",
-    type: "categorical",
-    evalConfig: {},
-    colorSpace: "lab",
-  },
+  currentPal: 0,
 };
 
 function convertStoreHexToColor(store: StorageData): StoreData {
-  const space = store.currentPal.colorSpace;
   return {
-    palettes: store.palettes.map((x) => ({
-      ...x,
-      background: Color.colorFromString(x.background, x.colorSpace as any),
-      colors: x.colors.map((y) =>
-        Color.colorFromString(y, x.colorSpace as any)
-      ),
-    })),
-    currentPal: {
-      ...store.currentPal,
-      background: Color.colorFromString(
-        store.currentPal.background,
-        space as any
-      ),
-      colors: store.currentPal.colors.map((y) =>
-        Color.colorFromString(y, space as any)
-      ),
-    },
+    palettes: store.palettes.map(stringPalToColorPal),
+    currentPal: store.currentPal,
   };
 }
 
@@ -92,21 +77,8 @@ function convertStoreColorToHex(store: StoreData): StorageData {
       background: x.background.toString(),
       colors: x.colors.map((y) => y.toString()),
     })),
-    currentPal: {
-      ...store.currentPal,
-      background: store.currentPal.background.toString(),
-      colors: store.currentPal.colors.map((y) => y.toString()),
-    },
+    currentPal: store.currentPal,
   };
-}
-
-function insertPalette(palettes: Palette[], pal: Palette): Palette[] {
-  let nameCount = palettes.reduce(
-    (acc, x) => acc + (x.name === pal.name ? 1 : 0),
-    0
-  );
-  const name = nameCount === 0 ? pal.name : `${pal.name} ${nameCount}`;
-  return [{ ...pal, name }, ...palettes];
 }
 
 // install defaults if not present
@@ -114,14 +86,12 @@ function addDefaults(store: Partial<StorageData>): StorageData {
   // check if the base store objects work right
   const storeData = { ...InitialStore, ...store };
   // check if the current pal works right
-  storeData.currentPal = {
-    ...InitialStore.currentPal,
-    ...storeData.currentPal,
-  };
+  storeData.currentPal = 0;
 
   // also check all of the palettes
+  const genericPal = newGenericPal("Example");
   storeData.palettes = storeData.palettes!.map((pal) => ({
-    ...InitialStore.currentPal,
+    ...genericPal,
     ...pal,
   }));
 
@@ -129,12 +99,10 @@ function addDefaults(store: Partial<StorageData>): StorageData {
 }
 
 function createStore() {
+  const target =
+    localStorage.getItem("color-pal") || JSON.stringify(InitialStore);
   let storeData: StoreData = convertStoreHexToColor(
-    addDefaults(
-      JSON.parse(
-        localStorage.getItem("color-pal") || JSON.stringify(InitialStore)
-      )
-    )
+    addDefaults(JSON.parse(target))
   );
 
   // persist new store to storage
@@ -167,7 +135,12 @@ function createStore() {
       return newVal;
     });
   const palUp = (updateFunc: (old: Palette) => Palette) =>
-    persistUpdate((n) => ({ ...n, currentPal: updateFunc(n.currentPal) }));
+    persistUpdate((n) => {
+      const newPal = updateFunc(n.palettes[n.currentPal]);
+      const updatedPals = [...n.palettes];
+      updatedPals[n.currentPal] = newPal;
+      return { ...n, palettes: updatedPals };
+    });
 
   const palsUp = (updateFunc: (old: Palette[]) => Palette[]) =>
     persistUpdate((n) => ({ ...n, palettes: updateFunc(n.palettes) }));
@@ -216,27 +189,31 @@ function createStore() {
     setPalettes: simpleSet("palettes"),
     setCurrentPal: simpleSet("currentPal"),
     setCurrentPalColors: (colors: Color[]) => palUp((n) => ({ ...n, colors })),
-    startUsingPal: (palName: string) => {
-      persistUpdate((n) => {
-        const newPal = n.palettes.find((x) => x.name === palName);
-        if (!newPal) return n;
-        const updatedPals = insertPalette(
-          n.palettes.filter((x) => x.name !== palName),
-          n.currentPal
-        );
-        return { ...n, currentPal: newPal, palettes: updatedPals };
-      });
+    startUsingPal: (indx: number) => {
+      persistUpdate((n) => ({ ...n, currentPal: indx }));
     },
     createNewPal: (newPal: Palette) =>
       persistUpdate((n) => ({
-        ...n,
-        currentPal: newPal,
-        palettes: insertPalette(n.palettes, n.currentPal),
+        currentPal: 0,
+        palettes: [newPal, ...n.palettes],
       })),
     removePal: (index: number) =>
-      palsUp((n) => n.filter((_x, idx) => idx !== index)),
-    copyPal: (pal: string) =>
-      palsUp((n) => insertPalette(n, n.find((x) => x.name === pal)!)),
+      persistUpdate((n) => {
+        let palettes = [...n.palettes].filter((_, i) => i !== index);
+        if (palettes.length === 0) {
+          palettes = [stringPalToColorPal(newGenericPal("Example"))];
+        }
+        return {
+          ...n,
+          currentPal: Math.min(index, palettes.length - 1),
+          palettes,
+        };
+      }),
+    duplicatePal: (index: number) =>
+      palsUp((n) => {
+        const newPal = { ...n[index], name: `${n[index].name} copy` };
+        return [...n.slice(0, index), newPal, ...n.slice(index)];
+      }),
     setSort: (sort: Color[]) => palUp((n) => ({ ...n, colors: deDup(sort) })),
     setCurrentPalName: (name: string) => palUp((n) => ({ ...n, name })),
     setCurrentPalType: (type: PalType) => palUp((n) => ({ ...n, type })),

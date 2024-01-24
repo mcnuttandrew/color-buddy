@@ -8,10 +8,11 @@
 
   let axis = "z" as "x" | "y" | "z";
   $: focusedColors = $focusStore.focusedColors;
-  $: colors = $colorStore.currentPal.colors;
+  $: currentPal = $colorStore.palettes[$colorStore.currentPal];
+  $: colors = currentPal.colors;
   $: angle = 0;
 
-  $: colorSpace = $colorStore.currentPal.colorSpace;
+  $: colorSpace = currentPal.colorSpace;
   $: angle, rotatePoints();
   $: memorizedColors = false as false | Color[];
   let rotationPoint = "zero " as number | "avg" | "zero";

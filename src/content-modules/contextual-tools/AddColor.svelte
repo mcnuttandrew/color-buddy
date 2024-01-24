@@ -17,8 +17,9 @@
       .map((x) => componentToHex(x))
       .join("")}`;
 
-  $: colors = $colorStore.currentPal.colors;
-  $: colorSpace = $colorStore.currentPal.colorSpace;
+  $: currentPal = $colorStore.palettes[$colorStore.currentPal];
+  $: colors = currentPal.colors;
+  $: colorSpace = currentPal.colorSpace;
 
   let suggestions = [randColor(), randColor(), randColor()];
 
@@ -54,11 +55,7 @@
     }
 
     requestState = "loading";
-    suggestAdditionsToPalette(
-      $colorStore.currentPal,
-      $configStore.engine,
-      searchedString
-    )
+    suggestAdditionsToPalette(currentPal, $configStore.engine, searchedString)
       .then((x) => {
         console.log("ai suggestions", x);
         x.forEach((color) => {

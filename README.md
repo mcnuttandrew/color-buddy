@@ -17,7 +17,6 @@ First time you start it up you should also run `yarn prep data`
 - [ ] Insert color theory options, eg insert opposing, inserting analogous color, etc, mine from the adobe picker
 - [ ] Labels, tooltips, etc
 - [ ] Nice to have: Rest of basic geometry manipulations: flip (horizontal, vertical), scale, Distribute radially
-- [ ] Bug report. If I am comparing a palette with itself and select a color in the main view, the color is not selected in the xy plot of the comparison panel. It is selected in the vertical only plot
 - [ ] For the palettes, a couple of ideas. Right now, feels like selecting a palette in the list reorders all the palettes, which is disorienting. I realize what you're doing in removing the palette I clicked on, adding the one I was editing. I think don't do this. Keep a fixed order (which I could change if I wanted to), and simply mark the palette that's being editing, don't remove it from the list. Similarly, if I copy a palette, put it right after the palette I copied, not up at the top. I also think adding a compact view of the palettes will eventually be necessary, so now might be the time to do it. Even as a default, would make the circles a bit smaller and pack them tighter. Or maybe make them tall rectangles that would pack even tighter.
 - [ ] For the palettes, there is a copy and delete bug. Try this: Copy Example 2, then immediately click delete (menu is still up). Surpise!
 - [ ] Tool tip not staying put
@@ -29,6 +28,7 @@ First time you start it up you should also run `yarn prep data`
 - [ ] Bug: rotate in polar coordinates doesn't work right
 - [ ] Ad hoc lints seem possible, do a spike
 - [ ] Directional subtlies for aligns
+- [x] Bug report. If I am comparing a palette with itself and select a color in the main view, the color is not selected in the xy plot of the comparison panel. It is selected in the vertical only plot
 - [x] Similarly, would like to work through the various options for the examples. Delete, Edit, Hide (not Mute) seem good. If you're going to Hide, then ideally you provide a selective unhide (dropdown of names is the easiest) as well as the unhide all. Your Solo means "hide everything else" which I'm not convinced is worth a button. However, a "full screen" or "fit width" "fit height" options that scales it up and reduces the rest to thumbnails might be cool. And I'm sure there are a few more we'll discover as we work with it.
 - [x] Albers color theory games style examples
 

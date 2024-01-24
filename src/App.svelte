@@ -24,6 +24,7 @@
 
   import ContentEditable from "./components/ContentEditable.svelte";
 
+  $: currentPal = $colorStore.palettes[$colorStore.currentPal];
   const tabs = ["examples", "compare", "eval"];
 </script>
 
@@ -40,9 +41,9 @@
               class={`${buttonStyle} `}
               on:click={() => {
                 const newPal = {
-                  ...$colorStore.currentPal,
-                  name: `${$colorStore.currentPal.name} copy`,
-                  colors: [...$colorStore.currentPal.colors],
+                  ...currentPal,
+                  name: `${currentPal.name} copy`,
+                  colors: [...currentPal.colors],
                 };
                 colorStore.createNewPal(newPal);
               }}
@@ -62,7 +63,7 @@
                 <span>✎</span>
                 <ContentEditable
                   onChange={(x) => colorStore.setCurrentPalName(x)}
-                  value={$colorStore.currentPal.name}
+                  value={currentPal.name}
                 />
               </div>
             </div>
@@ -70,8 +71,8 @@
           </div>
           <ColorScatterPlot
             scatterPlotMode="moving"
-            colorSpace={$colorStore.currentPal.colorSpace}
-            Pal={$colorStore.currentPal}
+            colorSpace={currentPal.colorSpace}
+            Pal={currentPal}
             focusedColors={$focusStore.focusedColors}
             height={450}
             width={450}
@@ -83,11 +84,11 @@
           <div class="flex">
             <Background
               onChange={(bg) => colorStore.setBackground(bg)}
-              bg={$colorStore.currentPal.background}
-              colorSpace={$colorStore.currentPal.colorSpace}
+              bg={currentPal.background}
+              colorSpace={currentPal.colorSpace}
             />
             <SetColorSpace
-              colorSpace={$colorStore.currentPal.colorSpace}
+              colorSpace={currentPal.colorSpace}
               onChange={(space) => colorStore.setColorSpace(space)}
             />
             <Sort />
@@ -96,7 +97,7 @@
             <!-- overview / preview -->
             <PalPreview
               highlightSelected={true}
-              pal={$colorStore.currentPal}
+              pal={currentPal}
               allowModification={true}
             />
             <GetColorsFromString />

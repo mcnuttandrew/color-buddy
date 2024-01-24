@@ -16,13 +16,14 @@
   $: selectedBlindType = $configStore.colorSim;
 
   let metric: "dE" | "dE94" | "none" = "none";
-  $: colors = $colorStore.currentPal.colors;
+  $: currentPal = $colorStore.palettes[$colorStore.currentPal];
+  $: colors = currentPal.colors;
   $: stats = computeStats(colors, metric);
 
   $: colorNames = colorNameSimple(colors);
-  $: palType = $colorStore.currentPal.type;
-  $: evalConfig = $colorStore.currentPal.evalConfig;
-  $: checks = runLintChecks($colorStore.currentPal).filter((x) =>
+  $: palType = currentPal.type;
+  $: evalConfig = currentPal.evalConfig;
+  $: checks = runLintChecks(currentPal).filter((x) =>
     x.taskTypes.includes(palType)
   );
 
@@ -243,7 +244,7 @@
           {/if}
         {/each}
       {/each}
-      {#if Object.keys($colorStore.currentPal.evalConfig)}
+      {#if Object.keys(currentPal.evalConfig)}
         <button
           class={`${buttonStyle} mt-5`}
           on:click={() => colorStore.setCurrentPalEvalConfig({})}

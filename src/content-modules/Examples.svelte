@@ -19,8 +19,9 @@
   let modalState: "closed" | "input-svg" | "input-vega" | "edit-colors" =
     "closed";
   let modifyingExample: number | false = false;
-  $: bg = $colorStore.currentPal.background;
-  $: colorSpace = $colorStore.currentPal.colorSpace;
+  $: currentPal = $colorStore.palettes[$colorStore.currentPal];
+  $: bg = currentPal.background;
+  $: colorSpace = currentPal.colorSpace;
   let value = "";
 
   $: detectedColors = [] as string[];

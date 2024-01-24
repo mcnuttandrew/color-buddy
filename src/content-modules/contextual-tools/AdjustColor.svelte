@@ -6,9 +6,10 @@
 
   import { buttonStyle } from "../../lib/styles";
 
-  $: colors = $colorStore.currentPal.colors;
+  $: currentPal = $colorStore.palettes[$colorStore.currentPal];
+  $: colors = currentPal.colors;
   $: focusedColors = $focusStore.focusedColors;
-  $: colorSpace = $colorStore.currentPal.colorSpace;
+  $: colorSpace = currentPal.colorSpace;
 
   type ColorEffect = (color: Color) => [number, number, number];
   function actionOnColor(focusedColors: number[], action: ColorEffect) {

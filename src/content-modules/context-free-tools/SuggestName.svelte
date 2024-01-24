@@ -6,10 +6,12 @@
 
   import { suggestNameForPalette } from "../../lib/api-calls";
 
+  $: currentPal = $colorStore.palettes[$colorStore.currentPal];
+
   function makeRequest() {
     if (requestState === "loading") return;
     requestState = "loading";
-    suggestNameForPalette($colorStore.currentPal, $configStore.engine)
+    suggestNameForPalette(currentPal, $configStore.engine)
       .then((x) => {
         nameSuggestions = x;
         requestState = "idle";
@@ -24,7 +26,11 @@
   let requestState: "idle" | "loading" = "idle";
 </script>
 
-<Tooltip>
+<Tooltip
+  onClose={() => {
+    nameSuggestions = [];
+  }}
+>
   <div slot="content" let:onClick>
     <div class="">
       {#if requestState === "loading"}

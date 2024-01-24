@@ -104,9 +104,10 @@
   $: CircleProps = (color: Color, i: number) => ({
     cx: x(color),
     cy: y(color),
-    r: 10,
+    // r: 10,
     class: "cursor-pointer",
     fill: color.toDisplay(),
+    r: 10 + (focusSet.has(i) ? 5 : 0),
   });
   $: RectProps = (color: Color, i: number) => ({
     y: z(color),
@@ -310,7 +311,6 @@
               {#if scatterPlotMode === "moving"}
                 <circle
                   {...CircleProps(color, i)}
-                  r={10 + (focusSet.has(i) ? 5 : 0)}
                   on:touchstart|preventDefault={(e) => {
                     onFocusedColorsChange([i]);
                     dragStart(e);

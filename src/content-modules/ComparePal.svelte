@@ -11,11 +11,13 @@
 
   import SetColorSpace from "./contextual-tools/SetColorSpace.svelte";
 
-  $: compareName = $configStore.comparePal;
-  $: ComparisonPal = $colorStore.palettes.find((x) => x.name === compareName);
+  $: currentPal = $colorStore.palettes[$colorStore.currentPal];
+  $: compareIdx = $configStore.comparePal;
+  $: focused = $focusStore.focusedColors;
+  $: ComparisonPal = compareIdx ? $colorStore.palettes[compareIdx] : undefined;
   $: {
-    if (!ComparisonPal && $colorStore.currentPal.name === compareName) {
-      ComparisonPal = $colorStore.currentPal;
+    if (!ComparisonPal && $colorStore.currentPal === compareIdx) {
+      ComparisonPal = currentPal;
     }
   }
   let bg = ComparisonPal?.background.toHex() || "white";
@@ -26,13 +28,13 @@
 <div class="flex flex-col" style={`background: ${bg}`}>
   {#if ComparisonPal !== undefined}
     <div class="text-xl">
-      <span class="italic">Compare Pal: {compareName}</span>
+      <span class="italic">Compare Pal: {ComparisonPal.name}</span>
     </div>
     <ColorScatterPlot
       scatterPlotMode="looking"
       Pal={{ ...ComparisonPal, background: Color.colorFromHex(bg, colorSpace) }}
       {colorSpace}
-      focusedColors={$focusStore.focusedColors}
+      focusedColors={$colorStore.currentPal === compareIdx ? focused : []}
       height={450}
       width={450}
       onColorsChange={() => {}}
@@ -50,22 +52,22 @@
 <div class="flex">
   <Tooltip>
     <button class={buttonStyle} slot="target" let:toggle on:click={toggle}>
-      Select comparison. Currently: {compareName || "none"}
+      Select comparison. Currently: {ComparisonPal?.name || "none"}
     </button>
     <div class="flex flex-col w-80" slot="content">
       <div class="flex flex-col">
         Current Palette:
         <MiniPalPreview
-          pal={$colorStore.currentPal}
-          onClick={() => configStore.setComparePal($colorStore.currentPal.name)}
+          pal={currentPal}
+          onClick={() => configStore.setComparePal($colorStore.currentPal)}
         />
       </div>
       <div>Other Saved Palettes:</div>
       <div class="flex flex-wrap">
-        {#each [$colorStore.currentPal, ...$colorStore.palettes] as pal, idx}
+        {#each [currentPal, ...$colorStore.palettes] as pal, idx}
           <MiniPalPreview
             {pal}
-            onClick={() => configStore.setComparePal(pal.name)}
+            onClick={() => configStore.setComparePal(idx)}
           />
         {/each}
       </div>

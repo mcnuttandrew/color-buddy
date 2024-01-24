@@ -32,7 +32,8 @@
       }
     });
   }
-  $: evalConfig = $colorStore.currentPal.evalConfig;
+  $: currentPal = $colorStore.palettes[$colorStore.currentPal];
+  $: evalConfig = currentPal.evalConfig;
   function updateEvalConfig(
     checkName: string,
     value: any,
@@ -98,7 +99,7 @@
       <div>Failed to generate suggestions</div>
     {:else if requestState === "loaded" && suggestion}
       <div class="flex flex-col">
-        <PalDiff beforePal={$colorStore.currentPal} afterPal={suggestion} />
+        <PalDiff beforePal={currentPal} afterPal={suggestion} />
         <div class="flex justify-between">
           <button
             class={buttonStyle}

@@ -4,10 +4,10 @@
   import focusStore from "../stores/focus-store";
   import Tooltip from "../components/Tooltip.svelte";
   import SwatchTooltipContent from "./SwatchTooltipContent.svelte";
-  import { swap } from "../lib/utils";
-  import { buttonStyle } from "../lib/styles";
-  $: colors = $colorStore.currentPal.colors;
-  $: bg = $colorStore.currentPal.background;
+
+  $: currentPal = $colorStore.palettes[$colorStore.currentPal];
+  $: colors = currentPal.colors;
+  $: bg = currentPal.background;
   $: focused = $focusStore.focusedColors;
   $: focusSet = new Set(focused);
 

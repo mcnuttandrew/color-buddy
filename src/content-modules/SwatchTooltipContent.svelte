@@ -8,8 +8,9 @@
   export let idx: number;
   export let color: Color;
   export let closeTooltip: () => void;
-  $: colors = $colorStore.currentPal.colors;
-  $: colorSpace = $colorStore.currentPal.colorSpace;
+  $: currentPal = $colorStore.palettes[$colorStore.currentPal];
+  $: colors = currentPal.colors;
+  $: colorSpace = currentPal.colorSpace;
 
   function updateColor(color: Color) {
     const updatedColors = [...colors];

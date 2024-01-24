@@ -37,7 +37,8 @@
     return output;
   }
 
-  $: colors = $colorStore.currentPal.colors;
+  $: currentPal = $colorStore.palettes[$colorStore.currentPal];
+  $: colors = currentPal.colors;
 </script>
 
 <div class="text-sm italic">

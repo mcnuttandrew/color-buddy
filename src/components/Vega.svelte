@@ -7,8 +7,8 @@
   export let size = 300;
 
   let producedSVG: string = "";
-
-  $: getSVG(spec, $colorStore.currentPal).then((x) => {
+  $: currentPal = $colorStore.palettes[$colorStore.currentPal];
+  $: getSVG(spec, currentPal).then((x) => {
     producedSVG = x;
   });
 </script>

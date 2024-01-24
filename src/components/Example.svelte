@@ -42,8 +42,9 @@
     }
     return svg;
   }
-  $: colors = $colorStore.currentPal.colors;
-  $: bg = $colorStore.currentPal.background;
+  $: currentPal = $colorStore.palettes[$colorStore.currentPal];
+  $: colors = currentPal.colors;
+  $: bg = currentPal.background;
   $: colors, example, attachListeners();
 
   function onClick(e: any) {

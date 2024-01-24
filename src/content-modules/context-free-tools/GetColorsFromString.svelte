@@ -2,9 +2,10 @@
   import { Color } from "../../lib/Color";
   import colorStore from "../../stores/color-store";
   import configStore from "../../stores/config-store";
-  $: colors = $colorStore.currentPal.colors;
   let state: "idle" | "error" = "idle";
-  $: colorSpace = $colorStore.currentPal.colorSpace;
+  $: currentPal = $colorStore.palettes[$colorStore.currentPal];
+  $: colors = currentPal.colors;
+  $: colorSpace = currentPal.colorSpace;
 
   function processBodyInput(body: string) {
     try {

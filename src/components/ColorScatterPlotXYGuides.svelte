@@ -17,7 +17,8 @@
   $: xNonDimScale = scaleLinear().domain([0, 1]).range(xScale.domain());
   $: yNonDimScale = scaleLinear().domain([0, 1]).range(yScale.domain());
   $: focusedColors = $focusStore.focusedColors;
-  $: colors = $colorStore.currentPal.colors;
+  $: currentPal = $colorStore.palettes[$colorStore.currentPal];
+  $: colors = currentPal.colors;
   $: axisFormatter =
     colorPickerConfig[colorSpace as keyof typeof colorPickerConfig].axisLabel;
 

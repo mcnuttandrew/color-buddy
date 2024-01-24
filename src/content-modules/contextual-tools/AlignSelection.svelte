@@ -4,11 +4,12 @@
   import { Color, colorPickerConfig } from "../../lib/Color";
   import { buttonStyle } from "../../lib/styles";
 
-  $: colors = $colorStore.currentPal.colors;
+  $: currentPal = $colorStore.palettes[$colorStore.currentPal];
+  $: colors = currentPal.colors;
   $: focusedColors = $focusStore.focusedColors;
   $: focusSet = new Set(focusedColors);
   $: focusLabs = focusedColors.map((idx) => colors[idx].toChannels());
-  $: colorSpace = $colorStore.currentPal.colorSpace;
+  $: colorSpace = currentPal.colorSpace;
   $: zName = colorPickerConfig[colorSpace].zChannel;
   $: ALIGNS = [
     { pos: 1, name: "Left", op: Math.min },

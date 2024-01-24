@@ -3,18 +3,19 @@
   import type { Palette } from "../../stores/color-store";
   import colorStore from "../../stores/color-store";
   import focusStore from "../../stores/focus-store";
-  import { buttonStyle, buttonStyleDisabled } from "../../lib/styles";
+  import { buttonStyle } from "../../lib/styles";
   import PalPreview from "../../components/PalPreview.svelte";
 
+  $: currentPal = $colorStore.palettes[$colorStore.currentPal];
   $: focusedColors = $focusStore.focusedColors;
   $: focusSet = new Set(focusedColors);
-  $: colors = $colorStore.currentPal.colors;
+  $: colors = currentPal.colors;
   let colorSpace = "lab";
   let numPoints = 1;
   $: tempPal = (numPoints &&
     colorSpace &&
     focusedColors.length >= 2 && {
-      ...$colorStore.currentPal,
+      ...currentPal,
       colors: createInterpolation(),
     }) as Palette;
   function createInterpolatedPoints(pointA: Color, pointB: Color) {

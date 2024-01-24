@@ -5,7 +5,8 @@
   import { deDup } from "../../lib/utils";
   $: focusedColors = $focusStore.focusedColors;
   $: focusSet = new Set(focusedColors);
-  $: colors = $colorStore.currentPal.colors;
+  $: currentPal = $colorStore.palettes[$colorStore.currentPal];
+  $: colors = currentPal.colors;
 
   $: hasDuplicates = colors && checkForDuplicates();
   function checkForDuplicates() {

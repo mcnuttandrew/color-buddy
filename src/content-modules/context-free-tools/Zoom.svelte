@@ -13,7 +13,8 @@
   $: zZoom = $configStore.zZoom;
   $: zZoom && configStore.setZoom("z", zZoom);
 
-  $: colorSpace = $colorStore.currentPal.colorSpace;
+  $: currentPal = $colorStore.palettes[$colorStore.currentPal];
+  $: colorSpace = currentPal.colorSpace;
   $: config = colorPickerConfig[colorSpace as keyof typeof colorPickerConfig];
 
   $: xName = config.xChannel.toUpperCase();

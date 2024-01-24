@@ -1,5 +1,4 @@
 import { Color } from "./Color";
-import type { Palette } from "../stores/color-store";
 
 /////////////// MAUREEN'S CODE ///////////////////////
 

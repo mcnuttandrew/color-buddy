@@ -4,7 +4,8 @@
   import focusStore from "../stores/focus-store";
   $: focusedSet = new Set($focusStore.focusedColors);
   $: copiedData = [] as Color[];
-  $: colorSpace = $colorStore.currentPal.colorSpace;
+  $: currentPal = $colorStore.palettes[$colorStore.currentPal];
+  $: colorSpace = currentPal.colorSpace;
   $: config = colorPickerConfig[colorSpace];
   $: xStep = config.xStep;
   $: yStep = config.yStep;
@@ -44,7 +45,7 @@
     if (key === "backspace" || key === "delete") {
       e.preventDefault();
       const focusedSet = new Set($focusStore.focusedColors);
-      const newColors = $colorStore.currentPal.colors.filter(
+      const newColors = currentPal.colors.filter(
         (_, idx) => !focusedSet.has(idx)
       );
       colorStore.setCurrentPalColors(newColors);
@@ -63,7 +64,7 @@
       }
       e.preventDefault();
       const focusSet = new Set($focusStore.focusedColors);
-      const newColors = $colorStore.currentPal.colors.map((color, idx) => {
+      const newColors = currentPal.colors.map((color, idx) => {
         if (!focusSet.has(idx)) {
           return color;
         }
@@ -91,25 +92,15 @@
     // SAVE BY DUPLICATING PALETTE
     if (key === "s" && metaKey) {
       e.preventDefault();
-      const newPal = {
-        ...$colorStore.currentPal,
-        name: `${$colorStore.currentPal.name} copy`,
-        colors: [...$colorStore.currentPal.colors],
-      };
-      colorStore.createNewPal(newPal);
+      colorStore.duplicatePal($colorStore.currentPal);
     }
 
     // COPY PASTE
     if (key === "c" && metaKey && $focusStore.focusedColors.length) {
-      copiedData = $colorStore.currentPal.colors.filter((_, idx) =>
-        focusedSet.has(idx)
-      );
+      copiedData = currentPal.colors.filter((_, idx) => focusedSet.has(idx));
     }
     if (key === "v" && metaKey && copiedData.length) {
-      colorStore.setCurrentPalColors([
-        ...$colorStore.currentPal.colors,
-        ...copiedData,
-      ]);
+      colorStore.setCurrentPalColors([...currentPal.colors, ...copiedData]);
     }
   }
 </script>

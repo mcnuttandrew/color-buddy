@@ -2,9 +2,11 @@
   import colorStore from "./stores/color-store";
   import focusStore from "./stores/focus-store";
   import configStore from "./stores/config-store";
+  import { buttonStyle } from "./lib/styles";
+
+  import Nav from "./components/Nav.svelte";
 
   import LeftPanel from "./content-modules/LeftPanel.svelte";
-  import ActionArea from "./content-modules/ActionArea.svelte";
   import Examples from "./content-modules/Examples.svelte";
   import Eval from "./content-modules/Eval.svelte";
   import KeyboardHooks from "./components/KeyboardHooks.svelte";
@@ -18,23 +20,54 @@
   import Sort from "./content-modules/context-free-tools/Sort.svelte";
   import SuggestName from "./content-modules/context-free-tools/SuggestName.svelte";
   import GetColorsFromString from "./content-modules/context-free-tools/GetColorsFromString.svelte";
+  import NewPal from "./content-modules/context-free-tools/NewPal.svelte";
 
   import ContentEditable from "./components/ContentEditable.svelte";
 
-  const tabs = ["examples", "compare", "eval"] as const;
+  const tabs = ["examples", "compare", "eval"];
 </script>
 
 <main class="flex h-full">
   <LeftPanel />
   <div class="h-full flex flex-col grow main-content">
-    <ActionArea />
     <div class="flex w-full grow overflow-auto">
       <div class="flex flex-col">
-        <div class="w-full flex bg-slate-100 px-2 py-3">
+        <div class="w-full flex bg-stone-800 px-2 py-3 text-white">
+          <div class="flex">
+            <NewPal />
+            <button
+              id="save"
+              class={`${buttonStyle} `}
+              on:click={() => {
+                const newPal = {
+                  ...$colorStore.currentPal,
+                  name: `${$colorStore.currentPal.name} copy`,
+                  colors: [...$colorStore.currentPal.colors],
+                };
+                colorStore.createNewPal(newPal);
+              }}
+            >
+              Save
+            </button>
+          </div>
           <SetSimulation />
           <Zoom />
         </div>
-        <div class="flex flex-col h-full">
+        <div class="flex flex-col h-full px-4">
+          <!-- naming stuff -->
+          <div class="flex justify-between">
+            <div class="flex text-xl">
+              <span class="italic">Current Pal:</span>
+              <div class="flex">
+                <span>✎</span>
+                <ContentEditable
+                  onChange={(x) => colorStore.setCurrentPalName(x)}
+                  value={$colorStore.currentPal.name}
+                />
+              </div>
+            </div>
+            <SuggestName />
+          </div>
           <ColorScatterPlot
             scatterPlotMode="moving"
             colorSpace={$colorStore.currentPal.colorSpace}
@@ -57,60 +90,29 @@
               colorSpace={$colorStore.currentPal.colorSpace}
               onChange={(space) => colorStore.setColorSpace(space)}
             />
+            <Sort />
           </div>
           <div class="flex flex-col pl-2">
-            <!-- naming stuff -->
-            <div class="flex justify-between">
-              <div class="flex">
-                <span class="italic">Current Pal:</span>
-                <div class="flex">
-                  <span>✎</span>
-                  <ContentEditable
-                    onChange={(x) => colorStore.setCurrentPalName(x)}
-                    value={$colorStore.currentPal.name}
-                  />
-                </div>
-              </div>
-              <SuggestName />
-            </div>
             <!-- overview / preview -->
-            <div class="flex w-full items-center">
-              <PalPreview
-                highlightSelected={true}
-                pal={$colorStore.currentPal}
-                allowModification={true}
-              />
-              <div class="pl-2">
-                <Sort />
-              </div>
-            </div>
+            <PalPreview
+              highlightSelected={true}
+              pal={$colorStore.currentPal}
+              allowModification={true}
+            />
             <GetColorsFromString />
           </div>
         </div>
       </div>
       <div class="grow">
-        <nav
-          aria-label="Page navigation"
-          class="bg-slate-100 flex justify-center"
-        >
-          <ul class="inline-flex">
-            {#each tabs as tab}
-              <li class="py-3">
-                <button
-                  class="h-6 px-2 transition-colors duration-150 border border-slate-500 focus:shadow-outline uppercase italic"
-                  class:bg-slate-500={$configStore.route === tab}
-                  class:bg-white={$configStore.route !== tab}
-                  class:text-white={$configStore.route === tab}
-                  class:rounded-r-lg={tab === "eval"}
-                  class:rounded-l-lg={tab === "examples"}
-                  on:click={() => configStore.setRoute(tab)}
-                >
-                  {tab}
-                </button>
-              </li>
-            {/each}
-          </ul>
-        </nav>
+        <Nav
+          className="bg-stone-800 text-white h-12 items-center "
+          {tabs}
+          isTabSelected={(x) => $configStore.route === x}
+          selectTab={(x) => {
+            // @ts-ignore
+            configStore.setRoute(x);
+          }}
+        />
 
         {#if $configStore.route === "examples"}
           <Examples />
@@ -130,5 +132,9 @@
 <style>
   .main-content {
     min-width: 0;
+  }
+  #save {
+    position: relative;
+    top: 2px;
   }
 </style>

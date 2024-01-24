@@ -1,5 +1,4 @@
 <script lang="ts">
-  import Tooltip from "../../components/Tooltip.svelte";
   import colorStore from "../../stores/color-store";
   import configStore from "../../stores/config-store";
   import { Color } from "../../lib/Color";
@@ -49,56 +48,50 @@
   }
 </script>
 
-<Tooltip>
-  <span slot="target" let:toggle>
-    <button class={AIButtonStyle} on:click={toggle}>Pal from prompt</button>
-  </span>
-  <div slot="content" let:onClick>
-    <div class="flex flex-col">
-      <label for="pal-prompt">
-        <div>Name of new Palette</div>
-        <div class="text-sm italic">
-          (e.g. "Color Wheel Basics" or "Mystic River")
-        </div>
-      </label>
-      {#if requestState === "loaded" && newPal}
-        <PalPreview pal={newPal} />
-        <div class="flex justify-between">
-          <button
-            class={buttonStyle}
-            on:click={() => {
-              if (!newPal) return;
-              colorStore.createNewPal(newPal);
-              requestState = "idle";
-              palPrompt = "";
-              onClick();
-            }}
-          >
-            Use
-          </button>
-          <button
-            class={buttonStyle}
-            on:click={() => {
-              requestState = "idle";
-            }}
-          >
-            Reject
-          </button>
-        </div>
-      {:else}
-        <form on:submit|preventDefault={makeRequest}>
-          <input bind:value={palPrompt} id="pal-prompt" />
-          <button
-            class:pointer-events-none={requestState === "loading"}
-            class={buttonStyle}
-          >
-            {requestState === "loading" ? "loading..." : "Submit"}
-          </button>
-        </form>
-        {#if requestState === "failed"}
-          <div class="text-red-500">No suggestions found, please try again</div>
-        {/if}
-      {/if}
+<div class="flex flex-col">
+  <label for="pal-prompt">
+    <div>Use the name of a new palette to generate a new palette</div>
+  </label>
+  {#if requestState === "loaded" && newPal}
+    <PalPreview pal={newPal} />
+    <div class="flex justify-between">
+      <button
+        class={buttonStyle}
+        on:click={() => {
+          if (!newPal) return;
+          colorStore.createNewPal(newPal);
+          requestState = "idle";
+          palPrompt = "";
+        }}
+      >
+        Use
+      </button>
+      <button
+        class={buttonStyle}
+        on:click={() => {
+          requestState = "idle";
+        }}
+      >
+        Reject
+      </button>
     </div>
-  </div>
-</Tooltip>
+  {:else}
+    <form on:submit|preventDefault={makeRequest} class="flex">
+      <input
+        bind:value={palPrompt}
+        id="pal-prompt"
+        class="leading-6 text-sm w-full"
+        placeholder="(e.g. 'Color Wheel Basics' or 'Mystic River')"
+      />
+      <button
+        class:pointer-events-none={requestState === "loading"}
+        class={buttonStyle}
+      >
+        {requestState === "loading" ? "loading..." : "Submit"}
+      </button>
+    </form>
+    {#if requestState === "failed"}
+      <div class="text-red-500">No suggestions found, please try again</div>
+    {/if}
+  {/if}
+</div>

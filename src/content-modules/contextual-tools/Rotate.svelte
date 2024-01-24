@@ -2,12 +2,11 @@
   import { Color } from "../../lib/Color";
   import colorStore from "../../stores/color-store";
   import focusStore from "../../stores/focus-store";
-  import Tooltip from "../../components/Tooltip.svelte";
   import { avgColors } from "../../lib/utils";
-  import { buttonStyle } from "../../lib/styles";
+  import { buttonStyle, buttonStyleSelected } from "../../lib/styles";
+  import Tooltip from "../../components/Tooltip.svelte";
 
   let axis = "z" as "x" | "y" | "z";
-  let isOpen = false;
   $: focusedColors = $focusStore.focusedColors;
   $: colors = $colorStore.currentPal.colors;
   $: angle = 0;
@@ -15,9 +14,10 @@
   $: colorSpace = $colorStore.currentPal.colorSpace;
   $: angle, rotatePoints();
   $: memorizedColors = false as false | Color[];
-  let rotationPoint = "avg" as number | "avg" | "zero";
+  let rotationPoint = "zero " as number | "avg" | "zero";
   function rotatePoints() {
-    if (!isOpen) {
+    if (focusedColors.length === 0) {
+      // memorizedColors = false;
       return;
     }
     if (!memorizedColors) {
@@ -27,6 +27,7 @@
     let localColors = memorizedColors;
 
     let centerChannels = [0, 0, 0];
+
     if (rotationPoint === "avg") {
       const clrs = focusedColors.map((x) => localColors[x]);
       // @ts-ignore
@@ -34,8 +35,10 @@
       centerChannels = center.toChannels();
     } else if (rotationPoint === "zero") {
       centerChannels = [0, 0, 0];
-    } else {
+    } else if (localColors[rotationPoint]) {
       centerChannels = localColors[rotationPoint].toChannels();
+    } else {
+      centerChannels = [0, 0, 0];
     }
 
     const rotated = Object.fromEntries(
@@ -93,76 +96,72 @@
   }
 </script>
 
-{#if focusedColors.length > 1}
-  <Tooltip
-    customClass="w-96"
-    onClose={() => {
-      isOpen = false;
-      memorizedColors = false;
-      angle = 0;
-    }}
-  >
-    <div slot="content" class="flex flex-col">
-      Rotate: {angle}
-      <input min={0} max={360} step={1} type="range" bind:value={angle} />
-      <span class="text-sm">
-        Rotates about an average point of the selected colors.
-      </span>
-      <div>Around which point?</div>
-      <div class="flex flex-wrap">
-        <button
-          on:click={() => setRotatePoint("avg")}
-          class={`${buttonStyle} mb-2`}
-          class:border-black={rotationPoint === "avg"}
-          class:border-2={rotationPoint === "avg"}
-        >
-          An average of the selected colors
-        </button>
-        <button
-          on:click={() => setRotatePoint("zero")}
-          class={`${buttonStyle} mb-2`}
-          class:border-black={rotationPoint === "zero"}
-          class:border-2={rotationPoint === "zero"}
-        >
-          Around zero
-        </button>
-        <div class="flex flex-wrap">
-          {#each focusedColors as colorIdx}
+{#if focusedColors.length > 0}
+  <div class="w-full border-t-2 border-black my-2"></div>
+  <div class="flex justify-between w-full">
+    <div class="font-bold">Rotate</div>
+    <Tooltip>
+      <button slot="target" let:toggle on:click={toggle}>⚙</button>
+      <div slot="content">
+        <div class="flex flex-col">
+          <div>Around which point?</div>
+          <div class="flex flex-wrap">
             <button
-              class={`${buttonStyle} flex justify-center items-center`}
-              class:border-black={rotationPoint === colorIdx}
-              class:border-2={rotationPoint === colorIdx}
-              on:click={() => setRotatePoint(colorIdx)}
+              on:click={() => setRotatePoint("avg")}
+              class={`${buttonStyle} mb-2 ${
+                rotationPoint === "avg" ? buttonStyleSelected : ""
+              }`}
             >
-              {colors[colorIdx].toHex()}
-              <span
-                style={`background-color: ${colors[colorIdx].toHex()}`}
-                class="rounded-full w-3 h-3 ml-2"
-              ></span>
+              An average of the selected colors
             </button>
-          {/each}
-        </div>
-        <div class="flex">
-          Rotate about the
-          <select bind:value={axis} class="mx-1">
-            {#each ["x", "y", "z"] as axis}
-              <option value={axis}>{axis}</option>
+            <button
+              on:click={() => setRotatePoint("zero")}
+              class={`${buttonStyle} mb-2 ${
+                rotationPoint === "zero" ? buttonStyleSelected : ""
+              }`}
+            >
+              Around zero
+            </button>
+
+            {#each focusedColors as colorIdx}
+              <button
+                class={`${buttonStyle} flex justify-center items-center ${
+                  rotationPoint === colorIdx ? buttonStyleSelected : ""
+                }`}
+                on:click={() => setRotatePoint(colorIdx)}
+              >
+                {colors[colorIdx].toHex()}
+                <span
+                  style={`background-color: ${colors[colorIdx].toHex()}`}
+                  class="rounded-full w-3 h-3 ml-2"
+                ></span>
+              </button>
             {/each}
-          </select>
-          Axis
+          </div>
+          <div class="flex">
+            Rotate about the
+            <select bind:value={axis} class="mx-1">
+              {#each ["x", "y", "z"] as axis}
+                <option value={axis}>{axis}</option>
+              {/each}
+            </select>
+            Axis
+          </div>
         </div>
       </div>
+    </Tooltip>
+  </div>
+  <div class="flex flex-col">
+    <div class="w-full flex justify-between">
+      <input min={0} max={360} step={1} type="range" bind:value={angle} />
+      <input
+        min={0}
+        max={360}
+        step={1}
+        type="number"
+        bind:value={angle}
+        class="w-16 text-sm"
+      />
     </div>
-    <span slot="target" let:toggle>
-      <button
-        class={buttonStyle}
-        on:click={() => {
-          isOpen = true;
-          toggle();
-        }}
-      >
-        Rotate
-      </button>
-    </span>
-  </Tooltip>
+  </div>
 {/if}

@@ -7,6 +7,7 @@
   import focusStore from "../stores/focus-store";
   import { idxToKey } from "../lib/charts";
   export let example: string;
+  export let size = 300;
   let focusedColor = false as false | number;
   function countNumberOfExamplesInUse(example: string): number {
     let inUse = 0;
@@ -18,17 +19,21 @@
   function insertColorsToExample(
     example: string,
     colors: string[],
-    bg: string
+    bg: string,
+    size: number = 250
   ) {
     const numInUse = countNumberOfExamplesInUse(example);
     let svg = example.replace("rebekkablue", bg);
-    //   .replace("<svg", `<svg overflow="visible" `);
     if (!svg.match(/<svg[^>]*\sheight="([^"]*)"/)) {
       svg = svg.replace("<svg", `<svg height="300px" `);
     }
     if (!svg.match(/<svg[^>]*\width="([^"]*)"/)) {
       svg = svg.replace("<svg", `<svg width="300px" `);
     }
+    // set the width and height
+    svg = svg.replace(/\sheight="([^"]*)"/, `height="${size}px" `);
+    svg = svg.replace(/\width="([^"]*)"/, `width="${size}px" `);
+
     for (let i = 0; i < numInUse; i++) {
       svg = svg.replace(
         new RegExp(idxToKey(i), "g"),
@@ -49,6 +54,7 @@
     const colorIdx = colors.findIndex((x) => x.toHex().toLowerCase() === color);
     if (colorIdx > -1) {
       focusedColor = colorIdx;
+      focusStore.setColors([colorIdx]);
     }
   }
 
@@ -79,7 +85,7 @@
 
 <div class="relative">
   <div bind:this={container} class="example-container">
-    {@html insertColorsToExample(example, mappedColors, bg.toHex())}
+    {@html insertColorsToExample(example, mappedColors, bg.toHex(), size)}
   </div>
   {#if color && focusedColor !== false}
     <Tooltip

@@ -7,14 +7,14 @@
     modifySVGForExampleStore,
   } from "../stores/example-store";
   import colorStore from "../stores/color-store";
-  import Vega from "../components/Vega.svelte";
+
+  import ExampleWrapper from "./ExampleWrapper.svelte";
   import Modal from "../components/Modal.svelte";
   import { buttonStyle } from "../lib/styles";
   import { xml } from "@codemirror/lang-xml";
   import CodeMirror from "svelte-codemirror-editor";
-  import Tooltip from "../components/Tooltip.svelte";
-  import Example from "../components/Example.svelte";
   import Swatches from "../content-modules/Swatches.svelte";
+  import Tooltip from "../components/Tooltip.svelte";
 
   let modalState: "closed" | "input-svg" | "input-vega" | "edit-colors" =
     "closed";
@@ -83,16 +83,25 @@
     return false;
   });
   $: examples = $exampleStore.examples as any;
+  $: groupsHidden = Object.keys(sections).filter((x) => !sections[x]).length;
+  $: hiddenExamples = $exampleStore.examples.filter((x: any) => x.hidden);
+  $: numberHidden = hiddenExamples.length + groupsHidden;
 
-  $: numberHidden = $exampleStore.examples.filter((x: any) => x.hidden).length;
-
-  const withFx = (fx: () => void) => (func: any) => (_e: any) => {
-    func();
-    fx();
-  };
+  $: numToShow = $exampleStore.examples.filter((x: any) => {
+    if (x.hidden) {
+      return false;
+    }
+    if (sections.svg && x?.svg) {
+      return true;
+    }
+    if (sections.vega && x.vega) {
+      return true;
+    }
+    return false;
+  }).length;
 </script>
 
-<div class="flex items-center bg-slate-200 px-4">
+<div class="flex items-center bg-stone-300 px-4 py-2">
   {#each Object.keys(sections) as group}
     <div class="mr-2">
       <label for={`${group}-checkbox`}>{group}</label>
@@ -110,81 +119,100 @@
       modalState = "input-svg";
     }}
   >
-    Use Example
+    Add New Example
   </button>
-  <button
-    class={buttonStyle}
-    on:click={() => exampleStore.restoreDefaultExamples()}
-  >
-    Reset to defaults
-  </button>
-  {#if numberHidden > 0}
-    <button
-      class={buttonStyle}
-      on:click={() => exampleStore.restoreHiddenExamples()}
-    >
-      Restore hidden examples
+  <Tooltip>
+    <div slot="content" let:onClick class="max-w-md">
+      <div>
+        Are you sure you want to reset to the default examples? This will remove
+        any custom ones you've uploaded
+      </div>
+      <div class="flex justify-between">
+        <button
+          class={buttonStyle}
+          on:click={() => exampleStore.restoreDefaultExamples()}
+        >
+          Yes! Reset em now
+        </button>
+        <button class={buttonStyle} on:click={onClick}>No! Never mind</button>
+      </div>
+    </div>
+    <button slot="target" let:toggle class={buttonStyle} on:click={toggle}>
+      Reset to defaults
     </button>
+  </Tooltip>
+  {#if numberHidden > 0}
+    <Tooltip>
+      <div slot="content">
+        <button
+          class={buttonStyle}
+          on:click={() => exampleStore.restoreHiddenExamples()}
+        >
+          Restore All Examples
+        </button>
+        <div>Restore individual example</div>
+        {#each hiddenExamples as example, idx}
+          <button
+            class={buttonStyle}
+            on:click={() => exampleStore.restoreHiddenExample(idx)}
+          >
+            {example.name}
+          </button>
+        {/each}
+      </div>
+      <button slot="target" let:toggle on:click={toggle} class={buttonStyle}>
+        Restore hidden examples
+      </button>
+    </Tooltip>
   {/if}
 </div>
 <div
-  class="flex flex-wrap overflow-auto p-4 w-full bg-slate-300"
+  class="flex flex-wrap overflow-auto p-4 w-full bg-stone-100"
   style={`height: calc(100% - 100px)`}
 >
-  {#if $exampleStore.sections["swatches"]}
-    <Swatches />
-  {/if}
-
   {#each examples as example, idx}
     {#if exampleShowMap[idx]}
-      <div
-        class="flex flex-col border-2 border-dashed rounded w-min mr-4"
-        style="background: {bg.toHex()};"
-      >
-        <div class="flex">
-          {#if example.svg}
-            <Example example={example.svg} />
-          {/if}
-          {#if example.vega}
-            <Vega spec={example.vega} />
-          {/if}
-          <Tooltip>
-            <div slot="content" let:onClick class="flex flex-col">
-              <button
-                class={buttonStyle}
-                on:click={() => clickExample(example, idx)}
-              >
-                Edit
-              </button>
-              <button
-                class={buttonStyle}
-                on:click={withFx(onClick)(() =>
-                  exampleStore.deleteExample(idx)
-                )}
-              >
-                Delete
-              </button>
-              <button
-                class={buttonStyle}
-                on:click={withFx(onClick)(() => exampleStore.toggleHidden(idx))}
-              >
-                Hide
-              </button>
-              <button
-                class={buttonStyle}
-                on:click={withFx(onClick)(() => exampleStore.spotLight(idx))}
-              >
-                Show only this example
-              </button>
-            </div>
-            <div slot="target" let:toggle>
-              <button class={buttonStyle} on:click={toggle}>⚙</button>
-            </div>
-          </Tooltip>
-        </div>
-      </div>
+      <ExampleWrapper {example} {idx} bg={bg.toHex()} {clickExample} />
     {/if}
   {/each}
+  {#if $exampleStore.sections["swatches"]}
+    <div class="mr-4 mb-2">
+      <div class="bg-stone-300 w-full justify-between flex p-1">
+        Swatches
+        <Tooltip>
+          <button
+            slot="target"
+            class={buttonStyle}
+            let:toggle
+            on:click={toggle}
+          >
+            Options
+          </button>
+          <div slot="content">
+            <button
+              class={buttonStyle}
+              on:click={() => {
+                onToggle("swatches");
+              }}
+            >
+              Hide
+            </button>
+            {#if numToShow > 1}
+              <button
+                class={buttonStyle}
+                on:click={() => {
+                  exampleStore.onlySwatches();
+                }}
+              >
+                Focus
+              </button>
+            {/if}
+          </div>
+        </Tooltip>
+      </div>
+      <Swatches />
+    </div>
+  {/if}
 </div>
 {#if modalState !== "closed"}
   <Modal
@@ -328,7 +356,11 @@
           class={buttonStyle}
           on:click={() => {
             const svg = modifySVGForExampleStore(value, detectedColors);
-            const example = { svg, numColors: detectedColors.length };
+            const example = {
+              svg,
+              numColors: detectedColors.length,
+              name: "Custom Example",
+            };
             if (modifyingExample !== false) {
               exampleStore.updateExample(example, modifyingExample);
             } else {
@@ -368,7 +400,7 @@
         <button
           class={buttonStyle}
           on:click={() => {
-            const example = { vega: value };
+            const example = { vega: value, name: "Custom Example", size: 300 };
             if (modifyingExample !== false) {
               exampleStore.updateExample(example, modifyingExample);
             } else {

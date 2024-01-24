@@ -74,12 +74,12 @@
     >
       <div class="relative" class:right-edge={positionAlongRightEdge}>
         <span
-          class="tooltip rounded shadow-lg p-4 bg-slate-100 text-black flex-wrap flex {customClass}"
+          class="tooltip rounded shadow-lg p-4 bg-stone-100 text-black flex-wrap flex {customClass}"
           class:p-4={true}
         >
           {#if allowDrag}
             <div
-              class="absolute cursor-move w-12 h-12 bg-slate-100 rounded-full grab-handle"
+              class="absolute cursor-move w-12 h-12 bg-stone-100 rounded-full grab-handle"
               use:draggable
               on:dragmove|preventDefault={(e) => {
                 e.preventDefault();

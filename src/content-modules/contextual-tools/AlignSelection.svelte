@@ -1,8 +1,7 @@
 <script lang="ts">
   import focusStore from "../../stores/focus-store";
   import colorStore from "../../stores/color-store";
-  import { Color } from "../../lib/Color";
-  import Tooltip from "../../components/Tooltip.svelte";
+  import { Color, colorPickerConfig } from "../../lib/Color";
   import { buttonStyle } from "../../lib/styles";
 
   $: colors = $colorStore.currentPal.colors;
@@ -10,13 +9,14 @@
   $: focusSet = new Set(focusedColors);
   $: focusLabs = focusedColors.map((idx) => colors[idx].toChannels());
   $: colorSpace = $colorStore.currentPal.colorSpace;
-  const ALIGNS = [
+  $: zName = colorPickerConfig[colorSpace].zChannel;
+  $: ALIGNS = [
     { pos: 1, name: "Left", op: Math.min },
     { pos: 1, name: "Right", op: Math.max },
     { pos: 2, name: "Top", op: Math.min },
     { pos: 2, name: "Bottom", op: Math.max },
-    { pos: 0, name: "Z Top", op: Math.min },
-    { pos: 0, name: "Z Bottom", op: Math.max },
+    { pos: 0, name: `${zName} Min`, op: Math.min },
+    { pos: 0, name: `${zName} Max`, op: Math.max },
   ];
 
   const mapFocusedColors = (fn: (color: [number, number, number]) => any) =>
@@ -26,33 +26,31 @@
 </script>
 
 {#if focusedColors.length > 1}
-  <Tooltip>
-    <div slot="content" class="w-24">
-      {#each ALIGNS as { pos, name, op }}
-        <button
-          class={buttonStyle}
-          on:click={() => {
-            const newCoordinate = op(...focusLabs.map((x) => x[pos]));
-            colorStore.setCurrentPalColors(
-              mapFocusedColors(([a, b, c]) => {
-                return Color.colorFromChannels(
-                  [
-                    pos === 0 ? newCoordinate : a,
-                    pos === 1 ? newCoordinate : b,
-                    pos === 2 ? newCoordinate : c,
-                  ],
-                  colorSpace
-                );
-              })
-            );
-          }}
-        >
-          {name}
-        </button>
-      {/each}
-    </div>
-    <span slot="target" let:toggle>
-      <button class={buttonStyle} on:click={toggle}>Align to</button>
-    </span>
-  </Tooltip>
+  <div class="w-full border-t-2 border-black my-2"></div>
+  <!-- <Tooltip> -->
+  <div class="font-bold">Align</div>
+  <div class="flex flex-wrap">
+    {#each ALIGNS as { pos, name, op }}
+      <button
+        class={buttonStyle}
+        on:click={() => {
+          const newCoordinate = op(...focusLabs.map((x) => x[pos]));
+          colorStore.setCurrentPalColors(
+            mapFocusedColors(([a, b, c]) => {
+              return Color.colorFromChannels(
+                [
+                  pos === 0 ? newCoordinate : a,
+                  pos === 1 ? newCoordinate : b,
+                  pos === 2 ? newCoordinate : c,
+                ],
+                colorSpace
+              );
+            })
+          );
+        }}
+      >
+        {name}
+      </button>
+    {/each}
+  </div>
 {/if}

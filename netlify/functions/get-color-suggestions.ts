@@ -18,7 +18,7 @@ Background Color: ${pal.background}
 
 Prompt: ${pal.search}
 
-Your response: \`\`\`json`;
+Your response: `;
   return result;
 };
 

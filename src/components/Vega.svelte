@@ -4,6 +4,7 @@
   import { getSVG } from "../lib/charts";
 
   export let spec: any;
+  export let size = 300;
 
   let producedSVG: string = "";
 
@@ -12,4 +13,4 @@
   });
 </script>
 
-<Example example={producedSVG} />
+<Example example={producedSVG} {size} />

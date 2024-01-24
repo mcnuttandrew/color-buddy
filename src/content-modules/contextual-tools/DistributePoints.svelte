@@ -2,13 +2,13 @@
   import { Color, colorPickerConfig } from "../../lib/Color";
   import colorStore from "../../stores/color-store";
   import focusStore from "../../stores/focus-store";
-  import Tooltip from "../../components/Tooltip.svelte";
   import { buttonStyle } from "../../lib/styles";
 
   $: colors = $colorStore.currentPal.colors;
   $: focusedColors = $focusStore.focusedColors;
   $: colorSpace = $colorStore.currentPal.colorSpace;
   $: config = colorPickerConfig[colorSpace];
+  $: zName = colorPickerConfig[colorSpace].zChannel;
 
   type Direction = "horizontal" | "vertical" | "in z space";
   function distributePoints(direction: Direction) {
@@ -34,10 +34,10 @@
       const zIdx = config.zChannelIndex;
       if (direction === "horizontal") {
         newPoint[xIdx] = minPoint[xIdx] * (1 - t) + maxPoint[xIdx] * t;
-      } else if (direction === "in z space") {
-        newPoint[zIdx] = minPoint[zIdx] * (1 - t) + maxPoint[zIdx] * t;
-      } else {
+      } else if (direction === "vertical") {
         newPoint[yIdx] = minPoint[yIdx] * (1 - t) + maxPoint[yIdx] * t;
+      } else {
+        newPoint[zIdx] = minPoint[zIdx] * (1 - t) + maxPoint[zIdx] * t;
       }
       return newPoint as Channels;
     });
@@ -52,23 +52,21 @@
 
     colorStore.setCurrentPalColors(newColors);
   }
-  const directions: Direction[] = ["horizontal", "vertical", "in z space"];
+  $: directions = [
+    "horizontal",
+    "vertical",
+    `in ${zName} space`,
+  ] as Direction[];
 </script>
 
 {#if focusedColors.length > 2}
-  <Tooltip>
-    <div slot="content" class="w-40">
-      {#each directions as direction}
-        <button
-          class={buttonStyle}
-          on:click={() => distributePoints(direction)}
-        >
-          {direction}ly
-        </button>
-      {/each}
-    </div>
-    <div slot="target" let:toggle>
-      <button class={buttonStyle} on:click={toggle}>Distribute</button>
-    </div>
-  </Tooltip>
+  <div class="w-full border-t-2 border-black my-2"></div>
+  <div class="font-bold">Distribute</div>
+  <div class="flex flex-wrap">
+    {#each directions as direction}
+      <button class={buttonStyle} on:click={() => distributePoints(direction)}>
+        {direction}
+      </button>
+    {/each}
+  </div>
 {/if}

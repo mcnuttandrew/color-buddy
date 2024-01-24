@@ -19,11 +19,21 @@
   $: xName = config.xChannel.toUpperCase();
   $: yName = config.yChannel.toUpperCase();
   $: zName = config.zChannel.toUpperCase();
+
+  $: noZoom =
+    xZoom[0] === 0 &&
+    xZoom[1] === 1 &&
+    yZoom[0] === 0 &&
+    yZoom[1] === 1 &&
+    zZoom[0] === 0 &&
+    zZoom[1] === 1;
 </script>
 
 <Tooltip>
   <button class={buttonStyle} slot="target" let:toggle on:click={toggle}>
-    Zoom
+    Zoom {#if !noZoom}
+      (currently zoomed in)
+    {/if}
   </button>
   <div slot="content" class="w-48">
     <div class="font-bold">Zoom levels</div>

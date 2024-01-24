@@ -35,14 +35,18 @@
         </button>
       {/each}
     </div>
-    <div>Show color background on drag</div>
-    <div>
-      <input
-        type="checkbox"
-        checked={showBg}
-        on:change={() => configStore.setShowColorBackground(!showBg)}
-      />
-    </div>
+    <div>Background on drag</div>
+    {#each ["show", "hide"] as show}
+      <button
+        class={buttonStyle}
+        class:font-bold={(show === "show" && showBg) ||
+          (show == "hide" && !showBg)}
+        on:click={() => configStore.setShowColorBackground(show === "show")}
+      >
+        {show}
+      </button>
+    {/each}
+
     <div class="font-bold">Short cuts</div>
     <div>
       {#each shortCuts as { name, shortcut }}

@@ -1,11 +1,10 @@
 <script lang="ts">
-  import Tooltip from "../../components/Tooltip.svelte";
   import colorStore from "../../stores/color-store";
   import focusStore from "../../stores/focus-store";
   import configStore from "../../stores/config-store";
   import { Color } from "../../lib/Color";
   import { suggestContextualAdjustments } from "../../lib/api-calls";
-  import { buttonStyle, AIButtonStyle } from "../../lib/styles";
+  import { buttonStyle } from "../../lib/styles";
   import PalDiff from "../../components/PalDiff.svelte";
 
   let requestState: "idle" | "loading" | "loaded" | "failed" = "idle";
@@ -54,7 +53,7 @@
       });
   }
 
-  function useSuggestion(onClick: () => void) {
+  function useSuggestion() {
     let newColors = colors;
     if (selectedColors.length) {
       let usedSuggestions = new Set<number>([]);
@@ -76,64 +75,61 @@
       );
     }
     colorStore.setCurrentPalColors(newColors);
-    onClick();
     requestState = "idle";
     palPrompt = "";
   }
 </script>
 
-<Tooltip>
-  <span slot="target" let:toggle>
-    <button class={AIButtonStyle} on:click={toggle}>Modify by Command</button>
-  </span>
-  <div slot="content" let:onClick>
-    <div class="flex flex-col w-72">
-      <label for="pal-prompt">
-        <div>Change these points</div>
-        <div class="text-sm italic">(e.g. "Make them groovier")</div>
-      </label>
-      {#if requestState === "loaded"}
-        <div>
-          <PalDiff
-            beforePal={selectedColors.length
-              ? toPal(selectedColors)
-              : $colorStore.currentPal}
-            afterPal={toPal(suggestedColors)}
-          />
-        </div>
-        <div class="flex justify-between">
-          <button class={buttonStyle} on:click={() => useSuggestion(onClick)}>
-            Use
-          </button>
-          <button
-            class={buttonStyle}
-            on:click={() => {
-              requestState = "idle";
-            }}
-          >
-            Reject
-          </button>
-        </div>
-      {:else}
-        <form on:submit|preventDefault={makeRequest} class="flex">
-          <input bind:value={palPrompt} id="pal-prompt" />
-          <button
-            class={buttonStyle}
-            class:pointer-events-none={requestState === "loading"}
-          >
-            {requestState === "loading" ? "loading..." : "Submit"}
-          </button>
-        </form>
-        {#if !selectedColors.length}
-          <span class="italic text-sm">
-            (Current scope is all colors, you can select a group of colors to
-            limit the scope)
-          </span>
-        {/if}
+<div>
+  <div class="flex flex-col w-72">
+    <label for="pal-prompt" class="italic text-sm">
+      <div>Change these points</div>
+    </label>
+    {#if requestState === "loaded"}
+      <div>
+        <PalDiff
+          beforePal={selectedColors.length
+            ? toPal(selectedColors)
+            : $colorStore.currentPal}
+          afterPal={toPal(suggestedColors)}
+        />
+      </div>
+      <div class="flex justify-between">
+        <button class={buttonStyle} on:click={useSuggestion}>Use</button>
+        <button
+          class={buttonStyle}
+          on:click={() => {
+            requestState = "idle";
+          }}
+        >
+          Reject
+        </button>
+      </div>
+    {:else}
+      <form on:submit|preventDefault={makeRequest} class="flex flex-col">
+        <input
+          bind:value={palPrompt}
+          id="pal-prompt"
+          class="indent-2 text-sm leading-6"
+          placeholder="e.g. 'Make them groovier'"
+        />
+        <button
+          class={buttonStyle}
+          class:pointer-events-none={requestState === "loading"}
+        >
+          {requestState === "loading" ? "loading..." : "Submit"}
+        </button>
+      </form>
+      {#if !selectedColors.length}
+        <span class="italic text-sm">
+          (Current scope is all colors, you can select a group of colors to
+          limit the scope)
+        </span>
       {/if}
-      {#if requestState === "failed"}
-        <div class="text-red-500">No suggestions found, please try again</div>
-      {/if}
-    </div>
+    {/if}
+    {#if requestState === "failed"}
+      <div class="text-red-500">No suggestions found, please try again</div>
+    {/if}
   </div>
-</Tooltip>
+</div>
+<!-- </Tooltip> -->

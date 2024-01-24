@@ -51,7 +51,7 @@
       label: `${config.xChannel}: ${axisFormatter(xScale.domain()[1])}`,
     },
   };
-  const bgResolution = 25;
+  const bgResolution = 15;
   const avgNums = (nums: number[]) =>
     nums.reduce((acc, x) => acc + x, 0) / nums.length;
   $: fColors = focusedColors.map((x) => colors[x].toChannels());

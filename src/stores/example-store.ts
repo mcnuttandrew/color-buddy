@@ -3,8 +3,8 @@ import * as idb from "idb-keyval";
 import { idxToKey } from "../lib/charts";
 
 type Example =
-  | { svg: string; hidden?: boolean }
-  | { vega: string; hidden?: boolean };
+  | { svg: string; hidden?: boolean; size?: number; name: string }
+  | { vega: string; hidden?: boolean; size?: number; name: string };
 interface StoreData {
   examples: Example[];
   sections: typeof InitialSections;
@@ -20,6 +20,7 @@ const InitialStore: StoreData = {
 };
 
 export const DEMOS = [
+  { type: "svg", title: "Albers", filename: "./examples/albers.svg" },
   { type: "svg", title: "Holy Grail", filename: "./examples/HolyGrail.svg" },
   { type: "svg", title: "Fourier", filename: "./examples/fourier.svg" },
   { type: "svg", title: "Mondrian", filename: "./examples/mondrian.svg" },
@@ -91,7 +92,11 @@ async function buildAllExamples() {
   for (const demo of DEMOS) {
     try {
       const text = await fetch(demo.filename).then((x) => x.text());
-      const example = { hidden: false } as any;
+      const example = {
+        hidden: false,
+        size: 250,
+        name: demo.filename.split("/").at(-1)?.split(".")[0],
+      } as any;
       if (demo.type === "vega") {
         example.vega = text;
       } else {
@@ -161,16 +166,32 @@ function createStore() {
       })),
     addExample: (example: Example) =>
       persistUpdate((old) => {
+        const nameCollisions = old.examples.filter((x) =>
+          x.name.startsWith(example.name)
+        );
+        if (nameCollisions.length) {
+          example.name = `${example.name}-${nameCollisions.length + 1}`;
+        }
+
         return { ...old, examples: [...old.examples, example] };
       }),
     restoreDefaultExamples: async () => {
       const examples = await buildAllExamples();
       persistUpdate((old) => ({ ...old, examples }));
     },
+    restoreHiddenExample: (idx: number) =>
+      persistUpdate((old) => {
+        const newExamples = [...old.examples];
+        newExamples[idx].hidden = false;
+        return { ...old, examples: newExamples };
+      }),
     restoreHiddenExamples: () =>
       persistUpdate((old) => ({
         ...old,
-        examples: old.examples.map((x) => ({ ...x, hidden: false })),
+        sections: Object.fromEntries(
+          Object.keys(old.sections).map((x) => [x, true])
+        ) as any,
+        examples: old.examples.map((x) => ({ ...x, hidden: false, size: 250 })),
       })),
     toggleHidden: (idx: number) =>
       persistUpdate((old) => {
@@ -178,17 +199,48 @@ function createStore() {
         newExamples[idx].hidden = !newExamples[idx].hidden;
         return { ...old, examples: newExamples };
       }),
-    spotLight: (idx: number) =>
+    soloExample: (idx: number) =>
       persistUpdate((old) => {
-        const newExamples = [...old.examples].map((x) => {
-          x.hidden = true;
-          return x;
-        });
+        const newExamples = hideAllExamples(old.examples);
         newExamples[idx].hidden = false;
+        return {
+          ...old,
+          examples: newExamples,
+          sections: { ...old.sections, swatches: false },
+        };
+      }),
+    onlySwatches: () =>
+      persistUpdate((old) => {
+        return { ...old, examples: hideAllExamples(old.examples) };
+      }),
+    setExampleSize: (idx: number, size: number) =>
+      persistUpdate((old) => {
+        const newExamples = [...old.examples];
+        newExamples[idx].size = size;
         return { ...old, examples: newExamples };
+      }),
+    setExampleName: (idx: number, name: string) =>
+      persistUpdate((old) => {
+        const newExamples = [...old.examples];
+        newExamples[idx].name = name;
+        return { ...old, examples: newExamples };
+      }),
+    hideAllExcept: (idx: number) =>
+      persistUpdate((old) => {
+        const newExamples = hideAllExamples(old.examples);
+        newExamples[idx].hidden = false;
+
+        return {
+          ...old,
+          examples: newExamples,
+          sections: { ...old.sections, swatches: false },
+        };
       }),
   };
 }
+
+const hideAllExamples = (examples: Example[]) =>
+  examples.map((example) => ({ ...example, hidden: true }));
 
 const store = createStore();
 

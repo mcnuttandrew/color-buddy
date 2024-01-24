@@ -28,8 +28,8 @@
       ],
       lab: [
         { name: "L", min: 0, max: 100, step: 1 },
-        { name: "a", min: -110, max: 110, step: 1 },
-        { name: "b", min: -110, max: 110, step: 1 },
+        { name: "a", min: -125, max: 125, step: 1 },
+        { name: "b", min: -125, max: 125, step: 1 },
       ],
       oklab: [
         { name: "L", min: 0, max: 1, step: 0.01 },
@@ -137,7 +137,7 @@
       <option value={colorMode}>{colorMode}</option>
     {/each}
   </select>
-  <div class="flex h-full pl-2 mr-2">
+  <div class="flex h-full mr-2">
     <div class="flex flex-col">
       <div class="flex flex-col">
         <div class="w-full">
@@ -145,10 +145,12 @@
             <div class="flex items-start flex-col mb-2">
               <div class="flex">
                 <label class="block uppercase text-sm mt-2">
-                  <div class="flex w-full justify-between">
-                    <span>{channel.name} ({channel.min}-{channel.max})</span>
+                  <div class="flex w-full justify-between items-center">
+                    <span class="whitespace-nowrap mr-2">
+                      {channel.name} ({channel.min}-{channel.max})
+                    </span>
                     <input
-                      class="w-full h-4 text-right"
+                      class="h-4 text-right w-16 text-sm"
                       type="number"
                       value={formatter(channel.value)}
                       min={channel.min}
@@ -195,7 +197,7 @@
     height: 2.2em;
     border-radius: 0.3em;
     box-shadow: 0 0 1px rgba(0, 0, 0, 0.5);
-    min-width: 300px;
+    min-width: 285px;
   }
 
   .color-slider::-webkit-slider-thumb {

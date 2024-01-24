@@ -26,6 +26,7 @@ export default class SequentialOrder extends ColorLint<boolean, false> {
   buildMessage(): string {
     return `This pal should be ordered by lightness if being used as a sequential palette`;
   }
+  hasHeuristicFix = true;
   async suggestFix() {
     const colors = [...this.palette.colors];
     colors.sort((a, b) => getLightness(a) - getLightness(b));

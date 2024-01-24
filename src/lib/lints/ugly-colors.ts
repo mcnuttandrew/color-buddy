@@ -27,6 +27,7 @@ export default class UglyColors extends ColorLint<Color[], false> {
     const str = hexJoin(this.checkData);
     return `This palette has some colors (specifically ${str}) that are close to what are known as ugly colors`;
   }
+  hasHeuristicFix = true;
   async suggestFix() {
     const colors = [...this.palette.colors];
 

@@ -37,9 +37,6 @@ export default class BackgroundContrast extends ColorLint<Color[], Algorithm> {
   }
   buildMessage(): string {
     const colors = this.checkData?.map((x) => x.toHex());
-    return `These colors (${colors}) do not have a sufficient contrast ratio with the background and may be hard to discriminate in some contexts`;
-  }
-  getOptions() {
-    return this.paramOptions.options;
+    return `These colors (${colors}) do not have a sufficient contrast ratio with the background and may be hard to discriminate in some contexts. Contrast is calculated using the ${this.config.val} algorithm.`;
   }
 }

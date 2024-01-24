@@ -12,19 +12,34 @@ import SequentialOrder from "./lints/sequential-order";
 import AvoidExtremes from "./lints/avoid-extremes";
 import DivergingOrder from "./lints/diverging-order";
 import BackgroundContrast from "./lints/contrast";
+import Fair from "./lints/fair";
+import EvenDistribution from "./lints/even-distribution";
 
-export function runLintChecks(palette: Palette): ColorLint<any, any>[] {
-  return [
-    new NameDiscrim(palette),
-    new MaxColors(palette),
-    ...Discrims.map((x) => new x(palette)),
-    ...Blinds.map((x) => new x(palette)),
-    new ColorSimilarity(palette),
-    new BackgroundDifferentiability(palette),
-    new UglyColors(palette),
-    new SequentialOrder(palette),
-    new AvoidExtremes(palette),
-    new DivergingOrder(palette),
-    new BackgroundContrast(palette),
-  ].map((x) => x.run());
+export function runLintChecks(
+  palette: Palette,
+  palType: any
+): ColorLint<any, any>[] {
+  return (
+    [
+      NameDiscrim,
+      MaxColors,
+      ...Discrims,
+      ...Blinds,
+      ColorSimilarity,
+      BackgroundDifferentiability,
+      UglyColors,
+      SequentialOrder,
+      AvoidExtremes,
+      DivergingOrder,
+      BackgroundContrast,
+      ...Fair,
+      EvenDistribution,
+    ] as (typeof ColorLint)[]
+  )
+    .map((x) => new x(palette))
+    .filter((x) => x.taskTypes.includes(palType))
+    .map((x) => x.run());
 }
+
+// typesript type for an list of classes
+// https://stackoverflow.com/questions/57465358/typescript-type-for-an-list-of-classes

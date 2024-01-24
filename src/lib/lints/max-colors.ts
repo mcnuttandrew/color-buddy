@@ -27,6 +27,7 @@ export default class MaxColors extends ColorLint<number, number> {
   buildMessage(): string {
     return `This palette has too many colors (${this.checkData}) and may be hard to discriminate in some contexts. Maximum: ${this.config.val}.`;
   }
+  hasHeuristicFix = true;
   async suggestFix() {
     const { colors } = this.palette;
     return {

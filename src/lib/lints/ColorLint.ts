@@ -25,6 +25,7 @@ export class ColorLint<CheckData, ParamType> {
   palette: Palette;
   message: string = "";
   hasParam: boolean = false;
+  hasHeuristicFix: boolean = false;
   config: { val?: ParamType } = {};
   defaultParam: ParamType = false as any;
   group: string = "";
@@ -51,6 +52,7 @@ export class ColorLint<CheckData, ParamType> {
     copy.hasParam = this.hasParam;
     copy.config = this.config;
     copy.defaultParam = this.defaultParam;
+    copy.hasHeuristicFix = this.hasHeuristicFix;
     copy.level = this.level;
     return copy;
   }
@@ -78,6 +80,9 @@ export class ColorLint<CheckData, ParamType> {
   }
 
   async suggestFix(engine?: string) {
+    return AIFix(this.palette, this.message, engine || "openai");
+  }
+  async suggestAIFix(engine?: string) {
     return AIFix(this.palette, this.message, engine || "openai");
   }
 }

@@ -16,6 +16,7 @@ export default class ExtremeColors extends ColorLint<Color[], false> {
   level: "error" | "warning" = "warning";
   group = "aesthetics";
   description = `Colors at either end of the lightness spectrum can be hard to discriminate in some contexts, and are sometimes advised against.`;
+  hasHeuristicFix = true;
 
   _runCheck() {
     const { colors } = this.palette;

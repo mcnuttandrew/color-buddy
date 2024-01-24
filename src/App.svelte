@@ -26,6 +26,15 @@
 
   $: currentPal = $colorStore.palettes[$colorStore.currentPal];
   const tabs = ["examples", "compare", "eval"];
+  const descriptions = {
+    sequential:
+      "Sequential palettes are used to represent a range of values. They are often used to represent quantitative data, such as temperature or elevation.",
+    diverging:
+      "Diverging palettes are used to represent a range of values around a central point. They are often used to represent quantitative data, such as temperature or elevation.",
+    categorical:
+      "Categorical palettes are used to represent a set of discrete values. They are often used to represent qualitative data, such as different types of land cover or different political parties.",
+  };
+  $: palType = currentPal.type;
 </script>
 
 <main class="flex h-full">
@@ -101,6 +110,20 @@
               allowModification={true}
             />
             <GetColorsFromString />
+            <div class="max-w-lg">
+              This is a <select
+                value={palType}
+                on:change={(e) => {
+                  // @ts-ignore
+                  colorStore.setCurrentPalType(e.target.value);
+                }}
+              >
+                {#each ["sequential", "diverging", "categorical"] as type}
+                  <option value={type}>{type}</option>
+                {/each}
+              </select>
+              palette. {descriptions[palType]}
+            </div>
           </div>
         </div>
       </div>

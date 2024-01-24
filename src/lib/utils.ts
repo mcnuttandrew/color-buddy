@@ -136,7 +136,7 @@ export const swap = (arr: any[], i: number, j: number) => {
   return newArr;
 };
 
-const extent = (arr: number[]) => [Math.min(...arr), Math.max(...arr)];
+export const extent = (arr: number[]) => [Math.min(...arr), Math.max(...arr)];
 function makeExtents(arr: number[][]) {
   return Object.fromEntries(
     ["x", "y", "z"].map((key, idx) => [key, extent(arr.map((el) => el[idx]))])

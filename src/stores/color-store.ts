@@ -148,9 +148,6 @@ function createStore() {
   const simpleUpdate = (updateFunc: (old: StoreData) => StoreData) =>
     update((oldStore) => updateFunc(oldStore));
 
-  const simpleSet = (key: keyof StoreData) => (val: any) =>
-    persistUpdate((n) => ({ ...n, [key]: val }));
-
   const saveUpdate = (updateFunc: (old: StoreData) => StoreData) =>
     update((oldStore) => {
       const newVal = updateFunc(oldStore);
@@ -186,8 +183,7 @@ function createStore() {
       undoStack.pop();
     },
 
-    setPalettes: simpleSet("palettes"),
-    setCurrentPal: simpleSet("currentPal"),
+    setCurrentPal: (pal: Palette) => palUp(() => pal),
     setCurrentPalColors: (colors: Color[]) => palUp((n) => ({ ...n, colors })),
     startUsingPal: (indx: number) => {
       persistUpdate((n) => ({ ...n, currentPal: indx }));

@@ -23,9 +23,7 @@
   $: colorNames = colorNameSimple(colors);
   $: palType = currentPal.type;
   $: evalConfig = currentPal.evalConfig;
-  $: checks = runLintChecks(currentPal).filter((x) =>
-    x.taskTypes.includes(palType)
-  );
+  $: checks = runLintChecks(currentPal, palType);
 
   $: checkGroups = checks.reduce(
     (acc, check) => {
@@ -56,15 +54,6 @@
       .split(" ")
       .map((x) => x[0].toUpperCase() + x.slice(1))
       .join(" ");
-
-  const descriptions = {
-    sequential:
-      "Sequential palettes are used to represent a range of values. They are often used to represent quantitative data, such as temperature or elevation.",
-    diverging:
-      "Diverging palettes are used to represent a range of values around a central point. They are often used to represent quantitative data, such as temperature or elevation.",
-    categorical:
-      "Categorical palettes are used to represent a set of discrete values. They are often used to represent qualitative data, such as different types of land cover or different political parties.",
-  };
 </script>
 
 <div class="flex h-full">
@@ -157,21 +146,6 @@
     </div>
   </div>
   <div class="flex flex-col ml-2">
-    <div>
-      This is a <select
-        value={palType}
-        on:change={(e) => {
-          // @ts-ignore
-          colorStore.setCurrentPalType(e.target.value);
-        }}
-      >
-        {#each ["sequential", "diverging", "categorical"] as type}
-          <option value={type}>{type}</option>
-        {/each}
-      </select>
-      palette. {descriptions[palType]}
-    </div>
-
     <div class="overflow-auto h-full max-w-md">
       {#each Object.entries(checkGroups) as checkGroup}
         <div class="flex mt-5">

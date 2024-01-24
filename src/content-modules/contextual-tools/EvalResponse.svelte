@@ -13,14 +13,22 @@
 
   $: suggestion = false as false | Palette;
 
-  function proposeFix() {
+  function proposeFix(useAi: boolean = false) {
     requestState = "loading";
     let hasRetried = false;
-    const getFix = () =>
-      check.suggestFix($configStore.engine).then((x) => {
-        suggestion = x;
-        requestState = "loaded";
-      });
+    const getFix = () => {
+      if (useAi) {
+        return check.suggestAIFix().then((x) => {
+          suggestion = x;
+          requestState = "loaded";
+        });
+      } else {
+        return check.suggestFix().then((x) => {
+          suggestion = x;
+          requestState = "loaded";
+        });
+      }
+    };
 
     getFix().catch((e) => {
       console.log(e);
@@ -49,13 +57,38 @@
       [checkName]: { ...evalConfig[checkName], val },
     });
   }
+
+  function activateCB() {
+    const match = options.find((x) => check.name.includes(x));
+    if (match) {
+      configStore.setColorSim(match);
+    }
+  }
+  const options = ["deuteranopia", "protanopia", "tritanopia"] as const;
+  $: cbMatch = options.find((x) =>
+    check.name.includes(x)
+  ) as (typeof options)[number];
 </script>
 
 <Tooltip positionAlongRightEdge={true}>
   <div slot="content" let:onClick>
-    <button class={buttonStyle} on:click={() => proposeFix()}>
-      Try to fix
+    {#if cbMatch}
+      <button
+        class={buttonStyle}
+        on:click={() => configStore.setColorSim(cbMatch)}
+      >
+        Activate {cbMatch} simulator
+      </button>
+    {/if}
+    <button class={buttonStyle} on:click={() => proposeFix(true)}>
+      Try to fix (AI)
     </button>
+    {#if check.hasHeuristicFix}
+      <button class={buttonStyle} on:click={() => proposeFix(false)}>
+        Try to fix (hueristics)
+      </button>
+    {/if}
+
     <button
       class={buttonStyle}
       on:click={() => {

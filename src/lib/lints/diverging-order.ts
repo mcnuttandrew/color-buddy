@@ -43,6 +43,7 @@ export default class SequentialOrder extends ColorLint<boolean, false> {
   buildMessage(): string {
     return `This pal should have a middle color that is the lightest or darkest color`;
   }
+  hasHeuristicFix = true;
   async suggestFix() {
     // figure out if its centered on a light color or a dark color?
     // a dumb hueristic is just look at what the center color is in lab space, and see if its darker or lighter than most colors

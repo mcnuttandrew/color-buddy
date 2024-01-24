@@ -27,6 +27,7 @@ export default class BackgroundDifferentiability extends ColorLint<
     const str = hexJoin(this.checkData.map((x) => colors[x]));
     return `This palette has some colors (${str}) that are close to the background color`;
   }
+  hasHeuristicFix = true;
   async suggestFix() {
     const { colors, background, colorSpace } = this.palette;
     const backgroundL = background.toColorIO().to("lab").coords[0];

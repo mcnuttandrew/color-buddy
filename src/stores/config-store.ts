@@ -2,7 +2,8 @@ import { writable } from "svelte/store";
 
 interface StoreData {
   route: "examples" | "compare" | "eval";
-  leftRoute: "controls" | "saved-pals";
+  controlsOpen: boolean;
+  savedPalsOpen: boolean;
   comparePal: string | undefined;
   colorSim: "deuteranopia" | "protanopia" | "tritanopia" | "none";
   includeQuotes: boolean;
@@ -16,7 +17,8 @@ interface StoreData {
 
 const InitialStore: StoreData = {
   route: "examples",
-  leftRoute: "controls",
+  controlsOpen: false,
+  savedPalsOpen: true,
   comparePal: undefined,
   colorSim: "none",
   includeQuotes: false,
@@ -67,8 +69,10 @@ function createStore() {
       persist((old) => ({ ...old, showColorBackground: n })),
     setTooltipXY: (xy: StoreData["tooltipXY"]) =>
       persist((old) => ({ ...old, tooltipXY: xy })),
-    setLeftRoute: (route: StoreData["leftRoute"]) =>
-      persist((old) => ({ ...old, leftRoute: route })),
+    setControlsOpen: (n: StoreData["controlsOpen"]) =>
+      persist((old) => ({ ...old, controlsOpen: n })),
+    setSavedPalsOpen: (n: StoreData["savedPalsOpen"]) =>
+      persist((old) => ({ ...old, savedPalsOpen: n })),
   };
 }
 

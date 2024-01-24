@@ -30,21 +30,32 @@
   </section>
 
   <section class="flex flex-col flex-1 overflow-auto p-2">
-    <Nav
-      tabs={["saved-pals", "controls"]}
-      isTabSelected={(x) => $configStore.leftRoute === x}
-      selectTab={(x) => {
-        // @ts-ignore
-        configStore.setLeftRoute(x);
-      }}
-      className="w-full"
-    />
-
-    {#if $configStore.leftRoute === "saved-pals"}
-      <SavedPals />
-    {/if}
-    {#if $configStore.leftRoute === "controls"}
+    <div class="flex justify-between">
+      <div class="font-bold">Controls</div>
+      <Nav
+        tabs={["open", "close"]}
+        isTabSelected={(x) =>
+          (x === "open" && $configStore.controlsOpen) ||
+          (x === "close" && !$configStore.controlsOpen)}
+        selectTab={(x) => configStore.setControlsOpen(x === "open")}
+      />
+    </div>
+    {#if $configStore.controlsOpen}
       <Controls />
+    {/if}
+    <div class="w-full border-t-2 border-black my-6"></div>
+    <div class="flex justify-between">
+      <div class="font-bold">Saved Pals</div>
+      <Nav
+        tabs={["open", "close"]}
+        isTabSelected={(x) =>
+          (x === "open" && $configStore.savedPalsOpen) ||
+          (x === "close" && !$configStore.savedPalsOpen)}
+        selectTab={(x) => configStore.setSavedPalsOpen(x === "open")}
+      />
+    </div>
+    {#if $configStore.savedPalsOpen}
+      <SavedPals />
     {/if}
   </section>
 </div>

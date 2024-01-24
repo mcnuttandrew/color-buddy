@@ -384,3 +384,9 @@ export const dragEventToColorXY: dragEventToColor = (
   coords[config.yChannelIndex] = newVal[1];
   return Color.colorFromChannels(coords, colorSpace);
 };
+
+export const screenSpaceAvg = (colors: { x: number; y: number }[]) => {
+  const xAvg = colors.reduce((acc, x) => acc + x.x, 0) / colors.length;
+  const yAvg = colors.reduce((acc, x) => acc + x.y, 0) / colors.length;
+  return { x: xAvg, y: yAvg };
+};

@@ -8,7 +8,6 @@
   import DistributePoints from "./contextual-tools/DistributePoints.svelte";
   import AdjustColor from "./contextual-tools/AdjustColor.svelte";
   import AddColor from "./contextual-tools/AddColor.svelte";
-  import Rotate from "./contextual-tools/Rotate.svelte";
   import ColorChannelPicker from "../components/ColorChannelPicker.svelte";
 
   $: currentPal = $colorStore.palettes[$colorStore.currentPal];
@@ -31,7 +30,6 @@
 {/if}
 
 <AdjustColor />
-<Rotate />
 <DistributePoints />
 <AlignSelection />
 <ModifySelection />

@@ -467,11 +467,20 @@
               {/if}
             {/each}
             {#each blindColors as blindColor, i}
+              <line
+                stroke-dasharray="5,5"
+                x1={x(blindColor)}
+                y1={y(blindColor)}
+                x2={x(colors[i])}
+                y2={y(colors[i])}
+                stroke={blindColor.toDisplay()}
+                stroke-width="1"
+              />
               <circle
                 {...CircleProps(blindColor, i)}
                 class="cursor-pointer"
                 stroke={blindColor.toDisplay()}
-                fill={"none"}
+                fill={bg.toDisplay()}
                 stroke-width="4"
                 on:touchstart|preventDefault={(e) => {
                   onFocusedColorsChange([i]);

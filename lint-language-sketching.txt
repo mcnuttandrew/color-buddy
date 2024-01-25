@@ -1,0 +1,60 @@
+# Usability Checks
+Color Name discriminability: ALL colors a, ALL colors b, NAME(a) != NAME(b)
+Thin Discriminability: ALL colors a, ALL colors b, JND(a, b, thin) > threshold
+Medium Discriminability: ALL colors a, ALL colors b, JND(a, b, medium) > threshold
+Wide Discriminability: ALL colors a, ALL colors b, JND(a, b, wide) > threshold
+Sequential: OR (ALL_SEQ colors next current, lab(current, l) > lab(next, l)) (ALL_SEQ colors next current, lab(current, l) < lab(next, l))
+Diverging: 
+
+# Aesthetics Checks
+Max Colors: count(colors) < threshold
+Palette does not have ugly colors: NOT ALL c in colors, ALL u in ugly, c similar to u
+Avoid extreme colors: NOT ALL c in colors, ALL e in extreme, c equal to e
+Fair: range(colors, lch, c) < threshold_1 AND range(colors, lch, l) < threshold_2
+
+# Accessibility Checks
+Colorblind Friendly for deuteranopia: ALL colors a, ALL colors b, NOT (sim(a) similar to sim(b))
+Colorblind Friendly for protanopia: ALL colors a, ALL colors b, NOT (sim(a) similar to sim(b))
+Colorblind Friendly for tritanopia: ALL colors a, ALL colors b, NOT (sim(a) similar to sim(b))
+All colors differentiable from background: ALL colors c, deltaE(c, bg) > threshold
+Background Contrast: ALL colors c, contrast(c, bg) > threshold
+
+# Ad Hoc-y ideas: 
+All complementary Pairs: ALL colors a, EXIST color b, hue(a) approx hue(b) + PI
+Exist complementary pair: EXIST colors a, EXIST color b, hue(a) approx hue(b) + PI
+All monochromatic: ALL colors a, EXIST color b, hue(a) approx hue(b)
+
+Gender Colors Not Conformist: NOT ((EXIST color a similar to "LIGHT BLUE") AND (EXIST color b similar to "PINK"))
+
+Specific value included: EXIST color a, value(a) equal to X
+
+
+# Affective Color Assertions
+"Highly saturated light colors will not be appropriate for SERIOUS/TRUST/CALM": ALL (FILTER colors c, lab(c) > threshold) b, NOT hsl(b) > threshold
+"light blues, beiges, and grays are appropriate for PLAYFUL"
+"dark reds and browns are not POSITIVE": ALL colors c, NOT (c similar to "DARK RED" OR c similar to "BROWN")
+"light colors, particularly greens, do not communicate NEGATIVE"
+"trustworthy has two themeatic strategies (blue-gray, green-gray) bridge by a common color (yellow)"
+
+
+Functions: similar to, sim, deltaE, contrast, count, range, name, JND, approx, equal to
+
+Expressions:
+e = NOT e | e AND e | e OR e | p  | Q e p | T | F
+Quantifiers: (v[]) => T | F
+Q = ALL | EXIST | ALL SEQ
+Predicates (v, v) => T | F
+p = ... | v > v | v < v | v ~= v | v == v
+Values
+v = number | color | channel(color, colorSpace, channel)
+
+JSON syntax:
+{
+    all: {
+        input: colors,
+        value: 'c',
+        predicate: {
+            
+        }
+    }
+}

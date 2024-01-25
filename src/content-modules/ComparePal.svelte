@@ -11,18 +11,18 @@
 
   import SetColorSpace from "../controls/SetColorSpace.svelte";
 
-  $: currentPal = $colorStore.palettes[$colorStore.currentPal];
+  $: currentPalIdx = $colorStore.currentPal;
+  $: currentPal = $colorStore.palettes[currentPalIdx];
   $: compareIdx = $configStore.comparePal;
   $: focused = $focusStore.focusedColors;
-  $: ComparisonPal = compareIdx ? $colorStore.palettes[compareIdx] : undefined;
-  $: {
-    if (!ComparisonPal && $colorStore.currentPal === compareIdx) {
-      ComparisonPal = currentPal;
-    }
-  }
-  let bg = ComparisonPal?.background.toHex() || "white";
+  $: ComparisonPal =
+    typeof compareIdx === "number"
+      ? $colorStore.palettes[compareIdx]
+      : undefined;
 
-  let colorSpace = ComparisonPal?.colorSpace || "lab";
+  $: bg = ComparisonPal?.background.toHex() || "white";
+
+  $: colorSpace = ComparisonPal?.colorSpace || "lab";
 </script>
 
 <div class="flex flex-col" style={`background: ${bg}`}>
@@ -34,7 +34,7 @@
       scatterPlotMode="looking"
       Pal={{ ...ComparisonPal, background: Color.colorFromHex(bg, colorSpace) }}
       {colorSpace}
-      focusedColors={$colorStore.currentPal === compareIdx ? focused : []}
+      focusedColors={currentPalIdx === compareIdx ? focused : []}
       height={450}
       width={450}
       onColorsChange={() => {}}
@@ -55,18 +55,12 @@
       Select comparison. Currently: {ComparisonPal?.name || "none"}
     </button>
     <div class="flex flex-col w-80" slot="content">
-      <div class="flex flex-col">
-        Current Palette:
-        <MiniPalPreview
-          pal={currentPal}
-          onClick={() => configStore.setComparePal($colorStore.currentPal)}
-        />
-      </div>
-      <div>Other Saved Palettes:</div>
+      <div>Saved Palettes:</div>
       <div class="flex flex-wrap">
-        {#each [currentPal, ...$colorStore.palettes] as pal, idx}
+        {#each $colorStore.palettes as pal, idx (idx)}
           <MiniPalPreview
             {pal}
+            className={compareIdx === idx ? "border-2 border-black" : ""}
             onClick={() => configStore.setComparePal(idx)}
           />
         {/each}

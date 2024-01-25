@@ -2,9 +2,10 @@
   import type { Palette } from "../stores/color-store";
   export let pal: Palette;
   export let onClick: () => void;
+  export let className = "";
 </script>
 
-<div class="relative mr-2 mb-2 flex justify-center items-center">
+<div class="relative mr-2 mb-2 flex justify-center items-center {className}">
   <div class="w-full flex absolute top-0 opacity-50 pointer-events-none">
     {#each pal.colors as color}
       <div

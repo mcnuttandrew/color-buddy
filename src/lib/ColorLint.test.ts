@@ -33,7 +33,7 @@ test("ColorLint - ColorNameDiscriminability", async () => {
     examplePal.colors.map((x) => getName(x))
   );
   expect(oldColorNames.length).toBe(1);
-  const colorNames = unique<string>(fix.colors.map((x) => getName(x)));
+  const colorNames = unique<string>(fix[0].colors.map((x) => getName(x)));
   expect(colorNames.length).toBe(2);
 });
 
@@ -44,7 +44,7 @@ test("ColorLint - MaxColors", async () => {
   expect(exampleLint.message).toBe(
     "This palette has too many colors (15) and may be hard to discriminate in some contexts. Maximum: 10."
   );
-  const fix = await exampleLint.suggestFix();
+  const fix = await exampleLint.suggestFix().then((x) => x[0]);
   expect(fix.colors.length).toBe(9);
 });
 
@@ -83,7 +83,7 @@ test("ColorLint - BackgroundDifferentiability", async () => {
   expect(exampleLint.message).toBe(
     "This palette has some colors (#fdfdfc) that are close to the background color"
   );
-  const fix = await exampleLint.suggestFix();
+  const fix = await exampleLint.suggestFix().then((x) => x[0]);
   expect(fix.colors.map((x) => x.toHex())).toMatchSnapshot();
 
   examplePal.background = Color.colorFromHex("#00e4ff", "lab");
@@ -92,6 +92,6 @@ test("ColorLint - BackgroundDifferentiability", async () => {
   expect(exampleLint2.message).toBe(
     "This palette has some colors (#0ff, #00faff, #00e4ff, #0ff) that are close to the background color"
   );
-  const fix2 = await exampleLint2.suggestFix();
+  const fix2 = await exampleLint2.suggestFix().then((x) => x[0]);
   expect(fix2.colors.map((x) => x.toHex())).toMatchSnapshot();
 });

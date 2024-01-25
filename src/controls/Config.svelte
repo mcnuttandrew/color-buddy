@@ -1,7 +1,7 @@
 <script lang="ts">
-  import configStore from "../../stores/config-store";
-  import Tooltip from "../../components/Tooltip.svelte";
-  import { buttonStyle } from "../../lib/styles";
+  import configStore from "../stores/config-store";
+  import Tooltip from "../components/Tooltip.svelte";
+  import { buttonStyle } from "../lib/styles";
   const aiModes = ["google", "openai"] as const;
   $: showBg = $configStore.showColorBackground;
 

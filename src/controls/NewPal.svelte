@@ -1,17 +1,17 @@
 <script lang="ts">
-  import { Color } from "../../lib/Color";
-  import colorStore, { newGenericPal } from "../../stores/color-store";
-  import focusStore from "../../stores/focus-store";
+  import { Color } from "../lib/Color";
+  import colorStore, { newGenericPal } from "../stores/color-store";
+  import focusStore from "../stores/focus-store";
   import { onMount } from "svelte";
-  import type { Palette } from "../../stores/color-store";
-  import Tooltip from "../../components/Tooltip.svelte";
-  import { VegaColors } from "../../lib/charts";
-  import { buttonStyle } from "../../lib/styles";
-  import { makePal, toHex } from "../../lib/utils";
-  import type { ExtendedPal } from "../../lib/utils";
+  import type { Palette } from "../stores/color-store";
+  import Tooltip from "../components/Tooltip.svelte";
+  import { VegaColors } from "../lib/charts";
+  import { buttonStyle } from "../lib/styles";
+  import { makePal, toHex } from "../lib/utils";
+  import type { ExtendedPal } from "../lib/utils";
   import SuggestColorPal from "./SuggestColorPal.svelte";
 
-  import MiniPalPreview from "../../components/MiniPalPreview.svelte";
+  import MiniPalPreview from "../components/MiniPalPreview.svelte";
   $: familiarPals = [] as ExtendedPal[];
   $: currentPal = $colorStore.palettes[$colorStore.currentPal];
   $: colorSpace = currentPal.colorSpace;

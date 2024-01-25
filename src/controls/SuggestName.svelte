@@ -1,10 +1,10 @@
 <script lang="ts">
-  import colorStore from "../../stores/color-store";
-  import configStore from "../../stores/config-store";
-  import Tooltip from "../../components/Tooltip.svelte";
-  import { AIButtonStyle, buttonStyle } from "../../lib/styles";
+  import colorStore from "../stores/color-store";
+  import configStore from "../stores/config-store";
+  import Tooltip from "../components/Tooltip.svelte";
+  import { AIButtonStyle, buttonStyle } from "../lib/styles";
 
-  import { suggestNameForPalette } from "../../lib/api-calls";
+  import { suggestNameForPalette } from "../lib/api-calls";
 
   $: currentPal = $colorStore.palettes[$colorStore.currentPal];
 

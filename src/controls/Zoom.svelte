@@ -1,10 +1,10 @@
 <script lang="ts">
-  import Tooltip from "../../components/Tooltip.svelte";
-  import { buttonStyle } from "../../lib/styles";
-  import { colorPickerConfig } from "../../lib/Color";
-  import DoubleRangeSlider from "../../components/DoubleRangeSlider.svelte";
-  import configStore from "../../stores/config-store";
-  import colorStore from "../../stores/color-store";
+  import Tooltip from "../components/Tooltip.svelte";
+  import { buttonStyle } from "../lib/styles";
+  import { colorPickerConfig } from "../lib/Color";
+  import DoubleRangeSlider from "../components/DoubleRangeSlider.svelte";
+  import configStore from "../stores/config-store";
+  import colorStore from "../stores/color-store";
 
   $: xZoom = $configStore.xZoom;
   $: xZoom && configStore.setZoom("x", xZoom);

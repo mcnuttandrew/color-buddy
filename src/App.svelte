@@ -7,20 +7,20 @@
   import Nav from "./components/Nav.svelte";
 
   import LeftPanel from "./content-modules/LeftPanel.svelte";
-  import Examples from "./content-modules/Examples.svelte";
-  import Eval from "./content-modules/Eval.svelte";
+  import Examples from "./example/Examples.svelte";
+  import Eval from "./linting/Eval.svelte";
   import KeyboardHooks from "./components/KeyboardHooks.svelte";
   import ComparePal from "./content-modules/ComparePal.svelte";
-  import ColorScatterPlot from "./components/ColorScatterPlot.svelte";
-  import SetSimulation from "./content-modules/context-free-tools/SetSimulation.svelte";
-  import Zoom from "./content-modules/context-free-tools/Zoom.svelte";
-  import Background from "./content-modules/Background.svelte";
-  import SetColorSpace from "./content-modules/contextual-tools/SetColorSpace.svelte";
+  import ColorScatterPlot from "./scatterplot/ColorScatterPlot.svelte";
+  import SetSimulation from "./controls/SetSimulation.svelte";
+  import Zoom from "./controls/Zoom.svelte";
+  import Background from "./components/Background.svelte";
+  import SetColorSpace from "./controls/SetColorSpace.svelte";
   import PalPreview from "./components/PalPreview.svelte";
-  import Sort from "./content-modules/context-free-tools/Sort.svelte";
-  import SuggestName from "./content-modules/context-free-tools/SuggestName.svelte";
-  import GetColorsFromString from "./content-modules/context-free-tools/GetColorsFromString.svelte";
-  import NewPal from "./content-modules/context-free-tools/NewPal.svelte";
+  import Sort from "./controls/Sort.svelte";
+  import SuggestName from "./controls/SuggestName.svelte";
+  import GetColorsFromString from "./controls/GetColorsFromString.svelte";
+  import NewPal from "./controls/NewPal.svelte";
 
   import ContentEditable from "./components/ContentEditable.svelte";
 

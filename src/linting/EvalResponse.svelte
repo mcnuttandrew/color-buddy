@@ -1,13 +1,13 @@
 <script lang="ts">
-  import Tooltip from "../../components/Tooltip.svelte";
-  import colorStore from "../../stores/color-store";
-  import focusStore from "../../stores/focus-store";
-  import configStore from "../../stores/config-store";
-  import { ColorLint } from "../../lib/lints/ColorLint";
-  import type { Palette } from "../../stores/color-store";
-  import PalDiff from "../../components/PalDiff.svelte";
+  import Tooltip from "../components/Tooltip.svelte";
+  import colorStore from "../stores/color-store";
+  import focusStore from "../stores/focus-store";
+  import configStore from "../stores/config-store";
+  import { ColorLint } from "../lib/lints/ColorLint";
+  import type { Palette } from "../stores/color-store";
+  import PalDiff from "../components/PalDiff.svelte";
 
-  import { buttonStyle } from "../../lib/styles";
+  import { buttonStyle } from "../lib/styles";
   let requestState: "idle" | "loading" | "loaded" | "failed" = "idle";
   export let check: ColorLint<any, any>;
 

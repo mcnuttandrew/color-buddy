@@ -3,7 +3,7 @@
   import colorStore from "../stores/color-store";
   import { Color } from "../lib/Color";
   import Tooltip from "../components/Tooltip.svelte";
-  import SwatchTooltipContent from "../content-modules/SwatchTooltipContent.svelte";
+  import SwatchTooltipContent from "../components/SwatchTooltipContent.svelte";
   import focusStore from "../stores/focus-store";
   import { idxToKey } from "../lib/charts";
   export let example: string;

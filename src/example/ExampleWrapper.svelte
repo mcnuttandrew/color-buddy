@@ -1,8 +1,8 @@
 <script lang="ts">
   import { buttonStyle } from "../lib/styles";
   import exampleStore from "../stores/example-store";
-  import Vega from "../components/Vega.svelte";
-  import Example from "../components/Example.svelte";
+  import Vega from "./Vega.svelte";
+  import Example from "./Example.svelte";
   import Tooltip from "../components/Tooltip.svelte";
   import ContentEditable from "../components/ContentEditable.svelte";
   export let example: any;

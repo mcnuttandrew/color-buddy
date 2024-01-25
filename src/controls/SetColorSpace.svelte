@@ -1,7 +1,7 @@
 <script lang="ts">
-  import { colorPickerConfig } from "../../lib/Color";
-  import Tooltip from "../../components/Tooltip.svelte";
-  import { buttonStyle } from "../../lib/styles";
+  import { colorPickerConfig } from "../lib/Color";
+  import Tooltip from "../components/Tooltip.svelte";
+  import { buttonStyle } from "../lib/styles";
   // $: colorSpace = $colorStore.currentPal.colorSpace;
   export let colorSpace: string;
   export let onChange: (e: any) => void;

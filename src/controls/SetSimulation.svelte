@@ -1,7 +1,7 @@
 <script lang="ts">
-  import { buttonStyle } from "../../lib/styles";
-  import Tooltip from "../../components/Tooltip.svelte";
-  import configStore from "../../stores/config-store";
+  import { buttonStyle } from "../lib/styles";
+  import Tooltip from "../components/Tooltip.svelte";
+  import configStore from "../stores/config-store";
 </script>
 
 <Tooltip>

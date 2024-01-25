@@ -3,13 +3,13 @@
   import colorStore from "../stores/color-store";
   import configStore from "../stores/config-store";
   import focusStore from "../stores/focus-store";
-  import ColorScatterPlot from "../components/ColorScatterPlot.svelte";
-  import Background from "./Background.svelte";
+  import ColorScatterPlot from "../scatterplot/ColorScatterPlot.svelte";
+  import Background from "../components/Background.svelte";
   import { buttonStyle } from "../lib/styles";
   import Tooltip from "../components/Tooltip.svelte";
   import MiniPalPreview from "../components/MiniPalPreview.svelte";
 
-  import SetColorSpace from "./contextual-tools/SetColorSpace.svelte";
+  import SetColorSpace from "../controls/SetColorSpace.svelte";
 
   $: currentPal = $colorStore.palettes[$colorStore.currentPal];
   $: compareIdx = $configStore.comparePal;

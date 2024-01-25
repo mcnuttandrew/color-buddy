@@ -1,11 +1,11 @@
 <script lang="ts">
-  import colorStore from "../../stores/color-store";
-  import configStore from "../../stores/config-store";
-  import { Color } from "../../lib/Color";
-  import { suggestPal } from "../../lib/api-calls";
-  import type { Palette } from "../../stores/color-store";
-  import PalPreview from "../../components/PalPreview.svelte";
-  import { buttonStyle, AIButtonStyle } from "../../lib/styles";
+  import colorStore from "../stores/color-store";
+  import configStore from "../stores/config-store";
+  import { Color } from "../lib/Color";
+  import { suggestPal } from "../lib/api-calls";
+  import type { Palette } from "../stores/color-store";
+  import PalPreview from "../components/PalPreview.svelte";
+  import { buttonStyle, AIButtonStyle } from "../lib/styles";
 
   $: currentPal = $colorStore.palettes[$colorStore.currentPal];
   $: colorSpace = currentPal.colorSpace;

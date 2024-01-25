@@ -1,5 +1,5 @@
 <script lang="ts">
-  import ColorChannelPicker from "../components/ColorChannelPicker.svelte";
+  import ColorChannelPicker from "./ColorChannelPicker.svelte";
   import { Color } from "../lib/Color";
   import colorStore from "../stores/color-store";
   import focusStore from "../stores/focus-store";

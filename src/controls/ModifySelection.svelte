@@ -1,8 +1,8 @@
 <script lang="ts">
-  import focusStore from "../../stores/focus-store";
-  import colorStore from "../../stores/color-store";
-  import { buttonStyle } from "../../lib/styles";
-  import { deDup } from "../../lib/utils";
+  import focusStore from "../stores/focus-store";
+  import colorStore from "../stores/color-store";
+  import { buttonStyle } from "../lib/styles";
+  import { deDup } from "../lib/utils";
   $: focusedColors = $focusStore.focusedColors;
   $: focusSet = new Set(focusedColors);
   $: currentPal = $colorStore.palettes[$colorStore.currentPal];

@@ -1,7 +1,7 @@
 <script lang="ts">
   import { Color } from "../lib/Color";
-  import ColorChannelPicker from "../components/ColorChannelPicker.svelte";
-  import Tooltip from "../components/Tooltip.svelte";
+  import ColorChannelPicker from "./ColorChannelPicker.svelte";
+  import Tooltip from "./Tooltip.svelte";
   import { buttonStyle } from "../lib/styles";
   export let onChange: (color: Color) => void;
   export let bg: Color;

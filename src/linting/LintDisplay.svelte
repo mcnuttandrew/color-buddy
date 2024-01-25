@@ -3,15 +3,13 @@
   import { ColorLint } from "../lib/lints/ColorLint";
   import { buttonStyle } from "../lib/styles";
   import Tooltip from "../components/Tooltip.svelte";
-  import ExplanationViewer from "../components/ExplanationViewer.svelte";
-  import EvalResponse from "./contextual-tools/EvalResponse.svelte";
-  import { checkLevelToSymbol } from "../lib/utils";
+  import ExplanationViewer from "./ExplanationViewer.svelte";
+  import EvalResponse from "./EvalResponse.svelte";
   export let check: ColorLint<any, any>;
 
   $: currentPal = $colorStore.palettes[$colorStore.currentPal];
   $: evalConfig = currentPal.evalConfig;
   $: ignored = !!evalConfig[check.name]?.ignore;
-  $: console.log(ignored);
 </script>
 
 {#if ignored}

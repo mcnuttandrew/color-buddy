@@ -1,8 +1,8 @@
 <script lang="ts">
-  import focusStore from "../../stores/focus-store";
-  import colorStore from "../../stores/color-store";
-  import { Color, colorPickerConfig } from "../../lib/Color";
-  import { buttonStyle } from "../../lib/styles";
+  import focusStore from "../stores/focus-store";
+  import colorStore from "../stores/color-store";
+  import { Color, colorPickerConfig } from "../lib/Color";
+  import { buttonStyle } from "../lib/styles";
 
   $: currentPal = $colorStore.palettes[$colorStore.currentPal];
   $: colors = currentPal.colors;

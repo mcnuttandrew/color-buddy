@@ -1,7 +1,7 @@
 <script lang="ts">
-  import { Color } from "../../lib/Color";
-  import colorStore from "../../stores/color-store";
-  import configStore from "../../stores/config-store";
+  import { Color } from "../lib/Color";
+  import colorStore from "../stores/color-store";
+  import configStore from "../stores/config-store";
   let state: "idle" | "error" = "idle";
   $: currentPal = $colorStore.palettes[$colorStore.currentPal];
   $: colors = currentPal.colors;

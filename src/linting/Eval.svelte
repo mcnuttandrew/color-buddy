@@ -11,8 +11,8 @@
   import { Color } from "../lib/Color";
 
   import Tooltip from "../components/Tooltip.svelte";
-  import SwatchTooltipContent from "./SwatchTooltipContent.svelte";
-  import ExplanationViewer from "../components/ExplanationViewer.svelte";
+  import SwatchTooltipContent from "../components/SwatchTooltipContent.svelte";
+  import ExplanationViewer from "./ExplanationViewer.svelte";
   import simulate_cvd from "../lib/blindness";
   import { checkLevelToSymbol } from "../lib/utils";
 

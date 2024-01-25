@@ -2,7 +2,7 @@
   import focusStore from "../stores/focus-store";
   import type { Palette } from "../stores/color-store";
   import Tooltip from "./Tooltip.svelte";
-  import SwatchTooltipContent from "../content-modules/SwatchTooltipContent.svelte";
+  import SwatchTooltipContent from "./SwatchTooltipContent.svelte";
   import { toggleElement } from "../lib/utils";
   export let pal: Palette;
   export let allowModification: boolean = false;

@@ -13,7 +13,7 @@
   import { buttonStyle } from "../lib/styles";
   import { xml } from "@codemirror/lang-xml";
   import CodeMirror from "svelte-codemirror-editor";
-  import Swatches from "../content-modules/Swatches.svelte";
+  import Swatches from "./Swatches.svelte";
   import Tooltip from "../components/Tooltip.svelte";
 
   let modalState: "closed" | "input-svg" | "input-vega" | "edit-colors" =

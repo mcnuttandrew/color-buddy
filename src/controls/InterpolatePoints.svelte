@@ -1,10 +1,10 @@
 <script lang="ts">
-  import { Color } from "../../lib/Color";
-  import type { Palette } from "../../stores/color-store";
-  import colorStore from "../../stores/color-store";
-  import focusStore from "../../stores/focus-store";
-  import { buttonStyle } from "../../lib/styles";
-  import PalPreview from "../../components/PalPreview.svelte";
+  import { Color } from "../lib/Color";
+  import type { Palette } from "../stores/color-store";
+  import colorStore from "../stores/color-store";
+  import focusStore from "../stores/focus-store";
+  import { buttonStyle } from "../lib/styles";
+  import PalPreview from "../components/PalPreview.svelte";
 
   $: currentPal = $colorStore.palettes[$colorStore.currentPal];
   $: focusedColors = $focusStore.focusedColors;

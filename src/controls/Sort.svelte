@@ -1,7 +1,7 @@
 <script lang="ts">
-  import colorStore from "../../stores/color-store";
-  import Tooltip from "../../components/Tooltip.svelte";
-  import { buttonStyle } from "../../lib/styles";
+  import colorStore from "../stores/color-store";
+  import Tooltip from "../components/Tooltip.svelte";
+  import { buttonStyle } from "../lib/styles";
   const spaces = ["lab", "lch", "hsl", "hsv"];
   let selectedColorSpace: (typeof spaces)[number] = "lab";
   let selectedLetter = "a";

@@ -1,10 +1,10 @@
 <script lang="ts">
-  import { Color } from "../../lib/Color";
-  import colorStore from "../../stores/color-store";
-  import focusStore from "../../stores/focus-store";
-  import { clipToGamut, clamp } from "../../lib/utils";
+  import { Color } from "../lib/Color";
+  import colorStore from "../stores/color-store";
+  import focusStore from "../stores/focus-store";
+  import { clipToGamut, clamp } from "../lib/utils";
 
-  import { buttonStyle } from "../../lib/styles";
+  import { buttonStyle } from "../lib/styles";
 
   $: currentPal = $colorStore.palettes[$colorStore.currentPal];
   $: colors = currentPal.colors;

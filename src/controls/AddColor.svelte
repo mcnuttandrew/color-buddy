@@ -1,11 +1,11 @@
 <script lang="ts">
-  import colorStore from "../../stores/color-store";
-  import configStore from "../../stores/config-store";
-  import { buttonStyle } from "../../lib/styles";
-  import { Color } from "../../lib/Color";
-  import { suggestAdditionsToPalette } from "../../lib/api-calls";
-  import ColorButton from "../../components/ColorButton.svelte";
-  import Tooltip from "../../components/Tooltip.svelte";
+  import colorStore from "../stores/color-store";
+  import configStore from "../stores/config-store";
+  import { buttonStyle } from "../lib/styles";
+  import { Color } from "../lib/Color";
+  import { suggestAdditionsToPalette } from "../lib/api-calls";
+  import ColorButton from "../components/ColorButton.svelte";
+  import Tooltip from "../components/Tooltip.svelte";
 
   const randChan = () => Math.floor(Math.random() * 255);
   function componentToHex(c: number): string {

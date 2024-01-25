@@ -3,7 +3,7 @@
   import colorStore from "../stores/color-store";
   import focusStore from "../stores/focus-store";
   import Tooltip from "../components/Tooltip.svelte";
-  import SwatchTooltipContent from "./SwatchTooltipContent.svelte";
+  import SwatchTooltipContent from "../components/SwatchTooltipContent.svelte";
 
   $: currentPal = $colorStore.palettes[$colorStore.currentPal];
   $: colors = currentPal.colors;

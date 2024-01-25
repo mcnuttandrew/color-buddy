@@ -1,13 +1,13 @@
 <script lang="ts">
   import focusStore from "../stores/focus-store";
   import colorStore from "../stores/color-store";
-  import ModifySelection from "./contextual-tools/ModifySelection.svelte";
-  import AlignSelection from "./contextual-tools/AlignSelection.svelte";
-  import SuggestionModificationToSelection from "./contextual-tools/SuggestionModificationToSelection.svelte";
-  import InterpolatePoints from "./contextual-tools/InterpolatePoints.svelte";
-  import DistributePoints from "./contextual-tools/DistributePoints.svelte";
-  import AdjustColor from "./contextual-tools/AdjustColor.svelte";
-  import AddColor from "./contextual-tools/AddColor.svelte";
+  import ModifySelection from "../controls/ModifySelection.svelte";
+  import AlignSelection from "../controls/AlignSelection.svelte";
+  import SuggestionModificationToSelection from "../controls/SuggestionModificationToSelection.svelte";
+  import InterpolatePoints from "../controls/InterpolatePoints.svelte";
+  import DistributePoints from "../controls/DistributePoints.svelte";
+  import AdjustColor from "../controls/AdjustColor.svelte";
+  import AddColor from "../controls/AddColor.svelte";
   import ColorChannelPicker from "../components/ColorChannelPicker.svelte";
 
   $: currentPal = $colorStore.palettes[$colorStore.currentPal];

@@ -1,11 +1,11 @@
 <script lang="ts">
-  import colorStore from "../../stores/color-store";
-  import focusStore from "../../stores/focus-store";
-  import configStore from "../../stores/config-store";
-  import { Color } from "../../lib/Color";
-  import { suggestContextualAdjustments } from "../../lib/api-calls";
-  import { buttonStyle } from "../../lib/styles";
-  import PalDiff from "../../components/PalDiff.svelte";
+  import colorStore from "../stores/color-store";
+  import focusStore from "../stores/focus-store";
+  import configStore from "../stores/config-store";
+  import { Color } from "../lib/Color";
+  import { suggestContextualAdjustments } from "../lib/api-calls";
+  import { buttonStyle } from "../lib/styles";
+  import PalDiff from "../components/PalDiff.svelte";
 
   let requestState: "idle" | "loading" | "loaded" | "failed" = "idle";
   $: currentPal = $colorStore.palettes[$colorStore.currentPal];

@@ -3,7 +3,7 @@
   import configStore from "../stores/config-store";
   import Nav from "../components/Nav.svelte";
 
-  import Config from "./context-free-tools/Config.svelte";
+  import Config from "../controls/Config.svelte";
   import Controls from "./Controls.svelte";
   import { buttonStyle } from "../lib/styles";
 

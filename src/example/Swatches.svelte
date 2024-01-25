@@ -3,7 +3,9 @@
   import colorStore from "../stores/color-store";
   import focusStore from "../stores/focus-store";
   import Tooltip from "../components/Tooltip.svelte";
+  import exampleStore from "../stores/example-store";
   import SwatchTooltipContent from "../components/SwatchTooltipContent.svelte";
+  import { buttonStyle } from "../lib/styles";
 
   $: currentPal = $colorStore.palettes[$colorStore.currentPal];
   $: colors = currentPal.colors;
@@ -29,85 +31,121 @@
       selectionClass: "relative top-1 left-1",
     },
   ];
+
+  $: sections = $exampleStore.sections as any;
+  $: numToShow = $exampleStore.examples.filter((x: any) => {
+    if (x.hidden) {
+      return false;
+    }
+    if (sections.svg && x?.svg) {
+      return true;
+    }
+    if (sections.vega && x.vega) {
+      return true;
+    }
+    return false;
+  }).length;
 </script>
 
-<div
-  class="flex flex-col p-4 flex-initial"
-  style={`background-color: ${bg.toHex()}; max-width: 600px`}
->
-  <div class="flex mb-2 justify-between items-center">
-    <!-- <span class="text-sm flex flex-col" class:text-white={bg.luminance() < 0.5}>
-      <span>Click to modify colors</span>
-      <span>Hold shift to select multiple</span>
-    </span> -->
-  </div>
-  {#each classes as { className, styleMap, selectionClass }}
-    <div class="flex justify-center flex-wrap">
-      {#each colors as color, idx}
-        <Tooltip top={"100px"} allowDrag={true}>
-          <div slot="content" class="flex flex-col" let:onClick>
-            <SwatchTooltipContent {color} closeTooltip={onClick} {idx} />
-          </div>
+<div class="mr-4 mb-2">
+  <div class="bg-stone-300 w-full justify-between flex p-1">
+    Swatches
+    <Tooltip>
+      <button slot="target" class={buttonStyle} let:toggle on:click={toggle}>
+        Options
+      </button>
+      <div slot="content">
+        <button
+          class={buttonStyle}
+          on:click={() => exampleStore.toggleSection("swatches")}
+        >
+          Hide
+        </button>
+        {#if numToShow > 1}
           <button
-            let:toggle
-            let:tooltipOpen
-            slot="target"
-            class={`${className} ${focusSet.has(idx) ? selectionClass : ""}`}
-            style={`${styleMap(color)}`}
-            on:click={(e) => {
-              const isFocused = focusSet.has(idx);
-              const shiftKey = e.shiftKey;
-              if (!tooltipOpen && !isFocused) {
-                if (shiftKey) {
-                  focusStore.addColor(idx);
-                } else {
-                  focusStore.setColors([idx]);
-                }
-                toggle();
-              } else if (!tooltipOpen && isFocused) {
-                if (shiftKey) {
-                  focusStore.toggleColor(idx);
-                } else {
-                  focusStore.clearColors();
-                }
-              } else if (tooltipOpen && !isFocused) {
-                if (shiftKey) {
-                  focusStore.addColor(idx);
-                } else {
-                  focusStore.setColors([idx]);
-                }
-              } else {
-                toggle();
-                if (shiftKey) {
-                  focusStore.toggleColor(idx);
-                } else {
-                  focusStore.clearColors();
-                }
-              }
+            class={buttonStyle}
+            on:click={() => {
+              exampleStore.onlySwatches();
             }}
-          ></button>
-        </Tooltip>
+          >
+            Focus
+          </button>
+        {/if}
+      </div>
+    </Tooltip>
+  </div>
+  <div
+    class="flex flex-col p-4 flex-initial"
+    style={`background-color: ${bg.toHex()}; max-width: 600px`}
+  >
+    {#each classes as { className, styleMap, selectionClass }}
+      <div class="flex justify-center flex-wrap">
+        {#each colors as color, idx}
+          <Tooltip top={"100px"} allowDrag={true}>
+            <div slot="content" class="flex flex-col" let:onClick>
+              <SwatchTooltipContent {color} closeTooltip={onClick} {idx} />
+            </div>
+            <button
+              let:toggle
+              let:tooltipOpen
+              slot="target"
+              class={`${className} ${focusSet.has(idx) ? selectionClass : ""}`}
+              style={`${styleMap(color)}`}
+              on:click={(e) => {
+                const isFocused = focusSet.has(idx);
+                const shiftKey = e.shiftKey;
+                if (!tooltipOpen && !isFocused) {
+                  if (shiftKey) {
+                    focusStore.addColor(idx);
+                  } else {
+                    focusStore.setColors([idx]);
+                  }
+                  toggle();
+                } else if (!tooltipOpen && isFocused) {
+                  if (shiftKey) {
+                    focusStore.toggleColor(idx);
+                  } else {
+                    focusStore.clearColors();
+                  }
+                } else if (tooltipOpen && !isFocused) {
+                  if (shiftKey) {
+                    focusStore.addColor(idx);
+                  } else {
+                    focusStore.setColors([idx]);
+                  }
+                } else {
+                  toggle();
+                  if (shiftKey) {
+                    focusStore.toggleColor(idx);
+                  } else {
+                    focusStore.clearColors();
+                  }
+                }
+              }}
+            ></button>
+          </Tooltip>
+        {/each}
+      </div>
+    {/each}
+    <div class="flex flex-wrap justify-center">
+      {#each colors as color, i}
+        <button
+          style={`color: ${color.toHex()}; transform: rotate(${
+            focusSet.has(i) ? 10 : 0
+          }deg)`}
+          class="mr-2 w-16"
+          on:click={(e) => {
+            const isMeta = e.metaKey || e.shiftKey || e.ctrlKey;
+            if (isMeta) {
+              focusStore.toggleColor(i);
+            } else {
+              focusStore.setColors(focusSet.has(i) ? [] : [i]);
+            }
+          }}
+        >
+          {color.toHex()}
+        </button>
       {/each}
     </div>
-  {/each}
-  <div class="flex flex-wrap justify-center">
-    {#each colors as color, i}
-      <button
-        style={`color: ${color.toHex()}; transform: rotate(${
-          focusSet.has(i) ? 10 : 0
-        }deg)`}
-        class="mr-2 w-16"
-        on:click={(e) => {
-          const isMeta = e.metaKey || e.shiftKey || e.ctrlKey;
-          if (isMeta) {
-            focusStore.toggleColor(i);
-          } else {
-            focusStore.setColors(focusSet.has(i) ? [] : [i]);
-          }
-        }}
-      >
-        {color.toHex()}
-      </button>
-    {/each}
   </div>
 </div>

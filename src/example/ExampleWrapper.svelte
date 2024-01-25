@@ -9,9 +9,9 @@
   export let idx: number;
   export let bg: string;
   export let clickExample: (example: any, idx: number) => void;
-
-  let operations = [
-    { name: "Edit", action: () => clickExample(example, idx), condition: true },
+  $: size = example.size || 250;
+  $: operations = [
+    { name: "Edit", action: () => clickExample(example, idx) },
     {
       name: "Delete",
       action: () => exampleStore.deleteExample(idx),
@@ -22,11 +22,7 @@
       action: () => exampleStore.toggleHidden(idx),
       condition: true,
     },
-    {
-      name: "Expand",
-      action: () => exampleStore.setExampleSize(idx, 600),
-      condition: true,
-    },
+
     {
       name: "Focus (expand and hide others)",
       action: () => {
@@ -36,9 +32,19 @@
       condition: true,
     },
     {
+      name: "Expand",
+      action: () => exampleStore.setExampleSize(idx, 600),
+      condition: size !== 600,
+    },
+    {
+      name: "Reset size",
+      action: () => exampleStore.setExampleSize(idx, 250),
+      condition: size !== 250,
+    },
+    {
       name: "Shrink",
       action: () => exampleStore.setExampleSize(idx, 50),
-      condition: true,
+      condition: size !== 50,
     },
   ].filter((x) => x.condition);
 </script>
@@ -60,7 +66,7 @@
       <button slot="target" class={buttonStyle} let:toggle on:click={toggle}>
         Options ⚙
       </button>
-      <div slot="content">
+      <div slot="content" class="flex flex-col items-start">
         {#each operations as { name, action }}
           <button class={buttonStyle} on:click={action}>{name}</button>
         {/each}

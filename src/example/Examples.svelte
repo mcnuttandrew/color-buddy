@@ -87,19 +87,6 @@
   $: groupsHidden = Object.keys(sections).filter((x) => !sections[x]).length;
   $: hiddenExamples = $exampleStore.examples.filter((x: any) => x.hidden);
   $: numberHidden = hiddenExamples.length + groupsHidden;
-
-  $: numToShow = $exampleStore.examples.filter((x: any) => {
-    if (x.hidden) {
-      return false;
-    }
-    if (sections.svg && x?.svg) {
-      return true;
-    }
-    if (sections.vega && x.vega) {
-      return true;
-    }
-    return false;
-  }).length;
 </script>
 
 <div class="flex items-center bg-stone-300 px-4 py-2">
@@ -171,49 +158,14 @@
   class="flex flex-wrap overflow-auto p-4 w-full bg-stone-100"
   style={`height: calc(100% - 100px)`}
 >
+  {#if $exampleStore.sections["swatches"]}
+    <Swatches />
+  {/if}
   {#each examples as example, idx}
     {#if exampleShowMap[idx]}
       <ExampleWrapper {example} {idx} bg={bg.toHex()} {clickExample} />
     {/if}
   {/each}
-  {#if $exampleStore.sections["swatches"]}
-    <div class="mr-4 mb-2">
-      <div class="bg-stone-300 w-full justify-between flex p-1">
-        Swatches
-        <Tooltip>
-          <button
-            slot="target"
-            class={buttonStyle}
-            let:toggle
-            on:click={toggle}
-          >
-            Options
-          </button>
-          <div slot="content">
-            <button
-              class={buttonStyle}
-              on:click={() => {
-                onToggle("swatches");
-              }}
-            >
-              Hide
-            </button>
-            {#if numToShow > 1}
-              <button
-                class={buttonStyle}
-                on:click={() => {
-                  exampleStore.onlySwatches();
-                }}
-              >
-                Focus
-              </button>
-            {/if}
-          </div>
-        </Tooltip>
-      </div>
-      <Swatches />
-    </div>
-  {/if}
 </div>
 {#if modalState !== "closed"}
   <Modal

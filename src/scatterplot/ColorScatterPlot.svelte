@@ -20,7 +20,7 @@
   import ColorScatterPlotZGuide from "./ColorScatterPlotZGuide.svelte";
   import GamutMarker from "./GamutMarker.svelte";
 
-  export let scatterPlotMode: "moving" | "looking";
+  export let scatterPlotMode: "moving" | "looking" | "putting";
 
   export let Pal: Palette;
   export let focusedColors: number[];
@@ -101,9 +101,6 @@
   $: x = scales.x;
   $: y = scales.y;
   $: z = scales.z;
-  // screen -> color space
-  $: xInv = scales.xInv;
-  $: yInv = scales.yInv;
 
   $: CircleProps = (color: Color, i: number) => ({
     cx: x(color),
@@ -325,8 +322,8 @@
         const y3 =
           Math.sin(angle) * (x1 - xc) + Math.cos(angle) * (y1 - yc) + yc;
         const newChannels = [...color.toChannels()] as [number, number, number];
-        newChannels[config.xChannelIndex] = xInv(x3, y3);
-        newChannels[config.yChannelIndex] = yInv(x3, y3);
+        newChannels[config.xChannelIndex] = scales.xInv(x3, y3);
+        newChannels[config.yChannelIndex] = scales.yInv(x3, y3);
         return color.fromChannels(newChannels);
       });
     onColorsChange(newColors);
@@ -335,6 +332,33 @@
     // console.log("rotate end");
     interactionMode = "idle";
     stopDragging();
+  }
+
+  let puttingPreview: false | Color = false;
+
+  function puttingUpdate(e: any) {
+    let currentPos = toXY(e);
+    const box = svgContainer.getBoundingClientRect();
+    currentPos = {
+      x: currentPos.x - box.x,
+      y: currentPos.y - box.y,
+    };
+    const newX = scales.xInv(currentPos.x, currentPos.y);
+    const newY = scales.yInv(currentPos.x, currentPos.y);
+    const newZ = scales.zInv(plotHeight / 2);
+    const newChannels = [0, 0, 0] as [number, number, number];
+    newChannels[config.xChannelIndex] = newX;
+    newChannels[config.yChannelIndex] = newY;
+    newChannels[config.zChannelIndex] = newZ;
+    puttingPreview = Color.colorFromChannels(newChannels, colorSpace);
+  }
+
+  function puttingEnd() {
+    onColorsChange([...colors, puttingPreview as Color]);
+    setTimeout(() => {
+      configStore.setScatterplotMode("moving");
+    }, 10);
+    puttingPreview = false;
   }
 
   $: handles = [
@@ -456,7 +480,7 @@
                   on:mouseleave|preventDefault={switchToDragPoint(i)}
                 />
               {/if}
-              {#if scatterPlotMode === "looking"}
+              {#if scatterPlotMode === "looking" || scatterPlotMode === "putting"}
                 <circle
                   {...CircleProps(color, i)}
                   on:mouseenter={() => hoverPoint(color)}
@@ -597,6 +621,23 @@
             on:touchend|preventDefault={rotateEnd}
           />
         {/if}
+        {#if scatterPlotMode === "putting"}
+          {#if puttingPreview}
+            <circle
+              r={10}
+              fill={puttingPreview.toDisplay()}
+              cx={x(puttingPreview)}
+              cy={y(puttingPreview)}
+            />
+          {/if}
+          <rect
+            {...fillParamsXY}
+            on:mousemove|preventDefault={puttingUpdate}
+            on:touchmove|preventDefault={puttingUpdate}
+            on:mouseup|preventDefault={puttingEnd}
+            on:touchend|preventDefault={puttingEnd}
+          />
+        {/if}
       </svg>
     </div>
   </div>
@@ -705,5 +746,9 @@
     transition: r 0.2s ease-in-out;
     -webkit-transition: r 0.2s ease-in-out;
     -moz-transition: r 0.2s ease-in-out;
+  }
+
+  svg {
+    overflow: visible;
   }
 </style>

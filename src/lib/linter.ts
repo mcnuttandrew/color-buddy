@@ -33,7 +33,7 @@ export function runLintChecks(
       DivergingOrder,
       BackgroundContrast,
       ...Fair,
-      EvenDistribution,
+      // EvenDistribution,
     ] as (typeof ColorLint)[]
   )
     .map((x) => new x(palette))

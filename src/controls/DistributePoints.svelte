@@ -15,7 +15,7 @@
   function distributePoints(direction: Direction) {
     let sortedIndexes = focusedColors.sort((a, b) => {
       const modeToIdx = { horizontal: 1, vertical: 2, "in z space": 0 };
-      const idx = modeToIdx[direction];
+      const idx = modeToIdx[direction] || 0;
       const pointA = colors[a].toChannels()[idx];
       const pointB = colors[b].toChannels()[idx];
       return pointA - pointB;

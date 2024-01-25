@@ -13,21 +13,23 @@ interface StoreData {
   engine: "openai" | "google";
   showColorBackground: boolean;
   tooltipXY?: [string, string];
+  scatterplotMode: "moving" | "putting";
 }
 
 const InitialStore: StoreData = {
-  route: "examples",
-  controlsOpen: false,
-  savedPalsOpen: true,
-  comparePal: undefined,
   colorSim: "none",
+  comparePal: undefined,
+  controlsOpen: false,
+  engine: "openai",
   includeQuotes: false,
+  route: "examples",
+  savedPalsOpen: true,
+  scatterplotMode: "moving",
+  showColorBackground: true,
+  tooltipXY: undefined,
   xZoom: [0, 1],
   yZoom: [0, 1],
   zZoom: [0, 1],
-  engine: "openai",
-  showColorBackground: true,
-  tooltipXY: undefined,
 };
 const storeName = "color-pal-nav-store";
 
@@ -73,6 +75,8 @@ function createStore() {
       persist((old) => ({ ...old, controlsOpen: n })),
     setSavedPalsOpen: (n: StoreData["savedPalsOpen"]) =>
       persist((old) => ({ ...old, savedPalsOpen: n })),
+    setScatterplotMode: (n: StoreData["scatterplotMode"]) =>
+      persist((old) => ({ ...old, scatterplotMode: n })),
   };
 }
 

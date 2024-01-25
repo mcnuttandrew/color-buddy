@@ -79,7 +79,7 @@
             <SuggestName />
           </div>
           <ColorScatterPlot
-            scatterPlotMode="moving"
+            scatterPlotMode={$configStore.scatterplotMode}
             colorSpace={currentPal.colorSpace}
             Pal={currentPal}
             focusedColors={$focusStore.focusedColors}
@@ -90,7 +90,15 @@
             startDragging={() => colorStore.pausePersistance()}
             stopDragging={() => colorStore.resumePersistance()}
           />
+
           <div class="flex">
+            <button
+              class={buttonStyle}
+              on:click={() => configStore.setScatterplotMode("putting")}
+            >
+              Add color {#if $configStore.scatterplotMode === "putting"}(move
+                mouse on chart){/if}
+            </button>
             <Background
               onChange={(bg) => colorStore.setBackground(bg)}
               bg={currentPal.background}

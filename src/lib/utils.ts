@@ -390,3 +390,8 @@ export const screenSpaceAvg = (colors: { x: number; y: number }[]) => {
   const yAvg = colors.reduce((acc, x) => acc + x.y, 0) / colors.length;
   return { x: xAvg, y: yAvg };
 };
+
+export const checkLevelToSymbol = {
+  error: "❌",
+  warning: "⚠️",
+} as any;

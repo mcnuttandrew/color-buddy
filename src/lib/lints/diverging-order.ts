@@ -18,8 +18,7 @@ const findMinDistPoint = (points: Color[], pos: { x: number; y: number }) => {
   return points[distances.indexOf(minDist)];
 };
 export default class SequentialOrder extends ColorLint<boolean, false> {
-  name =
-    "Diverging Palettes should have a middle color that is the lightest or darkest color";
+  name = "Diverging Palettes order";
   taskTypes = ["diverging"] as TaskType[];
   group = "usability";
   description: string = `Diverging palettes should have a middle color that is the lightest or darkest color. This is because if they are not, then they will not be differentiable from each other in some contexts.`;
@@ -41,7 +40,7 @@ export default class SequentialOrder extends ColorLint<boolean, false> {
     return { passCheck: summarizedDirections.length === 2, data: false };
   }
   buildMessage(): string {
-    return `This pal should have a middle color that is the lightest or darkest color`;
+    return `This palette should have a middle color that is the lightest or darkest color, from which the other colors grow darker or lighter  respectively.`;
   }
   hasHeuristicFix = true;
   async suggestFix() {

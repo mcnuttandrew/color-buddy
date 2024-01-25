@@ -58,12 +58,6 @@
     });
   }
 
-  function activateCB() {
-    const match = options.find((x) => check.name.includes(x));
-    if (match) {
-      configStore.setColorSim(match);
-    }
-  }
   const options = ["deuteranopia", "protanopia", "tritanopia"] as const;
   $: cbMatch = options.find((x) =>
     check.name.includes(x)
@@ -71,7 +65,7 @@
 </script>
 
 <Tooltip positionAlongRightEdge={true}>
-  <div slot="content" let:onClick>
+  <div slot="content" let:onClick class="max-w-lg">
     {#if cbMatch}
       <button
         class={buttonStyle}
@@ -137,11 +131,13 @@
           <button
             class={buttonStyle}
             on:click={() => {
-              colorStore.setCurrentPal(suggestion);
-              focusStore.clearColors();
-              requestState = "idle";
-              suggestion = false;
-              onClick();
+              if (suggestion) {
+                colorStore.setCurrentPal(suggestion);
+                focusStore.clearColors();
+                requestState = "idle";
+                suggestion = false;
+                onClick();
+              }
             }}
           >
             Use
@@ -158,5 +154,7 @@
       </div>
     {/if}
   </div>
-  <button slot="target" let:toggle class={` ml-4`} on:click={toggle}>🛠️</button>
+  <button slot="target" let:toggle class={`${buttonStyle}`} on:click={toggle}>
+    fixes
+  </button>
 </Tooltip>

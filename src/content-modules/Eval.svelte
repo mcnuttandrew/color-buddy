@@ -7,11 +7,14 @@
   import { runLintChecks } from "../lib/linter";
   import { colorNameSimple } from "../lib/lints/name-discrim";
   import { buttonStyle } from "../lib/styles";
-  import EvalResponse from "./contextual-tools/EvalResponse.svelte";
+  import LintDisplay from "./LintDisplay.svelte";
+  import { Color } from "../lib/Color";
+
   import Tooltip from "../components/Tooltip.svelte";
   import SwatchTooltipContent from "./SwatchTooltipContent.svelte";
   import ExplanationViewer from "../components/ExplanationViewer.svelte";
   import simulate_cvd from "../lib/blindness";
+  import { checkLevelToSymbol } from "../lib/utils";
 
   $: selectedBlindType = $configStore.colorSim;
 
@@ -43,17 +46,21 @@
     );
   });
 
-  const checkLevelToSymbol = {
-    error: "❌",
-    warning: "⚠️",
-  } as any;
-  // more info symbol: ℹ️
-
   const titleCase = (str: string) =>
     str
       .split(" ")
       .map((x) => x[0].toUpperCase() + x.slice(1))
       .join(" ");
+
+  function setGroupTo(checks: ColorLint<any, any>[], ignore: boolean) {
+    const newEvalConfig = { ...evalConfig };
+    checks.forEach((check) => {
+      newEvalConfig[check.name] = { ignore };
+    });
+    colorStore.setCurrentPalEvalConfig(newEvalConfig);
+  }
+  $: sim = (color: Color): string =>
+    simulate_cvd(selectedBlindType, color).toHex();
 </script>
 
 <div class="flex h-full">
@@ -90,10 +97,7 @@
               {#if selectedBlindType !== "none"}
                 <div
                   class="grow h-full"
-                  style={`background-color: ${simulate_cvd(
-                    selectedBlindType,
-                    color
-                  ).toHex()}`}
+                  style={`background-color: ${sim(color)}`}
                 ></div>
               {/if}
             </div>
@@ -146,86 +150,44 @@
     </div>
   </div>
   <div class="flex flex-col ml-2">
-    <div class="overflow-auto h-full max-w-md">
-      {#each Object.entries(checkGroups) as checkGroup}
-        <div class="flex mt-5">
-          <div class="font-bold mr-5">{titleCase(checkGroup[0])} Checks</div>
-          <button
-            class={buttonStyle}
-            on:click={() => {
-              const newEvalConfig = { ...evalConfig };
-              checkGroup[1].forEach((check) => {
-                newEvalConfig[check.name] = { ignore: true };
-              });
-              colorStore.setCurrentPalEvalConfig(newEvalConfig);
-            }}
-          >
-            ignore all
-          </button>
-          {#if checkGroup[1].some((x) => evalConfig[x.name]?.ignore)}
-            <button
-              class={buttonStyle}
-              on:click={() => {
-                const newEvalConfig = { ...evalConfig };
-                checkGroup[1].forEach((check) => {
-                  newEvalConfig[check.name] = { ignore: false };
-                });
-                colorStore.setCurrentPalEvalConfig(newEvalConfig);
-              }}
-            >
-              renable all
-            </button>
-          {/if}
-        </div>
-        {#each checkGroup[1] as check}
-          {#if evalConfig[check.name]?.ignore}
-            <div class="text-xs">
-              Ignored "{check.name}"
-              <button
-                class={buttonStyle}
-                on:click={() => {
-                  colorStore.setCurrentPalEvalConfig({
-                    ...evalConfig,
-                    [check.name]: { ignore: false },
-                  });
-                }}
-              >
-                renable
-              </button>
-            </div>
-          {:else}
-            <div class="w-full rounded flex flex-col justify-between py-1">
-              <div class="flex" class:font-bold={!check.passes}>
-                {#if check.passes}<div class="text-green-500">
-                    ✅
-                  </div>{:else}<div class="text-red-500">
-                    {checkLevelToSymbol[check.level]}
-                  </div>{/if}
-                <Tooltip>
-                  <div slot="content" class="flex flex-col">
-                    <div class="">{check.description}</div>
-                  </div>
-                  <button slot="target" let:toggle on:click={toggle}>ⓘ</button>
-                </Tooltip>
-                {#if !check.passes}
-                  <EvalResponse {check} />
-                {/if}{check.name}
-              </div>
-              {#if !check.passes}
-                <ExplanationViewer {check} />
-              {/if}
-            </div>
-          {/if}
-        {/each}
-      {/each}
+    <div class="overflow-auto h-full max-w-lg">
       {#if Object.keys(currentPal.evalConfig)}
         <button
-          class={`${buttonStyle} mt-5`}
+          class={`${buttonStyle} ml-0 pl-0 mt-4`}
           on:click={() => colorStore.setCurrentPalEvalConfig({})}
         >
           Restore Defaults
         </button>
       {/if}
+      <div class="text-sm">
+        This collection of checks validates whether or not your palette matches
+        a number of commonly held beliefs about best practices. They will not
+        fit every situation or task (so you should feel unashamed if you ignore
+        some of them), but they are a good starting point for thinking about how
+        to improve your palette.
+      </div>
+      {#each Object.entries(checkGroups) as checkGroup}
+        <div class="flex mt-4">
+          <div class="font-bold">{titleCase(checkGroup[0])} Checks</div>
+          <button
+            class={`${buttonStyle} `}
+            on:click={() => setGroupTo(checkGroup[1], true)}
+          >
+            ignore all
+          </button>
+          {#if checkGroup[1].some((x) => evalConfig[x.name]?.ignore)}
+            <button
+              class={`${buttonStyle} `}
+              on:click={() => setGroupTo(checkGroup[1], false)}
+            >
+              re-enable all
+            </button>
+          {/if}
+        </div>
+        {#each checkGroup[1] as check}
+          <LintDisplay {check} />
+        {/each}
+      {/each}
     </div>
   </div>
 </div>

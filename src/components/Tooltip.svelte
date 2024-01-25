@@ -9,6 +9,8 @@
   export let allowDrag: boolean = false;
   import { draggable } from "../lib/utils";
   export let customClass: string = "";
+  export let buttonName: string = "";
+  import { buttonStyle } from "../lib/styles";
   let tooltipOpen: boolean = initiallyOpen;
 
   const query = "main *";
@@ -99,7 +101,11 @@
   </Portal>
 {/if}
 <div bind:this={target}>
-  <slot name="target" {toggle} {tooltipOpen} />
+  <slot name="target" {toggle} {tooltipOpen}>
+    {#if buttonName}
+      <button class={buttonStyle} on:click={toggle}>{buttonName}</button>
+    {/if}
+  </slot>
 </div>
 
 <style>

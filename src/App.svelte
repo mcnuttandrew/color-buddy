@@ -110,9 +110,10 @@
               allowModification={true}
             />
             <GetColorsFromString />
-            <div class="max-w-lg">
+            <div class="max-w-lg text-sm italic">
               This is a <select
                 value={palType}
+                class="font-bold"
                 on:change={(e) => {
                   // @ts-ignore
                   colorStore.setCurrentPalType(e.target.value);

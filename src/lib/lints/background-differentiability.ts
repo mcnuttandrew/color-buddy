@@ -48,6 +48,6 @@ export default class BackgroundDifferentiability extends ColorLint<
         colorSpace as any
       );
     });
-    return { ...this.palette, colors: newColors };
+    return [{ ...this.palette, colors: newColors }];
   }
 }

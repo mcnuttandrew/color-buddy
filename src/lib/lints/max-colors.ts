@@ -30,9 +30,11 @@ export default class MaxColors extends ColorLint<number, number> {
   hasHeuristicFix = true;
   async suggestFix() {
     const { colors } = this.palette;
-    return {
-      ...this.palette,
-      colors: colors.slice(0, this.config.val! - 1),
-    };
+    return [
+      {
+        ...this.palette,
+        colors: colors.slice(0, this.config.val! - 1),
+      },
+    ];
   }
 }

@@ -10,10 +10,19 @@ function AIFix(palette: Palette, message: string, engine: string) {
     if (x.length === 0) {
       throw new Error("No suggestions");
     }
-    return {
-      ...palette,
-      colors: x[0].colors.map((x) => Color.colorFromHex(x, colorSpace)),
-    };
+    return x.map((el) => {
+      try {
+        return {
+          ...palette,
+          colors: el.colors.map((x) =>
+            Color.colorFromHex(x.replace("##", "#"), colorSpace)
+          ),
+        };
+      } catch (e) {
+        console.log(e);
+        return palette;
+      }
+    });
   });
 }
 
@@ -79,10 +88,10 @@ export class ColorLint<CheckData, ParamType> {
     return "";
   }
 
-  async suggestFix(engine?: string) {
+  async suggestFix(engine?: string): Promise<Palette[]> {
     return AIFix(this.palette, this.message, engine || "openai");
   }
-  async suggestAIFix(engine?: string) {
+  async suggestAIFix(engine?: string): Promise<Palette[]> {
     return AIFix(this.palette, this.message, engine || "openai");
   }
 }

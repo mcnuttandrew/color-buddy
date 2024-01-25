@@ -11,20 +11,21 @@
   let requestState: "idle" | "loading" | "loaded" | "failed" = "idle";
   export let check: ColorLint<any, any>;
 
-  $: suggestion = false as false | Palette;
+  $: engine = $configStore.engine;
+  $: suggestions = [] as Palette[];
 
   function proposeFix(useAi: boolean = false) {
     requestState = "loading";
     let hasRetried = false;
     const getFix = () => {
       if (useAi) {
-        return check.suggestAIFix().then((x) => {
-          suggestion = x;
+        return check.suggestAIFix(engine).then((x) => {
+          suggestions = x;
           requestState = "loaded";
         });
       } else {
-        return check.suggestFix().then((x) => {
-          suggestion = x;
+        return check.suggestFix(engine).then((x) => {
+          suggestions = x;
           requestState = "loaded";
         });
       }
@@ -124,34 +125,39 @@
       <div>Loading...</div>
     {:else if requestState === "failed"}
       <div>Failed to generate suggestions</div>
-    {:else if requestState === "loaded" && suggestion}
-      <div class="flex flex-col">
-        <PalDiff beforePal={currentPal} afterPal={suggestion} />
-        <div class="flex justify-between">
-          <button
-            class={buttonStyle}
-            on:click={() => {
-              if (suggestion) {
-                colorStore.setCurrentPal(suggestion);
-                focusStore.clearColors();
-                requestState = "idle";
-                suggestion = false;
-                onClick();
-              }
-            }}
-          >
-            Use
-          </button>
-          <button
-            class={buttonStyle}
-            on:click={() => {
-              requestState = "idle";
-            }}
-          >
-            Reject
-          </button>
+    {:else if requestState === "loaded"}
+      {#each suggestions as suggestion}
+        <div class="flex flex-col">
+          <PalDiff beforePal={currentPal} afterPal={suggestion} />
+          <div class="flex justify-between">
+            <button
+              class={buttonStyle}
+              on:click={() => {
+                if (suggestion) {
+                  colorStore.setCurrentPal(suggestion);
+                  focusStore.clearColors();
+                  requestState = "idle";
+                  suggestions = [];
+                  onClick();
+                }
+              }}
+            >
+              Use
+            </button>
+            <button
+              class={buttonStyle}
+              on:click={() => {
+                suggestions = suggestions.filter((x) => x !== suggestion);
+                if (suggestions.length === 0) {
+                  requestState = "idle";
+                }
+              }}
+            >
+              Reject
+            </button>
+          </div>
         </div>
-      </div>
+      {/each}
     {/if}
   </div>
   <button slot="target" let:toggle class={`${buttonStyle}`} on:click={toggle}>

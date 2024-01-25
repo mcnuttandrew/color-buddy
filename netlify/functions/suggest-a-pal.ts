@@ -2,7 +2,7 @@ import { genericHandler } from "../utils";
 
 type promptInput = { textPrompt: string };
 const prompt = (pal: promptInput) => `
-You are a color expert. You take in a prompt for a color palette and return the contents of the palette.
+You are a color palette design expert. You take in a text prompt for a color palette and return a color palette. 
 
 For example:
 Prompt: "Color Wheel Basics"
@@ -11,7 +11,7 @@ Output: {
     "background": "#FFFFFF"
 }
 
-Present your names a list of JSON strings. They should have a type like {"colors": string[]; "background": string}. Only respond with a palette fitting the prompt. Do not offer any other response.
+Present your responses as an array of json objects. They should have a types like {"colors": string[]; "background": string}. Only respond with palettes fitting the prompt. Do not offer any other response.
 
 Prompt: ${JSON.stringify(pal.textPrompt)}
 Your response: `;

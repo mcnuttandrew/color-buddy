@@ -30,6 +30,6 @@ export default class SequentialOrder extends ColorLint<boolean, false> {
   async suggestFix() {
     const colors = [...this.palette.colors];
     colors.sort((a, b) => getLightness(a) - getLightness(b));
-    return { ...this.palette, colors };
+    return [{ ...this.palette, colors }];
   }
 }

@@ -111,6 +111,6 @@ export default class ColorNameDiscriminability extends ColorLint<
   }
   hasHeuristicFix = true;
   async suggestFix() {
-    return { ...this.palette, colors: buildFix(this.palette.colors) };
+    return [{ ...this.palette, colors: buildFix(this.palette.colors) }];
   }
 }

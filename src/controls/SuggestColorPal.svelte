@@ -10,8 +10,27 @@
   $: currentPal = $colorStore.palettes[$colorStore.currentPal];
   $: colorSpace = currentPal.colorSpace;
   let requestState: "idle" | "loading" | "loaded" | "failed" = "idle";
-  let newPal: Palette | undefined = undefined;
+  let newPals: Palette[] = [];
   let palPrompt: string = "";
+
+  function suggestionToPal(suggestion: {
+    colors: string[];
+    background: string;
+  }): Palette {
+    return {
+      colors: suggestion.colors.map((x) =>
+        Color.colorFromString(x, colorSpace as any)
+      ),
+      background: Color.colorFromString(
+        suggestion.background,
+        colorSpace as any
+      ),
+      name: palPrompt,
+      type: "categorical",
+      evalConfig: {},
+      colorSpace: colorSpace as any,
+    };
+  }
 
   function makeRequest() {
     const allowedStates = new Set(["idle", "loaded", "failed"]);
@@ -25,20 +44,16 @@
           requestState = "idle";
           return;
         }
-        const suggestion = suggestions[0];
-        newPal = {
-          colors: suggestion.colors.map((x) =>
-            Color.colorFromString(x, colorSpace as any)
-          ),
-          background: Color.colorFromString(
-            suggestion.background,
-            colorSpace as any
-          ),
-          name: palPrompt,
-          type: "categorical",
-          evalConfig: {},
-          colorSpace: colorSpace as any,
-        };
+        newPals = suggestions
+          .map((x) => {
+            try {
+              return suggestionToPal(x);
+            } catch (e) {
+              console.log(e);
+              return undefined;
+            }
+          })
+          .filter((x) => x !== undefined) as Palette[];
 
         requestState = "loaded";
       })
@@ -53,29 +68,34 @@
   <label for="pal-prompt">
     <div>Use the name of a new palette to generate a new palette</div>
   </label>
-  {#if requestState === "loaded" && newPal}
-    <PalPreview pal={newPal} />
-    <div class="flex justify-between">
-      <button
-        class={buttonStyle}
-        on:click={() => {
-          if (!newPal) return;
-          colorStore.createNewPal(newPal);
-          requestState = "idle";
-          palPrompt = "";
-        }}
-      >
-        Use
-      </button>
-      <button
-        class={buttonStyle}
-        on:click={() => {
-          requestState = "idle";
-        }}
-      >
-        Reject
-      </button>
-    </div>
+  {#if requestState === "loaded"}
+    {#each newPals as pal, idx}
+      <PalPreview {pal} />
+      <div class="flex justify-between">
+        <button
+          class={buttonStyle}
+          on:click={() => {
+            if (!pal) return;
+            colorStore.createNewPal(pal);
+            requestState = "idle";
+            palPrompt = "";
+          }}
+        >
+          Use
+        </button>
+        <button
+          class={buttonStyle}
+          on:click={() => {
+            newPals = newPals.filter((_, i) => i !== idx);
+            if (newPals.length === 0) {
+              requestState = "idle";
+            }
+          }}
+        >
+          Reject
+        </button>
+      </div>
+    {/each}
   {:else}
     <form on:submit|preventDefault={makeRequest} class="flex">
       <input

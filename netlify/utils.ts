@@ -1,6 +1,7 @@
 import OpenAI from "openai";
-const { GoogleGenerativeAI } = require("@google/generative-ai");
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_KEY);
+// const { GoogleGenerativeAI } = require("@google/generative-ai");
+import { GoogleGenerativeAI } from "@google/generative-ai";
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_KEY as string);
 const model = genAI.getGenerativeModel({ model: "gemini-pro" });
 
 const openai = new OpenAI({
@@ -22,6 +23,8 @@ const engines = {
     openai.chat.completions.create({
       messages: [{ role: "user", content: prompt }],
       model: "gpt-3.5-turbo",
+      n: 3,
+      temperature: 0.5,
       // model: "gpt-4",
     }),
 };

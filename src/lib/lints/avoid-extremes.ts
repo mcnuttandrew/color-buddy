@@ -29,9 +29,11 @@ export default class ExtremeColors extends ColorLint<Color[], false> {
     return `Colors at either end of the lightness spectrum (${str}) are hard to discriminate in some contexts, and are sometimes advised against`;
   }
   async suggestFix() {
-    return {
-      ...this.palette,
-      colors: this.palette.colors.filter((x) => !bannedSet.has(x.toHex())),
-    };
+    return [
+      {
+        ...this.palette,
+        colors: this.palette.colors.filter((x) => !bannedSet.has(x.toHex())),
+      },
+    ];
   }
 }

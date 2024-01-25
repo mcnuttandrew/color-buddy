@@ -1,5 +1,6 @@
 import { Color } from "./Color";
 import type { Palette } from "../stores/color-store";
+import * as Json from "jsonc-parser";
 
 type Engine = "openai" | "google";
 type SimplePal = { background: string; colors: string[] };
@@ -29,7 +30,7 @@ function openAIScaffold<A>(
       return x.choices
         .map((x: any) => x?.message?.content)
         .filter((x: any) => x)
-        .flatMap((x: any) => (parseAsJSON ? JSON.parse(x) : x));
+        .flatMap((x: any) => (parseAsJSON ? Json.parse(x) : x));
     });
 }
 
@@ -51,10 +52,13 @@ function googleScaffold<A>(
     .then((response) => response.json())
     .then((x: any) => {
       console.log(x);
-      return x?.response?.candidates
+      const result = x?.response?.candidates
         .flatMap((x: any) => x.content?.parts?.flatMap((x: any) => x.text))
-        .map((x: any) => x.replace(/\\n/g, "").replace(/\`/g, "").trim())
-        .flatMap((x: any) => (parseAsJSON ? JSON.parse(x) : x));
+        .map((x: any) =>
+          x.replace(/\\n/g, "").replace(/\`/g, "").replace("json", "").trim()
+        )
+        .flatMap((x: any) => (parseAsJSON ? Json.parse(x) : x));
+      return result;
     });
 }
 
@@ -90,15 +94,6 @@ export function suggestAdditionsToPalette(
 export function suggestPal(prompt: string, engine: Engine) {
   const body = JSON.stringify({ prompt });
   return engineToScaffold[engine]<SimplePal>(`suggest-a-pal`, body, true);
-}
-
-export function suggestAdjustments(
-  prompt: string,
-  currentPal: Palette,
-  engine: Engine
-) {
-  const body = JSON.stringify({ prompt, ...palToString(currentPal) });
-  return engineToScaffold[engine]<SimplePal>(`suggest-adjustments`, body, true);
 }
 
 export function suggestContextualAdjustments(

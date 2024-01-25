@@ -14,7 +14,7 @@
   $: selectedColors = $focusStore.focusedColors
     .map((x) => colors[x]?.toHex())
     .filter((x) => x !== undefined) as string[];
-  let suggestedColors: string[] = [];
+  let suggestedColorSets: string[][] = [];
   let palPrompt: string = "";
 
   function toPal(colors: string[]) {
@@ -44,8 +44,16 @@
           requestState = "idle";
           return;
         }
-        const suggestion = suggestions[0];
-        suggestedColors = suggestion.colors;
+        suggestedColorSets = suggestions
+          .map((x) => {
+            try {
+              return x.colors;
+            } catch (e) {
+              console.log(e);
+              return undefined;
+            }
+          })
+          .filter((x) => x !== undefined) as string[][];
         requestState = "loaded";
       })
       .catch((e) => {
@@ -54,7 +62,8 @@
       });
   }
 
-  function useSuggestion() {
+  function useSuggestion(jdx: number) {
+    const suggestedColors = suggestedColorSets[jdx];
     let newColors = colors;
     if (selectedColors.length) {
       let usedSuggestions = new Set<number>([]);
@@ -87,23 +96,34 @@
       <div>Change these points</div>
     </label>
     {#if requestState === "loaded"}
-      <div>
-        <PalDiff
-          beforePal={selectedColors.length ? toPal(selectedColors) : currentPal}
-          afterPal={toPal(suggestedColors)}
-        />
-      </div>
-      <div class="flex justify-between">
-        <button class={buttonStyle} on:click={useSuggestion}>Use</button>
-        <button
-          class={buttonStyle}
-          on:click={() => {
-            requestState = "idle";
-          }}
-        >
-          Reject
-        </button>
-      </div>
+      {#each suggestedColorSets as suggestedColors, idx}
+        <div>
+          <PalDiff
+            beforePal={selectedColors.length
+              ? toPal(selectedColors)
+              : currentPal}
+            afterPal={toPal(suggestedColors)}
+          />
+        </div>
+        <div class="flex justify-between">
+          <button class={buttonStyle} on:click={() => useSuggestion(idx)}>
+            Use
+          </button>
+          <button
+            class={buttonStyle}
+            on:click={() => {
+              suggestedColorSets = suggestedColorSets.filter(
+                (_, jdx) => jdx !== idx
+              );
+              if (suggestedColorSets.length === 0) {
+                requestState = "idle";
+              }
+            }}
+          >
+            Reject
+          </button>
+        </div>
+      {/each}
     {:else}
       <form on:submit|preventDefault={makeRequest} class="flex flex-col">
         <input

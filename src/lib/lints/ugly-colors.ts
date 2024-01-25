@@ -35,6 +35,6 @@ export default class UglyColors extends ColorLint<Color[], false> {
       checkIfAColorIsCloseToAnUglyColor(colors).map((x) => x.toHex())
     );
     const newColors = colors.filter((x) => !uggColors.has(x.toHex()));
-    return { ...this.palette, colors: newColors };
+    return [{ ...this.palette, colors: newColors }];
   }
 }

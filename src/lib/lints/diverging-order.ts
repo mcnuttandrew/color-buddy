@@ -82,6 +82,6 @@ export default class SequentialOrder extends ColorLint<boolean, false> {
       ...leftColors.sort(sortByLum),
       ...rightColors.sort(sortByLum).reverse(),
     ];
-    return { ...this.palette, colors };
+    return [{ ...this.palette, colors }];
   }
 }

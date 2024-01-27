@@ -81,7 +81,7 @@
         <path
           fill={fillColor(i, j)}
           stroke={"white"}
-          opacity={true || (dragging && focusedColors.length === 1) ? 1 : 0}
+          opacity={dragging && focusedColors.length === 1 ? 1 : 0}
           class="transition-opacity duration-500 ease-in-out"
           d={arcScale({
             startAngle: angleScale(j) + Math.PI / 2,

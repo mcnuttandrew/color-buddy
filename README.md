@@ -12,6 +12,8 @@ First time you start it up you should also run `yarn prep data`
 
 # Todo bankruptcy
 
+- [ ] "new from blank" "new from small generic palette" buttons in the new menu.
+- [ ] "Easy on ramp" progressive disclosure
 - [ ] per cols 4 all: color blindness metric should maybe be sensitive to task?
 - [ ] Minor: Make keyboard short cut (option+up/down) for the z-direction
 - [ ] Insert color theory options, eg insert opposing, inserting analogous color, etc, mine from the adobe picker

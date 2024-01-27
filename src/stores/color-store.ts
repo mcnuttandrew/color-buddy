@@ -85,8 +85,6 @@ function convertStoreColorToHex(store: StoreData): StorageData {
 function addDefaults(store: Partial<StorageData>): StorageData {
   // check if the base store objects work right
   const storeData = { ...InitialStore, ...store };
-  // check if the current pal works right
-  storeData.currentPal = 0;
 
   // also check all of the palettes
   const genericPal = newGenericPal("Example");
@@ -199,11 +197,13 @@ function createStore() {
         if (palettes.length === 0) {
           palettes = [stringPalToColorPal(newGenericPal("Example"))];
         }
-        return {
-          ...n,
-          currentPal: Math.min(index, palettes.length - 1),
-          palettes,
-        };
+        const currentPal =
+          index === n.currentPal
+            ? Math.min(index, palettes.length - 1)
+            : index > n.currentPal
+            ? n.currentPal
+            : n.currentPal - 1;
+        return { ...n, currentPal, palettes };
       }),
     duplicatePal: (index: number) =>
       palsUp((n) => {

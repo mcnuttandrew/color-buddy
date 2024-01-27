@@ -1,10 +1,12 @@
 # Usability Checks
 Color Name discriminability: ALL colors a, ALL colors b, NAME(a) != NAME(b)
-Thin Discriminability: ALL colors a, ALL colors b, JND(a, b, thin) > threshold
-Medium Discriminability: ALL colors a, ALL colors b, JND(a, b, medium) > threshold
-Wide Discriminability: ALL colors a, ALL colors b, JND(a, b, wide) > threshold
+Thin Discriminability: ALL colors a, ALL colors b, diff(a, b, 'lab') > jnd(thin)
+Medium Discriminability: ALL colors a, ALL colors b, diff(a, b, 'lab') > jnd(medium)
+Wide Discriminability: ALL colors a, ALL colors b, diff(a, b, 'lab') > jnd(wide)
 Sequential: OR (ALL_SEQ colors next current, lab(current, l) > lab(next, l)) (ALL_SEQ colors next current, lab(current, l) < lab(next, l))
-Diverging: 
+Diverging: EXIST c in colors, 
+    ALL SEQ a, where indexof(a) < indexof(c), lab(a, l) < lab(c, l) AND 
+    ALL SEQ b, where indexof(b) > indexof(c), lab(b, l) > lab(c, l)
 
 # Aesthetics Checks
 Max Colors: count(colors) < threshold
@@ -25,36 +27,107 @@ Exist complementary pair: EXIST colors a, EXIST color b, hue(a) approx hue(b) + 
 All monochromatic: ALL colors a, EXIST color b, hue(a) approx hue(b)
 
 Gender Colors Not Conformist: NOT ((EXIST color a similar to "LIGHT BLUE") AND (EXIST color b similar to "PINK"))
-
-Specific value included: EXIST color a, value(a) equal to X
+Specific value included: EXIST color a, value(a) equal to "uber blue"
 
 
 # Affective Color Assertions
 "Highly saturated light colors will not be appropriate for SERIOUS/TRUST/CALM": ALL (FILTER colors c, lab(c) > threshold) b, NOT hsl(b) > threshold
 "light blues, beiges, and grays are appropriate for PLAYFUL"
 "dark reds and browns are not POSITIVE": ALL colors c, NOT (c similar to "DARK RED" OR c similar to "BROWN")
-"light colors, particularly greens, do not communicate NEGATIVE"
-"trustworthy has two themeatic strategies (blue-gray, green-gray) bridge by a common color (yellow)"
+"light colors, particularly greens, do not communicate NEGATIVE": ALL colors c, NOT (c similar to "GREEN" AND lab(l) > threshold) maybe more messaging that one?
+"trustworthy has two thematic strategies (blue-gray, green-gray) bridge by a common color (yellow)": AND (EXIST color a, a similar to yellow) .......
 
 
-Functions: similar to, sim, deltaE, contrast, count, range, name, JND, approx, equal to
 
-Expressions:
-e = NOT e | e AND e | e OR e | p  | Q e p | T | F
-Quantifiers: (v[]) => T | F
-Q = ALL | EXIST | ALL SEQ
-Predicates (v, v) => T | F
-p = ... | v > v | v < v | v ~= v | v == v
+
+
+Predicates: approx, equal to, similar to
+Pair functions: contrast, deltaE
+Reduces: count, range
+Value functions: sim, name, space
+
+Program: e
+
+Expressions (e) => T | F | (e, e) => T | F
+e = NOT e | AND e[] | OR e[] | p | Q (v[] | colors) p | T | F | if e e e
+
 Values
-v = number | color | channel(color, colorSpace, channel)
+v' = n  | c | var
+v  = v' | c[] | var[] | m v[] | r v[] | pf v' v'
 
-JSON syntax:
-{
-    all: {
-        input: colors,
-        value: 'c',
-        predicate: {
-            
-        }
-    }
-}
+Quantifiers: 
+Q =  ∀ | ∃ | ∀_SEQ
+
+Maps:
+m = filter vf | extent vf | sort vf | map vf
+
+Reduces
+r = count | range | sum | min | max | mean | median | mode | std --- range is wrong
+
+Predicates (v, v) => T | F
+p = > v v | < v v | ~= v v | == v v | 
+
+Value functions (c) => v
+vf = space.channel | name | cvd_sim
+
+Pair functions (c, c) => v
+pf = contrast | deltaE
+
+YAML syntax, color blindness
+all: 
+    input: colors,
+    value: 'a',
+    predicate: 
+        all: 
+            colors,
+            value: 'b',
+            predicate: 
+                not: 
+                    equal: 
+                        left:  {cvd_sim: 'a', type: 'deuteranopia'}
+                        right: {cvd_sim: 'b', type: 'deuteranopia'}
+
+YAML syntax, max colors
+<: 
+    left:  {count: colors}
+    right: {value: 10}
+
+YAML syntax, Exist complementary pair:
+exist: 
+    input: colors,
+    value: 'a',
+    predicate: 
+        exist: 
+            colors,
+            value: 'b',
+            predicate: 
+                equal: 
+                    left:  {hue: 'a'}
+                    right: {hue: 'b', offset: 180}
+
+YAML syntax, Specific value included:
+exist: 
+    input: colors,
+    value: 'a',
+    predicate: 
+        equal: 
+            left:  {value: 'a'}
+            right: {value: 'uber blue'}
+
+YAML syntax, ALL (FILTER colors c, lab(c) > threshold) b, NOT hsl(b) > threshold
+all: 
+    input: 
+        filter: 
+            input: colors
+            value: 'c'
+            predicate: 
+                greater: 
+                    left:  {lab: 'c'}
+                    right: {value: threshold}
+    value: 'a',
+    predicate: 
+        not: 
+            greater: 
+                left:  {hsl: 'a'}
+                right: {value: threshold}
+

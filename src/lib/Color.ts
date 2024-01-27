@@ -195,9 +195,9 @@ class HSV extends Color {
   channelNames = ["h", "s", "v"];
   isPolar = true;
   channels = { h: 0, s: 0, v: 0 };
-  domains = { h: [0, 360], s: [0, 100], v: [0, 100] } as Domain;
+  domains = { h: [0, 360], s: [0, 100], v: [100, 0] } as Domain;
   spaceName = "hsv" as const;
-  dimensionToChannel = { x: "v", y: "h", z: "s" };
+  dimensionToChannel = { x: "s", y: "h", z: "v" };
   toString(): string {
     const [h, s, v] = this.stringChannels();
     return `color(hsv ${h} ${s} ${v})`;
@@ -226,7 +226,7 @@ class HSL extends Color {
   spaceName = "hsl" as const;
   domains = { h: [0, 360], s: [0, 100], l: [100, 0] } as Domain;
   stepSize: Channels = [1, 1, 1];
-  dimensionToChannel = { x: "l", y: "h", z: "s" };
+  dimensionToChannel = { x: "s", y: "h", z: "l" };
   isPolar = true;
 
   toString(): string {

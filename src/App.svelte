@@ -21,6 +21,8 @@
   import SuggestName from "./controls/SuggestName.svelte";
   import GetColorsFromString from "./controls/GetColorsFromString.svelte";
   import NewPal from "./controls/NewPal.svelte";
+  import AdjustOrder from "./controls/AdjustOrder.svelte";
+  import ModifySelection from "./controls/ModifySelection.svelte";
 
   import ContentEditable from "./components/ContentEditable.svelte";
 
@@ -78,6 +80,17 @@
             </div>
             <SuggestName />
           </div>
+          <div class="flex">
+            <SetColorSpace
+              colorSpace={currentPal.colorSpace}
+              onChange={(space) => colorStore.setColorSpace(space)}
+            />
+            <Background
+              onChange={(bg) => colorStore.setBackground(bg)}
+              bg={currentPal.background}
+              colorSpace={currentPal.colorSpace}
+            />
+          </div>
           <ColorScatterPlot
             scatterPlotMode={$configStore.scatterplotMode}
             colorSpace={currentPal.colorSpace}
@@ -99,16 +112,9 @@
               Add color {#if $configStore.scatterplotMode === "putting"}(move
                 mouse on chart){/if}
             </button>
-            <Background
-              onChange={(bg) => colorStore.setBackground(bg)}
-              bg={currentPal.background}
-              colorSpace={currentPal.colorSpace}
-            />
-            <SetColorSpace
-              colorSpace={currentPal.colorSpace}
-              onChange={(space) => colorStore.setColorSpace(space)}
-            />
-            <Sort />
+            <AdjustOrder />
+
+            <ModifySelection />
           </div>
           <div class="flex flex-col pl-2">
             <!-- overview / preview -->
@@ -117,7 +123,12 @@
               pal={currentPal}
               allowModification={true}
             />
-            <GetColorsFromString />
+            <GetColorsFromString
+              allowSort={true}
+              onChange={(colors) => colorStore.setCurrentPalColors(colors)}
+              colorSpace={currentPal.colorSpace}
+              colors={currentPal.colors}
+            />
             <div class="max-w-lg text-sm italic">
               This is a <select
                 value={palType}

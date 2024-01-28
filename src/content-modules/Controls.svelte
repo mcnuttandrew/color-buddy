@@ -16,6 +16,9 @@
   $: focusedColors = $focusStore.focusedColors;
 </script>
 
+<AddColor />
+<SuggestionModificationToSelection />
+<AdjustColor />
 {#if focusedColors.length === 1}
   <div class="w-full border-t-2 border-black my-2"></div>
   <ColorChannelPicker
@@ -29,10 +32,8 @@
   />
 {/if}
 
-<AdjustColor />
 <DistributePoints />
 <AlignSelection />
-<ModifySelection />
-<AddColor />
-<SuggestionModificationToSelection />
+<!-- <ModifySelection /> -->
+
 <InterpolatePoints />

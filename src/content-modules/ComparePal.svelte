@@ -8,11 +8,12 @@
   import { buttonStyle } from "../lib/styles";
   import Tooltip from "../components/Tooltip.svelte";
   import MiniPalPreview from "../components/MiniPalPreview.svelte";
+  import PalPreview from "../components/PalPreview.svelte";
+  import GetColorsFromString from "../controls/GetColorsFromString.svelte";
 
   import SetColorSpace from "../controls/SetColorSpace.svelte";
 
   $: currentPalIdx = $colorStore.currentPal;
-  $: currentPal = $colorStore.palettes[currentPalIdx];
   $: compareIdx = $configStore.comparePal;
   $: focused = $focusStore.focusedColors;
   $: ComparisonPal =
@@ -22,7 +23,7 @@
 
   $: bg = ComparisonPal?.background.toHex() || "white";
 
-  $: colorSpace = ComparisonPal?.colorSpace || "lab";
+  let colorSpace = ComparisonPal?.colorSpace || "lab";
 </script>
 
 <div class="flex flex-col" style={`background: ${bg}`}>
@@ -30,9 +31,28 @@
     <div class="text-xl">
       <span class="italic">Compare Pal: {ComparisonPal.name}</span>
     </div>
+    <div class="flex">
+      <SetColorSpace
+        {colorSpace}
+        onChange={(space) => {
+          colorSpace = space;
+        }}
+      />
+      <Background
+        onChange={(background) => {
+          bg = background.toHex();
+        }}
+        bg={Color.colorFromHex(bg, colorSpace)}
+        {colorSpace}
+      />
+    </div>
     <ColorScatterPlot
       scatterPlotMode="looking"
-      Pal={{ ...ComparisonPal, background: Color.colorFromHex(bg, colorSpace) }}
+      Pal={{
+        ...ComparisonPal,
+        background: Color.colorFromHex(bg, colorSpace),
+        colorSpace,
+      }}
       {colorSpace}
       focusedColors={currentPalIdx === compareIdx ? focused : []}
       height={450}
@@ -52,7 +72,7 @@
 <div class="flex">
   <Tooltip>
     <button class={buttonStyle} slot="target" let:toggle on:click={toggle}>
-      Select comparison. Currently: {ComparisonPal?.name || "none"}
+      Change Compared Palette
     </button>
     <div class="flex flex-col w-80" slot="content">
       <div>Saved Palettes:</div>
@@ -67,20 +87,23 @@
       </div>
     </div>
   </Tooltip>
-  <Background
-    onChange={(background) => {
-      bg = background.toHex();
-    }}
-    bg={Color.colorFromHex(bg, colorSpace)}
-    {colorSpace}
-  />
-  <SetColorSpace
-    {colorSpace}
-    onChange={(space) => {
-      colorSpace = space;
-    }}
-  />
 </div>
+{#if ComparisonPal !== undefined}
+  <div class="flex flex-col pl-2">
+    <PalPreview
+      highlightSelected={false}
+      pal={ComparisonPal}
+      allowModification={false}
+    />
+
+    <GetColorsFromString
+      allowSort={false}
+      colors={ComparisonPal.colors}
+      onChange={() => {}}
+      {colorSpace}
+    />
+  </div>
+{/if}
 
 <style>
   .empty-pal-holder {

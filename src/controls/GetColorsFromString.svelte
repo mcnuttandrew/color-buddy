@@ -1,11 +1,12 @@
 <script lang="ts">
   import { Color } from "../lib/Color";
-  import colorStore from "../stores/color-store";
   import configStore from "../stores/config-store";
+  import Sort from "./Sort.svelte";
   let state: "idle" | "error" = "idle";
-  $: currentPal = $colorStore.palettes[$colorStore.currentPal];
-  $: colors = currentPal.colors;
-  $: colorSpace = currentPal.colorSpace;
+  export let onChange: (colors: Color[]) => void;
+  export let colors: Color[];
+  export let colorSpace: string;
+  export let allowSort: boolean;
 
   function processBodyInput(body: string) {
     try {
@@ -13,8 +14,8 @@
         .split(",")
         .map((x) => x.replace(/"/g, "").trim())
         .filter((x) => x.length > 0)
-        .map((x) => Color.colorFromString(x, colorSpace));
-      colorStore.setCurrentPalColors(newColors);
+        .map((x) => Color.colorFromString(x, colorSpace as any));
+      onChange(newColors);
       state = "idle";
     } catch (e) {
       console.error(e);
@@ -27,7 +28,12 @@
 
 <div class="mt-2">
   <div class="flex justify-between w-full">
-    <label for="current-colors">Current Colors</label>
+    {#if allowSort}
+      <Sort />
+    {:else}
+      <div></div>
+    {/if}
+    <!-- <label for="current-colors">Current Colors</label> -->
     <!-- switch for including quotes -->
     <div class="flex items-center">
       <label for="include-quotes" class="mr-2">Include quotes</label>

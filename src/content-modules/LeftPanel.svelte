@@ -45,7 +45,7 @@
     {/if}
     <div class="w-full border-t-2 border-black my-6"></div>
     <div class="flex justify-between">
-      <div class="font-bold">Saved Pals</div>
+      <div class="font-bold">Saved Palettes</div>
       <Nav
         tabs={["open", "close"]}
         isTabSelected={(x) =>

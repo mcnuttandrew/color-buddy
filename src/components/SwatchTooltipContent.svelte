@@ -4,7 +4,6 @@
   import colorStore from "../stores/color-store";
   import focusStore from "../stores/focus-store";
   import { buttonStyle } from "../lib/styles";
-  import { swap } from "../lib/utils";
   export let idx: number;
   export let color: Color;
   export let closeTooltip: () => void;
@@ -40,30 +39,6 @@
     >
       Delete
     </button>
-    {#if idx > 0}
-      <button
-        class="{buttonStyle} mr-2"
-        on:click|stopPropagation|preventDefault={() => {
-          colorStore.setSort(swap(colors, idx, idx - 1));
-          focusStore.setColors([idx - 1]);
-          idx = idx - 1;
-        }}
-      >
-        Move forward
-      </button>
-    {/if}
-    {#if idx < colors.length - 1}
-      <button
-        class="{buttonStyle} mr-2"
-        on:click|stopPropagation|preventDefault={() => {
-          colorStore.setSort(swap(colors, idx, idx + 1));
-          focusStore.setColors([idx + 1]);
-          idx = idx + 1;
-        }}
-      >
-        Move backward
-      </button>
-    {/if}
   </div>
   <div class="flex">
     {#each modes as colorMode, jdx}

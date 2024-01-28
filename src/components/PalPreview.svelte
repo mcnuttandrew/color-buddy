@@ -12,9 +12,12 @@
   $: focusSet = new Set($focusStore.focusedColors);
 </script>
 
+<!-- svelte-ignore a11y-click-events-have-key-events -->
+<!-- svelte-ignore a11y-no-static-element-interactions -->
 <div
   class="flex flex-wrap rounded p-2 grow"
   style="background-color: {pal.background.toDisplay()};"
+  on:click={() => focusStore.clearColors()}
 >
   {#each pal.colors as color, idx}
     {#if allowModification}
@@ -24,10 +27,17 @@
         </div>
         <button
           slot="target"
+          let:tooltipOpen
           let:toggle
-          on:click={(e) => {
-            const isMeta = e.metaKey || e.ctrlKey;
-            const newColors = isMeta ? toggleElement(focusColors, idx) : [idx];
+          on:click|stopPropagation|preventDefault={(e) => {
+            const isMeta = e.metaKey || e.ctrlKey || e.shiftKey;
+            let newColors = [...focusColors];
+            if (isMeta) {
+              newColors = toggleElement(focusColors, idx);
+            } else {
+              newColors = tooltipOpen ? [] : [idx];
+            }
+
             focusStore.setColors(newColors);
             toggle();
           }}

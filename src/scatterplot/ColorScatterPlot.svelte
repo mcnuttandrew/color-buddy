@@ -418,9 +418,9 @@
 <!-- svelte-ignore a11y-no-static-element-interactions -->
 <div class="flex pb-2" style="background: {bg.toDisplay()}">
   <div class="flex flex-col items-center">
-    <span class="text-2xl" style="color: {textColor}">
+    <!-- <span class="text-2xl" style="color: {textColor}">
       {config.title}
-    </span>
+    </span> -->
     <div class="flex h-full">
       <div class="h-full py-4" style="max-height: {height}px"></div>
       <svg {width} {height} class="ml-2" bind:this={svgContainer}>
@@ -643,7 +643,7 @@
   </div>
   <div class="h-full">
     <!-- invisible space inserter -->
-    <span class=" text-xl opacity-0">X</span>
+    <!-- <span class=" text-xl opacity-0">X</span> -->
     <!-- svelte-ignore a11y-no-static-element-interactions -->
     <div class="flex h-full">
       <div class="flex flex-col">

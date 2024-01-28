@@ -12,6 +12,11 @@ First time you start it up you should also run `yarn prep data`
 
 # Todo bankruptcy
 
+- [ ] Gamut algorithm broken again
+- [ ] Allow no palettes, allows renaming of non-current palettes
+- [ ] MS didn't like the location of the new button
+- [ ] Colors from String should save on enter
+- [ ] Changing spaces is pretty bad on lab <-> oklab, cf ("#35ffbf", "#87b995", "#e84f82")
 - [ ] "new from blank" "new from small generic palette" buttons in the new menu.
 - [ ] "Easy on ramp" progressive disclosure
 - [ ] per cols 4 all: color blindness metric should maybe be sensitive to task?
@@ -26,6 +31,9 @@ First time you start it up you should also run `yarn prep data`
 - [ ] Bug: rotate in polar coordinates doesn't work right
 - [ ] Ad hoc lints seem possible, do a spike
 - [ ] Directional subtlies for aligns, they do not work in polar also
+- [x] Bug: if comparing the same palette in two spaces, make a change and the space reverts
+- [x] Compare: should show the values a pal preview
+- [x] Deselect: In the row of colors, clicking on a selected color should deselect it
 - [x] Tool tip not staying put
 - [x] Chore: Extract some common types into a top level location (like types.ts type thing)
 - [x] For the palettes, there is a copy and delete bug. Try this: Copy Example 2, then immediately click delete (menu is still up). Surpise!

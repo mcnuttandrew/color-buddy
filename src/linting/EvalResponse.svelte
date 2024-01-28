@@ -59,9 +59,14 @@
     });
   }
 
-  const options = ["deuteranopia", "protanopia", "tritanopia"] as const;
+  const options = [
+    "deuteranopia",
+    "protanopia",
+    "tritanopia",
+    "grayscale",
+  ] as const;
   $: cbMatch = options.find((x) =>
-    check.name.includes(x)
+    check.name.toLowerCase().includes(x)
   ) as (typeof options)[number];
 </script>
 

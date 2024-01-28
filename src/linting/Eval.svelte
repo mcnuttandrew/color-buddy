@@ -151,14 +151,24 @@
   </div>
   <div class="flex flex-col ml-2">
     <div class="overflow-auto h-full max-w-lg">
-      {#if Object.keys(currentPal.evalConfig)}
-        <button
-          class={`${buttonStyle} ml-0 pl-0 mt-4`}
-          on:click={() => colorStore.setCurrentPalEvalConfig({})}
-        >
-          Restore Defaults
-        </button>
-      {/if}
+      <div class="flex">
+        {#if Object.keys(currentPal.evalConfig)}
+          <button
+            class={`${buttonStyle} ml-0 pl-0 mt-4`}
+            on:click={() => colorStore.setCurrentPalEvalConfig({})}
+          >
+            Restore Defaults
+          </button>
+        {/if}
+        {#if $configStore.colorSim !== "none"}
+          <button
+            class={`${buttonStyle} ml-0 pl-0 mt-4`}
+            on:click={() => configStore.setColorSim("none")}
+          >
+            Disable Color Blindness Simulation
+          </button>
+        {/if}
+      </div>
       <div class="text-sm">
         This collection of checks validates whether or not your palette matches
         a number of commonly held beliefs about best practices. They will not

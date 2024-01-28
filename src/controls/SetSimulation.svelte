@@ -6,7 +6,7 @@
 
 <Tooltip>
   <div slot="content">
-    {#each ["none", "deuteranopia", "protanopia", "tritanopia", "black-and-white"] as value}
+    {#each ["none", "deuteranopia", "protanopia", "tritanopia", "grayscale"] as value}
       <label>
         <input
           type="radio"

@@ -2,13 +2,25 @@
   import { Color } from "../lib/Color";
   import colorStore from "../stores/color-store";
   import focusStore from "../stores/focus-store";
+  import configStore from "../stores/config-store";
   import Tooltip from "../components/Tooltip.svelte";
   import exampleStore from "../stores/example-store";
   import SwatchTooltipContent from "../components/SwatchTooltipContent.svelte";
   import { buttonStyle } from "../lib/styles";
+  import simulate_cvd from "../lib/blindness";
 
   $: currentPal = $colorStore.palettes[$colorStore.currentPal];
   $: colors = currentPal.colors;
+  $: {
+    if (
+      $configStore.colorSim !== "none" &&
+      $configStore.useSimulatorOnExamples
+    ) {
+      colors = colors.map((x) => simulate_cvd($configStore.colorSim, x));
+    } else {
+      colors = currentPal.colors;
+    }
+  }
   $: bg = currentPal.background;
   $: focused = $focusStore.focusedColors;
   $: focusSet = new Set(focused);

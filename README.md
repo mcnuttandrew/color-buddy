@@ -31,6 +31,8 @@ First time you start it up you should also run `yarn prep data`
 - [ ] Bug: rotate in polar coordinates doesn't work right
 - [ ] Ad hoc lints seem possible, do a spike
 - [ ] Directional subtlies for aligns, they do not work in polar also
+- [ ] Bug: make a selection. interpolate it. undo the interpolation, crash. Proposed solution: if the number of points changes clear the selection?
+- [x] Show simulated colors on examples, add a gray scale check
 - [x] Bug: if comparing the same palette in two spaces, make a change and the space reverts
 - [x] Compare: should show the values a pal preview
 - [x] Deselect: In the row of colors, clicking on a selected color should deselect it

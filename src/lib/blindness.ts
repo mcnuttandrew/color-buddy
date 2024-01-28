@@ -102,10 +102,10 @@ function blackAndWhite(color: Channels): Channels {
 }
 
 function dl_simulate_cvd(
-  deficiency: DLDeficiency | "black-and-white",
+  deficiency: DLDeficiency | "grayscale",
   color: Channels
 ): Channels {
-  if (deficiency == "black-and-white") {
+  if (deficiency == "grayscale") {
     return blackAndWhite(color);
   }
   return brettelFunctions[deficiency](color);

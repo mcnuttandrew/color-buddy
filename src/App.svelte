@@ -17,7 +17,6 @@
   import Background from "./components/Background.svelte";
   import SetColorSpace from "./controls/SetColorSpace.svelte";
   import PalPreview from "./components/PalPreview.svelte";
-  import Sort from "./controls/Sort.svelte";
   import SuggestName from "./controls/SuggestName.svelte";
   import GetColorsFromString from "./controls/GetColorsFromString.svelte";
   import NewPal from "./controls/NewPal.svelte";
@@ -68,7 +67,7 @@
         <div class="flex flex-col h-full px-4">
           <!-- naming stuff -->
           <div class="flex justify-between">
-            <div class="flex text-xl">
+            <div class="flex font-bold">
               <span class="italic">Current Pal:</span>
               <div class="flex">
                 <span>✎</span>

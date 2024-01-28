@@ -28,8 +28,8 @@
 
 <div class="flex flex-col" style={`background: ${bg}`}>
   {#if ComparisonPal !== undefined}
-    <div class="text-xl">
-      <span class="italic">Compare Pal: {ComparisonPal.name}</span>
+    <div class="font-bold">
+      <span class="italic">Compare: {ComparisonPal.name}</span>
     </div>
     <div class="flex">
       <SetColorSpace

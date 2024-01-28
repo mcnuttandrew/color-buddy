@@ -7,6 +7,7 @@
     modifySVGForExampleStore,
   } from "../stores/example-store";
   import colorStore from "../stores/color-store";
+  import configStore from "../stores/config-store";
 
   import ExampleWrapper from "./ExampleWrapper.svelte";
   import Modal from "../components/Modal.svelte";
@@ -118,7 +119,10 @@
       <div class="flex justify-between">
         <button
           class={buttonStyle}
-          on:click={() => exampleStore.restoreDefaultExamples()}
+          on:click={() => {
+            configStore.setUseSimulatorOnExamples(false);
+            exampleStore.restoreDefaultExamples();
+          }}
         >
           Yes! Reset em now
         </button>
@@ -129,6 +133,21 @@
       Reset to defaults
     </button>
   </Tooltip>
+  {#if $configStore.colorSim !== "none"}
+    <button
+      class={buttonStyle}
+      on:click={() =>
+        configStore.setUseSimulatorOnExamples(
+          !$configStore.useSimulatorOnExamples
+        )}
+    >
+      {#if $configStore.useSimulatorOnExamples}
+        Use original colors
+      {:else}
+        Use simulated colors
+      {/if}
+    </button>
+  {/if}
   {#if numberHidden > 0}
     <Tooltip>
       <div slot="content">

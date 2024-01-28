@@ -5,7 +5,7 @@ interface StoreData {
   controlsOpen: boolean;
   savedPalsOpen: boolean;
   comparePal: number | undefined;
-  colorSim: "deuteranopia" | "protanopia" | "tritanopia" | "none";
+  colorSim: "deuteranopia" | "protanopia" | "tritanopia" | "none" | "grayscale";
   includeQuotes: boolean;
   xZoom: [number, number];
   yZoom: [number, number];
@@ -14,6 +14,7 @@ interface StoreData {
   showColorBackground: boolean;
   tooltipXY?: [string, string];
   scatterplotMode: "moving" | "putting";
+  useSimulatorOnExamples: boolean;
 }
 
 const InitialStore: StoreData = {
@@ -30,6 +31,7 @@ const InitialStore: StoreData = {
   xZoom: [0, 1],
   yZoom: [0, 1],
   zZoom: [0, 1],
+  useSimulatorOnExamples: false,
 };
 const storeName = "color-pal-nav-store";
 
@@ -77,6 +79,8 @@ function createStore() {
       persist((old) => ({ ...old, savedPalsOpen: n })),
     setScatterplotMode: (n: StoreData["scatterplotMode"]) =>
       persist((old) => ({ ...old, scatterplotMode: n })),
+    setUseSimulatorOnExamples: (n: StoreData["useSimulatorOnExamples"]) =>
+      persist((old) => ({ ...old, useSimulatorOnExamples: n })),
   };
 }
 

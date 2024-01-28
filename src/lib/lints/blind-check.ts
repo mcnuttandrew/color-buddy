@@ -27,7 +27,7 @@ function indexesWithSmallDeltaE(colors: Color[]) {
   return indexes;
 }
 
-function checkType(colors: Color[], type: BlindnessTypes) {
+function checkType(colors: Color[], type: BlindnessTypes | "grayscale") {
   const blindColors = colors.map((x) => simulate_cvd(type, x));
   let notOKColorIndexes: [number, number][] =
     indexesWithSmallDeltaE(blindColors);
@@ -92,5 +92,26 @@ const checks = blindnessTypes.map((key) => {
     }
   };
 });
+
+class Grayscale extends ColorLint<[number, number][], false> {
+  name = `Grayscale friendly`;
+  taskTypes = ["sequential", "diverging", "categorical"] as TaskType[];
+  group: string = "accessibility";
+  description: string = `Colors should be discernable in gray scale. For instance if printing in black and white, colors should still be distinguishable.`;
+  _runCheck() {
+    const colors = this.palette.colors;
+    const { pass, notOKColorIndexes } = checkType(colors, "grayscale");
+    return { passCheck: pass, data: notOKColorIndexes };
+  }
+  buildMessage(): string {
+    const colors = this.palette.colors.map((x) => x.toHex());
+    const pairs = this.checkData
+      .map(([a, b]) => `(${colors[a]} and ${colors[b]})`)
+      .join(", ");
+    return `These color pairs are not distinguishable in grayscale: ${pairs}.`;
+  }
+}
+
+checks.push(Grayscale);
 
 export default checks;

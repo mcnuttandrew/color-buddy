@@ -1,11 +1,13 @@
 <script lang="ts">
   import { tick } from "svelte";
   import colorStore from "../stores/color-store";
+  import configStore from "../stores/config-store";
   import { Color } from "../lib/Color";
   import Tooltip from "../components/Tooltip.svelte";
   import SwatchTooltipContent from "../components/SwatchTooltipContent.svelte";
   import focusStore from "../stores/focus-store";
   import { idxToKey } from "../lib/charts";
+  import simulate_cvd from "../lib/blindness";
   export let example: string;
   export let size = 300;
   let focusedColor = false as false | number;
@@ -44,6 +46,16 @@
   }
   $: currentPal = $colorStore.palettes[$colorStore.currentPal];
   $: colors = currentPal.colors;
+  $: {
+    if (
+      $configStore.colorSim !== "none" &&
+      $configStore.useSimulatorOnExamples
+    ) {
+      colors = colors.map((x) => simulate_cvd($configStore.colorSim, x));
+    } else {
+      colors = currentPal.colors;
+    }
+  }
   $: bg = currentPal.background;
   $: colors, example, attachListeners();
 

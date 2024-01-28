@@ -55,7 +55,7 @@
     class:cursor-not-allowed={!buttonsActive}
     on:click={() => focusStore.clearColors()}
   >
-    Clear
+    Deselect
   </button>
   <button
     class={buttonStyle}

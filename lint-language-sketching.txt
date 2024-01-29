@@ -8,7 +8,8 @@ Diverging: EXIST c in colors,
     ALL SEQ a, where indexof(a) < indexof(c), lab(a, l) < lab(c, l) AND 
     ALL SEQ b, where indexof(b) > indexof(c), lab(b, l) > lab(c, l)
 
-# Aesthetics Checks
+# Aesthetics Checks -> MS suggests dropping this, as it captures too much
+# Design Checks | Constraints 
 Max Colors: count(colors) < threshold
 Palette does not have ugly colors: NOT ALL c in colors, ALL u in ugly, c similar to u
 Avoid extreme colors: NOT ALL c in colors, ALL e in extreme, c equal to e
@@ -16,8 +17,8 @@ Fair: range(colors, lch, c) < threshold_1 AND range(colors, lch, l) < threshold_
 
 # Accessibility Checks
 Colorblind Friendly for deuteranopia: ALL colors a, ALL colors b, NOT (sim(a) similar to sim(b))
-Colorblind Friendly for protanopia: ALL colors a, ALL colors b, NOT (sim(a) similar to sim(b))
-Colorblind Friendly for tritanopia: ALL colors a, ALL colors b, NOT (sim(a) similar to sim(b))
+Colorblind Friendly for protanopia:   ALL colors a, ALL colors b, NOT (sim(a) similar to sim(b))
+Colorblind Friendly for tritanopia:   ALL colors a, ALL colors b, NOT (sim(a) similar to sim(b))
 All colors differentiable from background: ALL colors c, deltaE(c, bg) > threshold
 Background Contrast: ALL colors c, contrast(c, bg) > threshold
 
@@ -28,6 +29,10 @@ All monochromatic: ALL colors a, EXIST color b, hue(a) approx hue(b)
 
 Gender Colors Not Conformist: NOT ((EXIST color a similar to "LIGHT BLUE") AND (EXIST color b similar to "PINK"))
 Specific value included: EXIST color a, value(a) equal to "uber blue"
+
+Color semantics (cf semantic color paper)
+Grass should be green, ocean should be shades of blue
+Brand colors 
 
 
 # Affective Color Assertions

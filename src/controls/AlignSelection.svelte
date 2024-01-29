@@ -28,7 +28,6 @@
 
 {#if focusedColors.length > 1}
   <div class="w-full border-t-2 border-black my-2"></div>
-  <!-- <Tooltip> -->
   <div class="font-bold">Align</div>
   <div class="flex flex-wrap">
     {#each ALIGNS as { pos, name, op }}

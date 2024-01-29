@@ -326,7 +326,11 @@
         newChannels[config.yChannelIndex] = scales.yInv(x3, y3);
         return color.fromChannels(newChannels);
       });
-    onColorsChange(newColors);
+    const outColors = [...initialRotationColors];
+    newColors.forEach((color, idx) => {
+      outColors[focusedColors[idx]] = color;
+    });
+    onColorsChange(outColors);
   }
   function rotateEnd() {
     // console.log("rotate end");

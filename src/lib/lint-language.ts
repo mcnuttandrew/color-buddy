@@ -38,7 +38,7 @@ interface Predicate {
 interface Quantifier {
   nodeType: "Quantifier";
   type: "exists" | "forall" | "forall-seq";
-  input: Value;
+  input: Value[];
   predicate: Predicate;
   value: Variable;
 }
@@ -123,16 +123,7 @@ const evalPredicate: Evaluator<Predicate> = (predicate, env) => {
       return [evalValue(left, env) <= evalValue(right, env), env];
   }
 };
-const evalQuantifier: Evaluator<Quantifier> = (quantifier, env) => {
-  switch (quantifier.type) {
-    case "exists":
-      return evalExists(quantifier, env);
-    case "forall":
-      return evalForAll(quantifier, env);
-    case "forall-seq":
-      return evalForAllSeq(quantifier, env);
-  }
-};
+
 // this is wrong circle back
 const evalValue: Evaluator<Value> = (value, env: Environment) => [
   value.value,
@@ -143,11 +134,24 @@ const evalVariable: Evaluator<Variable> = (variable, env) => [
   env.variables[variable.value],
   env,
 ];
+
+const evalQuantifier: Evaluator<Quantifier> = (quantifier, env) => {
+  switch (quantifier.type) {
+    case "exists":
+      return evalExists(quantifier, env);
+    case "forall":
+      return evalForAll(quantifier, env);
+    case "forall-seq":
+      return evalForAllSeq(quantifier, env);
+  }
+};
 const evalExists: Evaluator<Quantifier> = (quantifier, env) => {
-  const inputEval = evalValue(input, env);
-  const predicate = quantifier.predicate;
-  const predicateEval = evalPredicate(predicate, env, inputEval, value);
-  return [predicateEval, env];
+  const inputEval = quantifier.input.map((x) => evaluate(x, env));
+  const variable = quantifier.value.value;
+  const result = inputEval.some(
+    (x) => evalPredicate(quantifier.predicate, setVar(variable, x, env))[0]
+  );
+  return [result, env];
 };
 
 const evalForAll: Evaluator<Quantifier> = (_q, env) => {
@@ -160,9 +164,14 @@ const evalForAllSeq: Evaluator<Quantifier> = (_q, env) => {
 };
 const evalConditional: Evaluator<Conditional> = (expression, env) => {
   const condition = evalExpression(expression.condition, env);
-  const result = evalExpression(
-    condition[0] ? expression.then : expression.else,
-    env
-  );
-  return [result, env];
+  return evalExpression(condition[0] ? expression.then : expression.else, env);
 };
+
+const setVar = (
+  varName: string,
+  value: Value,
+  env: Environment
+): Environment => ({
+  ...env,
+  variables: { ...env.variables, [varName]: value },
+});

@@ -139,7 +139,18 @@ export class Color {
       .map((x) => x || 0)
       .map((x) => x.toLocaleString("fullwide", { useGrouping: false }));
   }
-
+  static stringIsColor = (str: string, spaceName: string) => {
+    try {
+      new ColorIO(str).to(spaceName).coords;
+    } catch (e) {
+      try {
+        new ColorIO(`#${str}`).to(spaceName).coords;
+      } catch (e) {
+        return false;
+      }
+    }
+    return true;
+  };
   static toColorSpace = toColorSpace;
   static stringToChannels = stringToChannels;
   static colorFromString = colorFromString;

@@ -7,7 +7,8 @@ class Environment {
   constructor(
     private colors: Color[],
     private variables: Record<string, LLVariable | LLValue | LLValueArray>,
-    public options: OptionsConfig
+    public options: OptionsConfig,
+    public colorBlame: Record<number, boolean> = {}
   ) {}
   set(name: string, value: LLVariable | LLValue | LLValueArray) {
     if (name === "colors") {
@@ -17,7 +18,12 @@ class Environment {
       throw new Error("Variable already exists");
     }
     const newVariables = { ...this.variables, [name]: value };
-    return new Environment(this.colors, newVariables, this.options);
+    return new Environment(
+      this.colors,
+      newVariables,
+      this.options,
+      this.colorBlame
+    );
   }
   get(name: string) {
     if (name === "colors") {
@@ -30,8 +36,29 @@ class Environment {
     if (!val) throw new Error("Variable not found");
     return val;
   }
+  toggleBlame(index: number) {
+    const newBlame = { ...this.colorBlame, [index]: !this.colorBlame[index] };
+    console.log("newBlame", newBlame);
+    return new Environment(this.colors, this.variables, this.options, newBlame);
+  }
+  toggleAllBlame() {
+    const newBlame = this.colors.reduce(
+      (acc, _, i) => ({ ...acc, [i]: !this.colorBlame[i] }),
+      {}
+    );
+    return new Environment(this.colors, this.variables, this.options, newBlame);
+  }
+  mergeBlame(other: Record<number, boolean>) {
+    const newBlame = { ...this.colorBlame, ...other };
+    return new Environment(this.colors, this.variables, this.options, newBlame);
+  }
   copy() {
-    return new Environment(this.colors, { ...this.variables }, this.options);
+    return new Environment(
+      this.colors,
+      { ...this.variables },
+      this.options,
+      this.colorBlame
+    );
   }
 }
 
@@ -60,7 +87,7 @@ class LLNode {
   }
   evalCheck(_env: Environment): void {
     if (_env.options.debugEval) {
-      console.log(this.constructor.name, this);
+      console.log(this.constructor.name);
     }
     return;
   }
@@ -110,14 +137,36 @@ class LLConjunction extends LLNode {
     switch (this.type) {
       case "id":
       case "and":
+        let andEnv = env;
+        const result = children.every((x) => {
+          const y = x.evaluate(andEnv);
+          console.log("asd", y.env.colorBlame);
+          andEnv = andEnv.mergeBlame(y.env.colorBlame);
+          return y.result;
+        });
         return {
-          result: children.every((x) => x.evaluate(env).result),
-          env,
+          result: result,
+          env: andEnv,
+          // result: children.every((x) => {
+          //   const y = x.evaluate(env);
+          //   console.log(y.env);
+          //   return y.result;
+          // }),
+          // env,
         };
       case "or":
-        return { result: children.some((x) => x.evaluate(env).result), env };
+        let orEnv = env;
+        const someResult = children.some((x) => {
+          const y = x.evaluate(orEnv);
+          console.log("dsa", y.env.colorBlame);
+          orEnv = orEnv.mergeBlame(y.env.colorBlame);
+          return y.result;
+        });
+        return { result: someResult, env: orEnv };
+      // return { result: children.some((x) => x.evaluate(env).result), env };
       case "not":
-        return { result: !children[0].evaluate(env).result, env };
+        const notResult = children[0].evaluate(env);
+        return { result: !notResult, env: notResult.env.toggleAllBlame() };
       case "none":
         return { result: true, env };
     }
@@ -303,9 +352,8 @@ class LLPredicate extends LLNode {
     switch (this.type) {
       // missing similar
       case "similar":
-        if (!this.similarityThreshold) {
+        if (!this.similarityThreshold)
           throw new Error("Similarity threshold not found");
-        }
         if (isColor) {
           const simResult =
             (leftEval as Color).symmetricDeltaE(rightEval) <
@@ -316,6 +364,7 @@ class LLPredicate extends LLNode {
       case "==":
         return { result: leftEval === rightEval, env };
       case "!=":
+        // console.log(leftEval, rightEval, leftEval !== rightEval);
         return { result: leftEval !== rightEval, env };
       case ">":
         return { result: leftEval > rightEval, env };
@@ -466,29 +515,62 @@ class LLQuantifier extends LLNode {
     this.evalCheck(env);
     // weird restoration of type information to make the forward stuff work
     const type = tryTypes([LLValueArray, LLValue], env.options);
+    const idxType = tryTypes([LLValue], env.options);
     const where = this.where;
     const inputEval = this.input
       .evaluate(env)
       .result.map((x: any) => type(x))
-      .filter((x: any) =>
-        where ? where.evaluate(env.set(this.value, x)).result : true
-      );
+      .filter((x: any, index: number) => {
+        if (!where) {
+          return true;
+        }
+        const newEnv = env
+          .set(this.value, x)
+          .set(`index(${this.value})`, idxType(index + 1));
+        return where.evaluate(newEnv).result;
+      });
 
     if (!Array.isArray(inputEval)) {
       throw new Error("Type error");
     }
     const predicateEval = this.predicate;
+    const negate = (func: any) => (x: any) => !func(x);
     // TODO can fold all-seq into all if willing to add indexes into the environment tacitly
     // note: this will need to adjust the where clause to accommodate for the indices
-    const evalPred = (x: any) =>
-      predicateEval.evaluate(env.set(this.value, x)).result;
+
+    const evalPred = (x: any, index: number) => {
+      const newEnv = env
+        .set(this.value, x)
+        .set(`index(${this.value})`, idxType(index + 1));
+      return predicateEval.evaluate(newEnv).result;
+    };
+    // switch (this.type) {
+    //   case "exist":
+    //     const resultExist = inputEval.some(evalPred);
+    //     return { result: resultExist, env };
+    //   case "all":
+    //     const resultAll = inputEval.every(evalPred);
+    //     return { result: resultAll, env };
+    //   case "all-seq":
+    //     throw new Error("not implemented");
+    // }
+
     switch (this.type) {
       case "exist":
-        const resultExist = inputEval.some(evalPred);
-        return { result: resultExist, env };
+        const existIndex = inputEval.findIndex(evalPred);
+        const result = existIndex !== -1;
+        return { result, env: result ? env : env.toggleBlame(existIndex) };
+      // return { result: inputEval.some(evalPred), env };
       case "all":
-        const resultAll = inputEval.every(evalPred);
-        return { result: resultAll, env };
+        const allIndex = inputEval.findIndex(negate(evalPred));
+        const pass = allIndex === -1;
+        const outBlame = pass ? env : env.toggleBlame(allIndex);
+        console.log({ pass, outBlame: outBlame.colorBlame });
+        return {
+          result: pass,
+          env: outBlame,
+        };
+      // return { result: inputEval.every(evalPred), env };
       case "all-seq":
         throw new Error("not implemented");
     }
@@ -576,13 +658,15 @@ const DEFAULT_OPTIONS = {
   stages: false,
 };
 export function LLEval(root: any, colors: Color[], options = DEFAULT_OPTIONS) {
-  const env = new Environment(colors, {}, DEFAULT_OPTIONS);
+  const inputEnv = new Environment(colors, {}, DEFAULT_OPTIONS, {});
   const ast = parseToAST({ id: [root] }, DEFAULT_OPTIONS);
   if (DEFAULT_OPTIONS.stages) {
     console.log(ast.toString());
     console.log("EVALUATION EVALUATION EVALUATION EVALUATION");
   }
-  return ast.evaluate(env).result;
+  const { result, env } = ast.evaluate(inputEnv);
+  console.log("blame", env.colorBlame);
+  return result;
 }
 
 export function prettyPrintLL(root: any) {

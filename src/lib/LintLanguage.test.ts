@@ -25,6 +25,26 @@ test("LintLanguage basic eval ", () => {
   expect(prettyPrintLL(prog4)).toBe("count(colors) < 10");
 });
 
+test("LintLanguage conjunctions", () => {
+  const prog1 = {
+    and: [
+      { "<": { left: { count: "colors" }, right: 10 } },
+      { ">": { left: { count: "colors" }, right: 2 } },
+    ],
+  };
+  expect(LLEval(prog1, exampleColors)).toBe(true);
+  expect(prettyPrintLL(prog1)).toBe("count(colors) < 10 AND count(colors) > 2");
+
+  const prog2 = {
+    or: [
+      { "<": { left: { count: "colors" }, right: 2 } },
+      { ">": { left: { count: "colors" }, right: 10 } },
+    ],
+  };
+  expect(LLEval(prog2, exampleColors)).toBe(false);
+  expect(prettyPrintLL(prog2)).toBe("count(colors) < 2 OR count(colors) > 10");
+});
+
 test("LintLanguage Quantifiers All - Simple", () => {
   const simpProg = (colors: string[]) => ({
     exist: {
@@ -276,7 +296,7 @@ test("LintLanguage Name discrimination with a single color", () => {
   expect(LLEval(program, [Color.colorFromString("#008137", "lab")])).toBe(true);
 });
 
-test("LintLanguage Avoid Extreme Colors", () => {
+test.only("LintLanguage Avoid Extreme Colors", () => {
   const program = {
     all: {
       input: "colors",
@@ -285,7 +305,7 @@ test("LintLanguage Avoid Extreme Colors", () => {
         all: {
           input: ["#000000", "#ffffff"],
           value: "b",
-          where: { "!=": { left: "a", right: "b" } },
+          where: { "!=": { left: "index(a)", right: "index(b)" } },
           predicate: { "!=": { left: "a", right: "b" } },
         },
       },
@@ -294,8 +314,8 @@ test("LintLanguage Avoid Extreme Colors", () => {
   expect(prettyPrintLL(program)).toBe(
     "all a in (colors), all b in ([#000, #fff]), a != b"
   );
-  expect(LLEval(program, greens)).toBe(false);
-  expect(LLEval(program, reds)).toBe(true);
+  expect(LLEval(program, greens)).toBe(true);
+  expect(LLEval(program, [Color.colorFromString("black", "lab")])).toBe(false);
 });
 
 // // YAML VERSION

@@ -2,19 +2,22 @@ import cvd_sim from "./blindness";
 import { Color } from "./Color";
 import { getName } from "./lints/name-discrim";
 
-type RawValues = string | number | Color | RawValues[];
+type RawValues = string | number | Color | string[] | number[] | Color[];
 class Environment {
   constructor(
     private colors: Color[],
-    private variables: Record<string, LLVariable | LLValue | LLValueArray> // private variables: Record<string, RawValues>
+    private variables: Record<string, LLVariable | LLValue | LLValueArray>,
+    public options: OptionsConfig
   ) {}
   set(name: string, value: LLVariable | LLValue | LLValueArray) {
-    // set(name: string, value: RawValues) {
     if (name === "colors") {
       throw new Error("Cannot set colors");
     }
+    if (this.variables[name]) {
+      throw new Error("Variable already exists");
+    }
     const newVariables = { ...this.variables, [name]: value };
-    return new Environment(this.colors, newVariables);
+    return new Environment(this.colors, newVariables, this.options);
   }
   get(name: string) {
     if (name === "colors") {
@@ -22,23 +25,25 @@ class Environment {
         .map((x) => new LLColor(x))
         .map((x) => new LLValue(x));
       return new LLValueArray(children);
-      // return this.colors;
     }
     const val = this.variables[name];
     if (!val) throw new Error("Variable not found");
     return val;
   }
   copy() {
-    return new Environment(this.colors, { ...this.variables });
+    return new Environment(this.colors, { ...this.variables }, this.options);
   }
 }
 
+interface OptionsConfig {
+  debugTypeCheck: boolean;
+  debugEval: boolean;
+}
 const tryTypes =
-  (nodeClasses: any[], options: { debug: boolean }) => (node: any) => {
+  (nodeClasses: any[], options: OptionsConfig) => (node: any) => {
     for (let i = 0; i < nodeClasses.length; i++) {
       const nodeClass = nodeClasses[i];
-      if (options.debug) {
-        console.log(options.debug);
+      if (options.debugTypeCheck) {
         console.log(nodeClass.name, node);
       }
       const result = nodeClass.tryToConstruct(node, options);
@@ -49,13 +54,17 @@ const tryTypes =
 
 type ReturnVal<A> = { result: A; env: Environment };
 class LLNode {
-  evaluate(_env: Environment): ReturnVal<any> {
+  evaluate(env: Environment): ReturnVal<any> {
+    this.evalCheck(env);
     throw new Error("Invalid node");
   }
-  static tryToConstruct(
-    node: any,
-    options: { debug: boolean }
-  ): false | LLNode {
+  evalCheck(_env: Environment): void {
+    if (_env.options.debugEval) {
+      console.log(this.constructor.name, this);
+    }
+    return;
+  }
+  static tryToConstruct(node: any, options: OptionsConfig): false | LLNode {
     throw new Error("Invalid node", node);
   }
   toString() {
@@ -70,9 +79,10 @@ class LLExpression extends LLNode {
     super();
   }
   evaluate(env: Environment): ReturnVal<boolean> {
+    this.evalCheck(env);
     return { result: this.value.evaluate(env).result, env };
   }
-  static tryToConstruct(node: any, options: { debug: boolean }) {
+  static tryToConstruct(node: any, options: OptionsConfig) {
     const value = tryTypes(
       [LLConjunction, LLQuantifier, LLBool, LLPredicate],
       options
@@ -95,6 +105,7 @@ class LLConjunction extends LLNode {
   }
 
   evaluate(env: Environment): ReturnVal<boolean> {
+    this.evalCheck(env);
     const children = this.children;
     switch (this.type) {
       case "id":
@@ -111,7 +122,7 @@ class LLConjunction extends LLNode {
         return { result: true, env };
     }
   }
-  static tryToConstruct(node: any, options: { debug: boolean }) {
+  static tryToConstruct(node: any, options: OptionsConfig) {
     const exprType = ConjunctionTypes.find((x) => node[x]);
     if (!exprType) return false;
     const children = node[exprType];
@@ -136,10 +147,11 @@ class LLValueArray extends LLNode {
     super();
   }
   evaluate(env: Environment): ReturnVal<RawValues[]> {
+    this.evalCheck(env);
     const result = this.children.map((x) => x.evaluate(env).result);
     return { result, env };
   }
-  static tryToConstruct(children: any, options: { debug: boolean }) {
+  static tryToConstruct(children: any, options: OptionsConfig) {
     if (!children || !Array.isArray(children)) return false;
     const childrenTypes = children.map(tryTypes([LLValue], options));
     if (childrenTypes.some((x) => x === false)) return false;
@@ -157,9 +169,10 @@ class LLBool extends LLNode {
     this.value = bool.value;
   }
   evaluate(env: Environment): ReturnVal<boolean> {
+    this.evalCheck(env);
     return { result: this.value === "True", env };
   }
-  static tryToConstruct(value: any, options: { debug: boolean }) {
+  static tryToConstruct(value: any, options: OptionsConfig) {
     if (value !== "True" && value !== "False") return false;
     return new LLBool({ value });
   }
@@ -172,11 +185,12 @@ class LLVariable extends LLNode {
   constructor(private value: string) {
     super();
   }
-  evaluate(env: Environment) {
+  evaluate(env: Environment): any {
+    this.evalCheck(env);
     const varDeRef = env.get(this.value);
     return varDeRef.evaluate(env);
   }
-  static tryToConstruct(value: any, options: { debug: boolean }) {
+  static tryToConstruct(value: any, options: OptionsConfig) {
     if (typeof value !== "string") return false;
     return new LLVariable(value);
   }
@@ -190,16 +204,14 @@ class LLColor extends LLNode {
     super();
   }
   evaluate(env: Environment): ReturnVal<Color> {
+    this.evalCheck(env);
     return { result: this.value, env };
   }
-  static tryToConstruct(
-    value: any,
-    options: { debug: boolean }
-  ): false | LLColor {
+  static tryToConstruct(value: any, options: OptionsConfig): false | LLColor {
     if (value instanceof Color) {
       return new LLColor(value);
     }
-    if (Color.stringIsColor(value, "lab")) {
+    if (typeof value === "string" && Color.stringIsColor(value, "lab")) {
       return new LLColor(Color.colorFromString(value, "lab"));
     }
     return false;
@@ -214,9 +226,10 @@ class LLNumber extends LLNode {
     super();
   }
   evaluate(env: Environment): ReturnVal<number> {
+    this.evalCheck(env);
     return { result: this.value, env };
   }
-  static tryToConstruct(value: any, options: { debug: boolean }) {
+  static tryToConstruct(value: any, options: OptionsConfig) {
     if (typeof value !== "number") return false;
     return new LLNumber(value);
   }
@@ -225,16 +238,57 @@ class LLNumber extends LLNode {
   }
 }
 
-const predicateTypes = ["==", "!=", ">", "<"] as const;
-class LLPredicate extends LLNode {
+const LLNumberOpTypes = ["+", "-", "*", "/"] as const;
+class LLNumberOp extends LLNode {
   constructor(
-    private type: (typeof predicateTypes)[number],
+    private type: (typeof LLNumberOpTypes)[number],
     private left: LLValue,
     private right: LLValue
   ) {
     super();
   }
+  evaluate(env: Environment): ReturnVal<number> {
+    this.evalCheck(env);
+    const left = this.left.evaluate(env).result;
+    const right = this.right.evaluate(env).result;
+    switch (this.type) {
+      case "+":
+        return { result: left + right, env };
+      case "-":
+        return { result: left - right, env };
+      case "*":
+        return { result: left * right, env };
+      case "/":
+        return { result: left / right, env };
+    }
+  }
+  static tryToConstruct(node: any, options: OptionsConfig) {
+    const opType = LLNumberOpTypes.find((x) => node[x]);
+    if (!opType) return false;
+    const { left, right } = node[opType];
+    if (!left || !right) return false;
+    const leftType = tryTypes([LLValue], options)(left);
+    const rightType = tryTypes([LLValue], options)(right);
+    if (!leftType || !rightType) return false;
+    return new LLNumberOp(opType, leftType, rightType);
+  }
+  toString(): string {
+    return `${this.left.toString()} ${this.type} ${this.right.toString()}`;
+  }
+}
+
+const predicateTypes = ["==", "!=", ">", "<", "similar"] as const;
+class LLPredicate extends LLNode {
+  constructor(
+    private type: (typeof predicateTypes)[number],
+    private left: LLValue,
+    private right: LLValue,
+    private similarityThreshold?: number
+  ) {
+    super();
+  }
   evaluate(env: Environment): ReturnVal<boolean> {
+    this.evalCheck(env);
     const { left, right } = this;
     let leftEval = left.evaluate(env).result;
     let rightEval = right.evaluate(env).result;
@@ -242,11 +296,23 @@ class LLPredicate extends LLNode {
       throw new Error("predicate - type error ");
     }
     let isColor = leftEval instanceof Color;
-    if (isColor) {
-      leftEval = leftEval.toString();
-      rightEval = rightEval.toString();
+    if (isColor && this.type !== "similar") {
+      leftEval = leftEval.toHex();
+      rightEval = rightEval.toHex();
     }
     switch (this.type) {
+      // missing similar
+      case "similar":
+        if (!this.similarityThreshold) {
+          throw new Error("Similarity threshold not found");
+        }
+        if (isColor) {
+          const simResult =
+            (leftEval as Color).symmetricDeltaE(rightEval) <
+            this.similarityThreshold;
+          return { result: simResult, env };
+        }
+        throw new Error("Type error");
       case "==":
         return { result: leftEval === rightEval, env };
       case "!=":
@@ -257,33 +323,55 @@ class LLPredicate extends LLNode {
         return { result: leftEval < rightEval, env };
     }
   }
-  static tryToConstruct(node: any, options: { debug: boolean }) {
-    // throw new Error("test");
+  static tryToConstruct(node: any, options: OptionsConfig) {
     const predicateType = predicateTypes.find((x) => node[x]);
     if (!predicateType) return false;
-    const { left, right } = node[predicateType];
+    const { left, right, similarityThreshold } = node[predicateType];
     if (!left || !right) return false;
     const leftType = tryTypes([LLValue], options)(left);
     const rightType = tryTypes([LLValue], options)(right);
     if (!leftType || !rightType) return false;
-    return new LLPredicate(predicateType, leftType, rightType);
+    return new LLPredicate(
+      predicateType,
+      leftType,
+      rightType,
+      similarityThreshold
+    );
   }
   toString(): string {
-    return `${this.left.toString()} ${this.type} ${this.right.toString()}`;
+    let type = "" + this.type;
+    if (this.type === "similar") {
+      type = `similar(${this.similarityThreshold})`;
+    }
+    return `${this.left.toString()} ${type} ${this.right.toString()}`;
   }
 }
 
 class LLValue extends LLNode {
   constructor(
-    private value: LLValueFunction | LLColor | LLNumber | LLVariable | LLReduces
+    private value:
+      | LLValueFunction
+      | LLColor
+      | LLNumber
+      | LLVariable
+      | LLReduces
+      | LLNumberOp
   ) {
     super();
   }
   evaluate(env: Environment) {
+    this.evalCheck(env);
     return { result: this.value.evaluate(env).result, env };
   }
-  static tryToConstruct(node: any, options: { debug: boolean }) {
-    const types = [LLValueFunction, LLColor, LLNumber, LLVariable, LLReduces];
+  static tryToConstruct(node: any, options: OptionsConfig) {
+    const types = [
+      LLValueFunction,
+      LLColor,
+      LLNumber,
+      LLVariable,
+      LLReduces,
+      LLNumberOp,
+    ];
     const value = tryTypes(types, options)(node);
     if (!value) return false;
     return value;
@@ -306,7 +394,7 @@ const VFTypes = [
     op: (val: Color, _params: Params) => getName(val),
   },
   {
-    primaryKey: "colorSpaceChanel",
+    primaryKey: "toColor",
     params: ["space", "channel"] as string[],
     op: (val: Color, params: Params) =>
       val.toColorSpace(params.space as any).getChannel(params.channel),
@@ -322,6 +410,7 @@ class LLValueFunction extends LLNode {
     super();
   }
   evaluate(env: Environment) {
+    this.evalCheck(env);
     const { input, params } = this;
     // get the value of the input, such as by deref
     const inputEval = input.evaluate(env).result;
@@ -333,7 +422,7 @@ class LLValueFunction extends LLNode {
     const result = op.op(inputEval, params);
     return { result, env };
   }
-  static tryToConstruct(node: any, options: { debug: boolean }) {
+  static tryToConstruct(node: any, options: OptionsConfig) {
     const inputTypes = [LLColor, LLVariable];
     // find the appropriate type and do a simple type check
     const op = VFTypes.find((x) => {
@@ -368,42 +457,61 @@ class LLQuantifier extends LLNode {
     private type: (typeof QuantifierTypes)[number],
     private input: LLValueArray | LLVariable,
     private predicate: LLPredicate,
-    private value: string
+    private value: string,
+    private where?: LLPredicate
   ) {
     super();
   }
   evaluate(env: Environment) {
-    // weird restoration of type information
-    const inputEval = this.input.evaluate(env).result.map((x) => {
-      return tryTypes([LLValueArray, LLValue], {
-        debug: false,
-      })(x);
-    });
+    this.evalCheck(env);
+    // weird restoration of type information to make the forward stuff work
+    const type = tryTypes([LLValueArray, LLValue], env.options);
+    const where = this.where;
+    const inputEval = this.input
+      .evaluate(env)
+      .result.map((x: any) => type(x))
+      .filter((x: any) =>
+        where ? where.evaluate(env.set(this.value, x)).result : true
+      );
+
     if (!Array.isArray(inputEval)) {
       throw new Error("Type error");
     }
     const predicateEval = this.predicate;
     // TODO can fold all-seq into all if willing to add indexes into the environment tacitly
-    const evalPred = (x) =>
+    // note: this will need to adjust the where clause to accommodate for the indices
+    const evalPred = (x: any) =>
       predicateEval.evaluate(env.set(this.value, x)).result;
     switch (this.type) {
       case "exist":
-        return { result: inputEval.some(evalPred), env };
+        const resultExist = inputEval.some(evalPred);
+        return { result: resultExist, env };
       case "all":
-        return { result: inputEval.every(evalPred), env };
+        const resultAll = inputEval.every(evalPred);
+        return { result: resultAll, env };
       case "all-seq":
         throw new Error("not implemented");
     }
   }
-  static tryToConstruct(node: any, options: { debug: boolean }) {
+  static tryToConstruct(node: any, options: OptionsConfig) {
     const quantifierType = QuantifierTypes.find((x) => node[x]);
     if (!quantifierType) return false;
-    const { input, predicate, value } = node[quantifierType];
+    const { input, predicate, value, where } = node[quantifierType];
     if (!input || !predicate || !value) return false;
     const inputType = tryTypes([LLValueArray, LLVariable], options)(input);
     const predicateType = tryTypes([LLExpression], options)(predicate);
     if (!inputType || !predicateType) return false;
-    return new LLQuantifier(quantifierType, inputType, predicateType, value);
+    let whereType;
+    if (where) {
+      whereType = tryTypes([LLPredicate], options)(where);
+    }
+    return new LLQuantifier(
+      quantifierType,
+      inputType,
+      predicateType,
+      value,
+      whereType
+    );
   }
   toString(): string {
     return `${this.type} ${
@@ -412,15 +520,7 @@ class LLQuantifier extends LLNode {
   }
 }
 
-const reduceTypes = [
-  "count",
-  "sum",
-  "min",
-  "max",
-  //   "median",
-  //   "mode",
-  "std",
-] as const;
+const reduceTypes = ["count", "sum", "min", "max"] as const;
 class LLReduces extends LLNode {
   constructor(
     private type: (typeof reduceTypes)[number],
@@ -429,12 +529,11 @@ class LLReduces extends LLNode {
     super();
   }
   evaluate(env: Environment): ReturnVal<number> {
+    this.evalCheck(env);
     const children = this.children.evaluate(env).result;
     if (!Array.isArray(children)) {
       throw new Error("Type error");
     }
-    // const childrenEval = children.map((x) => x.evaluate(env).result);
-
     switch (this.type) {
       case "count":
         return { result: children.length, env };
@@ -444,11 +543,9 @@ class LLReduces extends LLNode {
         return { result: Math.min(...children), env };
       case "max":
         return { result: Math.max(...children), env };
-      case "std":
-        return { result: 0, env };
     }
   }
-  static tryToConstruct(node: any, options: { debug: boolean }) {
+  static tryToConstruct(node: any, options: OptionsConfig) {
     const reduceType = reduceTypes.find((x) => node[x]);
     if (!reduceType) return false;
     const children = node[reduceType];
@@ -467,21 +564,28 @@ class LLReduces extends LLNode {
   }
 }
 
-function parseToAST(root: any) {
-  const node = LLExpression.tryToConstruct(root, { debug: false });
+function parseToAST(root: any, options: OptionsConfig) {
+  const node = LLExpression.tryToConstruct(root, options);
   if (!node) throw new Error("Invalid node");
   return node;
 }
 
-export function LLEval(root: any, colors: Color[]) {
-  const env = new Environment(colors, {});
-  const ast = parseToAST({ id: [root] });
-  console.log(ast.toString());
-  console.log("EVALUATION EVALUATION EVALUATION EVALUATION");
+const DEFAULT_OPTIONS = {
+  debugTypeCheck: false,
+  debugEval: false,
+  stages: false,
+};
+export function LLEval(root: any, colors: Color[], options = DEFAULT_OPTIONS) {
+  const env = new Environment(colors, {}, DEFAULT_OPTIONS);
+  const ast = parseToAST({ id: [root] }, DEFAULT_OPTIONS);
+  if (DEFAULT_OPTIONS.stages) {
+    console.log(ast.toString());
+    console.log("EVALUATION EVALUATION EVALUATION EVALUATION");
+  }
   return ast.evaluate(env).result;
 }
 
 export function prettyPrintLL(root: any) {
-  const ast = parseToAST({ id: [root] });
+  const ast = parseToAST({ id: [root] }, DEFAULT_OPTIONS);
   return ast.toString();
 }

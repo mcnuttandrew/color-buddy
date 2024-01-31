@@ -140,12 +140,13 @@ export class Color {
       .map((x) => x.toLocaleString("fullwide", { useGrouping: false }));
   }
   static stringIsColor = (str: string, spaceName: string) => {
+    // todo add cache
     try {
       new ColorIO(str).to(spaceName).coords;
-    } catch (e) {
+    } catch (ea) {
       try {
         new ColorIO(`#${str}`).to(spaceName).coords;
-      } catch (e) {
+      } catch (eb) {
         return false;
       }
     }

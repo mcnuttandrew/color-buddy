@@ -108,8 +108,8 @@ exist:
             value: 'b',
             predicate: 
                 equal: 
-                    left:  {hue: 'a'}
-                    right: {hue: 'b', offset: 180}
+                    left:  {toColor: 'a', space: 'hsl', channel: 'h'}
+                    right: {+: {toColor: 'b', space: 'hsl', channel: 'h'}, value: 180}
 
 YAML syntax, Specific value included:
 exist: 

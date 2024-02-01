@@ -41,6 +41,13 @@ class Environment {
     console.log("newBlame", newBlame);
     return new Environment(this.colors, this.variables, this.options, newBlame);
   }
+  blameIndices(indices: number[]) {
+    const newBlame = indices.reduce(
+      (acc, x) => ({ ...acc, [x]: true }),
+      this.colorBlame
+    );
+    return new Environment(this.colors, this.variables, this.options, newBlame);
+  }
   toggleAllBlame() {
     const newBlame = this.colors.reduce(
       (acc, _, i) => ({ ...acc, [i]: !this.colorBlame[i] }),
@@ -166,7 +173,10 @@ class LLConjunction extends LLNode {
       // return { result: children.some((x) => x.evaluate(env).result), env };
       case "not":
         const notResult = children[0].evaluate(env);
-        return { result: !notResult, env: notResult.env.toggleAllBlame() };
+        return {
+          result: !notResult.result,
+          env: notResult.env.toggleAllBlame(),
+        };
       case "none":
         return { result: true, env };
     }
@@ -352,19 +362,17 @@ class LLPredicate extends LLNode {
     switch (this.type) {
       // missing similar
       case "similar":
-        if (!this.similarityThreshold)
-          throw new Error("Similarity threshold not found");
+        let thresh = this.similarityThreshold;
+        if (!thresh) throw new Error("Similarity threshold not found");
         if (isColor) {
-          const simResult =
-            (leftEval as Color).symmetricDeltaE(rightEval) <
-            this.similarityThreshold;
-          return { result: simResult, env };
+          const diff = leftEval.symmetricDeltaE(rightEval);
+          return { result: diff < thresh, env };
         }
         throw new Error("Type error");
       case "==":
         return { result: leftEval === rightEval, env };
       case "!=":
-        // console.log(leftEval, rightEval, leftEval !== rightEval);
+        console.log(leftEval, rightEval, leftEval !== rightEval);
         return { result: leftEval !== rightEval, env };
       case ">":
         return { result: leftEval > rightEval, env };
@@ -500,7 +508,7 @@ class LLValueFunction extends LLNode {
   }
 }
 
-const QuantifierTypes = ["exist", "all", "all-seq"] as const;
+const QuantifierTypes = ["exist", "all"] as const;
 class LLQuantifier extends LLNode {
   constructor(
     private type: (typeof QuantifierTypes)[number],
@@ -519,14 +527,14 @@ class LLQuantifier extends LLNode {
     const where = this.where;
     const inputEval = this.input
       .evaluate(env)
-      .result.map((x: any) => type(x))
-      .filter((x: any, index: number) => {
+      .result.map((x: any, index: number) => [index, type(x)])
+      .filter(([index, x]: any, idx: number) => {
         if (!where) {
           return true;
         }
         const newEnv = env
           .set(this.value, x)
-          .set(`index(${this.value})`, idxType(index + 1));
+          .set(`index(${this.value})`, idxType(idx + 1));
         return where.evaluate(newEnv).result;
       });
 
@@ -534,11 +542,13 @@ class LLQuantifier extends LLNode {
       throw new Error("Type error");
     }
     const predicateEval = this.predicate;
-    const negate = (func: any) => (x: any) => !func(x);
+
     // TODO can fold all-seq into all if willing to add indexes into the environment tacitly
     // note: this will need to adjust the where clause to accommodate for the indices
 
-    const evalPred = (x: any, index: number) => {
+    // const evalPred = (x: any, index: number) => {
+    const evalPred = (prop: any) => {
+      const [index, x] = prop;
       const newEnv = env
         .set(this.value, x)
         .set(`index(${this.value})`, idxType(index + 1));
@@ -555,24 +565,39 @@ class LLQuantifier extends LLNode {
     //     throw new Error("not implemented");
     // }
 
+    const mappedEvaluations = inputEval.map(evalPred);
+    const blameIndexes = mappedEvaluations.reduce(
+      (acc, x, i) => (!x ? acc : [...acc, i]),
+      [] as number[]
+    );
+    console.log(this.type, mappedEvaluations);
     switch (this.type) {
       case "exist":
-        const existIndex = inputEval.findIndex(evalPred);
-        const result = existIndex !== -1;
-        return { result, env: result ? env : env.toggleBlame(existIndex) };
+        if (mappedEvaluations.some((x) => x)) {
+          return { result: true, env };
+        } else {
+          return { result: false, env: env.blameIndices(blameIndexes) };
+        }
+      // const negate = (func: any) => (x: any) => !func(x);
+      // const existIndex = inputEval.findIndex(evalPred);
+      // const result = existIndex !== -1;
+      // return { result, env: result ? env : env.toggleBlame(existIndex) };
       // return { result: inputEval.some(evalPred), env };
       case "all":
-        const allIndex = inputEval.findIndex(negate(evalPred));
-        const pass = allIndex === -1;
-        const outBlame = pass ? env : env.toggleBlame(allIndex);
-        console.log({ pass, outBlame: outBlame.colorBlame });
-        return {
-          result: pass,
-          env: outBlame,
-        };
-      // return { result: inputEval.every(evalPred), env };
-      case "all-seq":
-        throw new Error("not implemented");
+        // console.log("all", inputEval);
+        if (mappedEvaluations.every((x) => x)) {
+          return { result: true, env };
+        } else {
+          return { result: false, env: env.blameIndices(blameIndexes) };
+        }
+      // const allIndex = inputEval.findIndex(negate(evalPred));
+      // const pass = allIndex === -1;
+      // const outBlame = pass ? env : env.toggleBlame(allIndex);
+      // console.log({ pass, outBlame: outBlame.colorBlame });
+      // return {
+      //   result: pass,
+      //   env: outBlame,
+      // };
     }
   }
   static tryToConstruct(node: any, options: OptionsConfig) {
@@ -583,16 +608,12 @@ class LLQuantifier extends LLNode {
     const inputType = tryTypes([LLValueArray, LLVariable], options)(input);
     const predicateType = tryTypes([LLExpression], options)(predicate);
     if (!inputType || !predicateType) return false;
-    let whereType;
-    if (where) {
-      whereType = tryTypes([LLPredicate], options)(where);
-    }
     return new LLQuantifier(
       quantifierType,
       inputType,
       predicateType,
       value,
-      whereType
+      where && tryTypes([LLPredicate], options)(where)
     );
   }
   toString(): string {
@@ -602,7 +623,7 @@ class LLQuantifier extends LLNode {
   }
 }
 
-const reduceTypes = ["count", "sum", "min", "max"] as const;
+const reduceTypes = ["count", "sum", "min", "max", "mean"] as const;
 class LLReduces extends LLNode {
   constructor(
     private type: (typeof reduceTypes)[number],
@@ -621,6 +642,11 @@ class LLReduces extends LLNode {
         return { result: children.length, env };
       case "sum":
         return { result: children.reduce((a, b) => a + b, 0), env };
+      case "mean":
+        return {
+          result: children.reduce((a, b) => a + b, 0) / children.length,
+          env,
+        };
       case "min":
         return { result: Math.min(...children), env };
       case "max":

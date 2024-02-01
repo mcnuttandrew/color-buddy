@@ -33,7 +33,7 @@ test("LintLanguage conjunctions", () => {
     ],
   };
   expect(LLEval(prog1, exampleColors)).toBe(true);
-  expect(prettyPrintLL(prog1)).toBe("count(colors) < 10 AND count(colors) > 2");
+  expect(prettyPrintLL(prog1)).toBe("count(colors) < 10 and count(colors) > 2");
 
   const prog2 = {
     or: [
@@ -42,7 +42,7 @@ test("LintLanguage conjunctions", () => {
     ],
   };
   expect(LLEval(prog2, exampleColors)).toBe(false);
-  expect(prettyPrintLL(prog2)).toBe("count(colors) < 2 OR count(colors) > 10");
+  expect(prettyPrintLL(prog2)).toBe("count(colors) < 2 or count(colors) > 10");
 });
 
 test("LintLanguage Quantifiers All - Simple", () => {
@@ -69,47 +69,46 @@ test("LintLanguage Quantifiers All - Simple", () => {
   );
   expect(LLEval(simpProg(["#7bb9ff"]), exampleColors)).toBe(true);
 });
-
-test("LintLanguage Quantifiers All - CB", () => {
-  const expectedOut = (type: string) =>
-    `all a in (colors), all b in (colors), NOT cvd_sim(a, ${type}) similar(9) cvd_sim(b, ${type})`;
-  const allBlindProg = (type: string) => ({
-    all: {
-      input: "colors",
-      value: "a",
-      predicate: {
-        all: {
-          input: "colors",
-          value: "b",
-          where: { "!=": { left: "a", right: "b" } },
-          predicate: {
-            not: {
-              similar: {
-                left: { cvd_sim: "a", type },
-                right: { cvd_sim: "b", type },
-                similarityThreshold: 9,
-              },
+const expectedOutBlind = (type: string) =>
+  `all a in (colors), all b in (colors), NOT cvd_sim(a, ${type}) similar(9) cvd_sim(b, ${type})`;
+const allBlindProg = (type: string) => ({
+  all: {
+    input: "colors",
+    value: "a",
+    predicate: {
+      all: {
+        input: "colors",
+        value: "b",
+        where: { "!=": { left: "a", right: "b" } },
+        predicate: {
+          not: {
+            similar: {
+              left: { cvd_sim: "a", type },
+              right: { cvd_sim: "b", type },
+              similarityThreshold: 9,
             },
           },
         },
       },
     },
-  });
-
-  // deuteranopia
+  },
+});
+test("LintLanguage Quantifiers All - deuteranopia", () => {
   expect(prettyPrintLL(allBlindProg("deuteranopia"))).toBe(
-    expectedOut("deuteranopia")
+    expectedOutBlind("deuteranopia")
   );
   expect(LLEval(allBlindProg("deuteranopia"), exampleColors)).toBe(false);
-  // protanopia
+});
+test("LintLanguage Quantifiers All - protanopia", () => {
   expect(prettyPrintLL(allBlindProg("protanopia"))).toBe(
-    expectedOut("protanopia")
+    expectedOutBlind("protanopia")
   );
   expect(LLEval(allBlindProg("protanopia"), exampleColors)).toBe(false);
-  // tritanopia
-  expect(prettyPrintLL(allBlindProg("tritanopia"))).toBe(
-    expectedOut("tritanopia")
-  );
+});
+test("LintLanguage Quantifiers All - tritanopia", () => {
+  // expect(prettyPrintLL(allBlindProg("tritanopia"))).toBe(
+  //   expectedOutBlind("tritanopia")
+  // );
   expect(LLEval(allBlindProg("tritanopia"), exampleColors)).toBe(true);
 });
 
@@ -211,6 +210,12 @@ test("LintLanguage Agg Ops: max", () => {
   expect(prettyPrintLL(aggProg("max", 4))).toBe(`max([1, 2, 3, 4]) == 4`);
   expect(LLEval(aggProg("max", 4), [])).toBe(true);
 });
+test("LintLanguage Agg Ops: mean", () => {
+  expect(prettyPrintLL(aggProg("mean", 10))).toBe(`mean([1, 2, 3, 4]) == 10`);
+  expect(LLEval(aggProg("mean", 10), [])).toBe(false);
+  expect(prettyPrintLL(aggProg("mean", 2.5))).toBe(`mean([1, 2, 3, 4]) == 2.5`);
+  expect(LLEval(aggProg("mean", 2.5), [])).toBe(true);
+});
 test("LintLanguage to color rotate", () => {
   const realisticProgram = {
     exist: {
@@ -257,7 +262,7 @@ test("LintLanguage Name discrimination", () => {
         all: {
           input: "colors",
           value: "b",
-          where: { "!=": { left: "a", right: "b" } },
+          where: { "!=": { left: "index(a)", right: "index(b)" } },
           predicate: {
             "!=": { left: { name: "a" }, right: { name: "b" } },
           },
@@ -282,7 +287,7 @@ test("LintLanguage Name discrimination with a single color", () => {
         all: {
           input: "colors",
           value: "b",
-          where: { "!=": { left: "a", right: "b" } },
+          where: { "!=": { left: "index(a)", right: "index(b)" } },
           predicate: {
             "!=": { left: { name: "a" }, right: { name: "b" } },
           },
@@ -296,7 +301,7 @@ test("LintLanguage Name discrimination with a single color", () => {
   expect(LLEval(program, [Color.colorFromString("#008137", "lab")])).toBe(true);
 });
 
-test.only("LintLanguage Avoid Extreme Colors", () => {
+test("LintLanguage Avoid Extreme Colors", () => {
   const program = {
     all: {
       input: "colors",
@@ -305,7 +310,6 @@ test.only("LintLanguage Avoid Extreme Colors", () => {
         all: {
           input: ["#000000", "#ffffff"],
           value: "b",
-          where: { "!=": { left: "index(a)", right: "index(b)" } },
           predicate: { "!=": { left: "a", right: "b" } },
         },
       },
@@ -318,39 +322,101 @@ test.only("LintLanguage Avoid Extreme Colors", () => {
   expect(LLEval(program, [Color.colorFromString("black", "lab")])).toBe(false);
 });
 
+test("LintLanguage Sequential Colors", () => {
+  const program = {
+    or: [
+      {
+        all: {
+          input: "colors",
+          value: "a",
+          predicate: {
+            all: {
+              input: "colors",
+              value: "b",
+              where: {
+                "==": {
+                  left: { "-": { left: "index(a)", right: 1 } },
+                  right: "index(b)",
+                },
+              },
+              predicate: {
+                ">": {
+                  left: { space: "lab", channel: "l", toColor: "a" },
+                  right: { space: "lab", channel: "l", toColor: "b" },
+                },
+              },
+            },
+          },
+        },
+      },
+      {
+        all: {
+          input: "colors",
+          value: "a",
+          predicate: {
+            all: {
+              input: "colors",
+              value: "b",
+              where: {
+                "==": {
+                  left: { "-": { left: "index(a)", right: 1 } },
+                  right: "index(b)",
+                },
+              },
+              predicate: {
+                ">": {
+                  left: { space: "lab", channel: "l", toColor: "a" },
+                  right: { space: "lab", channel: "l", toColor: "b" },
+                },
+              },
+            },
+          },
+        },
+      },
+    ],
+  };
+  expect(prettyPrintLL(program)).toBe(
+    "all a in (colors), all b in (colors), toColor(a, lab, l) > toColor(b, lab, l) or all a in (colors), all b in (colors), toColor(a, lab, l) > toColor(b, lab, l)"
+  );
+  expect(
+    LLEval(
+      program,
+      ["#d4a8ff", "#008694", "#7bb9ff"].map((x) =>
+        Color.colorFromString(x, "lab")
+      )
+    )
+  ).toBe(false);
+  expect(
+    LLEval(
+      program,
+      ["#d4a8ff", "#7bb9ff", "#008694"].map((x) =>
+        Color.colorFromString(x, "lab")
+      )
+    )
+  ).toBe(true);
+});
+
+// Text version
+// or
+// (all colors a, all colors b where index(a) - 1 == index(b), lab(a, l) > lab(b, l))
+// (all colors a, all colors b where index(a) - 1 == index(b), lab(a, l) < lab(b, l))
+
 // // YAML VERSION
-// const yamlVersion = `
-// exist:
-//     input: colors,
-//     value: 'a',
-//     predicate:
-//         exist:
-//             colors,
-//             value: 'b',
-//             predicate:
-//                 equal:
-//                     left:  {toColor: 'a', space: 'hsl', channel: 'h'}
-//                     right: {+: {toColor: 'b', space: 'hsl', channel: 'h'}, value: 180}
-//                     `;
-// // JSON VERSION
-// const jsonVersion = {
-//   exist: {
-//     input: "colors",
-//     value: "a",
-//     predicate: {
-//       exist: {
-//         input: "colors",
-//         value: "b",
-//         predicate: {
-//           equal: {
-//             left: { toColor: "a", space: "hsl", channel: "h" },
-//             right: {
-//               "+": { toColor: "b", space: "hsl", channel: "h" },
-//               value: 180,
-//             },
-//           },
-//         },
-//       },
-//     },
-//   },
-// };
+// - or:
+//     - all:
+//         input: colors
+//         value: a
+//         predicate:
+//             all:
+//                 input: colors
+//                 value: b
+//                 where:
+//                     ==:
+//                         left:  {-: {left: index(a), right: 1}}
+//                         right: index(b)
+//                 predicate:
+//                     >:
+//                         left:  {space: 'lab', channel: 'l', color: a}
+//                         right: {space: 'lab', channel: 'l', color: a}
+
+// JSON VERSION

@@ -86,6 +86,9 @@ const tryTypes =
     return false;
   };
 
+const checkIfValsPresent = (node: Record<any, any>, keys: string[]) =>
+  keys.every((key) => key in node);
+
 type ReturnVal<A> = { result: A; env: Environment };
 class LLNode {
   evaluate(env: Environment): ReturnVal<any> {
@@ -114,11 +117,11 @@ class LLExpression extends LLNode {
   }
   evaluate(env: Environment): ReturnVal<boolean> {
     this.evalCheck(env);
-    return { result: this.value.evaluate(env).result, env };
+    return this.value.evaluate(env);
   }
   static tryToConstruct(node: any, options: OptionsConfig) {
     const value = tryTypes(
-      [LLConjunction, LLQuantifier, LLBool, LLPredicate],
+      [LLConjunction, LLPredicate, LLQuantifier, LLBool],
       options
     )(node);
     if (!value) return false;
@@ -147,25 +150,15 @@ class LLConjunction extends LLNode {
         let andEnv = env;
         const result = children.every((x) => {
           const y = x.evaluate(andEnv);
-          console.log("asd", y.env.colorBlame);
           andEnv = andEnv.mergeBlame(y.env.colorBlame);
           return y.result;
         });
-        return {
-          result: result,
-          env: andEnv,
-          // result: children.every((x) => {
-          //   const y = x.evaluate(env);
-          //   console.log(y.env);
-          //   return y.result;
-          // }),
-          // env,
-        };
+        return { result: result, env: andEnv };
       case "or":
         let orEnv = env;
         const someResult = children.some((x) => {
           const y = x.evaluate(orEnv);
-          console.log("dsa", y.env.colorBlame);
+          console.log("todo this needs a different blame algorithm");
           orEnv = orEnv.mergeBlame(y.env.colorBlame);
           return y.result;
         });
@@ -222,21 +215,19 @@ class LLValueArray extends LLNode {
 }
 
 class LLBool extends LLNode {
-  value: "True" | "False";
-  constructor(bool: { value: "True" | "False" }) {
+  constructor(private value: boolean) {
     super();
-    this.value = bool.value;
   }
   evaluate(env: Environment): ReturnVal<boolean> {
     this.evalCheck(env);
-    return { result: this.value === "True", env };
+    return { result: !!this.value, env };
   }
   static tryToConstruct(value: any, options: OptionsConfig) {
-    if (value !== "True" && value !== "False") return false;
-    return new LLBool({ value });
+    if (typeof value !== "boolean") return false;
+    return new LLBool(value);
   }
   toString(): string {
-    return this.value;
+    return this.value ? "TRUE" : "FALSE";
   }
 }
 
@@ -325,7 +316,7 @@ class LLNumberOp extends LLNode {
     const opType = LLNumberOpTypes.find((x) => node[x]);
     if (!opType) return false;
     const { left, right } = node[opType];
-    if (!left || !right) return false;
+    if (!checkIfValsPresent(node[opType], ["left", "right"])) return false;
     const leftType = tryTypes([LLValue], options)(left);
     const rightType = tryTypes([LLValue], options)(right);
     if (!leftType || !rightType) return false;
@@ -360,7 +351,6 @@ class LLPredicate extends LLNode {
       rightEval = rightEval.toHex();
     }
     switch (this.type) {
-      // missing similar
       case "similar":
         let thresh = this.similarityThreshold;
         if (!thresh) throw new Error("Similarity threshold not found");
@@ -383,7 +373,8 @@ class LLPredicate extends LLNode {
     const predicateType = predicateTypes.find((x) => node[x]);
     if (!predicateType) return false;
     const { left, right, similarityThreshold } = node[predicateType];
-    if (!left || !right) return false;
+    if (!checkIfValsPresent(node[predicateType], ["left", "right"]))
+      return false;
     const leftType = tryTypes([LLValue], options)(left);
     const rightType = tryTypes([LLValue], options)(right);
     if (!leftType || !rightType) return false;
@@ -417,11 +408,12 @@ class LLValue extends LLNode {
   }
   evaluate(env: Environment) {
     this.evalCheck(env);
-    return { result: this.value.evaluate(env).result, env };
+    return this.value.evaluate(env);
   }
   static tryToConstruct(node: any, options: OptionsConfig) {
     const types = [
       LLValueFunction,
+      LLBool,
       LLColor,
       LLNumber,
       LLVariable,
@@ -538,6 +530,7 @@ class LLQuantifier extends LLNode {
     const carts = (cartesian as any)(...this.varbs.map(() => indices)).map(
       (x: any) => (Array.isArray(x) ? x : [x])
     );
+    let blameIndices = new Set<number>([]);
     const mappedEvaluations = carts
       .map((combo: any) => {
         const varbIndex = this.varbs.map((varb, idx) => {
@@ -552,33 +545,37 @@ class LLQuantifier extends LLNode {
           }
         }
         const evalPred = this.predicate.evaluate(newEnv).result;
+        if (evalPred === false) {
+          combo.forEach((x: number) => blameIndices.add(x));
+        }
         return evalPred;
       })
       .filter((x: any) => x !== "skip") as boolean[];
 
-    const blameIndexes = mappedEvaluations.reduce(
-      (acc, x, i) => (!x ? acc : [...acc, i]),
-      [] as number[]
-    );
+    // todo don't try to do blame indices if its not looking at color
+    console.log(this.input);
+    const blameArray = Array.from(blameIndices);
+
     switch (this.type) {
       case "exist":
         if (mappedEvaluations.some((x) => x)) {
           return { result: true, env };
         } else {
-          return { result: false, env: env.blameIndices(blameIndexes) };
+          return { result: false, env: env.blameIndices(blameArray) };
         }
       case "all":
         if (mappedEvaluations.every((x) => x)) {
           return { result: true, env };
         } else {
-          return { result: false, env: env.blameIndices(blameIndexes) };
+          return { result: false, env: env.blameIndices(blameArray) };
         }
     }
   }
   static tryToConstruct(node: any, options: OptionsConfig) {
     const quantifierType = QuantifierTypes.find((x) => node[x]);
     if (!quantifierType) return false;
-    const { input, predicate, varb, varbs, where } = node[quantifierType];
+    const { predicate, varb, varbs, where } = node[quantifierType];
+    const input = node[quantifierType].in;
     // must have both an input and a predicate
     if (!input || !predicate) return false;
     // must have a variable or variables
@@ -676,19 +673,33 @@ const DEFAULT_OPTIONS = {
   debugEval: false,
   stages: false,
 };
-export function LLEval(root: any, colors: Color[], options = DEFAULT_OPTIONS) {
-  const inputEnv = new Environment(colors, {}, DEFAULT_OPTIONS, {});
-  const ast = parseToAST({ id: [root] }, DEFAULT_OPTIONS);
-  if (DEFAULT_OPTIONS.stages) {
+export function LLEval(
+  root: any,
+  colors: Color[],
+  options: Partial<typeof DEFAULT_OPTIONS> = {}
+) {
+  const opts = { ...DEFAULT_OPTIONS, ...options };
+
+  const inputEnv = new Environment(colors, {}, opts, {});
+  const ast = parseToAST({ id: [root] }, opts);
+  if (options.stages) {
     console.log(ast.toString());
     console.log("EVALUATION EVALUATION EVALUATION EVALUATION");
   }
   const { result, env } = ast.evaluate(inputEnv);
-  console.log("blame", env.colorBlame);
-  return result;
+  const blame = Object.entries(env.colorBlame)
+    .filter((x) => x[1])
+    .map((x) => +x[0]);
+
+  return { result, blame };
 }
 
-export function prettyPrintLL(root: any) {
-  const ast = parseToAST({ id: [root] }, DEFAULT_OPTIONS);
+export function prettyPrintLL(
+  root: any,
+  options: Partial<typeof DEFAULT_OPTIONS> = {}
+) {
+  const opts = { ...DEFAULT_OPTIONS, ...options };
+  console.log("options", opts);
+  const ast = parseToAST({ id: [root] }, opts);
   return ast.toString();
 }

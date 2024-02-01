@@ -1,21 +1,26 @@
+Expressions
+EXPR = Conjunction | Quantifier | Comparison | Boolean
+
 Conjunctions:
 AND: {and: [EXPR, EXPR, ...]}
 OR: {or: [EXPR, EXPR, EXPR]}
 NOT: {not: EXPR}
 
 Quantifiers:
-FORALL: {all: {value: Variable, where?: PREDICATE, input: Variable | Value[]}}
-EXISTS: {exists: {value: Variable, where?: PREDICATE, input: Variable | Value[]}}
+FORALL: {all: {value: Variable, where?: PREDICATE, in: Variable | Value[]}}
+EXISTS: {exists: {value: Variable, where?: PREDICATE, in: Variable | Value[]}}
 
-Comparisons:
+Comparisons (value) => expression
 similar: {"similar": {left: Value, right: Value, similarityThreshold: Number}}
 equal: {"==": {left: Value, right: Value}}
 not equal: {"!=": {left: Value, right: Value}}
 less than: {"<": {left: Value, right: Value}}
 greater than: {">": {left: Value, right: Value}}
 
+Value = Variable | Number | Color | Boolean
+
 Operations:
-count: {count: Variable | Number[]}
+count: {count: Variable | Number[] | Color[]}
 sum: {sum: Variable | Number[]}
 min: {min: Variable | Number[]}
 max: {max: Variable | Number[]}

@@ -351,6 +351,56 @@ test("LintLanguage Name discrimination with a single color", () => {
   expect(result.result).toBe(true);
 });
 
+test("LintLanguage Measure Distance", () => {
+  const colors = toColors(["#000000", "#fff"]);
+  const program = {
+    "==": {
+      left: { dist: { left: colors[0], right: colors[1] }, space: "lab" },
+      right: 100,
+    },
+  };
+  const result = LLEval(program, []);
+  expect(prettyPrintLL(program)).toBe("dist(#000, #fff, lab) == 100");
+  expect(result.result).toBe(true);
+  expect(result.blame).toStrictEqual([]);
+});
+
+test("LintLanguage Measure DeltaE", () => {
+  const colors = toColors(["#000000", "#fff"]);
+  const program = {
+    "==": {
+      left: {
+        deltaE: { left: colors[0], right: colors[1] },
+        algorithm: "2000",
+      },
+      right: 100,
+    },
+  };
+  const result = LLEval(program, []);
+  expect(prettyPrintLL(program)).toBe("deltaE(#000, #fff, 2000) == 100");
+  expect(result.result).toBe(true);
+  expect(result.blame).toStrictEqual([]);
+});
+
+test("LintLanguage Measure Contrast", () => {
+  const colors = toColors(["#000000", "#fff"]);
+  const program = {
+    "==": {
+      left: {
+        contrast: { left: colors[0], right: colors[1] },
+        algorithm: "APCA",
+      },
+      right: -107.88473522404158,
+    },
+  };
+  const result = LLEval(program, []);
+  expect(prettyPrintLL(program)).toBe(
+    "contrast(#000, #fff, APCA) == -107.88473522404158"
+  );
+  expect(result.result).toBe(true);
+  expect(result.blame).toStrictEqual([]);
+});
+
 test("LintLanguage Avoid Extreme Colors", () => {
   const program = {
     all: {

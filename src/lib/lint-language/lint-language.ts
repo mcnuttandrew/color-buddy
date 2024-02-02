@@ -38,7 +38,6 @@ class Environment {
   }
   toggleBlame(index: number) {
     const newBlame = { ...this.colorBlame, [index]: !this.colorBlame[index] };
-    console.log("newBlame", newBlame);
     return new Environment(this.colors, this.variables, this.options, newBlame);
   }
   blameIndices(indices: number[]) {
@@ -401,6 +400,7 @@ export class LLValue extends LLNode {
   constructor(
     private value:
       | LLValueFunction
+      | LLPairFunction
       | LLColor
       | LLNumber
       | LLVariable
@@ -416,6 +416,7 @@ export class LLValue extends LLNode {
   static tryToConstruct(node: any, options: OptionsConfig) {
     const types = [
       LLValueFunction,
+      LLPairFunction,
       LLBool,
       LLColor,
       LLNumber,
@@ -491,29 +492,101 @@ export class LLValueFunction extends LLNode {
   static tryToConstruct(node: any, options: OptionsConfig) {
     const inputTypes = [LLColor, LLVariable];
     // find the appropriate type and do a simple type check
-    const op = VFTypes.find((x) => {
-      const pk = node[x.primaryKey];
-      if (!pk) return false;
-      const allParamsFound = x.params.every((key) => key in node);
-      const noExtraParams = Object.keys(node).every(
-        (key) => x.params.includes(key) || key === x.primaryKey
-      );
-      return allParamsFound && noExtraParams;
-    });
-
+    const op = getOp(VFTypes)(node);
     if (!op) return false;
     const input = tryTypes(inputTypes, options)(node[op.primaryKey]);
     if (!input) return false;
-    const params = op.params.reduce(
-      (acc, key) => ({ ...acc, [key]: node[key] }),
-      {}
-    );
+    const params = getParams(op, node);
     return new LLValueFunction(op.primaryKey, input, params);
   }
   toString(): string {
     const params = Object.values(this.params).join(", ");
     const paramString = params.length ? `, ${params}` : "";
     return `${this.type}(${this.input.toString()}${paramString})`;
+  }
+}
+
+const getOp =
+  (ops: typeof VFTypes | typeof LLPairFunctionTypes) => (node: any) =>
+    ops.find((x) => {
+      const pk = node[x.primaryKey];
+      if (!pk) return false;
+      const allParamsFound = x.params.every((key) => key in node);
+      const noExtraParams = Object.keys(node).every(
+        (key) => x.params.includes(key) || key === x.primaryKey
+      );
+      // console.log(allParamsFound, noExtraParams, x.params, Object.keys(node));
+      return allParamsFound && noExtraParams;
+    });
+const getParams = (op: any, node: any) =>
+  op.params.reduce((acc: any, key: any) => ({ ...acc, [key]: node[key] }), {});
+
+const LLPairFunctionTypes = [
+  {
+    primaryKey: "dist",
+    params: ["space"] as string[],
+    op: (valA: Color, valB: Color, params: Params) =>
+      valA.distance(valB, params.space as any),
+  },
+  {
+    primaryKey: "deltaE",
+    params: ["algorithm"] as string[],
+    op: (valA: Color, valB: Color, params: Params) =>
+      valA.deltaE(valB, params.algorithm as any),
+  },
+  {
+    primaryKey: "contrast",
+    params: ["algorithm"] as string[],
+    op: (valA: Color, valB: Color, params: Params) =>
+      valA.toColorIO().contrast(valB.toColorIO(), params.algorithm as any),
+  },
+];
+export class LLPairFunction extends LLNode {
+  constructor(
+    private type: (typeof LLPairFunctionTypes)[number]["primaryKey"],
+    private left: LLColor | LLVariable,
+    private right: LLColor | LLVariable,
+    private params: Record<string, string>
+  ) {
+    super();
+  }
+  evaluate(env: Environment) {
+    this.evalCheck(env);
+    const { left, right, params } = this;
+    // get the value of the input, such as by deref
+    const leftEval = left.evaluate(env).result;
+    const rightEval = right.evaluate(env).result;
+    if (!(leftEval instanceof Color) || !(rightEval instanceof Color)) {
+      throw new Error("Type error");
+    }
+    const op = LLPairFunctionTypes.find((x) => x.primaryKey === this.type);
+    if (!op) throw new Error("Invalid type");
+    const result = op.op(leftEval, rightEval, params);
+    if (result === undefined) {
+      throw new Error("Invalid result");
+    }
+    return { result, env };
+  }
+  static tryToConstruct(node: any, options: OptionsConfig) {
+    const inputTypes = [LLColor, LLVariable];
+    // find the appropriate type and do a simple type check
+    const op = getOp(LLPairFunctionTypes)(node);
+    if (!op) return false;
+    const { left, right } = node[op.primaryKey];
+    const leftType = tryTypes(inputTypes, options)(left);
+    const rightType = tryTypes(inputTypes, options)(right);
+
+    if (!leftType || !rightType) return false;
+    const params = getParams(op, node);
+    return new LLPairFunction(op.primaryKey, leftType, rightType, params);
+  }
+
+  toString() {
+    const params = Object.values(this.params).join(", ");
+    const paramString = params.length ? `, ${params}` : "";
+    return `${
+      this.type
+    }(${this.left.toString()}, ${this.right.toString()}${paramString})`;
   }
 }
 
@@ -558,11 +631,6 @@ export class LLQuantifier extends LLNode {
         const newEnv = varbIndex.reduce((acc, [varb, [index, x]]) => {
           return acc.set(varb, x).set(`index(${varb})`, idxType(index + 1));
         }, env);
-        // console.log(
-        //   "skip",
-        //   this.where?.toString(),
-        //   Object.fromEntries(varbIndex)
-        // );
 
         if (this.where && !this.where.evaluate(newEnv).result) {
           return "skip";

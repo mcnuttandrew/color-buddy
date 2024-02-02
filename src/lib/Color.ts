@@ -127,8 +127,15 @@ export class Color {
   luminance(): number {
     return this.toColorIO().luminance;
   }
-  deltaE(color: Color): number {
-    return this.toColorIO().deltaE(color.toColorIO(), "2000");
+  deltaE(
+    color: Color,
+    algorithm: "76" | "CMC" | "2000" | "ITP" | "Jz" | "OK" = "2000"
+  ): number {
+    return this.toColorIO().deltaE(color.toColorIO(), algorithm);
+  }
+  distance(color: Color, space: string): number {
+    const colorSpace = space || this.spaceName;
+    return this.toColorIO().distance(color.toColorIO(), colorSpace);
   }
   symmetricDeltaE(color: Color): number {
     return 0.5 * (this.deltaE(color) + color.deltaE(this));

@@ -38,6 +38,11 @@ export class Color {
     return `${this.spaceName}(${channelsString})`;
   }
   getChannel(channel: keyof typeof this.channels): number {
+    let channelStr = channel.toLowerCase() as string;
+    if (!(channelStr in this.channels)) {
+      channelStr = channelStr.toUpperCase();
+      return this.channels[channelStr];
+    }
     return this.channels[channel];
   }
   toChannels(): Channels {

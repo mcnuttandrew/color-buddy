@@ -268,12 +268,9 @@ test("LintLanguage to color rotate", () => {
           varb: "b",
           predicate: {
             "==": {
-              left: { toColor: "a", space: "hsl", channel: "h" },
+              left: { "hsl.h": "a" },
               right: {
-                "+": {
-                  left: { toColor: "b", space: "hsl", channel: "h" },
-                  right: 180,
-                },
+                "+": { left: { "hsl.h": "b" }, right: 180 },
               },
             },
           },
@@ -282,7 +279,7 @@ test("LintLanguage to color rotate", () => {
     },
   };
   expect(prettyPrintLL(realisticProgram)).toBe(
-    "EXIST a in colors, EXIST b in colors, toColor(a, hsl, h) == toColor(b, hsl, h) + 180"
+    "EXIST a in colors, EXIST b in colors, hsl.h(a) == hsl.h(b) + 180"
   );
   expect(LLEval(realisticProgram, exampleColors).result).toBe(false);
 });
@@ -410,7 +407,7 @@ test("LintLanguage Avoid Extreme Colors Swapped Predicate Order (blame test)", (
   expect(failResult.blame).toStrictEqual([3]);
 });
 
-test.skip("LintLanguage Sequential Colors", () => {
+test("LintLanguage Sequential Colors", () => {
   const program = {
     or: [
       {
@@ -424,10 +421,7 @@ test.skip("LintLanguage Sequential Colors", () => {
             },
           },
           predicate: {
-            ">": {
-              left: { space: "lab", channel: "l", toColor: "a" },
-              right: { space: "lab", channel: "l", toColor: "b" },
-            },
+            ">": { left: { "lab.l": "a" }, right: { "lab.l": "b" } },
           },
         },
       },
@@ -442,48 +436,155 @@ test.skip("LintLanguage Sequential Colors", () => {
             },
           },
           predicate: {
-            "<": {
-              left: { space: "lab", channel: "l", toColor: "a" },
-              right: { space: "lab", channel: "l", toColor: "b" },
+            "<": { left: { "lab.l": "a" }, right: { "lab.l": "b" } },
+          },
+        },
+      },
+    ],
+  };
+
+  const outOfOrder = toColors(["#d4a8ff", "#008694", "#7bb9ff"]);
+  const ooResult = LLEval(program, outOfOrder);
+  expect(ooResult.result).toBe(false);
+  expect(ooResult.blame).toStrictEqual([0, 1, 2]);
+
+  const inOrder = toColors(["#d4a8ff", "#7bb9ff", "#008694"]);
+  expect(LLEval(program, inOrder).result).toBe(true);
+  expect(prettyPrintLL(program)).toBe(
+    "ALL (a, b) in colors WHERE index(a) - 1 == index(b), lab.l(a) > lab.l(b) or ALL (a, b) in colors WHERE index(a) - 1 == index(b), lab.l(a) < lab.l(b)"
+  );
+});
+
+test("LintLanguage Sequential Colors", () => {
+  const sequential = {
+    "==": {
+      left: { "-": { left: "index(a)", right: 1 } },
+      right: "index(b)",
+    },
+  };
+  const program = {
+    or: [
+      {
+        all: {
+          in: "colors",
+          varbs: ["a", "b"],
+          where: sequential,
+          predicate: {
+            ">": { left: { "lab.l": "a" }, right: { "lab.l": "b" } },
+          },
+        },
+      },
+      {
+        all: {
+          in: "colors",
+          varbs: ["a", "b"],
+          where: sequential,
+          predicate: {
+            "<": { left: { "lab.l": "a" }, right: { "lab.l": "b" } },
+          },
+        },
+      },
+    ],
+  };
+
+  const outOfOrder = toColors(["#d4a8ff", "#008694", "#7bb9ff"]);
+  const ooResult = LLEval(program, outOfOrder);
+  expect(ooResult.result).toBe(false);
+  expect(ooResult.blame).toStrictEqual([0, 1, 2]);
+
+  const inOrder = toColors(["#d4a8ff", "#7bb9ff", "#008694"]);
+  expect(LLEval(program, inOrder).result).toBe(true);
+  expect(prettyPrintLL(program)).toBe(
+    "ALL (a, b) in colors WHERE index(a) - 1 == index(b), lab.l(a) > lab.l(b) or ALL (a, b) in colors WHERE index(a) - 1 == index(b), lab.l(a) < lab.l(b)"
+  );
+});
+
+test.skip("LintLanguage Diverging Colors - dense notation", () => {
+  const sequential = {
+    and: [
+      { "<": { left: "index(a)", right: "index(c)" } },
+      {
+        "==": {
+          left: "index(a)",
+          right: { "-": { left: "index(b)", right: 1 } },
+        },
+      },
+    ],
+  };
+  const prog = {
+    or: [
+      {
+        exist: {
+          in: "colors",
+          varb: "c",
+          predicate: {
+            all: {
+              in: "colors",
+              varbs: ["a", "b"],
+              where: sequential,
+              predicate: {
+                and: [
+                  { "<": { left: { "lab.l": "a" }, right: { "lab.l": "c" } } },
+                  { ">": { left: { "lab.l": "b" }, right: { "lab.l": "a" } } },
+                ],
+              },
+            },
+          },
+        },
+      },
+      {
+        exist: {
+          in: "colors",
+          varb: "c",
+          predicate: {
+            all: {
+              in: "colors",
+              varbs: ["a", "b"],
+              where: sequential,
+              predicate: {
+                and: [
+                  { ">": { left: { "lab.l": "a" }, right: { "lab.l": "c" } } },
+                  { "<": { left: { "lab.l": "b" }, right: { "lab.l": "a" } } },
+                ],
+              },
             },
           },
         },
       },
     ],
   };
-  expect(prettyPrintLL(program)).toBe(
-    "ALL a in colors, ALL b in colors, toColor(a, lab, l) > toColor(b, lab, l) or ALL a in colors, ALL b in colors, toColor(a, lab, l) > toColor(b, lab, l)"
-  );
-
-  expect(LLEval(program, toColors(["#d4a8ff", "#008694", "#7bb9ff"]))).toBe(
-    false
-  );
-  expect(LLEval(program, toColors(["#d4a8ff", "#7bb9ff", "#008694"]))).toBe(
-    true
-  );
+  const divergingColors = toColors([
+    "#67001f",
+    "#b2182b",
+    "#d6604d",
+    "#f4a582",
+    "#fddbc7",
+    "#fff",
+    "#e0e0e0",
+    "#bababa",
+    "#878787",
+    "#4d4d4d",
+    "#1a1a1a",
+  ]);
+  const result = LLEval(prog, divergingColors);
+  expect(result.result).toBe(true);
+  const result2 = LLEval(prog, toColors(["#be4704", "#008000", "#e00050"]));
+  expect(result2.result).toBe(false);
 });
 
 // Text version
-// or
-// (all colors a, all colors b where index(a) - 1 == index(b), lab(a, l) > lab(b, l))
-// (all colors a, all colors b where index(a) - 1 == index(b), lab(a, l) < lab(b, l))
+// OR
+// EXIST c in colors,
+//     ALL a, b where index(a) < index(c) AND index(a) == index(b) - 1, lab(a, l) < lab(c, l) AND lab(b, l) > lab(a, l)
+//     AND
+//     ALL a, b where index(a) > index(c) AND index(a) == index(b) - 1, lab(a, l) > lab(c, l) AND lab(b, l) < lab(a, l)
+// EXIST c in colors,
+//     ALL a, b where index(a) < index(c) AND index(a) == index(b) - 1, lab(a, l) > lab(c, l) AND lab(b, l) < lab(a, l)
+//     AND
+//     ALL a, b where index(a) > index(c) AND index(a) == index(b) - 1, lab(a, l) < lab(c, l) AND lab(b, l) > lab(a, l)
 
 // // YAML VERSION
-// - or:
-//     - all:
-//         in: colors
-//         value: a
-//         predicate:
-//             all:
-//                 in: colors
-//                 value: b
-//                 where:
-//                     ==:
-//                         left:  {-: {left: index(a), right: 1}}
-//                         right: index(b)
-//                 predicate:
-//                     >:
-//                         left:  {space: 'lab', channel: 'l', color: a}
-//                         right: {space: 'lab', channel: 'l', color: a}
+// or:
+//
 
 // JSON VERSION

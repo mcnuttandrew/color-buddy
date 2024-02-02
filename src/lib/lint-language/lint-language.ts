@@ -1,5 +1,5 @@
 import cvd_sim from "../blindness";
-import { Color } from "../Color";
+import { Color, colorPickerConfig } from "../Color";
 import { getName } from "../lints/name-discrim";
 
 type RawValues = string | number | Color | string[] | number[] | Color[];
@@ -450,7 +450,19 @@ const VFTypes = [
     op: (val: Color, params: Params) =>
       val.toColorSpace(params.space as any).getChannel(params.channel),
   },
-] as const;
+];
+
+Object.entries(colorPickerConfig).map(([colorSpace, value]) => {
+  (["xChannel", "yChannel", "zChannel"] as const).forEach((channel) => {
+    const channelKey = value[channel];
+    VFTypes.push({
+      primaryKey: `${colorSpace}.${channelKey.toLowerCase()}`,
+      params: [] as string[],
+      op: (val: Color, _params: Params) =>
+        val.toColorSpace(colorSpace as any).getChannel(channelKey),
+    });
+  });
+});
 
 export class LLValueFunction extends LLNode {
   constructor(
@@ -471,6 +483,9 @@ export class LLValueFunction extends LLNode {
     const op = VFTypes.find((x) => x.primaryKey === this.type);
     if (!op) throw new Error("Invalid type");
     const result = op.op(inputEval, params);
+    if (result === undefined) {
+      throw new Error("Invalid result");
+    }
     return { result, env };
   }
   static tryToConstruct(node: any, options: OptionsConfig) {
@@ -543,10 +558,14 @@ export class LLQuantifier extends LLNode {
         const newEnv = varbIndex.reduce((acc, [varb, [index, x]]) => {
           return acc.set(varb, x).set(`index(${varb})`, idxType(index + 1));
         }, env);
-        if (this.where) {
-          if (!this.where.evaluate(newEnv).result) {
-            return "skip";
-          }
+        // console.log(
+        //   "skip",
+        //   this.where?.toString(),
+        //   Object.fromEntries(varbIndex)
+        // );
+
+        if (this.where && !this.where.evaluate(newEnv).result) {
+          return "skip";
         }
         const evalPred = this.predicate.evaluate(newEnv);
         topEnv = topEnv.mergeBlame(evalPred.env.colorBlame);

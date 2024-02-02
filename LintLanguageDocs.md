@@ -21,6 +21,7 @@ Value = Variable | Number | Color | Boolean
 
 Operations:
 count: {count: Variable | Number[] | Color[]}
+distance: {left: Color | Variable, right: Color | Variable, algorithm: String }
 sum: {sum: Variable | Number[]}
 min: {min: Variable | Number[]}
 max: {max: Variable | Number[]}

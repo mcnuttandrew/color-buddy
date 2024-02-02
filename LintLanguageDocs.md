@@ -20,10 +20,14 @@ greater than: {">": {left: Value, right: Value}}
 Value = Variable | Number | Color | Boolean
 
 Operations:
-count: {count: Variable | Number[] | Color[]}
+\*: {left: Number | Variable, right: Number | Variable}
++: {left: Number | Variable, right: Number | Variable}
+/: {left: Number | Variable, right: Number | Variable}
+-: {left: Number | Variable, right: Number | Variable}
 dist: {left: Color | Variable, right: Color | Variable, space: COLOR_SPACE }
 deltaE: {left: Color | Variable, right: Color | Variable, algorithm: '2000' | etc }
 contrast: {left: Color | Variable, right: Color | Variable, algorithm: | "APCA" | "WCAG21" | "Michelson" | "Weber" | "Lstar" | "DeltaPhi"}
+count: {count: Variable | Number[] | Color[]}
 sum: {sum: Variable | Number[]}
 min: {min: Variable | Number[]}
 max: {max: Variable | Number[]}

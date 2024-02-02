@@ -1,6 +1,7 @@
 import cvd_sim from "../blindness";
 import { Color, colorPickerConfig } from "../Color";
 import { getName } from "../lints/name-discrim";
+import type { LintProgram } from "./lint-type";
 
 type RawValues = string | number | Color | string[] | number[] | Color[];
 class Environment {
@@ -768,7 +769,7 @@ const DEFAULT_OPTIONS = {
   stages: false,
 };
 export function LLEval(
-  root: any,
+  root: LintProgram,
   colors: Color[],
   options: Partial<typeof DEFAULT_OPTIONS> = {}
 ) {

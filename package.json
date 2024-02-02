@@ -14,7 +14,8 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
-    "build-parser": "lezer-generator src/lib/lint-language/lint.grammar -o src/lib/lint-language/lint-parser.js"
+    "build-parser": "lezer-generator src/lib/lint-language/lint.grammar -o src/lib/lint-language/lint-parser.js",
+    "build-schema": "ts-json-schema-generator --path src/lib/lint-language/lint-type.ts LintProgram  > src/lib/lint-language/lint-schema.json"
   },
   "devDependencies": {
     "@lezer/generator": "^1.6.0",
@@ -28,6 +29,7 @@
     "postcss": "^8.4.32",
     "svelte": "^4.2.3",
     "svelte-check": "^3.6.0",
+    "ts-json-schema-generator": "^1.5.0",
     "tslib": "^2.6.2",
     "typescript": "^5.2.2",
     "vega-typings": "^1.0.1",

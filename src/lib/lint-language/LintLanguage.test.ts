@@ -382,7 +382,7 @@ test("LintLanguage Avoid Extreme Colors", () => {
   expect(failResult.blame).toStrictEqual([3]);
 });
 
-test("LintLanguage Avoid Extreme Colors Swapped Predicate Order", () => {
+test("LintLanguage Avoid Extreme Colors Swapped Predicate Order (blame test)", () => {
   const program = {
     all: {
       in: ["#000000", "#ffffff"],

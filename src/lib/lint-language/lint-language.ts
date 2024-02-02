@@ -49,6 +49,10 @@ class Environment {
     return new Environment(this.colors, this.variables, this.options, newBlame);
   }
   toggleAllBlame() {
+    const nothingBlamedYet = Object.values(this.colorBlame).every((x) => !x);
+    if (nothingBlamedYet) {
+      return this.copy();
+    }
     const newBlame = this.colors.reduce(
       (acc, _, i) => ({ ...acc, [i]: !this.colorBlame[i] }),
       {}
@@ -148,19 +152,18 @@ export class LLConjunction extends LLNode {
       case "id":
       case "and":
         let andEnv = env;
-        const result = children.every((x) => {
-          const y = x.evaluate(andEnv);
-          andEnv = andEnv.mergeBlame(y.env.colorBlame);
-          return y.result;
+        const result = children.every((child) => {
+          const childResult = child.evaluate(andEnv);
+          andEnv = andEnv.mergeBlame(childResult.env.colorBlame);
+          return childResult.result;
         });
         return { result: result, env: andEnv };
       case "or":
         let orEnv = env;
-        const someResult = children.some((x) => {
-          const y = x.evaluate(orEnv);
-          console.log("todo this needs a different blame algorithm");
-          orEnv = orEnv.mergeBlame(y.env.colorBlame);
-          return y.result;
+        const someResult = children.some((child) => {
+          const childResult = child.evaluate(orEnv);
+          orEnv = orEnv.mergeBlame(childResult.env.colorBlame);
+          return childResult.result;
         });
         return { result: someResult, env: orEnv };
       // return { result: children.some((x) => x.evaluate(env).result), env };
@@ -531,6 +534,7 @@ export class LLQuantifier extends LLNode {
       (x: any) => (Array.isArray(x) ? x : [x])
     );
     let blameIndices = new Set<number>([]);
+    let topEnv = env.copy();
     const mappedEvaluations = carts
       .map((combo: any) => {
         const varbIndex = this.varbs.map((varb, idx) => {
@@ -544,30 +548,33 @@ export class LLQuantifier extends LLNode {
             return "skip";
           }
         }
-        const evalPred = this.predicate.evaluate(newEnv).result;
-        if (evalPred === false) {
+        const evalPred = this.predicate.evaluate(newEnv);
+        topEnv = topEnv.mergeBlame(evalPred.env.colorBlame);
+        if (evalPred.result === false) {
           combo.forEach((x: number) => blameIndices.add(x));
         }
-        return evalPred;
+        return evalPred.result;
       })
       .filter((x: any) => x !== "skip") as boolean[];
 
     // todo don't try to do blame indices if its not looking at color
-    console.log(this.input);
-    const blameArray = Array.from(blameIndices);
+    const isColor =
+      this.input.constructor.name === "LLVariable" &&
+      this.input.toString() === "colors";
+    const blameArray = isColor ? Array.from(blameIndices) : [];
 
     switch (this.type) {
       case "exist":
         if (mappedEvaluations.some((x) => x)) {
-          return { result: true, env };
+          return { result: true, env: topEnv };
         } else {
-          return { result: false, env: env.blameIndices(blameArray) };
+          return { result: false, env: topEnv.blameIndices(blameArray) };
         }
       case "all":
         if (mappedEvaluations.every((x) => x)) {
-          return { result: true, env };
+          return { result: true, env: topEnv };
         } else {
-          return { result: false, env: env.blameIndices(blameArray) };
+          return { result: false, env: topEnv.blameIndices(blameArray) };
         }
     }
   }
@@ -699,7 +706,6 @@ export function prettyPrintLL(
   options: Partial<typeof DEFAULT_OPTIONS> = {}
 ) {
   const opts = { ...DEFAULT_OPTIONS, ...options };
-  console.log("options", opts);
   const ast = parseToAST({ id: [root] }, opts);
   return ast.toString();
 }

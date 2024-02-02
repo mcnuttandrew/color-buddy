@@ -1,18 +1,28 @@
 import { expect, test } from "vitest";
 import { LLEval, prettyPrintLL } from "./lint-language";
 import { Color } from "../Color";
+import type { Palette } from "../../stores/color-store";
 
-const toColors = (colors: string[]) =>
+const toPal = (colors: string[]): Palette => ({
+  name: "test",
+  type: "sequential",
+  colorSpace: "lab",
+  evalConfig: {},
+  background: toColors(["#fff"])[0],
+  colors: toColors(colors),
+});
+const toColors = (colors: string[]): Color[] =>
   colors.map((x) => Color.colorFromString(x, "lab"));
-const exampleColors = toColors(["#d4a8ff", "#7bb9ff", "#008694"]);
+const exampleColors = toPal(["#d4a8ff", "#7bb9ff", "#008694"]);
 
-test("LintLanguage basic eval ", () => {
-  // eval with no references
-  const prog1 = { "<": { left: { count: exampleColors }, right: 2 } };
-  expect(LLEval(prog1, exampleColors).result).toBe(false);
+test("LintLanguage basic eval - eval with no references ", () => {
+  const prog1 = { "<": { left: { count: exampleColors.colors }, right: 2 } };
   expect(prettyPrintLL(prog1)).toBe("count([#d4a8ff, #7bb9ff, #008694]) < 2");
+  expect(LLEval(prog1, exampleColors).result).toBe(false);
+});
 
-  const prog2 = { "<": { left: { count: exampleColors }, right: 10 } };
+test("LintLanguage basic eval - eval with no references 2 ", () => {
+  const prog2 = { "<": { left: { count: exampleColors.colors }, right: 10 } };
   const prog2Result = LLEval(prog2, exampleColors);
   expect(prog2Result.result).toBe(true);
   expect(prog2Result.blame).toStrictEqual([]);
@@ -25,6 +35,20 @@ test("LintLanguage basic eval ", () => {
   expect(prog3Eval.blame).toStrictEqual([]);
   expect(prettyPrintLL(prog3)).toBe("count(colors) < 2");
 
+  const prog4 = { "<": { left: { count: "colors" }, right: 10 } };
+  expect(LLEval(prog4, exampleColors).result).toBe(true);
+  expect(prettyPrintLL(prog4)).toBe("count(colors) < 10");
+});
+
+test("LintLanguage basic eval - eval with main reference 1", () => {
+  const prog3 = { "<": { left: { count: "colors" }, right: 2 } };
+  const prog3Eval = LLEval(prog3, exampleColors);
+  expect(prog3Eval.result).toBe(false);
+  expect(prog3Eval.blame).toStrictEqual([]);
+  expect(prettyPrintLL(prog3)).toBe("count(colors) < 2");
+});
+
+test("LintLanguage basic eval - eval with main reference 2", () => {
   const prog4 = { "<": { left: { count: "colors" }, right: 10 } };
   expect(LLEval(prog4, exampleColors).result).toBe(true);
   expect(prettyPrintLL(prog4)).toBe("count(colors) < 10");
@@ -284,8 +308,8 @@ test("LintLanguage to color rotate", () => {
   expect(LLEval(realisticProgram, exampleColors).result).toBe(false);
 });
 
-const greens = toColors(["#008137", "#008000", "#008200"]);
-const reds = toColors(["#c13f25", "#dd0048", "#a35a00"]);
+const greens = toPal(["#008137", "#008000", "#008200"]);
+const reds = toPal(["#c13f25", "#dd0048", "#a35a00"]);
 test("LintLanguage Name discrimination", () => {
   // all names should be measured as different
   const program = {
@@ -347,7 +371,7 @@ test("LintLanguage Name discrimination with a single color", () => {
   expect(prettyPrintLL(program)).toBe(
     "ALL a in colors, ALL b in colors WHERE index(a) != index(b), name(a) != name(b)"
   );
-  const result = LLEval(program, toColors(["#008137"]));
+  const result = LLEval(program, toPal(["#008137"]));
   expect(result.result).toBe(true);
 });
 
@@ -423,7 +447,7 @@ test("LintLanguage Avoid Extreme Colors", () => {
   expect(blame).toStrictEqual([]);
   const failResult = LLEval(
     program,
-    toColors(["#111", "#111", "#111", "#000000"])
+    toPal(["#111", "#111", "#111", "#000000"])
   );
   expect(failResult.result).toBe(false);
   expect(failResult.blame).toStrictEqual([3]);
@@ -451,7 +475,7 @@ test("LintLanguage Avoid Extreme Colors Swapped Predicate Order (blame test)", (
   expect(blame).toStrictEqual([]);
   const failResult = LLEval(
     program,
-    toColors(["#111", "#111", "#111", "#000000"])
+    toPal(["#111", "#111", "#111", "#000000"])
   );
   expect(failResult.result).toBe(false);
   expect(failResult.blame).toStrictEqual([3]);
@@ -493,12 +517,12 @@ test("LintLanguage Sequential Colors", () => {
     ],
   };
 
-  const outOfOrder = toColors(["#d4a8ff", "#008694", "#7bb9ff"]);
+  const outOfOrder = toPal(["#d4a8ff", "#008694", "#7bb9ff"]);
   const ooResult = LLEval(program, outOfOrder);
   expect(ooResult.result).toBe(false);
   expect(ooResult.blame).toStrictEqual([0, 1, 2]);
 
-  const inOrder = toColors(["#d4a8ff", "#7bb9ff", "#008694"]);
+  const inOrder = toPal(["#d4a8ff", "#7bb9ff", "#008694"]);
   expect(LLEval(program, inOrder).result).toBe(true);
   expect(prettyPrintLL(program)).toBe(
     "ALL (a, b) in colors WHERE index(a) - 1 == index(b), lab.l(a) > lab.l(b) or ALL (a, b) in colors WHERE index(a) - 1 == index(b), lab.l(a) < lab.l(b)"
@@ -537,12 +561,12 @@ test("LintLanguage Sequential Colors", () => {
     ],
   };
 
-  const outOfOrder = toColors(["#d4a8ff", "#008694", "#7bb9ff"]);
+  const outOfOrder = toPal(["#d4a8ff", "#008694", "#7bb9ff"]);
   const ooResult = LLEval(program, outOfOrder);
   expect(ooResult.result).toBe(false);
   expect(ooResult.blame).toStrictEqual([0, 1, 2]);
 
-  const inOrder = toColors(["#d4a8ff", "#7bb9ff", "#008694"]);
+  const inOrder = toPal(["#d4a8ff", "#7bb9ff", "#008694"]);
   expect(LLEval(program, inOrder).result).toBe(true);
   expect(prettyPrintLL(program)).toBe(
     "ALL (a, b) in colors WHERE index(a) - 1 == index(b), lab.l(a) > lab.l(b) or ALL (a, b) in colors WHERE index(a) - 1 == index(b), lab.l(a) < lab.l(b)"
@@ -603,7 +627,7 @@ test.skip("LintLanguage Diverging Colors - dense notation", () => {
       },
     ],
   };
-  const divergingColors = toColors([
+  const divergingColors = toPal([
     "#67001f",
     "#b2182b",
     "#d6604d",
@@ -618,7 +642,7 @@ test.skip("LintLanguage Diverging Colors - dense notation", () => {
   ]);
   const result = LLEval(prog, divergingColors);
   expect(result.result).toBe(true);
-  const result2 = LLEval(prog, toColors(["#be4704", "#008000", "#e00050"]));
+  const result2 = LLEval(prog, toPal(["#be4704", "#008000", "#e00050"]));
   expect(result2.result).toBe(false);
 });
 

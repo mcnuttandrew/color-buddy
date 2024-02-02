@@ -1,4 +1,5 @@
 import cvd_sim from "../blindness";
+import type { Palette } from "../../stores/color-store";
 import { Color, colorPickerConfig } from "../Color";
 import { getName } from "../lints/name-discrim";
 import type { LintProgram } from "./lint-type";
@@ -6,21 +7,22 @@ import type { LintProgram } from "./lint-type";
 type RawValues = string | number | Color | string[] | number[] | Color[];
 class Environment {
   constructor(
-    private colors: Color[],
+    private palette: Palette,
     private variables: Record<string, LLVariable | LLValue | LLValueArray>,
     public options: OptionsConfig,
     public colorBlame: Record<number, boolean> = {}
   ) {}
   set(name: string, value: LLVariable | LLValue | LLValueArray) {
-    if (name === "colors") {
-      throw new Error("Cannot set colors");
+    const reserved = new Set(["colors", "background"]);
+    if (reserved.has(name)) {
+      throw new Error(`Cannot set ${reserved}`);
     }
     if (this.variables[name]) {
       throw new Error("Variable already exists");
     }
     const newVariables = { ...this.variables, [name]: value };
     return new Environment(
-      this.colors,
+      this.palette,
       newVariables,
       this.options,
       this.colorBlame
@@ -28,7 +30,7 @@ class Environment {
   }
   get(name: string) {
     if (name === "colors") {
-      const children = this.colors
+      const children = this.palette.colors
         .map((x) => new LLColor(x))
         .map((x) => new LLValue(x));
       return new LLValueArray(children);
@@ -39,33 +41,53 @@ class Environment {
   }
   toggleBlame(index: number) {
     const newBlame = { ...this.colorBlame, [index]: !this.colorBlame[index] };
-    return new Environment(this.colors, this.variables, this.options, newBlame);
+    return new Environment(
+      this.palette,
+      this.variables,
+      this.options,
+      newBlame
+    );
   }
   blameIndices(indices: number[]) {
     const newBlame = indices.reduce(
       (acc, x) => ({ ...acc, [x]: true }),
       this.colorBlame
     );
-    return new Environment(this.colors, this.variables, this.options, newBlame);
+    return new Environment(
+      this.palette,
+      this.variables,
+      this.options,
+      newBlame
+    );
   }
   toggleAllBlame() {
     const nothingBlamedYet = Object.values(this.colorBlame).every((x) => !x);
     if (nothingBlamedYet) {
       return this.copy();
     }
-    const newBlame = this.colors.reduce(
+    const newBlame = this.palette.colors.reduce(
       (acc, _, i) => ({ ...acc, [i]: !this.colorBlame[i] }),
       {}
     );
-    return new Environment(this.colors, this.variables, this.options, newBlame);
+    return new Environment(
+      this.palette,
+      this.variables,
+      this.options,
+      newBlame
+    );
   }
   mergeBlame(other: Record<number, boolean>) {
     const newBlame = { ...this.colorBlame, ...other };
-    return new Environment(this.colors, this.variables, this.options, newBlame);
+    return new Environment(
+      this.palette,
+      this.variables,
+      this.options,
+      newBlame
+    );
   }
   copy() {
     return new Environment(
-      this.colors,
+      this.palette,
       { ...this.variables },
       this.options,
       this.colorBlame
@@ -770,12 +792,12 @@ const DEFAULT_OPTIONS = {
 };
 export function LLEval(
   root: LintProgram,
-  colors: Color[],
+  palette: Palette,
   options: Partial<typeof DEFAULT_OPTIONS> = {}
 ) {
   const opts = { ...DEFAULT_OPTIONS, ...options };
 
-  const inputEnv = new Environment(colors, {}, opts, {});
+  const inputEnv = new Environment(palette, {}, opts, {});
   const ast = parseToAST({ id: [root] }, opts);
   if (options.stages) {
     console.log(ast.toString());

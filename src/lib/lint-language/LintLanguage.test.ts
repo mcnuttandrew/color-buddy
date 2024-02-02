@@ -1,6 +1,6 @@
 import { expect, test } from "vitest";
 import { LLEval, prettyPrintLL } from "./lint-language";
-import { Color } from "./Color";
+import { Color } from "../Color";
 
 const toColors = (colors: string[]) =>
   colors.map((x) => Color.colorFromString(x, "lab"));

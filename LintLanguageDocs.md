@@ -7,8 +7,8 @@ OR: {or: [EXPR, EXPR, EXPR]}
 NOT: {not: EXPR}
 
 Quantifiers:
-FORALL: {all: {value: Variable, where?: PREDICATE, in: Variable | Value[]}}
-EXISTS: {exists: {value: Variable, where?: PREDICATE, in: Variable | Value[]}}
+FORALL: {all: {value: Variable, where?: EXPR, in: Variable | Value[]}}
+EXISTS: {exists: {value: Variable, where?: EXPR, in: Variable | Value[]}}
 
 Comparisons (value) => expression
 similar: {"similar": {left: Value, right: Value, similarityThreshold: Number}}

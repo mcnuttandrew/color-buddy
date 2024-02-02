@@ -1,6 +1,6 @@
-import cvd_sim from "./blindness";
-import { Color } from "./Color";
-import { getName } from "./lints/name-discrim";
+import cvd_sim from "../blindness";
+import { Color } from "../Color";
+import { getName } from "../lints/name-discrim";
 
 type RawValues = string | number | Color | string[] | number[] | Color[];
 class Environment {
@@ -90,7 +90,7 @@ const checkIfValsPresent = (node: Record<any, any>, keys: string[]) =>
   keys.every((key) => key in node);
 
 type ReturnVal<A> = { result: A; env: Environment };
-class LLNode {
+export class LLNode {
   evaluate(env: Environment): ReturnVal<any> {
     this.evalCheck(env);
     throw new Error("Invalid node");
@@ -109,7 +109,7 @@ class LLNode {
   }
 }
 
-class LLExpression extends LLNode {
+export class LLExpression extends LLNode {
   constructor(
     private value: LLConjunction | LLPredicate | LLQuantifier | LLBool
   ) {
@@ -133,7 +133,7 @@ class LLExpression extends LLNode {
 }
 
 const ConjunctionTypes = ["and", "or", "not", "none", "id"] as const;
-class LLConjunction extends LLNode {
+export class LLConjunction extends LLNode {
   constructor(
     private type: (typeof ConjunctionTypes)[number],
     private children: LLConjunction[]
@@ -194,7 +194,7 @@ class LLConjunction extends LLNode {
   }
 }
 
-class LLValueArray extends LLNode {
+export class LLValueArray extends LLNode {
   constructor(private children: LLValue[]) {
     super();
   }
@@ -214,7 +214,7 @@ class LLValueArray extends LLNode {
   }
 }
 
-class LLBool extends LLNode {
+export class LLBool extends LLNode {
   constructor(private value: boolean) {
     super();
   }
@@ -231,7 +231,7 @@ class LLBool extends LLNode {
   }
 }
 
-class LLVariable extends LLNode {
+export class LLVariable extends LLNode {
   constructor(private value: string) {
     super();
   }
@@ -249,7 +249,7 @@ class LLVariable extends LLNode {
   }
 }
 
-class LLColor extends LLNode {
+export class LLColor extends LLNode {
   constructor(private value: Color) {
     super();
   }
@@ -271,7 +271,7 @@ class LLColor extends LLNode {
   }
 }
 
-class LLNumber extends LLNode {
+export class LLNumber extends LLNode {
   constructor(private value: number) {
     super();
   }
@@ -289,7 +289,7 @@ class LLNumber extends LLNode {
 }
 
 const LLNumberOpTypes = ["+", "-", "*", "/"] as const;
-class LLNumberOp extends LLNode {
+export class LLNumberOp extends LLNode {
   constructor(
     private type: (typeof LLNumberOpTypes)[number],
     private left: LLValue,
@@ -328,7 +328,7 @@ class LLNumberOp extends LLNode {
 }
 
 const predicateTypes = ["==", "!=", ">", "<", "similar"] as const;
-class LLPredicate extends LLNode {
+export class LLPredicate extends LLNode {
   constructor(
     private type: (typeof predicateTypes)[number],
     private left: LLValue,
@@ -394,7 +394,7 @@ class LLPredicate extends LLNode {
   }
 }
 
-class LLValue extends LLNode {
+export class LLValue extends LLNode {
   constructor(
     private value:
       | LLValueFunction
@@ -449,7 +449,7 @@ const VFTypes = [
   },
 ] as const;
 
-class LLValueFunction extends LLNode {
+export class LLValueFunction extends LLNode {
   constructor(
     private type: (typeof VFTypes)[number]["primaryKey"],
     private input: LLColor | LLVariable,
@@ -505,7 +505,7 @@ let cartesian = (a: any[], b: any[], ...c: any[]): any[] =>
   b ? (cartesian as any)(f(a, b), ...c) : a;
 
 const QuantifierTypes = ["exist", "all"] as const;
-class LLQuantifier extends LLNode {
+export class LLQuantifier extends LLNode {
   constructor(
     private type: (typeof QuantifierTypes)[number],
     private input: LLValueArray | LLVariable,
@@ -614,7 +614,7 @@ class LLQuantifier extends LLNode {
 }
 
 const reduceTypes = ["count", "sum", "min", "max", "mean"] as const;
-class LLReduces extends LLNode {
+export class LLReduces extends LLNode {
   constructor(
     private type: (typeof reduceTypes)[number],
     private children: LLValueArray | LLVariable

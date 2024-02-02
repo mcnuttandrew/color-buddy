@@ -1,0 +1,28 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`lint parser 1`] = `
+LLConjunction {
+  "children": [
+    LLConjunction {
+      "children": [
+        LLBool {
+          "value": true,
+        },
+        LLBool {
+          "value": false,
+        },
+      ],
+      "type": "and",
+    },
+    LLConjunction {
+      "children": [
+        LLBool {
+          "value": true,
+        },
+      ],
+      "type": "not",
+    },
+  ],
+  "type": "or",
+}
+`;

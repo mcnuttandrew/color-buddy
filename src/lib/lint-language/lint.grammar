@@ -1,0 +1,85 @@
+@top Program { expression }
+
+expression {
+    AllQuantifier |
+    NumberCompares |
+    OrExpression | 
+    AndExpression |
+    NotExpression |
+    BooleanExpression 
+}
+
+kw<term> { @specialize[@name={term}]<Identifier, term> }
+
+
+AndExpression{simpleExpression kw<"AND"> simpleExpression}
+OrExpression {simpleExpression kw<"OR"> simpleExpression}
+NotExpression{kw<"NOT"> simpleExpression}
+simpleExpression{BooleanExpression | LParen expression RParen }
+// quantifiers
+AllQuantifier{kw<"ALL"> Variable (kw<","> Variable)* kw<"WHERE"> expression}
+
+
+
+// values
+BooleanExpression{kw<"true"> | kw<"false">}
+
+ValueExpression{
+    Number | Variable | String |
+    IndexFunction |
+    CountFunction |
+    SumFunction |
+    AvgFunction |
+    MinFunction |
+    MaxFunction |
+    NumberManipulation 
+}
+SimpleValue {Number | Variable | String | LParen ValueExpression RParen}
+
+// comparisons
+NumberCompares {
+    LessThanExpression |
+    GreaterThanExpression |
+    NotEqualExpression |
+    EqualExpression
+}
+EqualExpression{ValueExpression kw<"=="> ValueExpression}
+NotEqualExpression{ValueExpression kw<"!="> ValueExpression}
+LessThanExpression{ValueExpression kw<"<"> ValueExpression}
+LessThanOrEqualExpression{ValueExpression kw<"<="> ValueExpression}
+GreaterThanExpression{ValueExpression kw<">"> ValueExpression}
+GreaterThanOrEqualExpression{ValueExpression kw<">="> ValueExpression}
+
+// number operations
+NumberManipulation {
+    AddExpression |
+    SubtractExpression |
+    MultiplyExpression |
+    DivideExpression
+}
+AddExpression{SimpleValue kw<"+"> SimpleValue}
+SubtractExpression{SimpleValue kw<"-"> SimpleValue}
+MultiplyExpression{SimpleValue kw<"*"> SimpleValue}
+DivideExpression{SimpleValue kw<"/"> SimpleValue}
+
+
+// simple functions
+IndexFunction{kw<"index"> LParen Variable RParen}
+CountFunction{kw<"COUNT"> LParen Variable RParen}
+AvgFunction{kw<"AVG"> LParen Variable RParen}
+SumFunction{kw<"SUM"> LParen Variable RParen}
+MinFunction{kw<"MIN"> LParen Variable RParen}
+MaxFunction{kw<"MAX"> LParen Variable RParen}
+
+Variable { Identifier }
+
+@skip { space }
+
+@tokens {
+  space { @whitespace+ }
+  LParen { "(" }
+  RParen { ")" }
+  Identifier { $[A-Za-z_]+ }
+  Number { $[0-9]+ }
+  String { '"' !["]* '"' }
+}

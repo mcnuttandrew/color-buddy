@@ -417,7 +417,7 @@ test("LintLanguage Measure Contrast", () => {
       right: -107.88473522404158,
     },
   };
-  const result = LLEval(program, []);
+  const result = LLEval(program, [] as any);
   expect(prettyPrintLL(program)).toBe(
     "contrast(#000, #fff, APCA) == -107.88473522404158"
   );
@@ -646,11 +646,11 @@ test.skip("LintLanguage Diverging Colors - dense notation", () => {
   expect(result2.result).toBe(false);
 });
 
-test("Background differentiability", () => {
+test("LintLanguage Background differentiability", () => {
   const program = {
     all: {
       in: "colors",
-      varbs: ["a"],
+      varb: "a",
       predicate: {
         not: { similar: { left: "a", right: "background", threshold: 15 } },
       },
@@ -658,6 +658,26 @@ test("Background differentiability", () => {
   };
   const astString = prettyPrintLL(program);
   expect(astString).toBe("ALL a in colors, NOT similar(a, background) > 15");
+  const result = LLEval(program, toPal(["#fff", "#eee", "#000", "#ddd"]));
+  expect(result.result).toBe(false);
+  expect(result.blame).toStrictEqual([0, 1, 3]);
+});
+
+test("LintLanguage Sequential Similarity", () => {
+  const program = {
+    all: {
+      in: "colors",
+      varbs: ["a", "b"],
+      where: { "!=": { left: "index(a)", right: "index(b)" } },
+      predicate: {
+        not: { similar: { left: "a", right: "b", threshold: 10 } },
+      },
+    },
+  };
+  const astString = prettyPrintLL(program);
+  expect(astString).toBe(
+    "ALL (a, b) in colors WHERE index(a) != index(b), NOT similar(a, b) > 10"
+  );
   const result = LLEval(program, toPal(["#fff", "#eee", "#000", "#ddd"]));
   expect(result.result).toBe(false);
   expect(result.blame).toStrictEqual([0, 1, 3]);

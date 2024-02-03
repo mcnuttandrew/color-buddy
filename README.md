@@ -12,14 +12,14 @@ First time you start it up you should also run `yarn prep data`
 
 # Language todos
 
-- [ ] Parser?
 - [ ] Integration into main app
-- [ ] "Blame" for colors
 - [ ] Add background, roles, palette level semantics
+- [x] "Blame" for colors
 - [x] JSON Schema (for validation) (if parser is not used)
-- [na] Swap left/right for [a, b] for density
 - [x] Basic Language
 - [x] Multi indexing (eg all colors a b c)
+- [na] Parser?
+- [na] Swap left/right for [a, b] for density
 
 # Todo bankruptcy
 

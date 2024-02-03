@@ -152,7 +152,7 @@ test("LintLanguage Boolean values", () => {
   const program = { "!=": { left: true, right: false } };
   const options = { debugParse: false };
   expect(prettyPrintLL(program, options)).toBe("TRUE != FALSE");
-  const { result, blame } = LLEval(program, [], options);
+  const { result, blame } = LLEval(program, toPal([]), options);
   expect(result).toBe(true);
   expect(blame).toStrictEqual([]);
 });
@@ -230,29 +230,29 @@ test("LintLanguage Check exists", () => {
 test("LintLanguage Arithmetic Ops: =", () => {
   const program1 = { "==": { left: 2, right: 2 } };
   expect(prettyPrintLL(program1)).toBe("2 == 2");
-  expect(LLEval(program1, []).result).toBe(true);
+  expect(LLEval(program1, toPal([])).result).toBe(true);
 });
 const opProg = (op: string) => ({
   "==": { left: { [op]: { left: 2, right: 10 } }, right: 2 },
 });
 test("LintLanguage Arithmetic Ops: + ", () => {
   expect(prettyPrintLL(opProg("+"))).toBe(`2 + 10 == 2`);
-  expect(LLEval(opProg("+"), []).result).toBe(false);
+  expect(LLEval(opProg("+"), toPal([])).result).toBe(false);
 });
 
 test("LintLanguage Arithmetic Ops: -", () => {
   expect(prettyPrintLL(opProg("-"))).toBe(`2 - 10 == 2`);
-  expect(LLEval(opProg("-"), []).result).toBe(false);
+  expect(LLEval(opProg("-"), toPal([])).result).toBe(false);
 });
 
 test("LintLanguage Arithmetic Ops: /", () => {
   expect(prettyPrintLL(opProg("/"))).toBe(`2 / 10 == 2`);
-  expect(LLEval(opProg("/"), []).result).toBe(false);
+  expect(LLEval(opProg("/"), toPal([])).result).toBe(false);
 });
 
 test("LintLanguage Arithmetic Ops: *", () => {
   expect(prettyPrintLL(opProg("*"))).toBe(`2 * 10 == 2`);
-  expect(LLEval(opProg("*"), []).result).toBe(false);
+  expect(LLEval(opProg("*"), toPal([])).result).toBe(false);
 });
 
 const aggProg = (op: string, right: number) => ({
@@ -260,27 +260,27 @@ const aggProg = (op: string, right: number) => ({
 });
 test("LintLanguage Agg Ops: sum", () => {
   expect(prettyPrintLL(aggProg("sum", 8))).toBe(`sum([1, 2, 3, 4]) == 8`);
-  expect(LLEval(aggProg("sum", 8), []).result).toBe(false);
+  expect(LLEval(aggProg("sum", 8), toPal([])).result).toBe(false);
   expect(prettyPrintLL(aggProg("sum", 10))).toBe(`sum([1, 2, 3, 4]) == 10`);
-  expect(LLEval(aggProg("sum", 10), []).result).toBe(true);
+  expect(LLEval(aggProg("sum", 10), toPal([])).result).toBe(true);
 });
 test("LintLanguage Agg Ops: min", () => {
   expect(prettyPrintLL(aggProg("min", 10))).toBe(`min([1, 2, 3, 4]) == 10`);
-  expect(LLEval(aggProg("min", 10), []).result).toBe(false);
+  expect(LLEval(aggProg("min", 10), toPal([])).result).toBe(false);
   expect(prettyPrintLL(aggProg("min", 1))).toBe(`min([1, 2, 3, 4]) == 1`);
-  expect(LLEval(aggProg("min", 1), []).result).toBe(true);
+  expect(LLEval(aggProg("min", 1), toPal([])).result).toBe(true);
 });
 test("LintLanguage Agg Ops: max", () => {
   expect(prettyPrintLL(aggProg("max", 10))).toBe(`max([1, 2, 3, 4]) == 10`);
-  expect(LLEval(aggProg("max", 10), []).result).toBe(false);
+  expect(LLEval(aggProg("max", 10), toPal([])).result).toBe(false);
   expect(prettyPrintLL(aggProg("max", 4))).toBe(`max([1, 2, 3, 4]) == 4`);
-  expect(LLEval(aggProg("max", 4), []).result).toBe(true);
+  expect(LLEval(aggProg("max", 4), toPal([])).result).toBe(true);
 });
 test("LintLanguage Agg Ops: mean", () => {
   expect(prettyPrintLL(aggProg("mean", 10))).toBe(`mean([1, 2, 3, 4]) == 10`);
-  expect(LLEval(aggProg("mean", 10), []).result).toBe(false);
+  expect(LLEval(aggProg("mean", 10), toPal([])).result).toBe(false);
   expect(prettyPrintLL(aggProg("mean", 2.5))).toBe(`mean([1, 2, 3, 4]) == 2.5`);
-  expect(LLEval(aggProg("mean", 2.5), []).result).toBe(true);
+  expect(LLEval(aggProg("mean", 2.5), toPal([])).result).toBe(true);
 });
 test("LintLanguage to color rotate", () => {
   const realisticProgram = {
@@ -384,7 +384,7 @@ test("LintLanguage Measure Distance", () => {
       right: 100,
     },
   };
-  const result = LLEval(program, []);
+  const result = LLEval(program, toPal([]));
   expect(prettyPrintLL(program)).toBe("dist(#000, #fff, lab) == 100");
   expect(result.result).toBe(true);
   expect(result.blame).toStrictEqual([]);
@@ -401,7 +401,7 @@ test("LintLanguage Measure DeltaE", () => {
       right: 100,
     },
   };
-  const result = LLEval(program, []);
+  const result = LLEval(program, toPal([]));
   expect(prettyPrintLL(program)).toBe("deltaE(#000, #fff, 2000) == 100");
   expect(result.result).toBe(true);
   expect(result.blame).toStrictEqual([]);

@@ -38,6 +38,11 @@ export class Color {
     return `${this.spaceName}(${channelsString})`;
   }
   getChannel(channel: keyof typeof this.channels): number {
+    let channelStr = channel.toLowerCase() as string;
+    if (!(channelStr in this.channels)) {
+      channelStr = channelStr.toUpperCase();
+      return this.channels[channelStr];
+    }
     return this.channels[channel];
   }
   toChannels(): Channels {
@@ -122,8 +127,15 @@ export class Color {
   luminance(): number {
     return this.toColorIO().luminance;
   }
-  deltaE(color: Color): number {
-    return this.toColorIO().deltaE(color.toColorIO(), "2000");
+  deltaE(
+    color: Color,
+    algorithm: "76" | "CMC" | "2000" | "ITP" | "Jz" | "OK" = "2000"
+  ): number {
+    return this.toColorIO().deltaE(color.toColorIO(), algorithm);
+  }
+  distance(color: Color, space: string): number {
+    const colorSpace = space || this.spaceName;
+    return this.toColorIO().distance(color.toColorIO(), colorSpace);
   }
   symmetricDeltaE(color: Color): number {
     return 0.5 * (this.deltaE(color) + color.deltaE(this));
@@ -139,7 +151,19 @@ export class Color {
       .map((x) => x || 0)
       .map((x) => x.toLocaleString("fullwide", { useGrouping: false }));
   }
-
+  static stringIsColor = (str: string, spaceName: string) => {
+    // todo add cache
+    try {
+      new ColorIO(str).to(spaceName).coords;
+    } catch (ea) {
+      try {
+        new ColorIO(`#${str}`).to(spaceName).coords;
+      } catch (eb) {
+        return false;
+      }
+    }
+    return true;
+  };
   static toColorSpace = toColorSpace;
   static stringToChannels = stringToChannels;
   static colorFromString = colorFromString;

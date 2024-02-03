@@ -1,0 +1,27 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`ColorLint - BackgroundDifferentiability 1`] = `
+[
+  "#0ff",
+  "#00faff",
+  "#00e4ff",
+  "#777776",
+  "#0ff",
+]
+`;
+
+exports[`ColorLint - BackgroundDifferentiability 2`] = `
+[
+  "#007070",
+  "#006f72",
+  "#006e7e",
+  "#fdfdfc",
+  "#007070",
+]
+`;
+
+exports[`ColorLint - ColorBlind 1`] = `"This palette is not colorblind friendly for deuteranopia color blindness (ie can't see green). The following pairs are undifferentiable: (#0078b4 and #8c69bc), (#ff7e0e and #c4bc27), (#3d9f2f and #da2827), (#e179c1 and #00becf)"`;
+
+exports[`ColorLint - ColorBlind 2`] = `"This palette is not colorblind friendly for protanopia color blindness (ie can't see red). The following pairs are undifferentiable: (#0078b4 and #8c69bc), (#ff7e0e and #3d9f2f), (#da2827 and #8e564b)"`;
+
+exports[`ColorLint - ColorBlind 3`] = `"This palette is not colorblind friendly for tritanopia color blindness (ie can't see blue). The following pairs are undifferentiable: (#ff7e0e and #e179c1), (#8c69bc and #7f7f7f)"`;

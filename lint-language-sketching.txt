@@ -51,14 +51,15 @@ Pair functions: contrast, deltaE
 Reduces: count, range
 Value functions: sim, name, space
 
-Program: e
+Program: p => T | F
+e
 
 Expressions (e) => T | F | (e, e) => T | F
-e = NOT e | AND e[] | OR e[] | p | Q (v[] | colors) p | T | F | if e e e
+e = NOT e | AND e[] | OR e[] | p v v | Q (v[] | colors) p | T | F | if e e e
 
 Values
-v' = n  | c | var
-v  = v' | c[] | var[] | m v[] | r v[] | pf v' v'
+a = n  | c | var | pf v' v' | r v[] --- (atomic values)
+v = a[] | m v[] 
 
 Quantifiers: 
 Q =  ∀ | ∃ | ∀_SEQ
@@ -66,7 +67,7 @@ Q =  ∀ | ∃ | ∀_SEQ
 Maps:
 m = filter vf | extent vf | sort vf | map vf
 
-Reduces
+Reduces (v[]) => v
 r = count | range | sum | min | max | mean | median | mode | std --- range is wrong
 
 Predicates (v, v) => T | F
@@ -107,8 +108,8 @@ exist:
             value: 'b',
             predicate: 
                 equal: 
-                    left:  {hue: 'a'}
-                    right: {hue: 'b', offset: 180}
+                    left:  {toColor: 'a', space: 'hsl', channel: 'h'}
+                    right: {+: {toColor: 'b', space: 'hsl', channel: 'h'}, value: 180}
 
 YAML syntax, Specific value included:
 exist: 

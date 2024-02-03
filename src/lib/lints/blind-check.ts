@@ -2,6 +2,7 @@ import { ColorLint } from "./ColorLint";
 import type { TaskType } from "./ColorLint";
 import { Color } from "../Color";
 import simulate_cvd from "../blindness";
+// import { LLEval } from "../lint-language";
 // import blind from "color-blind";
 
 const blindnessTypes = ["deuteranopia", "protanopia", "tritanopia"] as const;

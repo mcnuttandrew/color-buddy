@@ -10,6 +10,17 @@ Use: should point to localhost:8888 if all is well
 
 First time you start it up you should also run `yarn prep data`
 
+# Language todos
+
+- [ ] Parser?
+- [ ] Integration into main app
+- [ ] "Blame" for colors
+- [ ] Add background, roles, palette level semantics
+- [x] JSON Schema (for validation) (if parser is not used)
+- [na] Swap left/right for [a, b] for density
+- [x] Basic Language
+- [x] Multi indexing (eg all colors a b c)
+
 # Todo bankruptcy
 
 - [ ] Gamut algorithm broken again
@@ -39,7 +50,7 @@ First time you start it up you should also run `yarn prep data`
 - [x] Deselect: In the row of colors, clicking on a selected color should deselect it
 - [x] Tool tip not staying put
 - [x] Chore: Extract some common types into a top level location (like types.ts type thing)
-- [x] For the palettes, there is a copy and delete bug. Try this: Copy Example 2, then immediately click delete (menu is still up). Surpise!
+- [x] For the palettes, there is a copy and delete bug. Try this: Copy Example 2, then immediately click delete (menu is still up). Surprise!
 - [x] Direct manipulation new color add "puttin" mode on the scatterplot
 - [x] For the palettes, a couple of ideas. Right now, feels like selecting a palette in the list reorders all the palettes, which is disorienting. I realize what you're doing in removing the palette I clicked on, adding the one I was editing. I think don't do this. Keep a fixed order (which I could change if I wanted to), and simply mark the palette that's being editing, don't remove it from the list. Similarly, if I copy a palette, put it right after the palette I copied, not up at the top. I also think adding a compact view of the palettes will eventually be necessary, so now might be the time to do it. Even as a default, would make the circles a bit smaller and pack them tighter. Or maybe make them tall rectangles that would pack even tighter.
 - [x] Bug report. If I am comparing a palette with itself and select a color in the main view, the color is not selected in the xy plot of the comparison panel. It is selected in the vertical only plot

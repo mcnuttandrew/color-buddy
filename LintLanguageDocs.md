@@ -11,7 +11,7 @@ FORALL: {all: {varbs: Variable[], where?: EXPR, in: Variable | Value[]}}
 EXISTS: {exists: {varbs: Variable[], where?: EXPR, in: Variable | Value[]}}
 
 Comparisons (value) => expression
-similar: {"similar": {left: Value, right: Value, similarityThreshold: Number}}
+similar: {"similar": {left: Value, right: Value, threshold: Number}}
 equal: {"==": {left: Value, right: Value}}
 not equal: {"!=": {left: Value, right: Value}}
 less than: {"<": {left: Value, right: Value}}

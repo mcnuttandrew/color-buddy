@@ -15,9 +15,8 @@ First time you start it up you should also run `yarn prep data`
 - [ ] Parser?
 - [ ] Integration into main app
 - [ ] "Blame" for colors
+- [ ] Add background, roles, palette level semantics
 - [x] JSON Schema (for validation) (if parser is not used)
-- [ ] Add background, roles, etc
-- [ ] Add palette level semantics?
 - [na] Swap left/right for [a, b] for density
 - [x] Basic Language
 - [x] Multi indexing (eg all colors a b c)

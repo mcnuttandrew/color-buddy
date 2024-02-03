@@ -102,7 +102,7 @@ test("LintLanguage Quantifiers All - Simple", () => {
 });
 
 const expectedOutBlind = (type: string) =>
-  `ALL a in colors, ALL b in colors WHERE index(a) != index(b), NOT cvd_sim(a, ${type}) similar(9) cvd_sim(b, ${type})`;
+  `ALL a in colors, ALL b in colors WHERE index(a) != index(b), NOT similar(cvd_sim(a, ${type}), cvd_sim(b, ${type})) > 9`;
 const allBlindProg = (type: string) => ({
   all: {
     in: "colors",
@@ -117,7 +117,7 @@ const allBlindProg = (type: string) => ({
             similar: {
               left: { cvd_sim: "a", type },
               right: { cvd_sim: "b", type },
-              similarityThreshold: 9,
+              threshold: 9,
             },
           },
         },
@@ -644,6 +644,23 @@ test.skip("LintLanguage Diverging Colors - dense notation", () => {
   expect(result.result).toBe(true);
   const result2 = LLEval(prog, toPal(["#be4704", "#008000", "#e00050"]));
   expect(result2.result).toBe(false);
+});
+
+test("Background differentiability", () => {
+  const program = {
+    all: {
+      in: "colors",
+      varbs: ["a"],
+      predicate: {
+        not: { similar: { left: "a", right: "background", threshold: 15 } },
+      },
+    },
+  };
+  const astString = prettyPrintLL(program);
+  expect(astString).toBe("ALL a in colors, NOT similar(a, background) > 15");
+  const result = LLEval(program, toPal(["#fff", "#eee", "#000", "#ddd"]));
+  expect(result.result).toBe(false);
+  expect(result.blame).toStrictEqual([0, 1, 3]);
 });
 
 // Text version

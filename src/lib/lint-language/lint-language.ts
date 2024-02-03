@@ -35,6 +35,9 @@ class Environment {
         .map((x) => new LLValue(x));
       return new LLValueArray(children);
     }
+    if (name === "background") {
+      return new LLColor(this.palette.background);
+    }
     const val = this.variables[name];
     if (!val) throw new Error("Variable not found");
     return val;
@@ -358,7 +361,7 @@ export class LLPredicate extends LLNode {
     private type: (typeof predicateTypes)[number],
     private left: LLValue,
     private right: LLValue,
-    private similarityThreshold?: number
+    private threshold?: number
   ) {
     super();
   }
@@ -377,7 +380,7 @@ export class LLPredicate extends LLNode {
     }
     switch (this.type) {
       case "similar":
-        let thresh = this.similarityThreshold;
+        let thresh = this.threshold;
         if (!thresh) throw new Error("Similarity threshold not found");
         if (isColor) {
           const diff = leftEval.symmetricDeltaE(rightEval);
@@ -397,25 +400,22 @@ export class LLPredicate extends LLNode {
   static tryToConstruct(node: any, options: OptionsConfig) {
     const predicateType = predicateTypes.find((x) => node[x]);
     if (!predicateType) return false;
-    const { left, right, similarityThreshold } = node[predicateType];
+    const { left, right, threshold } = node[predicateType];
     if (!checkIfValsPresent(node[predicateType], ["left", "right"]))
       return false;
     const leftType = tryTypes([LLValue], options)(left);
     const rightType = tryTypes([LLValue], options)(right);
     if (!leftType || !rightType) return false;
-    return new LLPredicate(
-      predicateType,
-      leftType,
-      rightType,
-      similarityThreshold
-    );
+    return new LLPredicate(predicateType, leftType, rightType, threshold);
   }
   toString(): string {
     let type = "" + this.type;
+    const left = this.left.toString();
+    const right = this.right.toString();
     if (this.type === "similar") {
-      type = `similar(${this.similarityThreshold})`;
+      return `similar(${left}, ${right}) > ${this.threshold}`;
     }
-    return `${this.left.toString()} ${type} ${this.right.toString()}`;
+    return `${left} ${type} ${right}`;
   }
 }
 

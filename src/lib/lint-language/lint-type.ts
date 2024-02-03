@@ -18,19 +18,19 @@ type LintQuantifierBase =
   | {
       varbs: LintVariable[];
       where?: LintExpression;
-      in: LintVariable | LintValue[];
+      in: LintVariable | LintValue[] | LintMap;
     }
   | {
       varb: LintVariable;
       where?: LintExpression;
-      in: LintVariable | LintValue[];
+      in: LintVariable | LintValue[] | LintMap;
     };
 type LintQuantifier =
   | { all: LintQuantifierBase }
   | { exist: LintQuantifierBase };
 
 // Operations
-type LintRef = LintVariable | LintValue;
+type LintRef = LintVariable | LintValue | LintValue[] | LintMap;
 type LintComparisonBase = { left: LintRef; right: LintRef };
 type LintComparison =
   | { "==": LintComparisonBase }
@@ -56,10 +56,22 @@ type LintPairOps =
           | "DeltaPhi";
       };
     };
+type LintMap =
+  | { map: LintVariable | LintValue[]; func: LintColorFunction | LintPairOps }
+  | { sort: LintVariable | LintValue[]; func: LintColorFunction | LintPairOps }
+  | { filter: LintVariable | LintValue[]; func: LintExpression };
 
 type LintReduce = Record<
-  "sum" | "count" | "mean" | "max" | "min" | "mean",
-  LintVariable | any[]
+  | "sum"
+  | "count"
+  | "mean"
+  | "max"
+  | "min"
+  | "mean"
+  | "first"
+  | "last"
+  | "extent",
+  LintVariable | any[] | LintMap
 >;
 type LintColorFunction =
   | {

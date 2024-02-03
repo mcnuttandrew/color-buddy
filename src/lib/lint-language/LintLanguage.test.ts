@@ -2,6 +2,7 @@ import { expect, test } from "vitest";
 import { LLEval, prettyPrintLL } from "./lint-language";
 import { Color } from "../Color";
 import type { Palette } from "../../stores/color-store";
+import type { LintProgram } from "./lint-type";
 
 const toPal = (colors: string[]): Palette => ({
   name: "test",
@@ -149,7 +150,7 @@ test("LintLanguage Quantifiers All - tritanopia", () => {
 
 test("LintLanguage Boolean values", () => {
   const program = { "!=": { left: true, right: false } };
-  const options = { debugTypeCheck: false };
+  const options = { debugParse: false };
   expect(prettyPrintLL(program, options)).toBe("TRUE != FALSE");
   const { result, blame } = LLEval(program, [], options);
   expect(result).toBe(true);
@@ -683,19 +684,103 @@ test("LintLanguage Sequential Similarity", () => {
   expect(result.blame).toStrictEqual([0, 1, 3]);
 });
 
+test("LintLanguage Array Compare", () => {
+  const program = {
+    "==": {
+      left: [1, 2, 3],
+      right: [3, 2, 1],
+    },
+  };
+
+  const printed = prettyPrintLL(program);
+  expect(printed).toBe("[1, 2, 3] == [3, 2, 1]");
+
+  const result = LLEval(program, toPal([]));
+  expect(result.result).toBe(false);
+  expect(result.blame).toStrictEqual([]);
+});
+
+test("LintLanguage Array Compare 2", () => {
+  const program = {
+    "==": {
+      left: [1, 2, 3],
+      right: [1, 2, 3],
+    },
+  };
+
+  const printed = prettyPrintLL(program);
+  expect(printed).toBe("[1, 2, 3] == [1, 2, 3]");
+
+  const result = LLEval(program, toPal([]));
+  expect(result.result).toBe(true);
+  expect(result.blame).toStrictEqual([]);
+});
+
+test("LintLanguage Array Compare -- Sort", () => {
+  const program = {
+    "==": {
+      left: [1, 2, 3],
+      right: {
+        sort: [3, 2, 1],
+        func: { "+": { left: "x", right: 0 } },
+        varb: "x",
+      },
+    },
+  };
+
+  const printed = prettyPrintLL(program);
+  expect(printed).toBe("[1, 2, 3] == sort([3, 2, 1], x => x + 0)");
+
+  const result = LLEval(program, toPal([]));
+  expect(result.result).toBe(true);
+  expect(result.blame).toStrictEqual([]);
+});
+
+test("LintLanguage Array Compare Color", () => {
+  const program: LintProgram = {
+    "==": {
+      left: { sort: "colors", varb: "x", func: { "lab.l": "x" } },
+      right: toColors(["#000", "#fff", "#111", "#222"]),
+    },
+  };
+
+  const printed = prettyPrintLL(program);
+  expect(printed).toBe(
+    "sort(colors, x => lab.l(x)) == [#000, #fff, #111, #222]"
+  );
+
+  const result = LLEval(program, toPal(["#fff", "#eee", "#000", "#ddd"]));
+  expect(result.result).toBe(false);
+  expect(result.blame).toStrictEqual([]);
+});
+
+test("LintLanguage Fair Weighting", () => {
+  const program = {
+    "<": {
+      left: { extent: { sort: "colors", varb: "x", func: { "lch.l": "x" } } },
+      right: 50,
+    },
+  };
+
+  const printed = prettyPrintLL(program);
+  expect(printed).toBe("extent(sort(colors, x => lch.l(x))) < 50");
+  const pal = toPal(["#350d00", "#00f300", "#55e1ff", "#f4bcff"]);
+  const result = LLEval(program, pal, { debugCompare: false });
+  expect(result.result).toBe(false);
+  expect(result.blame).toStrictEqual([]);
+});
+
 // Text version
-// OR
-// EXIST c in colors,
-//     ALL a, b where index(a) < index(c) AND index(a) == index(b) - 1, lab(a, l) < lab(c, l) AND lab(b, l) > lab(a, l)
-//     AND
-//     ALL a, b where index(a) > index(c) AND index(a) == index(b) - 1, lab(a, l) > lab(c, l) AND lab(b, l) < lab(a, l)
-// EXIST c in colors,
-//     ALL a, b where index(a) < index(c) AND index(a) == index(b) - 1, lab(a, l) > lab(c, l) AND lab(b, l) < lab(a, l)
-//     AND
-//     ALL a, b where index(a) > index(c) AND index(a) == index(b) - 1, lab(a, l) < lab(c, l) AND lab(b, l) > lab(a, l)
+// range(colors, lch, c) < threshold_1 AND range(colors, lch, l) < threshold_2
 
 // // YAML VERSION
-// or:
-//
+// all:
+//   in: colors
+//   varbs: [a, b]
+//   where: '!=': [index(a), index(b)]
+//   predicate:
+//     and:
+//       - '<': [range(colors, lch, c), threshold_1]
+//       - '<': [range(colors, lch, l), threshold_2]
 
 // JSON VERSION

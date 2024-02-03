@@ -99,14 +99,15 @@ class Environment {
 }
 
 interface OptionsConfig {
-  debugTypeCheck: boolean;
+  debugParse: boolean;
   debugEval: boolean;
+  debugCompare: boolean;
 }
 const tryTypes =
   (nodeClasses: any[], options: OptionsConfig) => (node: any) => {
     for (let i = 0; i < nodeClasses.length; i++) {
       const nodeClass = nodeClasses[i];
-      if (options.debugTypeCheck) {
+      if (options.debugParse) {
         console.log(nodeClass.name, node);
       }
       const result = nodeClass.tryToConstruct(node, options);
@@ -356,46 +357,77 @@ export class LLNumberOp extends LLNode {
 }
 
 const predicateTypes = ["==", "!=", ">", "<", "similar"] as const;
+
+function compareValues(
+  leftVal: any,
+  rightVal: any,
+  pred: LLPredicate,
+  showValues: boolean
+) {
+  let isColor = leftVal instanceof Color;
+  let left = leftVal;
+  let right = rightVal;
+  if (isColor && pred.type !== "similar") {
+    left = leftVal.toHex();
+    right = rightVal.toHex();
+  }
+  if (showValues) {
+    console.log(pred.type, left, right);
+  }
+  switch (pred.type) {
+    case "similar":
+      let thresh = pred.threshold;
+      if (!thresh) throw new Error("Similarity threshold not found");
+      if (isColor) {
+        const diff = left.symmetricDeltaE(right);
+        return diff < thresh;
+      }
+      throw new Error("Type error");
+    case "==":
+      return left === right;
+    case "!=":
+      return left !== right;
+    case ">":
+      return left > right;
+    case "<":
+      return left < right;
+  }
+}
 export class LLPredicate extends LLNode {
   constructor(
-    private type: (typeof predicateTypes)[number],
-    private left: LLValue,
-    private right: LLValue,
-    private threshold?: number
+    public type: (typeof predicateTypes)[number],
+    private left: LLValue | LLValueArray | LLMap,
+    private right: LLValue | LLValueArray | LLMap,
+    public threshold?: number
   ) {
     super();
   }
   evaluate(env: Environment): ReturnVal<boolean> {
     this.evalCheck(env);
+    const showValues = env.options.debugCompare;
     const { left, right } = this;
     let leftEval = left.evaluate(env).result;
     let rightEval = right.evaluate(env).result;
     if (typeof leftEval !== typeof rightEval) {
       throw new Error("predicate - type error ");
     }
-    let isColor = leftEval instanceof Color;
-    if (isColor && this.type !== "similar") {
-      leftEval = leftEval.toHex();
-      rightEval = rightEval.toHex();
+    // array
+    if (Array.isArray(leftEval)) {
+      if (leftEval.length !== rightEval.length) {
+        throw new Error("Array length mismatch");
+      }
+      return {
+        result: leftEval.every((x, i) =>
+          compareValues(x, rightEval[i], this, showValues)
+        ),
+        env,
+      };
     }
-    switch (this.type) {
-      case "similar":
-        let thresh = this.threshold;
-        if (!thresh) throw new Error("Similarity threshold not found");
-        if (isColor) {
-          const diff = leftEval.symmetricDeltaE(rightEval);
-          return { result: diff < thresh, env };
-        }
-        throw new Error("Type error");
-      case "==":
-        return { result: leftEval === rightEval, env };
-      case "!=":
-        return { result: leftEval !== rightEval, env };
-      case ">":
-        return { result: leftEval > rightEval, env };
-      case "<":
-        return { result: leftEval < rightEval, env };
-    }
+    // single value
+    return {
+      result: compareValues(leftEval, rightEval, this, showValues),
+      env,
+    };
   }
   static tryToConstruct(node: any, options: OptionsConfig) {
     const predicateType = predicateTypes.find((x) => node[x]);
@@ -403,8 +435,8 @@ export class LLPredicate extends LLNode {
     const { left, right, threshold } = node[predicateType];
     if (!checkIfValsPresent(node[predicateType], ["left", "right"]))
       return false;
-    const leftType = tryTypes([LLValue], options)(left);
-    const rightType = tryTypes([LLValue], options)(right);
+    const leftType = tryTypes([LLValue, LLValueArray, LLMap], options)(left);
+    const rightType = tryTypes([LLValue, LLValueArray, LLMap], options)(right);
     if (!leftType || !rightType) return false;
     return new LLPredicate(predicateType, leftType, rightType, threshold);
   }
@@ -538,7 +570,6 @@ const getOp =
       const noExtraParams = Object.keys(node).every(
         (key) => x.params.includes(key) || key === x.primaryKey
       );
-      // console.log(allParamsFound, noExtraParams, x.params, Object.keys(node));
       return allParamsFound && noExtraParams;
     });
 const getParams = (op: any, node: any) =>
@@ -622,7 +653,7 @@ const QuantifierTypes = ["exist", "all"] as const;
 export class LLQuantifier extends LLNode {
   constructor(
     private type: (typeof QuantifierTypes)[number],
-    private input: LLValueArray | LLVariable,
+    private input: LLValueArray | LLVariable | LLMap,
     private predicate: LLPredicate,
     private varbs: string[],
     private where?: LLPredicate
@@ -698,7 +729,10 @@ export class LLQuantifier extends LLNode {
     // must have a variable or variables
     if (!varb && !varbs) return false;
 
-    const inputType = tryTypes([LLValueArray, LLVariable], options)(input);
+    const inputType = tryTypes(
+      [LLValueArray, LLVariable, LLMap],
+      options
+    )(input);
     const predicateType = tryTypes([LLExpression], options)(predicate);
     if (!inputType || !predicateType) return false;
     return new LLQuantifier(
@@ -730,7 +764,16 @@ export class LLQuantifier extends LLNode {
   }
 }
 
-const reduceTypes = ["count", "sum", "min", "max", "mean"] as const;
+const reduceTypes = [
+  "count",
+  "sum",
+  "min",
+  "max",
+  "mean",
+  "first",
+  "last",
+  "extent",
+] as const;
 export class LLReduces extends LLNode {
   constructor(
     private type: (typeof reduceTypes)[number],
@@ -747,6 +790,10 @@ export class LLReduces extends LLNode {
     switch (this.type) {
       case "count":
         return { result: children.length, env };
+      case "first":
+        return { result: children[0], env };
+      case "last":
+        return { result: children[children.length - 1], env };
       case "sum":
         return { result: children.reduce((a, b) => a + b, 0), env };
       case "mean":
@@ -758,6 +805,11 @@ export class LLReduces extends LLNode {
         return { result: Math.min(...children), env };
       case "max":
         return { result: Math.max(...children), env };
+      case "extent":
+        return {
+          result: Math.abs(Math.max(...children) - Math.min(...children)),
+          env,
+        };
     }
   }
   static tryToConstruct(node: any, options: OptionsConfig) {
@@ -769,13 +821,77 @@ export class LLReduces extends LLNode {
     if (Array.isArray(children)) {
       childType = tryTypes([LLValueArray], options)(children);
     } else {
-      childType = tryTypes([LLVariable], options)(children);
+      childType = tryTypes([LLVariable, LLMap], options)(children);
     }
     if (!childType) return false;
     return new LLReduces(reduceType, childType);
   }
   toString(): string {
     return `${this.type}(${this.children.toString()})`;
+  }
+}
+
+const mapTypes = ["map", "filter", "sort"] as const;
+// example syntax
+// {map: colors, func: {cvd_sim: {type: "protanomaly"}}, varb: "x"}
+export class LLMap extends LLNode {
+  constructor(
+    private type: (typeof mapTypes)[number],
+    private children: LLValueArray | LLVariable,
+    private func: LLValueFunction | LLPairFunction | LLNumberOp,
+    private varb: string
+  ) {
+    super();
+  }
+  evaluate(env: Environment): ReturnVal<RawValues[]> {
+    this.evalCheck(env);
+    const children = this.children.evaluate(env).result;
+    if (!Array.isArray(children)) {
+      throw new Error("Type error");
+    }
+    const newVal = tryTypes([LLValue], env.options);
+    const evalFunc = (x: any) => {
+      // more re-typing in-direction like from the quantifiers
+      const newEnv = env.set(this.varb, newVal(x));
+      return this.func.evaluate(newEnv).result;
+    };
+    // implicitly ignore the pass back i guess?
+    switch (this.type) {
+      case "map":
+        return { result: children.map(evalFunc), env };
+      case "filter":
+        return { result: children.filter(evalFunc), env };
+      case "sort":
+        return {
+          result: children.map(evalFunc).sort(),
+          env,
+        };
+    }
+  }
+  static tryToConstruct(node: any, options: OptionsConfig) {
+    const op = mapTypes.find((x) => node[x]);
+    if (!op) return false;
+
+    const childType =
+      node[op] && tryTypes([LLValueArray, LLVariable], options)(node[op]);
+    const varb = node.varb;
+    let func;
+    if (op === "filter") {
+      func = tryTypes([LLExpression], options)(node.func);
+    } else {
+      func = tryTypes(
+        [LLValueFunction, LLPairFunction, LLNumberOp],
+        options
+      )(node.func);
+    }
+    if (!func || !childType || !varb) return false;
+    return new LLMap(op, childType, func, varb);
+  }
+  toString(): string {
+    const type = this.type;
+    return `${type}(${this.children.toString()}, ${
+      this.varb
+    } => ${this.func.toString()})`;
   }
 }
 
@@ -786,9 +902,10 @@ function parseToAST(root: any, options: OptionsConfig) {
 }
 
 const DEFAULT_OPTIONS = {
-  debugTypeCheck: false,
+  debugParse: false,
   debugEval: false,
   stages: false,
+  debugCompare: false,
 };
 export function LLEval(
   root: LintProgram,

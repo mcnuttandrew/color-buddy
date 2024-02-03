@@ -32,6 +32,12 @@ sum: {sum: Variable | Number[]}
 min: {min: Variable | Number[]}
 max: {max: Variable | Number[]}
 mean: {mean: Variable | Number[]}
+first: {first: Variable | Number[]}
+last: {last: Variable | Number[]}
+extent: {extent: Variable | Number[]}
 toColor: {toColor: variableName, space: 'lab' | 'hsl' | etc, channel: 'a' | 'b' | 'l' | etc}
 cvd_sim: {cvd_sim: variableName, type: 'protanomaly' | 'deuteranomaly' | 'tritanopia' | 'grayscale'}
 name: {name: variableName}
+map: {map: Variable | Value[], func: Operation}
+sort: {sort: Variable | Value[], func: Operation}
+filter: {filter: Variable | Value[], func: EXPR}

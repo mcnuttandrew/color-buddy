@@ -137,8 +137,13 @@ export class Color {
     const colorSpace = space || this.spaceName;
     return this.toColorIO().distance(color.toColorIO(), colorSpace);
   }
-  symmetricDeltaE(color: Color): number {
-    return 0.5 * (this.deltaE(color) + color.deltaE(this));
+  symmetricDeltaE(
+    color: Color,
+    algorithm: "76" | "CMC" | "2000" | "ITP" | "Jz" | "OK" = "2000"
+  ): number {
+    return (
+      0.5 * (this.deltaE(color, algorithm) + color.deltaE(this, algorithm))
+    );
   }
   copy(): Color {
     return this.fromChannels(this.toChannels());

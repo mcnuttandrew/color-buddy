@@ -14,7 +14,7 @@ export default class ExtremeColors extends ColorLint<Color[], false> {
   name = "Avoid extreme colors";
   taskTypes = ["sequential", "diverging", "categorical"] as TaskType[];
   level: "error" | "warning" = "warning";
-  group = "aesthetics";
+  group = "design";
   description = `Colors at either end of the lightness spectrum can be hard to discriminate in some contexts, and are sometimes advised against.`;
   hasHeuristicFix = true;
 

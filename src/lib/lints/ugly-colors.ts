@@ -15,7 +15,7 @@ export default class UglyColors extends ColorLint<Color[], false> {
   name = "Palette does not have ugly colors";
   taskTypes = ["sequential", "diverging", "categorical"] as TaskType[];
   level: "error" | "warning" = "warning";
-  group = "aesthetics";
+  group = "design";
   description: string = `Colors that are close to what are known as ugly colors are sometimes advised against. See https://www.colourlovers.com/palette/1416250/The_Ugliest_Colors for more details.`;
   _runCheck() {
     const { colors } = this.palette;

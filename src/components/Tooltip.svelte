@@ -81,7 +81,7 @@
         >
           {#if allowDrag}
             <div
-              class="absolute cursor-move w-12 h-12 bg-stone-100 rounded-full grab-handle"
+              class="absolute cursor-move w-12 h-12 bg-stone-600 rounded-full grab-handle"
               use:draggable
               on:dragmove|preventDefault={(e) => {
                 e.preventDefault();

@@ -41,7 +41,7 @@ const fairMessage = (outOfBandL: Color[], outOfBandC: Color[]) => {
 
 class FairBase extends ColorLint<any, number> {
   name = "Fair";
-  group = "aesthetics";
+  group = "design";
   //   hasParam = true;
   level: "error" | "warning" = "warning";
   //   defaultParam = 1;

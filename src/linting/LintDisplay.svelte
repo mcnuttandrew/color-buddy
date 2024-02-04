@@ -6,13 +6,22 @@
   import ExplanationViewer from "./ExplanationViewer.svelte";
   import EvalResponse from "./EvalResponse.svelte";
   export let check: ColorLint<any, any>;
+  export let justSummary: boolean = false;
 
   $: currentPal = $colorStore.palettes[$colorStore.currentPal];
   $: evalConfig = currentPal.evalConfig;
   $: ignored = !!evalConfig[check.name]?.ignore;
+  // check box emojis [✅, ⚠️, ❌]
 </script>
 
-{#if ignored}
+{#if justSummary}
+  <Tooltip buttonName="✅">
+    <div slot="content" class="flex flex-col max-w-md">
+      <div class="font-bold">{check.name}</div>
+      <div class="">{check.description}</div>
+    </div>
+  </Tooltip>
+{:else if ignored}
   <div class="text-xs">
     Ignored "{check.name}"
     <button
@@ -32,9 +41,14 @@
     <div class="flex items-center">
       {#if check.passes}<div class="text-bf text-sm italic mr-2 text-green-500">
           Pass
-        </div>{/if}
-      {#if !check.passes}
-        <div class="text-bf text-sm italic mr-2 text-red-500">Fail</div>{/if}
+        </div>
+      {/if}
+      {#if !check.passes && check.level === "error"}
+        <div class="text-bf text-sm italic mr-2 text-red-500">Fail</div>
+      {/if}
+      {#if !check.passes && check.level === "warning"}
+        <div class="text-bf text-sm italic mr-2 text-yellow-400">Warning</div>
+      {/if}
       <div class:font-bold={!check.passes}>
         {check.name}
       </div>

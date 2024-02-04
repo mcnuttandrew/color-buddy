@@ -10,38 +10,36 @@
   $: buttonsActive = focusedColors.length > 0;
 </script>
 
-<div>
-  <button
-    class={buttonStyle}
-    class:button-deactivated={!buttonsActive}
-    on:click={() => {
-      colorStore.setCurrentPalColors(
-        colors.filter((_, idx) => !focusedSet.has(idx))
-      );
-      focusStore.clearColors();
-    }}
-  >
-    Delete
-  </button>
-  <button
-    class={buttonStyle}
-    class:button-deactivated={!buttonsActive}
-    on:click={() => focusStore.clearColors()}
-  >
-    Deselect
-  </button>
-  <button
-    class={buttonStyle}
-    class:button-deactivated={!buttonsActive}
-    on:click={() =>
-      colorStore.setCurrentPalColors([
-        ...currentPal.colors,
-        ...currentPal.colors.filter((_, idx) => focusedSet.has(idx)),
-      ])}
-  >
-    Duplicate
-  </button>
-</div>
+<button
+  class={buttonStyle}
+  class:button-deactivated={!buttonsActive}
+  on:click={() => {
+    colorStore.setCurrentPalColors(
+      colors.filter((_, idx) => !focusedSet.has(idx))
+    );
+    focusStore.clearColors();
+  }}
+>
+  Delete
+</button>
+<button
+  class={buttonStyle}
+  class:button-deactivated={!buttonsActive}
+  on:click={() => focusStore.clearColors()}
+>
+  Deselect
+</button>
+<button
+  class={buttonStyle}
+  class:button-deactivated={!buttonsActive}
+  on:click={() =>
+    colorStore.setCurrentPalColors([
+      ...currentPal.colors,
+      ...currentPal.colors.filter((_, idx) => focusedSet.has(idx)),
+    ])}
+>
+  Duplicate
+</button>
 
 <style>
   .button-deactivated {

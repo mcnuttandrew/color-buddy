@@ -74,7 +74,12 @@
       class="absolute min-w-10"
       style={`left: ${leftString}; top: ${topString}; z-index: 1000`}
     >
-      <div class="relative" class:right-edge={positionAlongRightEdge}>
+      <div
+        class="relative"
+        class:right-edge={positionAlongRightEdge}
+        class:border-bg-stone={true}
+        class:border-2={true}
+      >
         <span
           class="tooltip rounded shadow-lg p-4 bg-stone-100 text-black flex-wrap flex {customClass}"
           class:p-4={true}

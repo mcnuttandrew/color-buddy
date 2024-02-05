@@ -57,9 +57,9 @@ type LintPairOps =
       };
     };
 type LintMap =
-  | { map: LintVariable | LintValue[]; func: LintColorFunction | LintPairOps }
-  | { sort: LintVariable | LintValue[]; func: LintColorFunction | LintPairOps }
-  | { filter: LintVariable | LintValue[]; func: LintExpression };
+  // | { map: LintVariable | LintValue[]; func: LintColorFunction | LintPairOps }
+  // | { sort: LintVariable | LintValue[]; func: LintColorFunction | LintPairOps }
+  { filter: LintVariable | LintValue[]; func: LintExpression };
 
 type LintReduce = Record<
   | "sum"

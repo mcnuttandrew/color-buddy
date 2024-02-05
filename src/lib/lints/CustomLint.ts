@@ -14,22 +14,27 @@ export interface CustomLint {
 }
 
 export function CreateCustomLint(props: CustomLint) {
-  return class CustomLint extends ColorLint<any, any> {
+  return class CustomLint extends ColorLint<number[], any> {
     name = props.name;
     taskTypes = props.taskTypes;
     level = props.level;
     group = props.group;
     description = props.description;
     hasHeuristicFix = false;
+    isCustom = true;
 
     _runCheck() {
-      const { blame, result } = LLEval(props.program, this.palette);
+      const { blame, result } = LLEval(props.program, this.palette, {
+        debugCompare: false,
+      });
       return { passCheck: result, data: blame };
     }
 
     buildMessage() {
-      console.log("todo inject blame");
-      return props.failMessage;
+      const blame = this.checkData
+        .map((x) => this.palette.colors[x].toHex())
+        .join(", ");
+      return props.failMessage.replace("{{blame}}", blame);
     }
   };
 }

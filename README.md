@@ -24,6 +24,7 @@ First time you start it up you should also run `yarn prep data`
 # Todo bankruptcy
 
 - [ ] Gamut algorithm broken again
+- [ ] Add HCT/CAM, add explainers to each of the color spaces
 - [ ] Allow no palettes, allows renaming of non-current palettes
 - [ ] MS didn't like the location of the new button
 - [ ] Colors from String should save on enter

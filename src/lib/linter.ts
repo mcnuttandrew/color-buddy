@@ -14,31 +14,41 @@ import DivergingOrder from "./lints/diverging-order";
 import BackgroundContrast from "./lints/contrast";
 import Fair from "./lints/fair";
 import EvenDistribution from "./lints/even-distribution";
+import type { CustomLint } from "./lints/CustomLint";
+import { CreateCustomLint } from "./lints/CustomLint";
 
 export function runLintChecks(
   palette: Palette,
-  palType: any
+  palType: any,
+  customLints: CustomLint[],
+  ignoreList: Record<string, any>
 ): ColorLint<any, any>[] {
   return (
     [
       NameDiscrim,
-      MaxColors,
+      // MaxColors,
       ...Discrims,
       ...Blinds,
       ColorSimilarity,
       BackgroundDifferentiability,
       UglyColors,
       SequentialOrder,
-      AvoidExtremes,
+      // AvoidExtremes,
       DivergingOrder,
       BackgroundContrast,
       ...Fair,
       // EvenDistribution,
+      ...customLints.map((x) => CreateCustomLint(x)),
     ] as (typeof ColorLint)[]
   )
     .map((x) => new x(palette))
     .filter((x) => x.taskTypes.includes(palType))
-    .map((x) => x.run());
+    .map((x) => {
+      if (ignoreList[x.name] && ignoreList[x.name].ignore) {
+        return x;
+      }
+      return x.run();
+    });
 }
 
 // typesript type for an list of classes

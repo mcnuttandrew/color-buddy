@@ -379,7 +379,10 @@ function compareValues(
       let thresh = pred.threshold;
       if (!thresh) throw new Error("Similarity threshold not found");
       if (isColor) {
-        const diff = left.symmetricDeltaE(right);
+        const diff = left.symmetricDeltaE(right, "2000");
+        if (showValues) {
+          console.log("diff", diff, thresh, left.toHex(), right.toHex());
+        }
         return diff < thresh;
       }
       throw new Error("Type error");

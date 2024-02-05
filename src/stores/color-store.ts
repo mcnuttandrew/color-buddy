@@ -214,7 +214,7 @@ function createStore() {
     setCurrentPalName: (name: string) => palUp((n) => ({ ...n, name })),
     setCurrentPalType: (type: PalType) => palUp((n) => ({ ...n, type })),
     setCurrentPalEvalConfig: (evalConfig: Record<string, any>) =>
-      palUp((n) => ({ ...n, evalConfig })),
+      palUp((n) => ({ ...n, evalConfig: hardCopy(evalConfig) })),
     addColorToCurrentPal: (color: Color) =>
       palUp((n) => ({ ...n, colors: [...n.colors, color] })),
     setBackground: (color: Color) =>
@@ -230,6 +230,7 @@ function createStore() {
       })),
   };
 }
+const hardCopy = (x: any) => JSON.parse(JSON.stringify(x));
 
 const store = createStore();
 

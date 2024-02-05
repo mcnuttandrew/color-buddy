@@ -1,18 +1,21 @@
 <script lang="ts">
   import colorStore from "../stores/color-store";
   import configStore from "../stores/config-store";
+  import lintStore from "../stores/lint-store";
   import { ColorLint } from "../lib/lints/ColorLint";
 
   import { runLintChecks } from "../lib/linter";
   import { buttonStyle } from "../lib/styles";
   import LintDisplay from "./LintDisplay.svelte";
   import EvalColorColumn from "./EvalColorColumn.svelte";
+  import LintCustomizationModal from "./LintCustomizationModal.svelte";
   import Nav from "../components/Nav.svelte";
 
   $: currentPal = $colorStore.palettes[$colorStore.currentPal];
   $: palType = currentPal.type;
   $: evalConfig = currentPal.evalConfig;
-  $: checks = runLintChecks(currentPal, palType);
+  $: customLints = $lintStore.lints;
+  $: checks = runLintChecks(currentPal, palType, customLints, evalConfig);
 
   $: checkGroups = checks.reduce(
     (acc, check) => {
@@ -105,4 +108,7 @@
       {/each}
     </div>
   </div>
+  {#if $lintStore.focusedLint !== undefined}
+    <LintCustomizationModal />
+  {/if}
 </div>

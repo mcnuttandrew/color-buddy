@@ -12,7 +12,6 @@
   import ExampleWrapper from "./ExampleWrapper.svelte";
   import Modal from "../components/Modal.svelte";
   import { buttonStyle } from "../lib/styles";
-  import { xml } from "@codemirror/lang-xml";
   import CodeMirror from "svelte-codemirror-editor";
   import Swatches from "./Swatches.svelte";
   import Tooltip from "../components/Tooltip.svelte";
@@ -240,11 +239,7 @@
         {/if}
       </div>
       {#if modalState === "input-svg"}
-        <CodeMirror
-          bind:value
-          lang={xml()}
-          placeholder={"Paste in some SVG text here"}
-        />
+        <CodeMirror bind:value placeholder={"Paste in some SVG text here"} />
         <div>
           <input
             accept="image/svg"

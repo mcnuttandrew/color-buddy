@@ -131,19 +131,24 @@ export class Color {
     color: Color,
     algorithm: "76" | "CMC" | "2000" | "ITP" | "Jz" | "OK" = "2000"
   ): number {
-    return this.toColorIO().deltaE(color.toColorIO(), algorithm);
+    const left = this.toColorIO().to("srgb");
+    const right = color.toColorIO().to("srgb");
+    return left.deltaE(right, algorithm);
   }
   distance(color: Color, space: string): number {
     const colorSpace = space || this.spaceName;
-    return this.toColorIO().distance(color.toColorIO(), colorSpace);
+    const left = this.toColorIO().to(colorSpace);
+    const right = color.toColorIO().to(colorSpace);
+    return left.distance(right);
   }
   symmetricDeltaE(
     color: Color,
     algorithm: "76" | "CMC" | "2000" | "ITP" | "Jz" | "OK" = "2000"
   ): number {
-    return (
-      0.5 * (this.deltaE(color, algorithm) + color.deltaE(this, algorithm))
-    );
+    const left = this.deltaE(color, algorithm);
+    const right = color.deltaE(this, algorithm);
+    console.log(color.toHex(), this.toHex(), left, right);
+    return 0.5 * (left + right);
   }
   copy(): Color {
     return this.fromChannels(this.toChannels());

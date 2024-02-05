@@ -4,7 +4,7 @@ import App from "./App.svelte";
 let app;
 try {
   const targetElement = document.getElementById("app");
-  console.clear();
+  // console.clear();
   app = new App({
     target: targetElement ? targetElement : document.body,
   });

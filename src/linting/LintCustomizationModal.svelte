@@ -1,6 +1,7 @@
 <script lang="ts">
   import lintStore from "../stores/lint-store";
   import Modal from "../components/Modal.svelte";
+  import MonacoEditor from "../components/MonacoEditor.svelte";
   import CodeMirror from "svelte-codemirror-editor";
   let value = "";
 </script>
@@ -11,7 +12,7 @@
     lintStore.setFocusedLint(undefined);
   }}
 >
-  <div>
+  <div class="flex flex-col container">
     <div class="font-bold text-lg">Customize Lint</div>
     <div class="flex flex-col">
       <div class="flex items-center">
@@ -27,6 +28,12 @@
         <div class="ml-2">Warning</div>
       </div>
     </div>
-    <CodeMirror bind:value placeholder={"Paste in some SVG text here"} />
+    <MonacoEditor />
   </div>
 </Modal>
+
+<style>
+  .container {
+    min-width: 800px;
+  }
+</style>

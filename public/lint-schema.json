@@ -1,21 +1,12 @@
 {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "type": "object",
-    "properties": {
+    "definitions": {
         "LintProgram": {
             "$ref": "#/definitions/LintExpression"
         },
-        "LintExpression": {
-            "$ref": "#/definitions/LintExpression"
-        },
-        "LintConjunction": {
-            "$ref": "#/definitions/LintConjunction"
-        },
         "LintBoolean": {
             "type": "boolean"
-        },
-        "LintVariable": {
-            "type": "string"
         },
         "LintColor": {
             "anyOf": [
@@ -281,22 +272,6 @@
                 "v"
             ]
         },
-        "LintRef": {
-            "anyOf": [
-                {
-                    "$ref": "#/definitions/LintVariable"
-                },
-                {
-                    "$ref": "#/definitions/LintValue"
-                },
-                {
-                    "$ref": "#/definitions/LintMathOps"
-                },
-                {
-                    "$ref": "#/definitions/LintPairOps"
-                }
-            ]
-        },
         "LintComparisonBase": {
             "type": "object",
             "properties": {
@@ -453,32 +428,6 @@
                 }
             ]
         },
-        "LintQuantifier": {
-            "anyOf": [
-                {
-                    "type": "object",
-                    "properties": {
-                        "all": {
-                            "$ref": "#/definitions/LintQuantifierBase"
-                        }
-                    },
-                    "required": [
-                        "all"
-                    ]
-                },
-                {
-                    "type": "object",
-                    "properties": {
-                        "exist": {
-                            "$ref": "#/definitions/LintQuantifierBase"
-                        }
-                    },
-                    "required": [
-                        "exist"
-                    ]
-                }
-            ]
-        },
         "LintMapAlt": {
             "type": "object",
             "properties": {
@@ -531,9 +480,7 @@
                     "$ref": "#/definitions/LintColorFunction"
                 }
             ]
-        }
-    },
-    "definitions": {
+        },
         "LintExpression": {
             "anyOf": [
                 {
@@ -547,6 +494,25 @@
                 },
                 {
                     "$ref": "#/definitions/LintBoolean"
+                }
+            ]
+        },
+        "LintVariable": {
+            "type": "string"
+        },
+        "LintRef": {
+            "anyOf": [
+                {
+                    "$ref": "#/definitions/LintVariable"
+                },
+                {
+                    "$ref": "#/definitions/LintValue"
+                },
+                {
+                    "$ref": "#/definitions/LintMathOps"
+                },
+                {
+                    "$ref": "#/definitions/LintPairOps"
                 }
             ]
         },

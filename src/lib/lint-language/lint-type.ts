@@ -19,11 +19,13 @@ type LintQuantifierBase =
       varbs: LintVariable[];
       where?: LintExpression;
       in: LintVariable | LintValue[] | LintMap;
+      predicate: LintExpression;
     }
   | {
       varb: LintVariable;
       where?: LintExpression;
       in: LintVariable | LintValue[] | LintMap;
+      predicate: LintExpression;
     };
 type LintQuantifier =
   | { all: LintQuantifierBase }
@@ -37,7 +39,7 @@ type LintComparison =
   | { "!=": LintComparisonBase }
   | { "<": LintComparisonBase }
   | { ">": LintComparisonBase }
-  | { similar: { left: LintRef; right: LintRef; similarityThreshold: number } };
+  | { similar: { left: LintRef; right: LintRef; threshold: number } };
 type MathOperations = "+" | "-" | "*" | "/";
 type LintMathOps = Record<MathOperations, Number | LintVariable>;
 type LintPairOps =

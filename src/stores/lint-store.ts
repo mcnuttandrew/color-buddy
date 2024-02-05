@@ -5,40 +5,56 @@ import type { TaskType } from "../lib/lints/ColorLint";
 
 interface StoreData {
   lints: CustomLint[];
-  focusedLint: string | undefined;
+  focusedLint: string | false;
 }
 
 const InitialStore: StoreData = {
   lints: [],
-  focusedLint: undefined,
+  focusedLint: false,
 };
 
 export const BUILT_INS: CustomLint[] = [
   {
-    program: {
-      all: {
-        in: "colors",
-        varb: "a",
-        predicate: {
-          all: {
-            in: ["#000000", "#ffffff"],
-            varb: "b",
-            predicate: {
-              not: { similar: { left: "a", right: "b", threshold: 12 } },
+    program: JSON.stringify(
+      {
+        $schema:
+          "https://radiant-speculoos-7f8b2f.netlify.app/lint-schema.json",
+        all: {
+          in: "colors",
+          varb: "a",
+          predicate: {
+            all: {
+              in: ["#000000", "#ffffff"],
+              varb: "b",
+              predicate: {
+                not: { similar: { left: "a", right: "b", threshold: 12 } },
+              },
             },
           },
         },
       },
-    },
+      null,
+      2
+    ),
     name: "Avoid extreme colors",
     taskTypes: ["sequential", "diverging", "categorical"] as TaskType[],
     level: "warning",
     group: "design",
     description: `Colors at either end of the lightness spectrum can be hard to discriminate in some contexts, and are sometimes advised against.`,
     failMessage: `Colors at either end of the lightness spectrum {{blame}} are hard to discriminate in some contexts, and are sometimes advised against`,
+    id: "extreme-colors-built-in",
   },
   {
-    program: { "<": { left: { count: "colors" }, right: 10 } },
+    $schema: "https://radiant-speculoos-7f8b2f.netlify.app/lint-schema.json",
+    program: JSON.stringify(
+      {
+        $schema:
+          "https://radiant-speculoos-7f8b2f.netlify.app/lint-schema.json",
+        "<": { left: { count: "colors" }, right: 10 },
+      },
+      null,
+      2
+    ),
     name: "Avoid too many colors",
     taskTypes: ["sequential", "diverging", "categorical"] as TaskType[],
     level: "warning",
@@ -46,6 +62,7 @@ export const BUILT_INS: CustomLint[] = [
     description:
       "Palettes should have a maximum number of colors. Higher numbers of colors can make it hard to identify specific values.",
     failMessage: `This palette has too many colors and may be hard to discriminate in some contexts. Maximum: 10.`,
+    id: "too-many-colors-built-in",
   },
 ];
 
@@ -70,12 +87,39 @@ function createStore() {
       return newVal;
     });
 
+  const lintUpdate = (updateFunc: (old: CustomLint) => CustomLint) =>
+    persistUpdate((n) => {
+      const focusedLintIndex = n.lints.findIndex((x) => x.id === n.focusedLint);
+      const focusedLint = n.lints[focusedLintIndex];
+      if (!focusedLint) {
+        return n;
+      }
+      const newLint = updateFunc(focusedLint);
+      const updatedLints = [...n.lints];
+      updatedLints[focusedLintIndex] = newLint;
+      return { ...n, lints: updatedLints };
+    });
+
   return {
     subscribe,
     set: (newStore: StoreData) => persistUpdate(() => newStore),
     reset: () => persistUpdate(() => ({ ...InitialStore })),
-    setFocusedLint: (n: string | undefined) =>
+    setFocusedLint: (n: StoreData["focusedLint"]) =>
       persistUpdate((old) => ({ ...old, focusedLint: n })),
+    setCurrentLintProgram: (program: string) =>
+      lintUpdate((old) => ({ ...old, program })),
+    setCurrentLintName: (name: string) =>
+      lintUpdate((old) => ({ ...old, name })),
+    setCurrentLintTaskTypes: (taskTypes: TaskType[]) =>
+      lintUpdate((old) => ({ ...old, taskTypes })),
+    setCurrentLintLevel: (level: "error" | "warning") =>
+      lintUpdate((old) => ({ ...old, level })),
+    setCurrentLintGroup: (group: string) =>
+      lintUpdate((old) => ({ ...old, group })),
+    setCurrentLintDescription: (description: string) =>
+      lintUpdate((old) => ({ ...old, description })),
+    setCurrentLintFailMessage: (failMessage: string) =>
+      lintUpdate((old) => ({ ...old, failMessage })),
   };
 }
 

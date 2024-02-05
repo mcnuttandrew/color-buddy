@@ -147,7 +147,6 @@ export class Color {
   ): number {
     const left = this.deltaE(color, algorithm);
     const right = color.deltaE(this, algorithm);
-    console.log(color.toHex(), this.toHex(), left, right);
     return 0.5 * (left + right);
   }
   copy(): Color {

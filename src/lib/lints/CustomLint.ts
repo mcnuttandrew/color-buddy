@@ -3,14 +3,16 @@ import { ColorLint } from "./ColorLint";
 import type { TaskType } from "./ColorLint";
 import { LLEval, prettyPrintLL } from "../lint-language/lint-language";
 
+import * as Json from "jsonc-parser";
 export interface CustomLint {
-  program: LintProgram;
+  program: string;
   name: string;
   taskTypes: TaskType[];
   level: "error" | "warning";
   group: string;
   description: string;
   failMessage: string;
+  id: string;
 }
 
 export function CreateCustomLint(props: CustomLint) {
@@ -21,10 +23,11 @@ export function CreateCustomLint(props: CustomLint) {
     group = props.group;
     description = props.description;
     hasHeuristicFix = false;
-    isCustom = true;
+    isCustom = props.id;
 
     _runCheck() {
-      const { blame, result } = LLEval(props.program, this.palette, {
+      const prog = Json.parse(props.program);
+      const { blame, result } = LLEval(prog, this.palette, {
         debugCompare: false,
       });
       return { passCheck: result, data: blame };

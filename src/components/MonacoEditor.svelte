@@ -1,6 +1,10 @@
 <script lang="ts">
+  // https://www.codelantis.com/blog/sveltekit-monaco-editor
   import { onDestroy, onMount } from "svelte";
   import type * as Monaco from "monaco-editor/esm/vs/editor/editor.api";
+  export let value: string;
+  export let onChange: (value: string) => void;
+  export let language: string = "json";
 
   let editor: Monaco.editor.IStandaloneCodeEditor;
   let monaco: typeof Monaco;
@@ -13,27 +17,11 @@
 
     // Your monaco instance is ready, let's display some code!
     const editor = monaco.editor.create(editorContainer);
-    const model = monaco.editor.createModel(
-      `{
-  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
-  "description": "A simple bar chart with embedded data.",
-  "data": {
-    "values": [
-      {"a": "A", "b": 28}, {"a": "B", "b": 55}, {"a": "C", "b": 43},
-      {"a": "D", "b": 91}, {"a": "E", "b": 81}, {"a": "F", "b": 53},
-      {"a": "G", "b": 19}, {"a": "H", "b": 87}, {"a": "I", "b": 52}
-    ]
-  },
-  "mark": "bar",
-  "encoding": {
-    "x": {"field": "a", "type": "nominal", "axis": {"labelAngle": 0}},
-    "y": {"field": "b", "type": "quantitative"}
-  }
-}
-`,
-      "json"
-    );
+    const model = monaco.editor.createModel(value, language);
     editor.setModel(model);
+    editor.onDidChangeModelContent((event) => {
+      onChange(editor.getValue());
+    });
   });
 
   onDestroy(() => {
@@ -50,6 +38,6 @@
   .container {
     width: 100%;
     min-width: 100%;
-    height: 600px;
+    height: 400px;
   }
 </style>

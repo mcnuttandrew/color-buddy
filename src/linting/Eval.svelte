@@ -108,7 +108,7 @@
       {/each}
     </div>
   </div>
-  {#if $lintStore.focusedLint !== undefined}
+  {#if $lintStore.focusedLint !== false}
     <LintCustomizationModal />
   {/if}
 </div>

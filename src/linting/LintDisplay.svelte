@@ -12,8 +12,6 @@
   $: currentPal = $colorStore.palettes[$colorStore.currentPal];
   $: evalConfig = currentPal.evalConfig;
   $: ignored = !!evalConfig[check.name]?.ignore;
-  console.log(check.isCustom);
-  // check box emojis [✅, ⚠️, ❌]
 </script>
 
 {#if justSummary}
@@ -41,7 +39,8 @@
       <button
         class={buttonStyle}
         on:click={() => {
-          lintStore.setFocusedLint(check.name);
+          // @ts-ignore
+          lintStore.setFocusedLint(check.isCustom);
         }}
       >
         customize
@@ -72,12 +71,20 @@
       {#if !check.passes}
         <EvalResponse {check} />
       {/if}
+      {#if check.isCustom}
+        <button
+          class={buttonStyle}
+          on:click={() => {
+            // @ts-ignore
+            lintStore.setFocusedLint(check.isCustom);
+          }}
+        >
+          customize
+        </button>
+      {/if}
     </div>
     {#if !check.passes}
       <ExplanationViewer {check} />
-    {/if}
-    {#if check.isCustom}
-      custom
     {/if}
   </div>
 {/if}

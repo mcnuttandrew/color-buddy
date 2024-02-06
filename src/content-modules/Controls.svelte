@@ -9,6 +9,7 @@
   import AdjustColor from "../controls/AdjustColor.svelte";
   import AddColor from "../controls/AddColor.svelte";
   import ColorChannelPicker from "../components/ColorChannelPicker.svelte";
+  import Rotate from "../controls/Rotate.svelte";
 
   $: currentPal = $colorStore.palettes[$colorStore.currentPal];
   $: colors = currentPal.colors;
@@ -34,6 +35,7 @@
 
 <DistributePoints />
 <AlignSelection />
+<Rotate />
 <!-- <ModifySelection /> -->
 
 <InterpolatePoints />

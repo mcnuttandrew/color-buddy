@@ -275,6 +275,7 @@ class LCH extends Color {
   domains = { l: [100, 0], c: [0, 150], h: [360, 0] } as Domain;
   stepSize: Channels = [1, 1, 1];
   dimensionToChannel = { x: "c", y: "h", z: "l" };
+  isPolar = true;
   axisLabel = (num: number) => `${Math.round(num)}`;
 }
 

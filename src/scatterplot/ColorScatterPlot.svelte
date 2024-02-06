@@ -266,78 +266,6 @@
     class: "pointer-events-none",
   };
 
-  $: initialRotationColors = [] as Color[];
-  $: initialRotatePos = { x: 0, y: 0 };
-  $: rotatePivotCenter = { x: 0, y: 0 };
-  $: rotatePosition = { x: 0, y: 0 };
-
-  function rotateStart(e: any) {
-    // console.log("rotate start");
-    startDragging();
-    interactionMode = "rotate";
-    initialRotationColors = [...colors];
-    // const pos = toXY(e);
-    initialRotatePos = {
-      x: e.target.getBBox().x,
-      y: e.target.getBBox().y,
-    };
-    rotatePivotCenter = screenSpaceAvg(
-      focusedColors
-        .map((x) => initialRotationColors[x])
-        .map((el) => ({
-          x: x(el),
-          y: y(el),
-        }))
-    );
-    rotateUpdate(e);
-  }
-
-  function rotateUpdate(e: any) {
-    // console.log("rotate update");
-    let currentPos = toXY(e);
-    currentPos = {
-      x: currentPos.x - svgContainer.getBoundingClientRect().x,
-      y: currentPos.y - svgContainer.getBoundingClientRect().y,
-    };
-    rotatePosition = currentPos;
-    let newAngle = Math.atan2(
-      currentPos.y - rotatePivotCenter.y,
-      currentPos.x - rotatePivotCenter.x
-    );
-    const initialAngle = Math.atan2(
-      initialRotatePos.y - rotatePivotCenter.y,
-      initialRotatePos.x - rotatePivotCenter.x
-    );
-    let angle = newAngle - initialAngle;
-    angle = angle < 0 ? angle + 2 * Math.PI : angle;
-    const xc = rotatePivotCenter.x;
-    const yc = rotatePivotCenter.y;
-    const newColors = focusedColors
-      .map((x) => initialRotationColors[x])
-      .map((color) => {
-        const x1 = x(color);
-        const y1 = y(color);
-        const x3 =
-          Math.cos(angle) * (x1 - xc) - Math.sin(angle) * (y1 - yc) + xc;
-        const y3 =
-          Math.sin(angle) * (x1 - xc) + Math.cos(angle) * (y1 - yc) + yc;
-        const newChannels = [...color.toChannels()] as [number, number, number];
-        newChannels[config.xChannelIndex] = scales.xInv(x3, y3);
-        newChannels[config.yChannelIndex] = scales.yInv(x3, y3);
-        return color.fromChannels(newChannels);
-      });
-    const outColors = [...initialRotationColors];
-    newColors.forEach((color, idx) => {
-      outColors[focusedColors[idx]] = color;
-    });
-    onColorsChange(outColors);
-  }
-  function rotateEnd() {
-    // console.log("rotate end");
-    interactionMode = "idle";
-    stopDragging();
-  }
-
   let puttingPreview: false | Color = false;
 
   function puttingUpdate(e: any) {
@@ -364,57 +292,6 @@
     }, 10);
     puttingPreview = false;
   }
-
-  $: handles = [
-    // {
-    //   type: "stretch",
-    //   label: "left",
-    //   x: pos.xPos - 15,
-    //   y: pos.yPos + pos.selectionHeight / 2,
-    // },
-    // {
-    //   type: "stretch",
-    //   label: "right",
-    //   x: pos.xPos + pos.selectionWidth + 5,
-    //   y: pos.yPos + pos.selectionHeight / 2,
-    // },
-    // {
-    //   type: "stretch",
-    //   label: "top",
-    //   x: pos.xPos + pos.selectionWidth / 2,
-    //   y: pos.yPos - 15,
-    // },
-    // {
-    //   type: "stretch",
-    //   label: "bottom",
-    //   x: pos.xPos + pos.selectionWidth / 2,
-    //   y: pos.yPos + pos.selectionHeight + 5,
-    // },
-    {
-      type: "rotate",
-      label: "",
-      x: pos.xPos,
-      y: pos.yPos,
-    },
-    {
-      type: "rotate",
-      label: "",
-      x: pos.xPos,
-      y: pos.yPos + pos.selectionHeight,
-    },
-    {
-      type: "rotate",
-      label: "",
-      x: pos.xPos + pos.selectionWidth,
-      y: pos.yPos,
-    },
-    {
-      type: "rotate",
-      label: "",
-      x: pos.xPos + pos.selectionWidth,
-      y: pos.yPos + pos.selectionHeight,
-    },
-  ];
   let svgContainer: any;
 </script>
 
@@ -441,14 +318,10 @@
             on:touchstart|preventDefault={selectionStart(false)}
             on:touchmove|preventDefault={interactionMode === "drag"
               ? dragUpdate(false)
-              : interactionMode === "rotate"
-                ? rotateUpdate
-                : selectionUpdate(false)}
+              : selectionUpdate(false)}
             on:touchend|preventDefault={interactionMode === "drag"
               ? dragEnd(false)
-              : interactionMode === "rotate"
-                ? rotateEnd
-                : selectionEnd(false)}
+              : selectionEnd(false)}
           />
 
           <g
@@ -545,51 +418,6 @@
                 on:mousedown|preventDefault={(e) => dragStart(e)}
               />
             {/if}
-            {#if focusedColors.length > 1}
-              {#each handles as handle}
-                {#if handle.type === "stretch"}
-                  <rect
-                    x={handle.x}
-                    y={handle.y}
-                    width={10}
-                    fill={"black"}
-                    cursor="grab"
-                    height={10}
-                  />
-                {/if}
-                {#if handle.type === "rotate"}
-                  <circle
-                    cx={handle.x}
-                    cy={handle.y}
-                    r={10}
-                    fill={"steelblue"}
-                    opacity={0.5}
-                    cursor="grab"
-                    on:mousedown|preventDefault|stopPropagation={rotateStart}
-                    on:mouseup|preventDefault|stopPropagation={rotateEnd}
-                    on:touchstart|preventDefault|stopPropagation={rotateStart}
-                    on:touchmove|preventDefault|stopPropagation={rotateUpdate}
-                    on:touchend|preventDefault|stopPropagation={rotateEnd}
-                  />
-                {/if}
-              {/each}
-              {#if interactionMode === "rotate"}
-                <circle
-                  fill="green"
-                  r={10}
-                  cx={rotatePosition.x}
-                  cy={rotatePosition.y}
-                  pointer-events="none"
-                />
-                <line
-                  x1={rotatePivotCenter.x}
-                  y1={rotatePivotCenter.y}
-                  x2={rotatePosition.x}
-                  y2={rotatePosition.y}
-                  stroke="green"
-                />
-              {/if}
-            {/if}
           </g>
         </g>
         {#if interactionMode === "select"}
@@ -616,15 +444,6 @@
             on:touchend|preventDefault={dragEnd(false)}
           />
         {/if}
-        {#if interactionMode === "rotate"}
-          <rect
-            {...fillParamsXY}
-            on:mousemove|preventDefault={rotateUpdate}
-            on:mouseup|preventDefault={rotateEnd}
-            on:touchmove|preventDefault={rotateUpdate}
-            on:touchend|preventDefault={rotateEnd}
-          />
-        {/if}
         {#if scatterPlotMode === "putting"}
           {#if puttingPreview}
             <circle
@@ -646,8 +465,6 @@
     </div>
   </div>
   <div class="h-full">
-    <!-- invisible space inserter -->
-    <!-- <span class=" text-xl opacity-0">X</span> -->
     <!-- svelte-ignore a11y-no-static-element-interactions -->
     <div class="flex h-full">
       <div class="flex flex-col">

@@ -34,16 +34,6 @@
     <div class="flex w-full grow overflow-auto">
       <div class="flex flex-col">
         <div class="w-full flex bg-stone-800 px-2 py-3 text-white">
-          <div class="flex">
-            <NewPal />
-            <button
-              id="save"
-              class={`${buttonStyle} `}
-              on:click={() => colorStore.duplicatePal($colorStore.currentPal)}
-            >
-              Save
-            </button>
-          </div>
           <SetSimulation />
           <Zoom />
         </div>

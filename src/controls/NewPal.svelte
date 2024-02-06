@@ -6,7 +6,7 @@
   import type { Palette } from "../stores/color-store";
   import Tooltip from "../components/Tooltip.svelte";
   import { VegaColors } from "../lib/charts";
-  import { buttonStyle } from "../lib/styles";
+  import { buttonStyle, denseButtonStyle } from "../lib/styles";
   import { makePal, toHex } from "../lib/utils";
   import type { ExtendedPal } from "../lib/utils";
   import SuggestColorPal from "./SuggestColorPal.svelte";
@@ -48,6 +48,15 @@
 
   function newPalFromBlank() {
     const pal = newGenericPal("new palette") as any;
+    pal.colors = [];
+    pal.background = Color.colorFromString("#ffffff", colorSpace);
+    pal.colorSpace = colorSpace;
+    const newPal = pal as Palette;
+
+    colorStore.createNewPal(newPal);
+  }
+  function newWithGenericColors() {
+    const pal = newGenericPal("new palette") as any;
     pal.colors = pal.colors.map((x: string) =>
       Color.colorFromString(x, colorSpace)
     );
@@ -62,8 +71,23 @@
 <Tooltip>
   <span slot="content" let:onClick class="max-w-lg">
     <div>
-      <button class={buttonStyle} on:click={() => newPalFromBlank()}>
+      <button
+        class={buttonStyle}
+        on:click={() => {
+          newPalFromBlank();
+          onClick();
+        }}
+      >
         New blank
+      </button>
+      <button
+        class={buttonStyle}
+        on:click={() => {
+          newWithGenericColors();
+          onClick();
+        }}
+      >
+        New with generic colors
       </button>
     </div>
     <div class="mt-5 border-t-2 border-black"></div>
@@ -92,6 +116,6 @@
   </span>
 
   <span slot="target" let:toggle>
-    <button class={buttonStyle} on:click={toggle}>New</button>
+    <button class={denseButtonStyle} on:click={toggle}>New</button>
   </span>
 </Tooltip>

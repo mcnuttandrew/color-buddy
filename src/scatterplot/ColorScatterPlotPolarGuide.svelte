@@ -55,9 +55,6 @@
   };
   const angleBgResolution = 30;
   const rBgResolution = 5;
-  const avgNums = (nums: number[]) =>
-    nums.reduce((acc, x) => acc + x, 0) / nums.length;
-  $: fColors = focusedColors.map((x) => colors[x].toChannels());
   $: fillColor = (i: number, j: number) => {
     const { xIdx, yIdx, zIdx } = miniConfig;
     const coords = [0, 0, 0] as [number, number, number];
@@ -65,7 +62,9 @@
     const r = rNonDimScale(i / rBgResolution);
     coords[xIdx] = r;
     coords[yIdx] = angle;
-    coords[zIdx] = avgNums(fColors.map((x) => x[zIdx]));
+    coords[zIdx] = focusedColors.length
+      ? colors[focusedColors[0]].toChannels()[zIdx]
+      : colors[0].toChannels()[zIdx];
     return Color.colorFromChannels(coords, colorSpace as any).toDisplay();
   };
   $: arcScale = arc();

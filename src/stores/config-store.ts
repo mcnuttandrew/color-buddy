@@ -45,6 +45,7 @@ const addDefaults = (store: StoreData): StoreData => {
   // delete any keys that are not in the initial store
   for (const key in newStore) {
     if (!(key in InitialStore)) {
+      // @ts-ignore
       delete newStore[key];
     }
   }

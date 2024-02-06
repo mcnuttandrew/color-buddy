@@ -38,25 +38,3 @@ export default class ExtremeColors extends ColorLint<Color[], false> {
     ];
   }
 }
-
-const customLintVersion: CustomLint = {
-  program: {
-    all: {
-      in: "colors",
-      varb: "a",
-      predicate: {
-        all: {
-          in: ["#000000", "#ffffff"],
-          varb: "b",
-          predicate: { "!=": { left: "a", right: "b" } },
-        },
-      },
-    },
-  },
-  name: "Avoid extreme colors",
-  taskTypes: ["sequential", "diverging", "categorical"] as TaskType[],
-  level: "warning",
-  group: "design",
-  description: `Colors at either end of the lightness spectrum can be hard to discriminate in some contexts, and are sometimes advised against.`,
-  failMessage: `Colors at either end of the lightness spectrum are hard to discriminate in some contexts, and are sometimes advised against`,
-};

@@ -401,7 +401,7 @@ test("LintLanguage Measure DeltaE", () => {
       right: 100.00000248106656,
     },
   };
-  const result = LLEval(program, toPal([]), { debugCompare: true });
+  const result = LLEval(program, toPal([]), { debugCompare: false });
   expect(prettyPrintLL(program)).toBe(
     "deltaE(#000, #fff, 2000) == 100.00000248106656"
   );

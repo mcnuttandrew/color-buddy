@@ -1,0 +1,409 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "$ref": "#/definitions/LintProgram",
+  "definitions": {
+    "LintProgram": {
+      "description": "The LintProgram is the root of the Lint JSON schema. It is an expression which is evaluated to a boolean value.",
+      "$ref": "#/definitions/LintExpression"
+    },
+    "LintBoolean": { "type": "boolean" },
+    "LintColor": {
+      "description": "A LintColor is a JSON object that represents a color. It can accept any valid HTML color, such as hex encodings and so on.",
+      "anyOf": [{ "type": "string" }, {}]
+    },
+    "LintMathOps": {
+      "type": "object",
+      "additionalProperties": false,
+      "patternProperties": {
+        "^(\\+|\\-|\\*|\\/)$": {
+          "anyOf": [
+            { "type": "number" },
+            { "$ref": "#/definitions/LintVariable" }
+          ]
+        }
+      }
+    },
+    "LintPairOps": {
+      "anyOf": [
+        {
+          "type": "object",
+          "description": "Compute the distance between two colors using a given color space. The color space can be lab, hsl, or another valid color space.",
+          "additionalProperties": false,
+          "properties": {
+            "dist": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "left": { "$ref": "#/definitions/LintRef" },
+                "right": { "$ref": "#/definitions/LintRef" },
+                "space": { "enum": ["lab", "hsl"] }
+              },
+              "required": ["left", "right", "space"]
+            }
+          },
+          "required": ["dist"]
+        },
+        {
+          "type": "object",
+          "description": "Compute the deltaE between two colors using a given algorithm. The algorithm can be 2000 or 76.",
+          "additionalProperties": false,
+          "properties": {
+            "deltaE": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "left": { "$ref": "#/definitions/LintRef" },
+                "right": { "$ref": "#/definitions/LintRef" },
+                "algorithm": { "enum": ["2000", "76"] }
+              },
+              "required": ["left", "right", "algorithm"]
+            }
+          },
+          "required": ["deltaE"]
+        },
+        {
+          "description": "Compute the contrast between two colors using a given algorithm. The algorithm can be APCA, WCAG21, Michelson, Weber, Lstar or DeltaPhi.",
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "contrast": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "left": { "$ref": "#/definitions/LintRef" },
+                "right": { "$ref": "#/definitions/LintRef" },
+                "algorithm": {
+                  "enum": [
+                    "APCA",
+                    "WCAG21",
+                    "Michelson",
+                    "Weber",
+                    "Lstar",
+                    "DeltaPhi"
+                  ]
+                }
+              },
+              "required": ["left", "right", "algorithm"]
+            }
+          },
+          "required": ["contrast"]
+        }
+      ]
+    },
+    "LintMap": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "filter": { "$ref": "#/definitions/LintVariable" },
+        "func": { "$ref": "#/definitions/LintExpression" }
+      },
+      "required": ["filter", "func"]
+    },
+    "LintReduce": {
+      "type": "object",
+      "additionalProperties": false,
+      "patternProperties": {
+        "^(sum|count|mean|max|min|first|last|extent)$": {
+          "anyOf": [
+            { "$ref": "#/definitions/LintVariable" },
+            { "type": "array" },
+            { "$ref": "#/definitions/LintMap" }
+          ]
+        }
+      }
+    },
+    "LintColorFunction": {
+      "anyOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "cvd_sim": { "$ref": "#/definitions/LintVariable" },
+            "type": {
+              "enum": [
+                "protanomaly",
+                "deuteranomaly",
+                "tritanopia",
+                "grayscale"
+              ]
+            }
+          },
+          "required": ["cvd_sim", "type"]
+        },
+        { "$ref": "#/definitions/LintVariable" },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "toColor": { "$ref": "#/definitions/LintVariable" },
+            "space": {
+              "enum": [
+                "hsl",
+                "hsv",
+                "jzazbz",
+                "lab",
+                "lch",
+                "oklab",
+                "oklch",
+                "rgb",
+                "srgb"
+              ]
+            },
+            "channel": {
+              "enum": [
+                "a",
+                "az",
+                "b",
+                "bz",
+                "c",
+                "g",
+                "h",
+                "jz",
+                "l",
+                "okc",
+                "okl",
+                "r",
+                "s",
+                "v"
+              ]
+            }
+          },
+          "required": ["toColor", "space", "channel"]
+        },
+        {
+          "type": "object",
+          "patternProperties": {
+            "^(hsl|hsv|jzazbz|lab|lch|oklab|oklch|rgb|srgb)\\.(a|az|b|bz|c|g|h|jz|l|okc|okl|r|s|v)$": {
+              "$ref": "#/definitions/LintVariable"
+            }
+          }
+        }
+      ]
+    },
+    "ColorSpace": {
+      "enum": [
+        "hsl",
+        "hsv",
+        "jzazbz",
+        "lab",
+        "lch",
+        "oklab",
+        "oklch",
+        "rgb",
+        "srgb"
+      ]
+    },
+    "ColorChannel": {
+      "enum": [
+        "a",
+        "az",
+        "b",
+        "bz",
+        "c",
+        "g",
+        "h",
+        "jz",
+        "l",
+        "okc",
+        "okl",
+        "r",
+        "s",
+        "v"
+      ]
+    },
+    "LintComparisonBase": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "left": { "$ref": "#/definitions/LintRef" },
+        "right": { "$ref": "#/definitions/LintRef" }
+      },
+      "required": ["left", "right"]
+    },
+    "LintComparison": {
+      "description": "A logical comparison expression. It is used to express a comparison between two values. It can be ==, !=, <, > or similar. similar takes two colors and a similarity threshold expressed in dE units.",
+      "anyOf": [
+        { "$ref": "#/definitions/LintComparisonBase" },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "==": { "$ref": "#/definitions/LintComparisonBase" }
+          },
+          "required": ["=="]
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "!=": { "$ref": "#/definitions/LintComparisonBase" }
+          },
+          "required": ["!="]
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "<": { "$ref": "#/definitions/LintComparisonBase" }
+          },
+          "required": ["<"]
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            ">": { "$ref": "#/definitions/LintComparisonBase" }
+          },
+          "required": [">"]
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "similar": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "left": { "$ref": "#/definitions/LintRef" },
+                "right": { "$ref": "#/definitions/LintRef" },
+                "similarityThreshold": { "type": "number" }
+              },
+              "required": ["left", "right", "similarityThreshold"]
+            }
+          },
+          "required": ["similar"]
+        }
+      ]
+    },
+    "LintQuantifierBase": {
+      "anyOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "varbs": {
+              "type": "array",
+              "items": { "$ref": "#/definitions/LintVariable" }
+            },
+            "predicate": { "$ref": "#/definitions/LintExpression" },
+            "where": { "$ref": "#/definitions/LintExpression" },
+            "in": {
+              "anyOf": [
+                { "$ref": "#/definitions/LintVariable" },
+                { "type": "array" },
+                { "$ref": "#/definitions/LintMap" }
+              ]
+            }
+          },
+          "required": ["varbs", "in", "predicate"]
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "varb": { "$ref": "#/definitions/LintVariable" },
+            "where": { "$ref": "#/definitions/LintExpression" },
+            "predicate": { "$ref": "#/definitions/LintExpression" },
+            "in": {
+              "anyOf": [
+                { "$ref": "#/definitions/LintVariable" },
+                { "type": "array" },
+                { "$ref": "#/definitions/LintMap" }
+              ]
+            }
+          },
+          "required": ["varb", "in", "predicate"]
+        }
+      ]
+    },
+    "LintValue": {
+      "description": "A LintValue is a JSON object that represents a value. It can be a string, a number, a boolean, a LintColor, a LintVariable, a LintMathOps, a LintPairOps, a LintReduce, a LintColorFunction or a LintExpression.",
+      "anyOf": [
+        { "type": "string" },
+        { "type": "number" },
+        { "type": "boolean" },
+        { "$ref": "#/definitions/LintColor" },
+        { "$ref": "#/definitions/LintVariable" },
+        { "$ref": "#/definitions/LintMathOps" },
+        { "$ref": "#/definitions/LintPairOps" },
+        { "$ref": "#/definitions/LintReduce" },
+        { "$ref": "#/definitions/LintColorFunction" }
+      ]
+    },
+    "LintExpression": {
+      "description": "A LintExpression is a JSON object that represents a logical expression. It is used to express a condition that is evaluated to a boolean value. It can be a conjunction, a quantifier, a comparison or a boolean value.",
+      "anyOf": [
+        { "$ref": "#/definitions/LintConjunction" },
+        { "$ref": "#/definitions/LintQuantifier" },
+        { "$ref": "#/definitions/LintComparison" },
+        { "$ref": "#/definitions/LintBoolean" }
+      ]
+    },
+    "LintVariable": { "type": "string" },
+    "LintRef": {
+      "anyOf": [
+        { "$ref": "#/definitions/LintVariable" },
+        { "$ref": "#/definitions/LintValue" },
+        { "$ref": "#/definitions/LintMathOps" },
+        { "$ref": "#/definitions/LintPairOps" }
+      ]
+    },
+    "LintConjunction": {
+      "description": "A logical conjunction expression. It is used to express the logical AND, OR and NOT operations.",
+      "anyOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "and": {
+              "type": "array",
+              "items": { "$ref": "#/definitions/LintExpression" }
+            }
+          },
+          "required": ["and"]
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "or": {
+              "type": "array",
+              "items": { "$ref": "#/definitions/LintExpression" }
+            }
+          },
+          "required": ["or"]
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "not": { "$ref": "#/definitions/LintExpression" }
+          },
+          "required": ["not"]
+        }
+      ]
+    },
+    "LintQuantifier": {
+      "description": "A logical quantifier expression. It is used to express the existence of a value (exist) or the existence of a value for all elements in a collection (all).",
+      "anyOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "all": { "$ref": "#/definitions/LintQuantifierBase" }
+          },
+          "required": ["all"]
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "exist": { "$ref": "#/definitions/LintQuantifierBase" }
+          },
+          "required": ["exist"]
+        }
+      ]
+    }
+  }
+}

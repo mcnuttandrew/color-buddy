@@ -22,10 +22,10 @@ const engines = {
   openai: (prompt: string) =>
     openai.chat.completions.create({
       messages: [{ role: "user", content: prompt }],
-      model: "gpt-3.5-turbo",
-      n: 3,
+      // model: "gpt-3.5-turbo",
+      n: 1,
       temperature: 0.5,
-      // model: "gpt-4",
+      model: "gpt-4",
     }),
 };
 

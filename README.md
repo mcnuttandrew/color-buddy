@@ -10,10 +10,17 @@ Use: should point to localhost:8888 if all is well
 
 First time you start it up you should also run `yarn prep data`
 
+Macros story
+
+- not similar
+- sequences
+- "where": { "!=": {"left": "index(a)", "right": "index(b)"} },
+
 # Language todos
 
 - [ ] Integration into main app
 - [ ] Add background, roles, palette level semantics
+- [ ] Categorical mutually distinct
 - [x] "Blame" for colors
 - [ ] JSON Schema (for validation) (if parser is not used), get a sustainable way to use it
 - [x] Basic Language
@@ -24,6 +31,7 @@ First time you start it up you should also run `yarn prep data`
 # Todo bankruptcy
 
 - [ ] Gamut algorithm broken again
+- [ ] Add HCT/CAM, add explainers to each of the color spaces
 - [ ] Allow no palettes, allows renaming of non-current palettes
 - [ ] MS didn't like the location of the new button
 - [ ] Colors from String should save on enter

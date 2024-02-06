@@ -1,5 +1,18 @@
 import { Color, colorPickerConfig } from "./Color";
 import type { PalType, Palette } from "../stores/color-store";
+import { Formatter, FracturedJsonOptions, EolStyle } from "fracturedjsonjs";
+
+const options = new FracturedJsonOptions();
+options.MaxTotalLineLength = 120;
+options.MaxInlineComplexity = 2;
+options.JsonEolStyle = EolStyle.Crlf;
+
+const formatter = new Formatter();
+formatter.Options = options;
+
+export function JSONStringify(obj: string) {
+  return formatter.Reformat(obj);
+}
 
 export const pick = (arr: any[]) => arr[Math.floor(Math.random() * arr.length)];
 

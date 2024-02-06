@@ -37,6 +37,7 @@ export class ColorLint<CheckData, ParamType> {
   hasHeuristicFix: boolean = false;
   config: { val?: ParamType } = {};
   defaultParam: ParamType = false as any;
+  isCustom: false | string = false;
   group: string = "";
   description: string = "";
   paramOptions:
@@ -63,6 +64,10 @@ export class ColorLint<CheckData, ParamType> {
     copy.defaultParam = this.defaultParam;
     copy.hasHeuristicFix = this.hasHeuristicFix;
     copy.level = this.level;
+    copy.group = this.group;
+    copy.description = this.description;
+    copy.paramOptions = this.paramOptions;
+    copy.isCustom = this.isCustom;
     return copy;
   }
 

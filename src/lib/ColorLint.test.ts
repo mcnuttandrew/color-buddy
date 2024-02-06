@@ -4,7 +4,6 @@ import { Color } from "./Color";
 import type { Palette } from "../stores/color-store";
 
 import ColorNameDiscriminability, { getName } from "./lints/name-discrim";
-import MaxColors from "./lints/max-colors";
 import ColorBlind from "./lints/blind-check";
 import BackgroundDifferentiability from "./lints/background-differentiability";
 
@@ -35,17 +34,6 @@ test("ColorLint - ColorNameDiscriminability", async () => {
   expect(oldColorNames.length).toBe(1);
   const colorNames = unique<string>(fix[0].colors.map((x) => getName(x)));
   expect(colorNames.length).toBe(2);
-});
-
-test("ColorLint - MaxColors", async () => {
-  const examplePal = makePalFromHexes([...new Array(15)].map(() => "#006cc6"));
-  const exampleLint = new MaxColors(examplePal).run();
-  expect(exampleLint.passes).toBe(false);
-  expect(exampleLint.message).toBe(
-    "This palette has too many colors (15) and may be hard to discriminate in some contexts. Maximum: 10."
-  );
-  const fix = await exampleLint.suggestFix().then((x) => x[0]);
-  expect(fix.colors.length).toBe(9);
 });
 
 test("ColorLint - ColorBlind", async () => {

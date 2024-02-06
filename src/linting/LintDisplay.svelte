@@ -1,5 +1,6 @@
 <script lang="ts">
   import colorStore from "../stores/color-store";
+  import lintStore from "../stores/lint-store";
   import { ColorLint } from "../lib/lints/ColorLint";
   import { buttonStyle } from "../lib/styles";
   import Tooltip from "../components/Tooltip.svelte";
@@ -11,7 +12,6 @@
   $: currentPal = $colorStore.palettes[$colorStore.currentPal];
   $: evalConfig = currentPal.evalConfig;
   $: ignored = !!evalConfig[check.name]?.ignore;
-  // check box emojis [✅, ⚠️, ❌]
 </script>
 
 {#if justSummary}
@@ -33,8 +33,19 @@
         });
       }}
     >
-      renable
+      re-enable
     </button>
+    {#if check.isCustom}
+      <button
+        class={buttonStyle}
+        on:click={() => {
+          // @ts-ignore
+          lintStore.setFocusedLint(check.isCustom);
+        }}
+      >
+        customize
+      </button>
+    {/if}
   </div>
 {:else}
   <div class="w-full rounded flex flex-col justify-between py-1">
@@ -59,6 +70,17 @@
       </Tooltip>
       {#if !check.passes}
         <EvalResponse {check} />
+      {/if}
+      {#if check.isCustom}
+        <button
+          class={buttonStyle}
+          on:click={() => {
+            // @ts-ignore
+            lintStore.setFocusedLint(check.isCustom);
+          }}
+        >
+          customize
+        </button>
       {/if}
     </div>
     {#if !check.passes}

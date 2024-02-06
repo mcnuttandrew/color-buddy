@@ -11,7 +11,7 @@
   export let clickExample: (example: any, idx: number) => void;
   $: size = example.size || 250;
   $: operations = [
-    { name: "Edit", action: () => clickExample(example, idx) },
+    { name: "Edit", action: () => clickExample(example, idx), condition: true },
     {
       name: "Delete",
       action: () => exampleStore.deleteExample(idx),

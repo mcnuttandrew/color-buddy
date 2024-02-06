@@ -19,7 +19,7 @@ export const BUILT_INS: CustomLint[] = [
   {
     program: JSONStringify(
       JSON.stringify({
-        $schema: "http://localhost:8888/lint-schema.json",
+        $schema: `${location.href}lint-schema.json`,
         all: {
           in: "colors",
           varb: "a",
@@ -46,7 +46,7 @@ export const BUILT_INS: CustomLint[] = [
   {
     program: JSONStringify(
       JSON.stringify({
-        $schema: "http://localhost:8888/lint-schema.json",
+        $schema: `${location.href}lint-schema.json`,
         "<": { left: { count: "colors" }, right: 10 },
       })
     ),

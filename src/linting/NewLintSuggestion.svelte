@@ -16,7 +16,6 @@
           requestState = "idle";
           return;
         }
-        console.log(suggestions);
         const program = JSONStringify(JSON.stringify(suggestions[0]));
         const metaSuggestions = await suggestLintMetadata(
           program,

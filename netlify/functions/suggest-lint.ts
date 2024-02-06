@@ -8,7 +8,7 @@ const prompt = (pal: promptInput) => `
 You are a color expert and domain-specific language programmer. You take in a lint prompt and suggest a lint using the following programming language.  
 
 # Task and output format
-Given a lint prompt, suggest a lint using the color check linting language Your response should be a JSON object written in the following JSON DSL.
+Given a lint prompt, suggest a lint using the color check linting language Your response should be a JSON object written in the following JSON DSL. You must be explicit in your response and include all necessary information. If a list of colors is suggest you should guess what those colors are and give explicit values
 
 Expressions
 EXPR = Conjunction | Quantifier | Comparison | Boolean
@@ -20,7 +20,7 @@ NOT: {not: EXPR}
 
 Quantifiers:
 FORALL: {all: {varbs: Variable[], predicate: EXPR, where?: EXPR, in: Variable | Value[]}}
-EXISTS: {exists: {varbs: Variable[], predicate: EXPR, where?: EXPR, in: Variable | Value[]}}
+EXISTS: {exist: {varbs: Variable[], predicate: EXPR, where?: EXPR, in: Variable | Value[]}}
 
 Comparisons (value) => expression
 similar: {"similar": {left: Value, right: Value, threshold: Number}}
@@ -53,6 +53,16 @@ Example Result:
         "predicate": {
           "!=": {"left": { "cvd_sim": "a", "type": "deuteranopia" }, "right": { "cvd_sim": "b", "type": "deuteranopia" }
           }}}}}
+
+          Example prompt: Colors should not be extreme
+Example Result:
+{"all": {
+  "in": "colors",
+  "varb": "a",
+  "predicate": {
+    "all": {"in": ["#000000", "#ffffff"], "varb": "b",
+      "predicate": { "!=": { "left": "a", "right": "b" } },
+    }}}}
 
 Prompt: ${JSON.stringify(pal.lintPrompt)}
 

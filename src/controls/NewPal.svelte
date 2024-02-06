@@ -51,9 +51,7 @@
     pal.colors = [];
     pal.background = Color.colorFromString("#ffffff", colorSpace);
     pal.colorSpace = colorSpace;
-    const newPal = pal as Palette;
-
-    colorStore.createNewPal(newPal);
+    colorStore.createNewPal(pal);
   }
   function newWithGenericColors() {
     const pal = newGenericPal("new palette") as any;
@@ -62,9 +60,7 @@
     );
     pal.background = Color.colorFromString("#ffffff", colorSpace);
     pal.colorSpace = colorSpace;
-    const newPal = pal as Palette;
-
-    colorStore.createNewPal(newPal);
+    colorStore.createNewPal(pal);
   }
 </script>
 

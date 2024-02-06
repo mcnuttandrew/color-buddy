@@ -289,7 +289,6 @@
 
   function puttingEnd() {
     if (!puttingPreview) return;
-    stopDragging();
     onColorsChange([...colors, puttingPreview as Color]);
     setTimeout(() => {
       configStore.setScatterplotMode("moving");

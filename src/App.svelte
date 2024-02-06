@@ -69,8 +69,4 @@
   .main-content {
     min-width: 0;
   }
-  #save {
-    position: relative;
-    top: 2px;
-  }
 </style>

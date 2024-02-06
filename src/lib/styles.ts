@@ -17,3 +17,8 @@ export const buttonStyleDisabled = `${baseButtonStyle} bg-stone-300 text-stone-5
 // export const AIButtonStyle = `${baseButtonStyle} bg-amber-900`;
 
 export const AIButtonStyle = `${baseButtonStyle} `;
+
+export const denseButtonStyle = buttonStyle
+  .replace("p-2", "p-1")
+  .replace("px-2", "p-0")
+  .replace("mr-2", "mr-0");

@@ -2,10 +2,11 @@
   import colorStore from "../stores/color-store";
   import configStore from "../stores/config-store";
   import Nav from "../components/Nav.svelte";
+  import NewPal from "../controls/NewPal.svelte";
 
   import Config from "../controls/Config.svelte";
   import Controls from "./Controls.svelte";
-  import { buttonStyle } from "../lib/styles";
+  import { denseButtonStyle } from "../lib/styles";
 
   import SavedPals from "./SavedPals.svelte";
 </script>
@@ -16,20 +17,39 @@
     Color Buddy 𑁍
   </div>
   <section class="flex flex-col flex-none">
-    <div class="flex justify-between z-50 p-2">
-      <div>
-        <button class={buttonStyle} on:click={() => colorStore.undo()}>
+    <div class="flex w-full justify-between items-start">
+      <div class="flex ml-1">
+        <NewPal />
+        /
+        <button
+          id="save"
+          class={`${denseButtonStyle} mt-0.5`}
+          on:click={() => colorStore.duplicatePal($colorStore.currentPal)}
+        >
+          Duplicate
+        </button>
+      </div>
+      <div class="flex">
+        <button
+          class={`${denseButtonStyle} p-0 mt-0.5`}
+          on:click={() => colorStore.undo()}
+        >
           Undo
         </button>
-        <button class={buttonStyle} on:click={() => colorStore.redo()}>
+        /
+        <button
+          class={`${denseButtonStyle} p-0 mt-0.5`}
+          on:click={() => colorStore.redo()}
+        >
           Redo
         </button>
       </div>
       <Config />
     </div>
+    <div class="flex justify-center z-50"></div>
   </section>
 
-  <section class="flex flex-col flex-1 overflow-auto p-2">
+  <section class="flex flex-col flex-1 overflow-auto p-1">
     <div class="flex justify-center items-center">
       <Nav
         tabs={["palettes", "controls"]}

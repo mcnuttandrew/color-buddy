@@ -25,17 +25,20 @@
 
       if (t === 0 || t === 1) continue;
       const spaceOverWrite = { rgb: "srgb" } as any;
-      const adjustedSpace = spaceOverWrite[colorSpace] || colorSpace;
-      const space = spaceOverWrite[pointA.spaceName] || pointA.spaceName;
-      const [x1, x2, x3] = pointA.toColorIO().to(adjustedSpace).coords;
-      const [y1, y2, y3] = pointB.toColorIO().to(adjustedSpace).coords;
-      const lab = [
+      const space = spaceOverWrite[colorSpace] || colorSpace;
+      // const space = spaceOverWrite[pointA.spaceName] || pointA.spaceName;
+      const [x1, x2, x3] = pointA.toColorIO().to(space).coords;
+      const [y1, y2, y3] = pointB.toColorIO().to(space).coords;
+      const coords = [
         x1 * (1 - t) + y1 * t,
         x2 * (1 - t) + y2 * t,
         x3 * (1 - t) + y3 * t,
       ] as [number, number, number];
-      points.push(Color.colorFromChannels(lab, "lab").toColorSpace(space));
+
+      const newColor = Color.colorFromChannels(coords, space);
+      points.push(newColor.toColorSpace(currentPal.colorSpace));
     }
+
     return points;
   }
   function createInterpolation(): Color[] {
@@ -62,6 +65,15 @@
     );
     return newColors;
   }
+  const interpolationSpecs = [
+    "lab",
+    "lch",
+    "hsl",
+    "hsv",
+    //  "oklab",
+    //  "oklch",
+    "srgb",
+  ] as const;
 </script>
 
 {#if focusedColors.length >= 2}
@@ -71,7 +83,7 @@
     <div class="flex justify-between">
       <label for="color-space-select">Color Space</label>
       <select id="color-space-select" bind:value={colorSpace}>
-        {#each ["lab", "lch", "hsl", "hsv", "oklab", "oklch", "rgb"] as space}
+        {#each interpolationSpecs as space}
           <option value={space}>{space}</option>
         {/each}
       </select>

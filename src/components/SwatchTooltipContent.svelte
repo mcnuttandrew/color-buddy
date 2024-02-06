@@ -16,7 +16,9 @@
     updatedColors[idx] = color;
     colorStore.setCurrentPalColors(updatedColors);
   }
-  let modes = ["lab", "hsv"] as any;
+  $: modes = (
+    colorSpace === "hsv" ? ["hsv", "lab"] : [colorSpace, "hsv"]
+  ) as any;
 </script>
 
 <div class="px-4 pb-4 pt-2">
@@ -38,6 +40,16 @@
       }}
     >
       Delete
+    </button>
+    <button
+      class="{buttonStyle} mr-2"
+      on:click={() => {
+        const updatedColors = [...colors];
+        updatedColors.splice(idx, 0, color);
+        colorStore.setCurrentPalColors(updatedColors);
+      }}
+    >
+      Duplicate
     </button>
   </div>
   <div class="flex">

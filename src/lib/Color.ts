@@ -252,6 +252,21 @@ class RGB extends Color {
   }
 }
 
+class SRGB extends Color {
+  name = "sRGB";
+  channelNames = ["r", "g", "b"];
+  channels = { r: 0, g: 0, b: 0 };
+  spaceName = "srgb" as const;
+  domains = { r: [0, 1], g: [0, 1], b: [0, 1] } as Domain;
+  stepSize: Channels = [0.01, 0.01, 0.01];
+  dimensionToChannel = { x: "g", y: "b", z: "r" };
+  axisLabel = (num: number) => `${Math.round(num)}`;
+  toString(): string {
+    const [r, g, b] = this.stringChannels();
+    return `rgb(${Number(r) * 255} ${Number(g) * 255} ${Number(b) * 255})`;
+  }
+}
+
 class HSL extends Color {
   name = "HSL";
   channelNames = ["h", "s", "l"];
@@ -336,11 +351,18 @@ function colorFromHex(
   return outColor;
 }
 
+const colorChannelsCache = new Map<string, Color>();
 function colorFromChannels(
   channels: Channels,
   colorSpace: keyof typeof colorDirectory
 ): Color {
-  return new colorDirectory[colorSpace]().fromChannels(channels);
+  const cacheKey = `${colorSpace}(${channels.join(",")})`;
+  if (colorChannelsCache.has(cacheKey)) {
+    return colorChannelsCache.get(cacheKey)!.copy() as Color;
+  }
+  const color = new colorDirectory[colorSpace]().fromChannels(channels);
+  colorChannelsCache.set(cacheKey, color);
+  return color;
 }
 
 function toColorSpace(
@@ -365,7 +387,8 @@ const colorDirectory = {
   oklab: OKLAB,
   oklch: OKLCH,
   rgb: RGB,
-  srgb: RGB,
+  // srgb: RGB,
+  srgb: SRGB,
 };
 
 type ColorSpace = keyof typeof colorDirectory | string;

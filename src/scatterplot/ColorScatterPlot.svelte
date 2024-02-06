@@ -10,7 +10,6 @@
     makeScales,
     dragEventToColorZ,
     dragEventToColorXY,
-    screenSpaceAvg,
   } from "../lib/utils";
   import configStore from "../stores/config-store";
   import { scaleLinear } from "d3-scale";
@@ -77,7 +76,7 @@
     .range([0, plotHeight]);
 
   $: angleScale = scaleLinear()
-    .domain([0, 360])
+    .domain([360, 0])
     .range([0, 2 * Math.PI]);
 
   // bound box for selected colors
@@ -105,7 +104,6 @@
   $: CircleProps = (color: Color, i: number) => ({
     cx: x(color),
     cy: y(color),
-    // r: 10,
     class: "cursor-pointer",
     fill: color.toDisplay(),
     r: 10 + (focusSet.has(i) ? 5 : 0),
@@ -275,6 +273,10 @@
       x: currentPos.x - box.x,
       y: currentPos.y - box.y,
     };
+    if (config.isPolar) {
+      currentPos.x = currentPos.x - plotWidth / 2;
+      currentPos.y = currentPos.y - plotHeight / 2;
+    }
     const newX = scales.xInv(currentPos.x, currentPos.y);
     const newY = scales.yInv(currentPos.x, currentPos.y);
     const newZ = scales.zInv(plotHeight / 2);
@@ -286,6 +288,7 @@
   }
 
   function puttingEnd() {
+    if (!puttingPreview) return;
     onColorsChange([...colors, puttingPreview as Color]);
     setTimeout(() => {
       configStore.setScatterplotMode("moving");
@@ -446,12 +449,18 @@
         {/if}
         {#if scatterPlotMode === "putting"}
           {#if puttingPreview}
-            <circle
-              r={10}
-              fill={puttingPreview.toDisplay()}
-              cx={x(puttingPreview)}
-              cy={y(puttingPreview)}
-            />
+            <g
+              transform={config.isPolar
+                ? `translate(${plotWidth / 2}, ${plotHeight / 2})`
+                : ""}
+            >
+              <circle
+                r={10}
+                fill={puttingPreview.toDisplay()}
+                cx={x(puttingPreview)}
+                cy={y(puttingPreview)}
+              />
+            </g>
           {/if}
           <rect
             {...fillParamsXY}

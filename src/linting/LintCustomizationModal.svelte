@@ -28,7 +28,6 @@
       errors = e;
     }
   }
-  $: console.log(errors);
   $: lintRun = runLint(lint);
   let showDoubleCheck = false;
   $: currentTaskTypes = lint.taskTypes as string[];

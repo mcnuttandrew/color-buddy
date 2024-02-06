@@ -331,6 +331,7 @@ function colorFromHex(
   }
   const color = new ColorIO(hex).to(colorSpace);
   const outColor = new colorDirectory[colorSpace]().fromChannels(color.coords);
+  console.log(hex, color.coords, outColor.toHex());
   colorHexCache.set(hex, outColor);
   return outColor;
 }

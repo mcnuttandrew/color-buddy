@@ -2,6 +2,7 @@ import { writable } from "svelte/store";
 import * as idb from "idb-keyval";
 import type { CustomLint } from "../lib/lints/CustomLint";
 import type { TaskType } from "../lib/lints/ColorLint";
+import { JSONStringify } from "../lib/utils";
 
 interface StoreData {
   lints: CustomLint[];
@@ -15,10 +16,9 @@ const InitialStore: StoreData = {
 
 export const BUILT_INS: CustomLint[] = [
   {
-    program: JSON.stringify(
-      {
-        $schema:
-          "https://radiant-speculoos-7f8b2f.netlify.app/lint-schema.json",
+    program: JSONStringify(
+      JSON.stringify({
+        $schema: "http://localhost:8888/lint-schema.json",
         all: {
           in: "colors",
           varb: "a",
@@ -32,9 +32,7 @@ export const BUILT_INS: CustomLint[] = [
             },
           },
         },
-      },
-      null,
-      2
+      })
     ),
     name: "Avoid extreme colors",
     taskTypes: ["sequential", "diverging", "categorical"] as TaskType[],
@@ -45,15 +43,11 @@ export const BUILT_INS: CustomLint[] = [
     id: "extreme-colors-built-in",
   },
   {
-    $schema: "https://radiant-speculoos-7f8b2f.netlify.app/lint-schema.json",
-    program: JSON.stringify(
-      {
-        $schema:
-          "https://radiant-speculoos-7f8b2f.netlify.app/lint-schema.json",
+    program: JSONStringify(
+      JSON.stringify({
+        $schema: "http://localhost:8888/lint-schema.json",
         "<": { left: { count: "colors" }, right: 10 },
-      },
-      null,
-      2
+      })
     ),
     name: "Avoid too many colors",
     taskTypes: ["sequential", "diverging", "categorical"] as TaskType[],
@@ -120,6 +114,30 @@ function createStore() {
       lintUpdate((old) => ({ ...old, description })),
     setCurrentLintFailMessage: (failMessage: string) =>
       lintUpdate((old) => ({ ...old, failMessage })),
+    deleteLint: (id: string) =>
+      persistUpdate((old) => ({
+        ...old,
+        lints: old.lints.filter((x) => x.id !== id),
+      })),
+    createNewLint: (newLintFrag: Partial<CustomLint>) =>
+      persistUpdate((old) => ({
+        ...old,
+        lints: [...old.lints, newLint(newLintFrag)],
+      })),
+  };
+}
+
+function newLint(newLintFrag: Partial<CustomLint>): CustomLint {
+  return {
+    program: JSONStringify("{}"),
+    name: "New lint",
+    taskTypes: ["categorical", "sequential", "diverging"],
+    level: "warning",
+    group: "custom",
+    description: "v confusing",
+    failMessage: "v confusing",
+    id: Math.random().toString(),
+    ...newLintFrag,
   };
 }
 

@@ -54,7 +54,7 @@ export const getName = (color: Color) => {
   if (nameCache.has(hex)) {
     return nameCache.get(hex)!;
   }
-  const name = namer(hex, { pick: ["html"] });
+  const name = namer(hex, { pick: ["basic"] });
   const guess = findSmallest<any>(
     Object.values(name).map((x: any) => x[0]),
     (x) => x.distance
@@ -66,9 +66,9 @@ export const getName = (color: Color) => {
 
 function suggestFixForColorsWithCommonNames(colors: Color[]): Color[] {
   const hex = colors[0].toHex().toUpperCase();
-  let guesses = { ...namer(hex, { pick: ["html"] }) };
+  let guesses = { ...namer(hex, { pick: ["basic"] }) };
   return [...colors].map((color, idx) => {
-    const newColor = guesses.html[idx];
+    const newColor = guesses.basic[idx];
     return Color.colorFromHex(newColor.hex, color.spaceName);
   });
 }

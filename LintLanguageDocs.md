@@ -7,8 +7,8 @@ OR: {or: [EXPR, EXPR, EXPR]}
 NOT: {not: EXPR}
 
 Quantifiers:
-FORALL: {all: {varbs: Variable[], where?: EXPR, in: Variable | Value[]}}
-EXISTS: {exists: {varbs: Variable[], where?: EXPR, in: Variable | Value[]}}
+FORALL: {all: {varbs: Variable[], predicate: EXPR, where?: EXPR, in: Variable | Value[]}}
+EXISTS: {exists: {varbs: Variable[], predicate: EXPR, where?: EXPR, in: Variable | Value[]}}
 
 Comparisons (value) => expression
 similar: {"similar": {left: Value, right: Value, threshold: Number}}
@@ -20,7 +20,7 @@ greater than: {">": {left: Value, right: Value}}
 Value = Variable | Number | Color | Boolean
 
 Operations:
-\*: {left: Number | Variable, right: Number | Variable}
+*: {left: Number | Variable, right: Number | Variable}
 +: {left: Number | Variable, right: Number | Variable}
 /: {left: Number | Variable, right: Number | Variable}
 -: {left: Number | Variable, right: Number | Variable}

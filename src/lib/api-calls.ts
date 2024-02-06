@@ -62,8 +62,6 @@ function googleScaffold<A>(
     });
 }
 
-const toHex = (x: Color) => x.toHex().toUpperCase();
-
 const engineToScaffold = {
   openai: openAIScaffold,
   google: googleScaffold,
@@ -109,16 +107,21 @@ export function suggestContextualAdjustments(
   );
 }
 
-export function suggestSVGImage(prompt: string, engine: Engine) {
-  const body = JSON.stringify({ prompt });
-  return engineToScaffold[engine]<{ svg: string }>(
-    `suggest-svg-img`,
-    body,
-    false
-  );
-}
-
 export function suggestFix(currentPal: Palette, error: string, engine: Engine) {
   const body = JSON.stringify({ ...palToString(currentPal), error });
   return engineToScaffold[engine]<SimplePal>(`suggest-fix`, body, true);
+}
+
+export function suggestLint(lintPrompt: string, engine: Engine) {
+  const body = JSON.stringify({ lintPrompt });
+  return engineToScaffold[engine]<string>(`suggest-lint`, body, true);
+}
+
+export function suggestLintMetadata(lintProgram: string, engine: Engine) {
+  const body = JSON.stringify({ lintProgram });
+  return engineToScaffold[engine]<{
+    description: string;
+    failMessage: string;
+    name: string;
+  }>(`suggest-lint-metadata`, body, true);
 }

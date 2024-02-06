@@ -10,10 +10,17 @@ Use: should point to localhost:8888 if all is well
 
 First time you start it up you should also run `yarn prep data`
 
+Macros story
+
+- not similar
+- sequences
+- "where": { "!=": {"left": "index(a)", "right": "index(b)"} },
+
 # Language todos
 
 - [ ] Integration into main app
 - [ ] Add background, roles, palette level semantics
+- [ ] Categorical mutually distinct
 - [x] "Blame" for colors
 - [x] JSON Schema (for validation) (if parser is not used)
 - [x] Basic Language

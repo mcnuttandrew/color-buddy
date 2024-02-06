@@ -16,13 +16,19 @@
     monaco = (await import("./monaco")).default;
 
     // Your monaco instance is ready, let's display some code!
-    const editor = monaco.editor.create(editorContainer);
+    editor = monaco.editor.create(editorContainer, {
+      minimap: { enabled: false },
+    });
     const model = monaco.editor.createModel(value, language);
     editor.setModel(model);
-    editor.onDidChangeModelContent((event) => {
+    editor.onDidChangeModelContent(() => {
       onChange(editor.getValue());
     });
   });
+  // update the editor when the value changes
+  $: {
+    if (editor && value !== editor.getValue()) editor.setValue(value);
+  }
 
   onDestroy(() => {
     monaco?.editor.getModels().forEach((model) => model.dispose());

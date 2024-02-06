@@ -47,7 +47,12 @@ export function runLintChecks(
       if (ignoreList[x.name] && ignoreList[x.name].ignore) {
         return x;
       }
-      return x.run();
+      try {
+        return x.run();
+      } catch (e) {
+        console.error(e);
+        return x;
+      }
     });
 }
 

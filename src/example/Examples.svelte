@@ -12,7 +12,7 @@
   import ExampleWrapper from "./ExampleWrapper.svelte";
   import Modal from "../components/Modal.svelte";
   import { buttonStyle } from "../lib/styles";
-  import CodeMirror from "svelte-codemirror-editor";
+  import MonacoEditor from "../components/MonacoEditor.svelte";
   import Swatches from "./Swatches.svelte";
   import Tooltip from "../components/Tooltip.svelte";
 
@@ -239,7 +239,7 @@
         {/if}
       </div>
       {#if modalState === "input-svg"}
-        <CodeMirror bind:value placeholder={"Paste in some SVG text here"} />
+        <MonacoEditor language="xml" onChange={(x) => (value = x)} {value} />
         <div>
           <input
             accept="image/svg"
@@ -256,10 +256,7 @@
         {#if !validJSON}
           <div class="text-red-500">Invalid JSON</div>
         {/if}
-        <CodeMirror
-          bind:value
-          placeholder={"Paste in a valid vega or vega-lite program here"}
-        />
+        <MonacoEditor language="json" onChange={(x) => (value = x)} {value} />
       {/if}
 
       {#if modalState === "edit-colors"}

@@ -15,10 +15,14 @@ class Environment {
   set(name: string, value: LLVariable | LLValue | LLValueArray) {
     const reserved = new Set(["colors", "background"]);
     if (reserved.has(name)) {
-      throw new Error(`Cannot set ${reserved}`);
+      throw new Error(
+        `Cannot set "${name}" as a variable name. It is reserved.`
+      );
     }
     if (this.variables[name]) {
-      throw new Error("Variable already exists");
+      throw new Error(
+        `Variable "${name}" already exists and so can not be set`
+      );
     }
     const newVariables = { ...this.variables, [name]: value };
     return new Environment(
@@ -39,7 +43,17 @@ class Environment {
       return new LLColor(this.palette.background);
     }
     const val = this.variables[name];
-    if (!val) throw new Error("Variable not found");
+    const definedVariables = [
+      "colors",
+      "background",
+      ...Object.keys(this.variables),
+    ]
+      .map((x) => `"${x}"`)
+      .join(", ");
+    if (!val)
+      throw new Error(
+        `Variable "${name}" not found. Defined variables are ${definedVariables}`
+      );
     return val;
   }
   toggleBlame(index: number) {
@@ -653,6 +667,7 @@ let cartesian = (a: any[], b: any[], ...c: any[]): any[] =>
   b ? (cartesian as any)(f(a, b), ...c) : a;
 
 const QuantifierTypes = ["exist", "all"] as const;
+const QuantifierTypeErrors = [{ wrong: "exists", right: "exist" }] as const;
 export class LLQuantifier extends LLNode {
   constructor(
     private type: (typeof QuantifierTypes)[number],
@@ -724,6 +739,12 @@ export class LLQuantifier extends LLNode {
   }
   static tryToConstruct(node: any, options: OptionsConfig) {
     const quantifierType = QuantifierTypes.find((x) => node[x]);
+    const knownQuantErr = QuantifierTypeErrors.find((x) => node[x.wrong]);
+    if (knownQuantErr) {
+      throw new Error(
+        `Invalid quantifier type "${knownQuantErr.wrong}", did you mean "${knownQuantErr.right}"?`
+      );
+    }
     if (!quantifierType) return false;
     const { predicate, varb, varbs, where } = node[quantifierType];
     const input = node[quantifierType].in;
@@ -900,7 +921,11 @@ export class LLMap extends LLNode {
 
 function parseToAST(root: any, options: OptionsConfig) {
   const node = LLExpression.tryToConstruct(root, options);
-  if (!node) throw new Error("Invalid node");
+  if (!node)
+    throw new Error(
+      "Parsing failed. There was an invalid node somewhere.",
+      root
+    );
   return node;
 }
 

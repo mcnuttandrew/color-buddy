@@ -10,6 +10,7 @@
   import EvalColorColumn from "./EvalColorColumn.svelte";
   import LintCustomizationModal from "./LintCustomizationModal.svelte";
   import Nav from "../components/Nav.svelte";
+  import NewLintSuggestion from "./NewLintSuggestion.svelte";
 
   $: currentPal = $colorStore.palettes[$colorStore.currentPal];
   $: palType = currentPal.type;
@@ -56,15 +57,16 @@
       }}
     />
     <div class="overflow-auto h-full max-w-lg">
-      <div class="flex">
+      <div class="flex items-start justify-start">
         {#if Object.keys(currentPal.evalConfig)}
           <button
-            class={`${buttonStyle} ml-0 pl-0 mt-4`}
+            class={`${buttonStyle} ml-0 pl-0 `}
             on:click={() => colorStore.setCurrentPalEvalConfig({})}
           >
             Restore Defaults
           </button>
         {/if}
+        <NewLintSuggestion />
       </div>
       <div class="text-sm">
         This collection of checks validates whether or not your palette matches

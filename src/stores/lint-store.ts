@@ -15,6 +15,7 @@ const InitialStore: StoreData = {
 };
 
 export const BUILT_INS: CustomLint[] = [
+  // https://www.sciencedirect.com/science/article/pii/S0167947308005549?casa_token=s8jmZqboaYgAAAAA:7lsAu7YUHVBTQA_eaKJ_3FFGv309684j_NTisGO9mIr3UZNIJ6hlAlxPQo04xzsowG7-dH0vzm4
   {
     program: JSONStringify(
       JSON.stringify({
@@ -59,8 +60,6 @@ export const BUILT_INS: CustomLint[] = [
     id: "too-many-colors-built-in",
   },
 ];
-
-// TODO return from modification???
 
 const storeName = "color-pal-lints";
 function createStore() {

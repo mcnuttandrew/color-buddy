@@ -1,5 +1,5 @@
 <script lang="ts">
-  import lintStore from "../stores/lint-store";
+  import lintStore, { BUILT_INS } from "../stores/lint-store";
   import colorStore from "../stores/color-store";
 
   import Modal from "../components/Modal.svelte";
@@ -14,6 +14,10 @@
     (lint) => lint.id === $lintStore.focusedLint
   )!;
   $: program = lint ? lint.program : "";
+
+  $: builtInLint = BUILT_INS.find((x) => x.id === $lintStore.focusedLint);
+  $: isBuiltInThatsBeenModified =
+    builtInLint && lint?.program !== builtInLint?.program;
 
   $: currentPal = $colorStore.palettes[$colorStore.currentPal];
   // run this lint
@@ -43,6 +47,16 @@
     <div class="flex flex-col container">
       <div class="flex justify-between">
         <div class="font-bold text-lg">Customize Lint</div>
+        {#if isBuiltInThatsBeenModified}
+          <button
+            class={buttonStyle}
+            on:click={() => {
+              lintStore.setCurrentLintProgram(builtInLint?.program || "");
+            }}
+          >
+            Restore this lint to original version
+          </button>
+        {/if}
         <div class="flex">
           <button on:click={() => (showDoubleCheck = true)} class={buttonStyle}>
             Delete this lint

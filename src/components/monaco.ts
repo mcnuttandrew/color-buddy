@@ -177,6 +177,7 @@ monaco.languages.registerColorProvider("json", {
   provideColorPresentations: (model, colorInfo) => {
     const { red, green, blue } = colorInfo.color;
     const label = chroma.rgb(red * 255, green * 255, blue * 255).hex();
+    console.log(label);
     return [{ label: `${label}` }];
   },
 
@@ -186,6 +187,7 @@ monaco.languages.registerColorProvider("json", {
     for (let i = 0; i < text.length; i++) {
       const is7LenHex = isHexColor(text.slice(i, i + 7));
       if (text[i] === "#" && (is7LenHex || isHexColor(text.slice(i, i + 4)))) {
+        console.log("here", is7LenHex);
         const len = is7LenHex ? 7 : 4;
         const color = chroma(text.slice(i, i + len)).rgb();
         colors.push({
@@ -209,7 +211,7 @@ monaco.languages.registerColorProvider("json", {
           const end = i + color.length;
           const word = text.slice(start, end);
           if (word.toLowerCase() === color) {
-            const webColor = chroma(color).rgb();
+            const webColor = chroma(color.replace(/\"/g, "")).rgb();
             colors.push({
               color: {
                 red: webColor[0] / 255,

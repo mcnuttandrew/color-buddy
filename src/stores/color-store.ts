@@ -16,12 +16,12 @@ type ColorSpace =
   | "rgb"
   | "srgb";
 type Pal<A> = {
-  colors: A[];
-  name: string;
   background: A;
-  type: PalType;
-  evalConfig: Record<string, any>;
   colorSpace: ColorSpace;
+  colors: A[];
+  evalConfig: Record<string, any>;
+  name: string;
+  type: PalType;
 };
 export type Palette = Pal<Color>;
 
@@ -227,6 +227,16 @@ function createStore() {
         colorSpace,
         background: Color.toColorSpace(n.background, colorSpace),
         colors: n.colors.map((x) => Color.toColorSpace(x, colorSpace)),
+      })),
+    clearPalettes: () =>
+      persistUpdate(() => ({
+        currentPal: 0,
+        palettes: [stringPalToColorPal(newGenericPal("Example"))],
+      })),
+    setPalettes: (palettes: Palette[]) =>
+      persistUpdate(() => ({
+        currentPal: 0,
+        palettes: palettes,
       })),
   };
 }

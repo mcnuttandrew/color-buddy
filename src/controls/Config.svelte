@@ -1,6 +1,9 @@
 <script lang="ts">
   import configStore from "../stores/config-store";
+  import { Color } from "../lib/Color";
+  import type { Palette } from "../stores/color-store";
   import Tooltip from "../components/Tooltip.svelte";
+  import colorStore from "../stores/color-store";
   import { buttonStyle } from "../lib/styles";
   const aiModes = ["google", "openai"] as const;
   $: showBg = $configStore.showColorBackground;
@@ -16,6 +19,50 @@
     { name: "Move", shortcut: "arrow keys" },
     { name: "Checkpoint palette", shortcut: `${metaKey}+s` },
   ];
+
+  function importPals() {
+    const input = document.createElement("input");
+    input.type = "file";
+    input.accept = ".json";
+    input.onchange = (e: any) => {
+      const file = e.target.files[0];
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const text = (e.target as FileReader).result as string;
+        const palettes = JSON.parse(text);
+        if (Array.isArray(palettes)) {
+          const pals: Palette[] = palettes
+            .filter((x) => {
+              const { colors, background, name, colorSpace, type } = x;
+              return (
+                Array.isArray(colors) &&
+                colors.every((c: any) => typeof c === "string") &&
+                typeof background === "string" &&
+                typeof name === "string" &&
+                typeof colorSpace === "string" &&
+                typeof type === "string"
+              );
+            })
+            .map((x) => {
+              const { colors, background, name, colorSpace, type } = x;
+              return {
+                background: Color.colorFromString(background, colorSpace),
+                colorSpace,
+                colors: colors.map((c: string) =>
+                  Color.colorFromString(c, colorSpace)
+                ),
+                evalConfig: {},
+                name,
+                type,
+              };
+            });
+          colorStore.setPalettes(pals);
+        }
+      };
+      reader.readAsText(file);
+    };
+    input.click();
+  }
 </script>
 
 <Tooltip>
@@ -56,5 +103,47 @@
         </div>
       {/each}
     </div>
+    <button
+      class={buttonStyle}
+      on:click={() => {
+        const pals = $colorStore.palettes.map((x) => {
+          const { colors, background, name, colorSpace, type } = x;
+          return {
+            background: background.toString(),
+            colorSpace,
+            colors: colors.map((c) => c.toString()),
+            name,
+            type,
+          };
+        });
+        const blob = new Blob([JSON.stringify(pals)], {
+          type: "application/json",
+        });
+
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.style.display = "none";
+        a.href = url;
+
+        // the filename you want
+        a.download = "palettes-export.json";
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+      }}
+    >
+      Export Palettes
+    </button>
+    <button class={buttonStyle} on:click={() => importPals()}>
+      Import Palettes
+    </button>
+    <button
+      class={buttonStyle}
+      on:click={() => {
+        colorStore.clearPalettes();
+      }}
+    >
+      Clear Palettes
+    </button>
   </div>
 </Tooltip>

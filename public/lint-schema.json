@@ -119,7 +119,7 @@
           "type": "object",
           "additionalProperties": false,
           "properties": {
-            "cvd_sim": { "$ref": "#/definitions/LintVariable" },
+            "cvdSim": { "$ref": "#/definitions/LintVariable" },
             "type": {
               "enum": [
                 "protanomaly",
@@ -129,7 +129,7 @@
               ]
             }
           },
-          "required": ["cvd_sim", "type"]
+          "required": ["cvdSim", "type"]
         },
         { "$ref": "#/definitions/LintVariable" },
         {

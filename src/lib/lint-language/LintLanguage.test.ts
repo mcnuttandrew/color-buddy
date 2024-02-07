@@ -103,7 +103,7 @@ test("LintLanguage Quantifiers All - Simple", () => {
 });
 
 const expectedOutBlind = (type: string) =>
-  `ALL a in colors, ALL b in colors WHERE index(a) != index(b), NOT similar(cvd_sim(a, ${type}), cvd_sim(b, ${type})) > 9`;
+  `ALL a in colors, ALL b in colors WHERE index(a) != index(b), NOT similar(cvdSim(a, ${type}), cvdSim(b, ${type})) > 9`;
 const allBlindProg = (type: string) => ({
   all: {
     in: "colors",
@@ -116,8 +116,8 @@ const allBlindProg = (type: string) => ({
         predicate: {
           not: {
             similar: {
-              left: { cvd_sim: "a", type },
-              right: { cvd_sim: "b", type },
+              left: { cvdSim: "a", type },
+              right: { cvdSim: "b", type },
               threshold: 9,
             },
           },
@@ -169,8 +169,8 @@ test("LintLanguage Quantifiers Exist", () => {
             varb: "b",
             predicate: {
               "!=": {
-                left: { cvd_sim: "a", type: "deuteranopia" },
-                right: { cvd_sim: "b", type: "deuteranopia" },
+                left: { cvdSim: "a", type: "deuteranopia" },
+                right: { cvdSim: "b", type: "deuteranopia" },
               },
             },
           },
@@ -179,7 +179,7 @@ test("LintLanguage Quantifiers Exist", () => {
     },
   };
   expect(prettyPrintLL(colorBlindExists)).toBe(
-    "NOT EXIST a in colors, EXIST b in colors, cvd_sim(a, deuteranopia) != cvd_sim(b, deuteranopia)"
+    "NOT EXIST a in colors, EXIST b in colors, cvdSim(a, deuteranopia) != cvdSim(b, deuteranopia)"
   );
   expect(LLEval(colorBlindExists, exampleColors).result).toBe(false);
 });
@@ -192,15 +192,15 @@ test("LintLanguage Quantifiers Exist - DENSE", () => {
         varbs: ["a", "b"],
         predicate: {
           "!=": {
-            left: { cvd_sim: "a", type: "deuteranopia" },
-            right: { cvd_sim: "b", type: "deuteranopia" },
+            left: { cvdSim: "a", type: "deuteranopia" },
+            right: { cvdSim: "b", type: "deuteranopia" },
           },
         },
       },
     },
   };
   expect(prettyPrintLL(colorBlindExists)).toBe(
-    "NOT EXIST (a, b) in colors, cvd_sim(a, deuteranopia) != cvd_sim(b, deuteranopia)"
+    "NOT EXIST (a, b) in colors, cvdSim(a, deuteranopia) != cvdSim(b, deuteranopia)"
   );
   expect(LLEval(colorBlindExists, exampleColors).result).toBe(false);
 });

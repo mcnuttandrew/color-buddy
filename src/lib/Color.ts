@@ -287,7 +287,7 @@ class LCH extends Color {
   channelNames = ["l", "c", "h"];
   channels = { l: 0, c: 0, h: 0 };
   spaceName = "lch" as const;
-  domains = { l: [100, 0], c: [0, 150], h: [360, 0] } as Domain;
+  domains = { l: [100, 0], c: [0, 120], h: [360, 0] } as Domain;
   stepSize: Channels = [1, 1, 1];
   dimensionToChannel = { x: "c", y: "h", z: "l" };
   isPolar = true;

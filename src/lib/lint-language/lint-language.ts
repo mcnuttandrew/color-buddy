@@ -1,4 +1,4 @@
-import cvd_sim from "../blindness";
+import cvdSim from "../blindness";
 import type { Palette } from "../../stores/color-store";
 import { Color, colorPickerConfig } from "../Color";
 import { getName } from "../lints/name-discrim";
@@ -508,9 +508,9 @@ export class LLValue extends LLNode {
 type Params = Record<string, string>;
 const VFTypes = [
   {
-    primaryKey: "cvd_sim",
+    primaryKey: "cvdSim",
     params: ["type"] as string[],
-    op: (val: Color, params: Params) => cvd_sim(params.type, val),
+    op: (val: Color, params: Params) => cvdSim(params.type, val),
   },
   {
     primaryKey: "name",
@@ -857,7 +857,7 @@ export class LLReduces extends LLNode {
 
 const mapTypes = ["map", "filter", "sort"] as const;
 // example syntax
-// {map: colors, func: {cvd_sim: {type: "protanomaly"}}, varb: "x"}
+// {map: colors, func: {cvdSim: {type: "protanomaly"}}, varb: "x"}
 export class LLMap extends LLNode {
   constructor(
     private type: (typeof mapTypes)[number],

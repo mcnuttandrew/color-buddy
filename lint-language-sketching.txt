@@ -74,7 +74,7 @@ Predicates (v, v) => T | F
 p = > v v | < v v | ~= v v | == v v | 
 
 Value functions (c) => v
-vf = space.channel | name | cvd_sim
+vf = space.channel | name | cvdSim
 
 Pair functions (c, c) => v
 pf = contrast | deltaE
@@ -90,8 +90,8 @@ all:
             predicate: 
                 not: 
                     equal: 
-                        left:  {cvd_sim: 'a', type: 'deuteranopia'}
-                        right: {cvd_sim: 'b', type: 'deuteranopia'}
+                        left:  {cvdSim: 'a', type: 'deuteranopia'}
+                        right: {cvdSim: 'b', type: 'deuteranopia'}
 
 YAML syntax, max colors
 <: 

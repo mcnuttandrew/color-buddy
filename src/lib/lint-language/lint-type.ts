@@ -77,7 +77,7 @@ type LintReduce = Record<
 >;
 type LintColorFunction =
   | {
-      cvd_sim: LintVariable | LintColor;
+      cvdSim: LintVariable | LintColor;
       type: "protanomaly" | "deuteranomaly" | "tritanopia" | "grayscale";
     }
   | { name: LintVariable | LintColor }

@@ -40,7 +40,7 @@ contrast: {left: Color | Variable, right: Color | Variable, algorithm: | "APCA" 
 count: {count: Variable | Number[] | Color[]}
 sum|min|max|mean|first|last|extent: {sum: Variable | Number[]}
 toColor: {toColor: variableName, space: 'lab' | 'hsl' | etc, channel: 'a' | 'b' | 'l' | etc}
-cvd_sim: {cvd_sim: variableName, type: 'protanomaly' | 'deuteranomaly' | 'tritanopia' | 'grayscale'}
+cvdSim: {cvdSim: variableName, type: 'protanomaly' | 'deuteranomaly' | 'tritanopia' | 'grayscale'}
 name: {name: variableName}
 map|sort: {map: Variable | Value[], func: Operation}
 filter: {filter: Variable | Value[], func: EXPR}
@@ -51,7 +51,7 @@ Example Result:
         "in": "colors",
         "varbs": ["a", "b"],
         "predicate": {
-          "!=": {"left": { "cvd_sim": "a", "type": "deuteranopia" }, "right": { "cvd_sim": "b", "type": "deuteranopia" }
+          "!=": {"left": { "cvdSim": "a", "type": "deuteranopia" }, "right": { "cvdSim": "b", "type": "deuteranopia" }
           }}}}}
 
           Example prompt: Colors should not be extreme

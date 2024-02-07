@@ -20,13 +20,15 @@ greater than: {">": {left: Value, right: Value}}
 Value = Variable | Number | Color | Boolean
 
 Operations:
-*: {left: Number | Variable, right: Number | Variable}
+\*: {left: Number | Variable, right: Number | Variable}
 +: {left: Number | Variable, right: Number | Variable}
 /: {left: Number | Variable, right: Number | Variable}
 -: {left: Number | Variable, right: Number | Variable}
+
 dist: {left: Color | Variable, right: Color | Variable, space: COLOR_SPACE }
 deltaE: {left: Color | Variable, right: Color | Variable, algorithm: '2000' | etc }
 contrast: {left: Color | Variable, right: Color | Variable, algorithm: | "APCA" | "WCAG21" | "Michelson" | "Weber" | "Lstar" | "DeltaPhi"}
+
 count: {count: Variable | Number[] | Color[]}
 sum: {sum: Variable | Number[]}
 min: {min: Variable | Number[]}
@@ -35,9 +37,26 @@ mean: {mean: Variable | Number[]}
 first: {first: Variable | Number[]}
 last: {last: Variable | Number[]}
 extent: {extent: Variable | Number[]}
+
 toColor: {toColor: variableName, space: 'lab' | 'hsl' | etc, channel: 'a' | 'b' | 'l' | etc}
-cvd_sim: {cvd_sim: variableName, type: 'protanomaly' | 'deuteranomaly' | 'tritanopia' | 'grayscale'}
+cvdSim: {cvdSim: variableName, type: 'protanomaly' | 'deuteranomaly' | 'tritanopia' | 'grayscale'}
 name: {name: variableName}
-map: {map: Variable | Value[], func: Operation}
-sort: {sort: Variable | Value[], func: Operation}
-filter: {filter: Variable | Value[], func: EXPR}
+
+map: {map: Variable | Value[], func: Operation, varb: Variable}
+sort: {sort: Variable | Value[], func: Operation, varb: Variable}
+filter: {filter: Variable | Value[], func: EXPR, varb: Variable}
+
+```yaml
+---
+all:
+  varbs: [a, b]
+  in: colors
+  where:
+    "!=": {left: index(a) right: index(b)}
+  predicate:
+    not:
+      similar:
+        left: {cvdSim: a, type: deuteranopia}
+        right: {cvdSim: b, type: deuteranopia}
+        threshold: 9
+```

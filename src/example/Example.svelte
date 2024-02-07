@@ -10,6 +10,7 @@
   import simulate_cvd from "../lib/blindness";
   export let example: string;
   export let size = 300;
+  export let paletteIdx: number;
   let focusedColor = false as false | number;
   function countNumberOfExamplesInUse(example: string): number {
     let inUse = 0;
@@ -44,7 +45,7 @@
     }
     return svg;
   }
-  $: currentPal = $colorStore.palettes[$colorStore.currentPal];
+  $: currentPal = $colorStore.palettes[paletteIdx];
   $: colors = currentPal.colors;
   $: {
     if (
@@ -80,14 +81,14 @@
       return;
     }
     if (container) {
-      container.querySelectorAll(query).forEach((x) => {
+      container?.querySelectorAll(query).forEach((x) => {
         x.removeEventListener("click", onClick);
       });
     }
 
     await tick();
 
-    container.querySelectorAll(query).forEach((x) => {
+    container?.querySelectorAll(query).forEach((x) => {
       x.addEventListener("click", onClick);
     });
   }

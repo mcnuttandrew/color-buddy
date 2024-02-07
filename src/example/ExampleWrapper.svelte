@@ -1,6 +1,7 @@
 <script lang="ts">
   import { buttonStyle } from "../lib/styles";
   import exampleStore from "../stores/example-store";
+  import colorStore from "../stores/color-store";
   import Vega from "./Vega.svelte";
   import Example from "./Example.svelte";
   import Tooltip from "../components/Tooltip.svelte";
@@ -75,10 +76,18 @@
   </div>
   <div class="h-full flex justify-center items-center p-4">
     {#if example.svg}
-      <Example example={example.svg} size={example.size} />
+      <Example
+        example={example.svg}
+        size={example.size}
+        paletteIdx={$colorStore.currentPal}
+      />
     {/if}
     {#if example.vega}
-      <Vega spec={example.vega} size={example.size} />
+      <Vega
+        spec={example.vega}
+        size={example.size}
+        paletteIdx={$colorStore.currentPal}
+      />
     {/if}
   </div>
 </div>

@@ -177,7 +177,7 @@
   style={`height: calc(100% - 100px)`}
 >
   {#if $exampleStore.sections["swatches"]}
-    <Swatches />
+    <Swatches paletteIdx={$colorStore.currentPal} />
   {/if}
   {#each examples as example, idx}
     {#if exampleShowMap[idx]}

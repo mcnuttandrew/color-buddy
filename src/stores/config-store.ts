@@ -3,6 +3,7 @@ import { writable } from "svelte/store";
 interface StoreData {
   colorSim: "deuteranopia" | "protanopia" | "tritanopia" | "none" | "grayscale";
   comparePal: number | undefined;
+  compareSelectedExample: number;
   engine: "openai" | "google";
   evalDisplayMode: "regular" | "compact";
   evalDeltaDisplay: "none" | "76" | "CMC" | "2000" | "ITP" | "Jz" | "OK";
@@ -13,6 +14,8 @@ interface StoreData {
   showColorBackground: boolean;
   tooltipXY?: [string, string];
   useSimulatorOnExamples: boolean;
+  mainColumnRoute: "palette-config" | "example";
+  mainColumnSelectedExample: number;
   xZoom: [number, number];
   yZoom: [number, number];
   zZoom: [number, number];
@@ -21,6 +24,7 @@ interface StoreData {
 const InitialStore: StoreData = {
   colorSim: "none",
   comparePal: undefined,
+  compareSelectedExample: -1,
   engine: "openai",
   evalDisplayMode: "regular",
   evalDeltaDisplay: "none",
@@ -30,6 +34,8 @@ const InitialStore: StoreData = {
   scatterplotMode: "moving",
   showColorBackground: true,
   tooltipXY: undefined,
+  mainColumnRoute: "palette-config",
+  mainColumnSelectedExample: -1,
   useSimulatorOnExamples: false,
   xZoom: [0, 1],
   yZoom: [0, 1],
@@ -95,6 +101,12 @@ function createStore() {
       persist((old) => ({ ...old, scatterplotMode: n })),
     setUseSimulatorOnExamples: (n: StoreData["useSimulatorOnExamples"]) =>
       persist((old) => ({ ...old, useSimulatorOnExamples: n })),
+    setMainColumnRoute: (n: StoreData["mainColumnRoute"]) =>
+      persist((old) => ({ ...old, mainColumnRoute: n })),
+    setMainColumnSelectedExample: (n: StoreData["mainColumnSelectedExample"]) =>
+      persist((old) => ({ ...old, mainColumnSelectedExample: n })),
+    setCompareSelectedExample: (n: StoreData["compareSelectedExample"]) =>
+      persist((old) => ({ ...old, compareSelectedExample: n })),
   };
 }
 

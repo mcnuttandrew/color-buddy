@@ -9,7 +9,11 @@
   import { buttonStyle } from "../lib/styles";
   import simulate_cvd from "../lib/blindness";
 
-  $: currentPal = $colorStore.palettes[$colorStore.currentPal];
+  export let paletteIdx: number;
+  export let allowInteraction: boolean = true;
+  export let hideHeader: boolean = false;
+
+  $: currentPal = $colorStore.palettes[paletteIdx];
   $: colors = currentPal.colors;
   $: {
     if (
@@ -75,6 +79,9 @@
     toggle: () => void,
     tooltipOpen: boolean
   ) {
+    if (!allowInteraction) {
+      return () => {};
+    }
     return (e: any) => {
       const isFocused = focusSet.has(colorIdx);
       const shiftKey = e.shiftKey;
@@ -112,44 +119,49 @@
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <!-- svelte-ignore a11y-no-static-element-interactions -->
+
 <div
   class="mr-4 mb-2"
   on:click={(e) => {
-    focusStore.clearColors();
+    if (allowInteraction) {
+      focusStore.clearColors();
+    }
   }}
 >
-  <div class="bg-stone-300 w-full justify-between flex p-1">
-    Swatches
-    <Tooltip>
-      <button
-        slot="target"
-        class={buttonStyle}
-        let:toggle
-        on:click|preventDefault|stopPropagation={toggle}
-      >
-        Options
-      </button>
-      <div slot="content">
+  {#if !hideHeader}
+    <div class="bg-stone-300 w-full justify-between flex p-1">
+      Swatches
+      <Tooltip>
         <button
+          slot="target"
           class={buttonStyle}
-          on:click|preventDefault|stopPropagation={() =>
-            exampleStore.toggleSection("swatches")}
+          let:toggle
+          on:click|preventDefault|stopPropagation={toggle}
         >
-          Hide
+          Options
         </button>
-        {#if numToShow > 1}
+        <div slot="content">
           <button
             class={buttonStyle}
-            on:click|preventDefault|stopPropagation={() => {
-              exampleStore.onlySwatches();
-            }}
+            on:click|preventDefault|stopPropagation={() =>
+              exampleStore.toggleSection("swatches")}
           >
-            Focus
+            Hide
           </button>
-        {/if}
-      </div>
-    </Tooltip>
-  </div>
+          {#if numToShow > 1}
+            <button
+              class={buttonStyle}
+              on:click|preventDefault|stopPropagation={() => {
+                exampleStore.onlySwatches();
+              }}
+            >
+              Focus
+            </button>
+          {/if}
+        </div>
+      </Tooltip>
+    </div>
+  {/if}
   <div style={`background-color: ${bg.toHex()}; max-width: 600px`} class="flex">
     <div class="flex flex-col">
       {#each colors as color, i}

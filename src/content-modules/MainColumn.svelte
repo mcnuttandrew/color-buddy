@@ -3,14 +3,16 @@
   import focusStore from "../stores/focus-store";
   import configStore from "../stores/config-store";
   import { buttonStyle } from "../lib/styles";
-  import ColorScatterPlot from "../scatterplot/ColorScatterPlot.svelte";
-  import Background from "../components/Background.svelte";
-  import SetColorSpace from "../controls/SetColorSpace.svelte";
-  import PalPreview from "../components/PalPreview.svelte";
-  import SuggestName from "../controls/SuggestName.svelte";
-  import GetColorsFromString from "../controls/GetColorsFromString.svelte";
   import AdjustOrder from "../controls/AdjustOrder.svelte";
+  import Background from "../components/Background.svelte";
+  import ColorScatterPlot from "../scatterplot/ColorScatterPlot.svelte";
+  import ExampleAlaCart from "../example/ExampleAlaCarte.svelte";
+  import GetColorsFromString from "../controls/GetColorsFromString.svelte";
   import ModifySelection from "../controls/ModifySelection.svelte";
+  import Nav from "../components/Nav.svelte";
+  import PalPreview from "../components/PalPreview.svelte";
+  import SetColorSpace from "../controls/SetColorSpace.svelte";
+  import SuggestName from "../controls/SuggestName.svelte";
 
   import ContentEditable from "../components/ContentEditable.svelte";
   $: currentPal = $colorStore.palettes[$colorStore.currentPal];
@@ -84,26 +86,44 @@
       pal={currentPal}
       allowModification={true}
     />
-    <GetColorsFromString
-      allowSort={true}
-      onChange={(colors) => colorStore.setCurrentPalColors(colors)}
-      colorSpace={currentPal.colorSpace}
-      colors={currentPal.colors}
+    <Nav
+      tabs={["palette-config", "example"]}
+      isTabSelected={(x) => x === $configStore.mainColumnRoute}
+      selectTab={(x) => {
+        //@ts-ignore
+        configStore.setMainColumnRoute(x);
+      }}
     />
-    <div class="max-w-lg text-sm italic">
-      This is a <select
-        value={palType}
-        class="font-bold"
-        on:change={(e) => {
-          // @ts-ignore
-          colorStore.setCurrentPalType(e.target.value);
-        }}
-      >
-        {#each ["sequential", "diverging", "categorical"] as type}
-          <option value={type}>{type}</option>
-        {/each}
-      </select>
-      palette. {descriptions[palType]}
-    </div>
+    {#if $configStore.mainColumnRoute === "palette-config"}
+      <GetColorsFromString
+        allowSort={true}
+        onChange={(colors) => colorStore.setCurrentPalColors(colors)}
+        colorSpace={currentPal.colorSpace}
+        colors={currentPal.colors}
+      />
+
+      <div class="max-w-lg text-sm italic">
+        This is a <select
+          value={palType}
+          class="font-bold"
+          on:change={(e) => {
+            // @ts-ignore
+            colorStore.setCurrentPalType(e.target.value);
+          }}
+        >
+          {#each ["sequential", "diverging", "categorical"] as type}
+            <option value={type}>{type}</option>
+          {/each}
+        </select>
+        palette. {descriptions[palType]}
+      </div>
+    {/if}
+    {#if $configStore.mainColumnRoute === "example"}
+      <ExampleAlaCart
+        paletteIdx={$colorStore.currentPal}
+        exampleIdx={$configStore.mainColumnSelectedExample}
+        setExampleIdx={(idx) => configStore.setMainColumnSelectedExample(idx)}
+      />
+    {/if}
   </div>
 </div>

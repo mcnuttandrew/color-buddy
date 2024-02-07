@@ -3,13 +3,16 @@
   import colorStore from "../stores/color-store";
   import configStore from "../stores/config-store";
   import focusStore from "../stores/focus-store";
-  import ColorScatterPlot from "../scatterplot/ColorScatterPlot.svelte";
+
   import Background from "../components/Background.svelte";
-  import { buttonStyle } from "../lib/styles";
-  import Tooltip from "../components/Tooltip.svelte";
+  import ColorScatterPlot from "../scatterplot/ColorScatterPlot.svelte";
+  import ExampleAlaCart from "../example/ExampleAlaCarte.svelte";
   import MiniPalPreview from "../components/MiniPalPreview.svelte";
   import PalPreview from "../components/PalPreview.svelte";
-  import GetColorsFromString from "../controls/GetColorsFromString.svelte";
+  import Tooltip from "../components/Tooltip.svelte";
+  import Nav from "../components/Nav.svelte";
+
+  import { buttonStyle } from "../lib/styles";
 
   import SetColorSpace from "../controls/SetColorSpace.svelte";
 
@@ -96,11 +99,21 @@
       allowModification={false}
     />
 
-    <GetColorsFromString
+    <!-- <GetColorsFromString
       allowSort={false}
       colors={ComparisonPal.colors}
       onChange={() => {}}
       {colorSpace}
+    /> -->
+  </div>
+{/if}
+<Nav tabs={["example"]} selectTab={() => {}} isTabSelected={() => true} />
+{#if compareIdx !== undefined}
+  <div class="example-holder">
+    <ExampleAlaCart
+      paletteIdx={compareIdx}
+      exampleIdx={$configStore.compareSelectedExample}
+      setExampleIdx={(idx) => configStore.setCompareSelectedExample(idx)}
     />
   </div>
 {/if}
@@ -108,6 +121,9 @@
 <style>
   .empty-pal-holder {
     height: 450px;
+    width: 450px;
+  }
+  .example-holder {
     width: 450px;
   }
 </style>

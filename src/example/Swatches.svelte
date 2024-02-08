@@ -32,17 +32,17 @@
   let common = "cursor-pointer mr-2 mb-2 transition-all";
   let classes = [
     {
-      className: `${common} w-8 h-8 `,
+      className: `${common} big-swatch `,
       styleMap: (color: Color): string => `background-color: ${color.toHex()};`,
       selectionClass: "rotate-12",
     },
     {
-      className: `${common} w-6 h-6`,
+      className: `${common} small-swatch`,
       styleMap: (color: Color): string => `background-color: ${color.toHex()};`,
       selectionClass: "rotate-12",
     },
     {
-      className: `${common} w-4 h-4 rounded-full`,
+      className: `${common} small-swatch rounded-full`,
       styleMap: (color: Color): string => `border: 2px solid ${color.toHex()};`,
       selectionClass: "relative top-1 left-1",
     },
@@ -212,7 +212,7 @@
           </div>
         {/each}
       </div>
-      <div class="flex flex-wrap justify-center">
+      <div class="flex flex-wrap justify-center w-full">
         {#each colors as color, i}
           <button
             style={`color: ${color.toHex()}; transform: rotate(${
@@ -232,3 +232,14 @@
     </div>
   </div>
 </div>
+
+<style>
+  .big-swatch {
+    width: 45px;
+    height: 45px;
+  }
+  .small-swatch {
+    width: 20px;
+    height: 20px;
+  }
+</style>

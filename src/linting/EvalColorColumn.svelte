@@ -122,7 +122,7 @@
       {/if}
     {/each}
     <div>
-      <span>Metric</span>
+      <span>dE Metric</span>
       <select
         value={$configStore.evalDeltaDisplay}
         on:change={(e) => {

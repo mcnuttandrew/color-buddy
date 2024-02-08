@@ -8,6 +8,7 @@
   export let exampleIdx: number;
   export let setExampleIdx: (idx: number) => void;
   export let paletteIdx: number;
+  export let allowModification: boolean = false;
   $: example = {
     ...$exampleStore.examples[exampleIdx],
     size: 400,
@@ -43,7 +44,11 @@
 </div>
 <div class="h-full flex justify-center items-center p-4">
   {#if exampleIdx === -1}
-    <Swatches {paletteIdx} hideHeader={true} allowInteraction={false} />
+    <Swatches
+      {paletteIdx}
+      hideHeader={true}
+      allowInteraction={allowModification}
+    />
   {:else}
     {#if example.svg}
       <Example example={example.svg} size={example.size} {paletteIdx} />

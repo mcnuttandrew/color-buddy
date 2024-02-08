@@ -123,6 +123,7 @@
         paletteIdx={$colorStore.currentPal}
         exampleIdx={$configStore.mainColumnSelectedExample}
         setExampleIdx={(idx) => configStore.setMainColumnSelectedExample(idx)}
+        allowModification={true}
       />
     {/if}
   </div>

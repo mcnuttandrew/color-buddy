@@ -56,7 +56,7 @@
         configStore.setEvalDisplayMode(x);
       }}
     />
-    <div class="overflow-auto h-full max-w-lg">
+    <div class="overflow-auto h-full max-w-lg mb-28">
       <div class="flex items-start justify-start">
         {#if Object.keys(currentPal.evalConfig)}
           <button

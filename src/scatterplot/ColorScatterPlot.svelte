@@ -89,7 +89,6 @@
   $: selectionColor = luminance > 0.35 ? "#55330066" : "#ffeeccaa";
 
   let hoveredPoint: Color | false = false;
-  let hoverPoint = (x: typeof hoveredPoint) => (hoveredPoint = x);
 
   // coordinate transforms
   $: scales = makeScales(
@@ -230,6 +229,9 @@
   };
 
   let switchToDragPoint = (i: number) => (e: any) => {
+    if (interactionMode === "idle") {
+      hoveredPoint = colors[i];
+    }
     if (interactionMode !== "point-touch") return;
     startDragging();
     // console.log("switch to drag point");
@@ -360,11 +362,8 @@
                   on:mouseleave|preventDefault={switchToDragPoint(i)}
                 />
               {/if}
-              {#if scatterPlotMode === "looking" || scatterPlotMode === "putting"}
-                <circle
-                  {...CircleProps(color, i)}
-                  on:mouseenter={() => hoverPoint(color)}
-                />
+              {#if scatterPlotMode === "putting"}
+                <circle {...CircleProps(color, i)} />
               {/if}
               {#if !color.inGamut()}
                 <GamutMarker xPos={x(color)} yPos={y(color)} />
@@ -397,7 +396,7 @@
               />
             {/each}
             <!-- simple tooltip -->
-            {#if hoveredPoint}
+            <!-- {#if hoveredPoint}
               <g
                 transform={`translate(${x(hoveredPoint) + 5}, ${
                   y(hoveredPoint) - 5
@@ -405,7 +404,7 @@
               >
                 <text fill={textColor}>{hoveredPoint.toDisplay()}</text>
               </g>
-            {/if}
+            {/if} -->
             <!-- selection target -->
             {#if focusedColors.length > 0}
               <rect
@@ -569,6 +568,15 @@
       </div>
     </div>
   </div>
+</div>
+<div class="flex items-center text-sm w-full justify-center">
+  {#if hoveredPoint}
+    Hovered point:
+    {hoveredPoint.toString()} -
+    {hoveredPoint.toHex()}
+  {:else}
+    &nbsp;
+  {/if}
 </div>
 
 <style>

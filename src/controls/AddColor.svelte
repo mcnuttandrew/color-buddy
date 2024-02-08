@@ -6,6 +6,7 @@
   import { suggestAdditionsToPalette } from "../lib/api-calls";
   import ColorButton from "../components/ColorButton.svelte";
   import Tooltip from "../components/Tooltip.svelte";
+  import { webColors } from "../lib/utils";
 
   const randChan = () => Math.floor(Math.random() * 255);
   function componentToHex(c: number): string {

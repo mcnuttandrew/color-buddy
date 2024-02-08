@@ -14,7 +14,7 @@
   export let hideHeader: boolean = false;
 
   $: currentPal = $colorStore.palettes[paletteIdx];
-  $: colors = currentPal.colors;
+  $: colors = currentPal?.colors || [];
   $: {
     if (
       $configStore.colorSim !== "none" &&
@@ -22,10 +22,10 @@
     ) {
       colors = colors.map((x) => simulate_cvd($configStore.colorSim, x));
     } else {
-      colors = currentPal.colors;
+      colors = currentPal?.colors || [];
     }
   }
-  $: bg = currentPal.background;
+  $: bgColor = currentPal?.background?.toHex() || "white";
   $: focused = $focusStore.focusedColors;
   $: focusSet = new Set(focused);
 
@@ -162,7 +162,7 @@
       </Tooltip>
     </div>
   {/if}
-  <div style={`background-color: ${bg.toHex()}; max-width: 600px`} class="flex">
+  <div style={`background-color: ${bgColor}; max-width: 600px`} class="flex">
     <div class="flex flex-col">
       {#each colors as color, i}
         <button

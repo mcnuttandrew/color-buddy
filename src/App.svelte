@@ -2,13 +2,17 @@
   import colorStore from "./stores/color-store";
   import focusStore from "./stores/focus-store";
   import configStore from "./stores/config-store";
-  import { buttonStyle } from "./lib/styles";
 
   // make sure no focused colors are out of bounds
   $: focusedColors = $focusStore.focusedColors;
+  $: currentPal = $colorStore.palettes[$colorStore.currentPal];
+  $: palPresent = !!($colorStore.palettes.length > 0 && currentPal);
   $: {
     if (focusedColors.some((x) => x > currentPal.colors.length - 1)) {
       focusStore.clearColors();
+    }
+    if ($colorStore.palettes.length > 0 && !currentPal) {
+      colorStore.startUsingPal(0);
     }
   }
 
@@ -22,9 +26,7 @@
   import MainColumn from "./content-modules/MainColumn.svelte";
   import SetSimulation from "./controls/SetSimulation.svelte";
   import Zoom from "./controls/Zoom.svelte";
-  import NewPal from "./controls/NewPal.svelte";
 
-  $: currentPal = $colorStore.palettes[$colorStore.currentPal];
   const tabs = ["examples", "compare", "eval"];
 </script>
 
@@ -37,27 +39,31 @@
           <SetSimulation />
           <Zoom />
         </div>
-        <MainColumn />
-      </div>
-      <div class="grow">
-        <Nav
-          className="bg-stone-800 text-white h-12 items-center "
-          {tabs}
-          isTabSelected={(x) => $configStore.route === x}
-          selectTab={(x) => {
-            // @ts-ignore
-            configStore.setRoute(x);
-          }}
-        />
-
-        {#if $configStore.route === "examples"}
-          <Examples />
-        {:else if $configStore.route === "compare"}
-          <ComparePal />
-        {:else}
-          <Eval />
+        {#if palPresent}
+          <MainColumn />
         {/if}
       </div>
+      {#if palPresent}
+        <div class="grow">
+          <Nav
+            className="bg-stone-800 text-white h-12 items-center "
+            {tabs}
+            isTabSelected={(x) => $configStore.route === x}
+            selectTab={(x) => {
+              // @ts-ignore
+              configStore.setRoute(x);
+            }}
+          />
+
+          {#if $configStore.route === "examples"}
+            <Examples />
+          {:else if $configStore.route === "compare"}
+            <ComparePal />
+          {:else}
+            <Eval />
+          {/if}
+        </div>
+      {/if}
     </div>
     <!-- bottom row -->
   </div>

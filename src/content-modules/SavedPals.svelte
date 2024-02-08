@@ -28,7 +28,7 @@
           </button>
         </div>
         <Tooltip>
-          <div slot="content" let:onClick>
+          <div slot="content" let:onClick class="flex flex-col">
             <button
               class={buttonStyle}
               on:click={() => colorStore.duplicatePal(i)}
@@ -44,6 +44,42 @@
             >
               Delete
             </button>
+            {#if i !== 0}
+              <button
+                class={buttonStyle}
+                on:click={() => {
+                  const pals = $colorStore.palettes;
+                  const newIdx = i - 1;
+                  if (newIdx < 0) return;
+                  const newPals = [...pals];
+                  newPals[i] = pals[newIdx];
+                  newPals[newIdx] = pals[i];
+                  colorStore.setPalettes(newPals);
+
+                  onClick();
+                }}
+              >
+                Move up
+              </button>
+            {/if}
+            {#if i !== $colorStore.palettes.length - 1}
+              <button
+                class={buttonStyle}
+                on:click={() => {
+                  const pals = $colorStore.palettes;
+                  const newIdx = i + 1;
+                  if (newIdx >= pals.length) return;
+                  const newPals = [...pals];
+                  newPals[i] = pals[newIdx];
+                  newPals[newIdx] = pals[i];
+                  colorStore.setPalettes(newPals);
+
+                  onClick();
+                }}
+              >
+                Move down
+              </button>
+            {/if}
           </div>
           <button
             slot="target"

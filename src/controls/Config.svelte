@@ -109,9 +109,9 @@
         const pals = $colorStore.palettes.map((x) => {
           const { colors, background, name, colorSpace, type } = x;
           return {
-            background: background.toString(),
+            background: background.toHex(),
             colorSpace,
-            colors: colors.map((c) => c.toString()),
+            colors: colors.map((c) => c.toHex()),
             name,
             type,
           };

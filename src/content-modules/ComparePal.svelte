@@ -29,7 +29,7 @@
   let colorSpace = ComparisonPal?.colorSpace || "lab";
 </script>
 
-<div class="flex flex-col" style={`background: ${bg}`}>
+<div class="flex flex-col">
   {#if ComparisonPal !== undefined}
     <div class="font-bold">
       <span class="italic">Compare: {ComparisonPal.name}</span>

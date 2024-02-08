@@ -18,6 +18,7 @@ Macros story
 
 # Language todos
 
+- [ ] Add more blame robustness, may pay to try to reason across all of the operator families (insight: keep a list of the blamable variables in the environment to support tracing)
 - [ ] Add background, roles, palette level semantics
 - [ ] Categorical mutually distinct
 - [x] Integration into main app
@@ -30,6 +31,7 @@ Macros story
 
 # Todo bankruptcy
 
+- [ ] Search paletes by lint screen
 - [ ] off by one persistance error in undo/redo
 - [ ] Gamut algorithm broken again
 - [ ] Add HCT/CAM, add explainers to each of the color spaces, blocked by colorjs release
@@ -43,6 +45,7 @@ Macros story
 - [ ] Bug: rotate in polar coordinates doesn't work right
 - [ ] Directional subtlies for aligns, they do not work in polar also
 - [ ] Sequential check fix is incorrect for things with equi-ligthness
+- [x] Add up/down manipulation to palettes
 
 # Nice to have
 

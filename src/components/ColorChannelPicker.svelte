@@ -133,7 +133,7 @@
 
 <div class="flex flex-col">
   <select bind:value={colorMode}>
-    {#each [...Object.keys(colorConfigs), "hex"] as colorMode}
+    {#each [...Object.keys(colorConfigs)] as colorMode}
       <option value={colorMode}>{colorMode}</option>
     {/each}
   </select>

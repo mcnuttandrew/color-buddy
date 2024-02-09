@@ -574,6 +574,10 @@
     Hovered point:
     {hoveredPoint.toString()} -
     {hoveredPoint.toHex()}
+    <div
+      class="h-4 w-4 rounded-full"
+      style={`background: ${hoveredPoint.toDisplay()}`}
+    ></div>
   {:else}
     &nbsp;
   {/if}

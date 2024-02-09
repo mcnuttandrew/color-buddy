@@ -43,7 +43,7 @@ Macros story
 - [ ] Labels, tooltips, etc
 - [ ] Bug: Color channel usage slightly cursed (doesn't update positions correctly)
 - [ ] Bug: rotate in polar coordinates doesn't work right
-- [ ] Directional subtlies for aligns, they do not work in polar also
+- [ ] Directional subtile for aligns, they do not work in polar also
 - [ ] Sequential check fix is incorrect for things with equi-ligthness
 - [x] Add up/down manipulation to palettes
 

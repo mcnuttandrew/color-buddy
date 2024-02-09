@@ -93,7 +93,7 @@
                   {colorNames[idx]?.word}
                 </span>{/if}
             </span>
-            <span class="flex">
+            <span class="flex flex-wrap flex-row-reverse">
               {#each colorsToIssues[idx] as check}
                 {#if !evalConfig[check.name]?.ignore}
                   <Tooltip>

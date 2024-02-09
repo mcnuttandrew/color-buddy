@@ -6,7 +6,6 @@ import Discrims from "./lints/size-discrim";
 import Blinds from "./lints/blind-check";
 import ColorSimilarity from "./lints/color-similarity";
 import BackgroundDifferentiability from "./lints/background-differentiability";
-import UglyColors from "./lints/ugly-colors";
 import SequentialOrder from "./lints/sequential-order";
 import DivergingOrder from "./lints/diverging-order";
 import BackgroundContrast from "./lints/contrast";
@@ -28,7 +27,6 @@ export function runLintChecks(
       ...Blinds,
       ColorSimilarity,
       BackgroundDifferentiability,
-      UglyColors,
       SequentialOrder,
       DivergingOrder,
       BackgroundContrast,

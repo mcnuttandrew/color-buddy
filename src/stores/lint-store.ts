@@ -3,6 +3,7 @@ import * as idb from "idb-keyval";
 import type { CustomLint } from "../lib/lints/CustomLint";
 import type { TaskType } from "../lib/lints/ColorLint";
 import { JSONStringify } from "../lib/utils";
+import BUILT_INS from "./built-in-lints";
 
 interface StoreData {
   lints: CustomLint[];
@@ -14,52 +15,10 @@ const InitialStore: StoreData = {
   focusedLint: false,
 };
 
-export const BUILT_INS: CustomLint[] = [
-  // https://www.sciencedirect.com/science/article/pii/S0167947308005549?casa_token=s8jmZqboaYgAAAAA:7lsAu7YUHVBTQA_eaKJ_3FFGv309684j_NTisGO9mIr3UZNIJ6hlAlxPQo04xzsowG7-dH0vzm4
-  {
-    program: JSONStringify(
-      JSON.stringify({
-        $schema: `${location.href}lint-schema.json`,
-        all: {
-          in: "colors",
-          varb: "a",
-          predicate: {
-            all: {
-              in: ["#000000", "#ffffff"],
-              varb: "b",
-              predicate: {
-                not: { similar: { left: "a", right: "b", threshold: 12 } },
-              },
-            },
-          },
-        },
-      })
-    ),
-    name: "Avoid extreme colors",
-    taskTypes: ["sequential", "diverging", "categorical"] as TaskType[],
-    level: "warning",
-    group: "design",
-    description: `Colors at either end of the lightness spectrum can be hard to discriminate in some contexts, and are sometimes advised against.`,
-    failMessage: `Colors at either end of the lightness spectrum {{blame}} are hard to discriminate in some contexts, and are sometimes advised against`,
-    id: "extreme-colors-built-in",
-  },
-  {
-    program: JSONStringify(
-      JSON.stringify({
-        $schema: `${location.href}lint-schema.json`,
-        "<": { left: { count: "colors" }, right: 10 },
-      })
-    ),
-    name: "Avoid too many colors",
-    taskTypes: ["sequential", "diverging", "categorical"] as TaskType[],
-    level: "warning",
-    group: "design",
-    description:
-      "Palettes should have a maximum number of colors. Higher numbers of colors can make it hard to identify specific values.",
-    failMessage: `This palette has too many colors and may be hard to discriminate in some contexts. Maximum: 10.`,
-    id: "too-many-colors-built-in",
-  },
-];
+const builtInIndex = BUILT_INS.reduce((acc, x) => {
+  acc[x.id] = x;
+  return acc;
+}, {} as Record<string, CustomLint>);
 
 const storeName = "color-pal-lints";
 function createStore() {
@@ -67,11 +26,15 @@ function createStore() {
 
   const { subscribe, set, update } = writable<StoreData>(storeData);
   idb.get(storeName).then((x) => {
-    if (x) {
-      set({ ...x, lints: x.lints || [] } as StoreData);
-    } else {
-      set({ ...InitialStore, lints: BUILT_INS });
-    }
+    let storeBase = { ...InitialStore, ...x };
+    let lints = (storeBase.lints || []).map(
+      (x: CustomLint) => builtInIndex[x.id] || x
+    ) as CustomLint[];
+    const missingBuiltIns = BUILT_INS.filter(
+      (x) => !lints.find((y) => y.id === x.id)
+    );
+    console.log(missingBuiltIns, "missingBuiltIns", BUILT_INS);
+    set({ ...storeBase, lints: [...lints, ...missingBuiltIns] });
   });
   const persistUpdate = (updateFunc: (old: StoreData) => StoreData) =>
     update((oldStore) => {

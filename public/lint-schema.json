@@ -267,9 +267,9 @@
               "properties": {
                 "left": { "$ref": "#/definitions/LintRef" },
                 "right": { "$ref": "#/definitions/LintRef" },
-                "similarityThreshold": { "type": "number" }
+                "threshold": { "type": "number" }
               },
-              "required": ["left", "right", "similarityThreshold"]
+              "required": ["left", "right", "threshold"]
             }
           },
           "required": ["similar"]
@@ -292,7 +292,8 @@
               "anyOf": [
                 { "$ref": "#/definitions/LintVariable" },
                 { "type": "array" },
-                { "$ref": "#/definitions/LintMap" }
+                { "$ref": "#/definitions/LintMap" },
+                { "enum": ["colors"] }
               ]
             }
           },
@@ -309,7 +310,8 @@
               "anyOf": [
                 { "$ref": "#/definitions/LintVariable" },
                 { "type": "array" },
-                { "$ref": "#/definitions/LintMap" }
+                { "$ref": "#/definitions/LintMap" },
+                { "enum": ["colors"] }
               ]
             }
           },

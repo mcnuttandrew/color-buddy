@@ -45,7 +45,6 @@ monaco.languages.registerColorProvider("json", {
     for (let i = 0; i < text.length; i++) {
       const is7LenHex = isHexColor(text.slice(i, i + 7));
       if (text[i] === "#" && (is7LenHex || isHexColor(text.slice(i, i + 4)))) {
-        console.log("here", is7LenHex);
         const len = is7LenHex ? 7 : 4;
         const color = chroma(text.slice(i, i + len)).rgb();
         colors.push({

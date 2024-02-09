@@ -33,7 +33,6 @@ function createStore() {
     const missingBuiltIns = BUILT_INS.filter(
       (x) => !lints.find((y) => y.id === x.id)
     );
-    console.log(missingBuiltIns, "missingBuiltIns", BUILT_INS);
     set({ ...storeBase, lints: [...lints, ...missingBuiltIns] });
   });
   const persistUpdate = (updateFunc: (old: StoreData) => StoreData) =>

@@ -362,7 +362,7 @@
                   on:mouseleave|preventDefault={switchToDragPoint(i)}
                 />
               {/if}
-              {#if scatterPlotMode === "putting"}
+              {#if scatterPlotMode !== "moving"}
                 <circle {...CircleProps(color, i)} />
               {/if}
               {#if !color.inGamut()}

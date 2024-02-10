@@ -590,50 +590,6 @@ test("LintLanguage Sequential Colors", () => {
   );
 });
 
-test("LintLanguage Sequential Colors", () => {
-  const sequential = {
-    "==": {
-      left: { "-": { left: "index(a)", right: 1 } },
-      right: "index(b)",
-    },
-  };
-  const program = {
-    or: [
-      {
-        all: {
-          in: "colors",
-          varbs: ["a", "b"],
-          where: sequential,
-          predicate: {
-            ">": { left: { "lab.l": "a" }, right: { "lab.l": "b" } },
-          },
-        },
-      },
-      {
-        all: {
-          in: "colors",
-          varbs: ["a", "b"],
-          where: sequential,
-          predicate: {
-            "<": { left: { "lab.l": "a" }, right: { "lab.l": "b" } },
-          },
-        },
-      },
-    ],
-  };
-
-  const outOfOrder = toPal(["#d4a8ff", "#008694", "#7bb9ff"]);
-  const ooResult = LLEval(program, outOfOrder);
-  expect(ooResult.result).toBe(false);
-  expect(ooResult.blame).toStrictEqual([0, 1, 2]);
-
-  const inOrder = toPal(["#d4a8ff", "#7bb9ff", "#008694"]);
-  expect(LLEval(program, inOrder).result).toBe(true);
-  expect(prettyPrintLL(program)).toBe(
-    "ALL (a, b) in colors WHERE index(a) - 1 == index(b), lab.l(a) > lab.l(b) or ALL (a, b) in colors WHERE index(a) - 1 == index(b), lab.l(a) < lab.l(b)"
-  );
-});
-
 test.skip("LintLanguage Diverging Colors - dense notation", () => {
   const sequential = {
     and: [

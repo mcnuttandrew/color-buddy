@@ -695,12 +695,8 @@ export class LLQuantifier extends LLNode {
     );
     let blameIndices = new Set<number>([]);
     let topEnv = env.copy();
-    const checkedKeys = new Set<string>();
     const mappedEvaluations = carts
       .map((combo: any) => {
-        const key = combo.sort().join(",");
-        if (checkedKeys.has(key)) return "skip";
-        checkedKeys.add(key);
         const varbIndex = this.varbs.map((varb, idx) => {
           return [varb, inputData[combo[idx]]];
         });
@@ -976,6 +972,12 @@ export function permutativeBlame(
 ): number[] | number[][] {
   const initialRun = LLEval(root, palette);
   if (initialRun.result) return [];
+  // dont compute blame if it doesn't matter
+  const hasColorsRef = JSON.stringify(root).includes("colors");
+  const hasBgRef = JSON.stringify(root).includes("background");
+  if (!hasColorsRef && !hasBgRef) {
+    return [];
+  }
 
   // single blame
   const allIndices = palette.colors.map((_, i) => i);
@@ -987,7 +989,6 @@ export function permutativeBlame(
       const result = LLEval(root, tempPalette);
       if (!result.result) {
         blamedIndices.push(x);
-        console.log("constructive", x);
       }
     });
     if (blamedIndices.length > 0) return blamedIndices;

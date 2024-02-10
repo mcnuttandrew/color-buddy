@@ -4,8 +4,9 @@ import { Color } from "./Color";
 import type { Palette } from "../stores/color-store";
 
 import ColorNameDiscriminability, { getName } from "./lints/name-discrim";
-import ColorBlind from "./lints/blind-check";
 import BackgroundDifferentiability from "./lints/background-differentiability";
+import BUILT_INS from "../stores/built-in-lints";
+import { CreateCustomLint } from "./lints/CustomLint";
 
 function makePalFromHexes(hexes: string[]): Palette {
   return {
@@ -50,17 +51,33 @@ test("ColorLint - ColorBlind", async () => {
     "#00becf",
   ];
   const examplePal = makePalFromHexes(tableau10);
-  const exampleLint1 = new ColorBlind[0](examplePal).run();
+  const cbDeuteranopia = CreateCustomLint(
+    BUILT_INS.find((x) => x.id === "colorblind-friendly-deuteranopia-built-in")!
+  );
+  const exampleLint1 = new cbDeuteranopia(examplePal).run();
   expect(exampleLint1.passes).toBe(false);
   expect(exampleLint1.message).toMatchSnapshot();
 
-  const exampleLint2 = new ColorBlind[1](examplePal).run();
+  const cbProtanopia = CreateCustomLint(
+    BUILT_INS.find((x) => x.id === "colorblind-friendly-protanopia-built-in")!
+  );
+  const exampleLint2 = new cbProtanopia(examplePal).run();
   expect(exampleLint2.passes).toBe(false);
   expect(exampleLint2.message).toMatchSnapshot();
 
-  const exampleLint3 = new ColorBlind[2](examplePal).run();
+  const cbTritanopia = CreateCustomLint(
+    BUILT_INS.find((x) => x.id === "colorblind-friendly-tritanopia-built-in")!
+  );
+  const exampleLint3 = new cbTritanopia(examplePal).run();
   expect(exampleLint3.passes).toBe(false);
   expect(exampleLint3.message).toMatchSnapshot();
+
+  const cbGrayscale = CreateCustomLint(
+    BUILT_INS.find((x) => x.id === "colorblind-friendly-grayscale-built-in")!
+  );
+  const exampleLint4 = new cbGrayscale(examplePal).run();
+  expect(exampleLint4.passes).toBe(false);
+  expect(exampleLint4.message).toMatchSnapshot();
 });
 
 const ughWhat = ["#00ffff", "#00faff", "#00e4ff", "#fdfdfc", "#00ffff"];

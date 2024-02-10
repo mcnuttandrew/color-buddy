@@ -75,6 +75,8 @@ function createStore() {
       lintUpdate((old) => ({ ...old, description })),
     setCurrentLintFailMessage: (failMessage: string) =>
       lintUpdate((old) => ({ ...old, failMessage })),
+    setCurrentLintBlameMode: (blameMode: "pair" | "single" | "none") =>
+      lintUpdate((old) => ({ ...old, blameMode })),
     deleteLint: (id: string) =>
       persistUpdate((old) => ({
         ...old,
@@ -98,6 +100,7 @@ function newLint(newLintFrag: Partial<CustomLint>): CustomLint {
     description: "v confusing",
     failMessage: "v confusing",
     id: Math.random().toString(),
+    blameMode: "none",
     ...newLintFrag,
   };
 }

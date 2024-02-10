@@ -11,12 +11,18 @@
   import LintCustomizationModal from "./LintCustomizationModal.svelte";
   import Nav from "../components/Nav.svelte";
   import NewLintSuggestion from "./NewLintSuggestion.svelte";
+  import { debounce } from "vega";
 
   $: currentPal = $colorStore.palettes[$colorStore.currentPal];
   $: palType = currentPal.type;
   $: evalConfig = currentPal.evalConfig;
   $: customLints = $lintStore.lints;
-  $: checks = runLintChecks(currentPal, palType, customLints, evalConfig);
+  // $: checks = runLintChecks(currentPal, palType, customLints, evalConfig);
+  let checks = [] as ColorLint<any, any>[];
+  let updateSearchDebounced = debounce(100, (pal: any) => {
+    checks = runLintChecks(pal, palType, customLints, evalConfig);
+  });
+  $: updateSearchDebounced(currentPal);
 
   $: checkGroups = checks.reduce(
     (acc, check) => {

@@ -229,6 +229,7 @@
           "type": "object",
           "additionalProperties": false,
           "properties": {
+            "$schema": { "type": "string" },
             "==": { "$ref": "#/definitions/LintComparisonBase" }
           },
           "required": ["=="]
@@ -237,6 +238,7 @@
           "type": "object",
           "additionalProperties": false,
           "properties": {
+            "$schema": { "type": "string" },
             "!=": { "$ref": "#/definitions/LintComparisonBase" }
           },
           "required": ["!="]
@@ -245,6 +247,7 @@
           "type": "object",
           "additionalProperties": false,
           "properties": {
+            "$schema": { "type": "string" },
             "<": { "$ref": "#/definitions/LintComparisonBase" }
           },
           "required": ["<"]
@@ -253,6 +256,7 @@
           "type": "object",
           "additionalProperties": false,
           "properties": {
+            "$schema": { "type": "string" },
             ">": { "$ref": "#/definitions/LintComparisonBase" }
           },
           "required": [">"]
@@ -261,6 +265,7 @@
           "type": "object",
           "additionalProperties": false,
           "properties": {
+            "$schema": { "type": "string" },
             "similar": {
               "type": "object",
               "additionalProperties": false,
@@ -358,6 +363,7 @@
           "type": "object",
           "additionalProperties": false,
           "properties": {
+            "$schema": { "type": "string" },
             "and": {
               "type": "array",
               "items": { "$ref": "#/definitions/LintExpression" }
@@ -369,6 +375,7 @@
           "type": "object",
           "additionalProperties": false,
           "properties": {
+            "$schema": { "type": "string" },
             "or": {
               "type": "array",
               "items": { "$ref": "#/definitions/LintExpression" }
@@ -380,6 +387,7 @@
           "type": "object",
           "additionalProperties": false,
           "properties": {
+            "$schema": { "type": "string" },
             "not": { "$ref": "#/definitions/LintExpression" }
           },
           "required": ["not"]
@@ -393,6 +401,7 @@
           "type": "object",
           "additionalProperties": false,
           "properties": {
+            "$schema": { "type": "string" },
             "all": { "$ref": "#/definitions/LintQuantifierBase" }
           },
           "required": ["all"]
@@ -401,6 +410,7 @@
           "type": "object",
           "additionalProperties": false,
           "properties": {
+            "$schema": { "type": "string" },
             "exist": { "$ref": "#/definitions/LintQuantifierBase" }
           },
           "required": ["exist"]

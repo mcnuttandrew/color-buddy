@@ -1,5 +1,5 @@
 import { expect, test } from "vitest";
-import { LLEval, prettyPrintLL } from "./lint-language";
+import { LLEval, prettyPrintLL, permutativeBlame } from "./lint-language";
 import { Color } from "../Color";
 import type { Palette } from "../../stores/color-store";
 import type { LintProgram } from "./lint-type";
@@ -100,6 +100,64 @@ test("LintLanguage Quantifiers All - Simple", () => {
     "EXIST a in colors, EXIST b in ([#7bb9ff]), a == b"
   );
   expect(LLEval(simpProg(["#7bb9ff"]), exampleColors).result).toBe(true);
+});
+
+test("LintLanguage permutativeBlame - counts", () => {
+  const prog1 = { "<": { left: { count: "colors" }, right: 2 } };
+  expect(permutativeBlame(prog1, exampleColors, "single")).toStrictEqual([
+    0, 1, 2,
+  ]);
+});
+
+test("LintLanguage permutativeBlame - Quantifiers Simple", () => {
+  const simpProg = (colors: string[]) => ({
+    exist: {
+      in: "colors",
+      varb: "a",
+      predicate: {
+        exist: {
+          in: toColors(colors),
+          varb: "b",
+          predicate: { "==": { left: "a", right: "b" } },
+        },
+      },
+    },
+  });
+  expect(
+    permutativeBlame(simpProg(["red"]), exampleColors, "single")
+  ).toStrictEqual([0, 1, 2]);
+  expect(
+    permutativeBlame(simpProg(["#7bb9ff"]), exampleColors, "single")
+  ).toStrictEqual([]);
+});
+
+test("LintLanguage permutativeBlame - Quantifiers deuteranopia", () => {
+  const prog = allBlindProg("deuteranopia");
+  const pal = toPal(["#d4a8ff", "#7bb9ff", "#008694", "black"]);
+  expect(permutativeBlame(prog, pal, "single")).toStrictEqual([0, 1]);
+  expect(permutativeBlame(prog, pal, "pair")).toStrictEqual([[0, 1]]);
+});
+
+test("LintLanguage permutativeBlame - Tableau 10", () => {
+  const prog = allBlindProg("deuteranopia");
+  const pal = toPal([
+    "#1f77b4",
+    "#ff7f0e",
+    "#2ca02c",
+    "#d62728",
+    "#9467bd",
+    "#8c564b",
+    "#e377c2",
+    "#7f7f7f",
+    "#bcbd22",
+    "#17becf",
+  ]);
+  expect(permutativeBlame(prog, pal, "pair")).toStrictEqual([
+    [0, 4],
+    [1, 8],
+    [2, 3],
+    [6, 9],
+  ]);
 });
 
 const expectedOutBlind = (type: string) =>

@@ -1,13 +1,29 @@
 import type { CustomLint } from "../lib/lints/CustomLint";
-import type { TaskType } from "../lib/lints/ColorLint";
+import type { LintProgram } from "../lib/lint-language/lint-type";
 import { JSONStringify } from "../lib/utils";
+import type { TaskType } from "../lib/lints/ColorLint";
 
-const toString = (x: any) => JSONStringify(JSON.stringify(x));
+const toString = (x: LintProgram) => JSONStringify(JSON.stringify(x));
 const $schema = `${location.href}lint-schema.json`;
+
+const blindTypes = [
+  "deuteranopia",
+  "protanopia",
+  "tritanopia",
+  "grayscale",
+] as const;
+const blindnessLabels: Record<(typeof blindTypes)[number], string> = {
+  deuteranopia: "(ie can't see green)",
+  protanopia: "(ie can't see red)",
+  tritanopia: "(ie can't see blue)",
+  grayscale: "",
+};
 const BUILT_INS: CustomLint[] = [
   // https://www.sciencedirect.com/science/article/pii/S0167947308005549?casa_token=s8jmZqboaYgAAAAA:7lsAu7YUHVBTQA_eaKJ_3FFGv309684j_NTisGO9mIr3UZNIJ6hlAlxPQo04xzsowG7-dH0vzm4
   {
+    name: "Avoid extreme colors",
     program: toString({
+      // @ts-ignore
       $schema,
       all: {
         in: "colors",
@@ -23,31 +39,35 @@ const BUILT_INS: CustomLint[] = [
         },
       },
     }),
-    name: "Avoid extreme colors",
-    taskTypes: ["sequential", "diverging", "categorical"] as TaskType[],
+
+    taskTypes: ["sequential", "diverging", "categorical"] as const,
     level: "warning",
     group: "design",
     description: `Colors at either end of the lightness spectrum can be hard to discriminate in some contexts, and are sometimes advised against.`,
     failMessage: `Colors at either end of the lightness spectrum {{blame}} are hard to discriminate in some contexts, and are sometimes advised against`,
     id: "extreme-colors-built-in",
+    blameMode: "single",
   },
   {
     name: "Avoid too many colors",
     program: toString({
+      // @ts-ignore
       $schema,
       "<": { left: { count: "colors" }, right: 10 },
     }),
-    taskTypes: ["sequential", "diverging", "categorical"] as TaskType[],
+    taskTypes: ["sequential", "diverging", "categorical"] as const,
     level: "warning",
     group: "design",
     description:
       "Palettes should have a maximum number of colors. Higher numbers of colors can make it hard to identify specific values.",
     failMessage: `This palette has too many colors and may be hard to discriminate in some contexts. Maximum: 10.`,
     id: "too-many-colors-built-in",
+    blameMode: "single",
   },
   {
     name: "Palette does not have ugly colors",
     program: toString({
+      // @ts-ignore
       $schema,
       all: {
         in: "colors",
@@ -68,12 +88,48 @@ const BUILT_INS: CustomLint[] = [
       },
     }),
     taskTypes: ["categorical"],
-    description: `!!Colors that are close to what are known as ugly colors are sometimes advised against. See https://www.colourlovers.com/palette/1416250/The_Ugliest_Colors for more details.`,
+    description: `Colors that are close to what are known as ugly colors are sometimes advised against. See https://www.colourlovers.com/palette/1416250/The_Ugliest_Colors for more details.`,
     failMessage: `This palette has some colors (specifically {{blame}}) that are close to what are known as ugly colors`,
     level: "warning",
     group: "design",
     id: "ugly-colors-built-in",
+    blameMode: "single",
   },
+  ...blindTypes.map((type) => ({
+    // old algorithm - https://github.dev/gka/palettes
+    //     let distanceNorm = colorA.symmetricDeltaE(colorB);
+    // if (distanceNorm < smallestPerceivableDistance) continue;
+    // let distanceSim = colorA.symmetricDeltaE(colorB);
+    // let isNotOk =
+    //   distanceNorm / distanceSim > ratioThreshold &&
+    //   distanceSim < smallestPerceivableDistance;
+    program: toString({
+      // @ts-ignore
+      $schema,
+      all: {
+        in: "colors",
+        varbs: ["a", "b"],
+        where: { "!=": { left: "index(a)", right: "index(b)" } },
+        predicate: {
+          not: {
+            similar: {
+              left: { cvdSim: "a", type },
+              right: { cvdSim: "b", type },
+              threshold: 9,
+            },
+          },
+        },
+      },
+    }),
+    name: `Colorblind Friendly for ${type}`,
+    taskTypes: ["sequential", "diverging", "categorical"] as TaskType[],
+    group: "accessibility",
+    description: `All colors in a palette should be differentiable by people with ${type} ${blindnessLabels[type]}. This is because if they are not, then they will not be differentiable from each other in some contexts.`,
+    level: "error" as const,
+    failMessage: `Some colors in this palette ({{blame}}) are not differentiable by people with ${type}.`,
+    id: `colorblind-friendly-${type}-built-in`,
+    blameMode: "pair" as const,
+  })),
 ];
 
 export default BUILT_INS;

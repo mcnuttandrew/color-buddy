@@ -36,6 +36,8 @@
   $: lintRun = runLint(lint);
   let showDoubleCheck = false;
   $: currentTaskTypes = lint.taskTypes as string[];
+  $: checkData = lintRun?.checkData || [];
+  $: pairData = checkData as number[][];
 </script>
 
 {#if lint}
@@ -59,9 +61,6 @@
           </button>
         {/if}
         <div class="flex">
-          <button on:click={() => (showDoubleCheck = true)} class={buttonStyle}>
-            Delete this lint
-          </button>
           {#if showDoubleCheck}
             <div class="flex">
               <div>Are you sure you want to delete this lint?</div>
@@ -81,6 +80,13 @@
                 No
               </button>
             </div>
+          {:else}
+            <button
+              on:click={() => (showDoubleCheck = true)}
+              class={buttonStyle}
+            >
+              Delete this lint
+            </button>
           {/if}
         </div>
       </div>
@@ -181,17 +187,46 @@
             <div class="text-red-500 mr-2">
               This lint fails for the current palette.
             </div>
-            The following colors are blamed:
+            The following colors are blamed. Using
+            <select
+              value={lint.blameMode}
+              class="mx-2"
+              on:change={() => {
+                // @ts-ignore
+                lintStore.setCurrentLintBlameMode(event.target.value);
+              }}
+            >
+              <option>none</option>
+              <option>single</option>
+              <option>pair</option>
+            </select>
+            Blame mode
           </div>
-          <PalPreview
-            pal={{
-              ...currentPal,
-              colors: (lintRun?.checkData || []).map(
-                (x) => currentPal.colors[x]
-              ),
-            }}
-            allowModification={false}
-          />
+          {#if lint.blameMode === "pair"}
+            <div class="flex flex-wrap">
+              {#each pairData as pair}
+                <div class="mr-2 mb-1 border-2 border-black rounded">
+                  <PalPreview
+                    pal={{
+                      ...currentPal,
+                      colors: pair.map((x) => currentPal.colors[x]),
+                    }}
+                    allowModification={false}
+                  />
+                </div>
+              {/each}
+            </div>
+          {:else}
+            <PalPreview
+              pal={{
+                ...currentPal,
+                colors: checkData
+                  .flatMap((x) => x)
+                  .map((x) => currentPal.colors[x]),
+              }}
+              allowModification={false}
+            />
+          {/if}
         </div>
       {/if}
       {#if errors}

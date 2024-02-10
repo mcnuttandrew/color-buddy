@@ -40,6 +40,7 @@ export class ColorLint<CheckData, ParamType> {
   isCustom: false | string = false;
   group: string = "";
   description: string = "";
+  blameMode: "pair" | "single" | "none" = "none";
   paramOptions:
     | { type: "number"; min: number; max: number; step: number }
     | { type: "enum"; options: string[] }

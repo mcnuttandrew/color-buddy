@@ -3,7 +3,6 @@ import type { Palette } from "../stores/color-store";
 
 import NameDiscrim from "./lints/name-discrim";
 import Discrims from "./lints/size-discrim";
-import Blinds from "./lints/blind-check";
 import ColorSimilarity from "./lints/color-similarity";
 import BackgroundDifferentiability from "./lints/background-differentiability";
 import SequentialOrder from "./lints/sequential-order";
@@ -24,7 +23,6 @@ export function runLintChecks(
     [
       NameDiscrim,
       ...Discrims,
-      ...Blinds,
       ColorSimilarity,
       BackgroundDifferentiability,
       SequentialOrder,
@@ -49,6 +47,3 @@ export function runLintChecks(
       }
     });
 }
-
-// typesript type for an list of classes
-// https://stackoverflow.com/questions/57465358/typescript-type-for-an-list-of-classes

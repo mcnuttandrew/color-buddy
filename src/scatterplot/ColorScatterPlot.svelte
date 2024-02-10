@@ -83,12 +83,13 @@
   $: pos = makePosAndSizes(pickedColors);
 
   let originalColors = [] as Color[];
-  $: luminance = bg.luminance();
-  $: axisColor = luminance > 0.4 ? "#00000022" : "#ffffff55";
-  $: textColor = luminance > 0.4 ? "#00000066" : "#ffffffaa";
-  $: selectionColor = luminance > 0.35 ? "#55330066" : "#ffeeccaa";
+  $: bgLum = bg.luminance();
+  $: axisColor = bgLum > 0.4 ? "#00000022" : "#ffffff55";
+  $: textColor = bgLum > 0.4 ? "#00000066" : "#ffffffaa";
+  $: selectionColor = bgLum > 0.35 ? "#55330066" : "#ffeeccaa";
 
-  let hoveredPoint: Color | false = false;
+  let hoveredIndex: number | false = false;
+  $: hoveredPoint = hoveredIndex === false ? false : colors[hoveredIndex];
 
   // coordinate transforms
   $: scales = makeScales(
@@ -230,7 +231,7 @@
 
   let switchToDragPoint = (i: number) => (e: any) => {
     if (interactionMode === "idle") {
-      hoveredPoint = colors[i];
+      hoveredIndex = i;
     }
     if (interactionMode !== "point-touch") return;
     startDragging();
@@ -365,8 +366,13 @@
               {#if scatterPlotMode !== "moving"}
                 <circle {...CircleProps(color, i)} />
               {/if}
-              {#if !color.inGamut()}
-                <GamutMarker xPos={x(color)} yPos={y(color)} />
+              {#if !color.inGamut() && $configStore.showGamutMarkers}
+                <GamutMarker
+                  xPos={x(color)}
+                  yPos={y(color)}
+                  lum={color.luminance()}
+                  selected={focusSet.has(i)}
+                />
               {/if}
             {/each}
             {#each blindColors as blindColor, i}
@@ -570,7 +576,7 @@
   </div>
 </div>
 <div class="flex items-center text-sm w-full justify-center">
-  {#if hoveredPoint}
+  {#if typeof hoveredPoint !== "boolean"}
     Hovered point:
     {hoveredPoint.toString()} -
     {hoveredPoint.toHex()}

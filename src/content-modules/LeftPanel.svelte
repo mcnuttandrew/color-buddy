@@ -20,14 +20,14 @@
     <div class="flex w-full justify-between items-start">
       <div class="flex ml-1">
         <NewPal />
-        /
+        <!-- /
         <button
           id="save"
           class={`${denseButtonStyle} mt-0.5`}
           on:click={() => colorStore.duplicatePal($colorStore.currentPal)}
         >
           Duplicate
-        </button>
+        </button> -->
       </div>
       <div class="flex">
         <button

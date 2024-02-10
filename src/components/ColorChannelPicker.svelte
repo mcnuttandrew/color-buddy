@@ -16,6 +16,11 @@
   $: colorConfigs =
     color &&
     ({
+      rgb: [
+        { name: "Red", min: 0, max: 255, step: 1 },
+        { name: "Green", min: 0, max: 255, step: 1 },
+        { name: "Blue", min: 0, max: 255, step: 1 },
+      ],
       srgb: [
         { name: "Red", min: 0, max: 1, step: 0.01 },
         { name: "Green", min: 0, max: 1, step: 0.01 },
@@ -65,7 +70,8 @@
       .to(colorModeMap[colorMode] || colorMode)
       .coords.forEach((val, idx) => {
         // @ts-ignore
-        const newVal = typeof val === "object" ? val.valueOf() : val;
+        let newVal = typeof val === "object" ? val.valueOf() : val;
+        if (colorMode === "rgb") newVal *= 255;
         colorConfigs[colorMode][idx].value = newVal;
       });
 
@@ -75,6 +81,11 @@
 
     let spaceId = colorModeMap[colorMode] || colorMode;
     const coords = new ColorIO(color.toHex()).to(spaceId).coords;
+    // if (colorMode === "rgb") {
+    //   coords[0] *= 255;
+    //   coords[1] *= 255;
+    //   coords[2] *= 255;
+    // }
     const alpha = 1;
 
     let ret = [];
@@ -118,11 +129,11 @@
     let values = [...colorConfigs[colorMode].map((x) => x.value)] as number[];
     values[idx] = Number(e.target.value);
     if (colorMode.includes("rgb")) {
-      values = values.map((x) => x * 255);
+      values = values.map((x) => x / 255);
     }
     const newColor = Color.colorFromChannels(
       values as [number, number, number],
-      colorMode
+      colorModeMap[colorMode] || colorMode
     );
     const outColor = Color.toColorSpace(newColor, measuredColorMode);
     onColorChange(outColor);

@@ -7,6 +7,7 @@
   import { buttonStyle } from "../lib/styles";
   const aiModes = ["google", "openai"] as const;
   $: showBg = $configStore.showColorBackground;
+  $: showOutOfGamut = $configStore.showGamutMarkers;
 
   const isMac = navigator.userAgent.indexOf("Mac OS X") !== -1;
   const metaKey = isMac ? "⌘" : "ctrl";
@@ -70,6 +71,51 @@
     {`Config ⚙`}
   </button>
   <div slot="content">
+    <div class="flex mb-4">
+      <button
+        class={buttonStyle}
+        on:click={() => {
+          const pals = $colorStore.palettes.map((x) => {
+            const { colors, background, name, colorSpace, type } = x;
+            return {
+              background: background.toHex(),
+              colorSpace,
+              colors: colors.map((c) => c.toHex()),
+              name,
+              type,
+            };
+          });
+          const blob = new Blob([JSON.stringify(pals)], {
+            type: "application/json",
+          });
+
+          const url = window.URL.createObjectURL(blob);
+          const a = document.createElement("a");
+          a.style.display = "none";
+          a.href = url;
+
+          // the filename you want
+          a.download = "palettes-export.json";
+          document.body.appendChild(a);
+          a.click();
+          window.URL.revokeObjectURL(url);
+        }}
+      >
+        Export Palettes
+      </button>
+      <button class={buttonStyle} on:click={() => importPals()}>
+        Import Palettes
+      </button>
+      <button
+        class={buttonStyle}
+        on:click={() => {
+          colorStore.clearPalettes();
+        }}
+      >
+        Clear Palettes
+      </button>
+    </div>
+    <div class="font-bold">Configurations</div>
     <div>Pick AI Provider</div>
     <div>
       {#each aiModes as ai}
@@ -93,8 +139,19 @@
         {show}
       </button>
     {/each}
+    <div>Show Out of Gamut Marker</div>
+    {#each ["show", "hide"] as show}
+      <button
+        class={buttonStyle}
+        class:font-bold={(show === "show" && showOutOfGamut) ||
+          (show == "hide" && !showOutOfGamut)}
+        on:click={() => configStore.setShowGamutMarkers(show === "show")}
+      >
+        {show}
+      </button>
+    {/each}
 
-    <div class="font-bold">Short cuts</div>
+    <div class="font-bold mt-4">Short cuts</div>
     <div>
       {#each shortCuts as { name, shortcut }}
         <div class="flex justify-between">
@@ -103,47 +160,5 @@
         </div>
       {/each}
     </div>
-    <button
-      class={buttonStyle}
-      on:click={() => {
-        const pals = $colorStore.palettes.map((x) => {
-          const { colors, background, name, colorSpace, type } = x;
-          return {
-            background: background.toHex(),
-            colorSpace,
-            colors: colors.map((c) => c.toHex()),
-            name,
-            type,
-          };
-        });
-        const blob = new Blob([JSON.stringify(pals)], {
-          type: "application/json",
-        });
-
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.style.display = "none";
-        a.href = url;
-
-        // the filename you want
-        a.download = "palettes-export.json";
-        document.body.appendChild(a);
-        a.click();
-        window.URL.revokeObjectURL(url);
-      }}
-    >
-      Export Palettes
-    </button>
-    <button class={buttonStyle} on:click={() => importPals()}>
-      Import Palettes
-    </button>
-    <button
-      class={buttonStyle}
-      on:click={() => {
-        colorStore.clearPalettes();
-      }}
-    >
-      Clear Palettes
-    </button>
   </div>
 </Tooltip>

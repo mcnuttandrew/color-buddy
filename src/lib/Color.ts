@@ -62,21 +62,24 @@ export class Color {
     if (this.cachedInGamut !== null) {
       return this.cachedInGamut;
     }
-    // return this.toColorIO().inGamut("srgb");
+    const result = this.toColorIO().inGamut("srgb");
+    this.cachedInGamut = result;
+    return result;
+
     // // return new ColorIO(this.spaceName, this.toChannels()).inGamut();
     // let clr = this.toColorIO().to("srgb", { inGamut: false });
     // let cssColor = clr.display();
     // // cssColor.color.inGamut();
     // return cssColor.color.inGamut();
 
-    const x = this.toHex();
-    const y = this.toColorIO().to("srgb").toString({ format: "hex" });
-    if (x !== y) {
-      console.log("x", x, "y", y);
-    }
-    const result = x === y;
-    this.cachedInGamut = result;
-    return result;
+    // const x = this.toHex();
+    // const y = this.toColorIO().to("srgb").toString({ format: "hex" });
+    // if (x !== y) {
+    //   console.log("x", x, "y", y);
+    // }
+    // const result = x === y;
+    // this.cachedInGamut = result;
+    // return result;
   }
   toColorIO(): ColorIO {
     if (this.cachedColorIO) {

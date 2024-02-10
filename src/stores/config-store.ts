@@ -11,6 +11,7 @@ interface StoreData {
   leftRoute: "controls" | "palettes";
   route: "examples" | "compare" | "eval";
   scatterplotMode: "moving" | "putting";
+  showGamutMarkers: boolean;
   showColorBackground: boolean;
   tooltipXY?: [string, string];
   useSimulatorOnExamples: boolean;
@@ -33,6 +34,7 @@ const InitialStore: StoreData = {
   route: "examples",
   scatterplotMode: "moving",
   showColorBackground: true,
+  showGamutMarkers: true,
   tooltipXY: undefined,
   mainColumnRoute: "palette-config",
   mainColumnSelectedExample: -1,
@@ -99,6 +101,8 @@ function createStore() {
       persist((old) => ({ ...old, leftRoute: route })),
     setScatterplotMode: (n: StoreData["scatterplotMode"]) =>
       persist((old) => ({ ...old, scatterplotMode: n })),
+    setShowGamutMarkers: (n: StoreData["showGamutMarkers"]) =>
+      persist((old) => ({ ...old, showGamutMarkers: n })),
     setUseSimulatorOnExamples: (n: StoreData["useSimulatorOnExamples"]) =>
       persist((old) => ({ ...old, useSimulatorOnExamples: n })),
     setMainColumnRoute: (n: StoreData["mainColumnRoute"]) =>

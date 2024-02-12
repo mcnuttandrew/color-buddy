@@ -588,6 +588,11 @@
     &nbsp;
   {/if}
 </div>
+{#if $configStore.showGamutMarkers}
+  <div class="flex items-center text-sm w-full justify-center">
+    X indicates value that is out of gamut
+  </div>
+{/if}
 
 <style>
   circle {

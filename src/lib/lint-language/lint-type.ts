@@ -43,20 +43,20 @@ type LintComparison =
 type MathOperations = "+" | "-" | "*" | "/";
 type LintMathOps = Record<MathOperations, Number | LintVariable>;
 type LintPairOps =
-  | { dist: { left: LintRef; right: LintRef; space: "lab" | "hsl" } }
-  | { deltaE: { left: LintRef; right: LintRef; algorithm: "2000" | "76" } }
+  | { dist: { left: LintRef; right: LintRef }; space: "lab" | "hsl" }
+  | { deltaE: { left: LintRef; right: LintRef }; algorithm: "2000" | "76" }
   | {
       contrast: {
         left: LintRef;
         right: LintRef;
-        algorithm:
-          | "APCA"
-          | "WCAG21"
-          | "Michelson"
-          | "Weber"
-          | "Lstar"
-          | "DeltaPhi";
       };
+      algorithm:
+        | "APCA"
+        | "WCAG21"
+        | "Michelson"
+        | "Weber"
+        | "Lstar"
+        | "DeltaPhi";
     };
 type LintMap =
   // | { map: LintVariable | LintValue[]; func: LintColorFunction | LintPairOps }

@@ -19,8 +19,11 @@ Macros story
 # Language todos
 
 - [ ] Add more blame robustness, may pay to try to reason across all of the operator families (insight: keep a list of the blamable variables in the environment to support tracing)
-- [ ] Add background, roles, palette level semantics
-- [ ] Categorical mutually distinct
+- [ ] roles, palette level semantics
+- [ ] per cols 4 all: color blindness metric should maybe be sensitive to task?
+- [ ] Sequential check fix is incorrect for things with equi-ligthness
+- [x] Add background,
+- [x] Categorical mutually distinct
 - [x] Integration into main app
 - [x] "Blame" for colors
 - [x] JSON Schema (for validation) (if parser is not used), get a sustainable way to use it
@@ -31,20 +34,21 @@ Macros story
 
 # Todo bankruptcy
 
-- [ ] Search paletes by lint screen
+- [ ] Search palettes-by-lint screen
 - [ ] off by one persistance error in undo/redo
-- [ ] Gamut algorithm broken again
 - [ ] Add HCT/CAM, add explainers to each of the color spaces, blocked by colorjs release
-- [ ] Allow no palettes, allows renaming of non-current palettes
+- [ ] Allow no palettes, allows renaming of non-current palettes, which would be enable by:
+- [ ] Parameterize the scatter column completely, allow edits to the compare stuff
 - [ ] Colors from String should save on enter?
 - [ ] Changing spaces is pretty bad on lab <-> oklab, cf ("#35ffbf", "#87b995", "#e84f82")
 - [ ] "Easy on ramp" progressive disclosure
-- [ ] per cols 4 all: color blindness metric should maybe be sensitive to task?
 - [ ] Labels, tooltips, etc
 - [ ] Bug: Color channel usage slightly cursed (doesn't update positions correctly)
 - [ ] Bug: rotate in polar coordinates doesn't work right
 - [ ] Directional subtile for aligns, they do not work in polar also
-- [ ] Sequential check fix is incorrect for things with equi-ligthness
+- [ ] Performance stuff for linter (separate message generation into something very throttled, maybe move to web workers? Cache as hard as possible)
+- [ ] Hover broken on compare
+- [x] Gamut algorithm broken again
 - [x] Add up/down manipulation to palettes
 
 # Nice to have

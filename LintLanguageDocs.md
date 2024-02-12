@@ -1,50 +1,54 @@
 Expressions
-EXPR = Conjunction | Quantifier | Comparison | Boolean
-
-Conjunctions:
-AND: {and: [EXPR, EXPR, ...]}
-OR: {or: [EXPR, EXPR, EXPR]}
-NOT: {not: EXPR}
-
-Quantifiers:
-FORALL: {all: {varbs: Variable[], predicate: EXPR, where?: EXPR, in: Variable | Value[]}}
-EXISTS: {exists: {varbs: Variable[], predicate: EXPR, where?: EXPR, in: Variable | Value[]}}
-
-Comparisons (value) => expression
-similar: {"similar": {left: Value, right: Value, threshold: Number}}
-equal: {"==": {left: Value, right: Value}}
-not equal: {"!=": {left: Value, right: Value}}
-less than: {"<": {left: Value, right: Value}}
-greater than: {">": {left: Value, right: Value}}
+Conjunction | Quantifier | Comparison | Boolean
 
 Value = Variable | Number | Color | Boolean
 
-Operations:
+Conjunctions:
+{and: [EXPR, EXPR, ...]}
+{or: [EXPR, EXPR, EXPR]}
+{not: EXPR}
+
+Quantifiers:
+{all: {varbs: Variable[], predicate: EXPR, where?: EXPR, in: Variable | Value[]}}
+{exists: {varbs: Variable[], predicate: EXPR, where?: EXPR, in: Variable | Value[]}}
+
+Comparisons:
+{"similar": {left: Value, right: Value, threshold: Number}}
+{"==": {left: Value, right: Value}}
+{"!=": {left: Value, right: Value}}
+{"<": {left: Value, right: Value}}
+{">": {left: Value, right: Value}}
+
+Math Operations:
 \*: {left: Number | Variable, right: Number | Variable}
 +: {left: Number | Variable, right: Number | Variable}
 /: {left: Number | Variable, right: Number | Variable}
 -: {left: Number | Variable, right: Number | Variable}
 
-dist: {left: Color | Variable, right: Color | Variable, space: COLOR_SPACE }
-deltaE: {left: Color | Variable, right: Color | Variable, algorithm: '2000' | etc }
-contrast: {left: Color | Variable, right: Color | Variable, algorithm: | "APCA" | "WCAG21" | "Michelson" | "Weber" | "Lstar" | "DeltaPhi"}
+Value Comparisons:
+{dist: {left: Color | Variable, right: Color | Variable}, space: COLOR_SPACE }
+{deltaE: {left: Color | Variable, right: Color | Variable}, algorithm: '2000' | etc }
+{contrast: {left: Color | Variable, right: Color | Variable}, algorithm: | "APCA" | "WCAG21" | "Michelson" | "Weber" | "Lstar" | "DeltaPhi"}
 
-count: {count: Variable | Number[] | Color[]}
-sum: {sum: Variable | Number[]}
-min: {min: Variable | Number[]}
-max: {max: Variable | Number[]}
-mean: {mean: Variable | Number[]}
-first: {first: Variable | Number[]}
-last: {last: Variable | Number[]}
-extent: {extent: Variable | Number[]}
+Aggregates
+{count: Variable | Number[] | Color[]}
+{sum: Variable | Number[]}
+{min: Variable | Number[]}
+{max: Variable | Number[]}
+{mean: Variable | Number[]}
+{first: Variable | Number[]}
+{last: Variable | Number[]}
+{extent: Variable | Number[]}
 
-toColor: {toColor: variableName, space: 'lab' | 'hsl' | etc, channel: 'a' | 'b' | 'l' | etc}
-cvdSim: {cvdSim: variableName, type: 'protanomaly' | 'deuteranomaly' | 'tritanopia' | 'grayscale'}
-name: {name: variableName}
+Color Manipulations:
+{toColor: variableName, space: 'lab' | 'hsl' | etc, channel: 'a' | 'b' | 'l' | etc}
+{cvdSim: variableName, type: 'protanomaly' | 'deuteranomaly' | 'tritanopia' | 'grayscale'}
+{name: variableName}
 
-map: {map: Variable | Value[], func: Operation, varb: Variable}
-sort: {sort: Variable | Value[], func: Operation, varb: Variable}
-filter: {filter: Variable | Value[], func: EXPR, varb: Variable}
+Maps:
+{map: Variable | Value[], func: Operation, varb: Variable}
+{sort: Variable | Value[], func: Operation, varb: Variable}
+{filter: Variable | Value[], func: EXPR, varb: Variable}
 
 ```yaml
 ---

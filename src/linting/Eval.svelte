@@ -18,9 +18,12 @@
   $: evalConfig = currentPal.evalConfig;
   $: customLints = $lintStore.lints;
   // $: checks = runLintChecks(currentPal, palType, customLints, evalConfig);
-  let checks = [] as ColorLint<any, any>[];
-  let updateSearchDebounced = debounce(100, (pal: any) => {
-    checks = runLintChecks(pal, palType, customLints, evalConfig);
+  $: checks = [] as ColorLint<any, any>[];
+  $: selectedLint = $lintStore.focusedLint;
+  $: updateSearchDebounced = debounce(100, (pal: any) => {
+    if (!selectedLint) {
+      checks = runLintChecks(pal, palType, customLints, evalConfig);
+    }
   });
   $: updateSearchDebounced(currentPal);
 

@@ -4,6 +4,7 @@ import { JSONStringify } from "../lib/utils";
 import type { TaskType } from "../lib/lints/ColorLint";
 
 const toString = (x: LintProgram) => JSONStringify(JSON.stringify(x));
+// @ts-ignore
 const $schema = `${location.href}lint-schema.json`;
 
 const blindTypes = [
@@ -126,7 +127,7 @@ const BUILT_INS: CustomLint[] = [
     group: "accessibility",
     description: `All colors in a palette should be differentiable by people with ${type} ${blindnessLabels[type]}. This is because if they are not, then they will not be differentiable from each other in some contexts.`,
     level: "error" as const,
-    failMessage: `Some colors in this palette ({{blame}}) are not differentiable by people with ${type}.`,
+    failMessage: `This palette is not colorblind friendly for ${type} color blindness ${blindnessLabels[type]}. The following pairs are undifferentiable: ({{blame}})`,
     id: `colorblind-friendly-${type}-built-in`,
     blameMode: "pair" as const,
   })),

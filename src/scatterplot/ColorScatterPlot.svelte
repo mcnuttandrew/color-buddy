@@ -13,7 +13,6 @@
   } from "../lib/utils";
   import configStore from "../stores/config-store";
   import { scaleLinear } from "d3-scale";
-  import simulate_cvd from "../lib/blindness";
   import ColorScatterPlotXyGuides from "./ColorScatterPlotXYGuides.svelte";
   import ColorScatterPlotPolarGuide from "./ColorScatterPlotPolarGuide.svelte";
   import ColorScatterPlotZGuide from "./ColorScatterPlotZGuide.svelte";
@@ -31,12 +30,7 @@
   export let startDragging: () => void;
   export let stopDragging: () => void;
   export let colorSpace: any;
-
-  $: selectedBlindType = $configStore.colorSim;
-  $: blindColors =
-    selectedBlindType === "none"
-      ? []
-      : Pal.colors.map((x) => simulate_cvd(selectedBlindType as any, x));
+  export let blindColors: Color[] = [];
 
   $: focusSet = new Set(focusedColors);
 

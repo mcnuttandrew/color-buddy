@@ -13,6 +13,7 @@
   import PalPreview from "../components/PalPreview.svelte";
   import SetColorSpace from "../controls/SetColorSpace.svelte";
   import SuggestName from "../controls/SuggestName.svelte";
+  import simulate_cvd from "../lib/blindness";
 
   import ContentEditable from "../components/ContentEditable.svelte";
   $: currentPal = $colorStore.palettes[$colorStore.currentPal];
@@ -26,6 +27,7 @@
       "Categorical palettes are used to represent a set of discrete values. They are often used to represent qualitative data, such as different types of land cover or different political parties.",
   };
   $: palType = currentPal.type;
+  $: selectedBlindType = $configStore.colorSim;
 </script>
 
 <div class="flex flex-col h-full px-4">
@@ -65,6 +67,9 @@
     onFocusedColorsChange={(x) => focusStore.setColors(x)}
     startDragging={() => colorStore.pausePersistance()}
     stopDragging={() => colorStore.resumePersistance()}
+    blindColors={selectedBlindType === "none"
+      ? []
+      : currentPal.colors.map((x) => simulate_cvd(selectedBlindType, x))}
   />
 
   <div class="flex">

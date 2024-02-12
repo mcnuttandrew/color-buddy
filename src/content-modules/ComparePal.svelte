@@ -17,6 +17,7 @@
   import SetColorSpace from "../controls/SetColorSpace.svelte";
 
   $: currentPalIdx = $colorStore.currentPal;
+  $: currentPal = $colorStore.palettes[currentPalIdx];
   $: compareIdx = $configStore.comparePal;
   $: focused = $focusStore.focusedColors;
   $: ComparisonPal =
@@ -25,6 +26,7 @@
       : undefined;
 
   $: bg = ComparisonPal?.background.toHex() || "white";
+  let showDiff = false;
 
   let colorSpace = ComparisonPal?.colorSpace || "lab";
 </script>
@@ -48,6 +50,9 @@
         bg={Color.colorFromHex(bg, colorSpace)}
         {colorSpace}
       />
+      <button class={buttonStyle} on:click={() => (showDiff = !showDiff)}>
+        {#if showDiff}Hide{:else}Show{/if} diff
+      </button>
     </div>
     <ColorScatterPlot
       scatterPlotMode="looking"
@@ -64,6 +69,10 @@
       onFocusedColorsChange={() => {}}
       startDragging={() => {}}
       stopDragging={() => {}}
+      blindColors={(showDiff ? currentPal.colors : []).slice(
+        0,
+        Math.min(ComparisonPal.colors.length, currentPal.colors.length)
+      )}
     />
   {:else}
     <div class="empty-pal-holder flex justify-center items-center">

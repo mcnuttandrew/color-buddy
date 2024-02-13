@@ -24,7 +24,6 @@ export const DEMOS = [
   { type: "svg", title: "Holy Grail", filename: "./examples/HolyGrail.svg" },
   { type: "svg", title: "Fourier", filename: "./examples/fourier.svg" },
   { type: "svg", title: "Mondrian", filename: "./examples/mondrian.svg" },
-  { type: "svg", title: "R Squared", filename: "./examples/r2.svg" },
   { type: "svg", title: "Vis Logo", filename: "./examples/vis-logo.svg" },
   {
     type: "vega",

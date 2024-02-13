@@ -24,6 +24,7 @@ type Pal<A> = {
   type: PalType;
 };
 export type Palette = Pal<Color>;
+export type StringPalette = Pal<string>;
 
 interface StoreData {
   palettes: Pal<Color>[];

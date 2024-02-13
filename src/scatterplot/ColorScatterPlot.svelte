@@ -83,7 +83,10 @@
   $: selectionColor = bgLum > 0.35 ? "#55330066" : "#ffeeccaa";
 
   let hoveredIndex: number | false = false;
-  $: hoveredPoint = hoveredIndex === false ? false : colors[hoveredIndex];
+  $: hoveredPoint =
+    hoveredIndex === false || !colors[hoveredIndex]
+      ? false
+      : colors[hoveredIndex];
 
   // coordinate transforms
   $: scales = makeScales(

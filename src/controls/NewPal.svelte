@@ -1,9 +1,9 @@
 <script lang="ts">
   import { Color } from "../lib/Color";
   import colorStore, { newGenericPal } from "../stores/color-store";
+  import type { StringPalette, Palette } from "../stores/color-store";
   import focusStore from "../stores/focus-store";
   import { onMount } from "svelte";
-  import type { Palette } from "../stores/color-store";
   import Tooltip from "../components/Tooltip.svelte";
   import { VegaColors } from "../lib/charts";
   import { buttonStyle, denseButtonStyle } from "../lib/styles";
@@ -15,6 +15,17 @@
   $: familiarPals = [] as ExtendedPal[];
   $: currentPal = $colorStore.palettes[$colorStore.currentPal];
   $: colorSpace = currentPal.colorSpace;
+
+  function createPalFromHexes(colors: string[]): StringPalette {
+    return {
+      name: "new palette",
+      colors,
+      background: "#ffffff",
+      type: "categorical",
+      evalConfig: {},
+      colorSpace: "lab",
+    };
+  }
 
   onMount(async () => {
     let newPals = [] as ExtendedPal[];
@@ -46,20 +57,15 @@
     {} as Record<string, ExtendedPal[]>
   );
 
-  function newPalFromBlank() {
-    const pal = newGenericPal("new palette") as any;
-    pal.colors = [];
-    pal.background = Color.colorFromString("#ffffff", colorSpace);
-    pal.colorSpace = colorSpace;
-    colorStore.createNewPal(pal);
-  }
-  function newWithGenericColors() {
-    const pal = newGenericPal("new palette") as any;
-    pal.colors = pal.colors.map((x: string) =>
-      Color.colorFromString(x, colorSpace)
-    );
-    pal.background = Color.colorFromString("#ffffff", colorSpace);
-    pal.colorSpace = colorSpace;
+  function newPal(newPal: StringPalette) {
+    const pal = {
+      ...newPal,
+      colors: newPal.colors.map((x: string) =>
+        Color.colorFromString(x, colorSpace)
+      ),
+      background: Color.colorFromString(newPal.background, colorSpace),
+      colorSpace,
+    } as Palette;
     colorStore.createNewPal(pal);
   }
 </script>
@@ -70,7 +76,7 @@
       <button
         class={buttonStyle}
         on:click={() => {
-          newPalFromBlank();
+          newPal(createPalFromHexes([]));
           onClick();
         }}
       >
@@ -79,11 +85,45 @@
       <button
         class={buttonStyle}
         on:click={() => {
-          newWithGenericColors();
+          newPal(newGenericPal("new palette"));
           onClick();
         }}
       >
-        New with generic colors
+        New categorical
+      </button>
+      <button
+        class={buttonStyle}
+        on:click={() => {
+          const pal = createPalFromHexes([
+            "#0084a9",
+            "#009de5",
+            "#5fb1ff",
+            "#bbc3ff",
+            "#ecddff",
+          ]);
+          pal.type = "sequential";
+          newPal(pal);
+          onClick();
+        }}
+      >
+        New sequential
+      </button>
+      <button
+        class={buttonStyle}
+        on:click={() => {
+          const pal = createPalFromHexes([
+            "#0084ae",
+            "#8db3c7",
+            "#e5e3e0",
+            "#eca288",
+            "#e25c36",
+          ]);
+          pal.type = "diverging";
+          newPal(pal);
+          onClick();
+        }}
+      >
+        New diverging
       </button>
     </div>
     <div class="mt-5 border-t-2 border-black"></div>

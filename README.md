@@ -10,49 +10,45 @@ Use: should point to localhost:8888 if all is well
 
 First time you start it up you should also run `yarn prep data`
 
-Macros story
+# User study burn down
 
-- not similar
-- sequences
-- "where": { "!=": {"left": "index(a)", "right": "index(b)"} },
+- [ ] Make lints fast / non blocking as much as possible
+- [ ] Get most of the lints converted
+- [ ] Tour?
+- [ ] roles, palette level semantics
+- [ ] Design adjustments for smaller screens
 
 # Language todos
 
 - [ ] Add more blame robustness, may pay to try to reason across all of the operator families (insight: keep a list of the blamable variables in the environment to support tracing)
-- [ ] roles, palette level semantics
 - [ ] per cols 4 all: color blindness metric should maybe be sensitive to task?
 - [ ] Sequential check fix is incorrect for things with equi-ligthness
-- [x] Add background,
-- [x] Categorical mutually distinct
-- [x] Integration into main app
-- [x] "Blame" for colors
-- [x] JSON Schema (for validation) (if parser is not used), get a sustainable way to use it
-- [x] Basic Language
-- [x] Multi indexing (eg all colors a b c)
-- [na] Parser?
-- [na] Swap left/right for [a, b] for density
+- [ ] Macros story: "not similar", "sequences", "where": { "!=": {"left": "index(a)", "right": "index(b)"} },
 
-# Todo bankruptcy
+# General Todos
 
 - [ ] Search palettes-by-lint screen
+- [ ] Drag to re-order points?
 - [ ] off by one persistance error in undo/redo
-- [ ] Add HCT/CAM, add explainers to each of the color spaces, blocked by colorjs release
-- [ ] Allow no palettes, allows renaming of non-current palettes, which would be enable by:
-- [ ] Parameterize the scatter column completely, allow edits to the compare stuff
-- [ ] Colors from String should save on enter?
 - [ ] Changing spaces is pretty bad on lab <-> oklab, cf ("#35ffbf", "#87b995", "#e84f82")
 - [ ] "Easy on ramp" progressive disclosure
 - [ ] Labels, tooltips, etc
 - [ ] Bug: Color channel usage slightly cursed (doesn't update positions correctly)
 - [ ] Bug: rotate in polar coordinates doesn't work right
-- [ ] Directional subtile for aligns, they do not work in polar also
 - [ ] Performance stuff for linter (separate message generation into something very throttled, maybe move to web workers? Cache as hard as possible)
+
+Parameterization epic:
+
+- [ ] Allow no palettes, allows renaming of non-current palettes, which would be enable by:
+- [ ] Parameterize the scatter column completely, allow edits to the compare stuff
 - [ ] Hover broken on compare
-- [x] Gamut algorithm broken again
-- [x] Add up/down manipulation to palettes
+- [ ] Select compare from palettes drop down menu
 
 # Nice to have
 
+- [ ] Add HCT/CAM, add explainers to each of the color spaces, blocked by colorjs release
+- [ ] Directional subtile for aligns, they do not work in polar also
+- [ ] Colors from String should save on enter?
 - [ ] Insert color theory options, eg insert opposing, inserting analogous color, etc, mine from the adobe picker
 - [ ] Add clone color (and similar buttons) to the tooltip, mostly for making interacting with the examples simpler
 - [ ] XYY is probaably now possible

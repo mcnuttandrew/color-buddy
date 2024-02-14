@@ -13,28 +13,32 @@ import EvenDistribution from "./lints/even-distribution";
 import type { CustomLint } from "./lints/CustomLint";
 import { CreateCustomLint } from "./lints/CustomLint";
 
+export const manualLints = [
+  NameDiscrim,
+  ...Discrims,
+  ColorSimilarity,
+  BackgroundDifferentiability,
+  SequentialOrder,
+  DivergingOrder,
+  BackgroundContrast,
+  ...Fair,
+  // EvenDistribution,
+];
+
 export function runLintChecks(
   palette: Palette,
-  palType: any,
-  customLints: CustomLint[],
-  ignoreList: Record<string, any>
+  customLints: CustomLint[]
+  // ignoreList: Record<string, any>
 ): ColorLint<any, any>[] {
+  const ignoreList = palette.evalConfig;
   return (
     [
-      NameDiscrim,
-      ...Discrims,
-      ColorSimilarity,
-      BackgroundDifferentiability,
-      SequentialOrder,
-      DivergingOrder,
-      BackgroundContrast,
-      ...Fair,
-      // EvenDistribution,
+      ...manualLints,
       ...customLints.map((x) => CreateCustomLint(x)),
     ] as (typeof ColorLint)[]
   )
     .map((x) => new x(palette))
-    .filter((x) => x.taskTypes.includes(palType))
+    .filter((x) => x.taskTypes.includes(palette.type))
     .map((x) => {
       if (ignoreList[x.name] && ignoreList[x.name].ignore) {
         return x;

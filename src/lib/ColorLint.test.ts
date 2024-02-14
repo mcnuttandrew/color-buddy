@@ -5,8 +5,9 @@ import type { Palette } from "../stores/color-store";
 
 import ColorNameDiscriminability, { getName } from "./lints/name-discrim";
 import BackgroundDifferentiability from "./lints/background-differentiability";
-import BUILT_INS from "../stores/built-in-lints";
+import BUILT_INS from "./lints/built-in-lints";
 import { CreateCustomLint } from "./lints/CustomLint";
+import { suggestLintFix } from "./linter-tools/lint-fixer";
 
 function makePalFromHexes(hexes: string[]): Palette {
   return {
@@ -28,7 +29,7 @@ test("ColorLint - ColorNameDiscriminability", async () => {
   expect(exampleLint.message).toBe(
     "Color Name discriminability check failed. The following color names are repeated: Royalblue (#5260d1, #005ebe)"
   );
-  const fix = await exampleLint.suggestFix();
+  const fix = await suggestLintFix(examplePal, exampleLint);
   const oldColorNames = unique<string>(
     examplePal.colors.map((x) => getName(x))
   );
@@ -88,7 +89,7 @@ test("ColorLint - BackgroundDifferentiability", async () => {
   expect(exampleLint.message).toBe(
     "This palette has some colors (#fdfdfc) that are close to the background color"
   );
-  const fix = await exampleLint.suggestFix().then((x) => x[0]);
+  const fix = await suggestLintFix(examplePal, exampleLint).then((x) => x[0]);
   expect(fix.colors.map((x) => x.toHex())).toMatchSnapshot();
 
   examplePal.background = Color.colorFromHex("#00e4ff", "lab");
@@ -97,6 +98,6 @@ test("ColorLint - BackgroundDifferentiability", async () => {
   expect(exampleLint2.message).toBe(
     "This palette has some colors (#0ff, #00faff, #00e4ff, #0ff) that are close to the background color"
   );
-  const fix2 = await exampleLint2.suggestFix().then((x) => x[0]);
+  const fix2 = await suggestLintFix(examplePal, exampleLint2).then((x) => x[0]);
   expect(fix2.colors.map((x) => x.toHex())).toMatchSnapshot();
 });

@@ -1,6 +1,7 @@
 import { ColorLint } from "./ColorLint";
 import type { TaskType } from "./ColorLint";
 import { Color } from "../Color";
+import type { Palette } from "../../stores/color-store";
 
 const getLightness = (color: Color) => color.toColorIO().to("lab").coords[0];
 export default class SequentialOrder extends ColorLint<boolean, false> {
@@ -27,9 +28,9 @@ export default class SequentialOrder extends ColorLint<boolean, false> {
     return `This pal should be ordered by lightness if being used as a sequential palette`;
   }
   hasHeuristicFix = true;
-  async suggestFix() {
-    const colors = [...this.palette.colors];
+  static async suggestFix(palette: Palette) {
+    const colors = [...palette.colors];
     colors.sort((a, b) => getLightness(a) - getLightness(b));
-    return [{ ...this.palette, colors }];
+    return [{ ...palette, colors }];
   }
 }

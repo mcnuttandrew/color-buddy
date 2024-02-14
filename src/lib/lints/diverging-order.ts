@@ -1,6 +1,7 @@
 import { ColorLint } from "./ColorLint";
 import type { TaskType } from "./ColorLint";
 import { Color } from "../Color";
+import type { Palette } from "../../stores/color-store";
 
 const meanPoint2d = (points: Color[]) => {
   const labPoints = points.map((x) => x.toColorIO().to("lab").coords);
@@ -43,11 +44,11 @@ export default class SequentialOrder extends ColorLint<boolean, false> {
     return `This palette should have a middle color that is the lightest or darkest color, from which the other colors grow darker or lighter  respectively.`;
   }
   hasHeuristicFix = true;
-  async suggestFix() {
+  static async suggestFix(palette: Palette) {
     // figure out if its centered on a light color or a dark color?
     // a dumb hueristic is just look at what the center color is in lab space, and see if its darker or lighter than most colors
 
-    let colors = [...this.palette.colors];
+    let colors = [...palette.colors];
     // const medianPoint = findMinDistPoint(colors, meanPoint2d(colors));
     // console.log(medianPoint.toHex());
     // let darkerThanMedian = colors.filter(
@@ -82,6 +83,6 @@ export default class SequentialOrder extends ColorLint<boolean, false> {
       ...leftColors.sort(sortByLum),
       ...rightColors.sort(sortByLum).reverse(),
     ];
-    return [{ ...this.palette, colors }];
+    return [{ ...palette, colors }];
   }
 }

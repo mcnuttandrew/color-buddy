@@ -1,7 +1,7 @@
-import type { CustomLint } from "../lib/lints/CustomLint";
-import type { LintProgram } from "../lib/lint-language/lint-type";
-import { JSONStringify } from "../lib/utils";
-import type { TaskType } from "../lib/lints/ColorLint";
+import type { CustomLint } from "./CustomLint";
+import type { LintProgram } from "../lint-language/lint-type";
+import { JSONStringify } from "../utils";
+import type { TaskType } from "./ColorLint";
 
 const toString = (x: LintProgram) => JSONStringify(JSON.stringify(x));
 // @ts-ignore

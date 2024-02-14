@@ -551,3 +551,9 @@ export const webColors = [
   "DARKSLATEGRAY",
   "BLACK",
 ].map((x) => `"${x}"`.toLowerCase());
+
+export const titleCase = (str: string) =>
+  str
+    .split(" ")
+    .map((x) => x[0].toUpperCase() + x.slice(1))
+    .join(" ");

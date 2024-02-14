@@ -1,6 +1,6 @@
 <script lang="ts">
   import lintStore from "../stores/lint-store";
-  import BUILT_INS from "../stores/built-in-lints";
+  import BUILT_INS from "../lib/lints/built-in-lints";
   import colorStore from "../stores/color-store";
 
   import Modal from "../components/Modal.svelte";

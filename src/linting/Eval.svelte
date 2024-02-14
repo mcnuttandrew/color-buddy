@@ -4,7 +4,7 @@
   import lintStore from "../stores/lint-store";
   import { ColorLint } from "../lib/lints/ColorLint";
 
-  import { runLintChecks } from "../lib/linter";
+  import { lint } from "../lib/api-calls";
   import { buttonStyle } from "../lib/styles";
   import LintDisplay from "./LintDisplay.svelte";
   import EvalColorColumn from "./EvalColorColumn.svelte";
@@ -12,17 +12,17 @@
   import Nav from "../components/Nav.svelte";
   import NewLintSuggestion from "./NewLintSuggestion.svelte";
   import { debounce } from "vega";
+  import { titleCase } from "../lib/utils";
 
   $: currentPal = $colorStore.palettes[$colorStore.currentPal];
-  $: palType = currentPal.type;
   $: evalConfig = currentPal.evalConfig;
-  $: customLints = $lintStore.lints;
-  // $: checks = runLintChecks(currentPal, palType, customLints, evalConfig);
   $: checks = [] as ColorLint<any, any>[];
   $: selectedLint = $lintStore.focusedLint;
   $: updateSearchDebounced = debounce(100, (pal: any) => {
     if (!selectedLint) {
-      checks = runLintChecks(pal, palType, customLints, evalConfig);
+      lint(pal).then((res) => {
+        checks = res;
+      });
     }
   });
   $: updateSearchDebounced(currentPal);
@@ -37,12 +37,6 @@
     },
     {} as Record<string, ColorLint<any, any>[]>
   );
-
-  const titleCase = (str: string) =>
-    str
-      .split(" ")
-      .map((x) => x[0].toUpperCase() + x.slice(1))
-      .join(" ");
 
   function setGroupTo(checks: ColorLint<any, any>[], ignore: boolean) {
     const newEvalConfig = { ...evalConfig };

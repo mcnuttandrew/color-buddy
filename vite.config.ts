@@ -8,4 +8,7 @@ export default defineConfig({
   css: {
     postcss,
   },
+  worker: {
+    format: "es",
+  },
 });

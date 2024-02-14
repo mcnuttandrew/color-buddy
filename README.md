@@ -13,6 +13,7 @@ First time you start it up you should also run `yarn prep data`
 # User study burn down
 
 - [ ] Make lints fast / non blocking as much as possible
+- [ ] Make deactivation story make sense in new context
 - [ ] Get most of the lints converted
 - [ ] Tour?
 - [ ] roles, palette level semantics
@@ -27,6 +28,7 @@ First time you start it up you should also run `yarn prep data`
 
 # General Todos
 
+- [ ] Make name discrim hueristc fix more resilient
 - [ ] Search palettes-by-lint screen
 - [ ] Drag to re-order points?
 - [ ] off by one persistance error in undo/redo

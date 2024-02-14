@@ -1,6 +1,6 @@
-import { Color } from "./Color";
 import type { Palette } from "../stores/color-store";
 import * as Json from "jsonc-parser";
+import LintWorker from "./linter-tools/lint-worker.worker?worker";
 
 type Engine = "openai" | "google";
 type SimplePal = { background: string; colors: string[] };
@@ -124,4 +124,49 @@ export function suggestLintMetadata(lintProgram: string, engine: Engine) {
     failMessage: string;
     name: string;
   }>(`suggest-lint-metadata`, body, true);
+}
+
+// instantiate the worker
+console.log(LintWorker);
+const ViteWorker = LintWorker && new LintWorker();
+
+// send and receive messages from the worker
+type Message = { type: string; content: string; id?: string };
+const randID = () => Math.random().toString(36).substring(7);
+function workerDispatch() {
+  const waitingCallbacks: { [key: string]: (msg: string) => void } = {};
+  ViteWorker.addEventListener("message", (msg: MessageEvent<Message>) => {
+    const { id, content } = msg.data;
+    if (id && waitingCallbacks[id]) {
+      waitingCallbacks[id](content);
+      delete waitingCallbacks[id];
+    }
+  });
+
+  return async function caller(msg: Message) {
+    const id = randID();
+    ViteWorker.postMessage({ ...msg, id });
+    return new Promise<string>((resolve) => {
+      waitingCallbacks[id] = resolve;
+    });
+  };
+}
+const dispatch = workerDispatch();
+
+export function lint(pal: Palette) {
+  // this may be too deep a copy?
+  return dispatch({
+    type: "run-lint",
+    content: JSON.stringify({
+      ...pal,
+      background: pal.background.toHex(),
+      colors: pal.colors.map((x) => x.toHex()),
+    }),
+  }).then((x) => {
+    return x as unknown as any[];
+  });
+}
+
+export function loadLints() {
+  return dispatch({ type: "load-lints", content: "" });
 }

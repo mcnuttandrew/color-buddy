@@ -2,6 +2,8 @@ import namer from "color-namer";
 import { ColorLint } from "./ColorLint";
 import type { TaskType } from "./ColorLint";
 import { Color } from "../Color";
+import type { Palette } from "../../stores/color-store";
+import { titleCase } from "../utils";
 
 function findSmallest<A>(arr: A[], accessor: (x: A) => number): A {
   let smallest = arr[0];
@@ -9,14 +11,6 @@ function findSmallest<A>(arr: A[], accessor: (x: A) => number): A {
     if (accessor(arr[i]) < accessor(smallest)) smallest = arr[i];
   }
   return smallest;
-}
-
-function titleCase(str: string) {
-  return str
-    .split(" ")
-    .filter((x) => x.length > 0)
-    .map((x) => x[0].toUpperCase() + x.slice(1))
-    .join(" ");
 }
 
 // Simpler version of the color name stuff
@@ -54,7 +48,7 @@ export const getName = (color: Color) => {
   if (nameCache.has(hex)) {
     return nameCache.get(hex)!;
   }
-  const name = namer(hex, { pick: ["html"] });
+  const name = namer(hex, { pick: ["basic"] });
   const guess = findSmallest<any>(
     Object.values(name).map((x: any) => x[0]),
     (x) => x.distance
@@ -66,9 +60,9 @@ export const getName = (color: Color) => {
 
 function suggestFixForColorsWithCommonNames(colors: Color[]): Color[] {
   const hex = colors[0].toHex().toUpperCase();
-  let guesses = { ...namer(hex, { pick: ["html"] }) };
+  let guesses = { ...namer(hex, { pick: ["basic"] }) };
   return [...colors].map((color, idx) => {
-    const newColor = guesses.html[idx];
+    const newColor = guesses.basic[idx];
     return Color.colorFromHex(newColor.hex, color.spaceName);
   });
 }
@@ -110,7 +104,7 @@ export default class ColorNameDiscriminability extends ColorLint<
     return this.checkData;
   }
   hasHeuristicFix = true;
-  async suggestFix() {
-    return [{ ...this.palette, colors: buildFix(this.palette.colors) }];
+  static async suggestFix(palette: Palette) {
+    return [{ ...palette, colors: buildFix(palette.colors) }];
   }
 }

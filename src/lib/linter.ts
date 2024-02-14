@@ -7,7 +7,7 @@ import ColorSimilarity from "./lints/color-similarity";
 import BackgroundDifferentiability from "./lints/background-differentiability";
 import SequentialOrder from "./lints/sequential-order";
 import DivergingOrder from "./lints/diverging-order";
-import BackgroundContrast from "./lints/contrast";
+// import BackgroundContrast from "./lints/contrast";
 import Fair from "./lints/fair";
 import EvenDistribution from "./lints/even-distribution";
 import type { CustomLint } from "./lints/CustomLint";
@@ -20,7 +20,7 @@ export const manualLints = [
   BackgroundDifferentiability,
   SequentialOrder,
   DivergingOrder,
-  BackgroundContrast,
+  // BackgroundContrast,
   ...Fair,
   // EvenDistribution,
 ];

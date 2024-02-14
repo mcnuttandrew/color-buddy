@@ -13,7 +13,6 @@ type Algorithm =
 export default class BackgroundContrast extends ColorLint<Color[], Algorithm> {
   name = "Background Contrast";
   taskTypes = ["sequential", "diverging", "categorical"] as TaskType[];
-  hasParam = true;
   defaultParam = "APCA" as Algorithm;
   paramOptions: { type: "enum"; options: string[] } = {
     type: "enum",

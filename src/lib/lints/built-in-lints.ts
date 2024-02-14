@@ -155,6 +155,31 @@ const BUILT_INS: CustomLint[] = [
     id: "mutually-distinct-built-in",
     blameMode: "pair" as const,
   },
+  {
+    program: toString({
+      all: {
+        in: "colors",
+        varb: "a",
+        predicate: {
+          ">": {
+            left: {
+              contrast: { left: "a", right: "background" },
+              algorithm: "APCA",
+            },
+            right: 4.5,
+          },
+        },
+      },
+    }),
+    name: "Background Contrast",
+    taskTypes: ["sequential", "diverging", "categorical"] as const,
+    level: "error",
+    group: "accessibility",
+    description: `All colors in a palette should have a sufficient contrast ratio with the background color. This is because if they are not, then they will not be differentiable from each other in some contexts. Valid algorithms are APCA, WCAG21, Michelson, Weber, Lstar, DeltaPhi.`,
+    failMessage: `These colors ({{blame}}) do not have a sufficient contrast ratio with the background and may be hard to discriminate in some contexts.`,
+    id: "background-contrast-built-in",
+    blameMode: "single" as const,
+  },
 ];
 
 export default BUILT_INS;

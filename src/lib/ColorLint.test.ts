@@ -4,7 +4,6 @@ import { Color } from "./Color";
 import type { Palette } from "../stores/color-store";
 
 import ColorNameDiscriminability, { getName } from "./lints/name-discrim";
-import BackgroundDifferentiability from "./lints/background-differentiability";
 import BUILT_INS from "./lints/built-in-lints";
 import { CreateCustomLint } from "./lints/CustomLint";
 import { suggestLintFix } from "./linter-tools/lint-fixer";
@@ -84,6 +83,9 @@ test("ColorLint - ColorBlind", async () => {
 const ughWhat = ["#00ffff", "#00faff", "#00e4ff", "#fdfdfc", "#00ffff"];
 test("ColorLint - BackgroundDifferentiability", async () => {
   const examplePal = makePalFromHexes(ughWhat);
+  const BackgroundDifferentiability = CreateCustomLint(
+    BUILT_INS.find((x) => x.id === "background-contrast-built-in")!
+  );
   const exampleLint = new BackgroundDifferentiability(examplePal).run();
   expect(exampleLint.passes).toBe(false);
   expect(exampleLint.message).toBe(

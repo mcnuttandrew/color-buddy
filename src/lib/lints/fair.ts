@@ -44,13 +44,6 @@ class FairBase extends ColorLint<any, number> {
   group = "design";
   //   hasParam = true;
   level: "error" | "warning" = "warning";
-  //   defaultParam = 1;
-  //   paramOptions: { type: "number"; min: number; max: number; step: 1 } = {
-  //     type: "number",
-  //     min: 2,
-  //     max: 20,
-  //     step: 1,
-  //   };
 
   description: string = `Do the colors stand out equally? A color palette is described as fair if both chroma and luminance ranges are below a certain threshold and unfair if one of them is above a certain threshold. For sequential and diverging palettes, only the chroma range is considered.`;
   buildMessage(): string {

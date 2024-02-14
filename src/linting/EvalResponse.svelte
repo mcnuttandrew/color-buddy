@@ -105,31 +105,6 @@
     >
       Ignore for this palette
     </button>
-    <!-- {#if check.paramOptions.type !== "none"}
-      <div>
-        <div>Adjust check parameter</div>
-        {#if check.paramOptions.type === "number"}
-          <input
-            min={check.paramOptions.min}
-            max={check.paramOptions.max}
-            type="number"
-            step={check.paramOptions.step}
-            value={check.config.val}
-            on:change={(e) => updateEvalConfig(check.name, e, "number")}
-          />
-        {/if}
-        {#if check.paramOptions.type === "enum"}
-          <select
-            value={check.config.val}
-            on:change={(e) => updateEvalConfig(check.name, e, "string")}
-          >
-            {#each check.paramOptions.options as option}
-              <option value={option}>{option}</option>
-            {/each}
-          </select>
-        {/if}
-      </div>
-    {/if} -->
 
     {#if requestState === "loading"}
       <div>Loading...</div>

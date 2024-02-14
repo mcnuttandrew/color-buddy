@@ -4,7 +4,11 @@ import type { LintResult } from "../lints/ColorLint";
 import { manualLints } from "../linter";
 import { Color } from "../Color";
 
-function AIFix(palette: Palette, message: string, engine: string) {
+export async function suggestLintAIFix(
+  palette: Palette,
+  message: string,
+  engine: string
+) {
   const colorSpace = palette.colorSpace;
   return suggestFix(palette, message, engine as any).then((x) => {
     if (x.length === 0) {
@@ -24,14 +28,6 @@ function AIFix(palette: Palette, message: string, engine: string) {
       }
     });
   });
-}
-
-export async function suggestLintAIFix(
-  palette: Palette,
-  lint: LintResult,
-  engine?: string
-) {
-  return AIFix(palette, lint.message, engine || "openai");
 }
 
 const fixDirectory: Record<string, any> = {};

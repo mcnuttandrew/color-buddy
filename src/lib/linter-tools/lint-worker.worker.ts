@@ -35,18 +35,20 @@ const hydratePal = (pal: string): Palette => {
 let lintStore: CustomLint[] = [];
 let storeLoaded = false;
 const storeName = "color-pal-lints";
+const simpleLintCache = new Map<string, any>();
 async function dispatch(cmd: Command) {
   switch (cmd.type) {
     case "load-lints":
       idb.get(storeName).then((x) => {
         lintStore = x.lints;
         storeLoaded = true;
-        console.log("loaded lints", lintStore);
         return "";
       });
       return "";
     case "run-lint":
-      // TODO add a cache here
+      if (simpleLintCache.has(cmd.content)) {
+        return simpleLintCache.get(cmd.content);
+      }
       const pal = hydratePal(cmd.content);
       // if store not loaded, wait
       while (!storeLoaded) {
@@ -66,14 +68,13 @@ async function dispatch(cmd: Command) {
           hasHeuristicFix: x.hasHeuristicFix,
         };
       });
-      console.log("ran lints", result);
+      simpleLintCache.set(cmd.content, result);
       return result;
     default:
       return "no-op";
   }
 }
 
-console.log("start up");
 self.onmessage = async (event: MessageEvent<Command>) => {
   const result = await dispatch(event.data);
   self.postMessage({ id: event.data.id, content: result });

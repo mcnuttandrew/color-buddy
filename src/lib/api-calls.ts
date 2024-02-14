@@ -127,8 +127,7 @@ export function suggestLintMetadata(lintProgram: string, engine: Engine) {
 }
 
 // instantiate the worker
-console.log(LintWorker);
-const ViteWorker = LintWorker && new LintWorker();
+const ViteWorker = new LintWorker();
 
 // send and receive messages from the worker
 type Message = { type: string; content: string; id?: string };

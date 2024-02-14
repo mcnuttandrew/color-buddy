@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { Palette } from "../stores/color-store";
+  import type { Palette } from "../types";
   export let beforePal: Palette;
   export let afterPal: Palette;
   const xStep = 30;

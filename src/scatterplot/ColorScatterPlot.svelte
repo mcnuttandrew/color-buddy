@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { Palette } from "../stores/color-store";
+  import type { Palette } from "../types";
   import { Color, colorPickerConfig } from "../lib/Color";
   import {
     makePosAndSizes,

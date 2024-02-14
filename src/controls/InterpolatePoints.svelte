@@ -1,6 +1,6 @@
 <script lang="ts">
   import { Color } from "../lib/Color";
-  import type { Palette } from "../stores/color-store";
+  import type { Palette } from "../types";
   import colorStore from "../stores/color-store";
   import focusStore from "../stores/focus-store";
   import { buttonStyle } from "../lib/styles";

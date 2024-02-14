@@ -1,7 +1,7 @@
 <script lang="ts">
   import configStore from "../stores/config-store";
   import { Color } from "../lib/Color";
-  import type { Palette } from "../stores/color-store";
+  import type { Palette } from "../types";
   import Tooltip from "../components/Tooltip.svelte";
   import colorStore from "../stores/color-store";
   import { buttonStyle } from "../lib/styles";

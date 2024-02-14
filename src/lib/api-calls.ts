@@ -1,4 +1,4 @@
-import type { Palette } from "../stores/color-store";
+import type { Palette } from "../types";
 import * as Json from "jsonc-parser";
 import LintWorker from "./linter-tools/lint-worker.worker?worker";
 

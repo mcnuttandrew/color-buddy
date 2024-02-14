@@ -1,6 +1,6 @@
 <script lang="ts">
   import focusStore from "../stores/focus-store";
-  import type { Palette } from "../stores/color-store";
+  import type { Palette } from "../types";
   import Tooltip from "./Tooltip.svelte";
   import SwatchTooltipContent from "./SwatchTooltipContent.svelte";
   import { toggleElement } from "../lib/utils";

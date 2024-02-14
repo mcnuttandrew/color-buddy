@@ -26,6 +26,7 @@ First time you start it up you should also run `yarn prep data`
 - [ ] per cols 4 all: color blindness metric should maybe be sensitive to task?
 - [ ] Sequential check fix is incorrect for things with equi-ligthness
 - [ ] Macros story: "not similar", "sequences", "where": { "!=": {"left": "index(a)", "right": "index(b)"} },
+- [ ] More crashy type validation
 - [x] "No out of gamut"
 
 # General Todos
@@ -48,12 +49,12 @@ First time you start it up you should also run `yarn prep data`
 - [x] Performance stuff for linter (separate message generation into something very throttled, maybe move to web workers? Cache as hard as possible)
 - [x] Merge the info and fixes tooltips in the lints
 - [x] Hover broken on compare, also make sure it takes the right stringify (same as the color channel)
+- [x] Select compare from palettes drop down menu
 
 Parameterization epic:
 
 - [ ] Allow no palettes, allows renaming of non-current palettes, which would be enable by:
 - [ ] Parameterize the scatter column completely, allow edits to the compare stuff
-- [ ] Select compare from palettes drop down menu
 
 # Nice to have
 

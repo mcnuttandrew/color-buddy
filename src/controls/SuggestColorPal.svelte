@@ -3,7 +3,7 @@
   import configStore from "../stores/config-store";
   import { Color } from "../lib/Color";
   import { suggestPal } from "../lib/api-calls";
-  import type { Palette } from "../stores/color-store";
+  import type { Palette } from "../types";
   import PalPreview from "../components/PalPreview.svelte";
   import { buttonStyle, AIButtonStyle } from "../lib/styles";
 

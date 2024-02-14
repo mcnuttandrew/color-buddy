@@ -1,7 +1,7 @@
 <script lang="ts">
   import { Color } from "../lib/Color";
   import colorStore, { newGenericPal } from "../stores/color-store";
-  import type { StringPalette, Palette } from "../stores/color-store";
+  import type { StringPalette, Palette } from "../types";
   import focusStore from "../stores/focus-store";
   import { onMount } from "svelte";
   import Tooltip from "../components/Tooltip.svelte";

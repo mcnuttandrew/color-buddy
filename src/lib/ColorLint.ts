@@ -1,6 +1,5 @@
-import type { Palette } from "../stores/color-store";
+import type { Palette, PalType } from "../types";
 
-export type TaskType = "sequential" | "diverging" | "categorical";
 export type LintLevel = "error" | "warning";
 export interface LintResult {
   name: string;
@@ -10,13 +9,13 @@ export interface LintResult {
   group: string;
   description: string;
   isCustom: false | string;
-  taskTypes: TaskType[];
+  taskTypes: PalType[];
   subscribedFix: string;
 }
 
 export class ColorLint<CheckData, ParamType> {
   name: string = "";
-  taskTypes: TaskType[] = [];
+  taskTypes: PalType[] = [];
   passes: boolean;
   checkData: CheckData;
   palette: Palette;

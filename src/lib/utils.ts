@@ -1,5 +1,5 @@
 import { Color, colorPickerConfig } from "./Color";
-import type { PalType, Palette } from "../stores/color-store";
+import type { Palette } from "../types";
 import type { LintProgram } from "./lint-language/lint-type";
 import { Formatter, FracturedJsonOptions, EolStyle } from "fracturedjsonjs";
 

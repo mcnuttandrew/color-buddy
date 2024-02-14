@@ -1,7 +1,7 @@
 import { expect, test } from "vitest";
 
 import { Color } from "./Color";
-import type { Palette } from "../stores/color-store";
+import type { Palette } from "../types";
 
 import { CreateCustomLint } from "./CustomLint";
 import { suggestLintFix } from "./linter-tools/lint-fixer";

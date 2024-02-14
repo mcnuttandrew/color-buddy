@@ -1,7 +1,7 @@
 import { expect, test } from "vitest";
 import { LLEval, prettyPrintLL, permutativeBlame } from "./lint-language";
 import { Color } from "../Color";
-import type { Palette } from "../../stores/color-store";
+import type { Palette } from "../../types";
 import type { LintProgram } from "./lint-type";
 
 const toPal = (colors: string[]): Palette => ({

@@ -4,39 +4,19 @@ import fits from "../assets/outfits.json";
 import { pick, deDup } from "../lib/utils";
 const outfitToPal = (x: any) => [x.fill1, x.fill2, x.fill3];
 const outfits = fits.map((x) => outfitToPal(x));
-export type PalType = "sequential" | "diverging" | "categorical";
-type ColorSpace =
-  | "lab"
-  | "hsl"
-  | "hsv"
-  | "jzazbz"
-  | "lch"
-  | "oklab"
-  | "oklch"
-  | "rgb"
-  | "srgb";
-type Pal<A> = {
-  background: A;
-  colorSpace: ColorSpace;
-  colors: A[];
-  evalConfig: Record<string, any>;
-  name: string;
-  type: PalType;
-};
-export type Palette = Pal<Color>;
-export type StringPalette = Pal<string>;
+import type { Palette, StringPalette, PalType, ColorSpace } from "../types";
 
 interface StoreData {
-  palettes: Pal<Color>[];
+  palettes: Palette[];
   currentPal: number;
 }
 
 interface StorageData {
-  palettes: Pal<string>[];
+  palettes: StringPalette[];
   currentPal: number;
 }
 
-export function newGenericPal(name: string): Pal<string> {
+export function newGenericPal(name: string): StringPalette {
   return {
     name,
     colors: pick(outfits),
@@ -47,7 +27,7 @@ export function newGenericPal(name: string): Pal<string> {
   };
 }
 
-function stringPalToColorPal(pal: Pal<string>): Pal<Color> {
+function stringPalToColorPal(pal: StringPalette): Palette {
   return {
     ...pal,
     background: Color.colorFromString(pal.background, pal.colorSpace),

@@ -1,5 +1,5 @@
 import cvdSim from "../blindness";
-import type { Palette } from "../../stores/color-store";
+import type { Palette } from "../../types";
 import { Color, colorPickerConfig } from "../Color";
 import { getName } from "../lints/name-discrim";
 import type { LintProgram } from "./lint-type";

@@ -1,7 +1,7 @@
 import { JSONToPrettyString } from "../utils";
 import type { CustomLint } from "../CustomLint";
 import { Color } from "../Color";
-import type { Palette } from "../../stores/color-store";
+import type { Palette } from "../../types";
 import type { LintFixer } from "../linter-tools/lint-fixer";
 
 const lint: CustomLint = {

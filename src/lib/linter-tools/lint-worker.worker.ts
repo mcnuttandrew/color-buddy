@@ -1,7 +1,7 @@
 import * as idb from "idb-keyval";
 import { runLintChecks } from "../linter";
 import type { CustomLint } from "../CustomLint";
-import type { Palette } from "../../stores/color-store";
+import type { Palette } from "../../types";
 import { Color } from "../Color";
 import type { LintResult } from "../ColorLint";
 

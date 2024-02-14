@@ -1,4 +1,4 @@
-import type { Palette } from "../../stores/color-store";
+import type { Palette } from "../../types";
 import { suggestFix } from "../api-calls";
 import type { LintResult } from "../ColorLint";
 import { Color } from "../Color";

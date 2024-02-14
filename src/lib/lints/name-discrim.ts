@@ -2,7 +2,7 @@ import { JSONToPrettyString } from "../utils";
 import type { CustomLint } from "../CustomLint";
 import namer from "color-namer";
 import { Color } from "../Color";
-import type { Palette } from "../../stores/color-store";
+import type { Palette } from "../../types";
 import { titleCase } from "../utils";
 import type { LintFixer } from "../linter-tools/lint-fixer";
 

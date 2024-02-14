@@ -4,7 +4,7 @@
   import focusStore from "../stores/focus-store";
   import configStore from "../stores/config-store";
   import type { LintResult } from "../lib/ColorLint";
-  import type { Palette } from "../stores/color-store";
+  import type { Palette } from "../types";
   import PalDiff from "../components/PalDiff.svelte";
   import ExplanationViewer from "./ExplanationViewer.svelte";
   import {

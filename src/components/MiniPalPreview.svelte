@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { Palette } from "../stores/color-store";
+  import type { Palette } from "../types";
   export let pal: Palette;
   export let onClick: () => void;
   export let className = "";

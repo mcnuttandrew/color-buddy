@@ -1,26 +1,47 @@
 import { ColorLint } from "./lints/ColorLint";
 import type { Palette } from "../stores/color-store";
-
-import Discrims from "./lints/size-discrim";
-import DivergingOrder from "./lints/diverging-order";
-import EvenDistribution from "./lints/even-distribution";
 import type { CustomLint } from "./lints/CustomLint";
 import { CreateCustomLint } from "./lints/CustomLint";
 
-export const manualLints = [...Discrims, DivergingOrder];
+// manual lints
+import DivergingOrder from "./lints/diverging-order";
+import EvenDistribution from "./lints/even-distribution";
+
+// custom lints
+import AvoidExtremes from "./lints/avoid-extremes";
+import BackgroundDifferentiability from "./lints/background-contrast";
+import CatOrderSimilarity from "./lints/cat-order-similarity";
+import ColorBlindness from "./lints/color-blindness";
+import SizeDiscrim from "./lints/size-discrim";
+import Fair from "./lints/fair";
+import MaxColors from "./lints/max-colors";
+import MutuallyDistinct from "./lints/mutually-distinct";
+import SequentialOrder from "./lints/sequential-order";
+import UglyColors from "./lints/ugly-colors";
+
+export const BUILT_INS: CustomLint[] = [
+  ...ColorBlindness,
+  ...Fair,
+  ...SizeDiscrim,
+  AvoidExtremes,
+  BackgroundDifferentiability,
+  CatOrderSimilarity,
+  MaxColors,
+  MutuallyDistinct,
+  SequentialOrder,
+  UglyColors,
+];
 
 export function runLintChecks(
   palette: Palette,
   customLints: CustomLint[]
-  // ignoreList: Record<string, any>
 ): ColorLint<any, any>[] {
   const ignoreList = palette.evalConfig;
-  return (
-    [
-      ...manualLints,
-      ...customLints.map((x) => CreateCustomLint(x)),
-    ] as (typeof ColorLint)[]
-  )
+  const lints = [
+    DivergingOrder,
+    ...customLints.map((x) => CreateCustomLint(x)),
+  ] as (typeof ColorLint)[];
+  return lints
     .map((x) => new x(palette))
     .filter((x) => x.taskTypes.includes(palette.type))
     .map((x) => {

@@ -331,7 +331,7 @@ export class LLNumber extends LLNode {
   }
 }
 
-const LLNumberOpTypes = ["+", "-", "*", "/"] as const;
+const LLNumberOpTypes = ["+", "-", "*", "/", "absDiff"] as const;
 export class LLNumberOp extends LLNode {
   constructor(
     private type: (typeof LLNumberOpTypes)[number],
@@ -353,6 +353,8 @@ export class LLNumberOp extends LLNode {
         return { result: left * right, env };
       case "/":
         return { result: left / right, env };
+      case "absDiff":
+        return { result: Math.abs(left - right), env };
     }
   }
   static tryToConstruct(node: any, options: OptionsConfig) {

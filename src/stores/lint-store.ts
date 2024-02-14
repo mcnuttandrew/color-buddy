@@ -3,7 +3,7 @@ import * as idb from "idb-keyval";
 import type { CustomLint } from "../lib/lints/CustomLint";
 import type { TaskType } from "../lib/lints/ColorLint";
 import { JSONStringify } from "../lib/utils";
-import BUILT_INS from "../lib/lints/built-in-lints";
+import { BUILT_INS } from "../lib/linter";
 import { loadLints } from "../lib/api-calls";
 
 interface StoreData {

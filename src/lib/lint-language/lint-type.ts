@@ -39,6 +39,7 @@ type LintComparison =
   | { "!=": LintComparisonBase }
   | { "<": LintComparisonBase }
   | { ">": LintComparisonBase }
+  | { absDiff: LintComparisonBase }
   | { similar: { left: LintRef; right: LintRef; threshold: number } };
 type MathOperations = "+" | "-" | "*" | "/";
 type LintMathOps = Record<MathOperations, Number | LintVariable>;

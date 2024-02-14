@@ -12,6 +12,7 @@ import BackgroundContrast from "./lints/background-contrast";
 import CatOrderSimilarity from "./lints/cat-order-similarity";
 import ColorBlindness from "./lints/color-blindness";
 import ColorNameDiscriminability, { getName } from "./lints/name-discrim";
+import Discrims from "./lints/size-discrim";
 import Fair from "./lints/fair";
 import MaxColors from "./lints/max-colors";
 import MutuallyDistinct from "./lints/mutually-distinct";
@@ -171,6 +172,19 @@ test("ColorLint - ColorNameDiscriminability", async () => {
   expect(oldColorNames.length).toBe(1);
   const colorNames = unique<string>(fix[0].colors.map((x) => getName(x)));
   expect(colorNames.length).toBe(2);
+});
+
+test("ColorLint - SizeDiscrim (Thin)", () => {
+  const examplePal = makePalFromHexes(["#0084a9", "#bad", "#008000"]);
+  const newLint = CreateCustomLint(Discrims[0]);
+  const exampleLint = new newLint(examplePal).run();
+  expect(exampleLint.passes).toBe(true);
+  expect(exampleLint.message).toMatchSnapshot();
+
+  const examplePal2 = makePalFromHexes(["#0084a9", "#009de5", "#8ca9fa"]);
+  const exampleLint2 = new newLint(examplePal2).run();
+  expect(exampleLint2.passes).toBe(false);
+  expect(exampleLint2.message).toMatchSnapshot();
 });
 
 test("ColorLint - ColorBlind", async () => {

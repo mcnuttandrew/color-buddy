@@ -1,3 +1,0 @@
-// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
-
-exports[`ColorLint - AvoidExtremes 1`] = `"Colors at either end of the lightness spectrum #000, #fff are hard to discriminate in some contexts, and are sometimes advised against"`;

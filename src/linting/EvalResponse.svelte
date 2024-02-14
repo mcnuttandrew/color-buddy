@@ -3,14 +3,19 @@
   import colorStore from "../stores/color-store";
   import focusStore from "../stores/focus-store";
   import configStore from "../stores/config-store";
-  import { ColorLint } from "../lib/lints/ColorLint";
+  import type { LintResult } from "../lib/ColorLint";
   import type { Palette } from "../stores/color-store";
   import PalDiff from "../components/PalDiff.svelte";
+  import {
+    suggestLintAIFix,
+    suggestLintFix,
+  } from "../lib/linter-tools/lint-fixer";
 
   import { buttonStyle } from "../lib/styles";
   let requestState: "idle" | "loading" | "loaded" | "failed" = "idle";
-  export let check: ColorLint<any, any>;
+  export let check: LintResult;
 
+  $: palette = $colorStore.palettes[$colorStore.currentPal];
   $: engine = $configStore.engine;
   $: suggestions = [] as Palette[];
 
@@ -19,12 +24,12 @@
     let hasRetried = false;
     const getFix = () => {
       if (useAi) {
-        return check.suggestAIFix(engine).then((x) => {
+        return suggestLintAIFix(palette, check, engine).then((x) => {
           suggestions = x;
           requestState = "loaded";
         });
       } else {
-        return check.suggestFix(engine).then((x) => {
+        return suggestLintFix(palette, check, engine).then((x) => {
           suggestions = x;
           requestState = "loaded";
         });
@@ -43,21 +48,21 @@
   }
   $: currentPal = $colorStore.palettes[$colorStore.currentPal];
   $: evalConfig = currentPal.evalConfig;
-  function updateEvalConfig(
-    checkName: string,
-    value: any,
-    formatter: "number" | "string"
-  ) {
-    let val = value;
-    if (val.target.value) {
-      val =
-        formatter === "number" ? Number(val.target.value) : val.target.value;
-    }
-    colorStore.setCurrentPalEvalConfig({
-      ...evalConfig,
-      [checkName]: { ...evalConfig[checkName], val },
-    });
-  }
+  // function updateEvalConfig(
+  //   checkName: string,
+  //   value: any,
+  //   formatter: "number" | "string"
+  // ) {
+  //   let val = value;
+  //   if (val.target.value) {
+  //     val =
+  //       formatter === "number" ? Number(val.target.value) : val.target.value;
+  //   }
+  //   colorStore.setCurrentPalEvalConfig({
+  //     ...evalConfig,
+  //     [checkName]: { ...evalConfig[checkName], val },
+  //   });
+  // }
 
   const options = [
     "deuteranopia",
@@ -83,7 +88,7 @@
     <button class={buttonStyle} on:click={() => proposeFix(true)}>
       Try to fix (AI)
     </button>
-    {#if check.hasHeuristicFix}
+    {#if check.subscribedFix !== "none"}
       <button class={buttonStyle} on:click={() => proposeFix(false)}>
         Try to fix (hueristics)
       </button>
@@ -100,31 +105,6 @@
     >
       Ignore for this palette
     </button>
-    {#if check.paramOptions.type !== "none"}
-      <div>
-        <div>Adjust check parameter</div>
-        {#if check.paramOptions.type === "number"}
-          <input
-            min={check.paramOptions.min}
-            max={check.paramOptions.max}
-            type="number"
-            step={check.paramOptions.step}
-            value={check.config.val}
-            on:change={(e) => updateEvalConfig(check.name, e, "number")}
-          />
-        {/if}
-        {#if check.paramOptions.type === "enum"}
-          <select
-            value={check.config.val}
-            on:change={(e) => updateEvalConfig(check.name, e, "string")}
-          >
-            {#each check.paramOptions.options as option}
-              <option value={option}>{option}</option>
-            {/each}
-          </select>
-        {/if}
-      </div>
-    {/if}
 
     {#if requestState === "loading"}
       <div>Loading...</div>

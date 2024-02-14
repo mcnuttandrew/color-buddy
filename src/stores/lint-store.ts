@@ -1,9 +1,10 @@
 import { writable } from "svelte/store";
 import * as idb from "idb-keyval";
-import type { CustomLint } from "../lib/lints/CustomLint";
-import type { TaskType } from "../lib/lints/ColorLint";
+import type { CustomLint } from "../lib/CustomLint";
+import type { TaskType } from "../lib/ColorLint";
 import { JSONStringify } from "../lib/utils";
-import BUILT_INS from "./built-in-lints";
+import { BUILT_INS } from "../lib/linter";
+import { loadLints } from "../lib/api-calls";
 
 interface StoreData {
   lints: CustomLint[];
@@ -23,6 +24,8 @@ const builtInIndex = BUILT_INS.reduce((acc, x) => {
 const storeName = "color-pal-lints";
 function createStore() {
   let storeData: StoreData = JSON.parse(JSON.stringify(InitialStore));
+  // turn on the web worker and load whatever lints are in the store
+  loadLints();
 
   const { subscribe, set, update } = writable<StoreData>(storeData);
   idb.get(storeName).then((x) => {
@@ -33,12 +36,16 @@ function createStore() {
     const missingBuiltIns = BUILT_INS.filter(
       (x) => !lints.find((y) => y.id === x.id)
     );
-    set({ ...storeBase, lints: [...lints, ...missingBuiltIns] });
+    const newStore = { ...storeBase, lints: [...lints, ...missingBuiltIns] };
+    set(newStore);
+    idb.set(storeName, newStore);
   });
   const persistUpdate = (updateFunc: (old: StoreData) => StoreData) =>
     update((oldStore) => {
       const newVal: StoreData = updateFunc(oldStore);
-      idb.set(storeName, newVal);
+      idb.set(storeName, newVal).then(() => {
+        loadLints();
+      });
       return newVal;
     });
 

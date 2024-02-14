@@ -16,7 +16,7 @@
       "type": "object",
       "additionalProperties": false,
       "patternProperties": {
-        "^(\\+|\\-|\\*|\\/)$": {
+        "^(\\+|\\-|\\*|\\/|absDiff)$": {
           "anyOf": [
             { "type": "number" },
             { "$ref": "#/definitions/LintVariable" }
@@ -70,6 +70,7 @@
             "contrast": {
               "type": "object",
               "additionalProperties": false,
+              "description": "Compute the contrast between two colors using a given algorithm. The algorithm can be APCA, WCAG21, Michelson, Weber, Lstar or DeltaPhi.",
               "properties": {
                 "left": { "$ref": "#/definitions/LintRef" },
                 "right": { "$ref": "#/definitions/LintRef" },
@@ -92,13 +93,46 @@
       ]
     },
     "LintMap": {
-      "type": "object",
-      "additionalProperties": false,
-      "properties": {
-        "filter": { "$ref": "#/definitions/LintVariable" },
-        "func": { "$ref": "#/definitions/LintExpression" }
-      },
-      "required": ["filter", "func"]
+      "anyOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "filter": { "$ref": "#/definitions/LintVariable" },
+            "func": { "$ref": "#/definitions/LintExpression" },
+            "varb": { "$ref": "#/definitions/LintVariable" }
+          },
+          "required": ["filter", "func", "varb"]
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "map": { "$ref": "#/definitions/LintVariable" },
+            "func": { "$ref": "#/definitions/LintExpression" },
+            "varb": { "$ref": "#/definitions/LintVariable" }
+          },
+          "required": ["map", "func", "varb"]
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "reduce": { "$ref": "#/definitions/LintVariable" }
+          },
+          "required": ["reverse"]
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "sort": { "$ref": "#/definitions/LintVariable" },
+            "func": { "$ref": "#/definitions/LintExpression" },
+            "varb": { "$ref": "#/definitions/LintVariable" }
+          },
+          "required": ["sort", "func", "varb"]
+        }
+      ]
     },
     "LintReduce": {
       "type": "object",
@@ -118,6 +152,7 @@
         {
           "type": "object",
           "additionalProperties": false,
+          "description": "Simulate color vision deficiency. The type can be protanomaly, deuteranomaly, tritanopia or grayscale.",
           "properties": {
             "cvdSim": { "$ref": "#/definitions/LintVariable" },
             "type": {
@@ -131,7 +166,12 @@
           },
           "required": ["cvdSim", "type"]
         },
-        { "$ref": "#/definitions/LintVariable" },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": { "inGamut": { "$ref": "#/definitions/LintVariable" } },
+          "required": ["inGamut"]
+        },
         {
           "type": "object",
           "additionalProperties": false,

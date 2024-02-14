@@ -24,6 +24,7 @@ Math Operations:
 +: {left: Number | Variable, right: Number | Variable}
 /: {left: Number | Variable, right: Number | Variable}
 -: {left: Number | Variable, right: Number | Variable}
+absDiff: {left: Number | Variable, right: Number | Variable}
 
 Value Comparisons:
 {dist: {left: Color | Variable, right: Color | Variable}, space: COLOR_SPACE }
@@ -44,10 +45,12 @@ Color Manipulations:
 {toColor: variableName, space: 'lab' | 'hsl' | etc, channel: 'a' | 'b' | 'l' | etc}
 {cvdSim: variableName, type: 'protanomaly' | 'deuteranomaly' | 'tritanopia' | 'grayscale'}
 {name: variableName}
+{inGamut: variableName | Color}
 
 Maps:
 {map: Variable | Value[], func: Operation, varb: Variable}
 {sort: Variable | Value[], func: Operation, varb: Variable}
+{reverse: Variable | Value[]}
 {filter: Variable | Value[], func: EXPR, varb: Variable}
 
 ```yaml

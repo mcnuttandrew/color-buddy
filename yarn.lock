@@ -2242,6 +2242,13 @@
     loupe "^2.3.7"
     pretty-format "^29.7.0"
 
+"@vitest/web-worker@^1.2.2":
+  version "1.2.2"
+  resolved "https://registry.yarnpkg.com/@vitest/web-worker/-/web-worker-1.2.2.tgz#b9d20e5a30e99bc6608a94088a3bb78fa00a84a4"
+  integrity sha512-nDHsEE8s+e32PPKJOP+HR/X658ja+BZ1dC9y2jfX8+qiuuN/HSc6KiWrnBHZaLEuKMS0XAEjaIWsbzo0oneSsw==
+  dependencies:
+    debug "^4.3.4"
+
 "@xhmikosr/archive-type@^6.0.1":
   version "6.0.1"
   resolved "https://registry.npmjs.org/@xhmikosr/archive-type/-/archive-type-6.0.1.tgz"

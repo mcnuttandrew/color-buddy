@@ -1,7 +1,5 @@
-import { Color } from "../Color";
-import { ColorLint } from "./ColorLint";
-import type { TaskType } from "./ColorLint";
-
+import { JSONToPrettyString } from "../utils";
+import type { CustomLint } from "../CustomLint";
 // based on
 // https://github.com/connorgr/d3-jnd/blob/master/src/jnd.js
 
@@ -31,77 +29,58 @@ function jndLabInterval(p: pType, s: sType) {
   return nd(pVal, sVal);
 }
 
-export function noticeablyDifferent(
-  c1: Color,
-  c2: Color,
-  s: sType = 0.1,
-  p: pType = 0.5
-) {
-  var jnd = jndLabInterval(p, s);
-  const [l1, a1, b1] = Color.toColorSpace(c1, "lab").toChannels();
-  const [l2, a2, b2] = Color.toColorSpace(c2, "lab").toChannels();
-
-  return (
-    Math.abs(l1 - l2) >= jnd.l ||
-    Math.abs(a1 - a2) >= jnd.a ||
-    Math.abs(b1 - b2) >= jnd.b
-  );
-}
-
-export function checkJNDs(
-  colors: Color[]
-): [keyof typeof sMap, Color, Color, number, number][] {
-  const invalid = [] as any[];
-  for (let i = 0; i < colors.length; i++) {
-    for (let j = i + 1; j < colors.length; j++) {
-      Object.keys(sMap).forEach((s) => {
-        if (
-          !noticeablyDifferent(
-            colors[i],
-            colors[j],
-            s as keyof typeof sMap,
-            "default"
-          )
-        ) {
-          invalid.push([s, colors[i], colors[j], i, j]);
-        }
-      });
-    }
-  }
-  return invalid;
-}
-
-function uniqueJNDColors(key: string, jnds: ReturnType<typeof checkJNDs>) {
-  const uniqueColors = new Set<string>();
-  jnds
-    .filter((x) => x[0] === key)
-    .forEach(([_key, A, B]) => {
-      uniqueColors.add(A.toHex());
-      uniqueColors.add(B.toHex());
-    });
-  return [...uniqueColors].join(", ");
-}
-
-const Discrims = ["Thin", "Medium", "Wide"].map((key) => {
-  return class SizeDiscrim extends ColorLint<
-    ReturnType<typeof checkJNDs>,
-    false
-  > {
-    name = `${key} Discriminability`;
-    taskTypes = ["sequential", "diverging", "categorical"] as TaskType[];
-    group = "usability";
-    description: string = `Pairs of colors in a palette should be differentiable from each other in ${key} lines. `;
-    _runCheck() {
-      const jnds = checkJNDs(this.palette.colors);
-      const passCheck = jnds.filter((x) => x[0] === key).length === 0;
-      return { passCheck, data: jnds };
-    }
-    buildMessage() {
-      const jnds = this.checkData;
-      const invalid = uniqueJNDColors(key, jnds);
-      return `This palette has some colors (${invalid}) that are close to each other in perceptual space and will not be resolvable for ${key} areas.`;
-    }
+const lints: CustomLint[] = ["Thin", "Medium", "Wide"].map((key) => {
+  const p = "default";
+  const s = key as keyof typeof sMap;
+  const jnd = jndLabInterval(p, s);
+  return {
+    name: `Works for ${key} marks`,
+    program: JSONToPrettyString({
+      // @ts-ignore
+      $schema: `${location.href}lint-schema.json`,
+      all: {
+        in: "colors",
+        varbs: ["x", "y"],
+        where: { "!=": { left: "index(x)", right: "index(y)" } },
+        predicate: {
+          // this being or is real important
+          or: [
+            {
+              ">": {
+                left: {
+                  absDiff: { left: { "lab.l": "x" }, right: { "lab.l": "y" } },
+                },
+                right: jnd.l,
+              },
+            },
+            {
+              ">": {
+                left: {
+                  absDiff: { left: { "lab.a": "x" }, right: { "lab.a": "y" } },
+                },
+                right: jnd.a,
+              },
+            },
+            {
+              ">": {
+                left: {
+                  absDiff: { left: { "lab.b": "x" }, right: { "lab.b": "y" } },
+                },
+                right: jnd.b,
+              },
+            },
+          ],
+        },
+      },
+    }),
+    taskTypes: ["sequential", "diverging", "categorical"] as const,
+    level: "warning",
+    group: "usability",
+    description: `Pairs of colors in a palette should be differentiable from each other in ${key} lines. `,
+    failMessage: `This palette has some colors ({{blame}}) that are close to each other in perceptual space and will not be resolvable for ${key} areas.`,
+    id: `${key}-discrim-built-in`,
+    blameMode: "pair",
   };
 });
 
-export default Discrims;
+export default lints;

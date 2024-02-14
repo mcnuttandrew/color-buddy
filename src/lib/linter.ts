@@ -1,40 +1,51 @@
-import { ColorLint } from "./lints/ColorLint";
+import { ColorLint } from "./ColorLint";
 import type { Palette } from "../stores/color-store";
+import type { CustomLint } from "./CustomLint";
+import { CreateCustomLint } from "./CustomLint";
 
-import NameDiscrim from "./lints/name-discrim";
-import Discrims from "./lints/size-discrim";
-import ColorSimilarity from "./lints/color-similarity";
-import BackgroundDifferentiability from "./lints/background-differentiability";
-import SequentialOrder from "./lints/sequential-order";
+// manual lints
 import DivergingOrder from "./lints/diverging-order";
-import BackgroundContrast from "./lints/contrast";
-import Fair from "./lints/fair";
 import EvenDistribution from "./lints/even-distribution";
-import type { CustomLint } from "./lints/CustomLint";
-import { CreateCustomLint } from "./lints/CustomLint";
+
+// custom lints
+import AvoidExtremes from "./lints/avoid-extremes";
+import BackgroundDifferentiability from "./lints/background-contrast";
+import CatOrderSimilarity from "./lints/cat-order-similarity";
+import ColorBlindness from "./lints/color-blindness";
+import SizeDiscrim from "./lints/size-discrim";
+import Fair from "./lints/fair";
+import Gamut from "./lints/in-gamut";
+import MaxColors from "./lints/max-colors";
+import MutuallyDistinct from "./lints/mutually-distinct";
+import SequentialOrder from "./lints/sequential-order";
+import UglyColors from "./lints/ugly-colors";
+
+export const BUILT_INS: CustomLint[] = [
+  ...ColorBlindness,
+  ...Fair,
+  ...SizeDiscrim,
+  AvoidExtremes,
+  BackgroundDifferentiability,
+  CatOrderSimilarity,
+  Gamut,
+  MaxColors,
+  MutuallyDistinct,
+  SequentialOrder,
+  UglyColors,
+];
 
 export function runLintChecks(
   palette: Palette,
-  palType: any,
-  customLints: CustomLint[],
-  ignoreList: Record<string, any>
+  customLints: CustomLint[]
 ): ColorLint<any, any>[] {
-  return (
-    [
-      NameDiscrim,
-      ...Discrims,
-      ColorSimilarity,
-      BackgroundDifferentiability,
-      SequentialOrder,
-      DivergingOrder,
-      BackgroundContrast,
-      ...Fair,
-      // EvenDistribution,
-      ...customLints.map((x) => CreateCustomLint(x)),
-    ] as (typeof ColorLint)[]
-  )
+  const ignoreList = palette.evalConfig;
+  const lints = [
+    DivergingOrder,
+    ...customLints.map((x) => CreateCustomLint(x)),
+  ] as (typeof ColorLint)[];
+  return lints
     .map((x) => new x(palette))
-    .filter((x) => x.taskTypes.includes(palType))
+    .filter((x) => x.taskTypes.includes(palette.type))
     .map((x) => {
       if (ignoreList[x.name] && ignoreList[x.name].ignore) {
         return x;

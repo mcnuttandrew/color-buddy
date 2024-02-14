@@ -475,12 +475,12 @@ test("LintLanguage Measure Contrast", () => {
         contrast: { left: colors[0], right: colors[1] },
         algorithm: "APCA",
       },
-      right: -107.88473522404158,
+      right: 107.88473522404158,
     },
   };
   const result = LLEval(program, [] as any);
   expect(prettyPrintLL(program)).toBe(
-    "contrast(#000, #fff, APCA) == -107.88473522404158"
+    "contrast(#000, #fff, APCA) == 107.88473522404158"
   );
   expect(result.result).toBe(true);
   expect(result.blame).toStrictEqual([]);

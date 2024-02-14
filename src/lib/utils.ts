@@ -1,5 +1,6 @@
 import { Color, colorPickerConfig } from "./Color";
 import type { PalType, Palette } from "../stores/color-store";
+import type { LintProgram } from "./lint-language/lint-type";
 import { Formatter, FracturedJsonOptions, EolStyle } from "fracturedjsonjs";
 
 const options = new FracturedJsonOptions();
@@ -12,6 +13,9 @@ formatter.Options = options;
 
 export function JSONStringify(obj: string) {
   return formatter.Reformat(obj);
+}
+export function JSONToPrettyString(program: LintProgram) {
+  return JSONStringify(JSON.stringify(program));
 }
 
 export const pick = (arr: any[]) => arr[Math.floor(Math.random() * arr.length)];
@@ -551,3 +555,9 @@ export const webColors = [
   "DARKSLATEGRAY",
   "BLACK",
 ].map((x) => `"${x}"`.toLowerCase());
+
+export const titleCase = (str: string) =>
+  str
+    .split(" ")
+    .map((x) => x[0].toUpperCase() + x.slice(1))
+    .join(" ");

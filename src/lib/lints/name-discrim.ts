@@ -1,7 +1,10 @@
+import { JSONToPrettyString } from "../utils";
+import type { CustomLint } from "../CustomLint";
 import namer from "color-namer";
-import { ColorLint } from "./ColorLint";
-import type { TaskType } from "./ColorLint";
 import { Color } from "../Color";
+import type { Palette } from "../../stores/color-store";
+import { titleCase } from "../utils";
+import type { LintFixer } from "../linter-tools/lint-fixer";
 
 function findSmallest<A>(arr: A[], accessor: (x: A) => number): A {
   let smallest = arr[0];
@@ -11,41 +14,9 @@ function findSmallest<A>(arr: A[], accessor: (x: A) => number): A {
   return smallest;
 }
 
-function titleCase(str: string) {
-  return str
-    .split(" ")
-    .filter((x) => x.length > 0)
-    .map((x) => x[0].toUpperCase() + x.slice(1))
-    .join(" ");
-}
-
 // Simpler version of the color name stuff
 export function colorNameSimple(colors: Color[]) {
   return colors.map((x) => ({ word: getName(x), hex: x.toHex() }));
-}
-
-function simpleDiscrim(colors: Color[]) {
-  const names = colorNameSimple(colors);
-  const counts = names.reduce((acc, x) => {
-    if (!acc[x.word]) {
-      acc[x.word] = [];
-    }
-    acc[x.word].push(x);
-    return acc;
-  }, {} as Record<string, (typeof names)[0][]>);
-
-  const remaining = Object.entries(counts)
-    .filter((x) => x[1].length > 1)
-    .map(([x, y]) => [x, y.map((el) => el.hex).join(", ")]);
-  // .map((x) => x[0]);
-  if (remaining.length === 0) {
-    return false;
-  }
-
-  const countsStr = remaining
-    .map(([word, vals]) => `${word} (${vals})`)
-    .join(", ");
-  return `Color Name discriminability check failed. The following color names are repeated: ${countsStr}`;
 }
 
 const nameCache = new Map<string, string>();
@@ -73,7 +44,33 @@ function suggestFixForColorsWithCommonNames(colors: Color[]): Color[] {
   });
 }
 
-function buildFix(colors: Color[]): Color[] {
+const lint: CustomLint = {
+  program: JSONToPrettyString({
+    // @ts-ignore
+    $schema: `${location.href}lint-schema.json`,
+    all: {
+      in: "colors",
+      varbs: ["a", "b"],
+      where: { "!=": { left: "index(a)", right: "index(b)" } },
+      predicate: { "!=": { left: { name: "a" }, right: { name: "b" } } },
+    },
+  }),
+  name: "Color Name Discriminability",
+  taskTypes: ["sequential"] as const,
+  level: "error",
+  group: "usability",
+  description: `Being able to identify colors by name is important for usability and for memorability.`,
+  failMessage: `The following pairs of colors have the same name: {{blame}}`,
+  id: "color-name-discriminability-built-in",
+  blameMode: "pair" as const,
+  subscribedFix: "fixColorNameDiscriminability",
+};
+export default lint;
+
+export const fixColorNameDiscriminability: LintFixer = async (
+  palette: Palette
+) => {
+  const colors = palette.colors;
   const colorNamesByIndex = colors.reduce((acc, color, index) => {
     const name = getName(color);
     acc[name] = (acc[name] || []).concat(index);
@@ -89,28 +86,5 @@ function buildFix(colors: Color[]): Color[] {
         newColors[i] = updatedColors[j];
       });
     });
-  return newColors;
-}
-
-export default class ColorNameDiscriminability extends ColorLint<
-  string,
-  false
-> {
-  name = "Color Name Discriminability";
-  taskTypes = ["sequential", "diverging", "categorical"] as TaskType[];
-  group = "usability";
-  description: string =
-    "Being able to identify colors by name is important for usability and for memorability. ";
-  _runCheck() {
-    const { colors } = this.palette;
-    const passCheck = simpleDiscrim(colors);
-    return { passCheck: !passCheck, data: passCheck || "" };
-  }
-  buildMessage(): string {
-    return this.checkData;
-  }
-  hasHeuristicFix = true;
-  async suggestFix() {
-    return [{ ...this.palette, colors: buildFix(this.palette.colors) }];
-  }
-}
+  return [{ ...palette, colors: newColors }];
+};

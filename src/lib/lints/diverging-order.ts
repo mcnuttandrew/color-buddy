@@ -2,6 +2,7 @@ import { ColorLint } from "./ColorLint";
 import type { TaskType } from "./ColorLint";
 import { Color } from "../Color";
 import type { Palette } from "../../stores/color-store";
+import type { LintFixer } from "../linter-tools/lint-fixer";
 
 const meanPoint2d = (points: Color[]) => {
   const labPoints = points.map((x) => x.toColorIO().to("lab").coords);
@@ -43,46 +44,47 @@ export default class SequentialOrder extends ColorLint<boolean, false> {
   buildMessage(): string {
     return `This palette should have a middle color that is the lightest or darkest color, from which the other colors grow darker or lighter  respectively.`;
   }
-  hasHeuristicFix = true;
-  static async suggestFix(palette: Palette) {
-    // figure out if its centered on a light color or a dark color?
-    // a dumb hueristic is just look at what the center color is in lab space, and see if its darker or lighter than most colors
-
-    let colors = [...palette.colors];
-    // const medianPoint = findMinDistPoint(colors, meanPoint2d(colors));
-    // console.log(medianPoint.toHex());
-    // let darkerThanMedian = colors.filter(
-    //   (x) => x.luminance() < medianPoint.luminance()
-    // ).length;
-
-    const sortByLum = (a: Color, b: Color) => {
-      const aL = a.luminance();
-      const bL = b.luminance();
-      if (aL === bL) return 0;
-      return aL > bL ? 1 : -1;
-    };
-    // if (darkerThanMedian < colors.length / 2) {
-    //   console.log("reversing");
-    //   colors = colors.reverse();
-    // }
-
-    // const lightPoint = colors.at(-1)!;
-    const leftColors = [colors.at(-1)!];
-    const rightColors = [colors.at(-2)!];
-    for (let i = 0; i < colors.length - 2; i++) {
-      const color = colors[i];
-      const leftColor = leftColors.at(-1)!;
-      const rightColor = rightColors.at(-1)!;
-      if (color.deltaE(leftColor) < color.deltaE(rightColor)) {
-        leftColors.push(color);
-      } else {
-        rightColors.push(color);
-      }
-    }
-    colors = [
-      ...leftColors.sort(sortByLum),
-      ...rightColors.sort(sortByLum).reverse(),
-    ];
-    return [{ ...palette, colors }];
-  }
+  subscribedFix: string = "fixDivergingOrder";
 }
+
+export const fixDivergingOrder: LintFixer = async (palette) => {
+  // figure out if its centered on a light color or a dark color?
+  // a dumb hueristic is just look at what the center color is in lab space, and see if its darker or lighter than most colors
+
+  let colors = [...palette.colors];
+  // const medianPoint = findMinDistPoint(colors, meanPoint2d(colors));
+  // console.log(medianPoint.toHex());
+  // let darkerThanMedian = colors.filter(
+  //   (x) => x.luminance() < medianPoint.luminance()
+  // ).length;
+
+  const sortByLum = (a: Color, b: Color) => {
+    const aL = a.luminance();
+    const bL = b.luminance();
+    if (aL === bL) return 0;
+    return aL > bL ? 1 : -1;
+  };
+  // if (darkerThanMedian < colors.length / 2) {
+  //   console.log("reversing");
+  //   colors = colors.reverse();
+  // }
+
+  // const lightPoint = colors.at(-1)!;
+  const leftColors = [colors.at(-1)!];
+  const rightColors = [colors.at(-2)!];
+  for (let i = 0; i < colors.length - 2; i++) {
+    const color = colors[i];
+    const leftColor = leftColors.at(-1)!;
+    const rightColor = rightColors.at(-1)!;
+    if (color.deltaE(leftColor) < color.deltaE(rightColor)) {
+      leftColors.push(color);
+    } else {
+      rightColors.push(color);
+    }
+  }
+  colors = [
+    ...leftColors.sort(sortByLum),
+    ...rightColors.sort(sortByLum).reverse(),
+  ];
+  return [{ ...palette, colors }];
+};

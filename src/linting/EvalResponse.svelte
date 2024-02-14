@@ -88,7 +88,7 @@
     <button class={buttonStyle} on:click={() => proposeFix(true)}>
       Try to fix (AI)
     </button>
-    {#if check.hasHeuristicFix}
+    {#if check.subscribedFix !== "none"}
       <button class={buttonStyle} on:click={() => proposeFix(false)}>
         Try to fix (hueristics)
       </button>

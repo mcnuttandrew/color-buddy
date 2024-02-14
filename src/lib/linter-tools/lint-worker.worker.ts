@@ -65,7 +65,7 @@ async function dispatch(cmd: Command) {
           description: x.description,
           isCustom: x.isCustom,
           taskTypes: x.taskTypes as any,
-          hasHeuristicFix: x.hasHeuristicFix,
+          subscribedFix: x.subscribedFix,
         };
       });
       simpleLintCache.set(cmd.content, result);

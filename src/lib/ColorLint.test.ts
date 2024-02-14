@@ -1,32 +1,168 @@
 import { expect, test } from "vitest";
 
 import { Color } from "./Color";
-import type { Palette } from "../stores/color-store";
+import { makePalFromHexes } from "./utils";
 
-import ColorNameDiscriminability, { getName } from "./lints/name-discrim";
-import BUILT_INS from "./lints/built-in-lints";
 import { CreateCustomLint } from "./lints/CustomLint";
 import { suggestLintFix } from "./linter-tools/lint-fixer";
 
-function makePalFromHexes(hexes: string[]): Palette {
-  return {
-    colors: hexes.map((hex) => Color.colorFromHex(hex, "lab")),
-    background: Color.colorFromHex("#ffffff", "lab"),
-    name: "test",
-    type: "categorical",
-    evalConfig: {},
-    colorSpace: "lab",
-  };
-}
+// Lints
+import AvoidExtremes from "./lints/avoid-extremes";
+import BackgroundContrast from "./lints/background-contrast";
+import CatOrderSimilarity from "./lints/cat-order-similarity";
+import ColorBlindness from "./lints/color-blindness";
+import ColorNameDiscriminability, { getName } from "./lints/name-discrim";
+import Fair from "./lints/fair";
+import MaxColors from "./lints/max-colors";
+import MutuallyDistinct from "./lints/mutually-distinct";
+import SequentialOrder from "./lints/sequential-order";
+import UglyColors from "./lints/ugly-colors";
 
 const unique = <T>(arr: T[]): T[] => [...new Set(arr)];
 
+test("ColorLint - AvoidExtremes", () => {
+  const examplePal = makePalFromHexes([
+    "#000000",
+    "#ffffff",
+    "#ff0000",
+    "#00ff00",
+    "#0000ff",
+  ]);
+  const newLint = CreateCustomLint(AvoidExtremes);
+  const exampleLint = new newLint(examplePal).run();
+  expect(exampleLint.passes).toBe(false);
+  expect(exampleLint.message).toMatchSnapshot();
+});
+
+test("ColorLint - MutuallyDistinct", () => {
+  const examplePal = makePalFromHexes([
+    "#000000",
+    "#ffffff",
+    "#ff0000",
+    "#00ff00",
+    "#0000ff",
+  ]);
+  const newLint = CreateCustomLint(MutuallyDistinct);
+  const exampleLint = new newLint(examplePal).run();
+  expect(exampleLint.passes).toBe(true);
+  expect(exampleLint.message).toMatchSnapshot();
+
+  // TODO add a failing case
+  const examplePal2 = makePalFromHexes(["#d2b48c", "#f5f5dc", "#d7fcef"]);
+  const exampleLint2 = new newLint(examplePal2).run();
+  expect(exampleLint2.passes).toBe(false);
+  expect(exampleLint2.message).toMatchSnapshot();
+});
+
+test("ColorLint - MaxColors", () => {
+  const examplePal = makePalFromHexes(["#000000"]);
+  const newLint = CreateCustomLint(MaxColors);
+  const exampleLint = new newLint(examplePal).run();
+  expect(exampleLint.passes).toBe(true);
+  expect(exampleLint.message).toMatchSnapshot();
+
+  const examplePal2 = makePalFromHexes([...new Array(20)].map(() => "#000000"));
+  const exampleLint2 = new newLint(examplePal2).run();
+  expect(exampleLint2.passes).toBe(false);
+  expect(exampleLint2.message).toMatchSnapshot();
+});
+
+test("ColorLint - UglyColors", () => {
+  const examplePal = makePalFromHexes(["#000000"]);
+  const newLint = CreateCustomLint(UglyColors);
+  const exampleLint = new newLint(examplePal).run();
+  expect(exampleLint.passes).toBe(true);
+  expect(exampleLint.message).toMatchSnapshot();
+
+  const examplePal2 = makePalFromHexes(["#000000", "#56FF22"]);
+  const exampleLint2 = new newLint(examplePal2).run();
+  expect(exampleLint2.passes).toBe(false);
+  expect(exampleLint2.message).toMatchSnapshot();
+});
+
+test("ColorLint - Fair Nominal", () => {
+  const examplePal = makePalFromHexes(["#000000"]);
+  const newLint = CreateCustomLint(Fair[0]);
+  const exampleLint = new newLint(examplePal).run();
+  expect(exampleLint.passes).toBe(true);
+  expect(exampleLint.message).toMatchSnapshot();
+
+  const examplePal2 = makePalFromHexes(["#debdb5", "#2a2a2a", "#76fc00"]);
+  const exampleLint2 = new newLint(examplePal2).run();
+  expect(exampleLint2.passes).toBe(false);
+  expect(exampleLint2.message).toMatchSnapshot();
+});
+
+test("ColorLint - Fair Sequential", () => {
+  const examplePal = makePalFromHexes(["#000000"]);
+  const newLint = CreateCustomLint(Fair[1]);
+  const exampleLint = new newLint(examplePal).run();
+  expect(exampleLint.passes).toBe(true);
+  expect(exampleLint.message).toMatchSnapshot();
+
+  const examplePal2 = makePalFromHexes(["#debdb5", "#2a2a2a", "#76fc00"]);
+  const exampleLint2 = new newLint(examplePal2).run();
+  expect(exampleLint2.passes).toBe(false);
+  expect(exampleLint2.message).toMatchSnapshot();
+});
+
+test("ColorLint - SequentialOrder", () => {
+  const examplePal = makePalFromHexes([
+    "#0084a9",
+    "#009de5",
+    "#5fb1ff",
+    "#bbc3ff",
+    "#ecddff",
+  ]);
+  const newLint = CreateCustomLint(SequentialOrder);
+  const exampleLint = new newLint(examplePal).run();
+  expect(exampleLint.passes).toBe(true);
+  expect(exampleLint.message).toMatchSnapshot();
+
+  const examplePal2 = makePalFromHexes([
+    "#0084a9",
+    "#009de5",
+    "#5fb1ff",
+    "#ecddff",
+    "#bbc3ff",
+  ]);
+  const exampleLint2 = new newLint(examplePal2).run();
+  expect(exampleLint2.passes).toBe(false);
+  expect(exampleLint2.message).toMatchSnapshot();
+});
+
+test("ColorLint - CatOrderSimilarity", () => {
+  const examplePal = makePalFromHexes([
+    "#0084a9",
+    "#009de5",
+    "#8ca9fa",
+    "#bbc3ff",
+    "#ecddff",
+  ]);
+  const newLint = CreateCustomLint(CatOrderSimilarity);
+  const exampleLint = new newLint(examplePal).run();
+  expect(exampleLint.passes).toBe(true);
+  expect(exampleLint.message).toMatchSnapshot();
+
+  const examplePal2 = makePalFromHexes([
+    "#0084a9",
+    "#009de5",
+    "#5fb1ff",
+    "#bbc3ff",
+    "#ecddff",
+  ]);
+  const exampleLint2 = new newLint(examplePal2).run();
+  expect(exampleLint2.passes).toBe(false);
+  expect(exampleLint2.message).toMatchSnapshot();
+});
+
 test("ColorLint - ColorNameDiscriminability", async () => {
   const examplePal = makePalFromHexes(["#5260d1", "#005ebe"]);
-  const exampleLint = new ColorNameDiscriminability(examplePal).run();
+  const lint = CreateCustomLint(ColorNameDiscriminability);
+  const exampleLint = new lint(examplePal).run();
   expect(exampleLint.passes).toBe(false);
   expect(exampleLint.message).toBe(
-    "Color Name discriminability check failed. The following color names are repeated: Royalblue (#5260d1, #005ebe)"
+    "The following pairs of colors have the same name: #5260d1 and #005ebe"
   );
   const fix = await suggestLintFix(examplePal, exampleLint);
   const oldColorNames = unique<string>(
@@ -51,54 +187,44 @@ test("ColorLint - ColorBlind", async () => {
     "#00becf",
   ];
   const examplePal = makePalFromHexes(tableau10);
-  const cbDeuteranopia = CreateCustomLint(
-    BUILT_INS.find((x) => x.id === "colorblind-friendly-deuteranopia-built-in")!
-  );
+  const cbDeuteranopia = CreateCustomLint(ColorBlindness[0]);
   const exampleLint1 = new cbDeuteranopia(examplePal).run();
   expect(exampleLint1.passes).toBe(false);
   expect(exampleLint1.message).toMatchSnapshot();
 
-  const cbProtanopia = CreateCustomLint(
-    BUILT_INS.find((x) => x.id === "colorblind-friendly-protanopia-built-in")!
-  );
+  const cbProtanopia = CreateCustomLint(ColorBlindness[1]);
   const exampleLint2 = new cbProtanopia(examplePal).run();
   expect(exampleLint2.passes).toBe(false);
   expect(exampleLint2.message).toMatchSnapshot();
 
-  const cbTritanopia = CreateCustomLint(
-    BUILT_INS.find((x) => x.id === "colorblind-friendly-tritanopia-built-in")!
-  );
+  const cbTritanopia = CreateCustomLint(ColorBlindness[2]);
   const exampleLint3 = new cbTritanopia(examplePal).run();
   expect(exampleLint3.passes).toBe(false);
   expect(exampleLint3.message).toMatchSnapshot();
 
-  const cbGrayscale = CreateCustomLint(
-    BUILT_INS.find((x) => x.id === "colorblind-friendly-grayscale-built-in")!
-  );
+  const cbGrayscale = CreateCustomLint(ColorBlindness[3]);
   const exampleLint4 = new cbGrayscale(examplePal).run();
   expect(exampleLint4.passes).toBe(false);
   expect(exampleLint4.message).toMatchSnapshot();
 });
 
 const ughWhat = ["#00ffff", "#00faff", "#00e4ff", "#fdfdfc", "#00ffff"];
-test("ColorLint - BackgroundDifferentiability", async () => {
+test("ColorLint - Background Contrast", async () => {
   const examplePal = makePalFromHexes(ughWhat);
-  const BackgroundDifferentiability = CreateCustomLint(
-    BUILT_INS.find((x) => x.id === "background-contrast-built-in")!
-  );
-  const exampleLint = new BackgroundDifferentiability(examplePal).run();
+  const BackgroundContrastLint = CreateCustomLint(BackgroundContrast);
+  const exampleLint = new BackgroundContrastLint(examplePal).run();
   expect(exampleLint.passes).toBe(false);
   expect(exampleLint.message).toBe(
-    "This palette has some colors (#fdfdfc) that are close to the background color"
+    "These colors (#fdfdfc) do not have a sufficient contrast ratio with the background and may be hard to discriminate in some contexts."
   );
   const fix = await suggestLintFix(examplePal, exampleLint).then((x) => x[0]);
   expect(fix.colors.map((x) => x.toHex())).toMatchSnapshot();
 
   examplePal.background = Color.colorFromHex("#00e4ff", "lab");
-  const exampleLint2 = new BackgroundDifferentiability(examplePal).run();
+  const exampleLint2 = new BackgroundContrastLint(examplePal).run();
   expect(exampleLint2.passes).toBe(false);
   expect(exampleLint2.message).toBe(
-    "This palette has some colors (#0ff, #00faff, #00e4ff, #0ff) that are close to the background color"
+    "These colors (#00e4ff) do not have a sufficient contrast ratio with the background and may be hard to discriminate in some contexts."
   );
   const fix2 = await suggestLintFix(examplePal, exampleLint2).then((x) => x[0]);
   expect(fix2.colors.map((x) => x.toHex())).toMatchSnapshot();

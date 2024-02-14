@@ -1,5 +1,6 @@
 import { Color, colorPickerConfig } from "./Color";
 import type { PalType, Palette } from "../stores/color-store";
+import type { LintProgram } from "./lint-language/lint-type";
 import { Formatter, FracturedJsonOptions, EolStyle } from "fracturedjsonjs";
 
 const options = new FracturedJsonOptions();
@@ -12,6 +13,20 @@ formatter.Options = options;
 
 export function JSONStringify(obj: string) {
   return formatter.Reformat(obj);
+}
+export function JSONToPrettyString(program: LintProgram) {
+  return JSONStringify(JSON.stringify(program));
+}
+
+export function makePalFromHexes(hexes: string[]): Palette {
+  return {
+    colors: hexes.map((hex) => Color.colorFromHex(hex, "lab")),
+    background: Color.colorFromHex("#ffffff", "lab"),
+    name: "test",
+    type: "categorical",
+    evalConfig: {},
+    colorSpace: "lab",
+  };
 }
 
 export const pick = (arr: any[]) => arr[Math.floor(Math.random() * arr.length)];

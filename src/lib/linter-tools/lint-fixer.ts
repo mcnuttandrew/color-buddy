@@ -1,16 +1,15 @@
 import type { Palette } from "../../stores/color-store";
 import { suggestFix } from "../api-calls";
 import type { LintResult } from "../lints/ColorLint";
-import { manualLints } from "../linter";
 import { Color } from "../Color";
 
 export async function suggestLintAIFix(
   palette: Palette,
-  message: string,
+  lint: LintResult,
   engine: string
 ) {
   const colorSpace = palette.colorSpace;
-  return suggestFix(palette, message, engine as any).then((x) => {
+  return suggestFix(palette, lint.message, engine as any).then((x) => {
     if (x.length === 0) {
       throw new Error("No suggestions");
     }
@@ -30,23 +29,28 @@ export async function suggestLintAIFix(
   });
 }
 
-const fixDirectory: Record<string, any> = {};
-manualLints.forEach((x) => {
-  const demo = new x({} as any);
-  const name = demo.name;
-  if (demo.hasHeuristicFix) {
-    fixDirectory[name] = x.suggestFix;
-  }
-});
+export type LintFixer = (pal: Palette, lint: LintResult) => Promise<Palette[]>;
+import { fixBackgroundDifferentiability } from "../lints/background-contrast";
+import { fixDivergingOrder } from "../lints/diverging-order";
+import { fixColorNameDiscriminability } from "../lints/name-discrim";
+import { fixSequentialOrder } from "../lints/sequential-order";
+import { fixMaxColors } from "../lints/max-colors";
+const fixDirectory: Record<string, LintFixer> = {
+  fixBackgroundDifferentiability,
+  fixDivergingOrder,
+  fixColorNameDiscriminability,
+  fixSequentialOrder,
+  fixMaxColors,
+};
 
 export async function suggestLintFix(
   palette: Palette,
   lint: LintResult,
   _engine?: string
 ): Promise<Palette[]> {
-  if (fixDirectory[lint.name]) {
-    return fixDirectory[lint.name](palette);
+  if (fixDirectory[lint.subscribedFix]) {
+    return fixDirectory[lint.subscribedFix](palette, lint);
   }
-  console.log("check failed", lint.name, fixDirectory);
+  console.log("check failed", lint, fixDirectory);
   return [];
 }

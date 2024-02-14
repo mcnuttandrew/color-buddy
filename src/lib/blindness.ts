@@ -111,10 +111,15 @@ function dl_simulate_cvd(
   return brettelFunctions[deficiency](color);
 }
 
+const simulationCache = new Map<string, Color>();
 export default function simulate_cvd(
   deficiency: DLDeficiency,
   color: Color
 ): Color {
+  const key = deficiency + color.toString();
+  if (simulationCache.has(key)) {
+    return simulationCache.get(key)!;
+  }
   const colorIOcolor = color.toColorIO();
   const isachroma =
     deficiency == "achromatopsia" || deficiency == "achromatomaly";
@@ -124,5 +129,7 @@ export default function simulate_cvd(
   const newCoords = dl_simulate_cvd(deficiency, coords);
   const newColorIO = new ColorIO(spaceName, newCoords).to(color.spaceName);
 
-  return color.fromChannels(newColorIO.coords);
+  const result = color.fromChannels(newColorIO.coords);
+  simulationCache.set(key, result);
+  return result;
 }

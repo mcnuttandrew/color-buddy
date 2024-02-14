@@ -70,6 +70,7 @@
             "contrast": {
               "type": "object",
               "additionalProperties": false,
+              "description": "Compute the contrast between two colors using a given algorithm. The algorithm can be APCA, WCAG21, Michelson, Weber, Lstar or DeltaPhi.",
               "properties": {
                 "left": { "$ref": "#/definitions/LintRef" },
                 "right": { "$ref": "#/definitions/LintRef" },

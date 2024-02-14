@@ -4,5 +4,6 @@ export default defineConfig({
   test: {
     setupFiles: ["@vitest/web-worker"],
     environment: "jsdom",
+    includeSource: ["src/**/*.{js,ts}"],
   },
 });

@@ -583,10 +583,27 @@ const getOp =
     ops.find((x) => {
       const pk = node[x.primaryKey];
       if (!pk) return false;
+      // special short circuit bc theres a collision between Color and name
+      if (node.spaceName) {
+        return false;
+      }
       const allParamsFound = x.params.every((key) => key in node);
       const noExtraParams = Object.keys(node).every(
         (key) => x.params.includes(key) || key === x.primaryKey
       );
+      const allowedParamsMessage = x.params.length
+        ? `Allowed params are ${x.params.map((x) => `"${x}"`).join(", ")}`
+        : "No params allowed" + Object.keys(node);
+      if (!allParamsFound) {
+        throw new Error(
+          `Missing params for ${x.primaryKey}. ${allowedParamsMessage}`
+        );
+      }
+      if (!noExtraParams) {
+        throw new Error(
+          `Extra params for ${x.primaryKey}. ${allowedParamsMessage}`
+        );
+      }
       return allParamsFound && noExtraParams;
     });
 const getParams = (op: any, node: any) =>
@@ -603,13 +620,16 @@ const LLPairFunctionTypes = [
     primaryKey: "deltaE",
     params: ["algorithm"] as string[],
     op: (valA: Color, valB: Color, params: Params) =>
-      valA.deltaE(valB, params.algorithm as any),
+      valA.symmetricDeltaE(valB, params.algorithm as any),
   },
   {
     primaryKey: "contrast",
     params: ["algorithm"] as string[],
-    op: (valA: Color, valB: Color, params: Params) =>
-      valA.toColorIO().contrast(valB.toColorIO(), params.algorithm as any),
+    op: (valA: Color, valB: Color, params: Params) => {
+      const a = valA.toColorIO();
+      const b = valB.toColorIO();
+      return Math.abs(a.contrast(b, params.algorithm as any));
+    },
   },
 ];
 export class LLPairFunction extends LLNode {
@@ -681,7 +701,7 @@ export class LLQuantifier extends LLNode {
   evaluate(env: Environment) {
     this.evalCheck(env);
     // weird restoration of type information to make the forward stuff work
-    const type = tryTypes([LLValueArray, LLValue], env.options);
+    const type = tryTypes([LLValueArray, LLValue, LLMap], env.options);
     const idxType = tryTypes([LLValue], env.options);
     // materialize all combinations of the variables for each of the inputs
     const inputData = this.input
@@ -801,7 +821,7 @@ const reduceTypes = [
 export class LLReduces extends LLNode {
   constructor(
     private type: (typeof reduceTypes)[number],
-    private children: LLValueArray | LLVariable
+    private children: LLValueArray | LLVariable | LLMap
   ) {
     super();
   }
@@ -855,13 +875,13 @@ export class LLReduces extends LLNode {
   }
 }
 
-const mapTypes = ["map", "filter", "sort"] as const;
+const mapTypes = ["map", "filter", "sort", "reverse"] as const;
 // example syntax
 // {map: colors, func: {cvdSim: {type: "protanomaly"}}, varb: "x"}
 export class LLMap extends LLNode {
   constructor(
     private type: (typeof mapTypes)[number],
-    private children: LLValueArray | LLVariable,
+    private children: LLValueArray | LLVariable | LLMap,
     private func: LLValueFunction | LLPairFunction | LLNumberOp,
     private varb: string
   ) {
@@ -886,22 +906,29 @@ export class LLMap extends LLNode {
       case "filter":
         return { result: children.filter(evalFunc), env };
       case "sort":
-        return {
-          result: children.map(evalFunc).sort(),
-          env,
-        };
+        const childrenCopy = [...children].map(evalFunc);
+        childrenCopy.sort();
+        return { result: childrenCopy, env };
+      case "reverse":
+        const childrenCopy2 = [...children];
+        childrenCopy2.reverse();
+        return { result: childrenCopy2, env };
     }
   }
   static tryToConstruct(node: any, options: OptionsConfig) {
     const op = mapTypes.find((x) => node[x]);
     if (!op) return false;
-
     const childType =
-      node[op] && tryTypes([LLValueArray, LLVariable], options)(node[op]);
-    const varb = node.varb;
+      node[op] &&
+      tryTypes([LLValueArray, LLVariable, LLMap], options)(node[op]);
+    let varb = node.varb;
     let func;
     if (op === "filter") {
       func = tryTypes([LLExpression], options)(node.func);
+    } else if (op === "reverse") {
+      // reverse doesn't take any arguments besides the target
+      varb = " ";
+      func = " ";
     } else {
       func = tryTypes(
         [LLValueFunction, LLPairFunction, LLNumberOp],
@@ -932,7 +959,6 @@ function parseToAST(root: any, options: OptionsConfig) {
 const DEFAULT_OPTIONS = {
   debugParse: false,
   debugEval: false,
-  stages: false,
   debugCompare: false,
 };
 export function LLEval(
@@ -944,10 +970,7 @@ export function LLEval(
 
   const inputEnv = new Environment(palette, {}, opts, {});
   const ast = parseToAST({ id: [root] }, opts);
-  if (options.stages) {
-    console.log(ast.toString());
-    console.log("EVALUATION EVALUATION EVALUATION EVALUATION");
-  }
+
   const { result, env } = ast.evaluate(inputEnv);
   const blame = Object.entries(env.colorBlame)
     .filter((x) => x[1])

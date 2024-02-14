@@ -17,10 +17,14 @@ First time you start it up you should also run `yarn prep data`
 - [ ] Tour?
 - [ ] roles, palette level semantics
 - [ ] Design adjustments for smaller screens
+- [ ] Language Docs??
 - [x] Make lints fast / non blocking as much as possible
 
 # Language todos
 
+- [ ] Clone Rule
+- [ ] "No out of gamut"
+- [ ] Affect rules
 - [ ] Add more blame robustness, may pay to try to reason across all of the operator families (insight: keep a list of the blamable variables in the environment to support tracing)
 - [ ] per cols 4 all: color blindness metric should maybe be sensitive to task?
 - [ ] Sequential check fix is incorrect for things with equi-ligthness
@@ -28,22 +32,26 @@ First time you start it up you should also run `yarn prep data`
 
 # General Todos
 
-- [ ] Make name discrim hueristc fix more resilient
+- [ ] Merge the info and fixes tooltips in the lints
+- [ ] Color Space selections should persist
+- [ ] Make name discrim hueristc fix more resilient, see switching to basic colors
 - [ ] Search palettes-by-lint screen
 - [ ] Drag to re-order points?
 - [ ] off by one persistance error in undo/redo
 - [ ] Changing spaces is pretty bad on lab <-> oklab, cf ("#35ffbf", "#87b995", "#e84f82")
 - [ ] "Easy on ramp" progressive disclosure
 - [ ] Labels, tooltips, etc
+- [ ] Handles get stuck on channel picker again, ugh
 - [ ] Bug: Color channel usage slightly cursed (doesn't update positions correctly)
 - [ ] Bug: rotate in polar coordinates doesn't work right
 - [ ] Performance stuff for linter (separate message generation into something very throttled, maybe move to web workers? Cache as hard as possible)
+- [ ] LCH colors upside down god damn it
 
 Parameterization epic:
 
 - [ ] Allow no palettes, allows renaming of non-current palettes, which would be enable by:
 - [ ] Parameterize the scatter column completely, allow edits to the compare stuff
-- [ ] Hover broken on compare
+- [ ] Hover broken on compare, also make sure it takes the right stringify (same as the color channel)
 - [ ] Select compare from palettes drop down menu
 
 # Nice to have

@@ -61,6 +61,7 @@ type LintPairOps =
 type LintMap =
   // | { map: LintVariable | LintValue[]; func: LintColorFunction | LintPairOps }
   // | { sort: LintVariable | LintValue[]; func: LintColorFunction | LintPairOps }
+  // | {reverse: LintVariable | LintValue[]}
   { filter: LintVariable | LintValue[]; func: LintExpression };
 
 type LintReduce = Record<

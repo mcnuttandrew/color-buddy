@@ -10,6 +10,7 @@
   import { CreateCustomLint } from "../lib/lints/CustomLint";
   import { buttonStyle } from "../lib/styles";
   import { JSONStringify } from "../lib/utils";
+  import type { CustomLint } from "../lib/lints/CustomLint";
 
   $: lint = $lintStore.lints.find(
     (lint) => lint.id === $lintStore.focusedLint
@@ -23,17 +24,18 @@
   $: currentPal = $colorStore.palettes[$colorStore.currentPal];
   // run this lint
   let errors: any = null;
-  function runLint(lint: any) {
+  function runLint(lint: CustomLint, options: any) {
     try {
       const customLint = CreateCustomLint(lint);
-      const result = new customLint(currentPal).run();
+      const result = new customLint(currentPal).run(options);
       errors = null;
       return result;
     } catch (e) {
       errors = e;
     }
   }
-  $: lintRun = runLint(lint);
+  let debugCompare = false;
+  $: lintRun = runLint(lint, { debugCompare });
   let showDoubleCheck = false;
   $: currentTaskTypes = lint.taskTypes as string[];
   $: checkData = lintRun?.checkData || [];
@@ -250,6 +252,16 @@
         }}
         language="json"
       />
+      <div>
+        Show Compare Debug In Terminal
+        <Nav
+          tabs={["Show", "Hide"]}
+          isTabSelected={(x) => (debugCompare ? "Show" : "Hide") === x}
+          selectTab={(x) => {
+            debugCompare = x === "Show";
+          }}
+        />
+      </div>
     </div>
   </Modal>
 {/if}

@@ -48,6 +48,7 @@ Color Manipulations:
 Maps:
 {map: Variable | Value[], func: Operation, varb: Variable}
 {sort: Variable | Value[], func: Operation, varb: Variable}
+{reverse: Variable | Value[]}
 {filter: Variable | Value[], func: EXPR, varb: Variable}
 
 ```yaml

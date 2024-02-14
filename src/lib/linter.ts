@@ -1,29 +1,13 @@
 import { ColorLint } from "./lints/ColorLint";
 import type { Palette } from "../stores/color-store";
 
-import NameDiscrim from "./lints/name-discrim";
 import Discrims from "./lints/size-discrim";
-import ColorSimilarity from "./lints/color-similarity";
-import BackgroundDifferentiability from "./lints/background-differentiability";
-import SequentialOrder from "./lints/sequential-order";
 import DivergingOrder from "./lints/diverging-order";
-// import BackgroundContrast from "./lints/contrast";
-import Fair from "./lints/fair";
 import EvenDistribution from "./lints/even-distribution";
 import type { CustomLint } from "./lints/CustomLint";
 import { CreateCustomLint } from "./lints/CustomLint";
 
-export const manualLints = [
-  NameDiscrim,
-  ...Discrims,
-  ColorSimilarity,
-  BackgroundDifferentiability,
-  SequentialOrder,
-  DivergingOrder,
-  // BackgroundContrast,
-  ...Fair,
-  // EvenDistribution,
-];
+export const manualLints = [...Discrims, DivergingOrder];
 
 export function runLintChecks(
   palette: Palette,

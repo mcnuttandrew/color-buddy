@@ -12,12 +12,11 @@ First time you start it up you should also run `yarn prep data`
 
 # User study burn down
 
-- [ ] Make deactivation story make sense in new context
-- [ ] Get most of the lints converted
 - [ ] Tour?
 - [ ] roles, palette level semantics
 - [ ] Design adjustments for smaller screens
 - [ ] Language Docs??
+- [x] Get most of the lints converted
 - [x] Make lints fast / non blocking as much as possible
 
 # Language todos

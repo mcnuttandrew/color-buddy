@@ -1,7 +1,5 @@
-// import { Color } from "../Color";
-// import { ColorLint } from "./ColorLint";
-// import type { TaskType } from "./ColorLint";
-
+import { JSONToPrettyString } from "../utils";
+import type { CustomLint } from "../CustomLint";
 // based on
 // https://github.com/connorgr/d3-jnd/blob/master/src/jnd.js
 
@@ -30,9 +28,6 @@ function jndLabInterval(p: pType, s: sType) {
   const sVal = typeof s === "number" ? s : sMap[s] || sMap["default"];
   return nd(pVal, sVal);
 }
-
-import { JSONToPrettyString } from "../utils";
-import type { CustomLint } from "../CustomLint";
 
 const lints: CustomLint[] = ["Thin", "Medium", "Wide"].map((key) => {
   const p = "default";

@@ -596,7 +596,7 @@ const getOp =
       }
       const allParamsFound = x.params.every((key) => key in node);
       const noExtraParams = Object.keys(node).every(
-        (key) => x.params.includes(key) || key === x.primaryKey
+        (key) => (x.params as string[]).includes(key) || key === x.primaryKey
       );
       const allowedParamsMessage = x.params.length
         ? `Allowed params are ${x.params.map((x) => `"${x}"`).join(", ")}`
@@ -909,11 +909,11 @@ export class LLMap extends LLNode {
     // implicitly ignore the pass back i guess?
     switch (this.type) {
       case "map":
-        return { result: children.map(evalFunc), env };
+        return { result: children.map(evalFunc) as RawValues[], env };
       case "filter":
         return { result: children.filter(evalFunc), env };
       case "sort":
-        const childrenCopy = [...children].map(evalFunc);
+        const childrenCopy = [...children].map(evalFunc) as RawValues[];
         childrenCopy.sort();
         return { result: childrenCopy, env };
       case "reverse":

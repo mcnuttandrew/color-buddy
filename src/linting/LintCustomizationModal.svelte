@@ -42,6 +42,7 @@
   $: currentTaskTypes = lint?.taskTypes || ([] as string[]);
   $: checkData = lintRun?.checkData || [];
   $: pairData = checkData as number[][];
+  const taskTypes = ["sequential", "diverging", "categorical"] as const;
 </script>
 
 {#if lint}
@@ -141,7 +142,7 @@
       <div class="flex">
         <div>Lint Task Types:</div>
         <div class="flex">
-          {#each ["sequential", "diverging", "categorical"] as taskType}
+          {#each taskTypes as taskType}
             <div class="flex items-center">
               <label>
                 <input

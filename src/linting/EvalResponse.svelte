@@ -63,7 +63,7 @@
 </script>
 
 <Tooltip positionAlongRightEdge={true}>
-  <div slot="content" let:onClick class="max-w-2xl min-w-lg">
+  <div slot="content" let:onClick class="max-w-2xl eval-tooltip">
     <div class="font-bold">{check.name}</div>
     {#if check.passes}
       <div class="text-sm">{check.description}</div>
@@ -149,3 +149,9 @@
     {:else if check.passes}info{:else}fixes{/if}
   </button>
 </Tooltip>
+
+<style>
+  .eval-tooltip {
+    min-width: 500px;
+  }
+</style>

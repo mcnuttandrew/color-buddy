@@ -37,6 +37,12 @@ export class Color {
       .join(", ");
     return `${this.spaceName}(${channelsString})`;
   }
+  prettyChannels(): string[] {
+    return Object.values(this.channels).map((x) => this.axisLabel(x));
+  }
+  toPrettyString(): string {
+    return `${this.spaceName}(${this.prettyChannels().join(", ")})`;
+  }
   getChannel(channel: keyof typeof this.channels): number {
     let channelStr = channel.toLowerCase() as string;
     if (!(channelStr in this.channels)) {
@@ -225,6 +231,10 @@ class CIELAB extends Color {
     const [L, a, b] = this.stringChannels();
     return `lab(${L}% ${a} ${b})`;
   }
+  toPrettyString(): string {
+    const [L, a, b] = this.prettyChannels();
+    return `lab(${L}% ${a} ${b})`;
+  }
 }
 class HSV extends Color {
   name = "HSV";
@@ -237,6 +247,10 @@ class HSV extends Color {
   toString(): string {
     const [h, s, v] = this.stringChannels();
     return `color(hsv ${h} ${s} ${v})`;
+  }
+  toPrettyString(): string {
+    const [h, s, v] = this.prettyChannels();
+    return `hsv(${h} ${s}% ${v}%)`;
   }
 }
 
@@ -251,6 +265,10 @@ class RGB extends Color {
   axisLabel = (num: number) => `${Math.round(num)}`;
   toString(): string {
     const [r, g, b] = this.stringChannels();
+    return `rgb(${r} ${g} ${b})`;
+  }
+  toPrettyString(): string {
+    const [r, g, b] = this.prettyChannels();
     return `rgb(${r} ${g} ${b})`;
   }
 }
@@ -268,6 +286,10 @@ class SRGB extends Color {
     const [r, g, b] = this.stringChannels();
     return `rgb(${Number(r) * 255} ${Number(g) * 255} ${Number(b) * 255})`;
   }
+  toPrettyString(): string {
+    const [r, g, b] = this.prettyChannels();
+    return `rgb(${Number(r) * 255} ${Number(g) * 255} ${Number(b) * 255})`;
+  }
 }
 
 class HSL extends Color {
@@ -282,6 +304,10 @@ class HSL extends Color {
 
   toString(): string {
     const [h, s, l] = this.stringChannels();
+    return `hsl(${h} ${s}% ${l}%)`;
+  }
+  toPrettyString(): string {
+    const [h, s, l] = this.prettyChannels();
     return `hsl(${h} ${s}% ${l}%)`;
   }
 }
@@ -329,6 +355,10 @@ class JZAZBZ extends Color {
   toString(): string {
     const [jz, az, bz] = Object.values(this.channels);
     return `color(jzazbz ${jz} ${az} ${bz})`;
+  }
+  toPrettyString(): string {
+    const [jz, az, bz] = this.prettyChannels();
+    return `jzazbz(${jz} ${az} ${bz})`;
   }
 }
 

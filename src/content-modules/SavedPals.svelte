@@ -1,6 +1,7 @@
 <script lang="ts">
   import colorStore from "../stores/color-store";
   import focusStore from "../stores/focus-store";
+  import configStore from "../stores/config-store";
 
   import PalPreview from "../components/PalPreview.svelte";
 
@@ -29,6 +30,16 @@
         </div>
         <Tooltip>
           <div slot="content" let:onClick class="flex flex-col">
+            <button
+              class={buttonStyle}
+              on:click={() => {
+                configStore.setComparePal(i);
+                configStore.setRoute("compare");
+                onClick();
+              }}
+            >
+              Compare with current
+            </button>
             <button
               class={buttonStyle}
               on:click={() => colorStore.duplicatePal(i)}

@@ -71,7 +71,7 @@
   };
   $: arcScale = arc();
   $: angleScale = scaleLinear()
-    .domain([0, angleBgResolution])
+    .domain([angleBgResolution, 0])
     .range([0, Math.PI * 2]);
 </script>
 

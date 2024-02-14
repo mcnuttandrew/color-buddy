@@ -227,14 +227,15 @@
   };
 
   let switchToDragPoint = (i: number) => (e: any) => {
-    if (interactionMode === "idle") {
-      hoveredIndex = i;
-    }
     if (interactionMode !== "point-touch") return;
     startDragging();
     // console.log("switch to drag point");
     onFocusedColorsChange([i]);
     interactionMode = "drag";
+  };
+
+  let hoverPoint = (i: number) => {
+    hoveredIndex = i;
   };
 
   const fillParamsXY = {
@@ -358,10 +359,14 @@
                   on:mousedown|preventDefault={pointMouseDown}
                   on:mouseup|preventDefault={pointMouseUp(i)}
                   on:mouseleave|preventDefault={switchToDragPoint(i)}
+                  on:mouseenter|preventDefault={() => hoverPoint(i)}
                 />
               {/if}
               {#if scatterPlotMode !== "moving"}
-                <circle {...CircleProps(color, i)} />
+                <circle
+                  {...CircleProps(color, i)}
+                  on:mouseenter|preventDefault={() => hoverPoint(i)}
+                />
               {/if}
               {#if !color.inGamut() && $configStore.showGamutMarkers}
                 <GamutMarker
@@ -396,18 +401,9 @@
                 on:mousedown|preventDefault={pointMouseDown}
                 on:mouseup|preventDefault={pointMouseUp(i)}
                 on:mouseleave|preventDefault={switchToDragPoint(i)}
+                on:mouseenter|preventDefault={() => hoverPoint(i)}
               />
             {/each}
-            <!-- simple tooltip -->
-            <!-- {#if hoveredPoint}
-              <g
-                transform={`translate(${x(hoveredPoint) + 5}, ${
-                  y(hoveredPoint) - 5
-                })`}
-              >
-                <text fill={textColor}>{hoveredPoint.toDisplay()}</text>
-              </g>
-            {/if} -->
             <!-- selection target -->
             {#if focusedColors.length > 0}
               <rect
@@ -495,18 +491,26 @@
           <g transform={`translate(${margin.left}, ${margin.top})`}>
             <!-- main colors -->
             {#each colors as color, i}
-              <rect
-                {...RectProps(color, i)}
-                on:mousedown|preventDefault={pointMouseDown}
-                on:mouseup|preventDefault={pointMouseUp(i)}
-                on:mouseleave|preventDefault={switchToDragPoint(i)}
-                on:touchstart|preventDefault={(e) => {
-                  onFocusedColorsChange([i]);
-                  dragStart(e);
-                }}
-                on:touchmove|preventDefault={dragUpdate(true)}
-                on:touchend|preventDefault={pointMouseUp(i)}
-              />
+              {#if scatterPlotMode === "moving"}
+                <rect
+                  {...RectProps(color, i)}
+                  on:mousedown|preventDefault={pointMouseDown}
+                  on:mouseup|preventDefault={pointMouseUp(i)}
+                  on:mouseleave|preventDefault={switchToDragPoint(i)}
+                  on:touchstart|preventDefault={(e) => {
+                    onFocusedColorsChange([i]);
+                    dragStart(e);
+                  }}
+                  on:touchmove|preventDefault={dragUpdate(true)}
+                  on:touchend|preventDefault={pointMouseUp(i)}
+                  on:mouseenter|preventDefault={() => hoverPoint(i)}
+                />
+              {:else}
+                <rect
+                  {...RectProps(color, i)}
+                  on:mouseenter|preventDefault={() => hoverPoint(i)}
+                />
+              {/if}
             {/each}
             {#each blindColors as color, i}
               <rect
@@ -522,6 +526,7 @@
                 on:touchend|preventDefault={pointMouseUp(i)}
                 on:touchmove|preventDefault={dragUpdate(true)}
                 on:mouseleave|preventDefault={switchToDragPoint(i)}
+                on:mouseenter|preventDefault={() => hoverPoint(i)}
               />
             {/each}
             <!-- selection target -->
@@ -575,7 +580,7 @@
 <div class="flex items-center text-sm w-full justify-center">
   {#if typeof hoveredPoint !== "boolean"}
     Hovered point:
-    {hoveredPoint.toString()} -
+    {hoveredPoint.toPrettyString()} -
     {hoveredPoint.toHex()}
     <div
       class="h-4 w-4 rounded-full"

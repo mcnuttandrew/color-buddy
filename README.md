@@ -21,7 +21,6 @@ First time you start it up you should also run `yarn prep data`
 
 # Language todos
 
-- [ ] Clone Rule
 - [ ] Affect rules
 - [ ] Add more blame robustness, may pay to try to reason across all of the operator families (insight: keep a list of the blamable variables in the environment to support tracing)
 - [ ] per cols 4 all: color blindness metric should maybe be sensitive to task?
@@ -44,6 +43,7 @@ First time you start it up you should also run `yarn prep data`
 - [ ] Bug: Color channel usage slightly cursed (doesn't update positions correctly)
 - [ ] Bug: rotate in polar coordinates doesn't work right
 - [ ] LCH colors upside down god damn it
+- [x] Clone Rule
 - [x] Compact more compact
 - [x] Performance stuff for linter (separate message generation into something very throttled, maybe move to web workers? Cache as hard as possible)
 - [x] Merge the info and fixes tooltips in the lints

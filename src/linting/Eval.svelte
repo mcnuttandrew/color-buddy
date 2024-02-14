@@ -14,11 +14,13 @@
   import { debounce } from "vega";
   import { titleCase } from "../lib/utils";
 
+  import { loadLints } from "../lib/api-calls";
+
   $: currentPal = $colorStore.palettes[$colorStore.currentPal];
   $: evalConfig = currentPal.evalConfig;
   $: checks = [] as ColorLint<any, any>[];
   $: selectedLint = $lintStore.focusedLint;
-  $: updateSearchDebounced = debounce(100, (pal: any) => {
+  $: updateSearchDebounced = debounce(10, (pal: any) => {
     if (!selectedLint) {
       lint(pal).then((res) => {
         checks = res;
@@ -114,6 +116,16 @@
     </div>
   </div>
   {#if $lintStore.focusedLint !== false}
-    <LintCustomizationModal />
+    <LintCustomizationModal
+      onClose={() => {
+        setTimeout(() => {
+          loadLints()
+            .then(() => lint(currentPal))
+            .then((res) => {
+              checks = res;
+            });
+        }, 100);
+      }}
+    />
   {/if}
 </div>

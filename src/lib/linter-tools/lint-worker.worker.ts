@@ -35,13 +35,15 @@ const hydratePal = (pal: string): Palette => {
 let lintStore: CustomLint[] = [];
 let storeLoaded = false;
 const storeName = "color-pal-lints";
-const simpleLintCache = new Map<string, any>();
+let simpleLintCache = new Map<string, any>();
 async function dispatch(cmd: Command) {
   switch (cmd.type) {
     case "load-lints":
       idb.get(storeName).then((x) => {
         lintStore = x.lints;
         storeLoaded = true;
+        // gotta dump the cache when new lints are loaded
+        simpleLintCache = new Map<string, any>();
         return "";
       });
       return "";

@@ -12,6 +12,8 @@
   import { JSONStringify } from "../lib/utils";
   import type { CustomLint } from "../lib/CustomLint";
 
+  export let onClose: () => void;
+
   $: lint = $lintStore.lints.find(
     (lint) => lint.id === $lintStore.focusedLint
   )!;
@@ -37,7 +39,7 @@
   let debugCompare = false;
   $: lintRun = runLint(lint, { debugCompare });
   let showDoubleCheck = false;
-  $: currentTaskTypes = lint.taskTypes as string[];
+  $: currentTaskTypes = lint?.taskTypes || ([] as string[]);
   $: checkData = lintRun?.checkData || [];
   $: pairData = checkData as number[][];
 </script>
@@ -47,6 +49,7 @@
     showModal={true}
     closeModal={() => {
       lintStore.setFocusedLint(false);
+      onClose();
     }}
   >
     <div class="flex flex-col container">
@@ -69,6 +72,7 @@
               <button
                 on:click={() => {
                   lintStore.deleteLint(lint.id);
+                  onClose();
                   lintStore.setFocusedLint(false);
                 }}
                 class={buttonStyle}
@@ -90,6 +94,16 @@
               Delete this lint
             </button>
           {/if}
+          <button
+            class={buttonStyle}
+            on:click={() => {
+              lintStore.cloneLint(lint.id);
+              onClose();
+              lintStore.setFocusedLint(false);
+            }}
+          >
+            Clone this lint
+          </button>
         </div>
       </div>
       <div class="flex">

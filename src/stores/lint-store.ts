@@ -94,6 +94,17 @@ function createStore() {
         ...old,
         lints: [...old.lints, newLint(newLintFrag)],
       })),
+    cloneLint: (id: string) =>
+      persistUpdate((old) => {
+        const lint = old.lints.find((x) => x.id === id);
+        if (!lint) {
+          return old;
+        }
+        return {
+          ...old,
+          lints: [...old.lints, { ...lint, id: Math.random().toString() }],
+        };
+      }),
   };
 }
 

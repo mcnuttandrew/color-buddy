@@ -152,6 +152,7 @@
         {
           "type": "object",
           "additionalProperties": false,
+          "description": "Simulate color vision deficiency. The type can be protanomaly, deuteranomaly, tritanopia or grayscale.",
           "properties": {
             "cvdSim": { "$ref": "#/definitions/LintVariable" },
             "type": {
@@ -165,7 +166,12 @@
           },
           "required": ["cvdSim", "type"]
         },
-        { "$ref": "#/definitions/LintVariable" },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": { "inGamut": { "$ref": "#/definitions/LintVariable" } },
+          "required": ["inGamut"]
+        },
         {
           "type": "object",
           "additionalProperties": false,

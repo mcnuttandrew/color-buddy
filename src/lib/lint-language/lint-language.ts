@@ -525,6 +525,11 @@ const VFTypes = [
     op: (val: Color, params: Params) =>
       val.toColorSpace(params.space as any).getChannel(params.channel),
   },
+  {
+    primaryKey: "inGamut",
+    params: [],
+    op: (val: Color, _params: Params) => val.inGamut(),
+  },
 ];
 
 Object.entries(colorPickerConfig).map(([colorSpace, value]) => {

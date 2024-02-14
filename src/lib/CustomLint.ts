@@ -4,7 +4,7 @@ import {
   LLEval,
   prettyPrintLL,
   permutativeBlame,
-} from "../lint-language/lint-language";
+} from "./lint-language/lint-language";
 
 import * as Json from "jsonc-parser";
 export interface CustomLint {

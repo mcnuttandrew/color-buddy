@@ -3,7 +3,7 @@
 // import type { TaskType } from "./ColorLint";
 // import { extent } from "../utils";
 import { JSONToPrettyString } from "../utils";
-import type { CustomLint } from "./CustomLint";
+import type { CustomLint } from "../CustomLint";
 
 // magic numbers supplied by the paper
 const cRangeUnfair = 80;

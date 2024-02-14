@@ -1,5 +1,5 @@
 import { JSONToPrettyString } from "../utils";
-import type { CustomLint } from "./CustomLint";
+import type { CustomLint } from "../CustomLint";
 import { Color } from "../Color";
 import type { Palette } from "../../stores/color-store";
 import type { LintFixer } from "../linter-tools/lint-fixer";

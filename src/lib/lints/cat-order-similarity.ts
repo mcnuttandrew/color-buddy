@@ -1,5 +1,5 @@
 import { JSONToPrettyString } from "../utils";
-import type { CustomLint } from "./CustomLint";
+import type { CustomLint } from "../CustomLint";
 
 const lint: CustomLint = {
   name: "Colors distinguishable in order",

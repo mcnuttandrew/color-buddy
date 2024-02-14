@@ -1,5 +1,5 @@
-import { ColorLint } from "./ColorLint";
-import type { TaskType } from "./ColorLint";
+import { ColorLint } from "../ColorLint";
+import type { TaskType } from "../ColorLint";
 import { Color } from "../Color";
 import type { Palette } from "../../stores/color-store";
 import type { LintFixer } from "../linter-tools/lint-fixer";

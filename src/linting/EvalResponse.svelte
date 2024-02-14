@@ -3,7 +3,7 @@
   import colorStore from "../stores/color-store";
   import focusStore from "../stores/focus-store";
   import configStore from "../stores/config-store";
-  import type { LintResult } from "../lib/lints/ColorLint";
+  import type { LintResult } from "../lib/ColorLint";
   import type { Palette } from "../stores/color-store";
   import PalDiff from "../components/PalDiff.svelte";
   import {

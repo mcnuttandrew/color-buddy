@@ -1,5 +1,5 @@
-import { ColorLint } from "./ColorLint";
-import type { TaskType } from "./ColorLint";
+import { ColorLint } from "../ColorLint";
+import type { TaskType } from "../ColorLint";
 
 const sum = (arr: number[]) => arr.reduce((acc, val) => acc + val, 0);
 

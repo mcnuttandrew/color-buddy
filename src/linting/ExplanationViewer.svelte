@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { ColorLint } from "../lib/lints/ColorLint";
+  import { ColorLint } from "../lib/ColorLint";
   import focusStore from "../stores/focus-store";
   import colorStore from "../stores/color-store";
   export let check: ColorLint<any, any>;

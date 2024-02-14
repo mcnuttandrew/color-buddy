@@ -1,9 +1,9 @@
 import { expect, test } from "vitest";
 
 import { Color } from "./Color";
-import { makePalFromHexes } from "./utils";
+import type { Palette } from "../stores/color-store";
 
-import { CreateCustomLint } from "./lints/CustomLint";
+import { CreateCustomLint } from "./CustomLint";
 import { suggestLintFix } from "./linter-tools/lint-fixer";
 
 // Lints
@@ -14,25 +14,49 @@ import ColorBlindness from "./lints/color-blindness";
 import ColorNameDiscriminability, { getName } from "./lints/name-discrim";
 import Discrims from "./lints/size-discrim";
 import Fair from "./lints/fair";
+import Gamut from "./lints/in-gamut";
 import MaxColors from "./lints/max-colors";
 import MutuallyDistinct from "./lints/mutually-distinct";
 import SequentialOrder from "./lints/sequential-order";
 import UglyColors from "./lints/ugly-colors";
 
+function makePalFromHexes(hexes: string[]): Palette {
+  return {
+    colors: hexes.map((hex) => Color.colorFromHex(hex, "lab")),
+    background: Color.colorFromHex("#ffffff", "lab"),
+    name: "test",
+    type: "categorical",
+    evalConfig: {},
+    colorSpace: "lab",
+  };
+}
+function makePalFromString(strings: string[]): Palette {
+  return {
+    colors: strings.map((str) => Color.colorFromString(str, "lab")),
+    background: Color.colorFromString("#ffffff", "lab"),
+    name: "test",
+    type: "categorical",
+    evalConfig: {},
+    colorSpace: "lab",
+  };
+}
 const unique = <T>(arr: T[]): T[] => [...new Set(arr)];
 
 test("ColorLint - AvoidExtremes", () => {
   const examplePal = makePalFromHexes([
     "#000000",
     "#ffffff",
-    "#ff0000",
+    "#ff7e0e",
     "#00ff00",
+    "#0084a9",
     "#0000ff",
   ]);
   const newLint = CreateCustomLint(AvoidExtremes);
   const exampleLint = new newLint(examplePal).run();
   expect(exampleLint.passes).toBe(false);
-  expect(exampleLint.message).toMatchSnapshot();
+  expect(exampleLint.message).toBe(
+    "Colors at either end of the lightness spectrum #000, #fff, #0f0, #00f are hard to discriminate in some contexts, and are sometimes advised against"
+  );
 });
 
 test("ColorLint - MutuallyDistinct", () => {
@@ -184,6 +208,29 @@ test("ColorLint - SizeDiscrim (Thin)", () => {
   const examplePal2 = makePalFromHexes(["#0084a9", "#009de5", "#8ca9fa"]);
   const exampleLint2 = new newLint(examplePal2).run();
   expect(exampleLint2.passes).toBe(false);
+  expect(exampleLint2.message).toMatchSnapshot();
+});
+
+test("ColorLint - Gamut", async () => {
+  const examplePal = makePalFromString(["lab(50.625% -91.737 -88.303)"]);
+  const newLint = CreateCustomLint(Gamut);
+  const exampleLint = new newLint(examplePal).run();
+  expect(exampleLint.passes).toBe(false);
+  expect(exampleLint.message).toMatchSnapshot();
+
+  const fix = await suggestLintFix(examplePal, exampleLint);
+  expect(fix[0].colors.map((x) => x.toString())).toStrictEqual([
+    "lab(51.296% -23.327 -25.373)",
+  ]);
+
+  const examplePal2 = makePalFromString([
+    "#0084a9",
+    "#009de5",
+    "#8ca9fa",
+    "#ff0000",
+  ]);
+  const exampleLint2 = new newLint(examplePal2).run();
+  expect(exampleLint2.passes).toBe(true);
   expect(exampleLint2.message).toMatchSnapshot();
 });
 

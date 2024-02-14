@@ -32,7 +32,7 @@ function jndLabInterval(p: pType, s: sType) {
 }
 
 import { JSONToPrettyString } from "../utils";
-import type { CustomLint } from "./CustomLint";
+import type { CustomLint } from "../CustomLint";
 
 const lints: CustomLint[] = ["Thin", "Medium", "Wide"].map((key) => {
   const p = "default";
@@ -80,7 +80,7 @@ const lints: CustomLint[] = ["Thin", "Medium", "Wide"].map((key) => {
     }),
     taskTypes: ["sequential", "diverging", "categorical"] as const,
     level: "warning",
-    group: "design",
+    group: "usability",
     description: `Pairs of colors in a palette should be differentiable from each other in ${key} lines. `,
     failMessage: `This palette has some colors ({{blame}}) that are close to each other in perceptual space and will not be resolvable for ${key} areas.`,
     id: `${key}-discrim-built-in`,

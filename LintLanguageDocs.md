@@ -45,6 +45,7 @@ Color Manipulations:
 {toColor: variableName, space: 'lab' | 'hsl' | etc, channel: 'a' | 'b' | 'l' | etc}
 {cvdSim: variableName, type: 'protanomaly' | 'deuteranomaly' | 'tritanopia' | 'grayscale'}
 {name: variableName}
+{inGamut: variableName | Color}
 
 Maps:
 {map: Variable | Value[], func: Operation, varb: Variable}

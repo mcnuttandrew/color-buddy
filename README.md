@@ -23,15 +23,17 @@ First time you start it up you should also run `yarn prep data`
 # Language todos
 
 - [ ] Clone Rule
-- [ ] "No out of gamut"
 - [ ] Affect rules
 - [ ] Add more blame robustness, may pay to try to reason across all of the operator families (insight: keep a list of the blamable variables in the environment to support tracing)
 - [ ] per cols 4 all: color blindness metric should maybe be sensitive to task?
 - [ ] Sequential check fix is incorrect for things with equi-ligthness
 - [ ] Macros story: "not similar", "sequences", "where": { "!=": {"left": "index(a)", "right": "index(b)"} },
+- [x] "No out of gamut"
 
 # General Todos
 
+- [ ] Its really annoying to have to update schema, types, docs whenever a lang change is made. Can this be automated?
+- [ ] Compact more compact
 - [ ] Merge the info and fixes tooltips in the lints
 - [ ] Color Space selections should persist
 - [ ] Make name discrim hueristc fix more resilient, see switching to basic colors

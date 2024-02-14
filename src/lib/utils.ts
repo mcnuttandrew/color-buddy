@@ -18,17 +18,6 @@ export function JSONToPrettyString(program: LintProgram) {
   return JSONStringify(JSON.stringify(program));
 }
 
-export function makePalFromHexes(hexes: string[]): Palette {
-  return {
-    colors: hexes.map((hex) => Color.colorFromHex(hex, "lab")),
-    background: Color.colorFromHex("#ffffff", "lab"),
-    name: "test",
-    type: "categorical",
-    evalConfig: {},
-    colorSpace: "lab",
-  };
-}
-
 export const pick = (arr: any[]) => arr[Math.floor(Math.random() * arr.length)];
 
 export function avgColors(

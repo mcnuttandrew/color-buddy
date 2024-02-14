@@ -2,7 +2,7 @@
   import colorStore from "../stores/color-store";
   import configStore from "../stores/config-store";
   import lintStore from "../stores/lint-store";
-  import { ColorLint } from "../lib/lints/ColorLint";
+  import { ColorLint } from "../lib/ColorLint";
 
   import { lint } from "../lib/api-calls";
   import { buttonStyle } from "../lib/styles";

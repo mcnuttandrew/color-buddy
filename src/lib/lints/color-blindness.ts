@@ -1,5 +1,5 @@
 import { JSONToPrettyString } from "../utils";
-import type { CustomLint } from "./CustomLint";
+import type { CustomLint } from "../CustomLint";
 
 // old algorithm - https://github.dev/gka/palettes
 //     let distanceNorm = colorA.symmetricDeltaE(colorB);

@@ -1,4 +1,4 @@
-import type { Palette } from "../../stores/color-store";
+import type { Palette } from "../stores/color-store";
 
 export type TaskType = "sequential" | "diverging" | "categorical";
 export type LintLevel = "error" | "warning";

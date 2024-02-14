@@ -1,9 +1,9 @@
 import * as idb from "idb-keyval";
 import { runLintChecks } from "../linter";
-import type { CustomLint } from "../lints/CustomLint";
+import type { CustomLint } from "../CustomLint";
 import type { Palette } from "../../stores/color-store";
 import { Color } from "../Color";
-import type { LintResult } from "../lints/ColorLint";
+import type { LintResult } from "../ColorLint";
 
 type Command =
   | { type: "load-lints"; content: ""; id: string }

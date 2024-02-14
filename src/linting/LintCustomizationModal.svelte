@@ -7,10 +7,10 @@
   import MonacoEditor from "../components/MonacoEditor.svelte";
   import Nav from "../components/Nav.svelte";
   import PalPreview from "../components/PalPreview.svelte";
-  import { CreateCustomLint } from "../lib/lints/CustomLint";
+  import { CreateCustomLint } from "../lib/CustomLint";
   import { buttonStyle } from "../lib/styles";
   import { JSONStringify } from "../lib/utils";
-  import type { CustomLint } from "../lib/lints/CustomLint";
+  import type { CustomLint } from "../lib/CustomLint";
 
   $: lint = $lintStore.lints.find(
     (lint) => lint.id === $lintStore.focusedLint

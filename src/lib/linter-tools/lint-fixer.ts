@@ -1,6 +1,6 @@
 import type { Palette } from "../../stores/color-store";
 import { suggestFix } from "../api-calls";
-import type { LintResult } from "../lints/ColorLint";
+import type { LintResult } from "../ColorLint";
 import { Color } from "../Color";
 
 export async function suggestLintAIFix(
@@ -31,16 +31,18 @@ export async function suggestLintAIFix(
 
 export type LintFixer = (pal: Palette, lint: LintResult) => Promise<Palette[]>;
 import { fixBackgroundDifferentiability } from "../lints/background-contrast";
-import { fixDivergingOrder } from "../lints/diverging-order";
 import { fixColorNameDiscriminability } from "../lints/name-discrim";
-import { fixSequentialOrder } from "../lints/sequential-order";
+import { fixDivergingOrder } from "../lints/diverging-order";
+import { fixGamut } from "../lints/in-gamut";
 import { fixMaxColors } from "../lints/max-colors";
+import { fixSequentialOrder } from "../lints/sequential-order";
 const fixDirectory: Record<string, LintFixer> = {
   fixBackgroundDifferentiability,
-  fixDivergingOrder,
   fixColorNameDiscriminability,
-  fixSequentialOrder,
+  fixDivergingOrder,
+  fixGamut,
   fixMaxColors,
+  fixSequentialOrder,
 };
 
 export async function suggestLintFix(

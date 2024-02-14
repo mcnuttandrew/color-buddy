@@ -1,7 +1,7 @@
 <script lang="ts">
   import colorStore from "../stores/color-store";
   import lintStore from "../stores/lint-store";
-  import { ColorLint } from "../lib/lints/ColorLint";
+  import { ColorLint } from "../lib/ColorLint";
   import { buttonStyle } from "../lib/styles";
   import Tooltip from "../components/Tooltip.svelte";
   import ExplanationViewer from "./ExplanationViewer.svelte";

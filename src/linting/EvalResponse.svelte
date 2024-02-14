@@ -6,6 +6,7 @@
   import type { LintResult } from "../lib/ColorLint";
   import type { Palette } from "../stores/color-store";
   import PalDiff from "../components/PalDiff.svelte";
+  import ExplanationViewer from "./ExplanationViewer.svelte";
   import {
     suggestLintAIFix,
     suggestLintFix,
@@ -14,6 +15,7 @@
   import { buttonStyle } from "../lib/styles";
   let requestState: "idle" | "loading" | "loaded" | "failed" = "idle";
   export let check: LintResult;
+  export let customWord: string = "";
 
   $: palette = $colorStore.palettes[$colorStore.currentPal];
   $: engine = $configStore.engine;
@@ -48,21 +50,6 @@
   }
   $: currentPal = $colorStore.palettes[$colorStore.currentPal];
   $: evalConfig = currentPal.evalConfig;
-  // function updateEvalConfig(
-  //   checkName: string,
-  //   value: any,
-  //   formatter: "number" | "string"
-  // ) {
-  //   let val = value;
-  //   if (val.target.value) {
-  //     val =
-  //       formatter === "number" ? Number(val.target.value) : val.target.value;
-  //   }
-  //   colorStore.setCurrentPalEvalConfig({
-  //     ...evalConfig,
-  //     [checkName]: { ...evalConfig[checkName], val },
-  //   });
-  // }
 
   const options = [
     "deuteranopia",
@@ -76,7 +63,15 @@
 </script>
 
 <Tooltip positionAlongRightEdge={true}>
-  <div slot="content" let:onClick class="max-w-lg">
+  <div slot="content" let:onClick class="max-w-2xl min-w-lg">
+    <div class="font-bold">{check.name}</div>
+    {#if check.passes}
+      <div class="text-sm">{check.description}</div>
+    {:else}
+      <ExplanationViewer {check} />
+    {/if}
+
+    <div class="font-bold mt-4">Actions</div>
     {#if cbMatch}
       <button
         class={buttonStyle}
@@ -85,13 +80,16 @@
         Activate {cbMatch} simulator
       </button>
     {/if}
-    <button class={buttonStyle} on:click={() => proposeFix(true)}>
-      Try to fix (AI)
-    </button>
-    {#if check.subscribedFix !== "none"}
-      <button class={buttonStyle} on:click={() => proposeFix(false)}>
-        Try to fix (hueristics)
+
+    {#if !check.passes}
+      <button class={buttonStyle} on:click={() => proposeFix(true)}>
+        Try to fix (AI)
       </button>
+      {#if check.subscribedFix !== "none"}
+        <button class={buttonStyle} on:click={() => proposeFix(false)}>
+          Try to fix (hueristics)
+        </button>
+      {/if}
     {/if}
 
     <button
@@ -146,6 +144,8 @@
     {/if}
   </div>
   <button slot="target" let:toggle class={`${buttonStyle}`} on:click={toggle}>
-    fixes
+    {#if customWord}
+      {customWord}
+    {:else if check.passes}info{:else}fixes{/if}
   </button>
 </Tooltip>

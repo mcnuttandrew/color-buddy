@@ -1,6 +1,8 @@
 <script lang="ts">
   import colorStore from "../stores/color-store";
   import lintStore from "../stores/lint-store";
+  import configStore from "../stores/config-store";
+
   import { ColorLint } from "../lib/ColorLint";
   import { buttonStyle } from "../lib/styles";
   import Tooltip from "../components/Tooltip.svelte";
@@ -12,15 +14,11 @@
   $: currentPal = $colorStore.palettes[$colorStore.currentPal];
   $: evalConfig = currentPal.evalConfig;
   $: ignored = !!evalConfig[check.name]?.ignore;
+  $: isCompact = $configStore.evalDisplayMode === "compact";
 </script>
 
 {#if justSummary}
-  <Tooltip buttonName="✅">
-    <div slot="content" class="flex flex-col max-w-md">
-      <div class="font-bold">{check.name}</div>
-      <div class="">{check.description}</div>
-    </div>
-  </Tooltip>
+  <EvalResponse {check} customWord={"✅"} />
 {:else if ignored}
   <div class="text-xs">
     Ignored "{check.name}"
@@ -63,14 +61,12 @@
       <div class:font-bold={!check.passes}>
         {check.name}
       </div>
-      <Tooltip buttonName="info">
+      <!-- <Tooltip buttonName="info">
         <div slot="content" class="flex flex-col max-w-md">
           <div class="">{check.description}</div>
         </div>
-      </Tooltip>
-      {#if !check.passes}
-        <EvalResponse {check} />
-      {/if}
+      </Tooltip> -->
+      <EvalResponse {check} />
       {#if check.isCustom}
         <button
           class={buttonStyle}
@@ -83,7 +79,7 @@
         </button>
       {/if}
     </div>
-    {#if !check.passes}
+    {#if !check.passes && !isCompact}
       <ExplanationViewer {check} />
     {/if}
   </div>

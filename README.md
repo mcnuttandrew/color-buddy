@@ -32,8 +32,6 @@ First time you start it up you should also run `yarn prep data`
 # General Todos
 
 - [ ] Its really annoying to have to update schema, types, docs whenever a lang change is made. Can this be automated?
-- [ ] Compact more compact
-- [ ] Merge the info and fixes tooltips in the lints
 - [ ] Color Space selections should persist
 - [ ] Make name discrim hueristc fix more resilient, see switching to basic colors
 - [ ] Search palettes-by-lint screen
@@ -45,8 +43,10 @@ First time you start it up you should also run `yarn prep data`
 - [ ] Handles get stuck on channel picker again, ugh
 - [ ] Bug: Color channel usage slightly cursed (doesn't update positions correctly)
 - [ ] Bug: rotate in polar coordinates doesn't work right
-- [ ] Performance stuff for linter (separate message generation into something very throttled, maybe move to web workers? Cache as hard as possible)
 - [ ] LCH colors upside down god damn it
+- [x] Compact more compact
+- [x] Performance stuff for linter (separate message generation into something very throttled, maybe move to web workers? Cache as hard as possible)
+- [x] Merge the info and fixes tooltips in the lints
 
 Parameterization epic:
 

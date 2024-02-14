@@ -1,7 +1,8 @@
 import { Color, colorPickerConfig } from "./Color";
-import type { Palette } from "../types";
+import type { Palette, StringPalette } from "../types";
 import type { LintProgram } from "./lint-language/lint-type";
 import { Formatter, FracturedJsonOptions, EolStyle } from "fracturedjsonjs";
+import fits from "../assets/outfits.json";
 
 const options = new FracturedJsonOptions();
 options.MaxTotalLineLength = 120;
@@ -195,6 +196,16 @@ export const toHex = (x: string) => {
   return colors;
 };
 
+const defaultHexPal: StringPalette = {
+  name: "new palette",
+  colors: [],
+  background: "#ffffff",
+  type: "categorical",
+  evalConfig: {},
+  colorSpace: "lab",
+  intendedAffects: [],
+  intendedContexts: [],
+};
 export interface ExtendedPal extends Palette {
   group: string;
 }
@@ -206,13 +217,49 @@ export const makePal = (
   type: any = "categorical"
 ): ExtendedPal => {
   return {
+    ...defaultHexPal,
     name,
     colors: colors.map((x) => Color.colorFromString(x, colorSpace)),
     background: Color.colorFromString("#ffffff", colorSpace),
     group,
     type,
-    evalConfig: {},
-    colorSpace,
+  };
+};
+
+export function createPalFromHexes(colors: string[]): StringPalette {
+  return {
+    ...defaultHexPal,
+    colors,
+  };
+}
+const outfitToPal = (x: any) => [x.fill1, x.fill2, x.fill3];
+const outfits = fits.map((x) => outfitToPal(x));
+export function newGenericPal(name: string): StringPalette {
+  return {
+    ...defaultHexPal,
+    name,
+    colors: pick(outfits),
+  };
+}
+export function makePalFromString(strings: string[]): Palette {
+  return {
+    ...defaultHexPal,
+    colors: strings.map((str) => Color.colorFromString(str, "lab")),
+    background: Color.colorFromString("#ffffff", "lab"),
+  };
+}
+
+export const toPal = (
+  colors: string[],
+  currentPal: Palette,
+  colorSpace: any
+): Palette => {
+  return {
+    ...defaultHexPal,
+    colors: colors.map((x) => Color.colorFromString(x, colorSpace)),
+    name: "mods",
+    background: currentPal.background,
+    type: currentPal.type,
   };
 };
 

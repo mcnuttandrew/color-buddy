@@ -1,6 +1,5 @@
 <script lang="ts">
   import { Color } from "../lib/Color";
-  import type { Palette } from "../types";
   import exampleStore, {
     DEMOS,
     detectColorsInSvgString,
@@ -15,6 +14,7 @@
   import MonacoEditor from "../components/MonacoEditor.svelte";
   import Swatches from "./Swatches.svelte";
   import Tooltip from "../components/Tooltip.svelte";
+  import { makePalFromString } from "../lib/utils";
 
   let modalState: "closed" | "input-svg" | "input-vega" | "edit-colors" =
     "closed";
@@ -28,18 +28,6 @@
   $: sections = $exampleStore.sections as any;
   function onToggle(group: string) {
     exampleStore.toggleSection(group as keyof typeof $exampleStore.sections);
-  }
-
-  function createNewPal() {
-    const newPal: Palette = {
-      colors: detectedColors.map((x) => Color.colorFromString(x, colorSpace)),
-      background: bg,
-      name: "New Palette",
-      type: "categorical",
-      evalConfig: {},
-      colorSpace: "lab",
-    };
-    colorStore.createNewPal(newPal);
   }
 
   let validJSON = false;
@@ -345,7 +333,12 @@
         >
           Back to editing SVG
         </button>
-        <button class={buttonStyle} on:click={createNewPal}>
+        <button
+          class={buttonStyle}
+          on:click={() => {
+            colorStore.createNewPal(makePalFromString(detectedColors));
+          }}
+        >
           Use identified colors as new palette
         </button>
       {/if}

@@ -5,7 +5,7 @@
   import { suggestPal } from "../lib/api-calls";
   import type { Palette } from "../types";
   import PalPreview from "../components/PalPreview.svelte";
-  import { buttonStyle, AIButtonStyle } from "../lib/styles";
+  import { buttonStyle } from "../lib/styles";
 
   $: currentPal = $colorStore.palettes[$colorStore.currentPal];
   $: colorSpace = currentPal.colorSpace;
@@ -29,6 +29,8 @@
       type: "categorical",
       evalConfig: {},
       colorSpace: colorSpace as any,
+      intendedAffects: [],
+      intendedContexts: [],
     };
   }
 

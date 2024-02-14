@@ -1,9 +1,7 @@
 import { writable } from "svelte/store";
 import { Color } from "../lib/Color";
-import fits from "../assets/outfits.json";
-import { pick, deDup } from "../lib/utils";
-const outfitToPal = (x: any) => [x.fill1, x.fill2, x.fill3];
-const outfits = fits.map((x) => outfitToPal(x));
+import { deDup, newGenericPal } from "../lib/utils";
+
 import type { Palette, StringPalette, PalType, ColorSpace } from "../types";
 
 interface StoreData {
@@ -14,17 +12,6 @@ interface StoreData {
 interface StorageData {
   palettes: StringPalette[];
   currentPal: number;
-}
-
-export function newGenericPal(name: string): StringPalette {
-  return {
-    name,
-    colors: pick(outfits),
-    background: "#ffffff",
-    type: "categorical",
-    evalConfig: {},
-    colorSpace: "lab",
-  };
 }
 
 function stringPalToColorPal(pal: StringPalette): Palette {

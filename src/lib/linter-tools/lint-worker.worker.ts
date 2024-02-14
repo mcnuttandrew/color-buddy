@@ -29,6 +29,8 @@ const hydratePal = (pal: string): Palette => {
     colorSpace: parsed.colorSpace,
     name: parsed.name,
     evalConfig: parsed.evalConfig,
+    intendedAffects: parsed.intendedAffects,
+    intendedContexts: parsed.intendedContexts,
   };
 };
 

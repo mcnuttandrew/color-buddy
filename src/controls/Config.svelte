@@ -55,6 +55,8 @@
                 evalConfig: {},
                 name,
                 type,
+                intendedAffects: [],
+                intendedContexts: [],
               };
             });
           colorStore.setPalettes(pals);

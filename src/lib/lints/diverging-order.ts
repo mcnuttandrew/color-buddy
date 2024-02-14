@@ -1,5 +1,5 @@
 import { ColorLint } from "../ColorLint";
-import type { TaskType } from "../ColorLint";
+import type { PalType } from "../../types";
 import { Color } from "../Color";
 import type { Palette } from "../../types";
 import type { LintFixer } from "../linter-tools/lint-fixer";
@@ -21,7 +21,7 @@ const findMinDistPoint = (points: Color[], pos: { x: number; y: number }) => {
 };
 export default class SequentialOrder extends ColorLint<boolean, false> {
   name = "Diverging Palettes order";
-  taskTypes = ["diverging"] as TaskType[];
+  taskTypes = ["diverging"] as PalType[];
   group = "usability";
   description: string = `Diverging palettes should have a middle color that is the lightest or darkest color. This is because if they are not, then they will not be differentiable from each other in some contexts.`;
   _runCheck() {

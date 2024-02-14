@@ -1,5 +1,5 @@
 import { ColorLint } from "./ColorLint";
-import type { TaskType } from "./ColorLint";
+import type { PalType } from "../types";
 import {
   LLEval,
   prettyPrintLL,
@@ -10,7 +10,7 @@ import * as Json from "jsonc-parser";
 export interface CustomLint {
   program: string;
   name: string;
-  taskTypes: TaskType[];
+  taskTypes: PalType[];
   level: "error" | "warning";
   group: string;
   description: string;

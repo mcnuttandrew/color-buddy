@@ -1,5 +1,17 @@
 import { Color } from "./lib/Color";
 
+type Affect =
+  | "Calm"
+  | "Exciting"
+  | "Positive"
+  | "Negative"
+  | "Serious"
+  | "Playful"
+  | "Trustworthy"
+  | "Disturbing";
+
+type Context = "Scatterplot" | "LineChart" | "BarChart";
+
 export type ColorSpace =
   | "lab"
   | "hsl"
@@ -17,6 +29,8 @@ type Pal<A> = {
   evalConfig: Record<string, any>;
   name: string;
   type: PalType;
+  intendedAffects: Affect[];
+  intendedContexts: Context[];
 };
 export type PalType = "sequential" | "diverging" | "categorical";
 export type Palette = Pal<Color>;

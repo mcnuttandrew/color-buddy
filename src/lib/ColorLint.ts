@@ -21,7 +21,6 @@ export class ColorLint<CheckData, ParamType> {
   checkData: CheckData;
   palette: Palette;
   message: string = "";
-  config: { val?: ParamType } = {};
   isCustom: false | string = false;
   group: string = "";
   description: string = "";

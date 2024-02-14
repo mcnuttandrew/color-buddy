@@ -158,8 +158,8 @@ export function lint(pal: Palette) {
     type: "run-lint",
     content: JSON.stringify({
       ...pal,
-      background: pal.background.toHex(),
-      colors: pal.colors.map((x) => x.toHex()),
+      background: pal.background.toString(),
+      colors: pal.colors.map((x) => x.toString()),
     }),
   }).then((x) => {
     return x as unknown as any[];

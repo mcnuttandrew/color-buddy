@@ -59,13 +59,16 @@ type LintPairOps =
         | "Lstar"
         | "DeltaPhi";
     };
+type MapTarget = LintVariable | LintValue[];
+type MapEval = LintColorFunction | LintPairOps;
 type LintMap =
-  // | { map: LintVariable | LintValue[]; func: LintColorFunction | LintPairOps }
-  // | { sort: LintVariable | LintValue[]; func: LintColorFunction | LintPairOps }
-  // | {reverse: LintVariable | LintValue[]}
-  { filter: LintVariable | LintValue[]; func: LintExpression };
+  | { map: MapTarget; func: MapEval; varb: string }
+  | { sort: MapTarget; func: MapEval; varb: string }
+  | { reverse: LintVariable | LintValue[] }
+  | { filter: MapTarget; func: LintExpression; varb: string }
+  | { speed: MapTarget };
 
-type LintReduce = Record<
+type Aggs =
   | "sum"
   | "count"
   | "mean"
@@ -74,9 +77,9 @@ type LintReduce = Record<
   | "mean"
   | "first"
   | "last"
-  | "extent",
-  LintVariable | any[] | LintMap
->;
+  | "extent"
+  | "std";
+type LintAggregate = Record<Aggs, LintVariable | any[] | LintMap>;
 type LintColorFunction =
   | {
       cvdSim: LintVariable | LintColor;
@@ -127,7 +130,7 @@ type LintValue =
   | LintVariable
   | LintMathOps
   | LintPairOps
-  | LintReduce
+  | LintAggregate
   | LintColorFunction;
 
 // raw values

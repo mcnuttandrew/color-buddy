@@ -44,6 +44,9 @@ First time you start it up you should also run `yarn prep data`
 - [ ] Handles get stuck on channel picker again, ugh
 - [ ] Bug: Color channel usage slightly cursed (doesn't update positions correctly)
 - [ ] Bug: rotate in polar coordinates doesn't work right
+- [ ] Dont allow saves to examples when there's an error
+- [ ] Switch the examples to be tabs or single
+- [ ] Consider moving the names and color chunks into the left hand column for space
 - [x] LCH colors upside down god damn it
 - [x] Clone Rule
 - [x] Compact more compact

@@ -37,6 +37,7 @@ Aggregates
 {min: Variable | Number[]}
 {max: Variable | Number[]}
 {mean: Variable | Number[]}
+{std: Variable | Number[]}
 {first: Variable | Number[]}
 {last: Variable | Number[]}
 {extent: Variable | Number[]}
@@ -50,8 +51,9 @@ Color Manipulations:
 Maps:
 {map: Variable | Value[], func: Operation, varb: Variable}
 {sort: Variable | Value[], func: Operation, varb: Variable}
-{reverse: Variable | Value[]}
 {filter: Variable | Value[], func: EXPR, varb: Variable}
+{reverse: Variable | Value[]}
+{speed: Variable | Value[]}
 
 ```yaml
 ---

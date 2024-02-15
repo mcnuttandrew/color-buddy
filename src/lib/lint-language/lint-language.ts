@@ -478,7 +478,7 @@ export class LLValue extends LLNode {
       | LLColor
       | LLNumber
       | LLVariable
-      | LLReduces
+      | LLAggregate
       | LLNumberOp
   ) {
     super();
@@ -495,7 +495,7 @@ export class LLValue extends LLNode {
       LLColor,
       LLNumber,
       LLVariable,
-      LLReduces,
+      LLAggregate,
       LLNumberOp,
     ];
     const value = tryTypes(types, options)(node);
@@ -821,11 +821,12 @@ const reduceTypes = [
   "min",
   "max",
   "mean",
+  "std",
   "first",
   "last",
   "extent",
 ] as const;
-export class LLReduces extends LLNode {
+export class LLAggregate extends LLNode {
   constructor(
     private type: (typeof reduceTypes)[number],
     private children: LLValueArray | LLVariable | LLMap
@@ -836,7 +837,9 @@ export class LLReduces extends LLNode {
     this.evalCheck(env);
     const children = this.children.evaluate(env).result;
     if (!Array.isArray(children)) {
-      throw new Error("Type error");
+      throw new Error(
+        "Type error, aggregate received something that was an array"
+      );
     }
     switch (this.type) {
       case "count":
@@ -847,6 +850,12 @@ export class LLReduces extends LLNode {
         return { result: children[children.length - 1], env };
       case "sum":
         return { result: children.reduce((a, b) => a + b, 0), env };
+      case "std":
+        const sum = children.reduce((a, b) => a + b, 0);
+        const mean = sum / children.length;
+        const variance =
+          children.reduce((a, b) => a + (b - mean) ** 2, 0) / children.length;
+        return { result: Math.sqrt(variance), env };
       case "mean":
         return {
           result: children.reduce((a, b) => a + b, 0) / children.length,
@@ -865,6 +874,9 @@ export class LLReduces extends LLNode {
   }
   static tryToConstruct(node: any, options: OptionsConfig) {
     const reduceType = reduceTypes.find((x) => node[x]);
+    if (node.avg) {
+      throw new Error("Did you mean mean instead of avg?");
+    }
     if (!reduceType) return false;
     const children = node[reduceType];
     if (!children) return false;
@@ -875,14 +887,14 @@ export class LLReduces extends LLNode {
       childType = tryTypes([LLVariable, LLMap], options)(children);
     }
     if (!childType) return false;
-    return new LLReduces(reduceType, childType);
+    return new LLAggregate(reduceType, childType);
   }
   toString(): string {
     return `${this.type}(${this.children.toString()})`;
   }
 }
 
-const mapTypes = ["map", "filter", "sort", "reverse"] as const;
+const mapTypes = ["map", "filter", "sort", "reverse", "speed"] as const;
 // example syntax
 // {map: colors, func: {cvdSim: {type: "protanomaly"}}, varb: "x"}
 export class LLMap extends LLNode {
@@ -920,6 +932,32 @@ export class LLMap extends LLNode {
         const childrenCopy2 = [...children];
         childrenCopy2.reverse();
         return { result: childrenCopy2, env };
+      case "speed":
+        // todo maybe make this take algorithm as argument?
+        const speed = [];
+        const allNumbers = children.every(
+          (x) =>
+            typeof x === "number" ||
+            (typeof x === "object" && x?.type === "<number>")
+        );
+        const allColors = children.every((x) => x instanceof Color);
+        if (!allNumbers && !allColors) {
+          const types = children.map((x) => x);
+          console.log(children);
+          throw new Error(
+            `Type error, speed must receive all numbers or all colors, got ${types}`
+          );
+        }
+        for (let i = 0; i < children.length - 1; i++) {
+          const a = children[i];
+          const b = children[i + 1];
+          if (allNumbers) {
+            speed.push(Math.abs(a - b));
+          } else {
+            speed.push(a.symmetricDeltaE(b, "2000"));
+          }
+        }
+        return { result: speed, env };
     }
   }
   static tryToConstruct(node: any, options: OptionsConfig) {
@@ -932,7 +970,7 @@ export class LLMap extends LLNode {
     let func;
     if (op === "filter") {
       func = tryTypes([LLExpression], options)(node.func);
-    } else if (op === "reverse") {
+    } else if (op === "reverse" || op === "speed") {
       // reverse doesn't take any arguments besides the target
       varb = " ";
       func = " ";

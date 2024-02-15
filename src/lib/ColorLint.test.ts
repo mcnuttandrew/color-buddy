@@ -12,12 +12,12 @@ import BackgroundContrast from "./lints/background-contrast";
 import CatOrderSimilarity from "./lints/cat-order-similarity";
 import ColorBlindness from "./lints/color-blindness";
 import ColorNameDiscriminability, { getName } from "./lints/name-discrim";
-import Discrims from "./lints/size-discrim";
 import Fair from "./lints/fair";
 import Gamut from "./lints/in-gamut";
 import MaxColors from "./lints/max-colors";
 import MutuallyDistinct from "./lints/mutually-distinct";
 import SequentialOrder from "./lints/sequential-order";
+import SizeDiscrims from "./lints/size-discrim";
 import UglyColors from "./lints/ugly-colors";
 
 const unique = <T>(arr: T[]): T[] => [...new Set(arr)];
@@ -182,13 +182,13 @@ test("ColorLint - ColorNameDiscriminability", async () => {
 
 test("ColorLint - SizeDiscrim (Thin)", () => {
   const examplePal = makePalFromString(["#0084a9", "#bad", "#008000"]);
-  const newLint = CreateCustomLint(Discrims[0]);
   const exampleLint = new newLint(examplePal).run();
   expect(exampleLint.passes).toBe(true);
   expect(exampleLint.message).toMatchSnapshot();
 
   const examplePal2 = makePalFromString(["#0084a9", "#009de5", "#8ca9fa"]);
   const exampleLint2 = new newLint(examplePal2).run();
+  const newLint = CreateCustomLint(SizeDiscrims[0]);
   expect(exampleLint2.passes).toBe(false);
   expect(exampleLint2.message).toMatchSnapshot();
 });

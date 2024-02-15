@@ -608,3 +608,19 @@ export const titleCase = (str: string) =>
     .split(" ")
     .map((x) => x[0].toUpperCase() + x.slice(1))
     .join(" ");
+
+const oxfordJoin = (arr: string[]) => {
+  if (arr.length === 1) return arr[0];
+  if (arr.length === 2) return arr.join(" and ");
+  return arr.slice(0, -1).join(", ") + ", and " + arr.slice(-1);
+};
+
+export function summarizePal(pal: Palette) {
+  const affectMsg = ` It is intended to convey ${oxfordJoin(
+    pal.intendedAffects
+  )} affects.`;
+  const contextMsg = ` It is intended to be used ${oxfordJoin(
+    pal.intendedContexts.map((x) => `${x}s`)
+  )}.`;
+  return `This is a ${pal.type} palette called '${pal.name}'.${affectMsg}${contextMsg}`;
+}

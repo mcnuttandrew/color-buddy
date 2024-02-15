@@ -2,12 +2,14 @@
   import colorStore from "../stores/color-store";
   import focusStore from "../stores/focus-store";
   import configStore from "../stores/config-store";
+
   import { buttonStyle } from "../lib/styles";
   import AdjustOrder from "../controls/AdjustOrder.svelte";
   import Background from "../components/Background.svelte";
   import ColorScatterPlot from "../scatterplot/ColorScatterPlot.svelte";
   import ExampleAlaCart from "../example/ExampleAlaCarte.svelte";
-  import GetColorsFromString from "../controls/GetColorsFromString.svelte";
+  import PalTypeConfig from "../controls/PalTypeConfig.svelte";
+
   import ModifySelection from "../controls/ModifySelection.svelte";
   import Nav from "../components/Nav.svelte";
   import PalPreview from "../components/PalPreview.svelte";
@@ -17,16 +19,6 @@
 
   import ContentEditable from "../components/ContentEditable.svelte";
   $: currentPal = $colorStore.palettes[$colorStore.currentPal];
-
-  const descriptions = {
-    sequential:
-      "Sequential palettes are used to represent a range of values. They are often used to represent quantitative data, such as temperature or elevation.",
-    diverging:
-      "Diverging palettes are used to represent a range of values around a central point. They are often used to represent quantitative data, such as temperature or elevation.",
-    categorical:
-      "Categorical palettes are used to represent a set of discrete values. They are often used to represent qualitative data, such as different types of land cover or different political parties.",
-  };
-  $: palType = currentPal.type;
   $: selectedBlindType = $configStore.colorSim;
 </script>
 
@@ -100,28 +92,7 @@
       }}
     />
     {#if $configStore.mainColumnRoute === "palette-config"}
-      <GetColorsFromString
-        allowSort={true}
-        onChange={(colors) => colorStore.setCurrentPalColors(colors)}
-        colorSpace={currentPal.colorSpace}
-        colors={currentPal.colors}
-      />
-
-      <div class="max-w-lg text-sm italic">
-        This is a <select
-          value={palType}
-          class="font-bold"
-          on:change={(e) => {
-            // @ts-ignore
-            colorStore.setCurrentPalType(e.target.value);
-          }}
-        >
-          {#each ["sequential", "diverging", "categorical"] as type}
-            <option value={type}>{type}</option>
-          {/each}
-        </select>
-        palette. {descriptions[palType]}
-      </div>
+      <PalTypeConfig />
     {/if}
     {#if $configStore.mainColumnRoute === "example"}
       <ExampleAlaCart

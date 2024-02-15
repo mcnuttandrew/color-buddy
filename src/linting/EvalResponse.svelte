@@ -110,9 +110,9 @@
       <div>Failed to generate suggestions</div>
     {:else if requestState === "loaded"}
       {#each suggestions as suggestion}
-        <div class="flex flex-col">
+        <div class="flex">
           <PalDiff beforePal={currentPal} afterPal={suggestion} />
-          <div class="flex justify-between">
+          <div class="flex flex-col justify-between">
             <button
               class={buttonStyle}
               on:click={() => {

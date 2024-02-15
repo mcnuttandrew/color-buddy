@@ -1,6 +1,7 @@
 import type { Palette } from "../types";
 import * as Json from "jsonc-parser";
 import LintWorker from "./linter-tools/lint-worker.worker?worker";
+import { summarizePal } from "./utils";
 
 type Engine = "openai" | "google";
 type SimplePal = { background: string; colors: string[] };
@@ -75,6 +76,7 @@ export function suggestNameForPalette(
   return engineToScaffold[engine]<string>(`suggest-name`, body, true);
 }
 
+// supports the add color search function
 export function suggestAdditionsToPalette(
   palette: Palette,
   engine: Engine,
@@ -99,7 +101,11 @@ export function suggestContextualAdjustments(
   currentPal: Palette,
   engine: Engine
 ) {
-  const body = JSON.stringify({ prompt, ...palToString(currentPal) });
+  const adjustPrompt = `${summarizePal(currentPal)}\n\n${prompt}`;
+  const body = JSON.stringify({
+    prompt: adjustPrompt,
+    ...palToString(currentPal),
+  });
   return engineToScaffold[engine]<SimplePal>(
     `suggest-contextual-adjustments`,
     body,
@@ -107,7 +113,8 @@ export function suggestContextualAdjustments(
   );
 }
 
-export function suggestFix(currentPal: Palette, error: string, engine: Engine) {
+export function suggestFix(currentPal: Palette, msg: string, engine: Engine) {
+  const error = `${summarizePal(currentPal)}\n\n${msg}`;
   const body = JSON.stringify({ ...palToString(currentPal), error });
   return engineToScaffold[engine]<SimplePal>(`suggest-fix`, body, true);
 }

@@ -70,6 +70,8 @@ async function dispatch(cmd: Command) {
           isCustom: x.isCustom,
           taskTypes: x.taskTypes as any,
           subscribedFix: x.subscribedFix,
+          affectTypes: x.affectTypes,
+          contextTypes: x.contextTypes,
         };
       });
       simpleLintCache.set(cmd.content, result);

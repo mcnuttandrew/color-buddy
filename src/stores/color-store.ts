@@ -2,7 +2,14 @@ import { writable } from "svelte/store";
 import { Color } from "../lib/Color";
 import { deDup, newGenericPal } from "../lib/utils";
 
-import type { Palette, StringPalette, PalType, ColorSpace } from "../types";
+import type {
+  Palette,
+  StringPalette,
+  PalType,
+  ColorSpace,
+  Context,
+  Affect,
+} from "../types";
 
 interface StoreData {
   palettes: Palette[];
@@ -181,6 +188,11 @@ function createStore() {
     setSort: (sort: Color[]) => palUp((n) => ({ ...n, colors: deDup(sort) })),
     setCurrentPalName: (name: string) => palUp((n) => ({ ...n, name })),
     setCurrentPalType: (type: PalType) => palUp((n) => ({ ...n, type })),
+    setCurrentAffects: (intendedAffects: Affect[]) =>
+      palUp((n) => ({ ...n, intendedAffects })),
+    setCurrentContexts: (intendedContexts: Context[]) =>
+      palUp((n) => ({ ...n, intendedContexts })),
+
     setCurrentPalEvalConfig: (evalConfig: Record<string, any>) =>
       palUp((n) => ({ ...n, evalConfig: hardCopy(evalConfig) })),
     addColorToCurrentPal: (color: Color) =>

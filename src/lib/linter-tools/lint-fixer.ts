@@ -1,6 +1,6 @@
 import type { Palette } from "../../types";
-import { suggestFix } from "../api-calls";
 import type { LintResult } from "../ColorLint";
+import { suggestFix } from "../api-calls";
 import { Color } from "../Color";
 
 export async function suggestLintAIFix(

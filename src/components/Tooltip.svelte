@@ -55,8 +55,8 @@
     : "0";
   $: leftString = boundingBox ? `${boundingBox.x}px` : "0";
   $: {
-    if (boundingBox.y + 300 > window.screen.height) {
-      topString = `${window.screen.height - 300}px`;
+    if (boundingBox.y + 500 > window.screen.height) {
+      topString = `${window.screen.height - 500}px`;
     }
   }
   $: {

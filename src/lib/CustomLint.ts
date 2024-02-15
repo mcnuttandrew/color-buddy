@@ -1,5 +1,5 @@
 import { ColorLint } from "./ColorLint";
-import type { PalType } from "../types";
+import type { PalType, Affect, Context } from "../types";
 import {
   LLEval,
   prettyPrintLL,
@@ -8,22 +8,26 @@ import {
 
 import * as Json from "jsonc-parser";
 export interface CustomLint {
-  program: string;
-  name: string;
-  taskTypes: PalType[];
-  level: "error" | "warning";
-  group: string;
+  affectTypes?: Affect[];
+  contextTypes?: Context[];
+  blameMode: "pair" | "single" | "none";
   description: string;
   failMessage: string;
+  group: string;
   id: string;
-  blameMode: "pair" | "single" | "none";
+  level: "error" | "warning";
+  name: string;
+  program: string;
   subscribedFix?: string;
+  taskTypes: PalType[];
 }
 
 export function CreateCustomLint(props: CustomLint) {
   return class CustomLint extends ColorLint<number[] | number[][], any> {
     name = props.name;
     taskTypes = props.taskTypes;
+    affectTypes = props.affectTypes || [];
+    contextTypes = props.contextTypes || [];
     level = props.level;
     group = props.group;
     description = props.description;

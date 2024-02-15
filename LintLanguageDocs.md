@@ -20,11 +20,11 @@ Comparisons:
 {">": {left: Value, right: Value}}
 
 Math Operations:
-\*: {left: Number | Variable, right: Number | Variable}
-+: {left: Number | Variable, right: Number | Variable}
-/: {left: Number | Variable, right: Number | Variable}
--: {left: Number | Variable, right: Number | Variable}
-absDiff: {left: Number | Variable, right: Number | Variable}
+{"\*": {left: Number | Variable, right: Number | Variable}}
+{"+": {left: Number | Variable, right: Number | Variable}}
+{"/": {left: Number | Variable, right: Number | Variable}}
+{"-": {left: Number | Variable, right: Number | Variable}}
+{absDiff: {left: Number | Variable, right: Number | Variable}}
 
 Value Comparisons:
 {dist: {left: Color | Variable, right: Color | Variable}, space: COLOR_SPACE }

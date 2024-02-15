@@ -30,7 +30,7 @@ exports[`ColorLint - ColorBlind 2`] = `"This palette is not colorblind friendly 
 
 exports[`ColorLint - ColorBlind 3`] = `"This palette is not colorblind friendly for tritanopia color blindness (ie can't see blue). The following pairs are undifferentiable: (#ff7e0e and #e179c1, #8c69bc and #7f7f7f)"`;
 
-exports[`ColorLint - ColorBlind 4`] = `"This palette is not colorblind friendly for grayscale color blindness . The following pairs are undifferentiable: (#0078b4 and #da2827, #0078b4 and #8c69bc, #0078b4 and #8e564b, #0078b4 and #7f7f7f, #ff7e0e and #3d9f2f, #ff7e0e and #e179c1, #ff7e0e and #c4bc27, #ff7e0e and #00becf, #3d9f2f and #8c69bc, #3d9f2f and #e179c1, #3d9f2f and #7f7f7f, #da2827 and #8c69bc, #da2827 and #8e564b, #da2827 and #7f7f7f, #8c69bc and #8e564b, #8c69bc and #7f7f7f, #e179c1 and #c4bc27, #e179c1 and #00becf, #c4bc27 and #00becf)"`;
+exports[`ColorLint - ColorBlind 4`] = `"This palette may not work in black and white. The following pairs are hard to tell the difference between: (#0078b4 and #da2827, #0078b4 and #8c69bc, #0078b4 and #8e564b, #0078b4 and #7f7f7f, #ff7e0e and #3d9f2f, #ff7e0e and #e179c1, #ff7e0e and #c4bc27, #ff7e0e and #00becf, #3d9f2f and #8c69bc, #3d9f2f and #e179c1, #3d9f2f and #7f7f7f, #da2827 and #8c69bc, #da2827 and #8e564b, #da2827 and #7f7f7f, #8c69bc and #8e564b, #8c69bc and #7f7f7f, #e179c1 and #c4bc27, #e179c1 and #00becf, #c4bc27 and #00becf)"`;
 
 exports[`ColorLint - Fair Nominal 1`] = `"This palette is unfair (meaning that some values may unduely stand out). Note that this check is naturally at odds with color blind friendly palettes. Maximum chroma range: 80, maximum luminance range: 50."`;
 

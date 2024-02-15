@@ -13,20 +13,21 @@ First time you start it up you should also run `yarn prep data`
 # User study burn down
 
 - [ ] Tour?
-- [ ] roles, palette level semantics
+- [ ] Color Roles
 - [ ] Design adjustments for smaller screens
 - [ ] Language Docs??
+- [x] palette level semantics
 - [x] Get most of the lints converted
 - [x] Make lints fast / non blocking as much as possible
 
 # Language todos
 
-- [ ] Affect rules
 - [ ] Add more blame robustness, may pay to try to reason across all of the operator families (insight: keep a list of the blamable variables in the environment to support tracing)
 - [ ] per cols 4 all: color blindness metric should maybe be sensitive to task?
 - [ ] Sequential check fix is incorrect for things with equi-ligthness
 - [ ] Macros story: "not similar", "sequences", "where": { "!=": {"left": "index(a)", "right": "index(b)"} },
 - [ ] More crashy type validation
+- [x] Affect rules
 - [x] "No out of gamut"
 
 # General Todos

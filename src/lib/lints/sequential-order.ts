@@ -26,7 +26,7 @@ const lint: CustomLint = {
       },
     ],
   }),
-  taskTypes: ["sequential", "diverging", "categorical"] as const,
+  taskTypes: ["sequential"] as const,
   level: "error",
   group: "usability",
   description:

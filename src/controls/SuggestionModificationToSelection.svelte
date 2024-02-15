@@ -6,6 +6,7 @@
   import { suggestContextualAdjustments } from "../lib/api-calls";
   import { buttonStyle } from "../lib/styles";
   import PalDiff from "../components/PalDiff.svelte";
+  import { toPal } from "../lib/utils";
 
   let requestState: "idle" | "loading" | "loaded" | "failed" = "idle";
   $: currentPal = $colorStore.palettes[$colorStore.currentPal];
@@ -16,17 +17,6 @@
     .filter((x) => x !== undefined) as string[];
   let suggestedColorSets: string[][] = [];
   let palPrompt: string = "";
-
-  function toPal(colors: string[]) {
-    return {
-      colors: colors.map((x) => Color.colorFromString(x, colorSpace)),
-      name: "mods",
-      background: currentPal.background,
-      type: currentPal.type,
-      evalConfig: {},
-      colorSpace,
-    };
-  }
 
   function makeRequest() {
     requestState = "loading";
@@ -100,9 +90,9 @@
         <div>
           <PalDiff
             beforePal={selectedColors.length
-              ? toPal(selectedColors)
+              ? toPal(selectedColors, currentPal, colorSpace)
               : currentPal}
-            afterPal={toPal(suggestedColors)}
+            afterPal={toPal(suggestedColors, currentPal, colorSpace)}
           />
         </div>
         <div class="flex justify-between">

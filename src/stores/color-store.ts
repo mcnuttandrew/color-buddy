@@ -1,10 +1,15 @@
 import { writable } from "svelte/store";
 import { Color } from "../lib/Color";
-import fits from "../assets/outfits.json";
-import { pick, deDup } from "../lib/utils";
-const outfitToPal = (x: any) => [x.fill1, x.fill2, x.fill3];
-const outfits = fits.map((x) => outfitToPal(x));
-import type { Palette, StringPalette, PalType, ColorSpace } from "../types";
+import { deDup, newGenericPal } from "../lib/utils";
+
+import type {
+  Palette,
+  StringPalette,
+  PalType,
+  ColorSpace,
+  Context,
+  Affect,
+} from "../types";
 
 interface StoreData {
   palettes: Palette[];
@@ -14,17 +19,6 @@ interface StoreData {
 interface StorageData {
   palettes: StringPalette[];
   currentPal: number;
-}
-
-export function newGenericPal(name: string): StringPalette {
-  return {
-    name,
-    colors: pick(outfits),
-    background: "#ffffff",
-    type: "categorical",
-    evalConfig: {},
-    colorSpace: "lab",
-  };
 }
 
 function stringPalToColorPal(pal: StringPalette): Palette {
@@ -194,6 +188,11 @@ function createStore() {
     setSort: (sort: Color[]) => palUp((n) => ({ ...n, colors: deDup(sort) })),
     setCurrentPalName: (name: string) => palUp((n) => ({ ...n, name })),
     setCurrentPalType: (type: PalType) => palUp((n) => ({ ...n, type })),
+    setCurrentAffects: (intendedAffects: Affect[]) =>
+      palUp((n) => ({ ...n, intendedAffects })),
+    setCurrentContexts: (intendedContexts: Context[]) =>
+      palUp((n) => ({ ...n, intendedContexts })),
+
     setCurrentPalEvalConfig: (evalConfig: Record<string, any>) =>
       palUp((n) => ({ ...n, evalConfig: hardCopy(evalConfig) })),
     addColorToCurrentPal: (color: Color) =>

@@ -11,6 +11,8 @@ const toPal = (colors: string[]): Palette => ({
   evalConfig: {},
   background: toColors(["#fff"])[0],
   colors: toColors(colors),
+  intendedAffects: [],
+  intendedContexts: [],
 });
 const toColors = (colors: string[]): Color[] =>
   colors.map((x) => Color.colorFromString(x, "lab"));

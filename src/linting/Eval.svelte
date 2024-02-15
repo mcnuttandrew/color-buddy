@@ -37,7 +37,10 @@
       acc[check.group].push(check);
       return acc;
     },
-    {} as Record<string, ColorLint<any, any>[]>
+    { accessibility: [], design: [], usability: [] } as Record<
+      string,
+      ColorLint<any, any>[]
+    >
   );
 
   function setGroupTo(checks: ColorLint<any, any>[], ignore: boolean) {
@@ -112,6 +115,9 @@
             <LintDisplay {check} />
           {/if}
         {/each}
+        {#if checkGroup[1].length === 0}
+          <div class="text-sm animate-pulse italic font-bold">Loading</div>
+        {/if}
       {/each}
     </div>
   </div>

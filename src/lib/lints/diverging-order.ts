@@ -1,5 +1,5 @@
 import { ColorLint } from "../ColorLint";
-import type { TaskType } from "../ColorLint";
+import type { PalType } from "../../types";
 import { Color } from "../Color";
 import type { Palette } from "../../types";
 import type { LintFixer } from "../linter-tools/lint-fixer";
@@ -19,9 +19,9 @@ const findMinDistPoint = (points: Color[], pos: { x: number; y: number }) => {
   const minDist = Math.min(...distances);
   return points[distances.indexOf(minDist)];
 };
-export default class SequentialOrder extends ColorLint<boolean, false> {
+export default class DivergingOrder extends ColorLint<boolean, false> {
   name = "Diverging Palettes order";
-  taskTypes = ["diverging"] as TaskType[];
+  taskTypes = ["diverging"] as PalType[];
   group = "usability";
   description: string = `Diverging palettes should have a middle color that is the lightest or darkest color. This is because if they are not, then they will not be differentiable from each other in some contexts.`;
   _runCheck() {
@@ -88,3 +88,36 @@ export const fixDivergingOrder: LintFixer = async (palette) => {
   ];
   return [{ ...palette, colors }];
 };
+// {
+//     "exist": {
+//         "in": "colors",
+//         "varb": "c",
+//         "predicate": {
+//             "all": {
+//                 "in": "colors",
+//                 "varbs": ["a", "b"],
+//                 "where": {
+//                     "and": [
+//                         { "<": {"left": "index(a)", "right": "index(c)"} },
+//                         {
+//                             "==": {
+//                                 "left": "index(a)",
+//                                 "right": { "-": {"left": "index(b)", "right": 1} }
+//                             }
+//                         }
+//                     ]
+//                 },
+//                 "predicate": {
+//                     "and": [
+//                         {
+//                             "<": { "left": {"lab.l": "a"}, "right": {"lab.l": "c"} }
+//                         },
+//                         {
+//                             ">": { "left": {"lab.l": "b"}, "right": {"lab.l": "a"} }
+//                         }
+//                     ]
+//                 }
+//             }
+//         }
+//     }
+// }

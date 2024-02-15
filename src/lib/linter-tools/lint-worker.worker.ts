@@ -29,6 +29,8 @@ const hydratePal = (pal: string): Palette => {
     colorSpace: parsed.colorSpace,
     name: parsed.name,
     evalConfig: parsed.evalConfig,
+    intendedAffects: parsed.intendedAffects,
+    intendedContexts: parsed.intendedContexts,
   };
 };
 
@@ -68,6 +70,8 @@ async function dispatch(cmd: Command) {
           isCustom: x.isCustom,
           taskTypes: x.taskTypes as any,
           subscribedFix: x.subscribedFix,
+          affectTypes: x.affectTypes,
+          contextTypes: x.contextTypes,
         };
       });
       simpleLintCache.set(cmd.content, result);

@@ -1,6 +1,6 @@
 import type { Palette } from "../../types";
-import { suggestFix } from "../api-calls";
 import type { LintResult } from "../ColorLint";
+import { suggestFix } from "../api-calls";
 import { Color } from "../Color";
 
 export async function suggestLintAIFix(
@@ -9,6 +9,7 @@ export async function suggestLintAIFix(
   engine: string
 ) {
   const colorSpace = palette.colorSpace;
+  console.log(lint);
   return suggestFix(palette, lint.message, engine as any).then((x) => {
     if (x.length === 0) {
       throw new Error("No suggestions");

@@ -34,7 +34,6 @@ const FairNominal: CustomLint = {
   failMessage: `${failMsgBase} Maximum chroma range: ${cRangeUnfair}, maximum luminance range: ${lRangeUnfair}.`,
   id: "fair-nominal-built-in",
   blameMode: "single",
-  subscribedFix: "fixMaxColors",
 };
 const FairSequential: CustomLint = {
   ...FairNominal,

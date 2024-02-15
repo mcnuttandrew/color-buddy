@@ -37,12 +37,18 @@ const lints: CustomLint[] = blindTypes.map((type) => ({
       },
     },
   }),
-  name: `Colorblind Friendly for ${type}`,
+  name:
+    type === "grayscale"
+      ? "Right in black and white"
+      : `Colorblind Friendly for ${type}`,
   taskTypes: ["sequential", "diverging", "categorical"],
   group: "accessibility",
   description: `All colors in a palette should be differentiable by people with ${type} ${blindnessLabels[type]}. This is because if they are not, then they will not be differentiable from each other in some contexts.`,
   level: "error" as const,
-  failMessage: `This palette is not colorblind friendly for ${type} color blindness ${blindnessLabels[type]}. The following pairs are undifferentiable: ({{blame}})`,
+  failMessage:
+    type === "grayscale"
+      ? `This palette may not work in black and white. The following pairs are hard to tell the difference between: ({{blame}})`
+      : `This palette is not colorblind friendly for ${type} color blindness ${blindnessLabels[type]}. The following pairs are undifferentiable: ({{blame}})`,
   id: `colorblind-friendly-${type}-built-in`,
   blameMode: "pair" as const,
 }));

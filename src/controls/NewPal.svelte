@@ -1,13 +1,18 @@
 <script lang="ts">
   import { Color } from "../lib/Color";
-  import colorStore, { newGenericPal } from "../stores/color-store";
+  import colorStore from "../stores/color-store";
   import type { StringPalette, Palette } from "../types";
   import focusStore from "../stores/focus-store";
   import { onMount } from "svelte";
   import Tooltip from "../components/Tooltip.svelte";
   import { VegaColors } from "../lib/charts";
   import { buttonStyle, denseButtonStyle } from "../lib/styles";
-  import { makePal, toHex } from "../lib/utils";
+  import {
+    makePal,
+    toHex,
+    newGenericPal,
+    createPalFromHexes,
+  } from "../lib/utils";
   import type { ExtendedPal } from "../lib/utils";
   import SuggestColorPal from "./SuggestColorPal.svelte";
 
@@ -15,17 +20,6 @@
   $: familiarPals = [] as ExtendedPal[];
   $: currentPal = $colorStore.palettes[$colorStore.currentPal];
   $: colorSpace = currentPal.colorSpace;
-
-  function createPalFromHexes(colors: string[]): StringPalette {
-    return {
-      name: "new palette",
-      colors,
-      background: "#ffffff",
-      type: "categorical",
-      evalConfig: {},
-      colorSpace: "lab",
-    };
-  }
 
   onMount(async () => {
     let newPals = [] as ExtendedPal[];

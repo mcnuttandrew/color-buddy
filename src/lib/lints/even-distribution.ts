@@ -1,5 +1,5 @@
 import { ColorLint } from "../ColorLint";
-import type { TaskType } from "../ColorLint";
+import type { PalType } from "../../types";
 
 const sum = (arr: number[]) => arr.reduce((acc, val) => acc + val, 0);
 
@@ -83,7 +83,7 @@ function rayleighTest(angles: number[]): { z: number; criticalValue: number } {
 
 export default class EvenDistribution extends ColorLint<number, number> {
   name = "Even Distribution";
-  taskTypes = ["categorical"] as TaskType[];
+  taskTypes = ["categorical"] as PalType[];
   hasParam = true;
   defaultParam = 1;
   group = "usability";

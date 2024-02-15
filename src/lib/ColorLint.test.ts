@@ -1,10 +1,10 @@
 import { expect, test } from "vitest";
 
 import { Color } from "./Color";
-import type { Palette } from "../types";
 
 import { CreateCustomLint } from "./CustomLint";
 import { suggestLintFix } from "./linter-tools/lint-fixer";
+import { makePalFromString } from "./utils";
 
 // Lints
 import AvoidExtremes from "./lints/avoid-extremes";
@@ -20,30 +20,10 @@ import MutuallyDistinct from "./lints/mutually-distinct";
 import SequentialOrder from "./lints/sequential-order";
 import UglyColors from "./lints/ugly-colors";
 
-function makePalFromHexes(hexes: string[]): Palette {
-  return {
-    colors: hexes.map((hex) => Color.colorFromHex(hex, "lab")),
-    background: Color.colorFromHex("#ffffff", "lab"),
-    name: "test",
-    type: "categorical",
-    evalConfig: {},
-    colorSpace: "lab",
-  };
-}
-function makePalFromString(strings: string[]): Palette {
-  return {
-    colors: strings.map((str) => Color.colorFromString(str, "lab")),
-    background: Color.colorFromString("#ffffff", "lab"),
-    name: "test",
-    type: "categorical",
-    evalConfig: {},
-    colorSpace: "lab",
-  };
-}
 const unique = <T>(arr: T[]): T[] => [...new Set(arr)];
 
 test("ColorLint - AvoidExtremes", () => {
-  const examplePal = makePalFromHexes([
+  const examplePal = makePalFromString([
     "#000000",
     "#ffffff",
     "#ff7e0e",
@@ -60,7 +40,7 @@ test("ColorLint - AvoidExtremes", () => {
 });
 
 test("ColorLint - MutuallyDistinct", () => {
-  const examplePal = makePalFromHexes([
+  const examplePal = makePalFromString([
     "#000000",
     "#ffffff",
     "#ff0000",
@@ -73,66 +53,68 @@ test("ColorLint - MutuallyDistinct", () => {
   expect(exampleLint.message).toMatchSnapshot();
 
   // TODO add a failing case
-  const examplePal2 = makePalFromHexes(["#d2b48c", "#f5f5dc", "#d7fcef"]);
+  const examplePal2 = makePalFromString(["#d2b48c", "#f5f5dc", "#d7fcef"]);
   const exampleLint2 = new newLint(examplePal2).run();
   expect(exampleLint2.passes).toBe(false);
   expect(exampleLint2.message).toMatchSnapshot();
 });
 
 test("ColorLint - MaxColors", () => {
-  const examplePal = makePalFromHexes(["#000000"]);
+  const examplePal = makePalFromString(["#000000"]);
   const newLint = CreateCustomLint(MaxColors);
   const exampleLint = new newLint(examplePal).run();
   expect(exampleLint.passes).toBe(true);
   expect(exampleLint.message).toMatchSnapshot();
 
-  const examplePal2 = makePalFromHexes([...new Array(20)].map(() => "#000000"));
+  const examplePal2 = makePalFromString(
+    [...new Array(20)].map(() => "#000000")
+  );
   const exampleLint2 = new newLint(examplePal2).run();
   expect(exampleLint2.passes).toBe(false);
   expect(exampleLint2.message).toMatchSnapshot();
 });
 
 test("ColorLint - UglyColors", () => {
-  const examplePal = makePalFromHexes(["#000000"]);
+  const examplePal = makePalFromString(["#000000"]);
   const newLint = CreateCustomLint(UglyColors);
   const exampleLint = new newLint(examplePal).run();
   expect(exampleLint.passes).toBe(true);
   expect(exampleLint.message).toMatchSnapshot();
 
-  const examplePal2 = makePalFromHexes(["#000000", "#56FF22"]);
+  const examplePal2 = makePalFromString(["#000000", "#56FF22"]);
   const exampleLint2 = new newLint(examplePal2).run();
   expect(exampleLint2.passes).toBe(false);
   expect(exampleLint2.message).toMatchSnapshot();
 });
 
 test("ColorLint - Fair Nominal", () => {
-  const examplePal = makePalFromHexes(["#000000"]);
+  const examplePal = makePalFromString(["#000000"]);
   const newLint = CreateCustomLint(Fair[0]);
   const exampleLint = new newLint(examplePal).run();
   expect(exampleLint.passes).toBe(true);
   expect(exampleLint.message).toMatchSnapshot();
 
-  const examplePal2 = makePalFromHexes(["#debdb5", "#2a2a2a", "#76fc00"]);
+  const examplePal2 = makePalFromString(["#debdb5", "#2a2a2a", "#76fc00"]);
   const exampleLint2 = new newLint(examplePal2).run();
   expect(exampleLint2.passes).toBe(false);
   expect(exampleLint2.message).toMatchSnapshot();
 });
 
 test("ColorLint - Fair Sequential", () => {
-  const examplePal = makePalFromHexes(["#000000"]);
+  const examplePal = makePalFromString(["#000000"]);
   const newLint = CreateCustomLint(Fair[1]);
   const exampleLint = new newLint(examplePal).run();
   expect(exampleLint.passes).toBe(true);
   expect(exampleLint.message).toMatchSnapshot();
 
-  const examplePal2 = makePalFromHexes(["#debdb5", "#2a2a2a", "#76fc00"]);
+  const examplePal2 = makePalFromString(["#debdb5", "#2a2a2a", "#76fc00"]);
   const exampleLint2 = new newLint(examplePal2).run();
   expect(exampleLint2.passes).toBe(false);
   expect(exampleLint2.message).toMatchSnapshot();
 });
 
 test("ColorLint - SequentialOrder", () => {
-  const examplePal = makePalFromHexes([
+  const examplePal = makePalFromString([
     "#0084a9",
     "#009de5",
     "#5fb1ff",
@@ -144,7 +126,7 @@ test("ColorLint - SequentialOrder", () => {
   expect(exampleLint.passes).toBe(true);
   expect(exampleLint.message).toMatchSnapshot();
 
-  const examplePal2 = makePalFromHexes([
+  const examplePal2 = makePalFromString([
     "#0084a9",
     "#009de5",
     "#5fb1ff",
@@ -157,7 +139,7 @@ test("ColorLint - SequentialOrder", () => {
 });
 
 test("ColorLint - CatOrderSimilarity", () => {
-  const examplePal = makePalFromHexes([
+  const examplePal = makePalFromString([
     "#0084a9",
     "#009de5",
     "#8ca9fa",
@@ -169,7 +151,7 @@ test("ColorLint - CatOrderSimilarity", () => {
   expect(exampleLint.passes).toBe(true);
   expect(exampleLint.message).toMatchSnapshot();
 
-  const examplePal2 = makePalFromHexes([
+  const examplePal2 = makePalFromString([
     "#0084a9",
     "#009de5",
     "#5fb1ff",
@@ -182,7 +164,7 @@ test("ColorLint - CatOrderSimilarity", () => {
 });
 
 test("ColorLint - ColorNameDiscriminability", async () => {
-  const examplePal = makePalFromHexes(["#5260d1", "#005ebe"]);
+  const examplePal = makePalFromString(["#5260d1", "#005ebe"]);
   const lint = CreateCustomLint(ColorNameDiscriminability);
   const exampleLint = new lint(examplePal).run();
   expect(exampleLint.passes).toBe(false);
@@ -199,13 +181,13 @@ test("ColorLint - ColorNameDiscriminability", async () => {
 });
 
 test("ColorLint - SizeDiscrim (Thin)", () => {
-  const examplePal = makePalFromHexes(["#0084a9", "#bad", "#008000"]);
+  const examplePal = makePalFromString(["#0084a9", "#bad", "#008000"]);
   const newLint = CreateCustomLint(Discrims[0]);
   const exampleLint = new newLint(examplePal).run();
   expect(exampleLint.passes).toBe(true);
   expect(exampleLint.message).toMatchSnapshot();
 
-  const examplePal2 = makePalFromHexes(["#0084a9", "#009de5", "#8ca9fa"]);
+  const examplePal2 = makePalFromString(["#0084a9", "#009de5", "#8ca9fa"]);
   const exampleLint2 = new newLint(examplePal2).run();
   expect(exampleLint2.passes).toBe(false);
   expect(exampleLint2.message).toMatchSnapshot();
@@ -247,7 +229,7 @@ test("ColorLint - ColorBlind", async () => {
     "#c4bc27",
     "#00becf",
   ];
-  const examplePal = makePalFromHexes(tableau10);
+  const examplePal = makePalFromString(tableau10);
   const cbDeuteranopia = CreateCustomLint(ColorBlindness[0]);
   const exampleLint1 = new cbDeuteranopia(examplePal).run();
   expect(exampleLint1.passes).toBe(false);
@@ -271,7 +253,7 @@ test("ColorLint - ColorBlind", async () => {
 
 const ughWhat = ["#00ffff", "#00faff", "#00e4ff", "#fdfdfc", "#00ffff"];
 test("ColorLint - Background Contrast", async () => {
-  const examplePal = makePalFromHexes(ughWhat);
+  const examplePal = makePalFromString(ughWhat);
   const BackgroundContrastLint = CreateCustomLint(BackgroundContrast);
   const exampleLint = new BackgroundContrastLint(examplePal).run();
   expect(exampleLint.passes).toBe(false);

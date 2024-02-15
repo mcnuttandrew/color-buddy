@@ -1,7 +1,7 @@
 import { writable } from "svelte/store";
 import * as idb from "idb-keyval";
 import type { CustomLint } from "../lib/CustomLint";
-import type { TaskType } from "../lib/ColorLint";
+import type { PalType } from "../types";
 import { JSONStringify } from "../lib/utils";
 import { BUILT_INS } from "../lib/linter";
 import { loadLints } from "../lib/api-calls";
@@ -72,7 +72,7 @@ function createStore() {
       lintUpdate((old) => ({ ...old, program })),
     setCurrentLintName: (name: string) =>
       lintUpdate((old) => ({ ...old, name })),
-    setCurrentLintTaskTypes: (taskTypes: TaskType[]) =>
+    setCurrentLintTaskTypes: (taskTypes: PalType[]) =>
       lintUpdate((old) => ({ ...old, taskTypes })),
     setCurrentLintLevel: (level: "error" | "warning") =>
       lintUpdate((old) => ({ ...old, level })),

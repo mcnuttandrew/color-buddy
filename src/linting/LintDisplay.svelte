@@ -20,8 +20,9 @@
 {#if justSummary}
   <EvalResponse {check} customWord={"✅"} />
 {:else if ignored}
-  <div class="text-xs">
+  <div class="text-xs flex">
     Ignored "{check.name}"
+    <EvalResponse {check} customWord={"⚙️"} />
     <button
       class={buttonStyle}
       on:click={() => {
@@ -33,17 +34,6 @@
     >
       re-enable
     </button>
-    {#if check.isCustom}
-      <button
-        class={buttonStyle}
-        on:click={() => {
-          // @ts-ignore
-          lintStore.setFocusedLint(check.isCustom);
-        }}
-      >
-        customize
-      </button>
-    {/if}
   </div>
 {:else}
   <div class="w-full rounded flex flex-col justify-between py-1">
@@ -67,17 +57,6 @@
         </div>
       </Tooltip> -->
       <EvalResponse {check} />
-      {#if check.isCustom}
-        <button
-          class={buttonStyle}
-          on:click={() => {
-            // @ts-ignore
-            lintStore.setFocusedLint(check.isCustom);
-          }}
-        >
-          customize
-        </button>
-      {/if}
     </div>
     {#if !check.passes && !isCompact}
       <ExplanationViewer {check} />

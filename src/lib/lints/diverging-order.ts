@@ -19,7 +19,7 @@ const findMinDistPoint = (points: Color[], pos: { x: number; y: number }) => {
   const minDist = Math.min(...distances);
   return points[distances.indexOf(minDist)];
 };
-export default class SequentialOrder extends ColorLint<boolean, false> {
+export default class DivergingOrder extends ColorLint<boolean, false> {
   name = "Diverging Palettes order";
   taskTypes = ["diverging"] as PalType[];
   group = "usability";
@@ -88,3 +88,36 @@ export const fixDivergingOrder: LintFixer = async (palette) => {
   ];
   return [{ ...palette, colors }];
 };
+// {
+//     "exist": {
+//         "in": "colors",
+//         "varb": "c",
+//         "predicate": {
+//             "all": {
+//                 "in": "colors",
+//                 "varbs": ["a", "b"],
+//                 "where": {
+//                     "and": [
+//                         { "<": {"left": "index(a)", "right": "index(c)"} },
+//                         {
+//                             "==": {
+//                                 "left": "index(a)",
+//                                 "right": { "-": {"left": "index(b)", "right": 1} }
+//                             }
+//                         }
+//                     ]
+//                 },
+//                 "predicate": {
+//                     "and": [
+//                         {
+//                             "<": { "left": {"lab.l": "a"}, "right": {"lab.l": "c"} }
+//                         },
+//                         {
+//                             ">": { "left": {"lab.l": "b"}, "right": {"lab.l": "a"} }
+//                         }
+//                     ]
+//                 }
+//             }
+//         }
+//     }
+// }

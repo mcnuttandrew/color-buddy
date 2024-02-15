@@ -101,9 +101,9 @@ export function suggestContextualAdjustments(
   currentPal: Palette,
   engine: Engine
 ) {
-  const adjustPrompt = `${summarizePal(currentPal)}\n\n${prompt}`;
+  const adjustedPrompt = `${summarizePal(currentPal)}\n\n${prompt}`;
   const body = JSON.stringify({
-    prompt: adjustPrompt,
+    prompt: adjustedPrompt,
     ...palToString(currentPal),
   });
   return engineToScaffold[engine]<SimplePal>(

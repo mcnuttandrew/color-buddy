@@ -1,10 +1,13 @@
 <script lang="ts">
-  import Tooltip from "../components/Tooltip.svelte";
   import colorStore from "../stores/color-store";
   import focusStore from "../stores/focus-store";
+  import lintStore from "../stores/lint-store";
   import configStore from "../stores/config-store";
+
   import type { LintResult } from "../lib/ColorLint";
   import type { Palette } from "../types";
+
+  import Tooltip from "../components/Tooltip.svelte";
   import PalDiff from "../components/PalDiff.svelte";
   import ExplanationViewer from "./ExplanationViewer.svelte";
   import {
@@ -60,18 +63,27 @@
   $: cbMatch = options.find((x) =>
     check.name.toLowerCase().includes(x)
   ) as (typeof options)[number];
+  $: ignored = !!evalConfig[check.name]?.ignore;
 </script>
 
 <Tooltip positionAlongRightEdge={true}>
   <div slot="content" let:onClick class="max-w-2xl eval-tooltip">
     <div class="font-bold">{check.name}</div>
-    {#if check.passes}
+    {#if check.passes || ignored}
       <div class="text-sm">{check.description}</div>
     {:else}
       <ExplanationViewer {check} />
     {/if}
 
     <div class="font-bold mt-4">Actions</div>
+    {#if check.isCustom}
+      <button
+        class={buttonStyle}
+        on:click={() => lintStore.setFocusedLint(check.isCustom)}
+      >
+        Customize
+      </button>
+    {/if}
     {#if cbMatch}
       <button
         class={buttonStyle}
@@ -92,17 +104,31 @@
       {/if}
     {/if}
 
-    <button
-      class={buttonStyle}
-      on:click={() => {
-        colorStore.setCurrentPalEvalConfig({
-          ...evalConfig,
-          [check.name]: { ignore: true },
-        });
-      }}
-    >
-      Ignore for this palette
-    </button>
+    {#if !ignored}
+      <button
+        class={buttonStyle}
+        on:click={() => {
+          colorStore.setCurrentPalEvalConfig({
+            ...evalConfig,
+            [check.name]: { ignore: true },
+          });
+        }}
+      >
+        Ignore for this palette
+      </button>
+    {:else}
+      <button
+        class={buttonStyle}
+        on:click={() => {
+          colorStore.setCurrentPalEvalConfig({
+            ...evalConfig,
+            [check.name]: { ignore: false },
+          });
+        }}
+      >
+        Re-enable
+      </button>
+    {/if}
 
     {#if requestState === "loading"}
       <div>Loading...</div>

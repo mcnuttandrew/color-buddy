@@ -616,11 +616,13 @@ const oxfordJoin = (arr: string[]) => {
 };
 
 export function summarizePal(pal: Palette) {
-  const affectMsg = ` It is intended to convey ${oxfordJoin(
-    pal.intendedAffects
-  )} affects.`;
-  const contextMsg = ` It is intended to be used ${oxfordJoin(
-    pal.intendedContexts.map((x) => `${x}s`)
-  )}.`;
+  const affects = pal.intendedAffects;
+  const affectMsg = affects.length
+    ? ` It is intended to convey ${oxfordJoin(pal.intendedAffects)} affects.`
+    : "";
+  const contexts = pal.intendedContexts.map((x) => `${x}s`);
+  const contextMsg = contexts.length
+    ? ` It is intended to be used ${oxfordJoin(contexts)}.`
+    : "";
   return `This is a ${pal.type} palette called '${pal.name}'.${affectMsg}${contextMsg}`;
 }

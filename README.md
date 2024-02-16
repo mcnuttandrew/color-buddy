@@ -45,8 +45,8 @@ First time you start it up you should also run `yarn prep data`
 - [ ] Bug: Color channel usage slightly cursed (doesn't update positions correctly)
 - [ ] Bug: rotate in polar coordinates doesn't work right
 - [ ] Dont allow saves to examples when there's an error
-- [ ] Switch the examples to be tabs or single
-- [ ] Consider moving the names and color chunks into the left hand column for space
+- [x] Switch the examples to be tabs or single
+- [x] Consider moving the names and color chunks into the left hand column for space
 - [x] LCH colors upside down god damn it
 - [x] Clone Rule
 - [x] Compact more compact
@@ -54,20 +54,18 @@ First time you start it up you should also run `yarn prep data`
 - [x] Merge the info and fixes tooltips in the lints
 - [x] Hover broken on compare, also make sure it takes the right stringify (same as the color channel)
 - [x] Select compare from palettes drop down menu
-
-Parameterization epic:
-
-- [ ] Allow no palettes, allows renaming of non-current palettes, which would be enable by:
+- [ ] Allow no palettes,
+- [ ] allows renaming of non-current palettes
 - [ ] Parameterize the scatter column completely, allow edits to the compare stuff
 
 # Nice to have
 
 - [ ] Add HCT/CAM, add explainers to each of the color spaces, blocked by colorjs release
 - [ ] Directional subtile for aligns, they do not work in polar also
-- [ ] Colors from String should save on enter?
 - [ ] Insert color theory options, eg insert opposing, inserting analogous color, etc, mine from the adobe picker
 - [ ] Add clone color (and similar buttons) to the tooltip, mostly for making interacting with the examples simpler
 - [ ] XYY is probaably now possible
 - [ ] Nice to have: Rest of basic geometry manipulations: flip (horizontal, vertical), scale, Distribute radially
 - [ ] Undo / redo stack size. Nice to have: summarize each action
-- [ ] Minor: Make keyboard short cut (option+up/down) for the z-direction
+- [x] Colors from String should save on enter?
+- [x] Minor: Make keyboard short cut (option+up/down) for the z-direction

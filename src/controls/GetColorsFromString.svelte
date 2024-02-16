@@ -54,10 +54,14 @@
       .map((color) => color.toHex())
       .map((x) => (includeQuotes ? `"${x}"` : x))
       .join(", ")}
-    on:change={(e) => {
-      // @ts-ignore
-      processBodyInput(e.target.value);
+    on:keydown={(e) => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        processBodyInput(e.currentTarget.value);
+        e.currentTarget.blur();
+      }
     }}
+    on:change={(e) => processBodyInput(e.currentTarget.value)}
   />
   {#if state === "error"}
     <div class="text-red-500">Error parsing colors</div>

@@ -633,13 +633,13 @@ export function dealWithFocusEvent(
   focusedItems: number[]
 ) {
   const newFocusedItems = toggleElement(focusedItems, clickedItem);
-  const isShift = e.shiftKey;
-  const isCtrl = e.ctrlKey;
-  if (isShift) {
+  if (e.shiftKey || e.ctrlKey || e.metaKey) {
     return newFocusedItems;
   }
-  if (isCtrl) {
-    return newFocusedItems;
+  const itemInFocus = newFocusedItems.includes(clickedItem);
+  const numFocused = focusedItems.length;
+  if (numFocused > 1) {
+    return [clickedItem];
   }
-  return [clickedItem];
+  return itemInFocus ? [clickedItem] : [];
 }

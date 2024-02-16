@@ -35,7 +35,9 @@
 
   <DistributePoints />
   <AlignSelection />
-  <Rotate />
+  {#if focusedColors.length > 0 && colorSpace !== "hsl" && colorSpace !== "hsv" && colorSpace !== "lch"}
+    <Rotate />
+  {/if}
 
   <InterpolatePoints />
 </div>

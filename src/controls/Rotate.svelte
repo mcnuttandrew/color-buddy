@@ -106,74 +106,72 @@
   }
 </script>
 
-{#if focusedColors.length > 0 && colorSpace !== "hsl" && colorSpace !== "hsv" && colorSpace !== "lch"}
-  <div class="w-full border-t-2 border-black my-2"></div>
-  <div class="flex justify-between w-full">
-    <div class="font-bold">Rotate</div>
-    <Tooltip>
-      <button slot="target" let:toggle on:click={toggle}>⚙</button>
-      <div slot="content">
-        <div class="flex flex-col">
-          <div>Around which point?</div>
-          <div class="flex flex-wrap">
+<div class="w-full border-t-2 border-black my-2"></div>
+<div class="flex justify-between w-full">
+  <div class="font-bold">Rotate</div>
+  <Tooltip>
+    <button slot="target" let:toggle on:click={toggle}>⚙</button>
+    <div slot="content">
+      <div class="flex flex-col">
+        <div>Around which point?</div>
+        <div class="flex flex-wrap">
+          <button
+            on:click={() => setRotatePoint("avg")}
+            class={`${buttonStyle} mb-2 ${
+              rotationPoint === "avg" ? buttonStyleSelected : ""
+            }`}
+          >
+            An average of the selected colors
+          </button>
+          {#if zeroRotationSpaces.has(colorSpace)}
             <button
-              on:click={() => setRotatePoint("avg")}
+              on:click={() => setRotatePoint("zero")}
               class={`${buttonStyle} mb-2 ${
-                rotationPoint === "avg" ? buttonStyleSelected : ""
+                rotationPoint === "zero" ? buttonStyleSelected : ""
               }`}
             >
-              An average of the selected colors
+              Around zero
             </button>
-            {#if zeroRotationSpaces.has(colorSpace)}
-              <button
-                on:click={() => setRotatePoint("zero")}
-                class={`${buttonStyle} mb-2 ${
-                  rotationPoint === "zero" ? buttonStyleSelected : ""
-                }`}
-              >
-                Around zero
-              </button>
-            {/if}
+          {/if}
 
-            {#each focusedColors as colorIdx}
-              <button
-                class={`${buttonStyle} flex justify-center items-center ${
-                  rotationPoint === colorIdx ? buttonStyleSelected : ""
-                }`}
-                on:click={() => setRotatePoint(colorIdx)}
-              >
-                {colors[colorIdx].toHex()}
-                <span
-                  style={`background-color: ${colors[colorIdx].toHex()}`}
-                  class="rounded-full w-3 h-3 ml-2"
-                ></span>
-              </button>
+          {#each focusedColors as colorIdx}
+            <button
+              class={`${buttonStyle} flex justify-center items-center ${
+                rotationPoint === colorIdx ? buttonStyleSelected : ""
+              }`}
+              on:click={() => setRotatePoint(colorIdx)}
+            >
+              {colors[colorIdx].toHex()}
+              <span
+                style={`background-color: ${colors[colorIdx].toHex()}`}
+                class="rounded-full w-3 h-3 ml-2"
+              ></span>
+            </button>
+          {/each}
+        </div>
+        <div class="flex">
+          Rotate about the
+          <select bind:value={axis} class="mx-1">
+            {#each ["x", "y", "z"] as axis}
+              <option value={axis}>{axis}</option>
             {/each}
-          </div>
-          <div class="flex">
-            Rotate about the
-            <select bind:value={axis} class="mx-1">
-              {#each ["x", "y", "z"] as axis}
-                <option value={axis}>{axis}</option>
-              {/each}
-            </select>
-            Axis
-          </div>
+          </select>
+          Axis
         </div>
       </div>
-    </Tooltip>
-  </div>
-  <div class="flex flex-col">
-    <div class="w-full flex justify-between">
-      <input min={0} max={360} step={1} type="range" bind:value={angle} />
-      <input
-        min={0}
-        max={360}
-        step={1}
-        type="number"
-        bind:value={angle}
-        class="w-16 text-sm"
-      />
     </div>
+  </Tooltip>
+</div>
+<div class="flex flex-col">
+  <div class="w-full flex justify-between">
+    <input min={0} max={360} step={1} type="range" bind:value={angle} />
+    <input
+      min={0}
+      max={360}
+      step={1}
+      type="number"
+      bind:value={angle}
+      class="w-16 text-sm"
+    />
   </div>
-{/if}
+</div>

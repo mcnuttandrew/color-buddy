@@ -95,6 +95,7 @@
             on:click={() => {
               configStore.setUseSimulatorOnExamples(false);
               exampleStore.restoreDefaultExamples();
+              onClick();
             }}
           >
             Yes! Reset em now
@@ -350,7 +351,7 @@
           Mark Colors
         </button>
       {/if}
-      {#if modalState === "input-vega"}
+      {#if modalState === "input-vega" && validJSON}
         <button
           class={buttonStyle}
           on:click={() => {

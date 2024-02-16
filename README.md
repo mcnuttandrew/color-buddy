@@ -24,9 +24,9 @@ First time you start it up you should also run `yarn prep data`
 
 - [ ] Add more blame robustness, may pay to try to reason across all of the operator families (insight: keep a list of the blamable variables in the environment to support tracing)
 - [ ] per cols 4 all: color blindness metric should maybe be sensitive to task?
-- [ ] Sequential check fix is incorrect for things with equi-ligthness
 - [ ] Macros story: "not similar", "sequences", "where": { "!=": {"left": "index(a)", "right": "index(b)"} },
 - [ ] More crashy type validation
+- [x] Sequential check fix is incorrect for things with equi-ligthness
 - [x] Affect rules
 - [x] "No out of gamut"
 
@@ -44,7 +44,10 @@ First time you start it up you should also run `yarn prep data`
 - [ ] Handles get stuck on channel picker again, ugh
 - [ ] Bug: Color channel usage slightly cursed (doesn't update positions correctly)
 - [ ] Bug: rotate in polar coordinates doesn't work right
-- [ ] Dont allow saves to examples when there's an error
+- [ ] Allow no palettes
+- [ ] allows renaming of non-current palettes
+- [ ] Parameterize the scatter column completely, allow edits to the compare stuff
+- [x] Dont allow saves to examples when there's an error
 - [x] Switch the examples to be tabs or single
 - [x] Consider moving the names and color chunks into the left hand column for space
 - [x] LCH colors upside down god damn it
@@ -54,9 +57,6 @@ First time you start it up you should also run `yarn prep data`
 - [x] Merge the info and fixes tooltips in the lints
 - [x] Hover broken on compare, also make sure it takes the right stringify (same as the color channel)
 - [x] Select compare from palettes drop down menu
-- [ ] Allow no palettes,
-- [ ] allows renaming of non-current palettes
-- [ ] Parameterize the scatter column completely, allow edits to the compare stuff
 
 # Nice to have
 

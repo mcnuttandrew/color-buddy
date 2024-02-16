@@ -10,6 +10,9 @@
   export let idx: number;
   export let bg: string;
   export let clickExample: (example: any, idx: number) => void;
+  $: numberExamples = $exampleStore.examples.length;
+  $: numberHidden = $exampleStore.examples.filter((x) => x.hidden).length;
+  $: exampleIsSoled = numberExamples - 1 === numberHidden;
   $: size = example.size || 250;
   $: operations = [
     { name: "Edit", action: () => clickExample(example, idx), condition: true },
@@ -30,23 +33,31 @@
         exampleStore.hideAllExcept(idx);
         exampleStore.setExampleSize(idx, 600);
       },
-      condition: true,
+      condition: !exampleIsSoled,
     },
     {
-      name: "Expand",
-      action: () => exampleStore.setExampleSize(idx, 600),
-      condition: size !== 600,
+      name: "Unfocus (restore group)",
+      action: () => {
+        exampleStore.restoreHiddenExamples();
+        exampleStore.setExampleSize(idx, 250);
+      },
+      condition: exampleIsSoled,
     },
-    {
-      name: "Reset size",
-      action: () => exampleStore.setExampleSize(idx, 250),
-      condition: size !== 250,
-    },
-    {
-      name: "Shrink",
-      action: () => exampleStore.setExampleSize(idx, 50),
-      condition: size !== 50,
-    },
+    // {
+    //   name: "Expand",
+    //   action: () => exampleStore.setExampleSize(idx, 600),
+    //   condition: size !== 600,
+    // },
+    // {
+    //   name: "Reset size",
+    //   action: () => exampleStore.setExampleSize(idx, 250),
+    //   condition: size !== 250,
+    // },
+    // {
+    //   name: "Shrink",
+    //   action: () => exampleStore.setExampleSize(idx, 50),
+    //   condition: size !== 50,
+    // },
   ].filter((x) => x.condition);
 </script>
 

@@ -2,26 +2,35 @@
   import { buttonStyle } from "../lib/styles";
   import Tooltip from "../components/Tooltip.svelte";
   import configStore from "../stores/config-store";
+  const options = [
+    "none",
+    "deuteranopia",
+    "protanopia",
+    "tritanopia",
+    "grayscale",
+  ] as const;
 </script>
 
+{#if $configStore.colorSim !== "none"}
+  <button class={buttonStyle} on:click={() => configStore.setColorSim("none")}>
+    Deactivate Sim
+  </button>
+{/if}
 <Tooltip>
   <div slot="content">
-    {#each ["none", "deuteranopia", "protanopia", "tritanopia", "grayscale"] as value}
+    {#each options as value}
       <label>
         <input
           type="radio"
           checked={$configStore.colorSim === value}
-          on:change={(e) => {
-            // @ts-ignore
-            configStore.setColorSim(e.target.value);
-          }}
-          name="amount"
+          on:change={() => configStore.setColorSim(value)}
           {value}
         />
         {value}
       </label>
     {/each}
   </div>
+
   <button slot="target" let:toggle on:click={toggle} class={buttonStyle}>
     Simulation: {$configStore.colorSim}
   </button>

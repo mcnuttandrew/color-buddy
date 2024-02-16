@@ -2,6 +2,7 @@
   import colorStore from "./stores/color-store";
   import focusStore from "./stores/focus-store";
   import configStore from "./stores/config-store";
+  import lintStore from "./stores/lint-store";
 
   // make sure no focused colors are out of bounds
   $: focusedColors = $focusStore.focusedColors;
@@ -28,6 +29,23 @@
   import Zoom from "./controls/Zoom.svelte";
 
   const tabs = ["examples", "compare", "eval"];
+
+  import { lint } from "./lib/api-calls";
+  import { debounce } from "vega";
+
+  $: selectedLint = $lintStore.focusedLint;
+  $: updateSearchDebounced = debounce(10, (pal: any) => {
+    // keep the noise down on the console
+    if (!selectedLint) {
+      lint(pal).then((res) => {
+        lintStore.postCurrentChecks(res);
+      });
+    }
+  });
+  $: updateSearchDebounced(currentPal);
+
+  let innerWidth = window.innerWidth;
+  $: scatterSize = Math.max(Math.min(innerWidth * 0.3, 450), 350);
 </script>
 
 <main class="flex h-full">
@@ -40,7 +58,7 @@
           <Zoom />
         </div>
         {#if palPresent}
-          <MainColumn />
+          <MainColumn {scatterSize} />
         {/if}
       </div>
       {#if palPresent}
@@ -58,7 +76,7 @@
           {#if $configStore.route === "examples"}
             <Examples />
           {:else if $configStore.route === "compare"}
-            <ComparePal />
+            <ComparePal {scatterSize} />
           {:else}
             <Eval />
           {/if}
@@ -70,6 +88,7 @@
 </main>
 
 <KeyboardHooks />
+<svelte:window bind:innerWidth />
 
 <style>
   .main-content {

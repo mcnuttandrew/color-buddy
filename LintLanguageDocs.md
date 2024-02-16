@@ -10,7 +10,7 @@ Conjunctions:
 
 Quantifiers:
 {all: {varbs: Variable[], predicate: EXPR, where?: EXPR, in: Variable | Value[]}}
-{exists: {varbs: Variable[], predicate: EXPR, where?: EXPR, in: Variable | Value[]}}
+{exist: {varbs: Variable[], predicate: EXPR, where?: EXPR, in: Variable | Value[]}}
 
 Comparisons:
 {"similar": {left: Value, right: Value, threshold: Number}}

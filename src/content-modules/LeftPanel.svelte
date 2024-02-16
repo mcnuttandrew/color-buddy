@@ -1,18 +1,27 @@
 <script lang="ts">
   import colorStore from "../stores/color-store";
   import configStore from "../stores/config-store";
+
   import Nav from "../components/Nav.svelte";
   import NewPal from "../controls/NewPal.svelte";
+  import EvalColorColumn from "../linting/EvalColorColumn.svelte";
 
   import Config from "../controls/Config.svelte";
   import Controls from "./Controls.svelte";
   import { denseButtonStyle } from "../lib/styles";
 
   import SavedPals from "./SavedPals.svelte";
+
+  let innerWidth = window.innerWidth;
+
+  $: leftPanelTabs =
+    innerWidth < 1500
+      ? ["palettes", "controls", "colors"]
+      : ["palettes", "controls"];
 </script>
 
 <!-- left panel -->
-<div class="bg-stone-200 w-80 container flex flex-col h-full flex-none">
+<div class="bg-stone-200 w-72 container flex flex-col h-full flex-none">
   <div class="text-4xl font-bold bg-stone-800 text-white px-2 py-1">
     Color Buddy 𑁍
   </div>
@@ -20,14 +29,6 @@
     <div class="flex w-full justify-between items-start">
       <div class="flex ml-1">
         <NewPal />
-        <!-- /
-        <button
-          id="save"
-          class={`${denseButtonStyle} mt-0.5`}
-          on:click={() => colorStore.duplicatePal($colorStore.currentPal)}
-        >
-          Duplicate
-        </button> -->
       </div>
       <div class="flex">
         <button
@@ -52,7 +53,7 @@
   <section class="flex flex-col flex-1 overflow-auto p-1">
     <div class="flex justify-center items-center">
       <Nav
-        tabs={["palettes", "controls"]}
+        tabs={leftPanelTabs}
         isTabSelected={(x) => x === $configStore.leftRoute}
         selectTab={(x) => {
           //@ts-ignore
@@ -60,13 +61,19 @@
         }}
       />
     </div>
+    <div class="w-full border-t-2 border-black my-2"></div>
     {#if $configStore.leftRoute === "controls"}
       <Controls />
-    {:else}
+    {/if}
+    {#if $configStore.leftRoute === "palettes"}
       <SavedPals />
+    {/if}
+    {#if $configStore.leftRoute === "colors"}
+      <EvalColorColumn />
     {/if}
   </section>
 </div>
+<svelte:window bind:innerWidth />
 
 <style>
   .container {

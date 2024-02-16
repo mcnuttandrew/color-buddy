@@ -1,14 +1,12 @@
 <script lang="ts">
   import colorStore from "../stores/color-store";
-  import lintStore from "../stores/lint-store";
   import configStore from "../stores/config-store";
 
-  import { ColorLint } from "../lib/ColorLint";
+  import type { LintResult } from "../lib/ColorLint";
   import { buttonStyle } from "../lib/styles";
-  import Tooltip from "../components/Tooltip.svelte";
   import ExplanationViewer from "./ExplanationViewer.svelte";
   import EvalResponse from "./EvalResponse.svelte";
-  export let check: ColorLint<any, any>;
+  export let check: LintResult;
   export let justSummary: boolean = false;
 
   $: currentPal = $colorStore.palettes[$colorStore.currentPal];
@@ -51,11 +49,6 @@
       <div class:font-bold={!check.passes}>
         {check.name}
       </div>
-      <!-- <Tooltip buttonName="info">
-        <div slot="content" class="flex flex-col max-w-md">
-          <div class="">{check.description}</div>
-        </div>
-      </Tooltip> -->
       <EvalResponse {check} />
     </div>
     {#if !check.passes && !isCompact}

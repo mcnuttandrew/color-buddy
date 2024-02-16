@@ -19,7 +19,7 @@ const lint: CustomLint = {
   group: "design",
   description:
     "Checks if the colors are in the sRGB gamut. This is important to ensure that the colors are visible and can be displayed on most devices.",
-  failMessage: `The color is not in the sRGB gamut. Please choose a color that is in the sRGB gamut.`,
+  failMessage: `A color or colors is not in the sRGB gamut ({{blame}}). Please adjust the color so that it can be displayed on most devices.`,
   id: "gamut-check-built-in",
   blameMode: "single",
   subscribedFix: "fixGamut",

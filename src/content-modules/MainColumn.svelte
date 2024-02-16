@@ -14,28 +14,27 @@
   import Nav from "../components/Nav.svelte";
   import PalPreview from "../components/PalPreview.svelte";
   import SetColorSpace from "../controls/SetColorSpace.svelte";
-  import SuggestName from "../controls/SuggestName.svelte";
   import simulate_cvd from "../lib/blindness";
 
   import ContentEditable from "../components/ContentEditable.svelte";
+
+  export let scatterSize = 450;
+
   $: currentPal = $colorStore.palettes[$colorStore.currentPal];
   $: selectedBlindType = $configStore.colorSim;
 </script>
 
 <div class="flex flex-col h-full px-4">
   <!-- naming stuff -->
-  <div class="flex justify-between">
-    <div class="flex font-bold">
-      <span class="italic">Current Pal:</span>
-      <div class="flex">
-        <span>✎</span>
-        <ContentEditable
-          onChange={(x) => colorStore.setCurrentPalName(x)}
-          value={currentPal.name}
-        />
-      </div>
+  <div class="flex font-bold">
+    <span class="italic">Current Pal:</span>
+    <div class="flex">
+      <span>✎</span>
+      <ContentEditable
+        onChange={(x) => colorStore.setCurrentPalName(x)}
+        value={currentPal.name}
+      />
     </div>
-    <SuggestName />
   </div>
   <div class="flex">
     <SetColorSpace
@@ -53,8 +52,8 @@
     colorSpace={currentPal.colorSpace}
     Pal={currentPal}
     focusedColors={$focusStore.focusedColors}
-    height={450}
-    width={450}
+    height={scatterSize}
+    width={scatterSize}
     onColorsChange={(x) => colorStore.setCurrentPalColors(x)}
     onFocusedColorsChange={(x) => focusStore.setColors(x)}
     startDragging={() => colorStore.pausePersistance()}
@@ -64,7 +63,7 @@
       : currentPal.colors.map((x) => simulate_cvd(selectedBlindType, x))}
   />
 
-  <div class="flex">
+  <div class="flex flex-wrap">
     <button
       class={buttonStyle}
       on:click={() => configStore.setScatterplotMode("putting")}

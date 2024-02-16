@@ -2,32 +2,23 @@
   import colorStore from "../stores/color-store";
   import configStore from "../stores/config-store";
   import lintStore from "../stores/lint-store";
-  import { ColorLint } from "../lib/ColorLint";
 
   import { lint } from "../lib/api-calls";
   import { buttonStyle } from "../lib/styles";
   import LintDisplay from "./LintDisplay.svelte";
-  import EvalColorColumn from "./EvalColorColumn.svelte";
   import LintCustomizationModal from "./LintCustomizationModal.svelte";
   import Nav from "../components/Nav.svelte";
   import NewLintSuggestion from "./NewLintSuggestion.svelte";
-  import { debounce } from "vega";
   import { titleCase } from "../lib/utils";
+  import EvalColorColumn from "./EvalColorColumn.svelte";
+
+  import type { LintResult } from "../lib/ColorLint";
 
   import { loadLints } from "../lib/api-calls";
 
   $: currentPal = $colorStore.palettes[$colorStore.currentPal];
   $: evalConfig = currentPal.evalConfig;
-  $: checks = [] as ColorLint<any, any>[];
-  $: selectedLint = $lintStore.focusedLint;
-  $: updateSearchDebounced = debounce(10, (pal: any) => {
-    if (!selectedLint) {
-      lint(pal).then((res) => {
-        checks = res;
-      });
-    }
-  });
-  $: updateSearchDebounced(currentPal);
+  $: checks = $lintStore.currentChecks;
 
   $: checkGroups = checks.reduce(
     (acc, check) => {
@@ -39,11 +30,11 @@
     },
     { accessibility: [], design: [], usability: [] } as Record<
       string,
-      ColorLint<any, any>[]
+      LintResult[]
     >
   );
 
-  function setGroupTo(checks: ColorLint<any, any>[], ignore: boolean) {
+  function setGroupTo(checks: LintResult[], ignore: boolean) {
     const newEvalConfig = { ...evalConfig };
     checks.forEach((check) => {
       newEvalConfig[check.name] = { ignore };
@@ -51,37 +42,53 @@
     colorStore.setCurrentPalEvalConfig(newEvalConfig);
   }
   $: isCompact = $configStore.evalDisplayMode === "compact";
+
+  let innerWidth = window.innerWidth;
+  $: showEvalColumn = innerWidth >= 1500;
+  $: {
+    if (showEvalColumn && $configStore.leftRoute === "colors") {
+      configStore.setLeftPanelRoute("controls");
+    }
+  }
 </script>
 
-<div class="flex h-full">
-  <EvalColorColumn {checks} />
+<div class="bg-stone-300 w-full">
+  <Nav
+    tabs={["regular", "compact"]}
+    isTabSelected={(x) => x === $configStore.evalDisplayMode}
+    selectTab={(x) => {
+      //@ts-ignore
+      configStore.setEvalDisplayMode(x);
+    }}
+  />
+</div>
+<div class="flex h-full bg-stone-100">
+  {#if showEvalColumn}
+    <div class="bg-stone-300">
+      <EvalColorColumn />
+    </div>
+  {/if}
   <div class="flex flex-col ml-2">
-    <Nav
-      tabs={["regular", "compact"]}
-      isTabSelected={(x) => x === $configStore.evalDisplayMode}
-      selectTab={(x) => {
-        //@ts-ignore
-        configStore.setEvalDisplayMode(x);
-      }}
-    />
-    <div class="overflow-auto h-full max-w-lg mb-28">
+    <div class="overflow-auto h-full max-w-lg mb-28 px-2">
       <div class="flex items-start justify-start">
         {#if Object.keys(currentPal.evalConfig)}
-          <button
-            class={`${buttonStyle} ml-0 pl-0 `}
-            on:click={() => colorStore.setCurrentPalEvalConfig({})}
-          >
-            Restore Defaults
-          </button>
+          <div>
+            <button
+              class={`${buttonStyle} ml-0 pl-0`}
+              on:click={() => colorStore.setCurrentPalEvalConfig({})}
+            >
+              Restore Defaults
+            </button>
+          </div>
         {/if}
         <NewLintSuggestion />
       </div>
       <div class="text-sm">
         This collection of checks validates whether or not your palette matches
-        a number of commonly held beliefs about best practices. They will not
-        fit every situation or task (so you should feel unashamed if you ignore
-        some of them), but they are a good starting point for thinking about how
-        to improve your palette.
+        a number of commonly held beliefs about best practices. They wont fit
+        every situation. So don't feel shamed if you ignore some of them. They
+        are just a good starting point for thinking about how to improve your
+        palette.
       </div>
       {#each Object.entries(checkGroups) as checkGroup}
         <div class="flex mt-4">
@@ -135,3 +142,5 @@
     />
   {/if}
 </div>
+
+<svelte:window bind:innerWidth />

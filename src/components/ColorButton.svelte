@@ -6,7 +6,7 @@
 </script>
 
 <div
-  class=" {buttonStyle} h-12 flex justify-between items-center mb-2 opacity-100"
+  class="text-sm px-2 transition-colors mr-2 whitespace-nowrap font-bold hover:underline flex justify-between items-center mb-2 opacity-100"
 >
   <button
     class="w-3 h-3 rounded-full mr-2"

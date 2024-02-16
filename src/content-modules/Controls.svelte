@@ -1,7 +1,6 @@
 <script lang="ts">
   import focusStore from "../stores/focus-store";
   import colorStore from "../stores/color-store";
-  import ModifySelection from "../controls/ModifySelection.svelte";
   import AlignSelection from "../controls/AlignSelection.svelte";
   import SuggestionModificationToSelection from "../controls/SuggestionModificationToSelection.svelte";
   import InterpolatePoints from "../controls/InterpolatePoints.svelte";
@@ -17,25 +16,26 @@
   $: focusedColors = $focusStore.focusedColors;
 </script>
 
-<AddColor />
-<SuggestionModificationToSelection />
-<AdjustColor />
-{#if focusedColors.length === 1}
-  <div class="w-full border-t-2 border-black my-2"></div>
-  <ColorChannelPicker
-    color={colors[focusedColors[0]].toColorSpace(colorSpace)}
-    colorMode={colorSpace}
-    onColorChange={(color) => {
-      const updatedColors = [...colors];
-      updatedColors[focusedColors[0]] = color.toColorSpace(colorSpace);
-      colorStore.setCurrentPalColors(updatedColors);
-    }}
-  />
-{/if}
+<div class="px-2">
+  <AddColor />
+  <SuggestionModificationToSelection />
+  <AdjustColor />
+  {#if focusedColors.length === 1}
+    <div class="w-full border-t-2 border-black my-2"></div>
+    <ColorChannelPicker
+      color={colors[focusedColors[0]].toColorSpace(colorSpace)}
+      colorMode={colorSpace}
+      onColorChange={(color) => {
+        const updatedColors = [...colors];
+        updatedColors[focusedColors[0]] = color.toColorSpace(colorSpace);
+        colorStore.setCurrentPalColors(updatedColors);
+      }}
+    />
+  {/if}
 
-<DistributePoints />
-<AlignSelection />
-<Rotate />
-<!-- <ModifySelection /> -->
+  <DistributePoints />
+  <AlignSelection />
+  <Rotate />
 
-<InterpolatePoints />
+  <InterpolatePoints />
+</div>

@@ -7,16 +7,10 @@ type Example =
   | { vega: string; hidden?: boolean; size?: number; name: string };
 interface StoreData {
   examples: Example[];
-  sections: typeof InitialSections;
 }
-const InitialSections = {
-  svg: true,
-  vega: true,
-  swatches: true,
-};
+
 const InitialStore: StoreData = {
   examples: [],
-  sections: InitialSections,
 };
 
 export const DEMOS = [
@@ -32,21 +26,21 @@ export const DEMOS = [
   },
   {
     type: "vega",
-    title: "Grouped Bar Chart",
+    title: "Bar Chart",
     filename: "./examples/grouped-bar-chart.json",
   },
   { type: "vega", title: "Heatmap", filename: "./examples/heatmap.json" },
   { type: "vega", title: "Map", filename: "./examples/illinois-map.json" },
   {
     type: "vega",
-    title: "Scatterplot Ordinal",
+    title: "Scatterplot",
     filename: "./examples/scatterplot-ordinal.json",
   },
-  {
-    type: "vega",
-    title: "Scatterplot",
-    filename: "./examples/scatterplot.json",
-  },
+  // {
+  //   type: "vega",
+  //   title: "Scatterplot",
+  //   filename: "./examples/scatterplot.json",
+  // },
   {
     type: "vega",
     title: "Stacked Area Chart",
@@ -94,7 +88,8 @@ async function buildAllExamples() {
       const example = {
         hidden: false,
         size: 250,
-        name: demo.filename.split("/").at(-1)?.split(".")[0],
+        // name: demo.filename.split("/").at(-1)?.split(".")[0],
+        name: demo.title,
       } as any;
       if (demo.type === "vega") {
         example.vega = text;
@@ -117,23 +112,21 @@ function createStore() {
   let storeData: StoreData = JSON.parse(JSON.stringify(InitialStore));
 
   const { subscribe, set, update } = writable<StoreData>(storeData);
-  idb.get(storeName).then((x) => {
+
+  idb.get(storeName).then(async (x) => {
+    const prebuiltExamples = await buildAllExamples();
+    const preBuiltMap = prebuiltExamples.reduce((acc, cur) => {
+      acc[cur.name] = cur;
+      return acc;
+    }, {} as any);
     if (x) {
-      const savedSections = Object.fromEntries(
-        Object.entries(InitialStore.sections).map(([key, value]) => [
-          key,
-          (x.sections || {})[key] || value,
-        ])
-      );
+      const examples = x.examples.filter((x) => preBuiltMap[x.name]);
       const newStore = {
-        examples: x.examples || [],
-        sections: savedSections,
+        examples: [...prebuiltExamples, ...examples],
       };
       set(newStore as StoreData);
     } else {
-      buildAllExamples().then((examples) => {
-        set({ ...InitialStore, examples });
-      });
+      set({ ...InitialStore, examples: prebuiltExamples });
     }
   });
   const persistUpdate = (updateFunc: (old: StoreData) => StoreData) =>
@@ -147,11 +140,6 @@ function createStore() {
     subscribe,
     set: (newStore: StoreData) => persistUpdate(() => newStore),
     reset: () => persistUpdate(() => ({ ...InitialStore })),
-    toggleSection: (section: keyof typeof InitialSections) =>
-      persistUpdate((old) => ({
-        ...old,
-        sections: { ...old.sections, [section]: !old.sections[section] },
-      })),
     updateExample: (example: Example, idx: number) =>
       persistUpdate((old) => {
         const newExamples = [...old.examples];
@@ -187,9 +175,6 @@ function createStore() {
     restoreHiddenExamples: () =>
       persistUpdate((old) => ({
         ...old,
-        sections: Object.fromEntries(
-          Object.keys(old.sections).map((x) => [x, true])
-        ) as any,
         examples: old.examples.map((x) => ({ ...x, hidden: false, size: 250 })),
       })),
     toggleHidden: (idx: number) =>
@@ -205,7 +190,6 @@ function createStore() {
         return {
           ...old,
           examples: newExamples,
-          sections: { ...old.sections, swatches: false },
         };
       }),
     onlySwatches: () =>
@@ -232,7 +216,6 @@ function createStore() {
         return {
           ...old,
           examples: newExamples,
-          sections: { ...old.sections, swatches: false },
         };
       }),
   };

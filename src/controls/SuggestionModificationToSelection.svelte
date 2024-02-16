@@ -83,7 +83,7 @@
 <div>
   <div class="flex flex-col w-72">
     <label for="pal-prompt" class="italic text-sm">
-      <div>Change these points</div>
+      <div>Change these points with AI</div>
     </label>
     {#if requestState === "loaded"}
       {#each suggestedColorSets as suggestedColors, idx}
@@ -115,9 +115,16 @@
         </div>
       {/each}
     {:else}
-      <form on:submit|preventDefault={makeRequest} class="flex flex-col">
-        <input
+      <form on:submit|preventDefault={makeRequest} class="flex flex-col pr-2">
+        <textarea
           bind:value={palPrompt}
+          on:keypress={(e) => {
+            if (e.key === "Enter") {
+              // @ts-ignore
+              e.target.blur();
+              makeRequest();
+            }
+          }}
           id="pal-prompt"
           class="indent-2 text-sm leading-6"
           placeholder="e.g. 'Make them groovier'"

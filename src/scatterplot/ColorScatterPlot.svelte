@@ -34,9 +34,9 @@
 
   $: focusSet = new Set(focusedColors);
 
-  const margin = { top: 15, right: 15, bottom: 15, left: 15 };
-  const plotWidth = width - margin.left - margin.right;
-  const plotHeight = height - margin.top - margin.bottom;
+  let margin = { top: 15, right: 15, bottom: 15, left: 15 };
+  $: plotWidth = width - margin.left - margin.right;
+  $: plotHeight = height - margin.top - margin.bottom;
   $: extents = {
     x: $configStore.xZoom,
     y: $configStore.yZoom,

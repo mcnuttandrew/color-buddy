@@ -68,14 +68,6 @@ const engineToScaffold = {
   google: googleScaffold,
 };
 
-export function suggestNameForPalette(
-  palette: Palette,
-  engine: Engine
-): Promise<string[]> {
-  const body = JSON.stringify({ ...palToString(palette) });
-  return engineToScaffold[engine]<string>(`suggest-name`, body, true);
-}
-
 // supports the add color search function
 export function suggestAdditionsToPalette(
   palette: Palette,

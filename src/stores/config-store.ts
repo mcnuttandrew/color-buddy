@@ -7,8 +7,9 @@ interface StoreData {
   engine: "openai" | "google";
   evalDisplayMode: "regular" | "compact";
   evalDeltaDisplay: "none" | "76" | "CMC" | "2000" | "ITP" | "Jz" | "OK";
+  exampleRoute: "svg" | "vega" | "swatches";
   includeQuotes: boolean;
-  leftRoute: "controls" | "palettes";
+  leftRoute: "controls" | "palettes" | "colors";
   route: "examples" | "compare" | "eval";
   scatterplotMode: "moving" | "putting";
   showGamutMarkers: boolean;
@@ -29,6 +30,7 @@ const InitialStore: StoreData = {
   engine: "openai",
   evalDisplayMode: "regular",
   evalDeltaDisplay: "none",
+  exampleRoute: "vega",
   includeQuotes: false,
   leftRoute: "palettes",
   route: "examples",
@@ -111,6 +113,8 @@ function createStore() {
       persist((old) => ({ ...old, mainColumnSelectedExample: n })),
     setCompareSelectedExample: (n: StoreData["compareSelectedExample"]) =>
       persist((old) => ({ ...old, compareSelectedExample: n })),
+    setExampleRoute: (n: StoreData["exampleRoute"]) =>
+      persist((old) => ({ ...old, exampleRoute: n })),
   };
 }
 

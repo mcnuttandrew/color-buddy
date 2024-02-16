@@ -15,7 +15,8 @@
     const tagName = e.target.tagName.toLowerCase();
     const tagType = e.target.type;
 
-    if (tagName === "input") {
+    const classes = e.target.getAttribute("class");
+    if (tagName === "input" && !classes.includes("color-slider")) {
       const isUIElement =
         tagType === "number" || tagType === "range" || tagType === "text";
       if (isUIElement) {
@@ -23,7 +24,7 @@
       }
     }
     // block code mirror editing
-    if ((e.target.getAttribute("class") || "").includes("cm-content")) {
+    if ((classes || "").includes("cm-content")) {
       return;
     }
     if (tagName === "textarea") {

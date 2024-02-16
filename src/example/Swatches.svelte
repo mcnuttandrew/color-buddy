@@ -3,11 +3,9 @@
   import colorStore from "../stores/color-store";
   import focusStore from "../stores/focus-store";
   import configStore from "../stores/config-store";
-  import Tooltip from "../components/Tooltip.svelte";
-  import exampleStore from "../stores/example-store";
-  import SwatchTooltipContent from "../components/SwatchTooltipContent.svelte";
-  import { buttonStyle } from "../lib/styles";
   import simulate_cvd from "../lib/blindness";
+
+  import { dealWithFocusEvent } from "../lib/utils";
 
   export let paletteIdx: number;
   export let allowInteraction: boolean = true;
@@ -59,47 +57,6 @@
     },
     []
   );
-
-  function onClickColor(
-    colorIdx: number,
-    toggle: () => void,
-    tooltipOpen: boolean
-  ) {
-    if (!allowInteraction) {
-      return () => {};
-    }
-    return (e: any) => {
-      const isFocused = focusSet.has(colorIdx);
-      const shiftKey = e.shiftKey;
-      if (!tooltipOpen && !isFocused) {
-        if (shiftKey) {
-          focusStore.addColor(colorIdx);
-        } else {
-          focusStore.setColors([colorIdx]);
-        }
-        toggle();
-      } else if (!tooltipOpen && isFocused) {
-        if (shiftKey) {
-          focusStore.toggleColor(colorIdx);
-        } else {
-          focusStore.clearColors();
-        }
-      } else if (tooltipOpen && !isFocused) {
-        if (shiftKey) {
-          focusStore.addColor(colorIdx);
-        } else {
-          focusStore.setColors([colorIdx]);
-        }
-      } else {
-        toggle();
-        if (shiftKey) {
-          focusStore.toggleColor(colorIdx);
-        } else {
-          focusStore.clearColors();
-        }
-      }
-    };
-  }
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
@@ -115,50 +72,20 @@
   }}
 >
   {#if !hideHeader}
-    <div class="bg-stone-300 w-full justify-between flex p-1">
-      Swatches
-      <!-- <Tooltip>
-        <button
-          slot="target"
-          class={buttonStyle}
-          let:toggle
-          on:click|preventDefault|stopPropagation={toggle}
-        >
-          Options
-        </button>
-        <div slot="content">
-          <button
-            class={buttonStyle}
-            on:click|preventDefault|stopPropagation={() =>
-              exampleStore.toggleSection("swatches")}
-          >
-            Hide
-          </button>
-          {#if numToShow > 1}
-            <button
-              class={buttonStyle}
-              on:click|preventDefault|stopPropagation={() => {
-                exampleStore.onlySwatches();
-              }}
-            >
-              Focus
-            </button>
-          {/if}
-        </div>
-      </Tooltip> -->
-    </div>
+    <div class="bg-stone-300 w-full justify-between flex p-1">Swatches</div>
   {/if}
   <div style={`background-color: ${bgColor}; max-width: 600px`} class="flex">
     <div class="flex flex-col">
       {#each colors as color, i}
         <button
           style={`background-color: ${color.toHex()};`}
-          class="w-24 h-5"
-          on:click|preventDefault|stopPropagation={onClickColor(
-            i,
-            () => {},
-            false
-          )}
+          class="w-24 h-5 transition-all"
+          class:ml-5={focusSet.has(i)}
+          class:mr-5={!focusSet.has(i)}
+          on:click|preventDefault|stopPropagation={(e) =>
+            focusStore.setColors(
+              dealWithFocusEvent(e, i, $focusStore.focusedColors)
+            )}
         ></button>
       {/each}
     </div>
@@ -169,29 +96,21 @@
             {#each colorsInGroupsOf3 as colorGroup}
               <div class="flex">
                 {#each colorGroup as colorIdx}
-                  <Tooltip top={"100px"} allowDrag={true}>
-                    <div slot="content" class="flex flex-col" let:onClick>
-                      <SwatchTooltipContent
-                        color={colors[colorIdx]}
-                        closeTooltip={onClick}
-                        idx={colorIdx}
-                      />
-                    </div>
-                    <button
-                      let:toggle
-                      let:tooltipOpen
-                      slot="target"
-                      class={`${className} ${
-                        focusSet.has(colorIdx) ? selectionClass : ""
-                      }`}
-                      style={`${styleMap(colors[colorIdx])}`}
-                      on:click|preventDefault|stopPropagation={onClickColor(
-                        colorIdx,
-                        toggle,
-                        tooltipOpen
-                      )}
-                    ></button>
-                  </Tooltip>
+                  <button
+                    class={`${className} ${
+                      focusSet.has(colorIdx) ? selectionClass : ""
+                    }`}
+                    style={`${styleMap(colors[colorIdx])}`}
+                    on:click|preventDefault|stopPropagation={(e) => {
+                      focusStore.setColors(
+                        dealWithFocusEvent(
+                          e,
+                          colorIdx,
+                          $focusStore.focusedColors
+                        )
+                      );
+                    }}
+                  ></button>
                 {/each}
               </div>
             {/each}
@@ -205,11 +124,11 @@
               focusSet.has(i) ? 10 : 0
             }deg)`}
             class="mr-2 w-16"
-            on:click|preventDefault|stopPropagation={onClickColor(
-              i,
-              () => {},
-              false
-            )}
+            on:click|preventDefault|stopPropagation={(e) => {
+              focusStore.setColors(
+                dealWithFocusEvent(e, i, $focusStore.focusedColors)
+              );
+            }}
           >
             {color.toHex()}
           </button>

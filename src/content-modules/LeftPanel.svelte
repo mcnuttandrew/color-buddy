@@ -15,13 +15,13 @@
   let innerWidth = window.innerWidth;
 
   $: leftPanelTabs =
-    innerWidth < 1500
+    innerWidth < 1600
       ? ["palettes", "controls", "colors"]
       : ["palettes", "controls"];
 </script>
 
 <!-- left panel -->
-<div class="bg-stone-200 w-72 container flex flex-col h-full flex-none">
+<div class="bg-stone-200 w-80 container flex flex-col h-full flex-none">
   <div class="text-4xl font-bold bg-stone-800 text-white px-2 py-1">
     Color Buddy 𑁍
   </div>

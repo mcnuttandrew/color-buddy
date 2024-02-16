@@ -3,8 +3,6 @@
   import colorStore from "../stores/color-store";
   import configStore from "../stores/config-store";
   import { Color } from "../lib/Color";
-  import Tooltip from "../components/Tooltip.svelte";
-  import SwatchTooltipContent from "../components/SwatchTooltipContent.svelte";
   import focusStore from "../stores/focus-store";
   import { idxToKey } from "../lib/charts";
   import simulate_cvd from "../lib/blindness";
@@ -101,25 +99,6 @@
   <div bind:this={container} class="example-container">
     {@html insertColorsToExample(example, mappedColors, bg.toHex(), size)}
   </div>
-  {#if color && focusedColor !== false}
-    <Tooltip
-      top={"-20px"}
-      allowDrag={true}
-      initiallyOpen={true}
-      onClose={() => {
-        focusStore.clearColors();
-        focusedColor = false;
-      }}
-    >
-      <div slot="content" class="flex flex-col" let:onClick>
-        <SwatchTooltipContent
-          {color}
-          closeTooltip={onClick}
-          idx={focusedColor}
-        />
-      </div>
-    </Tooltip>
-  {/if}
 </div>
 
 <style>

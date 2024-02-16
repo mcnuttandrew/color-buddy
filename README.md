@@ -33,7 +33,6 @@ First time you start it up you should also run `yarn prep data`
 # General Todos
 
 - [ ] Its really annoying to have to update schema, types, docs whenever a lang change is made. Can this be automated?
-- [ ] Color Space selections should persist
 - [ ] Make name discrim hueristc fix more resilient, see switching to basic colors
 - [ ] Search palettes-by-lint screen
 - [ ] Drag to re-order points?
@@ -47,6 +46,7 @@ First time you start it up you should also run `yarn prep data`
 - [ ] Allow no palettes
 - [ ] allows renaming of non-current palettes
 - [ ] Parameterize the scatter column completely, allow edits to the compare stuff
+- [x] Color Space selections should persist
 - [x] Dont allow saves to examples when there's an error
 - [x] Switch the examples to be tabs or single
 - [x] Consider moving the names and color chunks into the left hand column for space

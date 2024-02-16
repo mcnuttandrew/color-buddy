@@ -626,3 +626,20 @@ export function summarizePal(pal: Palette) {
     : "";
   return `This is a ${pal.type} palette called '${pal.name}'.${affectMsg}${contextMsg}`;
 }
+
+export function dealWithFocusEvent(
+  e: any,
+  clickedItem: number,
+  focusedItems: number[]
+) {
+  const newFocusedItems = toggleElement(focusedItems, clickedItem);
+  if (e.shiftKey || e.ctrlKey || e.metaKey) {
+    return newFocusedItems;
+  }
+  const itemInFocus = newFocusedItems.includes(clickedItem);
+  const numFocused = focusedItems.length;
+  if (numFocused > 1) {
+    return [clickedItem];
+  }
+  return itemInFocus ? [clickedItem] : [];
+}

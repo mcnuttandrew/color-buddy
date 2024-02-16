@@ -49,7 +49,7 @@
       </Tooltip>
     {:else}
       <div
-        class={"w-6 h-6 mx-2 rounded-full transition-all"}
+        class={"w-6 h-6 mx-1 rounded-full transition-all"}
         class:w-8={highlightSelected && focusSet.has(idx)}
         class:h-8={highlightSelected && focusSet.has(idx)}
         style="background-color: {color.toDisplay()}"

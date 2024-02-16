@@ -40,9 +40,9 @@ exports[`ColorLint - Fair Sequential 1`] = `"This palette is unfair (meaning tha
 
 exports[`ColorLint - Fair Sequential 2`] = `"This palette is unfair (meaning that some values may unduely stand out). Note that this check is naturally at odds with color blind friendly palettes. Maximum chroma range: 50."`;
 
-exports[`ColorLint - Gamut 1`] = `"The color is not in the sRGB gamut. Please choose a color that is in the sRGB gamut."`;
+exports[`ColorLint - Gamut 1`] = `"A color or colors is not in the sRGB gamut (#0087a5). Please adjust the color so that it can be displayed on most devices."`;
 
-exports[`ColorLint - Gamut 2`] = `"The color is not in the sRGB gamut. Please choose a color that is in the sRGB gamut."`;
+exports[`ColorLint - Gamut 2`] = `"A color or colors is not in the sRGB gamut (). Please adjust the color so that it can be displayed on most devices."`;
 
 exports[`ColorLint - MaxColors 1`] = `"This palette has too many colors and may be hard to discriminate in some contexts. Maximum: 10."`;
 

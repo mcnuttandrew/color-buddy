@@ -2,6 +2,7 @@ import { writable } from "svelte/store";
 import * as idb from "idb-keyval";
 import type { CustomLint } from "../lib/CustomLint";
 import type { PalType } from "../types";
+import type { LintResult } from "../lib/ColorLint";
 import { JSONStringify } from "../lib/utils";
 import { BUILT_INS } from "../lib/linter";
 import { loadLints } from "../lib/api-calls";
@@ -9,11 +10,13 @@ import { loadLints } from "../lib/api-calls";
 interface StoreData {
   lints: CustomLint[];
   focusedLint: string | false;
+  currentChecks: LintResult[];
 }
 
 const InitialStore: StoreData = {
   lints: [],
   focusedLint: false,
+  currentChecks: [],
 };
 
 const builtInIndex = BUILT_INS.reduce((acc, x) => {
@@ -105,6 +108,8 @@ function createStore() {
           lints: [...old.lints, { ...lint, id: Math.random().toString() }],
         };
       }),
+    postCurrentChecks: (checks: LintResult[]) =>
+      persistUpdate((old) => ({ ...old, currentChecks: checks })),
   };
 }
 

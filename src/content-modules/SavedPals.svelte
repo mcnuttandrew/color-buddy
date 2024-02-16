@@ -9,7 +9,6 @@
   import Tooltip from "../components/Tooltip.svelte";
 </script>
 
-<div class="w-full border-t-2 border-black my-2"></div>
 <div class="overflow-auto">
   {#each $colorStore.palettes as pal, i}
     <div class="flex flex-col mt-2 h-fit">

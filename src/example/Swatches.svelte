@@ -48,20 +48,6 @@
     },
   ];
 
-  $: sections = $exampleStore.sections as any;
-  $: numToShow = $exampleStore.examples.filter((x: any) => {
-    if (x.hidden) {
-      return false;
-    }
-    if (sections.svg && x?.svg) {
-      return true;
-    }
-    if (sections.vega && x.vega) {
-      return true;
-    }
-    return false;
-  }).length;
-
   $: colorsInGroupsOf3 = colors.reduce(
     (acc: number[][], x: Color, i: number) => {
       const idx = Math.floor(i / 3);
@@ -131,7 +117,7 @@
   {#if !hideHeader}
     <div class="bg-stone-300 w-full justify-between flex p-1">
       Swatches
-      <Tooltip>
+      <!-- <Tooltip>
         <button
           slot="target"
           class={buttonStyle}
@@ -159,7 +145,7 @@
             </button>
           {/if}
         </div>
-      </Tooltip>
+      </Tooltip> -->
     </div>
   {/if}
   <div style={`background-color: ${bgColor}; max-width: 600px`} class="flex">

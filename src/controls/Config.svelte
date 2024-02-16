@@ -11,14 +11,15 @@
 
   const isMac = navigator.userAgent.indexOf("Mac OS X") !== -1;
   const metaKey = isMac ? "⌘" : "ctrl";
+  const altKey = isMac ? "option" : "alt";
   const shortCuts = [
     { name: "Undo", shortcut: `${metaKey}+z` },
     { name: "Redo", shortcut: `${metaKey}+y` },
     { name: "Delete Selection", shortcut: "delete" },
     { name: "Copy", shortcut: `${metaKey}+c` },
     { name: "Paste", shortcut: `${metaKey}+v` },
-    { name: "Move", shortcut: "arrow keys" },
-    { name: "Checkpoint palette", shortcut: `${metaKey}+s` },
+    { name: "Move in x-y", shortcut: "arrow keys" },
+    { name: "Move in z", shortcut: `${altKey}+up/down keys` },
   ];
 
   function importPals() {

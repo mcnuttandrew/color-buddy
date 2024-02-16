@@ -15,6 +15,7 @@
   import Swatches from "./Swatches.svelte";
   import Tooltip from "../components/Tooltip.svelte";
   import { makePalFromString } from "../lib/utils";
+  import Nav from "../components/Nav.svelte";
 
   let modalState: "closed" | "input-svg" | "input-vega" | "edit-colors" =
     "closed";
@@ -25,10 +26,6 @@
   let value = "";
 
   $: detectedColors = [] as string[];
-  $: sections = $exampleStore.sections as any;
-  function onToggle(group: string) {
-    exampleStore.toggleSection(group as keyof typeof $exampleStore.sections);
-  }
 
   let validJSON = false;
   $: {
@@ -63,108 +60,109 @@
     if (x.hidden) {
       return false;
     }
-    if (sections.svg && x?.svg) {
+    if ($configStore.exampleRoute === "svg" && x?.svg) {
       return true;
     }
-    if (sections.vega && x.vega) {
+    if ($configStore.exampleRoute === "vega" && x.vega) {
       return true;
     }
     return false;
   });
   $: examples = $exampleStore.examples as any;
-  $: groupsHidden = Object.keys(sections).filter((x) => !sections[x]).length;
   $: hiddenExamples = $exampleStore.examples.filter((x: any) => x.hidden);
-  $: numberHidden = hiddenExamples.length + groupsHidden;
+  $: numberHidden = hiddenExamples.length;
 </script>
 
-<div class="flex items-center bg-stone-300 px-4 py-2">
-  {#each Object.keys(sections) as group}
-    <div class="mr-2">
-      <label for={`${group}-checkbox`}>{group}</label>
-      <input
-        id={`${group}-checkbox`}
-        type="checkbox"
-        checked={sections[group]}
-        on:change={(e) => onToggle(group)}
-      />
-    </div>
-  {/each}
-  <button
-    class={buttonStyle}
-    on:click={() => {
-      modalState = "input-svg";
-    }}
-  >
-    Add New Example
-  </button>
-  <Tooltip>
-    <div slot="content" let:onClick class="max-w-md">
-      <div>
-        Are you sure you want to reset to the default examples? This will remove
-        any custom ones you've uploaded
-      </div>
-      <div class="flex justify-between">
-        <button
-          class={buttonStyle}
-          on:click={() => {
-            configStore.setUseSimulatorOnExamples(false);
-            exampleStore.restoreDefaultExamples();
-          }}
-        >
-          Yes! Reset em now
-        </button>
-        <button class={buttonStyle} on:click={onClick}>No! Never mind</button>
-      </div>
-    </div>
-    <button slot="target" let:toggle class={buttonStyle} on:click={toggle}>
-      Reset to defaults
-    </button>
-  </Tooltip>
-  {#if $configStore.colorSim !== "none"}
+<div class="flex flex-col items-center bg-stone-300 px-4 py-2">
+  <div class="flex">
     <button
       class={buttonStyle}
-      on:click={() =>
-        configStore.setUseSimulatorOnExamples(
-          !$configStore.useSimulatorOnExamples
-        )}
+      on:click={() => {
+        modalState = "input-svg";
+      }}
     >
-      {#if $configStore.useSimulatorOnExamples}
-        Use original colors
-      {:else}
-        Use simulated colors
-      {/if}
+      Add New Example
     </button>
-  {/if}
-  {#if numberHidden > 0}
     <Tooltip>
-      <div slot="content">
-        <button
-          class={buttonStyle}
-          on:click={() => exampleStore.restoreHiddenExamples()}
-        >
-          Restore All Examples
-        </button>
-        <div>Restore individual example</div>
-        {#each hiddenExamples as example, idx}
+      <div slot="content" let:onClick class="max-w-md">
+        <div>
+          Are you sure you want to reset to the default examples? This will
+          remove any custom ones you've uploaded
+        </div>
+        <div class="flex justify-between">
           <button
             class={buttonStyle}
-            on:click={() => exampleStore.restoreHiddenExample(idx)}
+            on:click={() => {
+              configStore.setUseSimulatorOnExamples(false);
+              exampleStore.restoreDefaultExamples();
+              onClick();
+            }}
           >
-            {example.name}
+            Yes! Reset em now
           </button>
-        {/each}
+          <button class={buttonStyle} on:click={onClick}>No! Never mind</button>
+        </div>
       </div>
-      <button slot="target" let:toggle on:click={toggle} class={buttonStyle}>
-        Restore hidden examples
+      <button slot="target" let:toggle class={buttonStyle} on:click={toggle}>
+        Reset to defaults
       </button>
     </Tooltip>
-  {/if}
+    {#if $configStore.colorSim !== "none"}
+      <div>
+        <button
+          class={buttonStyle}
+          on:click={() =>
+            configStore.setUseSimulatorOnExamples(
+              !$configStore.useSimulatorOnExamples
+            )}
+        >
+          {#if $configStore.useSimulatorOnExamples}
+            Use original colors
+          {:else}
+            Use simulated colors
+          {/if}
+        </button>
+      </div>
+    {/if}
+    {#if numberHidden > 0}
+      <Tooltip>
+        <div slot="content">
+          <button
+            class={buttonStyle}
+            on:click={() => exampleStore.restoreHiddenExamples()}
+          >
+            Restore All Examples
+          </button>
+          <div>Restore individual example</div>
+          {#each hiddenExamples as example, idx}
+            <button
+              class={buttonStyle}
+              on:click={() => exampleStore.restoreHiddenExample(idx)}
+            >
+              {example.name}
+            </button>
+          {/each}
+        </div>
+        <button slot="target" let:toggle on:click={toggle} class={buttonStyle}>
+          Restore hidden examples
+        </button>
+      </Tooltip>
+    {/if}
+  </div>
+  <Nav
+    tabs={["svg", "vega", "swatches"]}
+    isTabSelected={(x) => x === $configStore.exampleRoute}
+    selectTab={(x) => {
+      //@ts-ignore
+      configStore.setExampleRoute(x);
+    }}
+  />
 </div>
 <div
   class="flex flex-wrap overflow-auto p-4 w-full bg-stone-100"
   style={`height: calc(100% - 100px)`}
 >
-  {#if $exampleStore.sections["swatches"]}
+  {#if $configStore.exampleRoute === "swatches"}
     <Swatches paletteIdx={$colorStore.currentPal} />
   {/if}
   {#each examples as example, idx}
@@ -353,7 +351,7 @@
           Mark Colors
         </button>
       {/if}
-      {#if modalState === "input-vega"}
+      {#if modalState === "input-vega" && validJSON}
         <button
           class={buttonStyle}
           on:click={() => {

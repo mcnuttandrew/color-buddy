@@ -19,6 +19,7 @@
   let requestState: "idle" | "loading" | "loaded" | "failed" = "idle";
   export let check: LintResult;
   export let customWord: string = "";
+  export let positionAlongRightEdge: boolean = true;
 
   $: palette = $colorStore.palettes[$colorStore.currentPal];
   $: engine = $configStore.engine;
@@ -66,7 +67,7 @@
   $: ignored = !!evalConfig[check.name]?.ignore;
 </script>
 
-<Tooltip positionAlongRightEdge={true}>
+<Tooltip {positionAlongRightEdge}>
   <div slot="content" let:onClick class="max-w-2xl eval-tooltip">
     <div class="font-bold">{check.name}</div>
     {#if check.passes || ignored}
@@ -169,7 +170,12 @@
       {/each}
     {/if}
   </div>
-  <button slot="target" let:toggle class={`${buttonStyle}`} on:click={toggle}>
+  <button
+    slot="target"
+    let:toggle
+    class={customWord ? "" : `${buttonStyle}`}
+    on:click|stopPropagation={toggle}
+  >
     {#if customWord}
       {customWord}
     {:else if check.passes}info{:else}fixes{/if}

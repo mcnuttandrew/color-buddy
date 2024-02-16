@@ -9,13 +9,16 @@
   $: config = colorPickerConfig[colorSpace];
   $: xStep = config.xStep;
   $: yStep = config.yStep;
+  $: zStep = config.zStep;
   $: xDomain = config.xDomain;
   $: yDomain = config.yDomain;
+  $: zDomain = config.zDomain;
   function onKeyDown(e: any) {
     const tagName = e.target.tagName.toLowerCase();
     const tagType = e.target.type;
 
-    if (tagName === "input") {
+    const classes = e.target.getAttribute("class");
+    if (tagName === "input" && !classes.includes("color-slider")) {
       const isUIElement =
         tagType === "number" || tagType === "range" || tagType === "text";
       if (isUIElement) {
@@ -23,7 +26,7 @@
       }
     }
     // block code mirror editing
-    if ((e.target.getAttribute("class") || "").includes("cm-content")) {
+    if ((classes || "").includes("cm-content")) {
       return;
     }
     if (tagName === "textarea") {
@@ -31,6 +34,7 @@
     }
     const key = e.key.toLowerCase();
     const metaKey = e.metaKey || e.ctrlKey;
+    const optionKey = e.altKey;
     // UNDO REDO
     if (key === "z" && metaKey) {
       e.preventDefault();
@@ -58,7 +62,8 @@
       const verticalDirs = new Set(["arrowup", "arrowdown"]);
       const verticalDir = xDomain[1] < xDomain[0] ? 1 : -1;
       const horizontalDir = yDomain[1] < yDomain[0] ? 1 : -1;
-      let step = verticalDirs.has(key) ? yStep : xStep;
+      const zDir = zDomain[1] < zDomain[0] ? 1 : -1;
+      let step = verticalDirs.has(key) ? (optionKey ? zStep : yStep) : xStep;
       if (metaKey || e.shiftKey) {
         step *= 10;
       }
@@ -71,11 +76,19 @@
         const channels = color.toChannels();
         const xVal = channels[config.xChannelIndex];
         const yVal = channels[config.yChannelIndex];
-        if (key === "arrowdown") {
+        const zVal = channels[config.zChannelIndex];
+
+        if (!optionKey && key === "arrowdown") {
           return color.setChannel(config.yChannel, yVal + verticalDir * step);
         }
-        if (key === "arrowup") {
+        if (!optionKey && key === "arrowup") {
           return color.setChannel(config.yChannel, yVal - verticalDir * step);
+        }
+        if (optionKey && key === "arrowdown") {
+          return color.setChannel(config.zChannel, zVal + zDir * step);
+        }
+        if (optionKey && key === "arrowup") {
+          return color.setChannel(config.zChannel, zVal - zDir * step);
         }
         if (key === "arrowleft") {
           return color.setChannel(config.xChannel, xVal - horizontalDir * step);
@@ -87,12 +100,6 @@
       });
 
       colorStore.setCurrentPalColors(newColors);
-    }
-
-    // SAVE BY DUPLICATING PALETTE
-    if (key === "s" && metaKey) {
-      e.preventDefault();
-      colorStore.duplicatePal($colorStore.currentPal);
     }
 
     // COPY PASTE

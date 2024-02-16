@@ -208,7 +208,7 @@
     height: 2.2em;
     border-radius: 0.3em;
     box-shadow: 0 0 1px rgba(0, 0, 0, 0.5);
-    min-width: 285px;
+    min-width: 265px;
   }
 
   .color-slider::-webkit-slider-thumb {

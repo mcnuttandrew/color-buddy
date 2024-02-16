@@ -3,8 +3,9 @@
   import configStore from "../stores/config-store";
   import { buttonStyle } from "../lib/styles";
   import Tooltip from "../components/Tooltip.svelte";
-  import { suggestLint, suggestLintMetadata } from "../lib/api-calls";
+  import { suggestLint } from "../lib/api-calls";
   import { JSONStringify } from "../lib/utils";
+  import { loadLints } from "../lib/api-calls";
   let lintPrompt: string = "";
   let requestState: "idle" | "loading" | "loaded" | "failed" = "idle";
   function makeRequest() {
@@ -17,18 +18,9 @@
           return;
         }
         const program = JSONStringify(JSON.stringify(suggestions[0]));
-        const metaSuggestions = await suggestLintMetadata(
-          program,
-          $configStore.engine
-        );
         let description = lintPrompt;
         let failMessage = lintPrompt;
         let name = "New Lint";
-        if (metaSuggestions.length > 0) {
-          description = metaSuggestions[0]?.description || lintPrompt;
-          failMessage = metaSuggestions[0]?.failMessage || lintPrompt;
-          name = metaSuggestions[0]?.name || "New Lint";
-        }
 
         lintStore.createNewLint({
           name,
@@ -36,6 +28,11 @@
           failMessage,
           program,
         });
+        setTimeout(() => {
+          loadLints();
+          lintPrompt = "";
+        }, 100);
+
         requestState = "loaded";
       })
       .catch((e) => {
@@ -49,8 +46,15 @@
   <div slot="content" class="w-96">
     <div>What would you like your lint to be able to do?</div>
     <form on:submit|preventDefault={makeRequest} class="flex flex-col">
-      <input
+      <textarea
         bind:value={lintPrompt}
+        on:keypress={(e) => {
+          if (e.key === "Enter") {
+            // @ts-ignore
+            e.target.blur();
+            makeRequest();
+          }
+        }}
         id="pal-prompt"
         class="indent-2 text-sm leading-6"
         placeholder="e.g. 'This palette should have a Cascadian vibe'"

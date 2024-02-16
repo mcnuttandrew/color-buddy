@@ -120,7 +120,7 @@ function createStore() {
       return acc;
     }, {} as any);
     if (x) {
-      const examples = x.examples.filter((x) => preBuiltMap[x.name]);
+      const examples = x.examples.filter((x: any) => preBuiltMap[x.name]);
       const newStore = {
         examples: [...prebuiltExamples, ...examples],
       };

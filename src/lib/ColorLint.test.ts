@@ -182,13 +182,13 @@ test("ColorLint - ColorNameDiscriminability", async () => {
 
 test("ColorLint - SizeDiscrim (Thin)", () => {
   const examplePal = makePalFromString(["#0084a9", "#bad", "#008000"]);
+  const newLint = CreateCustomLint(SizeDiscrims[0]);
   const exampleLint = new newLint(examplePal).run();
   expect(exampleLint.passes).toBe(true);
   expect(exampleLint.message).toMatchSnapshot();
 
   const examplePal2 = makePalFromString(["#0084a9", "#009de5", "#8ca9fa"]);
   const exampleLint2 = new newLint(examplePal2).run();
-  const newLint = CreateCustomLint(SizeDiscrims[0]);
   expect(exampleLint2.passes).toBe(false);
   expect(exampleLint2.message).toMatchSnapshot();
 });

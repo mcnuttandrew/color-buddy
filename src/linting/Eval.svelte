@@ -44,7 +44,7 @@
   $: isCompact = $configStore.evalDisplayMode === "compact";
 
   let innerWidth = window.innerWidth;
-  $: showEvalColumn = innerWidth >= 1500;
+  $: showEvalColumn = innerWidth >= 1600;
   $: {
     if (showEvalColumn && $configStore.leftRoute === "colors") {
       configStore.setLeftPanelRoute("controls");

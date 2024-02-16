@@ -1,6 +1,10 @@
 <script lang="ts">
   import focusStore from "../stores/focus-store";
   import colorStore from "../stores/color-store";
+  import configStore from "../stores/config-store";
+
+  import { Color } from "../lib/Color";
+
   import AlignSelection from "../controls/AlignSelection.svelte";
   import SuggestionModificationToSelection from "../controls/SuggestionModificationToSelection.svelte";
   import InterpolatePoints from "../controls/InterpolatePoints.svelte";
@@ -22,9 +26,21 @@
   <AdjustColor />
   {#if focusedColors.length === 1}
     <div class="w-full border-t-2 border-black my-2"></div>
+    <input
+      class="w-full"
+      value={colors[focusedColors[0]].toHex()}
+      on:change={(e) => {
+        const updatedColors = [...colors];
+        updatedColors[focusedColors[0]] = Color.colorFromString(
+          e.currentTarget.value,
+          colorSpace
+        );
+        colorStore.setCurrentPalColors(updatedColors);
+      }}
+    />
     <ColorChannelPicker
       color={colors[focusedColors[0]].toColorSpace(colorSpace)}
-      colorMode={colorSpace}
+      colorMode={$configStore.channelPickerSpace}
       onColorChange={(color) => {
         const updatedColors = [...colors];
         updatedColors[focusedColors[0]] = color.toColorSpace(colorSpace);

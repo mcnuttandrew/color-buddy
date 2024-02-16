@@ -626,3 +626,20 @@ export function summarizePal(pal: Palette) {
     : "";
   return `This is a ${pal.type} palette called '${pal.name}'.${affectMsg}${contextMsg}`;
 }
+
+export function dealWithFocusEvent(
+  e: any,
+  clickedItem: number,
+  focusedItems: number[]
+) {
+  const newFocusedItems = toggleElement(focusedItems, clickedItem);
+  const isShift = e.shiftKey;
+  const isCtrl = e.ctrlKey;
+  if (isShift) {
+    return newFocusedItems;
+  }
+  if (isCtrl) {
+    return newFocusedItems;
+  }
+  return [clickedItem];
+}

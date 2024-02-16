@@ -4,6 +4,7 @@ interface StoreData {
   colorSim: "deuteranopia" | "protanopia" | "tritanopia" | "none" | "grayscale";
   comparePal: number | undefined;
   compareSelectedExample: number;
+  channelPickerSpace: "lab" | "lch" | "hsl" | "hsv" | "rgb";
   engine: "openai" | "google";
   evalDisplayMode: "regular" | "compact";
   evalDeltaDisplay: "none" | "76" | "CMC" | "2000" | "ITP" | "Jz" | "OK";
@@ -41,6 +42,7 @@ const InitialStore: StoreData = {
   mainColumnRoute: "palette-config",
   mainColumnSelectedExample: -1,
   useSimulatorOnExamples: false,
+  channelPickerSpace: "lab",
   xZoom: [0, 1],
   yZoom: [0, 1],
   zZoom: [0, 1],
@@ -115,6 +117,8 @@ function createStore() {
       persist((old) => ({ ...old, compareSelectedExample: n })),
     setExampleRoute: (n: StoreData["exampleRoute"]) =>
       persist((old) => ({ ...old, exampleRoute: n })),
+    setChannelPickerSpace: (n: StoreData["channelPickerSpace"]) =>
+      persist((old) => ({ ...old, channelPickerSpace: n })),
   };
 }
 

@@ -1,4 +1,6 @@
 <script lang="ts">
+  import configStore from "../stores/config-store";
+
   import { Color, colorPickerConfig } from "../lib/Color";
   import ColorIO from "colorjs.io";
   export let color: Color;
@@ -21,11 +23,11 @@
         { name: "Green", min: 0, max: 255, step: 1 },
         { name: "Blue", min: 0, max: 255, step: 1 },
       ],
-      srgb: [
-        { name: "Red", min: 0, max: 1, step: 0.01 },
-        { name: "Green", min: 0, max: 1, step: 0.01 },
-        { name: "Blue", min: 0, max: 1, step: 0.01 },
-      ],
+      // srgb: [
+      //   { name: "Red", min: 0, max: 1, step: 0.01 },
+      //   { name: "Green", min: 0, max: 1, step: 0.01 },
+      //   { name: "Blue", min: 0, max: 1, step: 0.01 },
+      // ],
       hsl: [
         { name: "Hue", min: 0, max: 360, step: 1 },
         { name: "Saturation", min: 0, max: 100, step: 1 },
@@ -36,11 +38,11 @@
         { name: "a", min: -125, max: 125, step: 1 },
         { name: "b", min: -125, max: 125, step: 1 },
       ],
-      oklab: [
-        { name: "L", min: 0, max: 1, step: 0.01 },
-        { name: "a", min: -0.4, max: 0.4, step: 0.01 },
-        { name: "b", min: -0.4, max: 0.4, step: 0.01 },
-      ],
+      // oklab: [
+      //   { name: "L", min: 0, max: 1, step: 0.01 },
+      //   { name: "a", min: -0.4, max: 0.4, step: 0.01 },
+      //   { name: "b", min: -0.4, max: 0.4, step: 0.01 },
+      // ],
       hsv: [
         { name: "h", min: 0, max: 360, step: 1 },
         { name: "s", min: 0, max: 100, step: 1 },
@@ -51,11 +53,11 @@
         { name: "c", min: 0, max: 150, step: 1 },
         { name: "h", min: 0, max: 360, step: 1 },
       ],
-      jzazbz: [
-        { name: "jz", min: 0, max: 1, step: 0.01 },
-        { name: "az", min: -0.5, max: 0.5, step: 0.01 },
-        { name: "bz", min: -0.5, max: 0.5, step: 0.01 },
-      ],
+      // jzazbz: [
+      //   { name: "jz", min: 0, max: 1, step: 0.01 },
+      //   { name: "az", min: -0.5, max: 0.5, step: 0.01 },
+      //   { name: "bz", min: -0.5, max: 0.5, step: 0.01 },
+      // ],
     } as Record<string, Channel[]>);
   const colorModeMap: any = { rgb: "srgb" };
   function toColorIO() {
@@ -66,6 +68,7 @@
     }
   }
   $: color &&
+    colorMode &&
     toColorIO()
       .to(colorModeMap[colorMode] || colorMode)
       .coords.forEach((val, idx) => {
@@ -123,7 +126,7 @@
     ret.push(steps);
     return ret;
   }
-  $: sliderSteps = color && (buildSliderSteps() as any);
+  $: sliderSteps = color && colorMode && (buildSliderSteps() as any);
 
   function colorUpdate(e: any, idx: number) {
     let values = [...colorConfigs[colorMode].map((x) => x.value)] as number[];
@@ -143,7 +146,13 @@
 </script>
 
 <div class="flex flex-col">
-  <select bind:value={colorMode}>
+  <select
+    value={colorMode}
+    on:change={(e) => {
+      // @ts-ignore
+      configStore.setChannelPickerSpace(e.currentTarget.value);
+    }}
+  >
     {#each [...Object.keys(colorConfigs)] as colorMode}
       <option value={colorMode}>{colorMode}</option>
     {/each}
@@ -161,7 +170,7 @@
                       {channel.name} ({channel.min}-{channel.max})
                     </span>
                     <input
-                      class="h-4 text-right w-16 text-sm"
+                      class="h-6 text-right w-16"
                       type="number"
                       value={formatter(channel.value)}
                       min={channel.min}
@@ -208,7 +217,7 @@
     height: 2.2em;
     border-radius: 0.3em;
     box-shadow: 0 0 1px rgba(0, 0, 0, 0.5);
-    min-width: 265px;
+    min-width: 285px;
   }
 
   .color-slider::-webkit-slider-thumb {

@@ -14,7 +14,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
-    "gen-schema": "npx ts-json-schema-generator --path src/lib/lint-language/lint-type.ts --type LintProgram > public/lint-schema.json --minify"
+    "gen-schema": "npx ts-json-schema-generator --path src/lib/lint-language/lint-type.ts --type LintProgram > public/lint-schema.json --minify && ts-node-esm scripts/pretty-schema.ts"
   },
   "devDependencies": {
     "@sveltejs/vite-plugin-svelte": "^3.0.0",
@@ -31,6 +31,7 @@
     "svelte": "^4.2.3",
     "svelte-check": "^3.6.0",
     "ts-json-schema-generator": "^1.5.0",
+    "ts-node": "^10.9.2",
     "tslib": "^2.6.2",
     "typescript": "^5.2.2",
     "vega-typings": "^1.0.1",

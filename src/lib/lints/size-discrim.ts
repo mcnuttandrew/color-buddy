@@ -47,9 +47,10 @@ const lints: CustomLint[] = ["Thin", "Medium", "Wide"].map((key) => {
           or: [
             {
               ">": {
-                left: {
-                  absDiff: { left: { "lab.l": "x" }, right: { "lab.l": "y" } },
-                },
+                // left: {
+                //   absDiff: { left: { "lab.l": "x" }, right: { "lab.l": "y" } },
+                // },
+                left: { absDiff: { left: 0, right: 1 } },
                 right: jnd.l,
               },
             },

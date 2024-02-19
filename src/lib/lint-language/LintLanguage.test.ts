@@ -19,7 +19,9 @@ const toColors = (colors: string[]): Color[] =>
 const exampleColors = toPal(["#d4a8ff", "#7bb9ff", "#008694"]);
 
 test("LintLanguage basic eval - eval with no references ", () => {
-  const prog1 = { "<": { left: { count: exampleColors.colors }, right: 2 } };
+  const prog1: LintProgram = {
+    "<": { left: { count: exampleColors.colors }, right: 2 },
+  };
   expect(prettyPrintLL(prog1)).toBe("count([#d4a8ff, #7bb9ff, #008694]) < 2");
   expect(LLEval(prog1, exampleColors).result).toBe(false);
 });
@@ -209,7 +211,7 @@ test("LintLanguage Quantifiers All - tritanopia", () => {
 });
 
 test("LintLanguage Boolean values", () => {
-  const program = { "!=": { left: true, right: false } };
+  const program: LintProgram = { "!=": { left: true, right: false } };
   const options = { debugParse: false };
   expect(prettyPrintLL(program, options)).toBe("TRUE != FALSE");
   const { result, blame } = LLEval(program, toPal([]), options);
@@ -292,9 +294,10 @@ test("LintLanguage Arithmetic Ops: =", () => {
   expect(prettyPrintLL(program1)).toBe("2 == 2");
   expect(LLEval(program1, toPal([])).result).toBe(true);
 });
-const opProg = (op: string) => ({
-  "==": { left: { [op]: { left: 2, right: 10 } }, right: 2 },
-});
+const opProg = (op: "+" | "-" | "/" | "*"): LintProgram =>
+  ({
+    "==": { left: { [op]: { left: 2, right: 10 } }, right: 2 },
+  } as LintProgram);
 test("LintLanguage Arithmetic Ops: + ", () => {
   expect(prettyPrintLL(opProg("+"))).toBe(`2 + 10 == 2`);
   expect(LLEval(opProg("+"), toPal([])).result).toBe(false);
@@ -315,9 +318,10 @@ test("LintLanguage Arithmetic Ops: *", () => {
   expect(LLEval(opProg("*"), toPal([])).result).toBe(false);
 });
 
-const aggProg = (op: string, right: number) => ({
-  "==": { left: { [op]: [1, 2, 3, 4] }, right },
-});
+const aggProg = (op: string, right: number): LintProgram =>
+  ({
+    "==": { left: { [op]: [1, 2, 3, 4] }, right },
+  } as LintProgram);
 test("LintLanguage Agg Ops: sum", () => {
   expect(prettyPrintLL(aggProg("sum", 8))).toBe(`sum([1, 2, 3, 4]) == 8`);
   expect(LLEval(aggProg("sum", 8), toPal([])).result).toBe(false);
@@ -342,6 +346,47 @@ test("LintLanguage Agg Ops: mean", () => {
   expect(prettyPrintLL(aggProg("mean", 2.5))).toBe(`mean([1, 2, 3, 4]) == 2.5`);
   expect(LLEval(aggProg("mean", 2.5), toPal([])).result).toBe(true);
 });
+test("LintLanguage Agg Ops: std", () => {
+  expect(prettyPrintLL(aggProg("std", 10))).toBe(`std([1, 2, 3, 4]) == 10`);
+  expect(LLEval(aggProg("std", 10), toPal([])).result).toBe(false);
+  expect(prettyPrintLL(aggProg("std", 1.118033988749895))).toBe(
+    `std([1, 2, 3, 4]) == 1.118033988749895`
+  );
+  expect(LLEval(aggProg("std", 1.118033988749895), toPal([])).result).toBe(
+    true
+  );
+});
+
+test("LintLanguage Agg Ops: count", () => {
+  expect(prettyPrintLL(aggProg("count", 10))).toBe(`count([1, 2, 3, 4]) == 10`);
+  expect(LLEval(aggProg("count", 10), toPal([])).result).toBe(false);
+  expect(prettyPrintLL(aggProg("count", 4))).toBe(`count([1, 2, 3, 4]) == 4`);
+  expect(LLEval(aggProg("count", 4), toPal([])).result).toBe(true);
+});
+
+test("LintLanguage Agg Ops: extent", () => {
+  expect(prettyPrintLL(aggProg("extent", 10))).toBe(
+    `extent([1, 2, 3, 4]) == 10`
+  );
+  expect(LLEval(aggProg("extent", 10), toPal([])).result).toBe(false);
+  expect(prettyPrintLL(aggProg("extent", 3))).toBe(`extent([1, 2, 3, 4]) == 3`);
+  expect(LLEval(aggProg("extent", 3), toPal([])).result).toBe(true);
+});
+
+test("LintLanguage Agg Ops: first", () => {
+  expect(prettyPrintLL(aggProg("first", 10))).toBe(`first([1, 2, 3, 4]) == 10`);
+  expect(LLEval(aggProg("first", 10), toPal([])).result).toBe(false);
+  expect(prettyPrintLL(aggProg("first", 1))).toBe(`first([1, 2, 3, 4]) == 1`);
+  expect(LLEval(aggProg("first", 1), toPal([])).result).toBe(true);
+});
+
+test("LintLanguage Agg Ops: last", () => {
+  expect(prettyPrintLL(aggProg("last", 10))).toBe(`last([1, 2, 3, 4]) == 10`);
+  expect(LLEval(aggProg("last", 10), toPal([])).result).toBe(false);
+  expect(prettyPrintLL(aggProg("last", 4))).toBe(`last([1, 2, 3, 4]) == 4`);
+  expect(LLEval(aggProg("last", 4), toPal([])).result).toBe(true);
+});
+
 test("LintLanguage to color rotate", () => {
   const realisticProgram = {
     exist: {
@@ -438,7 +483,7 @@ test("LintLanguage Name discrimination with a single color", () => {
 
 test("LintLanguage Measure Distance", () => {
   const colors = toColors(["#000000", "#fff"]);
-  const program = {
+  const program: LintProgram = {
     "==": {
       left: { dist: { left: colors[0], right: colors[1] }, space: "lab" },
       right: 100,
@@ -452,7 +497,7 @@ test("LintLanguage Measure Distance", () => {
 
 test("LintLanguage Measure DeltaE", () => {
   const colors = toColors(["#000000", "#fff"]);
-  const program = {
+  const program: LintProgram = {
     "==": {
       left: {
         deltaE: { left: colors[0], right: colors[1] },
@@ -471,7 +516,7 @@ test("LintLanguage Measure DeltaE", () => {
 
 test("LintLanguage Measure Contrast", () => {
   const colors = toColors(["#000000", "#fff"]);
-  const program = {
+  const program: LintProgram = {
     "==": {
       left: {
         contrast: { left: colors[0], right: colors[1] },
@@ -703,7 +748,7 @@ test("LintLanguage Sequential Similarity", () => {
 });
 
 test("LintLanguage Array Compare", () => {
-  const program = {
+  const program: LintProgram = {
     "==": {
       left: [1, 2, 3],
       right: [3, 2, 1],
@@ -735,7 +780,7 @@ test("LintLanguage Array Compare 2", () => {
 });
 
 test("LintLanguage Array Compare -- Sort", () => {
-  const program = {
+  const program: LintProgram = {
     "==": {
       left: [1, 2, 3],
       right: {
@@ -773,7 +818,7 @@ test("LintLanguage Array Compare Color", () => {
 });
 
 test("LintLanguage Fair Weighting", () => {
-  const program = {
+  const program: LintProgram = {
     "<": {
       left: { extent: { sort: "colors", varb: "x", func: { "lch.l": "x" } } },
       right: 50,
@@ -787,18 +832,3 @@ test("LintLanguage Fair Weighting", () => {
   expect(result.result).toBe(false);
   expect(result.blame).toStrictEqual([]);
 });
-
-// Text version
-// range(colors, lch, c) < threshold_1 AND range(colors, lch, l) < threshold_2
-
-// // YAML VERSION
-// all:
-//   in: colors
-//   varbs: [a, b]
-//   where: '!=': [index(a), index(b)]
-//   predicate:
-//     and:
-//       - '<': [range(colors, lch, c), threshold_1]
-//       - '<': [range(colors, lch, l), threshold_2]
-
-// JSON VERSION

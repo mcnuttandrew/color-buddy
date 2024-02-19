@@ -24,7 +24,7 @@ First time you start it up you should also run `yarn prep data`
 
 - [ ] Add more blame robustness, may pay to try to reason across all of the operator families (insight: keep a list of the blamable variables in the environment to support tracing)
 - [ ] per cols 4 all: color blindness metric should maybe be sensitive to task?
-- [ ] Macros story: "not similar", "sequences", "where": { "!=": {"left": "index(a)", "right": "index(b)"} },
+- [ ] Macros story: "not similar", "sequences", "where": { "!=": {"left": "index(a)", "right": "index(b)"} }, lab.l should become a macro to reduce the implementation surface
 - [ ] More crashy type validation
 - [x] Sequential check fix is incorrect for things with equi-ligthness
 - [x] Affect rules

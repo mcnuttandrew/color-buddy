@@ -1,3 +1,4 @@
+import { Color as ColorClass } from "../Color";
 /**
  * Lint Language
  * Lint Language is a language for expressing color logic. It is used to define color rules and constraints in the Lint system.
@@ -20,7 +21,7 @@ export type LintConjunction =
   | { and: LintExpression[] }
   | { or: LintExpression[] }
   | { not: LintExpression };
-export type LintQuantifierBase =
+type LintQuantifierBase =
   | {
       varbs: LintVariable[];
       /**
@@ -54,31 +55,43 @@ export type LintQuantifier =
   | { exist: LintQuantifierBase };
 
 // Operations
-export type LintRef = LintVariable | LintValue | LintValue[] | LintMap;
-
 /**
  * A logical comparison expression. It is used to express a comparison between two values. It can be ==, !=, <, > or similar. similar takes two colors and a similarity threshold expressed in dE units.
  */
 export type LintComparison =
-  | { "==": { left: LintRef; right: LintRef } }
-  | { "!=": { left: LintRef; right: LintRef } }
-  | { "<": { left: LintRef; right: LintRef } }
-  | { ">": { left: LintRef; right: LintRef } }
-  | { absDiff: { left: LintRef; right: LintRef } }
-  | { similar: { left: LintRef; right: LintRef; threshold: number } };
-export type MathOperations = "+" | "-" | "*" | "/";
-export type LintMathOps = Record<MathOperations, Number | LintVariable>;
+  | {
+      "==": {
+        left: LintValue | LintArrayValue;
+        right: LintValue | LintArrayValue;
+      };
+    }
+  | {
+      "!=": {
+        left: LintValue | LintArrayValue;
+        right: LintValue | LintArrayValue;
+      };
+    }
+  | { "<": { left: LintValue; right: LintValue } }
+  | { ">": { left: LintValue; right: LintValue } }
+  | { absDiff: { left: LintValue; right: LintValue } }
+  | { similar: { left: LintValue; right: LintValue; threshold: number } };
+export type LintMathOps =
+  | { "+": { left: LintValue; right: LintValue } }
+  | { "-": { left: LintValue; right: LintValue } }
+  | { "*": { left: LintValue; right: LintValue } }
+  | { "/": { left: LintValue; right: LintValue } };
 
 export type LintPairOps =
   | LintPairOpsDist
   | LintPairOpsDeltaE
   | LintPairOpsContrast;
 
+type PairType = LintColor | LintVariable;
 /**
  * Compute the distance between two colors using a given color space. The color space can be lab, hsl, or another valid color space.
  */
 export type LintPairOpsDist = {
-  dist: { left: LintRef; right: LintRef };
+  dist: { left: PairType; right: PairType };
   space: "lab" | "hsl";
 };
 
@@ -86,7 +99,7 @@ export type LintPairOpsDist = {
  * Compute the deltaE between two colors using a given algorithm. The algorithm can be 2000 or 76.
  */
 export type LintPairOpsDeltaE = {
-  deltaE: { left: LintRef; right: LintRef };
+  deltaE: { left: PairType; right: PairType };
   algorithm: "2000" | "76";
 };
 
@@ -94,36 +107,29 @@ export type LintPairOpsDeltaE = {
  * Compute the contrast between two colors using a given algorithm. The algorithm can be APCA, WCAG21, Michelson, Weber, Lstar or DeltaPhi.
  */
 export type LintPairOpsContrast = {
-  contrast: {
-    left: LintRef;
-    right: LintRef;
-  };
-  algorithm: "APCA" | "WCAG21" | "Michelson" | "Weber" | "Lstar" | "DeltaPhi";
+  contrast: { left: PairType; right: PairType };
+  algorithm: "APCA" | "DeltaPhi" | "Lstar" | "Michelson" | "WCAG21" | "Weber";
 };
 
-export type MapEval = LintColorFunction | LintPairOps;
+type LintArrayValue = LintVariable | LintValue[] | LintMap;
 export type LintMap =
-  | { map: LintVariable | LintValue[]; func: MapEval; varb: string }
-  | { sort: LintVariable | LintValue[]; func: MapEval; varb: string }
-  | { reverse: LintVariable | LintValue[] }
-  | { filter: LintVariable | LintValue[]; func: LintExpression; varb: string }
-  | { speed: LintVariable | LintValue[] };
+  | { filter: LintArrayValue; func: LintExpression; varb: string }
+  | { map: LintArrayValue; func: LintValue; varb: string }
+  | { reverse: LintArrayValue }
+  | { sort: LintArrayValue; func: LintValue; varb: string }
+  | { speed: LintArrayValue };
 
-export type Aggs =
-  | "sum"
-  | "count"
-  | "mean"
-  | "max"
-  | "min"
-  | "mean"
-  | "first"
-  | "last"
-  | "extent"
-  | "std";
-export type LintAggregate = Record<
-  Aggs,
-  LintVariable | (LintVariable | LintValue)[] | LintMap
->;
+export type LintAggregate =
+  | { count: LintArrayValue }
+  | { extent: LintArrayValue }
+  | { first: LintArrayValue }
+  | { last: LintArrayValue }
+  | { max: LintArrayValue }
+  | { mean: LintArrayValue }
+  | { mean: LintArrayValue }
+  | { min: LintArrayValue }
+  | { std: LintArrayValue }
+  | { sum: LintArrayValue };
 
 /**
  * Simulate color vision deficiency. The type can be protanomaly, deuteranomaly, tritanopia or grayscale.
@@ -141,7 +147,7 @@ export type LintColorFunction =
       space: ColorSpace;
       channel: ColorChannel;
     }
-  | Record<string, LintVariable | LintColor>;
+  | { [cmd: string]: LintVariable | string };
 
 /**
  * Converts a Color to a color space component. Has syntax like colorSpace.channel, where colorSpace is a color space and channel is a channel in that color space. Available spaces: hsl, hsv, jzazbz, lab, lch, oklab, oklch, rgb
@@ -187,6 +193,7 @@ export type LintValue =
   | boolean
   | LintColor
   | LintVariable
+  | LintComparison
   | LintMathOps
   | LintPairOps
   | LintAggregate
@@ -195,4 +202,5 @@ export type LintValue =
 // raw values
 export type LintBoolean = boolean;
 export type LintVariable = string;
-export type LintColor = string;
+// export type LintColor = string | Color | LintVariable;
+export type LintColor = string | LintVariable;

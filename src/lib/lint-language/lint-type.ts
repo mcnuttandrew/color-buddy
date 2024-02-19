@@ -1,4 +1,4 @@
-import { Color as ColorClass } from "../Color";
+import { Color } from "../Color";
 /**
  * Lint Language
  * Lint Language is a language for expressing color logic. It is used to define color rules and constraints in the Lint system.
@@ -202,5 +202,5 @@ export type LintValue =
 // raw values
 export type LintBoolean = boolean;
 export type LintVariable = string;
-// export type LintColor = string | Color | LintVariable;
-export type LintColor = string | LintVariable;
+export type LintColor = string | Color | LintVariable;
+// export type LintColor = string | LintVariable;

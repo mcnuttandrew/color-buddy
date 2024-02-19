@@ -913,9 +913,11 @@ export class LLMap extends LLNode {
       throw new Error("Type error");
     }
     const newVal = tryTypes([LLValue], env.options);
-    const evalFunc = (x: any) => {
-      // more re-typing in-direction like from the quantifiers
-      const newEnv = env.set(this.varb, newVal(x));
+    const idxType = tryTypes([LLValue], env.options);
+    const evalFunc = (x: any, index: number) => {
+      const newEnv = env
+        .set(this.varb, newVal(x))
+        .set(`index(${this.varb})`, idxType(index + 1));
       return this.func.evaluate(newEnv).result;
     };
     // implicitly ignore the pass back i guess?

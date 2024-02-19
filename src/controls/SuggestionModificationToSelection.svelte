@@ -10,7 +10,7 @@
 
   let requestState: "idle" | "loading" | "loaded" | "failed" = "idle";
   $: currentPal = $colorStore.palettes[$colorStore.currentPal];
-  $: colorSpace = currentPal.colorSpace;
+  $: colorSpace = currentPal ? currentPal.colorSpace : "lab";
   $: colors = currentPal.colors;
   $: selectedColors = $focusStore.focusedColors
     .map((x) => colors[x]?.toHex())

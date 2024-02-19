@@ -19,7 +19,7 @@
   import MiniPalPreview from "../components/MiniPalPreview.svelte";
   $: familiarPals = [] as ExtendedPal[];
   $: currentPal = $colorStore.palettes[$colorStore.currentPal];
-  $: colorSpace = currentPal.colorSpace;
+  $: colorSpace = currentPal ? currentPal.colorSpace : "lab";
 
   onMount(async () => {
     let newPals = [] as ExtendedPal[];

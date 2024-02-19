@@ -43,9 +43,9 @@ First time you start it up you should also run `yarn prep data`
 - [ ] Handles get stuck on channel picker again, ugh
 - [ ] Bug: Color channel usage slightly cursed (doesn't update positions correctly)
 - [ ] Bug: rotate in polar coordinates doesn't work right
-- [ ] Allow no palettes
 - [ ] allows renaming of non-current palettes
 - [ ] Parameterize the scatter column completely, allow edits to the compare stuff
+- [x] Allow no palettes
 - [x] Color Space selections should persist
 - [x] Dont allow saves to examples when there's an error
 - [x] Switch the examples to be tabs or single

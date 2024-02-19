@@ -169,9 +169,6 @@ function createStore() {
     removePal: (index: number) =>
       persistUpdate((n) => {
         let palettes = [...n.palettes].filter((_, i) => i !== index);
-        if (palettes.length === 0) {
-          palettes = [stringPalToColorPal(newGenericPal("Example"))];
-        }
         const currentPal =
           index === n.currentPal
             ? Math.min(index, palettes.length - 1)
@@ -211,7 +208,7 @@ function createStore() {
     clearPalettes: () =>
       persistUpdate(() => ({
         currentPal: 0,
-        palettes: [stringPalToColorPal(newGenericPal("Example"))],
+        palettes: [],
       })),
     setPalettes: (palettes: Palette[]) =>
       persistUpdate(() => ({

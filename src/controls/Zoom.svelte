@@ -14,7 +14,7 @@
   $: zZoom && configStore.setZoom("z", zZoom);
 
   $: currentPal = $colorStore.palettes[$colorStore.currentPal];
-  $: colorSpace = currentPal.colorSpace;
+  $: colorSpace = currentPal ? currentPal.colorSpace : "lab";
   $: config = colorPickerConfig[colorSpace as keyof typeof colorPickerConfig];
 
   $: xName = config.xChannel.toUpperCase();

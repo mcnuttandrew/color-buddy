@@ -36,7 +36,7 @@
   $: selectedLint = $lintStore.focusedLint;
   $: updateSearchDebounced = debounce(10, (pal: any) => {
     // keep the noise down on the console
-    if (!selectedLint) {
+    if (!selectedLint && pal) {
       lint(pal).then((res) => {
         lintStore.postCurrentChecks(res);
       });
@@ -59,20 +59,27 @@
         </div>
         {#if palPresent}
           <MainColumn {scatterSize} />
+        {:else}
+          <div class="flex-grow flex justify-center items-center">
+            <div class="text-2xl max-w-md text-center">
+              No palettes present, click "New" in the upper left to create a new
+              one
+            </div>
+          </div>
         {/if}
       </div>
-      {#if palPresent}
-        <div class="grow">
-          <Nav
-            className="bg-stone-800 text-white h-12 items-center "
-            {tabs}
-            isTabSelected={(x) => $configStore.route === x}
-            selectTab={(x) => {
-              // @ts-ignore
-              configStore.setRoute(x);
-            }}
-          />
 
+      <div class="grow">
+        <Nav
+          className="bg-stone-800 text-white h-12 items-center "
+          {tabs}
+          isTabSelected={(x) => $configStore.route === x}
+          selectTab={(x) => {
+            // @ts-ignore
+            configStore.setRoute(x);
+          }}
+        />
+        {#if palPresent}
           {#if $configStore.route === "examples"}
             <Examples />
           {:else if $configStore.route === "compare"}
@@ -80,8 +87,8 @@
           {:else}
             <Eval />
           {/if}
-        </div>
-      {/if}
+        {/if}
+      </div>
     </div>
     <!-- bottom row -->
   </div>

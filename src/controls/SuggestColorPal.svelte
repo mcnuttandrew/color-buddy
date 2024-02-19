@@ -8,7 +8,7 @@
   import { buttonStyle } from "../lib/styles";
 
   $: currentPal = $colorStore.palettes[$colorStore.currentPal];
-  $: colorSpace = currentPal.colorSpace;
+  $: colorSpace = currentPal ? currentPal.colorSpace : "lab";
   let requestState: "idle" | "loading" | "loaded" | "failed" = "idle";
   let newPals: Palette[] = [];
   let palPrompt: string = "";

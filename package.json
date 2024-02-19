@@ -13,7 +13,8 @@
     "build-data": "mkdir data && cp node_modules/vega-datasets/data/* ./data/",
     "test": "vitest run",
     "test:watch": "vitest",
-    "test:coverage": "vitest run --coverage"
+    "test:coverage": "vitest run --coverage",
+    "gen-schema": "npx ts-json-schema-generator --path src/lib/lint-language/lint-type.ts --type LintProgram > public/lint-schema.json --minify"
   },
   "devDependencies": {
     "@sveltejs/vite-plugin-svelte": "^3.0.0",
@@ -29,6 +30,7 @@
     "postcss": "^8.4.32",
     "svelte": "^4.2.3",
     "svelte-check": "^3.6.0",
+    "ts-json-schema-generator": "^1.5.0",
     "tslib": "^2.6.2",
     "typescript": "^5.2.2",
     "vega-typings": "^1.0.1",

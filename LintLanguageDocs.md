@@ -54,18 +54,3 @@ Maps:
 {filter: Variable | Value[], func: EXPR, varb: Variable}
 {reverse: Variable | Value[]}
 {speed: Variable | Value[]}
-
-```yaml
----
-all:
-  varbs: [a, b]
-  in: colors
-  where:
-    "!=": {left: index(a) right: index(b)}
-  predicate:
-    not:
-      similar:
-        left: {cvdSim: a, type: deuteranopia}
-        right: {cvdSim: b, type: deuteranopia}
-        threshold: 9
-```

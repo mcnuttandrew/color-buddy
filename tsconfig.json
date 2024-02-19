@@ -19,7 +19,8 @@
     "src/**/*.ts",
     "src/**/*.js",
     "src/**/*.svelte",
-    "src/custom-types.d.ts"
+    "src/custom-types.d.ts",
+    "scripts/**/*.ts"
   ],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

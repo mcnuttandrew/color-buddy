@@ -7,18 +7,12 @@
   import type { PaletteWrap } from "../stores/example-palette-store";
   import type { LintResult } from "../lib/ColorLint";
 
-  import PalPreview from "../components/PalPreview.svelte";
-
   import MiniPalPreview from "../components/MiniPalPreview.svelte";
   import LintCustomizationModal from "../linting/LintCustomizationModal.svelte";
   import { lint } from "../lib/api-calls";
   import Tooltip from "../components/Tooltip.svelte";
-  import { debounce } from "vega";
   import { buttonStyle } from "../lib/styles";
 
-  //   let lintCache: Record<number, false | any[]> = Object.fromEntries(
-  //     $examplePalStore.palettes.map((_, idx) => [idx, false])
-  //   );
   onMount(async () => {
     // wait for the palettes to be loaded
     while ($examplePalStore.palettes.length === 0) {
@@ -37,32 +31,6 @@
     });
   }
 
-  //   $: updateSearchDebounced = debounce(2000, async () => {
-  //     // for (let idx = 0; idx < $examplePalStore.palettes.length; idx++) {
-  //     //   const pal = $examplePalStore.palettes[idx];
-  //     //   console.log("linting", pal.palette.name);
-  //     //   const res = await lint(pal.palette, false);
-  //     //   lintCache[idx] = res;
-  //     // }
-  //     $examplePalStore.palettes.forEach(async (pal, index) => {
-  //       lint(pal.palette, false).then((res) => {
-  //         examplePalStore.postLint(index, res);
-  //       });
-  //     });
-  //   });
-  //   $: updateSearchDebounced();
-
-  $: groupsByTypes = $examplePalStore.palettes.reduce(
-    (acc, pal, idx) => {
-      if (acc[pal.palette.type]) {
-        acc[pal.palette.type].push([idx, pal]);
-      } else {
-        acc[pal.palette.type] = [[idx, pal]];
-      }
-      return acc;
-    },
-    {} as Record<string, [number, PaletteWrap][]>
-  );
   //   todo add the local ones as well
   const lintMarks = {
     pass: "✅",

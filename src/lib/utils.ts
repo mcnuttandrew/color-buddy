@@ -206,22 +206,17 @@ const defaultHexPal: StringPalette = {
   intendedAffects: [],
   intendedContexts: [],
 };
-export interface ExtendedPal extends Palette {
-  group: string;
-}
 export const makePal = (
   name: string,
   colors: string[],
   colorSpace: any,
-  group: any,
   type: any = "categorical"
-): ExtendedPal => {
+) => {
   return {
     ...defaultHexPal,
     name,
     colors: colors.map((x) => Color.colorFromString(x, colorSpace)),
     background: Color.colorFromString("#ffffff", colorSpace),
-    group,
     type,
   };
 };

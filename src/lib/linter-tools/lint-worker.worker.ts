@@ -7,7 +7,8 @@ import type { LintResult } from "../ColorLint";
 
 type Command =
   | { type: "load-lints"; content: ""; id: string }
-  | { type: "run-lint"; content: ""; id: string };
+  | { type: "run-lint"; content: ""; id: string }
+  | { type: "run-lint-no-message"; content: ""; id: string };
 
 const cache: Record<string, Color> = {};
 const getColor = (hex: string, space: string): Color => {
@@ -39,6 +40,7 @@ let storeLoaded = false;
 const storeName = "color-pal-lints";
 let simpleLintCache = new Map<string, any>();
 async function dispatch(cmd: Command) {
+  let computeMessage = true;
   switch (cmd.type) {
     case "load-lints":
       idb.get(storeName).then((x) => {
@@ -49,6 +51,8 @@ async function dispatch(cmd: Command) {
         return "";
       });
       return "";
+    case "run-lint-no-message":
+      computeMessage = false;
     case "run-lint":
       if (simpleLintCache.has(cmd.content)) {
         return simpleLintCache.get(cmd.content);
@@ -59,7 +63,15 @@ async function dispatch(cmd: Command) {
         await new Promise((resolve) => setTimeout(resolve, 100));
       }
 
-      const result: LintResult[] = runLintChecks(pal, lintStore).map((x) => {
+      const result: LintResult[] = runLintChecks(
+        pal,
+        lintStore.map((x) => {
+          if (!computeMessage) {
+            x.blameMode = "none";
+          }
+          return x;
+        })
+      ).map((x) => {
         return {
           name: x.name,
           passes: x.passes,

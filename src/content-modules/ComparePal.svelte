@@ -74,7 +74,10 @@
         onFocusedColorsChange={() => {}}
         startDragging={() => {}}
         stopDragging={() => {}}
-        blindColors={(showDiff ? currentPal.colors : []).slice(
+        blindColors={(showDiff
+          ? currentPal.colors.map((x) => x.toColorSpace(colorSpace))
+          : []
+        ).slice(
           0,
           Math.min(ComparisonPal.colors.length, currentPal.colors.length)
         )}

@@ -27,8 +27,10 @@
   import MainColumn from "./content-modules/MainColumn.svelte";
   import SetSimulation from "./controls/SetSimulation.svelte";
   import Zoom from "./controls/Zoom.svelte";
+  import Browse from "./content-modules/Browse.svelte";
 
   const tabs = ["examples", "compare", "eval"];
+  // const tabs = ["examples", "compare", "eval", "browse"];
 
   import { lint } from "./lib/api-calls";
   import { debounce } from "vega";
@@ -51,27 +53,32 @@
 <main class="flex h-full">
   <LeftPanel />
   <div class="h-full flex flex-col grow main-content">
-    <div class="flex w-full grow overflow-auto">
+    <div
+      class="flex w-full grow overflow-auto"
+      class:top-bar={$configStore.route === "browse"}
+    >
       <div class="flex flex-col">
         <div class="w-full flex bg-stone-800 px-2 py-3 text-white">
           <SetSimulation />
           <Zoom />
         </div>
-        {#if palPresent}
-          <MainColumn {scatterSize} />
-        {:else}
-          <div class="flex-grow flex justify-center items-center">
-            <div class="text-2xl max-w-md text-center">
-              No palettes present, click "New" in the upper left to create a new
-              one
+        {#if $configStore.route !== "browse"}
+          {#if palPresent}
+            <MainColumn {scatterSize} />
+          {:else}
+            <div class="flex-grow flex justify-center items-center">
+              <div class="text-2xl max-w-md text-center">
+                No palettes present, click "New" in the upper left to create a
+                new one
+              </div>
             </div>
-          </div>
+          {/if}
         {/if}
       </div>
 
       <div class="grow">
         <Nav
-          className="bg-stone-800 text-white h-12 items-center "
+          className="bg-stone-800 text-white h-12 items-center"
           {tabs}
           isTabSelected={(x) => $configStore.route === x}
           selectTab={(x) => {
@@ -84,12 +91,15 @@
             <Examples />
           {:else if $configStore.route === "compare"}
             <ComparePal {scatterSize} />
-          {:else}
+          {:else if $configStore.route === "eval"}
             <Eval />
           {/if}
         {/if}
       </div>
     </div>
+    {#if $configStore.route === "browse"}
+      <Browse />
+    {/if}
     <!-- bottom row -->
   </div>
 </main>
@@ -100,5 +110,8 @@
 <style>
   .main-content {
     min-width: 0;
+  }
+  .top-bar {
+    min-height: 50px !important;
   }
 </style>

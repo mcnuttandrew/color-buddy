@@ -11,7 +11,7 @@ interface StoreData {
   exampleRoute: "svg" | "vega" | "swatches";
   includeQuotes: boolean;
   leftRoute: "controls" | "palettes" | "colors";
-  route: "examples" | "compare" | "eval";
+  route: "examples" | "compare" | "eval" | "browse";
   scatterplotMode: "moving" | "putting";
   showGamutMarkers: boolean;
   showColorBackground: boolean;

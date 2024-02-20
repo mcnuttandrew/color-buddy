@@ -3,10 +3,14 @@
   import focusStore from "../stores/focus-store";
   import configStore from "../stores/config-store";
 
+  import { suggestNameForPalette } from "../lib/api-calls";
+
   import PalPreview from "../components/PalPreview.svelte";
 
   import { buttonStyle } from "../lib/styles";
   import Tooltip from "../components/Tooltip.svelte";
+  $: nameSuggestions = [] as string[];
+  let state: "idle" | "loading" = "idle";
 </script>
 
 <div class="overflow-auto">
@@ -90,6 +94,35 @@
                 Move down
               </button>
             {/if}
+            <button
+              class={buttonStyle}
+              on:click={() => {
+                state = "loading";
+                suggestNameForPalette(pal, $configStore.engine).then((res) => {
+                  state = "idle";
+                  nameSuggestions = res;
+                });
+              }}
+            >
+              Suggest Name
+            </button>
+            {#if nameSuggestions.length > 0}
+              <div class="font-bold text-sm">Suggested Names</div>
+              {#each nameSuggestions as name}
+                <button
+                  class={buttonStyle}
+                  on:click={() => {
+                    const newPals = [...$colorStore.palettes];
+                    newPals[i] = { ...pal, name };
+                    colorStore.setPalettes(newPals);
+                    nameSuggestions = [];
+                  }}
+                >
+                  {name}
+                </button>
+              {/each}
+            {/if}
+            <div></div>
           </div>
           <button
             slot="target"

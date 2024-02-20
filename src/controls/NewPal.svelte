@@ -1,54 +1,22 @@
 <script lang="ts">
   import { Color } from "../lib/Color";
   import colorStore from "../stores/color-store";
+  import examplePalStore from "../stores/example-palette-store";
   import type { StringPalette, Palette } from "../types";
   import focusStore from "../stores/focus-store";
-  import { onMount } from "svelte";
   import Tooltip from "../components/Tooltip.svelte";
-  import { VegaColors } from "../lib/charts";
   import { buttonStyle, denseButtonStyle } from "../lib/styles";
-  import {
-    makePal,
-    toHex,
-    newGenericPal,
-    createPalFromHexes,
-  } from "../lib/utils";
-  import type { ExtendedPal } from "../lib/utils";
+  import { newGenericPal, createPalFromHexes } from "../lib/utils";
   import SuggestColorPal from "./SuggestColorPal.svelte";
 
   import MiniPalPreview from "../components/MiniPalPreview.svelte";
-  $: familiarPals = [] as ExtendedPal[];
+  $: familiarPals = $examplePalStore.palettes.map((x) => x.palette);
   $: currentPal = $colorStore.palettes[$colorStore.currentPal];
   $: colorSpace = currentPal ? currentPal.colorSpace : "lab";
 
-  onMount(async () => {
-    let newPals = [] as ExtendedPal[];
-
-    Object.entries(VegaColors).forEach(([name, colors]) => {
-      newPals.push(makePal(name, toHex(colors), colorSpace, "vega"));
-    });
-
-    const get = (url: string) => fetch(url).then((x) => x.json());
-    const pals = await get("./pal-sets.json");
-    (Object.entries(pals) as any[]).forEach(([name, { type, colors }]) => {
-      const pal = makePal(name, colors, colorSpace, "ColorBrewer", type);
-      newPals.push(pal);
-    });
-    familiarPals = newPals;
-  });
   let searchString = "";
-  $: groups = familiarPals.reduce(
-    (acc, pal) => {
-      if (!acc[pal.group]) acc[pal.group] = [];
-      if (searchString.length > 0) {
-        if (!pal.name.toLowerCase().includes(searchString.toLowerCase())) {
-          return acc;
-        }
-      }
-      acc[pal.group].push(pal);
-      return acc;
-    },
-    {} as Record<string, ExtendedPal[]>
+  $: filteredPals = familiarPals.filter((pal) =>
+    pal.name.toLowerCase().includes(searchString.toLowerCase())
   );
 
   function newPal(newPal: StringPalette) {
@@ -127,21 +95,18 @@
     <div class="font-bold">Search for palettes from predefined examples</div>
     <input bind:value={searchString} placeholder="Search" />
     <div class="max-h-48 overflow-y-scroll">
-      {#each Object.entries(groups) as [group, pals]}
-        <div class="font-bold">{group}</div>
-        <div class="flex flex-wrap">
-          {#each pals as pal}
-            <MiniPalPreview
-              {pal}
-              onClick={() => {
-                colorStore.createNewPal(pal);
-                onClick();
-                focusStore.clearColors();
-              }}
-            />
-          {/each}
-        </div>
-      {/each}
+      <div class="flex flex-wrap">
+        {#each filteredPals as pal}
+          <MiniPalPreview
+            {pal}
+            onClick={() => {
+              colorStore.createNewPal(pal);
+              onClick();
+              focusStore.clearColors();
+            }}
+          />
+        {/each}
+      </div>
     </div>
   </span>
 

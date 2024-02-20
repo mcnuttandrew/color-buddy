@@ -88,6 +88,14 @@ export function suggestPal(prompt: string, engine: Engine) {
   return engineToScaffold[engine]<SimplePal>(`suggest-a-pal`, body, true);
 }
 
+export function suggestNameForPalette(
+  palette: Palette,
+  engine: Engine
+): Promise<string[]> {
+  const body = JSON.stringify({ ...palToString(palette) });
+  return engineToScaffold[engine]<string>(`suggest-name`, body, true);
+}
+
 export function suggestContextualAdjustments(
   prompt: string,
   currentPal: Palette,
@@ -151,10 +159,10 @@ function workerDispatch() {
 }
 const dispatch = workerDispatch();
 
-export function lint(pal: Palette) {
+export function lint(pal: Palette, computeMessage?: boolean) {
   // this may be too deep a copy?
   return dispatch({
-    type: "run-lint",
+    type: computeMessage ? "run-lint" : "run-lint-no-message",
     content: JSON.stringify({
       ...pal,
       background: pal.background.toString(),

@@ -186,6 +186,7 @@
   let windowPos = { x: 0, y: 0 };
   let selectionIsZ = false;
   let selectionStart = (isZ: boolean) => (e: any) => {
+    hoveredPoint = false;
     selectionIsZ = isZ;
     interactionMode = "select";
     // console.log("selection start");

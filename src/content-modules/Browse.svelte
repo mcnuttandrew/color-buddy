@@ -18,11 +18,11 @@
     while ($examplePalStore.palettes.length === 0) {
       await new Promise((resolve) => setTimeout(resolve, 100));
     }
-    computeLints();
+    computeLints(false);
   });
-  function computeLints() {
+  function computeLints(breakLint: boolean) {
     $examplePalStore.palettes.forEach(async (pal, index) => {
-      if (pal.lints.length > 0) {
+      if (!breakLint && pal.lints.length > 0) {
         return;
       }
       lint(pal.palette, false).then((res) => {
@@ -37,8 +37,9 @@
     fail: "❌",
     warn: "⚠️",
   };
+  $: pals = $examplePalStore.palettes;
 
-  $: allEvaluatedLints = $examplePalStore.palettes.reduce(
+  $: allEvaluatedLints = pals.reduce(
     (acc, pal) => {
       pal.lints.forEach((lint) => {
         acc[lint.name] = lint;
@@ -49,7 +50,7 @@
   );
   let disAllowedLints = new Set<string>();
 
-  $: filteredPals = $examplePalStore.palettes;
+  $: filteredPals = pals;
   let sortedBy = "natural";
   $: console.log(allEvaluatedLints, disAllowedLints);
 </script>
@@ -74,6 +75,9 @@
       on:click={() => (filteredPals = $examplePalStore.palettes)}
     >
       reset filters
+    </button>
+    <button class={buttonStyle} on:click={() => computeLints(true)}>
+      Re run lints
     </button>
   </div>
   <div class="flex flex-col flex-wrap max-h-80">

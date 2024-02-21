@@ -331,7 +331,7 @@ export class LLNumber extends LLNode {
   }
 }
 
-const LLNumberOpTypes = ["+", "-", "*", "/", "absDiff"] as const;
+const LLNumberOpTypes = ["+", "-", "*", "/", "absDiff", "%"] as const;
 export class LLNumberOp extends LLNode {
   constructor(
     private type: (typeof LLNumberOpTypes)[number],
@@ -355,16 +355,22 @@ export class LLNumberOp extends LLNode {
         return { result: left / right, env };
       case "absDiff":
         return { result: Math.abs(left - right), env };
+      case "%":
+        return { result: left % right, env };
     }
   }
   static tryToConstruct(node: any, options: OptionsConfig) {
     const opType = LLNumberOpTypes.find((x) => node[x]);
     if (!opType) return false;
     const { left, right } = node[opType];
-    if (!checkIfValsPresent(node[opType], ["left", "right"])) return false;
+    if (!checkIfValsPresent(node[opType], ["left", "right"])) {
+      throw new Error(`Missing left or right for ${opType}`);
+    }
     const leftType = tryTypes([LLValue], options)(left);
     const rightType = tryTypes([LLValue], options)(right);
-    if (!leftType || !rightType) return false;
+    if (!leftType || !rightType) {
+      throw new Error(`Type error in ${opType}`);
+    }
     return new LLNumberOp(opType, leftType, rightType);
   }
   toString(): string {
@@ -401,7 +407,7 @@ function compareValues(
         }
         return diff < thresh;
       }
-      throw new Error("Type error");
+      throw new Error("Type error. Similar must be used with colors.");
     case "==":
       return left === right;
     case "!=":
@@ -412,6 +418,8 @@ function compareValues(
       return left < right;
   }
 }
+const getType = (x: any) =>
+  typeof x === "object" ? (Array.isArray(x) ? "Array" : "object") : typeof x;
 export class LLPredicate extends LLNode {
   constructor(
     public type: (typeof predicateTypes)[number],
@@ -427,8 +435,13 @@ export class LLPredicate extends LLNode {
     const { left, right } = this;
     let leftEval = left.evaluate(env).result;
     let rightEval = right.evaluate(env).result;
-    if (typeof leftEval !== typeof rightEval) {
-      throw new Error("predicate - type error ");
+    const leftType = getType(leftEval);
+    const rightType = getType(rightEval);
+    if (leftType !== rightType) {
+      throw new Error(
+        `Type error on predicate "${this.type}": left and right types must be the same. 
+        Got ${leftType} and ${rightType}`
+      );
     }
     // array
     if (Array.isArray(leftEval)) {
@@ -523,7 +536,7 @@ const VFTypes = [
     primaryKey: "toColor",
     params: ["space", "channel"] as string[],
     op: (val: Color, params: Params) =>
-      val.toColorSpace(params.space as any).getChannel(params.channel),
+      Number(val.toColorSpace(params.space as any).getChannel(params.channel)),
   },
   {
     primaryKey: "inGamut",
@@ -539,7 +552,7 @@ Object.entries(colorPickerConfig).map(([colorSpace, value]) => {
       primaryKey: `${colorSpace}.${channelKey.toLowerCase()}`,
       params: [] as string[],
       op: (val: Color, _params: Params) =>
-        val.toColorSpace(colorSpace as any).getChannel(channelKey),
+        Number(val.toColorSpace(colorSpace as any).getChannel(channelKey)),
     });
   });
 });
@@ -558,7 +571,9 @@ export class LLValueFunction extends LLNode {
     // get the value of the input, such as by deref
     const inputEval = input.evaluate(env).result;
     if (!(inputEval instanceof Color)) {
-      throw new Error("Type error");
+      throw new Error(
+        `Type error, was expecting a color, but got ${inputEval} in function ${this.type}`
+      );
     }
     const op = VFTypes.find((x) => x.primaryKey === this.type);
     if (!op) throw new Error("Invalid type");
@@ -886,7 +901,9 @@ export class LLAggregate extends LLNode {
     } else {
       childType = tryTypes([LLVariable, LLMap], options)(children);
     }
-    if (!childType) return false;
+    if (!childType) {
+      throw new Error(`Type error in ${reduceType}`);
+    }
     return new LLAggregate(reduceType, childType);
   }
   toString(): string {
@@ -927,8 +944,13 @@ export class LLMap extends LLNode {
       case "filter":
         return { result: children.filter(evalFunc), env };
       case "sort":
-        const childrenCopy = [...children].map(evalFunc) as RawValues[];
-        childrenCopy.sort();
+        let childrenCopy = [...children].map(evalFunc) as RawValues[];
+        childrenCopy = childrenCopy.sort((a, b) => {
+          if (typeof a === "number" && typeof b === "number") {
+            return a - b;
+          }
+          return a.toString().localeCompare(b.toString());
+        });
         return { result: childrenCopy, env };
       case "reverse":
         const childrenCopy2 = [...children];
@@ -982,7 +1004,12 @@ export class LLMap extends LLNode {
         options
       )(node.func);
     }
-    if (!func || !childType || !varb) return false;
+    if (!func || !childType || !varb) {
+      throw new Error(
+        `Failed while parsing ${op}. func=${func}, child=${childType}, varb=${varb}`
+      );
+      return false;
+    }
     return new LLMap(op, childType, func, varb);
   }
   toString(): string {

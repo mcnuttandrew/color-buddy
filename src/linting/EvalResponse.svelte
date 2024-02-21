@@ -24,6 +24,7 @@
   $: palette = $colorStore.palettes[$colorStore.currentPal];
   $: engine = $configStore.engine;
   $: suggestions = [] as Palette[];
+  $: colorSpace = palette.colorSpace;
 
   function proposeFix(useAi: boolean = false) {
     requestState = "loading";
@@ -64,6 +65,10 @@
   $: cbMatch = options.find((x) =>
     check.name.toLowerCase().includes(x)
   ) as (typeof options)[number];
+  const allowedColorSpaces = ["lch", "lab", "hsl", "hsv"] as const;
+  $: spaceMatch = allowedColorSpaces.find(
+    (x) => check.description.toLowerCase().includes(x) && x !== colorSpace
+  ) as any;
   $: ignored = !!evalConfig[check.name]?.ignore;
 </script>
 
@@ -91,6 +96,14 @@
         on:click={() => configStore.setColorSim(cbMatch)}
       >
         Activate {cbMatch} simulator
+      </button>
+    {/if}
+    {#if !!spaceMatch}
+      <button
+        class={buttonStyle}
+        on:click={() => colorStore.setColorSpace(spaceMatch)}
+      >
+        Switch to {spaceMatch} color space
       </button>
     {/if}
 

@@ -33,7 +33,7 @@
   let colorSpace = ComparisonPal?.colorSpace || "lab";
 </script>
 
-<div style={`max-width: ${scatterSize + 50}px`}>
+<div style={`max-width: ${scatterSize + 150}px`}>
   <div class="flex flex-col">
     {#if ComparisonPal !== undefined}
       <div class="font-bold">
@@ -112,7 +112,10 @@
     <div class="flex flex-col pl-2">
       <PalPreview
         highlightSelected={false}
-        pal={ComparisonPal}
+        pal={{
+          ...ComparisonPal,
+          background: Color.colorFromHex(bg, colorSpace),
+        }}
         allowModification={false}
       />
 
@@ -124,13 +127,20 @@
     /> -->
     </div>
   {/if}
-  <Nav tabs={["example"]} selectTab={() => {}} isTabSelected={() => true} />
+  <Nav
+    tabs={["example"]}
+    selectTab={() => {}}
+    isTabSelected={() => true}
+    className="mt-4"
+  />
   {#if compareIdx !== undefined}
-    <div class="example-holder">
+    <div class="example-holder flex justify-center-center flex-col">
       <ExampleAlaCart
         paletteIdx={compareIdx}
         exampleIdx={$configStore.compareSelectedExample}
         setExampleIdx={(idx) => configStore.setCompareSelectedExample(idx)}
+        allowModification={false}
+        bgColor={bg}
       />
     </div>
   {/if}
@@ -138,10 +148,10 @@
 
 <style>
   .empty-pal-holder {
-    height: 450px;
-    width: 450px;
+    height: 600px;
+    width: 600px;
   }
   .example-holder {
-    width: 450px;
+    width: 600px;
   }
 </style>

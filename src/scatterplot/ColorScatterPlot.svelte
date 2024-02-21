@@ -34,7 +34,7 @@
 
   $: focusSet = new Set(focusedColors);
 
-  let margin = { top: 15, right: 15, bottom: 15, left: 15 };
+  let margin = { top: 20, right: 15, bottom: 15, left: 15 };
   $: plotWidth = width - margin.left - margin.right;
   $: plotHeight = height - margin.top - margin.bottom;
   $: extents = {
@@ -186,6 +186,7 @@
   let windowPos = { x: 0, y: 0 };
   let selectionIsZ = false;
   let selectionStart = (isZ: boolean) => (e: any) => {
+    hoveredPoint = false;
     selectionIsZ = isZ;
     interactionMode = "select";
     // console.log("selection start");
@@ -468,6 +469,17 @@
             on:touchend|preventDefault={puttingEnd}
           />
         {/if}
+
+        <!-- hover bull shit -->
+        {#if typeof hoveredPoint !== "boolean"}
+          <g transform={`translate(0, ${height - margin.bottom})`}>
+            <circle fill={hoveredPoint.toDisplay()} cx={6} cy={-7.5} r="6" />
+            <text fill={textColor} x={15}>{hoveredPoint.toHex()}</text>
+            <text fill={textColor} y="15">
+              {hoveredPoint.toPrettyString()}
+            </text>
+          </g>
+        {/if}
       </svg>
     </div>
   </div>
@@ -577,24 +589,9 @@
     </div>
   </div>
 </div>
-<div class="flex items-center text-sm w-full justify-center">
-  {#if typeof hoveredPoint !== "boolean"}
-    Hovered point:
-    {hoveredPoint.toPrettyString()} -
-    {hoveredPoint.toHex()}
-    <div
-      class="h-4 w-4 rounded-full"
-      style={`background: ${hoveredPoint.toDisplay()}`}
-    ></div>
-  {:else}
-    &nbsp;
-  {/if}
+<div class="flex justify-end text-sm">
+  {#if $configStore.showGamutMarkers}✖ indicates value that is out of gamut{:else}&nbsp;{/if}
 </div>
-{#if $configStore.showGamutMarkers}
-  <div class="flex items-center text-sm w-full justify-center">
-    X indicates value that is out of gamut
-  </div>
-{/if}
 
 <style>
   circle {

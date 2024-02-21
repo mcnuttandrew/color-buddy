@@ -99,6 +99,7 @@
         exampleIdx={$configStore.mainColumnSelectedExample}
         setExampleIdx={(idx) => configStore.setMainColumnSelectedExample(idx)}
         allowModification={true}
+        bgColor={currentPal.background.toHex()}
       />
     {/if}
   </div>

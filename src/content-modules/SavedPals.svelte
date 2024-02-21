@@ -11,6 +11,7 @@
   import Tooltip from "../components/Tooltip.svelte";
   $: nameSuggestions = [] as string[];
   let state: "idle" | "loading" = "idle";
+  let showRename = false;
 </script>
 
 <div class="overflow-auto">
@@ -31,8 +32,17 @@
             {pal.name}
           </button>
         </div>
-        <Tooltip>
-          <div slot="content" let:onClick class="flex flex-col">
+        <Tooltip
+          onClose={() => {
+            showRename = false;
+            nameSuggestions = [];
+          }}
+        >
+          <div
+            slot="content"
+            let:onClick
+            class="flex flex-col justify-start items-start"
+          >
             <button
               class={buttonStyle}
               on:click={() => {
@@ -93,6 +103,34 @@
               >
                 Move down
               </button>
+            {/if}
+            <button
+              class={buttonStyle}
+              on:click={() => {
+                showRename = true;
+              }}
+            >
+              Rename
+            </button>
+            {#if showRename}
+              <input
+                class="border-2 border-black"
+                value={pal.name}
+                on:blur={(e) => {
+                  const newPals = [...$colorStore.palettes];
+                  newPals[i] = { ...pal, name: e.currentTarget.value };
+                  colorStore.setPalettes(newPals);
+                  showRename = false;
+                }}
+                on:keydown={(e) => {
+                  if (e.key === "Enter") {
+                    const newPals = [...$colorStore.palettes];
+                    newPals[i] = { ...pal, name: e.currentTarget.value };
+                    colorStore.setPalettes(newPals);
+                    showRename = false;
+                  }
+                }}
+              />
             {/if}
             <button
               class={buttonStyle}

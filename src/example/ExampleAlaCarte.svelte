@@ -9,6 +9,7 @@
   export let setExampleIdx: (idx: number) => void;
   export let paletteIdx: number;
   export let allowModification: boolean = false;
+  export let bgColor: string = "white";
   $: example = {
     ...$exampleStore.examples[exampleIdx],
     size: 400,
@@ -42,7 +43,10 @@
     </button>
   </Tooltip>
 </div>
-<div class="h-full flex justify-center items-center p-4">
+<div
+  class="h-full flex justify-center items-center"
+  style={`background: ${bgColor}`}
+>
   {#if exampleIdx === -1}
     <Swatches
       {paletteIdx}

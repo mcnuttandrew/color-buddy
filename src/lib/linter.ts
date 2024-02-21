@@ -5,7 +5,6 @@ import { CreateCustomLint } from "./CustomLint";
 
 // manual lints
 import DivergingOrder from "./lints/diverging-order";
-import EvenDistribution from "./lints/even-distribution";
 
 // custom lints
 import Affects from "./lints/affects";
@@ -13,6 +12,7 @@ import AvoidExtremes from "./lints/avoid-extremes";
 import BackgroundDifferentiability from "./lints/background-contrast";
 import CatOrderSimilarity from "./lints/cat-order-similarity";
 import ColorBlindness from "./lints/color-blindness";
+import EvenDistribution from "./lints/even-distribution";
 import Fair from "./lints/fair";
 import Gamut from "./lints/in-gamut";
 import MaxColors from "./lints/max-colors";
@@ -30,6 +30,7 @@ export const BUILT_INS: CustomLint[] = [
   AvoidExtremes,
   BackgroundDifferentiability,
   CatOrderSimilarity,
+  EvenDistribution,
   Gamut,
   MaxColors,
   MutuallyDistinct,

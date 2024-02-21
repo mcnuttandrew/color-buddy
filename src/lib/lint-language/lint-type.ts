@@ -79,7 +79,8 @@ export type LintMathOps =
   | { "+": { left: LintValue; right: LintValue } }
   | { "-": { left: LintValue; right: LintValue } }
   | { "*": { left: LintValue; right: LintValue } }
-  | { "/": { left: LintValue; right: LintValue } };
+  | { "/": { left: LintValue; right: LintValue } }
+  | { "%": { left: LintValue; right: LintValue } };
 
 export type LintPairOps =
   | LintPairOpsDist

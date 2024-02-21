@@ -85,17 +85,11 @@ async function buildAllExamples() {
   for (const demo of DEMOS) {
     try {
       const text = await fetch(demo.filename).then((x) => x.text());
-      const example = {
-        hidden: false,
-        size: 250,
-        // name: demo.filename.split("/").at(-1)?.split(".")[0],
-        name: demo.title,
-      } as any;
+      const example = { hidden: false, size: 250, name: demo.title } as any;
       if (demo.type === "vega") {
         example.vega = text;
       } else {
         const colors = detectColorsInSvgString(text);
-        store.addExample(example);
         example.svg = modifySVGForExampleStore(text, colors);
       }
       builtExamples.push(example);
@@ -120,10 +114,8 @@ function createStore() {
       return acc;
     }, {} as any);
     if (x) {
-      const examples = x.examples.filter((x: any) => preBuiltMap[x.name]);
-      const newStore = {
-        examples: [...prebuiltExamples, ...examples],
-      };
+      const examples = x.examples.filter((x: any) => !preBuiltMap[x.name]);
+      const newStore = { examples: [...prebuiltExamples, ...examples] };
       set(newStore as StoreData);
     } else {
       set({ ...InitialStore, examples: prebuiltExamples });

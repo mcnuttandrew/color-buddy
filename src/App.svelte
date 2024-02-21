@@ -39,7 +39,7 @@
   $: updateSearchDebounced = debounce(10, (pal: any) => {
     // keep the noise down on the console
     if (!selectedLint && pal) {
-      lint(pal).then((res) => {
+      lint(pal, true).then((res) => {
         lintStore.postCurrentChecks(res);
       });
     }

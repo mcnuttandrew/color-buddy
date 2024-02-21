@@ -24,8 +24,9 @@
     }
   }
   $: bgColor = currentPal?.background?.toHex() || "white";
+
   $: focused = $focusStore.focusedColors;
-  $: focusSet = new Set(focused);
+  $: focusSet = allowInteraction ? new Set(focused) : new Set();
 
   let common = "cursor-pointer mr-2 mb-2 transition-all";
   let classes = [
@@ -83,6 +84,7 @@
           class:ml-5={focusSet.has(i)}
           class:mr-5={!focusSet.has(i)}
           on:click|preventDefault|stopPropagation={(e) =>
+            allowInteraction &&
             focusStore.setColors(
               dealWithFocusEvent(e, i, $focusStore.focusedColors)
             )}
@@ -102,13 +104,14 @@
                     }`}
                     style={`${styleMap(colors[colorIdx])}`}
                     on:click|preventDefault|stopPropagation={(e) => {
-                      focusStore.setColors(
-                        dealWithFocusEvent(
-                          e,
-                          colorIdx,
-                          $focusStore.focusedColors
-                        )
-                      );
+                      allowInteraction &&
+                        focusStore.setColors(
+                          dealWithFocusEvent(
+                            e,
+                            colorIdx,
+                            $focusStore.focusedColors
+                          )
+                        );
                     }}
                   ></button>
                 {/each}
@@ -125,9 +128,10 @@
             }deg)`}
             class="mr-2 w-16"
             on:click|preventDefault|stopPropagation={(e) => {
-              focusStore.setColors(
-                dealWithFocusEvent(e, i, $focusStore.focusedColors)
-              );
+              allowInteraction &&
+                focusStore.setColors(
+                  dealWithFocusEvent(e, i, $focusStore.focusedColors)
+                );
             }}
           >
             {color.toHex()}

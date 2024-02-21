@@ -7,7 +7,7 @@ const lint: CustomLint = {
   program: JSONToPrettyString({
     // @ts-ignore
     $schema: `${location.href}lint-schema.json`,
-    "<": { left: { count: "colors" }, right: 10 },
+    "<": { left: { count: "colors" }, right: 11 },
   }),
   taskTypes: ["sequential", "diverging", "categorical"] as const,
   level: "warning",

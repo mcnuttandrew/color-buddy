@@ -79,7 +79,7 @@
       {#each colors as color, i}
         <button
           style={`background-color: ${color.toHex()};`}
-          class="w-24 h-5 transition-all"
+          class="wide-bars transition-all"
           class:ml-5={focusSet.has(i)}
           class:mr-5={!focusSet.has(i)}
           on:click|preventDefault|stopPropagation={(e) =>
@@ -144,7 +144,11 @@
     height: 45px;
   }
   .small-swatch {
-    width: 20px;
-    height: 20px;
+    width: 12px;
+    height: 12px;
+  }
+  .wide-bar {
+    width: 150px;
+    height: 30px;
   }
 </style>

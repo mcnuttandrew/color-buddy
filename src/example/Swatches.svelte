@@ -80,7 +80,7 @@
       {#each colors as color, i}
         <button
           style={`background-color: ${color.toHex()};`}
-          class="wide-bars transition-all"
+          class="wide-bar transition-all"
           class:ml-5={focusSet.has(i)}
           class:mr-5={!focusSet.has(i)}
           on:click|preventDefault|stopPropagation={(e) =>

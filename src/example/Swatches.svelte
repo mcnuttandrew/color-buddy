@@ -144,8 +144,8 @@
 
 <style>
   .big-swatch {
-    width: 45px;
-    height: 45px;
+    width: 32px;
+    height: 32px;
   }
   .small-swatch {
     width: 12px;

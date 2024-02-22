@@ -94,7 +94,7 @@
     <div class="flex flex-col p-4 flex-initial">
       <div class="flex">
         {#each classes as { className, styleMap, selectionClass }}
-          <div class="flex flex-col justify-center">
+          <div class="flex flex-col p-4 justify-center">
             {#each colorsInGroupsOf3 as colorGroup}
               <div class="flex">
                 {#each colorGroup as colorIdx}

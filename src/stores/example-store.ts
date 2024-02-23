@@ -51,6 +51,11 @@ export const DEMOS = [
     title: "Line Chart",
     filename: "./examples/line-chart.json",
   },
+  {
+    type: "vega",
+    title: "Grid",
+    filename: "./examples/grid-heatmap.json",
+  },
 ];
 
 export function modifySVGForExampleStore(

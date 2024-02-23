@@ -1,0 +1,56 @@
+{
+  "$schema": "https://vega.github.io/schema/vega/v5.json",
+  "width": 200,
+  "height": 200,
+  "padding": 5,
+  "data": [
+    {
+      "name": "grid",
+      "transform": [
+        { "type": "sequence", "start": 0, "stop": 100, "as": "i" },
+        { "type": "formula", "expr": "datum['i'] % 9", "as": "x" },
+        { "type": "formula", "expr": "floor(datum['i'] / 10)", "as": "y" }
+      ]
+    }
+  ],
+  "scales": [
+    {
+      "name": "x",
+      "type": "band",
+      "range": "width",
+      "domain": { "data": "grid", "field": "x" }
+    },
+    {
+      "name": "y",
+      "type": "band",
+      "range": "height",
+      "domain": { "data": "grid", "field": "y" }
+    },
+    {
+      "name": "color",
+      "type": "ordinal",
+      "domain": { "data": "grid", "field": "i" },
+      "range": "category"
+    }
+  ],
+  "axes": [
+    { "orient": "bottom", "scale": "x" },
+    { "orient": "left", "scale": "y" }
+  ],
+  "marks": [
+    {
+      "type": "rect",
+      "from": { "data": "grid" },
+      "encode": {
+        "enter": {
+          "x": { "scale": "x", "field": "x" },
+          "y": { "scale": "y", "field": "y" },
+          "width": { "scale": "x", "band": true },
+          "height": { "scale": "y", "band": true },
+          "fill": { "scale": "color", "field": "i" }
+        }
+      }
+    }
+  ],
+  "config": { "axis": { "disable": true } }
+}

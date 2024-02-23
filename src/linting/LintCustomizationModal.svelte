@@ -209,7 +209,7 @@
                       const newContext = currentContexts.includes(context)
                         ? currentContexts.filter((x) => x !== context)
                         : [...currentContexts, context];
-                      lintStore.setCurrentContexts(newContext);
+                      lintStore.setCurrentContext(newContext);
                     }}
                   />
                   {context}

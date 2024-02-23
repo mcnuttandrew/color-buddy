@@ -51,7 +51,7 @@
 
   <DistributePoints />
   <AlignSelection />
-  {#if focusedColors.length > 0 && colorSpace !== "hsl" && colorSpace !== "hsv" && colorSpace !== "lch"}
+  {#if focusedColors.length > 0}
     <Rotate />
   {/if}
 

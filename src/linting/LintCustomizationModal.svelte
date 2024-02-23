@@ -11,6 +11,7 @@
   import { buttonStyle } from "../lib/styles";
   import { JSONStringify } from "../lib/utils";
   import type { CustomLint } from "../lib/CustomLint";
+  import { affects, contexts } from "../types";
 
   export let onClose: () => void;
 
@@ -39,7 +40,11 @@
   let debugCompare = false;
   $: lintRun = runLint(lint, { debugCompare });
   let showDoubleCheck = false;
+
   $: currentTaskTypes = lint?.taskTypes || ([] as string[]);
+  $: currentAffects = lint?.affectTypes || ([] as string[]);
+  $: currentContexts = lint?.contextTypes || ([] as string[]);
+
   $: checkData = lintRun?.checkData || [];
   $: pairData = checkData as number[][];
   const taskTypes = ["sequential", "diverging", "categorical"] as const;
@@ -53,8 +58,9 @@
       onClose();
     }}
   >
-    <div class="flex flex-col container">
-      <div class="flex justify-between">
+    <div class="flex flex-col">
+      <!-- TOP BAR -->
+      <div class="flex justify-between bg-stone-200 h-12 items-center px-4">
         <div class="font-bold text-lg">Customize Lint</div>
         {#if isBuiltInThatsBeenModified}
           <button
@@ -107,183 +113,228 @@
           </button>
         </div>
       </div>
-      <div class="flex">
-        <div>Lint Name:</div>
-        <input
-          class="ml-2 border border-gray-300 rounded px-2 py-1"
-          type="text"
-          value={lint.name}
-          on:change={(e) => {
-            // @ts-ignore
-            const name = e.target.value;
-            lintStore.setCurrentLintName(name);
-          }}
-        />
-      </div>
-      <div class="flex">
-        <div>Lint Level:</div>
-        <Nav
-          tabs={["error", "warning"]}
-          isTabSelected={(x) => x === lint.level}
-          selectTab={(x) => {
-            // @ts-ignore
-            lintStore.setCurrentLintLevel(x);
-          }}
-        />
-      </div>
-      <div class="flex">
-        <div>Lint Group:</div>
-        <Nav
-          tabs={["usability", "accessibility", "design", "custom"]}
-          isTabSelected={(x) => x === lint.group}
-          selectTab={(x) => lintStore.setCurrentLintGroup(x)}
-        />
-      </div>
-      <div class="flex">
-        <div>Lint Task Types:</div>
+
+      <div class="px-4 flex flex-col">
+        <!-- MAIN CONTENT -->
         <div class="flex">
-          {#each taskTypes as taskType}
-            <div class="flex items-center">
-              <label>
-                <input
-                  type="checkbox"
-                  checked={currentTaskTypes.includes(taskType)}
-                  on:change={(e) => {
-                    const newTasks = currentTaskTypes.includes(taskType)
-                      ? currentTaskTypes.filter((x) => x !== taskType)
-                      : [...currentTaskTypes, taskType];
-                    // @ts-ignore
-                    lintStore.setCurrentLintTaskTypes(newTasks);
-                  }}
-                />
-                {taskType}
-              </label>
-            </div>
-          {/each}
+          <div class="font-bold">Lint Name:</div>
+          <input
+            class="ml-2 border border-gray-300 rounded px-2 py-1"
+            type="text"
+            value={lint.name}
+            on:change={(e) => {
+              // @ts-ignore
+              const name = e.target.value;
+              lintStore.setCurrentLintName(name);
+            }}
+          />
         </div>
-      </div>
-      <div>
-        <div>Lint Description:</div>
-        <textarea
-          class="ml-2 border border-gray-300 rounded px-2 py-1 w-full"
-          value={lint.description}
-          on:change={(e) => {
-            // @ts-ignore
-            const description = e.target.value;
-            lintStore.setCurrentLintDescription(description);
-          }}
-        />
-      </div>
-      <div>
-        <div>Lint Error Message:</div>
-        <div class="text-sm italic">
-          {"If failures of your lint rule can be attributed to a specific color or colors, include {{blame}} in this message"}
+        <div class="flex">
+          <div class="font-bold">Lint Level:</div>
+          <Nav
+            tabs={["error", "warning"]}
+            isTabSelected={(x) => x === lint.level}
+            selectTab={(x) => {
+              // @ts-ignore
+              lintStore.setCurrentLintLevel(x);
+            }}
+          />
         </div>
-        <textarea
-          class="ml-2 border border-gray-300 rounded px-2 py-1 w-full"
-          value={lint.failMessage}
-          on:change={(e) => {
-            // @ts-ignore
-            const errorMessage = e.target.value;
-            lintStore.setCurrentLintFailMessage(errorMessage);
-          }}
-        />
-      </div>
-      <div>
-        Current Palette:
-        <PalPreview pal={currentPal} allowModification={false} />
-      </div>
-      {#if lintRun?.passes}
-        <div class="text-green-500">
-          This lint passes for the current palette
+        <div class="flex">
+          <div class="font-bold">Lint Group:</div>
+          <Nav
+            tabs={["usability", "accessibility", "design", "custom"]}
+            isTabSelected={(x) => x === lint.group}
+            selectTab={(x) => lintStore.setCurrentLintGroup(x)}
+          />
         </div>
-      {/if}
-      {#if !lintRun?.passes && !errors}
-        <div>
-          <div class="flex">
-            <div class="text-red-500 mr-2">
-              This lint fails for the current palette.
-            </div>
-            The following colors are blamed. Using
-            <select
-              value={lint.blameMode}
-              class="mx-2"
-              on:change={() => {
-                // @ts-ignore
-                lintStore.setCurrentLintBlameMode(event.target.value);
-              }}
-            >
-              <option>none</option>
-              <option>single</option>
-              <option>pair</option>
-            </select>
-            Blame mode
-          </div>
-          {#if lint.blameMode === "pair"}
-            <div class="flex flex-wrap">
-              {#each pairData as pair}
-                <div class="mr-2 mb-1 border-2 border-black rounded">
-                  <PalPreview
-                    pal={{
-                      ...currentPal,
-                      colors: pair.map((x) => currentPal.colors[x]),
+        <!-- TASK TYPES -->
+        <div class="flex">
+          <div class="mr-2 font-bold">Lint Task Types:</div>
+          <div class="flex flex-wrap">
+            {#each taskTypes as taskType}
+              <div class="flex items-center mr-4">
+                <label>
+                  <input
+                    type="checkbox"
+                    checked={currentTaskTypes.includes(taskType)}
+                    on:change={(e) => {
+                      const newTasks = currentTaskTypes.includes(taskType)
+                        ? currentTaskTypes.filter((x) => x !== taskType)
+                        : [...currentTaskTypes, taskType];
+                      lintStore.setCurrentLintTaskTypes(newTasks);
                     }}
-                    allowModification={false}
                   />
-                </div>
-              {/each}
-            </div>
-          {:else}
-            <PalPreview
-              pal={{
-                ...currentPal,
-                colors: checkData
-                  .flatMap((x) => x)
-                  .map((x) => currentPal.colors[x]),
-              }}
-              allowModification={false}
-            />
-          {/if}
+                  {taskType}
+                </label>
+              </div>
+            {/each}
+          </div>
         </div>
-      {/if}
-      {#if errors}
-        <div class="text-red-500">{errors.message}</div>
-      {/if}
-      <div class="flex justify-between">
-        <div>Lint Program</div>
-        <button
-          class={buttonStyle}
-          on:click={() => {
-            lintStore.setCurrentLintProgram(JSONStringify(program) || "");
+        <!-- AFFECTS -->
+        <div class="flex">
+          <div class="mr-2 font-bold">Affects:</div>
+          <div class="flex flex-wrap">
+            {#each affects as affectType}
+              <div class="flex items-center mr-4">
+                <label>
+                  <input
+                    type="checkbox"
+                    checked={currentAffects.includes(affectType)}
+                    on:change={(e) => {
+                      const newAffects = currentAffects.includes(affectType)
+                        ? currentAffects.filter((x) => x !== affectType)
+                        : [...currentAffects, affectType];
+                      lintStore.setCurrentAffects(newAffects);
+                    }}
+                  />
+                  {affectType}
+                </label>
+              </div>
+            {/each}
+          </div>
+        </div>
+
+        <!-- CONTEXTS -->
+        <div class="flex">
+          <div class="mr-2 font-bold">Contexts:</div>
+          <div class="flex flex-wrap">
+            {#each contexts as context}
+              <div class="flex items-center mr-4">
+                <label>
+                  <input
+                    type="checkbox"
+                    checked={currentContexts.includes(context)}
+                    on:change={(e) => {
+                      const newContext = currentContexts.includes(context)
+                        ? currentContexts.filter((x) => x !== context)
+                        : [...currentContexts, context];
+                      lintStore.setCurrentContexts(newContext);
+                    }}
+                  />
+                  {context}
+                </label>
+              </div>
+            {/each}
+          </div>
+        </div>
+
+        <div>
+          <div class="font-bold">Lint Description:</div>
+          <textarea
+            class="ml-2 border border-gray-300 rounded px-2 py-1 w-full"
+            value={lint.description}
+            on:change={(e) => {
+              // @ts-ignore
+              const description = e.target.value;
+              lintStore.setCurrentLintDescription(description);
+            }}
+          />
+        </div>
+        <div>
+          <div class="font-bold">Lint Error Message:</div>
+          <div class="text-sm italic">
+            {"If failures of your lint rule can be attributed to a specific color or colors, include {{blame}} in this message"}
+          </div>
+          <textarea
+            class="ml-2 border border-gray-300 rounded px-2 py-1 w-full"
+            value={lint.failMessage}
+            on:change={(e) => {
+              // @ts-ignore
+              const errorMessage = e.target.value;
+              lintStore.setCurrentLintFailMessage(errorMessage);
+            }}
+          />
+        </div>
+        <div class="flex">
+          Show Compare Debug In Terminal
+          <Nav
+            tabs={["Show", "Hide"]}
+            isTabSelected={(x) => (debugCompare ? "Show" : "Hide") === x}
+            selectTab={(x) => {
+              debugCompare = x === "Show";
+            }}
+          />
+        </div>
+        <div class="font-bold">
+          Current Palette:
+          <PalPreview pal={currentPal} allowModification={false} />
+        </div>
+        {#if lintRun?.passes}
+          <div class="text-green-500">
+            This lint passes for the current palette
+          </div>
+        {/if}
+        {#if !lintRun?.passes && !errors}
+          <div>
+            <div class="flex">
+              <div class="text-red-500 mr-2">
+                This lint fails for the current palette.
+              </div>
+              The following colors are blamed. Using
+              <select
+                value={lint.blameMode}
+                class="mx-2"
+                on:change={() => {
+                  // @ts-ignore
+                  lintStore.setCurrentLintBlameMode(event.target.value);
+                }}
+              >
+                <option>none</option>
+                <option>single</option>
+                <option>pair</option>
+              </select>
+              Blame mode
+            </div>
+            {#if lint.blameMode === "pair"}
+              <div class="flex flex-wrap">
+                {#each pairData as pair}
+                  <div class="mr-2 mb-1 border-2 border-black rounded">
+                    <PalPreview
+                      pal={{
+                        ...currentPal,
+                        colors: pair.map((x) => currentPal.colors[x]),
+                      }}
+                      allowModification={false}
+                    />
+                  </div>
+                {/each}
+              </div>
+            {:else}
+              <PalPreview
+                pal={{
+                  ...currentPal,
+                  colors: checkData
+                    .flatMap((x) => x)
+                    .map((x) => currentPal.colors[x]),
+                }}
+                allowModification={false}
+              />
+            {/if}
+          </div>
+        {/if}
+        {#if errors}
+          <div class="text-red-500">{errors.message}</div>
+        {/if}
+        <div class="flex justify-between">
+          <div class="font-bold">Lint Program</div>
+          <button
+            class={buttonStyle}
+            on:click={() => {
+              lintStore.setCurrentLintProgram(JSONStringify(program) || "");
+            }}
+          >
+            Clean up Program
+          </button>
+        </div>
+        <MonacoEditor
+          value={program}
+          onChange={(x) => {
+            lintStore.setCurrentLintProgram(x);
           }}
-        >
-          Clean up Program
-        </button>
-      </div>
-      <MonacoEditor
-        value={program}
-        onChange={(x) => {
-          lintStore.setCurrentLintProgram(x);
-        }}
-        language="json"
-      />
-      <div>
-        Show Compare Debug In Terminal
-        <Nav
-          tabs={["Show", "Hide"]}
-          isTabSelected={(x) => (debugCompare ? "Show" : "Hide") === x}
-          selectTab={(x) => {
-            debugCompare = x === "Show";
-          }}
+          language="json"
         />
       </div>
     </div>
   </Modal>
 {/if}
-
-<style>
-  .container {
-    min-width: 800px;
-    min-height: 800px;
-  }
-</style>

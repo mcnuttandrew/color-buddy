@@ -178,26 +178,24 @@
       modalState = "closed";
     }}
   >
-    <div slot="header">
-      <div class="flex justify-between">
-        <div>Add an Example</div>
-        <div>
-          {#each ["svg", "vega (or vega-lite)"] as mode}
-            <button
-              class={buttonStyle}
-              class:font-bold={(modalState === "input-svg" && mode === "svg") ||
-                (modalState === "input-vega" && mode === "vega (or vega-lite)")}
-              on:click={() => {
-                modalState = mode === "svg" ? "input-svg" : "input-vega";
-              }}
-            >
-              {mode}
-            </button>
-          {/each}
-        </div>
+    <div class="bg-stone-200 h-12 flex justify-between items-center px-4">
+      <div class="font-bold">Add an Example</div>
+      <div>
+        {#each ["svg", "vega (or vega-lite)"] as mode}
+          <button
+            class={buttonStyle}
+            class:font-bold={(modalState === "input-svg" && mode === "svg") ||
+              (modalState === "input-vega" && mode === "vega (or vega-lite)")}
+            on:click={() => {
+              modalState = mode === "svg" ? "input-svg" : "input-vega";
+            }}
+          >
+            {mode}
+          </button>
+        {/each}
       </div>
     </div>
-    <div class="h-96 overflow-auto" style="width: 700px;">
+    <div class="h-96 overflow-auto px-4" style="width: 700px;">
       <div>
         {#if modalState === "input-svg" || modalState === "input-vega"}
           Demos:

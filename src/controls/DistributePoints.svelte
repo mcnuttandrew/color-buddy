@@ -11,11 +11,14 @@
   $: config = colorPickerConfig[colorSpace];
   $: zName = colorPickerConfig[colorSpace].zChannel;
 
-  type Direction = "horizontal" | "vertical" | "in z space";
-  function distributePoints(direction: Direction) {
+  interface Direction {
+    direction: "horizontal" | "vertical" | "in z space";
+    name: string;
+  }
+  function distributePoints(dir: Direction) {
     let sortedIndexes = focusedColors.sort((a, b) => {
       const modeToIdx = { horizontal: 1, vertical: 2, "in z space": 0 };
-      const idx = modeToIdx[direction] || 0;
+      const idx = modeToIdx[dir.direction] || 0;
       const pointA = colors[a].toChannels()[idx];
       const pointB = colors[b].toChannels()[idx];
       return pointA - pointB;
@@ -33,9 +36,9 @@
       const xIdx = config.xChannelIndex;
       const yIdx = config.yChannelIndex;
       const zIdx = config.zChannelIndex;
-      if (direction === "horizontal") {
+      if (dir.direction === "horizontal") {
         newPoint[xIdx] = minPoint[xIdx] * (1 - t) + maxPoint[xIdx] * t;
-      } else if (direction === "vertical") {
+      } else if (dir.direction === "vertical") {
         newPoint[yIdx] = minPoint[yIdx] * (1 - t) + maxPoint[yIdx] * t;
       } else {
         newPoint[zIdx] = minPoint[zIdx] * (1 - t) + maxPoint[zIdx] * t;
@@ -53,10 +56,11 @@
 
     colorStore.setCurrentPalColors(newColors);
   }
+  $: isPolar = config.isPolar;
   $: directions = [
-    "horizontal",
-    "vertical",
-    `in ${zName} space`,
+    { direction: "horizontal", name: isPolar ? "radial" : "horizontal" },
+    { direction: "vertical", name: isPolar ? "angle" : "vertical" },
+    { direction: "in z space", name: `in ${zName.toUpperCase()} space` },
   ] as Direction[];
 </script>
 
@@ -66,7 +70,7 @@
   <div class="flex flex-wrap">
     {#each directions as direction}
       <button class={buttonStyle} on:click={() => distributePoints(direction)}>
-        {direction}
+        {direction.name}
       </button>
     {/each}
   </div>

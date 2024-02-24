@@ -198,7 +198,7 @@
   let selectionUpdate = (isZ: boolean) => (e: any) => {
     // console.log("selection update");
     const { x, y } = toXY(e);
-    selectionMouseCurrent = { x, y };
+    selectionMouseCurrent = { x: x + 10, y: y + 20 };
   };
   let selectionEnd = (isZ: boolean) => (e: any) => {
     interactionMode = "idle";
@@ -304,12 +304,19 @@
 <!-- svelte-ignore a11y-no-static-element-interactions -->
 <div class="flex pb-2" style="background: {bg.toDisplay()}">
   <div class="flex flex-col items-center">
-    <!-- <span class="text-2xl" style="color: {textColor}">
-      {config.title}
-    </span> -->
     <div class="flex h-full">
       <div class="h-full py-4" style="max-height: {height}px"></div>
-      <svg {width} {height} class="ml-2" bind:this={svgContainer}>
+      <svg
+        {width}
+        {height}
+        class="ml-2"
+        bind:this={svgContainer}
+        on:mouseleave={interactionMode === "drag"
+          ? dragEnd(false)
+          : interactionMode === "select"
+            ? selectionEnd(false)
+            : () => {}}
+      >
         <g transform={`translate(${margin.left}, ${margin.top})`}>
           {#if config.isPolar}
             <ColorScatterPlotPolarGuide {...guideProps} {rScale} />
@@ -590,7 +597,8 @@
   </div>
 </div>
 <div class="flex justify-start text-gray-400 text-sm">
-  {#if $configStore.showGamutMarkers} ⨂indicates out of gamut value{:else}&nbsp;{/if}
+  {#if $configStore.showGamutMarkers}
+    ⨂indicates out of gamut value{:else}&nbsp;{/if}
 </div>
 
 <style>

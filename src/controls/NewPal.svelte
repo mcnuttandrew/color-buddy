@@ -30,6 +30,21 @@
     } as Palette;
     colorStore.createNewPal(pal);
   }
+
+  let inputString = "";
+  function processBodyInput(body: string) {
+    try {
+      const newColors = body
+        .split(",")
+        .map((x) => x.replace(/"/g, "").trim())
+        .filter((x) => x.length > 0)
+        .map((x) => Color.colorFromString(x, colorSpace as any));
+      newPal(createPalFromHexes(newColors.map((x) => x.toHex())));
+    } catch (e) {
+      console.error(e);
+      return;
+    }
+  }
 </script>
 
 <Tooltip>
@@ -88,6 +103,21 @@
         New diverging
       </button>
     </div>
+    <div class="mt-5 border-t-2 border-black"></div>
+    <div class="font-bold">New from string of hex</div>
+    <textarea
+      id="current-colors"
+      class="w-full p-2 rounded"
+      value={inputString}
+      on:keydown={(e) => {
+        if (e.key === "Enter") {
+          e.preventDefault();
+          processBodyInput(e.currentTarget.value);
+          e.currentTarget.blur();
+        }
+      }}
+      on:change={(e) => processBodyInput(e.currentTarget.value)}
+    />
     <div class="mt-5 border-t-2 border-black"></div>
     <div class="font-bold">Generate a new palette using AI</div>
     <SuggestColorPal />

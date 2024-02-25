@@ -38,7 +38,7 @@
   $: selectedLint = $lintStore.focusedLint;
   const bindStr = "!!";
   // it appears that there is a bug in the vega debounce implementation, that causes the second argument to not fire
-  $: updateSearchDebounced = debounce(10, (x: [any, string]) => {
+  let updateSearchDebounced = debounce(10, (x: [any, string]) => {
     const [pal, ignoreString] = x;
     // keep the noise down on the console
     if (!selectedLint && pal) {
@@ -51,9 +51,7 @@
           globallyIgnoredLints: ignoreString.split(bindStr),
         },
       };
-      console.log("linting", ignoreString);
       lint(outPal, true).then((res): void => {
-        console.log("lint result", res);
         lintStore.postCurrentChecks(res);
       });
     }

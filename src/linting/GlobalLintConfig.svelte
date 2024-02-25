@@ -33,6 +33,7 @@
           <input
             type="checkbox"
             checked={ignoredSet.has(lint.id)}
+            class="mr-2"
             on:change={() => {
               const newLints = [...ignoreList];
               if (ignoredSet.has(lint.id)) {

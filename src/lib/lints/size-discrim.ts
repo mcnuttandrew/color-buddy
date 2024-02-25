@@ -29,12 +29,18 @@ function jndLabInterval(p: pType, s: sType) {
   return nd(pVal, sVal);
 }
 
-const lints: CustomLint[] = ["Thin", "Medium", "Wide"].map((key) => {
+const itemSizeDescriptions = {
+  Thin: "small blocks such as small circles or lines",
+  Medium: "medium blocks such as bars in a bar chart or small graphics",
+  Wide: "large blocks of color such as backgrounds or countries on a map",
+} as const;
+const keys = ["Thin", "Medium", "Wide"] as const;
+const lints: CustomLint[] = keys.map((key) => {
   const p = "default";
   const s = key as keyof typeof sMap;
   const jnd = jndLabInterval(p, s);
   return {
-    name: `Works for ${key} marks`,
+    name: `Mark size legibility: ${key}`,
     program: JSONToPrettyString({
       // @ts-ignore
       $schema: `${location.href}lint-schema.json`,
@@ -47,10 +53,9 @@ const lints: CustomLint[] = ["Thin", "Medium", "Wide"].map((key) => {
           or: [
             {
               ">": {
-                // left: {
-                //   absDiff: { left: { "lab.l": "x" }, right: { "lab.l": "y" } },
-                // },
-                left: { absDiff: { left: 0, right: 1 } },
+                left: {
+                  absDiff: { left: { "lab.l": "x" }, right: { "lab.l": "y" } },
+                },
                 right: jnd.l,
               },
             },
@@ -77,8 +82,8 @@ const lints: CustomLint[] = ["Thin", "Medium", "Wide"].map((key) => {
     taskTypes: ["sequential", "diverging", "categorical"] as const,
     level: "warning",
     group: "usability",
-    description: `Pairs of colors in a palette should be differentiable from each other in ${key} lines. `,
-    failMessage: `This palette has some colors ({{blame}}) that are close to each other in perceptual space and will not be resolvable for ${key} areas.`,
+    description: `Pairs of colors in a palette should be differentiable from each other in ${key} marks. `,
+    failMessage: `This palette has some colors ({{blame}}) that are close to each other in perceptual space and will not be resolvable for ${key} areas. This involves elements like ${itemSizeDescriptions[key]}`,
     id: `${key}-discrim-built-in`,
     blameMode: "pair",
   };

@@ -56,7 +56,7 @@ const lint: CustomLint = {
     },
   }),
   name: "Color Name Discriminability",
-  taskTypes: ["sequential"] as const,
+  taskTypes: ["sequential", "categorical", "diverging"] as const,
   level: "error",
   group: "usability",
   description: `Being able to identify colors by name is important for usability and for memorability.`,

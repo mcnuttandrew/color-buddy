@@ -46,6 +46,7 @@ export function runLintChecks(
   const ignoreList = palette.evalConfig;
   const affects = palette.intendedAffects;
   const contexts = palette.intendedContexts;
+  const globallyIgnoredLints = palette.evalConfig?.globallyIgnoredLints || [];
   const lints = [
     DivergingOrder,
     ...customLints.map((x) => CreateCustomLint(x)),
@@ -53,6 +54,7 @@ export function runLintChecks(
   return (
     lints
       .map((x) => new x(palette))
+      .filter((x) => !globallyIgnoredLints.includes(x.isCustom))
       // task type
       .filter((x) => x.taskTypes.includes(palette.type))
       // affect type

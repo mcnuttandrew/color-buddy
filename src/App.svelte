@@ -36,15 +36,31 @@
   import { debounce } from "vega";
 
   $: selectedLint = $lintStore.focusedLint;
-  $: updateSearchDebounced = debounce(10, (pal: any) => {
+  const bindStr = "!!";
+  // it appears that there is a bug in the vega debounce implementation, that causes the second argument to not fire
+  $: updateSearchDebounced = debounce(10, (x: [any, string]) => {
+    const [pal, ignoreString] = x;
     // keep the noise down on the console
     if (!selectedLint && pal) {
-      lint(pal, true).then((res) => {
+      lintStore.setLoadState("loading");
+
+      const outPal = {
+        ...pal,
+        evalConfig: {
+          ...pal.evalConfig,
+          globallyIgnoredLints: ignoreString.split(bindStr),
+        },
+      };
+      console.log("linting", ignoreString);
+      lint(outPal, true).then((res): void => {
+        console.log("lint result", res);
         lintStore.postCurrentChecks(res);
       });
     }
   });
-  $: updateSearchDebounced(currentPal);
+  // this weird foot work is to circumvent the svelte reactivity which is weird aggressive in this one specific case
+  $: globalString = $lintStore.globallyIgnoredLints.join(bindStr);
+  $: globalString, updateSearchDebounced([currentPal, globalString]);
 
   let innerWidth = window.innerWidth;
   $: scatterSize = Math.max(Math.min(innerWidth * 0.3, 450), 350);

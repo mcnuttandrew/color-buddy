@@ -11,6 +11,7 @@
   import NewLintSuggestion from "./NewLintSuggestion.svelte";
   import { titleCase } from "../lib/utils";
   import EvalColorColumn from "./EvalColorColumn.svelte";
+  import GlobalLintConfig from "./GlobalLintConfig.svelte";
 
   import type { LintResult } from "../lib/ColorLint";
 
@@ -52,7 +53,7 @@
   }
 </script>
 
-<div class="bg-stone-300 w-full">
+<div class="bg-stone-300 w-full flex">
   <Nav
     tabs={["regular", "compact"]}
     isTabSelected={(x) => x === $configStore.evalDisplayMode}
@@ -61,6 +62,7 @@
       configStore.setEvalDisplayMode(x);
     }}
   />
+  <GlobalLintConfig />
 </div>
 <div class="flex h-full bg-stone-100">
   {#if showEvalColumn}
@@ -122,7 +124,7 @@
             <LintDisplay {check} />
           {/if}
         {/each}
-        {#if checkGroup[1].length === 0}
+        {#if checkGroup[1].length === 0 && $lintStore.loadState === "loading"}
           <div class="text-sm animate-pulse italic font-bold">Loading</div>
         {/if}
       {/each}
@@ -133,7 +135,7 @@
       onClose={() => {
         setTimeout(() => {
           loadLints()
-            .then(() => lint(currentPal))
+            .then(() => lint(currentPal, false))
             .then((res) => {
               checks = res;
             });

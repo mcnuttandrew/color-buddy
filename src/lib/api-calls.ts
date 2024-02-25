@@ -159,7 +159,7 @@ function workerDispatch() {
 }
 const dispatch = workerDispatch();
 
-export function lint(pal: Palette, computeMessage?: boolean) {
+export function lint(pal: Palette, computeMessage: boolean) {
   // this may be too deep a copy?
   return dispatch({
     type: computeMessage ? "run-lint" : "run-lint-no-message",

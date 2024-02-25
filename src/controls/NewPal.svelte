@@ -107,16 +107,20 @@
     <div class="font-bold">New from string of hex</div>
     <textarea
       id="current-colors"
-      class="w-full p-2 rounded"
+      class="w-full p-2 rounded border-2"
       value={inputString}
       on:keydown={(e) => {
         if (e.key === "Enter") {
           e.preventDefault();
           processBodyInput(e.currentTarget.value);
           e.currentTarget.blur();
+          onClick();
         }
       }}
-      on:change={(e) => processBodyInput(e.currentTarget.value)}
+      on:change={(e) => {
+        processBodyInput(e.currentTarget.value);
+        onClick();
+      }}
     />
     <div class="mt-5 border-t-2 border-black"></div>
     <div class="font-bold">Generate a new palette using AI</div>

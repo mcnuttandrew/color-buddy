@@ -222,7 +222,7 @@
         <div>
           <div class="font-bold">Lint Description:</div>
           <textarea
-            class="ml-2 border border-gray-300 rounded px-2 py-1 w-full"
+            class="ml-2 border-2 border-gray-300 rounded px-2 py-1 w-full"
             value={lint.description}
             on:change={(e) => {
               // @ts-ignore
@@ -237,7 +237,7 @@
             {"If failures of your lint rule can be attributed to a specific color or colors, include {{blame}} in this message"}
           </div>
           <textarea
-            class="ml-2 border border-gray-300 rounded px-2 py-1 w-full"
+            class="ml-2 border-2 border-gray-300 rounded px-2 py-1 w-full"
             value={lint.failMessage}
             on:change={(e) => {
               // @ts-ignore

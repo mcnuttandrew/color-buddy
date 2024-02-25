@@ -5,6 +5,7 @@ interface StoreData {
   comparePal: number | undefined;
   compareSelectedExample: number;
   channelPickerSpace: "lab" | "lch" | "hsl" | "hsv" | "rgb";
+  compareBackground: string | undefined;
   engine: "openai" | "google";
   evalDisplayMode: "regular" | "compact";
   evalDeltaDisplay: "none" | "76" | "CMC" | "2000" | "ITP" | "Jz" | "OK";
@@ -28,6 +29,7 @@ const InitialStore: StoreData = {
   colorSim: "none",
   comparePal: undefined,
   compareSelectedExample: -1,
+  compareBackground: undefined,
   engine: "openai",
   evalDisplayMode: "regular",
   evalDeltaDisplay: "none",
@@ -119,6 +121,8 @@ function createStore() {
       persist((old) => ({ ...old, exampleRoute: n })),
     setChannelPickerSpace: (n: StoreData["channelPickerSpace"]) =>
       persist((old) => ({ ...old, channelPickerSpace: n })),
+    setCompareBackground: (n: StoreData["compareBackground"]) =>
+      persist((old) => ({ ...old, compareBackground: n })),
   };
 }
 

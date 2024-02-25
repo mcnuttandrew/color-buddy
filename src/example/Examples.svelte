@@ -163,7 +163,7 @@
   style={`height: calc(100% - 100px)`}
 >
   {#if $configStore.exampleRoute === "swatches"}
-    <Swatches paletteIdx={$colorStore.currentPal} />
+    <Swatches paletteIdx={$colorStore.currentPal} bg={bg.toString()} />
   {/if}
   {#each examples as example, idx}
     {#if exampleShowMap[idx]}

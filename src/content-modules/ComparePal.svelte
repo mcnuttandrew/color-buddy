@@ -27,7 +27,11 @@
       ? $colorStore.palettes[compareIdx]
       : undefined;
 
-  $: bg = ComparisonPal?.background.toHex() || "white";
+  $: bg =
+    $configStore.compareBackground ||
+    ComparisonPal?.background.toHex() ||
+    "white";
+
   let showDiff = false;
 
   let colorSpace = ComparisonPal?.colorSpace || "lab";
@@ -49,6 +53,7 @@
         <Background
           onChange={(background) => {
             bg = background.toHex();
+            configStore.setCompareBackground(background.toHex());
           }}
           bg={Color.colorFromHex(bg, colorSpace)}
           {colorSpace}

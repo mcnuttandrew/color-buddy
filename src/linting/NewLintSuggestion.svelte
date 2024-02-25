@@ -56,7 +56,7 @@
           }
         }}
         id="pal-prompt"
-        class="indent-2 text-sm leading-6"
+        class="indent-2 text-sm leading-6 border-2"
         placeholder="e.g. 'This palette should have a Cascadian vibe'"
       />
       <div>

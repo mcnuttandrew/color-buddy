@@ -10,6 +10,7 @@
   export let paletteIdx: number;
   export let allowInteraction: boolean = true;
   export let hideHeader: boolean = false;
+  export let bg: string;
 
   $: currentPal = $colorStore.palettes[paletteIdx];
   $: colors = currentPal?.colors || [];
@@ -23,7 +24,6 @@
       colors = currentPal?.colors || [];
     }
   }
-  $: bgColor = currentPal?.background?.toHex() || "white";
 
   $: focused = $focusStore.focusedColors;
   $: focusSet = allowInteraction ? new Set(focused) : new Set();
@@ -75,7 +75,7 @@
   {#if !hideHeader}
     <div class="bg-stone-300 w-full justify-between flex p-1">Swatches</div>
   {/if}
-  <div style={`background-color: ${bgColor}; max-width: 600px`} class="flex">
+  <div style={`background-color: ${bg}; max-width: 600px`} class="flex">
     <div class="flex flex-col">
       {#each colors as color, i}
         <button

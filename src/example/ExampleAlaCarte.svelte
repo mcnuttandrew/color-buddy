@@ -52,6 +52,7 @@
       {paletteIdx}
       hideHeader={true}
       allowInteraction={allowModification}
+      bg={bgColor}
     />
   {:else}
     {#if example.svg}

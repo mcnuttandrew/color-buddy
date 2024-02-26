@@ -56,9 +56,9 @@ exports[`ColorLint - SequentialOrder 1`] = `"This pal should be ordered by light
 
 exports[`ColorLint - SequentialOrder 2`] = `"This pal should be ordered by lightness if being used as a sequential palette. #ecddff, #bbc3ff may be to blame."`;
 
-exports[`ColorLint - SizeDiscrim (Thin) 1`] = `"This palette has some colors () that are close to each other in perceptual space and will not be resolvable for Thin areas."`;
+exports[`ColorLint - SizeDiscrim (Thin) 1`] = `"This palette has some colors () that are close to each other in perceptual space and will not be resolvable for Thin areas. This involves elements like small blocks such as small circles or lines"`;
 
-exports[`ColorLint - SizeDiscrim (Thin) 2`] = `"This palette has some colors (#0084a9 and #009de5) that are close to each other in perceptual space and will not be resolvable for Thin areas."`;
+exports[`ColorLint - SizeDiscrim (Thin) 2`] = `"This palette has some colors (#0084a9 and #009de5) that are close to each other in perceptual space and will not be resolvable for Thin areas. This involves elements like small blocks such as small circles or lines"`;
 
 exports[`ColorLint - UglyColors 1`] = `"This palette has some colors (specifically ) that are close to what are known as ugly colors"`;
 

@@ -42,7 +42,6 @@ export function CreateCustomLint(props: CustomLint) {
         ...options,
       });
       if (result) return { passCheck: true, data: blame };
-
       let newBlame: number[] | number[][] = [];
       if (this.blameMode !== "none") {
         newBlame = permutativeBlame(prog, this.palette, this.blameMode);
@@ -65,7 +64,7 @@ export function CreateCustomLint(props: CustomLint) {
           .join(", ");
       }
 
-      return props.failMessage.replace("{{blame}}", blame);
+      return props.failMessage.replaceAll("{{blame}}", blame);
     }
   };
 }

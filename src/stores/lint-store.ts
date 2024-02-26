@@ -11,12 +11,16 @@ interface StoreData {
   lints: CustomLint[];
   focusedLint: string | false;
   currentChecks: LintResult[];
+  globallyIgnoredLints: string[];
+  loadState?: "loading" | "idle";
 }
 
 const InitialStore: StoreData = {
   lints: [],
   focusedLint: false,
   currentChecks: [],
+  globallyIgnoredLints: [],
+  loadState: "idle",
 };
 
 const builtInIndex = BUILT_INS.reduce((acc, x) => {
@@ -113,7 +117,15 @@ function createStore() {
         };
       }),
     postCurrentChecks: (checks: LintResult[]) =>
-      persistUpdate((old) => ({ ...old, currentChecks: checks })),
+      persistUpdate((old) => ({
+        ...old,
+        currentChecks: checks,
+        loadState: "idle",
+      })),
+    setGloballyIgnoredLints: (lints: string[]) =>
+      persistUpdate((old) => ({ ...old, globallyIgnoredLints: [...lints] })),
+    setLoadState: (state: StoreData["loadState"]) =>
+      persistUpdate((old) => ({ ...old, loadState: state })),
   };
 }
 

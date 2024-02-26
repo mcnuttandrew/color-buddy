@@ -70,9 +70,18 @@
 
 {#if tooltipOpen && boundingBox}
   <Portal target="body">
+    <!-- svelte-ignore a11y-click-events-have-key-events -->
+    <!-- svelte-ignore a11y-no-static-element-interactions -->
     <div
       class="absolute min-w-10"
+      id="tooltip"
       style={`left: ${leftString}; top: ${topString}; z-index: 1000`}
+      on:click|stopPropagation={(e) => {
+        const id = e.target.id;
+        if (id === "tooltip") {
+          onClick(e);
+        }
+      }}
     >
       <div
         class="relative"

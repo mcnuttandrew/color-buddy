@@ -15,6 +15,40 @@
     },
     {} as Record<string, (typeof lints)[number][]>
   );
+
+  const recommendedNonIgnoredLints = new Set([
+    "Medium-discrim-built-in",
+    "Thin-discrim-built-in",
+    "Wide-discrim-built-in",
+    // "avoid-green-built-in",
+    // "avoid-tetradic-built-in",
+    // "avoid-too-much-contrast-with-the-background-built-in",
+    "background-contrast-built-in",
+    // "background-de-saturation-built-in",
+    "cat-order-similarity-built-in",
+    "color-name-discriminability-built-in",
+    "colorblind-friendly-deuteranopia-built-in",
+    "colorblind-friendly-grayscale-built-in",
+    "colorblind-friendly-protanopia-built-in",
+    "colorblind-friendly-tritanopia-built-in",
+    "dark-reds-browns-positive-built-in",
+    // "discrim-power-built-in",
+    // "even-colors-built-in",
+    "extreme-colors-built-in",
+    "fair-nominal-built-in",
+    "fair-sequential-built-in",
+    "gamut-check-built-in",
+    "light-blues-beiges-grays-playful-built-in",
+    "light-colors-greens-negative-built-in",
+    "mutually-distinct-built-in",
+    // "require-color-complements-built-in",
+    "saturated-calm-built-in",
+    "saturated-serious-built-in",
+    "saturated-trustworthy-built-in",
+    "sequential-order-built-in",
+    "too-many-colors-built-in",
+    "ugly-colors-built-in",
+  ]);
 </script>
 
 <Tooltip positionAlongRightEdge={true}>
@@ -34,6 +68,17 @@
         on:click={() => lintStore.setGloballyIgnoredLints([])}
       >
         Ignore none
+      </button>
+      <button
+        class={buttonStyle}
+        on:click={() =>
+          lintStore.setGloballyIgnoredLints(
+            lints
+              .filter((x) => !recommendedNonIgnoredLints.has(x.id))
+              .map((x) => x.id)
+          )}
+      >
+        Take recomended list
       </button>
     </div>
     <div class="flex flex-col">

@@ -1,6 +1,5 @@
 import { JSONToPrettyString } from "../utils";
 import type { CustomLint } from "../CustomLint";
-import type { LintFixer } from "../linter-tools/lint-fixer";
 
 // "Highly saturated light colors will not be appropriate for SERIOUS/TRUST/CALM": ALL (FILTER colors c, lab(c) > threshold) b, NOT hsl(b) > threshold
 const lints: CustomLint[] = [];

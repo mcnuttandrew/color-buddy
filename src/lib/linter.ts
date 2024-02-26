@@ -17,6 +17,7 @@ import Fair from "./lints/fair";
 import Gamut from "./lints/in-gamut";
 import MaxColors from "./lints/max-colors";
 import MutuallyDistinct from "./lints/mutually-distinct";
+import MuthGuidelines from "./lints/muth-guidelines";
 import NameDiscriminability from "./lints/name-discrim";
 import SequentialOrder from "./lints/sequential-order";
 import SizeDiscrim from "./lints/size-discrim";
@@ -26,6 +27,7 @@ export const BUILT_INS: CustomLint[] = [
   ...Affects,
   ...ColorBlindness,
   ...Fair,
+  ...MuthGuidelines,
   ...SizeDiscrim,
   AvoidExtremes,
   BackgroundDifferentiability,

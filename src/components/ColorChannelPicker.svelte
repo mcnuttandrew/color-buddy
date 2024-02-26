@@ -5,6 +5,7 @@
   import ColorIO from "colorjs.io";
   export let color: Color;
   export let onColorChange: (color: Color) => void;
+  export let onSpaceChange: (space: string) => void;
   export let colorMode: any = "lab";
   $: measuredColorMode = color.spaceName;
   type Channel = {
@@ -148,10 +149,7 @@
 <div class="flex flex-col">
   <select
     value={colorMode}
-    on:change={(e) => {
-      // @ts-ignore
-      configStore.setChannelPickerSpace(e.currentTarget.value);
-    }}
+    on:change={(e) => onSpaceChange(e.currentTarget.value)}
   >
     {#each [...Object.keys(colorConfigs)] as colorMode}
       <option value={colorMode}>{colorMode}</option>
@@ -170,7 +168,7 @@
                       {channel.name} ({channel.min}-{channel.max})
                     </span>
                     <input
-                      class="h-6 text-right w-16"
+                      class="h-6 text-right w-16 border-2"
                       type="number"
                       value={formatter(channel.value)}
                       min={channel.min}

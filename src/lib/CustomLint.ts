@@ -34,6 +34,7 @@ export function CreateCustomLint(props: CustomLint) {
     isCustom = props.id;
     blameMode = props.blameMode;
     subscribedFix = props.subscribedFix || "none";
+    naturalLanguageProgram = prettyPrintLL(Json.parse(props.program));
 
     _runCheck(options: any) {
       const prog = Json.parse(props.program);

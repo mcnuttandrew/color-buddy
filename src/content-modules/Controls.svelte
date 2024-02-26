@@ -41,6 +41,10 @@
     <ColorChannelPicker
       color={colors[focusedColors[0]].toColorSpace(colorSpace)}
       colorMode={$configStore.channelPickerSpace}
+      onSpaceChange={(space) => {
+        // @ts-ignore
+        configStore.setChannelPickerSpace(space);
+      }}
       onColorChange={(color) => {
         const updatedColors = [...colors];
         updatedColors[focusedColors[0]] = color.toColorSpace(colorSpace);

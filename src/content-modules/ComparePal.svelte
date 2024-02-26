@@ -55,8 +55,12 @@
             bg = background.toHex();
             configStore.setCompareBackground(background.toHex());
           }}
+          onSpaceChange={(space) => {
+            // @ts-ignore
+            configStore.setCompareBackgroundSpace(space);
+          }}
           bg={Color.colorFromHex(bg, colorSpace)}
-          {colorSpace}
+          colorSpace={$configStore.compareBackgroundSpace}
         />
         <div>
           <button class={buttonStyle} on:click={() => (showDiff = !showDiff)}>

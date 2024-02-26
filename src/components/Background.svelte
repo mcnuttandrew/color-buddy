@@ -6,6 +6,7 @@
   export let onChange: (color: Color) => void;
   export let bg: Color;
   export let colorSpace: any;
+  export let onSpaceChange: (space: string) => void;
   $: bgHex = bg.toHex();
 </script>
 
@@ -19,7 +20,12 @@
         onChange(Color.colorFromString(e.target.value, colorSpace));
       }}
     />
-    <ColorChannelPicker color={bg} onColorChange={onChange} />
+    <ColorChannelPicker
+      {onSpaceChange}
+      colorMode={colorSpace}
+      color={bg}
+      onColorChange={onChange}
+    />
   </div>
   <button
     let:toggle

@@ -15,6 +15,7 @@ import ColorNameDiscriminability, { getName } from "./lints/name-discrim";
 import Fair from "./lints/fair";
 import Gamut from "./lints/in-gamut";
 import MaxColors from "./lints/max-colors";
+import MuthGuidelines from "./lints/muth-guidelines";
 import MutuallyDistinct from "./lints/mutually-distinct";
 import SequentialOrder from "./lints/sequential-order";
 import SizeDiscrims from "./lints/size-discrim";
@@ -271,4 +272,84 @@ test("ColorLint - Background Contrast", async () => {
   );
   const fix2 = await suggestLintFix(examplePal, exampleLint2).then((x) => x[0]);
   expect(fix2.colors.map((x) => x.toHex())).toMatchSnapshot();
+});
+
+test("ColorLint - MuthGuidelines (1) Background desaturation sufficient", () => {
+  const newLint = CreateCustomLint(MuthGuidelines[0]);
+
+  const examplePal = makePalFromString([
+    "#0084a9",
+    "#009de5",
+    "#5fb1ff",
+    "#bbc3ff",
+  ]);
+  examplePal.background = Color.colorFromHex("#f4e3e3", "lab");
+  const exampleLint = new newLint(examplePal).run();
+  expect(exampleLint.passes).toBe(true);
+  expect(exampleLint.message).toMatchSnapshot();
+
+  const examplePal2 = makePalFromString([
+    "#0084a9",
+    "#009de5",
+    "#5fb1ff",
+    "#ecddff",
+  ]);
+  examplePal2.background = Color.colorFromHex("#000", "lab");
+  const exampleLint2 = new newLint(examplePal2).run();
+  expect(exampleLint2.passes).toBe(false);
+  expect(exampleLint2.message).toMatchSnapshot();
+});
+
+test("ColorLint - MuthGuidelines (2) Avoid Tetradic Palettes", () => {
+  const newLint = CreateCustomLint(MuthGuidelines[1]);
+
+  const examplePal = makePalFromString([
+    "#0084a9",
+    "#009de5",
+    "#5fb1ff",
+    "#bbc3ff",
+  ]);
+  const exampleLint = new newLint(examplePal).run();
+  expect(exampleLint.passes).toBe(true);
+  expect(exampleLint.message).toMatchSnapshot();
+
+  const examplePal2 = makePalFromString([
+    "#d23bae",
+    "#3b6dd2",
+    "#d89a35",
+    "#36d745",
+  ]);
+  const exampleLint2 = new newLint(examplePal2).run();
+  expect(exampleLint2.passes).toBe(false);
+  expect(exampleLint2.message).toMatchSnapshot();
+});
+
+test("ColorLint - MuthGuidelines (3) Prefer yellowish or blueish greens", () => {
+  const newLint = CreateCustomLint(MuthGuidelines[2]);
+
+  const examplePal = makePalFromString(["#bee38d", "#bbc3ff"]);
+  const exampleLint = new newLint(examplePal).run();
+  expect(exampleLint.passes).toBe(true);
+  expect(exampleLint.message).toMatchSnapshot();
+
+  const examplePal2 = makePalFromString(["#0084a9", "#93e789"]);
+  const exampleLint2 = new newLint(examplePal2).run();
+  expect(exampleLint2.passes).toBe(false);
+  expect(exampleLint2.message).toMatchSnapshot();
+});
+
+test("ColorLint - MuthGuidelines (4) Avoid too much contrast with the background", () => {
+  const newLint = CreateCustomLint(MuthGuidelines[3]);
+
+  const examplePal = makePalFromString(["#f4b05d", "#3c828d", "#1c4b76"]);
+  examplePal.background = Color.colorFromHex("#f9f9f9", "lab");
+  const exampleLint = new newLint(examplePal).run();
+  expect(exampleLint.passes).toBe(true);
+  expect(exampleLint.message).toMatchSnapshot();
+
+  const examplePal2 = makePalFromString(["#0e2d48", "#3c828d", "#b87930"]);
+  examplePal2.background = Color.colorFromHex("#f9f9f9", "lab");
+  const exampleLint2 = new newLint(examplePal2).run();
+  expect(exampleLint2.passes).toBe(false);
+  expect(exampleLint2.message).toMatchSnapshot();
 });

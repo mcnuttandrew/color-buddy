@@ -13,6 +13,7 @@ export interface LintResult {
   affectTypes: Affect[];
   contextTypes: Context[];
   subscribedFix: string;
+  naturalLanguageProgram: string;
 }
 
 export class ColorLint<CheckData, ParamType> {
@@ -28,6 +29,7 @@ export class ColorLint<CheckData, ParamType> {
   group: string = "";
   description: string = "";
   blameMode: "pair" | "single" | "none" = "none";
+  naturalLanguageProgram: string = "";
   level: LintLevel = "error";
   subscribedFix: string = "none";
 

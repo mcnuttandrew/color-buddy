@@ -159,4 +159,34 @@ const AvoidTooMuchContrastWithTheBackground: CustomLint = {
 };
 lints.push(AvoidTooMuchContrastWithTheBackground);
 
+// use pairs of colors
+// this isnt a muth its just sort of implied
+const requireColorComplements: CustomLint = {
+  name: `Require color complements`,
+  program: JSONToPrettyString({
+    // @ts-ignore
+    $schema: `${location.href}lint-schema.json`,
+    exist: {
+      in: "colors",
+      varbs: ["a", "b"],
+      predicate: {
+        similar: {
+          left: { "hsl.h": "a" },
+          right: { "+": { left: { "hsl.h": "b" }, right: 180 } },
+          threshold: 5,
+        },
+      },
+    },
+  }),
+  taskTypes: ["sequential", "diverging", "categorical"] as const,
+  affectTypes: [],
+  level: "warning",
+  group: "design",
+  description: `Use color complements whenever possible`,
+  failMessage: `This palette has colors that do not have good contrast.`,
+  id: `require-color-complements-built-in`,
+  blameMode: "pair",
+};
+lints.push(requireColorComplements);
+
 export default lints;

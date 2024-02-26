@@ -5,7 +5,9 @@ interface StoreData {
   comparePal: number | undefined;
   compareSelectedExample: number;
   channelPickerSpace: "lab" | "lch" | "hsl" | "hsv" | "rgb";
+  channelPickerSpaceBackground: "lab" | "lch" | "hsl" | "hsv" | "rgb";
   compareBackground: string | undefined;
+  compareBackgroundSpace: "lab" | "lch" | "hsl" | "hsv" | "rgb";
   engine: "openai" | "google";
   evalDisplayMode: "regular" | "compact";
   evalDeltaDisplay: "none" | "76" | "CMC" | "2000" | "ITP" | "Jz" | "OK";
@@ -30,6 +32,7 @@ const InitialStore: StoreData = {
   comparePal: undefined,
   compareSelectedExample: -1,
   compareBackground: undefined,
+  compareBackgroundSpace: "lab",
   engine: "openai",
   evalDisplayMode: "regular",
   evalDeltaDisplay: "none",
@@ -45,6 +48,7 @@ const InitialStore: StoreData = {
   mainColumnSelectedExample: -1,
   useSimulatorOnExamples: false,
   channelPickerSpace: "lab",
+  channelPickerSpaceBackground: "lab",
   xZoom: [0, 1],
   yZoom: [0, 1],
   zZoom: [0, 1],
@@ -121,8 +125,13 @@ function createStore() {
       persist((old) => ({ ...old, exampleRoute: n })),
     setChannelPickerSpace: (n: StoreData["channelPickerSpace"]) =>
       persist((old) => ({ ...old, channelPickerSpace: n })),
+    setChannelPickerSpaceBackground: (
+      n: StoreData["channelPickerSpaceBackground"]
+    ) => persist((old) => ({ ...old, channelPickerSpaceBackground: n })),
     setCompareBackground: (n: StoreData["compareBackground"]) =>
       persist((old) => ({ ...old, compareBackground: n })),
+    setCompareBackgroundSpace: (n: StoreData["compareBackgroundSpace"]) =>
+      persist((old) => ({ ...old, compareBackgroundSpace: n })),
   };
 }
 

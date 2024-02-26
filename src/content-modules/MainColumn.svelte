@@ -42,9 +42,14 @@
       onChange={(space) => colorStore.setColorSpace(space)}
     />
     <Background
-      onChange={(bg) => colorStore.setBackground(bg)}
+      onSpaceChange={(space) => {
+        // @ts-ignore
+        configStore.setChannelPickerSpaceBackground(space);
+      }}
+      onChange={(bg) =>
+        colorStore.setBackground(bg.toColorSpace(currentPal.colorSpace))}
       bg={currentPal.background}
-      colorSpace={currentPal.colorSpace}
+      colorSpace={$configStore.channelPickerSpaceBackground}
     />
   </div>
   <ColorScatterPlot

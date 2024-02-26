@@ -48,6 +48,22 @@ exports[`ColorLint - MaxColors 1`] = `"This palette has too many colors and may 
 
 exports[`ColorLint - MaxColors 2`] = `"This palette has too many colors and may be hard to discriminate in some contexts. Maximum: 10."`;
 
+exports[`ColorLint - MuthGuidelines (1) Background desaturation sufficient 1`] = `"Colorful backgrounds can seem like a good idea, but they can easily distract from your data and they limit your potential color palette. Desaturated colors are your best bet. Roughly, you want either HSL.L > 90 and HSV.S < 8 for light backgrounds, or you want 10 < HSL.L < 25 and HSV.S < 20 for dark backgrounds. See "https://blog.datawrapper.de/beautifulcolors/#12" for more"`;
+
+exports[`ColorLint - MuthGuidelines (1) Background desaturation sufficient 2`] = `"Colorful backgrounds can seem like a good idea, but they can easily distract from your data and they limit your potential color palette. Desaturated colors are your best bet. Roughly, you want either HSL.L > 90 and HSV.S < 8 for light backgrounds, or you want 10 < HSL.L < 25 and HSV.S < 20 for dark backgrounds. See "https://blog.datawrapper.de/beautifulcolors/#12" for more"`;
+
+exports[`ColorLint - MuthGuidelines (2) Avoid Tetradic Palettes 1`] = `"This palette is tetradic, which is not recommended."`;
+
+exports[`ColorLint - MuthGuidelines (2) Avoid Tetradic Palettes 2`] = `"This palette is tetradic, which is not recommended."`;
+
+exports[`ColorLint - MuthGuidelines (3) Prefer yellowish or blueish greens 1`] = `"When using green, it is better to try to it a yellow or blue one (hue angle less than 60 or greater than 160). T See "https://blog.datawrapper.de/beautifulcolors/#5" for more."`;
+
+exports[`ColorLint - MuthGuidelines (3) Prefer yellowish or blueish greens 2`] = `"When using green, it is better to try to it a yellow or blue one (hue angle less than 60 or greater than 160). T See "https://blog.datawrapper.de/beautifulcolors/#5" for more."`;
+
+exports[`ColorLint - MuthGuidelines (4) Avoid too much contrast with the background 1`] = `"Don't make your colors too dark and saturated when you're using a bright background. If in doubt, try it out. Make your colors lighter, pull some saturation out of them and see how it feels. See "https://blog.datawrapper.de/beautifulcolors/#11" for more."`;
+
+exports[`ColorLint - MuthGuidelines (4) Avoid too much contrast with the background 2`] = `"Don't make your colors too dark and saturated when you're using a bright background. If in doubt, try it out. Make your colors lighter, pull some saturation out of them and see how it feels. See "https://blog.datawrapper.de/beautifulcolors/#11" for more."`;
+
 exports[`ColorLint - MutuallyDistinct 1`] = `"Some colors in this palette () are not differentiable from each other."`;
 
 exports[`ColorLint - MutuallyDistinct 2`] = `"Some colors in this palette (#f5f5dc and #d7fcef) are not differentiable from each other."`;

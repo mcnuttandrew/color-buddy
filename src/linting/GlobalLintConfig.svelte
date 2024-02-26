@@ -6,6 +6,15 @@
   $: lints = [...$lintStore.lints].sort((a, b) => a.name.localeCompare(b.name));
   $: ignoreList = $lintStore.globallyIgnoredLints;
   $: ignoredSet = new Set(ignoreList);
+
+  $: lintsByGroup = lints.reduce(
+    (acc, lint) => {
+      acc[lint.group] = acc[lint.group] || [];
+      acc[lint.group].push(lint);
+      return acc;
+    },
+    {} as Record<string, (typeof lints)[number][]>
+  );
 </script>
 
 <Tooltip positionAlongRightEdge={true}>
@@ -28,29 +37,32 @@
       </button>
     </div>
     <div class="flex flex-col">
-      {#each lints as lint}
-        <label class="flex">
-          <input
-            type="checkbox"
-            checked={ignoredSet.has(lint.id)}
-            class="mr-2"
-            on:change={() => {
-              const newLints = [...ignoreList];
-              if (ignoredSet.has(lint.id)) {
-                newLints.filter((l) => l !== lint.id);
-              } else {
-                newLints.push(lint.id);
-              }
-              lintStore.setGloballyIgnoredLints(newLints);
-            }}
-          />
-          <div class="whitespace-nowrap mr-2">
-            {lint.name}
-            {#if lint.taskTypes.length && lint.taskTypes.length !== 3}
-              ({lint.taskTypes.join(", ")})
-            {/if}
-          </div>
-        </label>
+      {#each Object.entries(lintsByGroup) as [group, lints]}
+        <div class="font-bold mt-2">{group}</div>
+        {#each lints as lint}
+          <label class="flex text-sm">
+            <input
+              type="checkbox"
+              checked={ignoredSet.has(lint.id)}
+              class="mr-2"
+              on:change={() => {
+                let newLints = [...ignoreList];
+                if (ignoredSet.has(lint.id)) {
+                  newLints = newLints.filter((l) => l !== lint.id);
+                } else {
+                  newLints.push(lint.id);
+                }
+                lintStore.setGloballyIgnoredLints(newLints);
+              }}
+            />
+            <div class="whitespace-nowrap mr-2">
+              {lint.name}
+              {#if lint.taskTypes.length && lint.taskTypes.length !== 3}
+                ({lint.taskTypes.join(", ")})
+              {/if}
+            </div>
+          </label>
+        {/each}
       {/each}
     </div>
   </div>

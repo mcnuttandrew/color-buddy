@@ -25,7 +25,11 @@
           currentTextBlock = "";
         }
         let color = message.slice(idx, idx + hexLength + 1);
-        output.push({ content: color, type: "color" });
+        if (hexLength === 3 || hexLength === 6) {
+          output.push({ content: color, type: "color" });
+        } else {
+          output.push({ content: color, type: "text" });
+        }
         idx += hexLength;
       } else {
         currentTextBlock += message[idx];

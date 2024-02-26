@@ -67,7 +67,9 @@ test("LintLanguage conjunctions", () => {
     ],
   };
   expect(LLEval(prog1, exampleColors).result).toBe(true);
-  expect(prettyPrintLL(prog1)).toBe("count(colors) < 10 and count(colors) > 2");
+  expect(prettyPrintLL(prog1)).toBe(
+    "(count(colors) < 10 and count(colors) > 2)"
+  );
 
   const prog2 = {
     or: [
@@ -76,7 +78,9 @@ test("LintLanguage conjunctions", () => {
     ],
   };
   expect(LLEval(prog2, exampleColors).result).toBe(false);
-  expect(prettyPrintLL(prog2)).toBe("count(colors) < 2 or count(colors) > 10");
+  expect(prettyPrintLL(prog2)).toBe(
+    "(count(colors) < 2 or count(colors) > 10)"
+  );
 });
 
 test("LintLanguage Quantifiers All - Simple", () => {
@@ -165,7 +169,7 @@ test("LintLanguage permutativeBlame - Tableau 10", () => {
 });
 
 const expectedOutBlind = (type: string) =>
-  `ALL a in colors, ALL b in colors WHERE index(a) != index(b), NOT similar(cvdSim(a, ${type}), cvdSim(b, ${type})) > 9`;
+  `ALL a in colors, ALL b in colors WHERE index(a) != index(b), NOT similar(cvdSim(a, ${type}), cvdSim(b, ${type})) < 9`;
 const allBlindProg = (type: string) => ({
   all: {
     in: "colors",
@@ -397,11 +401,12 @@ test("LintLanguage to color rotate", () => {
           in: "colors",
           varb: "b",
           predicate: {
-            "==": {
+            similar: {
               left: { "hsl.h": "a" },
               right: {
                 "+": { left: { "hsl.h": "b" }, right: 180 },
               },
+              threshold: 5,
             },
           },
         },
@@ -409,7 +414,7 @@ test("LintLanguage to color rotate", () => {
     },
   };
   expect(prettyPrintLL(realisticProgram)).toBe(
-    "EXIST a in colors, EXIST b in colors, hsl.h(a) == hsl.h(b) + 180"
+    "EXIST a in colors, EXIST b in colors, similar(hsl.h(a), hsl.h(b) + 180) < 5"
   );
   expect(LLEval(realisticProgram, exampleColors).result).toBe(false);
 });
@@ -633,7 +638,7 @@ test("LintLanguage Sequential Colors", () => {
   const inOrder = toPal(["#d4a8ff", "#7bb9ff", "#008694"]);
   expect(LLEval(program, inOrder).result).toBe(true);
   expect(prettyPrintLL(program)).toBe(
-    "ALL (a, b) in colors WHERE index(a) - 1 == index(b), lab.l(a) > lab.l(b) or ALL (a, b) in colors WHERE index(a) - 1 == index(b), lab.l(a) < lab.l(b)"
+    "(ALL (a, b) in colors WHERE index(a) - 1 == index(b), lab.l(a) > lab.l(b) or ALL (a, b) in colors WHERE index(a) - 1 == index(b), lab.l(a) < lab.l(b))"
   );
 });
 
@@ -721,7 +726,7 @@ test("LintLanguage Background differentiability", () => {
     },
   };
   const astString = prettyPrintLL(program);
-  expect(astString).toBe("ALL a in colors, NOT similar(a, background) > 15");
+  expect(astString).toBe("ALL a in colors, NOT similar(a, background) < 15");
   const result = LLEval(program, toPal(["#fff", "#eee", "#000", "#ddd"]));
   expect(result.result).toBe(false);
   expect(result.blame).toStrictEqual([0, 1, 3]);
@@ -740,7 +745,7 @@ test("LintLanguage Sequential Similarity", () => {
   };
   const astString = prettyPrintLL(program);
   expect(astString).toBe(
-    "ALL (a, b) in colors WHERE index(a) != index(b), NOT similar(a, b) > 10"
+    "ALL (a, b) in colors WHERE index(a) != index(b), NOT similar(a, b) < 10"
   );
   const result = LLEval(program, toPal(["#fff", "#eee", "#000", "#ddd"]));
   expect(result.result).toBe(false);

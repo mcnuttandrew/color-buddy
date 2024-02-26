@@ -1,5 +1,6 @@
 import * as idb from "idb-keyval";
 import { runLintChecks } from "../linter";
+import { prettyPrintLL } from "../lint-language/lint-language";
 import type { CustomLint } from "../CustomLint";
 import type { Palette } from "../../types";
 import { Color } from "../Color";
@@ -84,6 +85,7 @@ async function dispatch(cmd: Command) {
           subscribedFix: x.subscribedFix,
           affectTypes: x.affectTypes,
           contextTypes: x.contextTypes,
+          naturalLanguageProgram: x.naturalLanguageProgram,
         };
       });
       simpleLintCache.set(cmd.content, result);

@@ -233,7 +233,7 @@ export class LLConjunction extends LLNode {
     if (this.type === "id") return this.children[0].toString();
     if (this.type === "none") return "";
     if (this.type === "not") return `NOT ${this.children[0].toString()}`;
-    return this.children.map((x) => x.toString()).join(` ${this.type} `);
+    return `(${this.children.map((x) => x.toString()).join(` ${this.type} `)})`;
   }
 }
 
@@ -407,7 +407,12 @@ function compareValues(
         }
         return diff < thresh;
       }
-      throw new Error("Type error. Similar must be used with colors.");
+      if (typeof left === "number" && typeof right === "number") {
+        return Math.abs(left - right) < thresh;
+      }
+      throw new Error(
+        "Type error. Similar must be used with colors or numbers."
+      );
     case "==":
       return left === right;
     case "!=":
@@ -477,7 +482,7 @@ export class LLPredicate extends LLNode {
     const left = this.left.toString();
     const right = this.right.toString();
     if (this.type === "similar") {
-      return `similar(${left}, ${right}) > ${this.threshold}`;
+      return `similar(${left}, ${right}) < ${this.threshold}`;
     }
     return `${left} ${type} ${right}`;
   }

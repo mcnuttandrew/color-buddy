@@ -134,8 +134,15 @@
     <LintCustomizationModal
       onClose={() => {
         setTimeout(() => {
+          const outPal = {
+            ...currentPal,
+            evalConfig: {
+              ...currentPal.evalConfig,
+              globallyIgnoredLints: $lintStore.globallyIgnoredLints,
+            },
+          };
           loadLints()
-            .then(() => lint(currentPal, false))
+            .then(() => lint(outPal, false))
             .then((res) => {
               checks = res;
             });

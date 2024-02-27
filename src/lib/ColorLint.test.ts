@@ -1,4 +1,5 @@
 import { expect, test } from "vitest";
+import fs from "fs/promises";
 
 import { Color } from "./Color";
 

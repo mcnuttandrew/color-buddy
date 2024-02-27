@@ -27,3 +27,5 @@ coverage/
 # Local Netlify folder
 .netlify
 public/data/*
+
+.env.development

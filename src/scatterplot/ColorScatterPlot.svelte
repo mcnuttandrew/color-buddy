@@ -477,7 +477,6 @@
           />
         {/if}
 
-        <!-- hover bull shit -->
         {#if typeof hoveredPoint !== "boolean"}
           <g transform={`translate(0, ${height - margin.bottom})`}>
             <circle fill={hoveredPoint.toDisplay()} cx={6} cy={-7.5} r="6" />

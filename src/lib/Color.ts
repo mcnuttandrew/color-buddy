@@ -233,7 +233,7 @@ class CIELAB extends Color {
   }
   toPrettyString(): string {
     const [L, a, b] = this.prettyChannels();
-    return `lab(${L}% ${a} ${b})`;
+    return `lab(${L} ${a} ${b})`;
   }
 }
 class HSV extends Color {

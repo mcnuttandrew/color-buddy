@@ -1,6 +1,6 @@
 # "Color Buddy" an interactive color palette development Tool
 
-This is the code repo for Color Buddy.
+This is the code repo for Color Buddy. You can see docs for the language in the public/lang-docs.md file.
 
 ## SETUP
 

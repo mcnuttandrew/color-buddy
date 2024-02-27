@@ -115,6 +115,7 @@
           >
             Clone this lint
           </button>
+          <a class={buttonStyle} target="_blank" href="./lang-docs.md">Docs</a>
         </div>
       </div>
 

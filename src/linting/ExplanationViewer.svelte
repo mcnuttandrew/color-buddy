@@ -3,6 +3,8 @@
   import colorStore from "../stores/color-store";
   import type { LintResult } from "../lib/ColorLint";
 
+  import { dealWithFocusEvent } from "../lib/utils";
+
   export let check: LintResult;
 
   type ParseBlock = { content: string; type: "text" | "color" };
@@ -53,11 +55,12 @@
       <span>{block.content}</span>
     {:else}
       <button
-        on:click={() => {
+        on:click|stopPropagation={(e) => {
           const hexes = colors.map((x) => x.toHex().toLowerCase());
           const idx = hexes.findIndex((x) => x === block.content.toLowerCase());
-          if (idx === -1) return;
-          focusStore.setColors([idx]);
+          focusStore.setColors(
+            dealWithFocusEvent(e, idx, $focusStore.focusedColors)
+          );
         }}
         style={`background-color: ${block.content}; top: -3px`}
         class="rounded-full w-3 h-3 ml-1 mr-1 inline-block cursor-pointer relative"
@@ -65,3 +68,10 @@
     {/if}
   {/each}
 </div>
+
+<!-- on:click={() => {
+          const hexes = colors.map((x) => x.toHex().toLowerCase());
+          const idx = hexes.findIndex((x) => x === block.content.toLowerCase());
+          if (idx === -1) return;
+          focusStore.setColors([idx]);
+        }} -->

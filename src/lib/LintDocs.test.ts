@@ -35,11 +35,11 @@ ${examples}
 
   `;
 
-  await fs.writeFile("./lang-docs.md", newDocs.trim());
+  await fs.writeFile("./public/lang-docs.md", newDocs.trim());
 }
 
 test("Docs have not changed", async () => {
   await buildDocs();
-  const docs = await fs.readFile("./lang-docs.md", "utf-8");
+  const docs = await fs.readFile("./public/lang-docs.md", "utf-8");
   expect(docs).toMatchSnapshot();
 });

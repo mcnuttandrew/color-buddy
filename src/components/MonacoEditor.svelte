@@ -18,6 +18,7 @@
     // Your monaco instance is ready, let's display some code!
     editor = monaco.editor.create(editorContainer, {
       minimap: { enabled: false },
+      wordWrap: "on",
     });
     const model = monaco.editor.createModel(value, language);
     editor.setModel(model);

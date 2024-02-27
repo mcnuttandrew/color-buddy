@@ -101,10 +101,15 @@ function createStore() {
         lints: old.lints.filter((x) => x.id !== id),
       })),
     createNewLint: (newLintFrag: Partial<CustomLint>) =>
-      persistUpdate((old) => ({
-        ...old,
-        lints: [...old.lints, newLint(newLintFrag)],
-      })),
+      persistUpdate((old) => {
+        const newBuiltLint = newLint(newLintFrag);
+
+        return {
+          ...old,
+          focusedLint: newBuiltLint.id,
+          lints: [...old.lints, newBuiltLint],
+        };
+      }),
     cloneLint: (id: string) =>
       persistUpdate((old) => {
         const lint = old.lints.find((x) => x.id === id);

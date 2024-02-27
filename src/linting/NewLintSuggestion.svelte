@@ -17,8 +17,17 @@
           requestState = "idle";
           return;
         }
-        const program = JSONStringify(JSON.stringify(suggestions[0]));
-        let description = lintPrompt;
+        const prog = suggestions[0] as any;
+        let explanation = "";
+        if (typeof prog === "object" && prog.comments) {
+          explanation = prog.comments;
+          delete prog.comments;
+        }
+        if (typeof prog === "object") {
+          prog.$schema = `${location.href}lint-schema.json`;
+        }
+        const program = JSONStringify(JSON.stringify(prog));
+        let description = explanation || lintPrompt;
         let failMessage = lintPrompt;
         let name = "New Lint";
 

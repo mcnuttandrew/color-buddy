@@ -28,6 +28,10 @@
   // run this lint
   let errors: any = null;
   function runLint(lint: CustomLint, options: any) {
+    if (!lint) {
+      onClose();
+      return;
+    }
     try {
       const customLint = CreateCustomLint(lint);
       const result = new customLint(currentPal).run(options);

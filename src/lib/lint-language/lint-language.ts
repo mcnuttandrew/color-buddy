@@ -674,6 +674,7 @@ export class LLPairFunction extends LLNode {
     // get the value of the input, such as by deref
     const leftEval = left.evaluate(env).result;
     const rightEval = right.evaluate(env).result;
+    console.log("????");
     if (!(leftEval instanceof Color) || !(rightEval instanceof Color)) {
       throw new Error("Type error");
     }
@@ -1065,6 +1066,7 @@ export function prettyPrintLL(
   const opts = { ...DEFAULT_OPTIONS, ...options };
   const ast = parseToAST({ id: [root] }, opts);
   return ast.toString();
+  return "";
 }
 
 export function permutativeBlame(

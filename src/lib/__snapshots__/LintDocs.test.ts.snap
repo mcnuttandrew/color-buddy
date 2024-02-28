@@ -864,9 +864,9 @@ Program:
 
 ### Avoid extreme colors
 
-Description: Colors at either end of the lightness spectrum can be hard to discriminate in some contexts, and are sometimes advised against.
+Description: Colors at either end of the lightness spectrum can be hard to discriminate in some contexts, and are sometimes advised against. See https://blog.datawrapper.de/beautifulcolors/#6 for more.
 
-Natural Language: ALL a in colors, ALL b in ([#000, #fff, #00f, #f00, #0f0]), NOT similar(a, b) < 12
+Natural Language: ALL a in colors, ALL b in ([#000, #fff, #00f, #f00, #0f0]), NOT a == b
 
 Program:
 
@@ -881,7 +881,7 @@ Program:
                 "in": ["#000000", "#ffffff", "#0000ff", "#ff0000", "#00ff00"], 
                 "varb": "b", 
                 "predicate": {
-                    "not": { "similar": {"left": "a", "right": "b", "threshold": 12} }
+                    "not": { "==": {"left": "a", "right": "b"} }
                 }
             }
         }

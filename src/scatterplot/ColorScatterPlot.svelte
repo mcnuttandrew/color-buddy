@@ -358,6 +358,10 @@
               {#if scatterPlotMode === "moving"}
                 <circle
                   {...CircleProps(color, i)}
+                  stroke={interactionMode === "drag" &&
+                  focusedColors.length === 1
+                    ? "white"
+                    : "none"}
                   on:touchstart|preventDefault={(e) => {
                     onFocusedColorsChange([i]);
                     dragStart(e);

@@ -15,7 +15,7 @@ const lint: CustomLint = {
           in: ["#000000", "#ffffff", "#0000ff", "#ff0000", "#00ff00"],
           varb: "b",
           predicate: {
-            not: { similar: { left: "a", right: "b", threshold: 12 } },
+            not: { "==": { left: "a", right: "b" } },
           },
         },
       },
@@ -25,7 +25,7 @@ const lint: CustomLint = {
   taskTypes: ["sequential", "diverging", "categorical"] as const,
   level: "warning",
   group: "design",
-  description: `Colors at either end of the lightness spectrum can be hard to discriminate in some contexts, and are sometimes advised against.`,
+  description: `Colors at either end of the lightness spectrum can be hard to discriminate in some contexts, and are sometimes advised against. See https://blog.datawrapper.de/beautifulcolors/#6 for more.`,
   failMessage: `Colors at either end of the lightness spectrum {{blame}} are hard to discriminate in some contexts, and are sometimes advised against`,
   id: "extreme-colors-built-in",
   blameMode: "single",

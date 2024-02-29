@@ -6,7 +6,7 @@
   import { lint } from "../lib/api-calls";
   import { buttonStyle } from "../lib/styles";
   import LintDisplay from "./LintDisplay.svelte";
-  import LintCustomizationModal from "./LintCustomizationModal.svelte";
+  import LintCustomizationModal from "./LintCustomizationTab.svelte";
   import Nav from "../components/Nav.svelte";
   import NewLintSuggestion from "./NewLintSuggestion.svelte";
   import { titleCase } from "../lib/utils";
@@ -59,6 +59,21 @@
     tabs={["regular", "compact", "lint-customization"]}
     isTabSelected={(x) => x === displayMode}
     selectTab={(x) => {
+      // TODO: maybe need to update the lints on change?
+      if (displayMode === "lint-customization") {
+        const outPal = {
+          ...currentPal,
+          evalConfig: {
+            ...currentPal.evalConfig,
+            globallyIgnoredLints: $lintStore.globallyIgnoredLints,
+          },
+        };
+        loadLints()
+          .then(() => lint(outPal, false))
+          .then((res) => {
+            checks = res;
+          });
+      }
       //@ts-ignore
       configStore.setEvalDisplayMode(x);
     }}

@@ -114,8 +114,11 @@ export function suggestContextualAdjustments(
 }
 
 export function suggestFix(currentPal: Palette, msg: string, engine: Engine) {
-  const error = `${summarizePal(currentPal)}\n\n${msg}`;
-  const body = JSON.stringify({ ...palToString(currentPal), error });
+  const body = JSON.stringify({
+    ...palToString(currentPal),
+    error: msg,
+    context: summarizePal(currentPal),
+  });
   return engineToScaffold[engine]<SimplePal>(`suggest-fix`, body, true);
 }
 

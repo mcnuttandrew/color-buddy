@@ -24,7 +24,7 @@ const engines = {
       messages: [{ role: "user", content: prompt }],
       model: "gpt-3.5-turbo",
       n: 1,
-      temperature: 0.1,
+      temperature: 0.7,
       // model: "gpt-4",
       // model: "gpt-4-turbo-preview",
     }),

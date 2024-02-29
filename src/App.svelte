@@ -35,13 +35,14 @@
   import { lint } from "./lib/api-calls";
   import { debounce } from "vega";
 
-  $: selectedLint = $lintStore.focusedLint;
+  $: route = $configStore.route;
+  $: evalRoute = $configStore.evalDisplayMode;
   const bindStr = "!!";
   // it appears that there is a bug in the vega debounce implementation, that causes the second argument to not fire
   let updateSearchDebounced = debounce(10, (x: [any, string]) => {
     const [pal, ignoreString] = x;
     // keep the noise down on the console
-    if (!selectedLint && pal) {
+    if ((route !== "eval" || evalRoute !== "lint-customization") && pal) {
       lintStore.setLoadState("loading");
 
       const outPal = {

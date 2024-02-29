@@ -110,7 +110,7 @@ function createStore() {
           lints: [...old.lints, newBuiltLint],
         };
       }),
-    cloneLint: (id: string) =>
+    cloneLint: (id: string, newId: string) =>
       persistUpdate((old) => {
         const lint = old.lints.find((x) => x.id === id);
         if (!lint) {
@@ -118,7 +118,7 @@ function createStore() {
         }
         return {
           ...old,
-          lints: [...old.lints, { ...lint, id: Math.random().toString() }],
+          lints: [...old.lints, { ...lint, id: newId }],
         };
       }),
     postCurrentChecks: (checks: LintResult[]) =>
@@ -134,6 +134,10 @@ function createStore() {
   };
 }
 
+export function newId() {
+  return Math.random().toString();
+}
+
 function newLint(newLintFrag: Partial<CustomLint>): CustomLint {
   return {
     program: JSONStringify("{}"),
@@ -143,7 +147,7 @@ function newLint(newLintFrag: Partial<CustomLint>): CustomLint {
     group: "custom",
     description: "v confusing",
     failMessage: "v confusing",
-    id: Math.random().toString(),
+    id: newId(),
     blameMode: "none",
     ...newLintFrag,
   };

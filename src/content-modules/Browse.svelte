@@ -1,10 +1,10 @@
 <script lang="ts">
   import examplePalStore from "../stores/example-palette-store";
   import lintStore from "../stores/lint-store";
+  import configStore from "../stores/config-store";
 
   import { onMount } from "svelte";
 
-  import type { PaletteWrap } from "../stores/example-palette-store";
   import type { LintResult } from "../lib/ColorLint";
 
   import MiniPalPreview from "../components/MiniPalPreview.svelte";
@@ -102,6 +102,7 @@
             class={buttonStyle}
             on:click={() => {
               lintStore.setFocusedLint(lint.isCustom);
+              configStore.setEvalDisplayMode("lint-customization");
             }}
           >
             Customize

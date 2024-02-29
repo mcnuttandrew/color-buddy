@@ -85,7 +85,10 @@
     {#if check.isCustom}
       <button
         class={buttonStyle}
-        on:click={() => lintStore.setFocusedLint(check.isCustom)}
+        on:click={() => {
+          lintStore.setFocusedLint(check.isCustom);
+          configStore.setEvalDisplayMode("lint-customization");
+        }}
       >
         Customize
       </button>

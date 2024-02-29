@@ -9,7 +9,7 @@ interface StoreData {
   compareBackground: string | undefined;
   compareBackgroundSpace: "lab" | "lch" | "hsl" | "hsv" | "rgb";
   engine: "openai" | "google";
-  evalDisplayMode: "regular" | "compact";
+  evalDisplayMode: "regular" | "compact" | "lint-customization";
   evalDeltaDisplay: "none" | "76" | "CMC" | "2000" | "ITP" | "Jz" | "OK";
   exampleRoute: "svg" | "vega" | "swatches";
   includeQuotes: boolean;

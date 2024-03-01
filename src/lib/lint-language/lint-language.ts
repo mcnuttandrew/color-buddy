@@ -986,6 +986,9 @@ export class LLMap extends LLNode {
             speed.push(a.symmetricDeltaE(b, "2000"));
           }
         }
+        if (speed.length === 0) {
+          return { result: [0], env };
+        }
         return { result: speed, env };
     }
   }

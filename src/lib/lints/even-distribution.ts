@@ -48,6 +48,7 @@ const lint: CustomLint = {
   blameMode: "none",
   expectedPassingTests: [
     makePalFromString(["#ffc5b8", "#00dec1", "#006095", "#b7d119", "#6e0074"]),
+    makePalFromString(["#4682b4"]),
   ],
   expectedFailingTests: [
     makePalFromString(["#ffb9ba", "#67de25", "#25d4c3", "#724dd6", "#6d0e44"]),

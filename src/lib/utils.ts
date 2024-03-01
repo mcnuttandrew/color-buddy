@@ -236,11 +236,14 @@ export function newGenericPal(name: string): StringPalette {
     colors: pick(outfits),
   };
 }
-export function makePalFromString(strings: string[]): Palette {
+export function makePalFromString(
+  strings: string[],
+  bg: string = "#ffffff"
+): Palette {
   return {
     ...defaultHexPal,
     colors: strings.map((str) => Color.colorFromString(str, "lab")),
-    background: Color.colorFromString("#ffffff", "lab"),
+    background: Color.colorFromString(bg, "lab"),
   };
 }
 

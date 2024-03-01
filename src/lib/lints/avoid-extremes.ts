@@ -1,4 +1,4 @@
-import { JSONToPrettyString } from "../utils";
+import { JSONToPrettyString, makePalFromString } from "../utils";
 import type { CustomLint } from "../CustomLint";
 
 // https://www.sciencedirect.com/science/article/pii/S0167947308005549?casa_token=s8jmZqboaYgAAAAA:7lsAu7YUHVBTQA_eaKJ_3FFGv309684j_NTisGO9mIr3UZNIJ6hlAlxPQo04xzsowG7-dH0vzm4
@@ -29,5 +29,16 @@ const lint: CustomLint = {
   failMessage: `Colors at either end of the lightness spectrum {{blame}} are hard to discriminate in some contexts, and are sometimes advised against`,
   id: "extreme-colors-built-in",
   blameMode: "single",
+  expectedPassingTests: [makePalFromString(["#ff7e0e"])],
+  expectedFailingTests: [
+    makePalFromString([
+      "#000000",
+      "#ffffff",
+      "#ff7e0e",
+      "#00ff00",
+      "#0084a9",
+      "#0000ff",
+    ]),
+  ],
 };
 export default lint;

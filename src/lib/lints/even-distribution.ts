@@ -1,4 +1,4 @@
-import { JSONToPrettyString } from "../utils";
+import { JSONToPrettyString, makePalFromString } from "../utils";
 import type { CustomLint } from "../CustomLint";
 
 const lint: CustomLint = {
@@ -46,5 +46,12 @@ const lint: CustomLint = {
   failMessage: `This palette does not evenly distribute the colors around its range correctly. Try making the spacing between the colors more regular to resolve this issue. `,
   id: "even-colors-built-in",
   blameMode: "none",
+  expectedPassingTests: [
+    makePalFromString(["#ffc5b8", "#00dec1", "#006095", "#b7d119", "#6e0074"]),
+    makePalFromString(["#4682b4"]),
+  ],
+  expectedFailingTests: [
+    makePalFromString(["#ffb9ba", "#67de25", "#25d4c3", "#724dd6", "#6d0e44"]),
+  ],
 };
 export default lint;

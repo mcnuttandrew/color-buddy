@@ -1,14 +1,13 @@
 <script lang="ts">
   import examplePalStore from "../stores/example-palette-store";
   import lintStore from "../stores/lint-store";
+  import configStore from "../stores/config-store";
 
   import { onMount } from "svelte";
 
-  import type { PaletteWrap } from "../stores/example-palette-store";
   import type { LintResult } from "../lib/ColorLint";
 
   import MiniPalPreview from "../components/MiniPalPreview.svelte";
-  import LintCustomizationModal from "../linting/LintCustomizationModal.svelte";
   import { lint } from "../lib/api-calls";
   import Tooltip from "../components/Tooltip.svelte";
   import { buttonStyle } from "../lib/styles";
@@ -102,6 +101,7 @@
             class={buttonStyle}
             on:click={() => {
               lintStore.setFocusedLint(lint.isCustom);
+              configStore.setEvalDisplayMode("lint-customization");
             }}
           >
             Customize
@@ -265,17 +265,3 @@
     {/each}
   </div>
 </div>
-
-{#if $lintStore.focusedLint !== false}
-  <LintCustomizationModal
-    onClose={() => {
-      setTimeout(() => {
-        // loadLints()
-        //   .then(() => lint(currentPal))
-        //   .then((res) => {
-        //     checks = res;
-        //   });
-      }, 100);
-    }}
-  />
-{/if}

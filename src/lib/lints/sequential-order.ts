@@ -1,4 +1,4 @@
-import { JSONToPrettyString } from "../utils";
+import { JSONToPrettyString, makePalFromString } from "../utils";
 import type { CustomLint } from "../CustomLint";
 import { Color } from "../Color";
 import type { Palette } from "../../types";
@@ -35,6 +35,12 @@ const lint: CustomLint = {
   id: "sequential-order-built-in",
   blameMode: "single",
   subscribedFix: "fixSequentialOrder",
+  expectedPassingTests: [
+    makePalFromString(["#0084a9", "#009de5", "#5fb1ff", "#bbc3ff", "#ecddff"]),
+  ],
+  expectedFailingTests: [
+    makePalFromString(["#0084a9", "#009de5", "#5fb1ff", "#ecddff", "#bbc3ff"]),
+  ],
 };
 export default lint;
 

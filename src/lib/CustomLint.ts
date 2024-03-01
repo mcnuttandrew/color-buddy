@@ -1,5 +1,5 @@
 import { ColorLint } from "./ColorLint";
-import type { PalType, Affect, Context } from "../types";
+import type { PalType, Affect, Context, Palette } from "../types";
 import {
   LLEval,
   prettyPrintLL,
@@ -20,6 +20,8 @@ export interface CustomLint {
   program: string;
   subscribedFix?: string;
   taskTypes: PalType[];
+  expectedPassingTests: Palette[];
+  expectedFailingTests: Palette[];
 }
 
 export function CreateCustomLint(props: CustomLint) {

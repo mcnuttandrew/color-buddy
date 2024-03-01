@@ -91,6 +91,7 @@ Description: Highly saturated light colors are not appropriate for palettes that
 
 Natural Language: ALL c in colors WHERE hsl.l(c) > 70, NOT hsl.s(c) > 70
 
+
 Program:
 
 ```json
@@ -121,6 +122,7 @@ Program:
 Description: Highly saturated light colors are not appropriate for palettes that seek to be trustworthy.  See "Affective color in visualization" for more.
 
 Natural Language: ALL c in colors WHERE hsl.l(c) > 70, NOT hsl.s(c) > 70
+
 
 Program:
 
@@ -153,6 +155,7 @@ Description: Highly saturated light colors are not appropriate for palettes that
 
 Natural Language: ALL c in colors WHERE hsl.l(c) > 70, NOT hsl.s(c) > 70
 
+
 Program:
 
 ```json
@@ -184,6 +187,7 @@ Description: Palettes that seek to be playful should have at least one light blu
 
 Natural Language: EXIST c in colors, (similar(c, #add8e6) < 20 or similar(c, #f5f5dc) < 20 or similar(c, #808080) < 20)
 
+
 Program:
 
 ```json
@@ -213,6 +217,7 @@ Program:
 Description: Palettes that seek to be positive should not have dark reds or browns.  See "Affective color in visualization" for more.
 
 Natural Language: ALL c in colors, NOT (similar(c, #8b0000) < 20 or similar(c, #a52a2a) < 20)
+
 
 Program:
 
@@ -244,6 +249,7 @@ Program:
 Description: Palettes that seek to be negative should not have light colors, particularly greens.  See "Affective color in visualization" for more.
 
 Natural Language: ALL c in colors, NOT (similar(c, #008000) < 20 or lab.l(c) > 70)
+
 
 Program:
 
@@ -278,6 +284,17 @@ Description: All colors in a palette should be differentiable by people with deu
 
 Natural Language: ALL (a, b) in colors WHERE index(a) != index(b), NOT similar(cvdSim(a, deuteranopia), cvdSim(b, deuteranopia)) < 9
 
+Palettes that will fail this test:
+
+- #0078b4, #ff7e0e, #3d9f2f, #da2827, #8c69bc, #8e564b, #e179c1, #7f7f7f, #c4bc27, #00becf with a #fff background
+
+
+
+Palettes that will pass this test:
+
+- #000, #fff, #f00, #00f with a #fff background
+
+
 Program:
 
 ```json
@@ -310,6 +327,17 @@ Program:
 Description: All colors in a palette should be differentiable by people with protanopia (ie can't see red). This is because if they are not, then they will not be differentiable from each other in some contexts.
 
 Natural Language: ALL (a, b) in colors WHERE index(a) != index(b), NOT similar(cvdSim(a, protanopia), cvdSim(b, protanopia)) < 9
+
+Palettes that will fail this test:
+
+- #0078b4, #ff7e0e, #3d9f2f, #da2827, #8c69bc, #8e564b, #e179c1, #7f7f7f, #c4bc27, #00becf with a #fff background
+
+
+
+Palettes that will pass this test:
+
+- #000, #fff, #f00, #00f with a #fff background
+
 
 Program:
 
@@ -344,6 +372,17 @@ Description: All colors in a palette should be differentiable by people with tri
 
 Natural Language: ALL (a, b) in colors WHERE index(a) != index(b), NOT similar(cvdSim(a, tritanopia), cvdSim(b, tritanopia)) < 9
 
+Palettes that will fail this test:
+
+- #0078b4, #ff7e0e, #3d9f2f, #da2827, #8c69bc, #8e564b, #e179c1, #7f7f7f, #c4bc27, #00becf with a #fff background
+
+
+
+Palettes that will pass this test:
+
+- #000, #fff, #f00, #00f with a #fff background
+
+
 Program:
 
 ```json
@@ -377,6 +416,17 @@ Description: All colors in a palette should be differentiable by people with gra
 
 Natural Language: ALL (a, b) in colors WHERE index(a) != index(b), NOT similar(cvdSim(a, grayscale), cvdSim(b, grayscale)) < 9
 
+Palettes that will fail this test:
+
+- #0078b4, #ff7e0e, #3d9f2f, #da2827, #8c69bc, #8e564b, #e179c1, #7f7f7f, #c4bc27, #00becf with a #fff background
+
+
+
+Palettes that will pass this test:
+
+- #000, #fff, #f00, #00f with a #fff background
+
+
 Program:
 
 ```json
@@ -409,6 +459,17 @@ Program:
 Description: Do the colors stand out equally? A color palette is described as fair if both chroma and luminance ranges are below a certain threshold and unfair if one of them is above a certain threshold.
 
 Natural Language: (extent(sort(colors, x => lch.l(x))) < 50 and extent(sort(colors, x => lch.c(x))) < 80)
+
+Palettes that will fail this test:
+
+- #debdb5, #2a2a2a, #76fc00 with a #fff background
+
+
+
+Palettes that will pass this test:
+
+- #000 with a #fff background
+
 
 Program:
 
@@ -447,6 +508,17 @@ Description: Do the colors stand out equally? A color palette is described as fa
 
 Natural Language: (extent(sort(colors, x => lch.l(x))) < 50)
 
+Palettes that will fail this test:
+
+- #debdb5, #2a2a2a, #76fc00 with a #fff background
+
+
+
+Palettes that will pass this test:
+
+- #000 with a #fff background
+
+
 Program:
 
 ```json
@@ -475,6 +547,17 @@ Program:
 Description: Background should be sufficiently desaturated. 
 
 Natural Language: (((hsl.l(background) > 90 and hsv.s(background) < 8) or hsl.l(background) > 99) or (hsl.l(background) > 10 and hsl.l(background) < 26 and hsv.s(background) < 21))
+
+Palettes that will fail this test:
+
+- #0084a9, #009de5, #5fb1ff, #ecddff with a #000 background
+
+
+
+Palettes that will pass this test:
+
+- #0084a9, #009de5, #5fb1ff, #bbc3ff with a #f4e3e3 background
+
 
 Program:
 
@@ -526,6 +609,17 @@ Program:
 Description: Tetradic palettes are hard to work with and are not recommended.
 
 Natural Language: NOT EXIST a in colors, (EXIST b in colors, similar(hsl.h(a), hsl.h(b) + 90) < 5 and EXIST b in colors, similar(hsl.h(a), hsl.h(b) + 90) < 5 and EXIST b in colors, similar(hsl.h(a), hsl.h(b) + 90) < 5)
+
+Palettes that will fail this test:
+
+- #d23bae, #3b6dd2, #d89a35, #36d745 with a #fff background
+
+
+
+Palettes that will pass this test:
+
+- #0084a9, #009de5, #5fb1ff, #bbc3ff with a #fff background
+
 
 Program:
 
@@ -601,6 +695,17 @@ Description: When using green, make it a yellow or blue one. This makes it easie
 
 Natural Language: ALL a in colors, (hsl.h(a) < 90 or hsl.h(a) > 150)
 
+Palettes that will fail this test:
+
+- #0084a9, #93e789 with a #fff background
+
+
+
+Palettes that will pass this test:
+
+- #bee38d, #bbc3ff with a #fff background
+
+
 Program:
 
 ```json
@@ -633,6 +738,17 @@ Program:
 Description: Don't make your colors too dark and saturated when you're using a bright background. If in doubt, try it out. Make your colors lighter, pull some saturation out of them and see how it feels.
 
 Natural Language: ((hsl.l(background) > 50 and ALL a in colors, contrast(a, background, WCAG21) < 10) or hsl.l(background) < 50)
+
+Palettes that will fail this test:
+
+- #0e2d48, #3c828d, #b87930 with a #f9f9f9 background
+
+
+
+Palettes that will pass this test:
+
+- #f4b05d, #3c828d, #1c4b76 with a #f9f9f9 background
+
 
 Program:
 
@@ -677,6 +793,7 @@ Description: Use color complements whenever possible
 
 Natural Language: EXIST (a, b) in colors, similar(hsl.h(a), hsl.h(b) + 180) < 5
 
+
 Program:
 
 ```json
@@ -708,6 +825,17 @@ Program:
 Description: Pairs of colors in a palette should be differentiable from each other in Thin marks. 
 
 Natural Language: ALL (x, y) in colors WHERE index(x) != index(y), (lab.l(x) absDiff lab.l(y) > 12.58 or lab.a(x) absDiff lab.a(y) > 20.740000000000002 or lab.b(x) absDiff lab.b(y) > 34.05)
+
+Palettes that will fail this test:
+
+- #0084a9, #009de5, #8ca9fa with a #fff background
+
+
+
+Palettes that will pass this test:
+
+- #0084a9, #bad, #008000 with a #fff background
+
 
 Program:
 
@@ -761,6 +889,17 @@ Description: Pairs of colors in a palette should be differentiable from each oth
 
 Natural Language: ALL (x, y) in colors WHERE index(x) != index(y), (lab.l(x) absDiff lab.l(y) > 6.58 or lab.a(x) absDiff lab.a(y) > 8.42 or lab.b(x) absDiff lab.b(y) > 11.09)
 
+Palettes that will fail this test:
+
+- #a77865, #468bbc, #bc6c6c, #a67873, #ff008c with a #fff background
+
+
+
+Palettes that will pass this test:
+
+- #cf5f67, #468bbc, #848475, #c55eab, #ff008c with a #fff background
+
+
 Program:
 
 ```json
@@ -812,6 +951,17 @@ Program:
 Description: Pairs of colors in a palette should be differentiable from each other in Wide marks. 
 
 Natural Language: ALL (x, y) in colors WHERE index(x) != index(y), (lab.l(x) absDiff lab.l(y) > 5.83 or lab.a(x) absDiff lab.a(y) > 6.88 or lab.b(x) absDiff lab.b(y) > 8.219999999999999)
+
+Palettes that will fail this test:
+
+- #a77865, #468bbc, #bc6c6c, #a67873, #ff008c with a #fff background
+
+
+
+Palettes that will pass this test:
+
+- #cf5f67, #468bbc, #848475, #c55eab, #ff008c with a #fff background
+
 
 Program:
 
@@ -865,6 +1015,17 @@ Description: Colors at either end of the lightness spectrum can be hard to discr
 
 Natural Language: ALL a in colors, ALL b in ([#000, #fff, #00f, #f00, #0f0]), NOT a == b
 
+Palettes that will fail this test:
+
+- #000, #fff, #ff7e0e, #0f0, #0084a9, #00f with a #fff background
+
+
+
+Palettes that will pass this test:
+
+- #ff7e0e with a #fff background
+
+
 Program:
 
 ```json
@@ -897,6 +1058,17 @@ Description: All colors in a palette should have a sufficient contrast ratio wit
 
 Natural Language: ALL a in colors, contrast(a, background, WCAG21) > 1.1
 
+Palettes that will fail this test:
+
+- #0ff, #00faff, #00e4ff, #fdfdfc, #0ff with a #fff background
+
+
+
+Palettes that will pass this test:
+
+- #cf5f67, #468bbc, #848475, #c55eab, #ff008c with a #fff background
+
+
 Program:
 
 ```json
@@ -925,6 +1097,17 @@ Program:
 Description: Opt for colors that are perceptually distinguishable in a logical sequence when designing visual elements like charts or graphs. This ensures that viewers can easily recognize the order or progression of data points. For categorical this means that when only a small number of colors are used, they should be as different as possible. For sequential and diverging, this means that the colors should be as different as possible in order.
 
 Natural Language: ALL (a, b) in colors WHERE index(a) == index(b) - 1, deltaE(a, b, 2000) > 10
+
+Palettes that will fail this test:
+
+- #0084a9, #009de5, #5fb1ff, #bbc3ff, #ecddff with a #fff background
+
+
+
+Palettes that will pass this test:
+
+- #0084a9, #009de5, #8ca9fa, #bbc3ff, #ecddff with a #fff background
+
 
 Program:
 
@@ -960,6 +1143,19 @@ Program:
 Description: Categorical values should have an even distribution around the hue circle in LCH color space
 
 Natural Language: (std(speed(sort(colors, x => lch.h(x)),   =>  )) < 10 or std(speed(sort(colors, x => lch.h(x) + 180 % 360),   =>  )) < 10)
+
+Palettes that will fail this test:
+
+- #ffb9ba, #67de25, #25d4c3, #724dd6, #6d0e44 with a #fff background
+
+
+
+Palettes that will pass this test:
+
+- #ffc5b8, #00dec1, #006095, #b7d119, #6e0074 with a #fff background
+
+- #4682b4 with a #fff background
+
 
 Program:
 
@@ -1013,6 +1209,17 @@ Description: Checks if the colors are in the sRGB gamut. This is important to en
 
 Natural Language: ALL a in colors, inGamut(a) == TRUE
 
+Palettes that will fail this test:
+
+- #0087a5 with a #fff background
+
+
+
+Palettes that will pass this test:
+
+- #0084a9, #009de5, #8ca9fa, #f00 with a #fff background
+
+
 Program:
 
 ```json
@@ -1039,6 +1246,17 @@ Description: Palettes should have a maximum number of colors. Higher numbers of 
 
 Natural Language: count(colors) < 11
 
+Palettes that will fail this test:
+
+- #000, #000, #000, #000, #000, #000, #000, #000, #000, #000, #000, #000, #000, #000, #000, #000, #000, #000, #000, #000 with a #fff background
+
+
+
+Palettes that will pass this test:
+
+- #000, #fff, #f00, #0f0, #00f with a #fff background
+
+
 Program:
 
 ```json
@@ -1058,6 +1276,17 @@ Program:
 Description: All colors in a palette should be different from each other. This is because if they are not, then they will not be differentiable from each other in some contexts.
 
 Natural Language: ALL (a, b) in colors WHERE index(a) != index(b), dist(a, b, lab) > 15
+
+Palettes that will fail this test:
+
+- #d2b48c, #f5f5dc, #d7fcef with a #fff background
+
+
+
+Palettes that will pass this test:
+
+- #000, #fff, #f00, #0f0, #00f with a #fff background
+
 
 Program:
 
@@ -1089,6 +1318,17 @@ Description: Being able to identify colors by name is important for usability an
 
 Natural Language: ALL (a, b) in colors WHERE index(a) != index(b), name(a) != name(b)
 
+Palettes that will fail this test:
+
+- #5260d1, #005ebe with a #fff background
+
+
+
+Palettes that will pass this test:
+
+- #000, #fff, #f00, #0f0, #00f with a #fff background
+
+
 Program:
 
 ```json
@@ -1115,6 +1355,17 @@ Program:
 Description: Sequential palettes should be ordered by lightness. This is a defining property of a sequential palette and ensures that values are understood as having an increase (or decreasing) value.
 
 Natural Language: (sort(colors, x => lch.l(x)) == map(colors, x => lch.l(x)) or sort(colors, x => lch.l(x)) == reverse(map(colors, x => lch.l(x)),   =>  ))
+
+Palettes that will fail this test:
+
+- #0084a9, #009de5, #5fb1ff, #ecddff, #bbc3ff with a #fff background
+
+
+
+Palettes that will pass this test:
+
+- #0084a9, #009de5, #5fb1ff, #bbc3ff, #ecddff with a #fff background
+
 
 Program:
 
@@ -1150,6 +1401,19 @@ Program:
 Description: Colors that are close to what are known as ugly colors are sometimes advised against. See https://www.colourlovers.com/palette/1416250/The_Ugliest_Colors for more details.
 
 Natural Language: ALL a in colors, ALL b in ([#56ff00, #0010ff, #6a7e25, #ff00ef, #806e28]), deltaE(a, b, 2000) > 10
+
+Palettes that will fail this test:
+
+- #000, #56ff22 with a #fff background
+
+- #000, #0010ff, #6a7e25, #0f0, #00f with a #fff background
+
+
+
+Palettes that will pass this test:
+
+- #000, #fff, #f00, #00c000, #9c70ff with a #fff background
+
 
 Program:
 

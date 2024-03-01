@@ -1,4 +1,4 @@
-import { JSONToPrettyString } from "../utils";
+import { JSONToPrettyString, makePalFromString } from "../utils";
 import type { CustomLint } from "../CustomLint";
 
 // old algorithm - https://github.dev/gka/palettes
@@ -18,6 +18,18 @@ const blindnessLabels = {
 const blindTypes = Object.keys(
   blindnessLabels
 ) as (keyof typeof blindnessLabels)[];
+const tableau10 = [
+  "#0078b4",
+  "#ff7e0e",
+  "#3d9f2f",
+  "#da2827",
+  "#8c69bc",
+  "#8e564b",
+  "#e179c1",
+  "#7f7f7f",
+  "#c4bc27",
+  "#00becf",
+];
 const lints: CustomLint[] = blindTypes.map((type) => ({
   program: JSONToPrettyString({
     // @ts-ignore
@@ -51,5 +63,9 @@ const lints: CustomLint[] = blindTypes.map((type) => ({
       : `This palette is not colorblind friendly for ${type} color blindness ${blindnessLabels[type]}. The following pairs are undifferentiable: ({{blame}})`,
   id: `colorblind-friendly-${type}-built-in`,
   blameMode: "pair" as const,
+  expectedPassingTests: [
+    makePalFromString(["#000000", "#ffffff", "#ff0000", "#0000ff"]),
+  ],
+  expectedFailingTests: [makePalFromString(tableau10)],
 }));
 export default lints;

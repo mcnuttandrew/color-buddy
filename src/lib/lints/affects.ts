@@ -1,4 +1,4 @@
-import { JSONToPrettyString } from "../utils";
+import { JSONToPrettyString, makePalFromString } from "../utils";
 import type { CustomLint } from "../CustomLint";
 
 // "Highly saturated light colors will not be appropriate for SERIOUS/TRUST/CALM": ALL (FILTER colors c, lab(c) > threshold) b, NOT hsl(b) > threshold
@@ -27,6 +27,8 @@ theseAffects.forEach((affect) => {
     failMessage: `This palette has colors which are highly saturated and light, which may not be appropriate for a ${affect} palette.`,
     id: `saturated-${affect}-built-in`,
     blameMode: "single",
+    expectedPassingTests: [],
+    expectedFailingTests: [],
   };
   lints.push(lint);
 });
@@ -58,6 +60,8 @@ const lint1: CustomLint = {
   failMessage: `This palette does not have at least one light blue, beige, or gray, which may not be appropriate for a playful palette. In particular {{blame}} may be problematic.`,
   id: `light-blues-beiges-grays-playful-built-in`,
   blameMode: "single",
+  expectedPassingTests: [],
+  expectedFailingTests: [],
 };
 lints.push(lint1);
 
@@ -88,6 +92,8 @@ const lint2: CustomLint = {
   failMessage: `This palette has dark reds or browns, which may not be appropriate for a positive palette. In particular {{blame}} may be problematic.`,
   id: `dark-reds-browns-positive-built-in`,
   blameMode: "single",
+  expectedPassingTests: [],
+  expectedFailingTests: [],
 };
 lints.push(lint2);
 
@@ -118,6 +124,8 @@ const lint3: CustomLint = {
   failMessage: `This palette has light colors, particularly greens, which may not be appropriate for a negative palette. In particular {{blame}} may be problematic.`,
   id: `light-colors-greens-negative-built-in`,
   blameMode: "single",
+  expectedPassingTests: [],
+  expectedFailingTests: [],
 };
 lints.push(lint3);
 
@@ -150,6 +158,8 @@ lints.push(lint3);
 //   failMessage: `This palette does not have two thematic strategies (blue-gray, green-gray) bridged by a common color (yellow), which may not be appropriate for a trustworthy palette.`,
 //   id: `trustworthy-thematic-strategies-yellow-built-in`,
 //   blameMode: "single",
+// expectedPassingTests: [],
+// expectedFailingTests: [],
 // };
 // lints.push(lint4);
 

@@ -1,4 +1,4 @@
-import { JSONToPrettyString } from "../utils";
+import { JSONToPrettyString, makePalFromString } from "../utils";
 import type { CustomLint } from "../CustomLint";
 
 const lints: CustomLint[] = [];
@@ -42,6 +42,12 @@ const bgDeSaturated: CustomLint = {
   failMessage: `Colorful backgrounds can seem like a good idea, but they can easily distract from your data and they limit your potential color palette. Desaturated colors are your best bet. Roughly, you want either HSL.L > 90 and HSV.S < 8 for light backgrounds, or you want 10 < HSL.L < 25 and HSV.S < 20 for dark backgrounds. See "https://blog.datawrapper.de/beautifulcolors/#12" for more`,
   id: `background-de-saturation-built-in`,
   blameMode: "none",
+  expectedPassingTests: [
+    makePalFromString(["#0084a9", "#009de5", "#5fb1ff", "#bbc3ff"], "#f4e3e3"),
+  ],
+  expectedFailingTests: [
+    makePalFromString(["#0084a9", "#009de5", "#5fb1ff", "#ecddff"], "#000"),
+  ],
 };
 lints.push(bgDeSaturated);
 
@@ -82,6 +88,12 @@ const avoidTetradic: CustomLint = {
   failMessage: `This palette is tetradic, which is not recommended.`,
   id: `avoid-tetradic-built-in`,
   blameMode: "pair",
+  expectedPassingTests: [
+    makePalFromString(["#0084a9", "#009de5", "#5fb1ff", "#bbc3ff"]),
+  ],
+  expectedFailingTests: [
+    makePalFromString(["#d23bae", "#3b6dd2", "#d89a35", "#36d745"]),
+  ],
 };
 lints.push(avoidTetradic);
 
@@ -112,6 +124,8 @@ const avoidGreen: CustomLint = {
   failMessage: `When using green, it is better to try to it a yellow or blue one (hue angle less than 60 or greater than 160). T See "https://blog.datawrapper.de/beautifulcolors/#5" for more.`,
   id: `avoid-green-built-in`,
   blameMode: "single",
+  expectedPassingTests: [makePalFromString(["#bee38d", "#bbc3ff"])],
+  expectedFailingTests: [makePalFromString(["#0084a9", "#93e789"])],
 };
 lints.push(avoidGreen);
 
@@ -156,6 +170,12 @@ const AvoidTooMuchContrastWithTheBackground: CustomLint = {
   failMessage: `Don't make your colors too dark and saturated when you're using a bright background. If in doubt, try it out. Make your colors lighter, pull some saturation out of them and see how it feels. See "https://blog.datawrapper.de/beautifulcolors/#11" for more.`,
   id: `avoid-too-much-contrast-with-the-background-built-in`,
   blameMode: "single",
+  expectedPassingTests: [
+    makePalFromString(["#f4b05d", "#3c828d", "#1c4b76"], "#f9f9f9"),
+  ],
+  expectedFailingTests: [
+    makePalFromString(["#0e2d48", "#3c828d", "#b87930"], "#f9f9f9"),
+  ],
 };
 lints.push(AvoidTooMuchContrastWithTheBackground);
 
@@ -186,6 +206,8 @@ const requireColorComplements: CustomLint = {
   failMessage: `This palette has colors that do not have good contrast.`,
   id: `require-color-complements-built-in`,
   blameMode: "pair",
+  expectedPassingTests: [],
+  expectedFailingTests: [],
 };
 lints.push(requireColorComplements);
 

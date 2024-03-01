@@ -1,5 +1,9 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
+exports[`ColorLint - AvoidExtremes 1`] = `"Colors at either end of the lightness spectrum  are hard to discriminate in some contexts, and are sometimes advised against"`;
+
+exports[`ColorLint - AvoidExtremes 2`] = `"Colors at either end of the lightness spectrum #000, #fff, #0f0, #00f are hard to discriminate in some contexts, and are sometimes advised against"`;
+
 exports[`ColorLint - Background Contrast 1`] = `
 [
   "#0ff",
@@ -20,17 +24,39 @@ exports[`ColorLint - Background Contrast 2`] = `
 ]
 `;
 
+exports[`ColorLint - Background Contrast 3`] = `"These colors () do not have a sufficient contrast ratio with the background and may be hard to discriminate in some contexts."`;
+
+exports[`ColorLint - Background Contrast 4`] = `"These colors (#fdfdfc) do not have a sufficient contrast ratio with the background and may be hard to discriminate in some contexts."`;
+
 exports[`ColorLint - CatOrderSimilarity 1`] = `"Some sequences of colors are too similar based on dE scores: . Try reordering them or making them more distinguishable"`;
 
 exports[`ColorLint - CatOrderSimilarity 2`] = `"Some sequences of colors are too similar based on dE scores: #009de5 and #5fb1ff. Try reordering them or making them more distinguishable"`;
 
-exports[`ColorLint - ColorBlind 1`] = `"This palette is not colorblind friendly for deuteranopia color blindness (ie can't see green). The following pairs are undifferentiable: (#0078b4 and #8c69bc, #ff7e0e and #c4bc27, #3d9f2f and #da2827, #e179c1 and #00becf)"`;
+exports[`ColorLint - ColorBlind: Deuteranopia 1`] = `"This palette is not colorblind friendly for deuteranopia color blindness (ie can't see green). The following pairs are undifferentiable: ()"`;
 
-exports[`ColorLint - ColorBlind 2`] = `"This palette is not colorblind friendly for protanopia color blindness (ie can't see red). The following pairs are undifferentiable: (#0078b4 and #8c69bc, #ff7e0e and #3d9f2f, #da2827 and #8e564b)"`;
+exports[`ColorLint - ColorBlind: Deuteranopia 2`] = `"This palette is not colorblind friendly for deuteranopia color blindness (ie can't see green). The following pairs are undifferentiable: (#0078b4 and #8c69bc, #ff7e0e and #c4bc27, #3d9f2f and #da2827, #e179c1 and #00becf)"`;
 
-exports[`ColorLint - ColorBlind 3`] = `"This palette is not colorblind friendly for tritanopia color blindness (ie can't see blue). The following pairs are undifferentiable: (#ff7e0e and #e179c1, #8c69bc and #7f7f7f)"`;
+exports[`ColorLint - ColorBlind: Grayscale 1`] = `"This palette may not work in black and white. The following pairs are hard to tell the difference between: ()"`;
 
-exports[`ColorLint - ColorBlind 4`] = `"This palette may not work in black and white. The following pairs are hard to tell the difference between: (#0078b4 and #da2827, #0078b4 and #8c69bc, #0078b4 and #8e564b, #0078b4 and #7f7f7f, #ff7e0e and #3d9f2f, #ff7e0e and #e179c1, #ff7e0e and #c4bc27, #ff7e0e and #00becf, #3d9f2f and #8c69bc, #3d9f2f and #e179c1, #3d9f2f and #7f7f7f, #da2827 and #8c69bc, #da2827 and #8e564b, #da2827 and #7f7f7f, #8c69bc and #8e564b, #8c69bc and #7f7f7f, #e179c1 and #c4bc27, #e179c1 and #00becf, #c4bc27 and #00becf)"`;
+exports[`ColorLint - ColorBlind: Grayscale 2`] = `"This palette may not work in black and white. The following pairs are hard to tell the difference between: (#0078b4 and #da2827, #0078b4 and #8c69bc, #0078b4 and #8e564b, #0078b4 and #7f7f7f, #ff7e0e and #3d9f2f, #ff7e0e and #e179c1, #ff7e0e and #c4bc27, #ff7e0e and #00becf, #3d9f2f and #8c69bc, #3d9f2f and #e179c1, #3d9f2f and #7f7f7f, #da2827 and #8c69bc, #da2827 and #8e564b, #da2827 and #7f7f7f, #8c69bc and #8e564b, #8c69bc and #7f7f7f, #e179c1 and #c4bc27, #e179c1 and #00becf, #c4bc27 and #00becf)"`;
+
+exports[`ColorLint - ColorBlind: Protanopia 1`] = `"This palette is not colorblind friendly for protanopia color blindness (ie can't see red). The following pairs are undifferentiable: ()"`;
+
+exports[`ColorLint - ColorBlind: Protanopia 2`] = `"This palette is not colorblind friendly for protanopia color blindness (ie can't see red). The following pairs are undifferentiable: (#0078b4 and #8c69bc, #ff7e0e and #3d9f2f, #da2827 and #8e564b)"`;
+
+exports[`ColorLint - ColorBlind: Tritanopia 1`] = `"This palette is not colorblind friendly for tritanopia color blindness (ie can't see blue). The following pairs are undifferentiable: ()"`;
+
+exports[`ColorLint - ColorBlind: Tritanopia 2`] = `"This palette is not colorblind friendly for tritanopia color blindness (ie can't see blue). The following pairs are undifferentiable: (#ff7e0e and #e179c1, #8c69bc and #7f7f7f)"`;
+
+exports[`ColorLint - ColorNameDiscriminability 1`] = `"The following pairs of colors have the same name: "`;
+
+exports[`ColorLint - ColorNameDiscriminability 2`] = `"The following pairs of colors have the same name: #5260d1 and #005ebe"`;
+
+exports[`ColorLint - EvenDistribution 1`] = `"This palette does not evenly distribute the colors around its range correctly. Try making the spacing between the colors more regular to resolve this issue. "`;
+
+exports[`ColorLint - EvenDistribution 2`] = `"This palette does not evenly distribute the colors around its range correctly. Try making the spacing between the colors more regular to resolve this issue. "`;
+
+exports[`ColorLint - EvenDistribution 3`] = `"This palette does not evenly distribute the colors around its range correctly. Try making the spacing between the colors more regular to resolve this issue. "`;
 
 exports[`ColorLint - Fair Nominal 1`] = `"This palette is unfair (meaning that some values may unduely stand out). Note that this check is naturally at odds with color blind friendly palettes. Maximum chroma range: 80, maximum luminance range: 50."`;
 
@@ -40,9 +66,11 @@ exports[`ColorLint - Fair Sequential 1`] = `"This palette is unfair (meaning tha
 
 exports[`ColorLint - Fair Sequential 2`] = `"This palette is unfair (meaning that some values may unduely stand out). Note that this check is naturally at odds with color blind friendly palettes. Maximum chroma range: 50."`;
 
-exports[`ColorLint - Gamut 1`] = `"A color or colors is not in the sRGB gamut (#0087a5). Please adjust the color so that it can be displayed on most devices."`;
+exports[`ColorLint - Gamut 1`] = `"A color or colors is not in the sRGB gamut (). Please adjust the color so that it can be displayed on most devices."`;
 
-exports[`ColorLint - Gamut 2`] = `"A color or colors is not in the sRGB gamut (). Please adjust the color so that it can be displayed on most devices."`;
+exports[`ColorLint - Gamut 2`] = `"A color or colors is not in the sRGB gamut (#0087a5). Please adjust the color so that it can be displayed on most devices."`;
+
+exports[`ColorLint - Gamut 3`] = `"A color or colors is not in the sRGB gamut (#0087a5). Please adjust the color so that it can be displayed on most devices."`;
 
 exports[`ColorLint - MaxColors 1`] = `"This palette has too many colors and may be hard to discriminate in some contexts. Maximum: 10."`;
 
@@ -72,10 +100,20 @@ exports[`ColorLint - SequentialOrder 1`] = `"This pal should be ordered by light
 
 exports[`ColorLint - SequentialOrder 2`] = `"This pal should be ordered by lightness if being used as a sequential palette. #ecddff, #bbc3ff may be to blame."`;
 
+exports[`ColorLint - SizeDiscrim (Medium) 1`] = `"This palette has some colors () that are close to each other in perceptual space and will not be resolvable for Medium areas. This involves elements like medium blocks such as bars in a bar chart or small graphics"`;
+
+exports[`ColorLint - SizeDiscrim (Medium) 2`] = `"This palette has some colors (#a77865 and #a67873) that are close to each other in perceptual space and will not be resolvable for Medium areas. This involves elements like medium blocks such as bars in a bar chart or small graphics"`;
+
 exports[`ColorLint - SizeDiscrim (Thin) 1`] = `"This palette has some colors () that are close to each other in perceptual space and will not be resolvable for Thin areas. This involves elements like small blocks such as small circles or lines"`;
 
 exports[`ColorLint - SizeDiscrim (Thin) 2`] = `"This palette has some colors (#0084a9 and #009de5) that are close to each other in perceptual space and will not be resolvable for Thin areas. This involves elements like small blocks such as small circles or lines"`;
 
+exports[`ColorLint - SizeDiscrim (Wide) 1`] = `"This palette has some colors () that are close to each other in perceptual space and will not be resolvable for Wide areas. This involves elements like large blocks of color such as backgrounds or countries on a map"`;
+
+exports[`ColorLint - SizeDiscrim (Wide) 2`] = `"This palette has some colors (#a77865 and #a67873) that are close to each other in perceptual space and will not be resolvable for Wide areas. This involves elements like large blocks of color such as backgrounds or countries on a map"`;
+
 exports[`ColorLint - UglyColors 1`] = `"This palette has some colors (specifically ) that are close to what are known as ugly colors"`;
 
 exports[`ColorLint - UglyColors 2`] = `"This palette has some colors (specifically #56ff22) that are close to what are known as ugly colors"`;
+
+exports[`ColorLint - UglyColors 3`] = `"This palette has some colors (specifically #0010ff, #6a7e25, #0f0, #00f) that are close to what are known as ugly colors"`;

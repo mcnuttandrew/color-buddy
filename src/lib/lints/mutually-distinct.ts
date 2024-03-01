@@ -1,4 +1,4 @@
-import { JSONToPrettyString } from "../utils";
+import { JSONToPrettyString, makePalFromString } from "../utils";
 import type { CustomLint } from "../CustomLint";
 const lint: CustomLint = {
   program: JSONToPrettyString({
@@ -24,6 +24,10 @@ const lint: CustomLint = {
   failMessage: `Some colors in this palette ({{blame}}) are not differentiable from each other.`,
   id: "mutually-distinct-built-in",
   blameMode: "pair" as const,
+  expectedPassingTests: [
+    makePalFromString(["#000000", "#ffffff", "#ff0000", "#00ff00", "#0000ff"]),
+  ],
+  expectedFailingTests: [makePalFromString(["#d2b48c", "#f5f5dc", "#d7fcef"])],
 };
 
 export default lint;

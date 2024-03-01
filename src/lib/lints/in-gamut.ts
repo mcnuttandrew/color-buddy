@@ -1,4 +1,4 @@
-import { JSONToPrettyString } from "../utils";
+import { JSONToPrettyString, makePalFromString } from "../utils";
 import type { CustomLint } from "../CustomLint";
 import type { LintFixer } from "../linter-tools/lint-fixer";
 import { clipToGamut } from "../utils";
@@ -23,6 +23,10 @@ const lint: CustomLint = {
   id: "gamut-check-built-in",
   blameMode: "single",
   subscribedFix: "fixGamut",
+  expectedPassingTests: [
+    makePalFromString(["#0084a9", "#009de5", "#8ca9fa", "#ff0000"]),
+  ],
+  expectedFailingTests: [makePalFromString(["lab(50.625% -91.737 -88.303)"])],
 };
 export default lint;
 

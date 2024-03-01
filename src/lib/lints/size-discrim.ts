@@ -1,6 +1,6 @@
-import { JSONToPrettyString } from "../utils";
+import { JSONToPrettyString, makePalFromString } from "../utils";
 import type { CustomLint } from "../CustomLint";
-// based on
+
 // https://github.com/connorgr/d3-jnd/blob/master/src/jnd.js
 
 const A = { l: 10.16, a: 10.68, b: 10.7 };
@@ -28,6 +28,53 @@ function jndLabInterval(p: pType, s: sType) {
   const sVal = typeof s === "number" ? s : sMap[s] || sMap["default"];
   return nd(pVal, sVal);
 }
+
+const testCase = {
+  Thin: {
+    passing: [makePalFromString(["#0084a9", "#bad", "#008000"])],
+    failing: [makePalFromString(["#0084a9", "#009de5", "#8ca9fa"])],
+  },
+  Medium: {
+    passing: [
+      makePalFromString([
+        "#cf5f67",
+        "#468bbc",
+        "#848475",
+        "#c55eab",
+        "#ff008c",
+      ]),
+    ],
+    failing: [
+      makePalFromString([
+        "#a77865",
+        "#468bbc",
+        "#bc6c6c",
+        "#a67873",
+        "#ff008c",
+      ]),
+    ],
+  },
+  Wide: {
+    passing: [
+      makePalFromString([
+        "#cf5f67",
+        "#468bbc",
+        "#848475",
+        "#c55eab",
+        "#ff008c",
+      ]),
+    ],
+    failing: [
+      makePalFromString([
+        "#a77865",
+        "#468bbc",
+        "#bc6c6c",
+        "#a67873",
+        "#ff008c",
+      ]),
+    ],
+  },
+};
 
 const itemSizeDescriptions = {
   Thin: "small blocks such as small circles or lines",
@@ -86,6 +133,8 @@ const lints: CustomLint[] = keys.map((key) => {
     failMessage: `This palette has some colors ({{blame}}) that are close to each other in perceptual space and will not be resolvable for ${key} areas. This involves elements like ${itemSizeDescriptions[key]}`,
     id: `${key}-discrim-built-in`,
     blameMode: "pair",
+    expectedPassingTests: testCase[key].passing,
+    expectedFailingTests: testCase[key].failing,
   };
 });
 

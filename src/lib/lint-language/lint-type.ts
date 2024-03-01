@@ -18,9 +18,9 @@ export type LintExpression =
  * A logical conjunction expression. It is used to express the logical AND, OR and NOT operations.
  */
 export type LintConjunction =
-  | { and: LintExpression[] }
-  | { or: LintExpression[] }
-  | { not: LintExpression };
+  | { $schema?: string; and: LintExpression[] }
+  | { $schema?: string; or: LintExpression[] }
+  | { $schema?: string; not: LintExpression };
 type LintQuantifierBase =
   | {
       varbs: LintVariable[];
@@ -51,8 +51,8 @@ type LintQuantifierBase =
  * A logical quantifier expression. It is used to express the existence of a value (exist) or the existence of a value for all elements in a collection (all).
  */
 export type LintQuantifier =
-  | { all: LintQuantifierBase }
-  | { exist: LintQuantifierBase };
+  | { $schema?: string; all: LintQuantifierBase }
+  | { $schema?: string; exist: LintQuantifierBase };
 
 // Operations
 /**
@@ -60,27 +60,32 @@ export type LintQuantifier =
  */
 export type LintComparison =
   | {
+      $schema?: string;
       "==": {
         left: LintValue | LintArrayValue;
         right: LintValue | LintArrayValue;
       };
     }
   | {
+      $schema?: string;
       "!=": {
         left: LintValue | LintArrayValue;
         right: LintValue | LintArrayValue;
       };
     }
-  | { "<": { left: LintValue; right: LintValue } }
-  | { ">": { left: LintValue; right: LintValue } }
-  | { absDiff: { left: LintValue; right: LintValue } }
-  | { similar: { left: LintValue; right: LintValue; threshold: number } };
+  | { $schema?: string; "<": { left: LintValue; right: LintValue } }
+  | { $schema?: string; ">": { left: LintValue; right: LintValue } }
+  | {
+      $schema?: string;
+      similar: { left: LintValue; right: LintValue; threshold: number };
+    };
 export type LintMathOps =
   | { "+": { left: LintValue; right: LintValue } }
   | { "-": { left: LintValue; right: LintValue } }
   | { "*": { left: LintValue; right: LintValue } }
   | { "/": { left: LintValue; right: LintValue } }
-  | { "%": { left: LintValue; right: LintValue } };
+  | { "%": { left: LintValue; right: LintValue } }
+  | { absDiff: { left: LintValue; right: LintValue } };
 
 export type LintPairOps =
   | LintPairOpsDist

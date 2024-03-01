@@ -15,6 +15,7 @@ import BackgroundContrast from "./lints/background-contrast";
 import CatOrderSimilarity from "./lints/cat-order-similarity";
 import ColorBlindness from "./lints/color-blindness";
 import ColorNameDiscriminability, { getName } from "./lints/name-discrim";
+import EvenDistribution from "./lints/even-distribution";
 import Fair from "./lints/fair";
 import Gamut from "./lints/in-gamut";
 import MaxColors from "./lints/max-colors";
@@ -57,6 +58,10 @@ test("ColorLint - MaxColors", () => {
 
 test("ColorLint - UglyColors", () => {
   autoTest(UglyColors);
+});
+
+test("ColorLint - EvenDistribution", () => {
+  autoTest(EvenDistribution);
 });
 
 test("ColorLint - Fair Nominal", () => {

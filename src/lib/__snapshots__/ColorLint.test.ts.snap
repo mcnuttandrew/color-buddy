@@ -52,6 +52,10 @@ exports[`ColorLint - ColorNameDiscriminability 1`] = `"The following pairs of co
 
 exports[`ColorLint - ColorNameDiscriminability 2`] = `"The following pairs of colors have the same name: #5260d1 and #005ebe"`;
 
+exports[`ColorLint - EvenDistribution 1`] = `"This palette does not evenly distribute the colors around its range correctly. Try making the spacing between the colors more regular to resolve this issue. "`;
+
+exports[`ColorLint - EvenDistribution 2`] = `"This palette does not evenly distribute the colors around its range correctly. Try making the spacing between the colors more regular to resolve this issue. "`;
+
 exports[`ColorLint - Fair Nominal 1`] = `"This palette is unfair (meaning that some values may unduely stand out). Note that this check is naturally at odds with color blind friendly palettes. Maximum chroma range: 80, maximum luminance range: 50."`;
 
 exports[`ColorLint - Fair Nominal 2`] = `"This palette is unfair (meaning that some values may unduely stand out). Note that this check is naturally at odds with color blind friendly palettes. Maximum chroma range: 80, maximum luminance range: 50."`;

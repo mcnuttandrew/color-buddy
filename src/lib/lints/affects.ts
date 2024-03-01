@@ -27,6 +27,8 @@ theseAffects.forEach((affect) => {
     failMessage: `This palette has colors which are highly saturated and light, which may not be appropriate for a ${affect} palette.`,
     id: `saturated-${affect}-built-in`,
     blameMode: "single",
+    expectedPassingTests: [],
+    expectedFailingTests: [],
   };
   lints.push(lint);
 });

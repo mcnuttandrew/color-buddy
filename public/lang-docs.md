@@ -1144,6 +1144,16 @@ Description: Categorical values should have an even distribution around the hue 
 
 Natural Language: (std(speed(sort(colors, x => lch.h(x)),   =>  )) < 10 or std(speed(sort(colors, x => lch.h(x) + 180 % 360),   =>  )) < 10)
 
+Palettes that will fail this test:
+
+- #ffb9ba, #67de25, #25d4c3, #724dd6, #6d0e44 with a #fff background
+
+
+
+Palettes that will pass this test:
+
+- #ffc5b8, #00dec1, #006095, #b7d119, #6e0074 with a #fff background
+
 
 Program:
 

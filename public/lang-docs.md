@@ -1154,6 +1154,8 @@ Palettes that will pass this test:
 
 - #ffc5b8, #00dec1, #006095, #b7d119, #6e0074 with a #fff background
 
+- #4682b4 with a #fff background
+
 
 Program:
 

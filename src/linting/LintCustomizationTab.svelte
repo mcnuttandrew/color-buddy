@@ -3,17 +3,17 @@
   import { BUILT_INS } from "../lib/linter";
   import colorStore from "../stores/color-store";
 
-  import Modal from "../components/Modal.svelte";
   import MonacoEditor from "../components/MonacoEditor.svelte";
   import Nav from "../components/Nav.svelte";
   import PalPreview from "../components/PalPreview.svelte";
   import { CreateCustomLint } from "../lib/CustomLint";
   import { buttonStyle } from "../lib/styles";
-  import { JSONStringify } from "../lib/utils";
+  import { JSONStringify, makePalFromString } from "../lib/utils";
   import type { CustomLint } from "../lib/CustomLint";
   import { affects, contexts } from "../types";
-
-  // export let onClose: () => void;
+  import type { Palette } from "../types";
+  import type { LintResult } from "../lib/ColorLint";
+  import LintCustomizationPreview from "./LintCustomizationPreview.svelte";
 
   $: lint = $lintStore.lints.find(
     (lint) => lint.id === $lintStore.focusedLint
@@ -24,17 +24,16 @@
   $: isBuiltInThatsBeenModified =
     builtInLint && lint?.program !== builtInLint?.program;
 
-  $: currentPal = $colorStore.palettes[$colorStore.currentPal];
   // run this lint
   let errors: any = null;
-  function runLint(lint: CustomLint, options: any) {
+  function runLint(lint: CustomLint, options: any, pal: Palette) {
     if (!lint) {
-      // onClose();
+      lintStore.setFocusedLint(false);
       return;
     }
     try {
       const customLint = CreateCustomLint(lint);
-      const result = new customLint(currentPal).run(options);
+      const result = new customLint(pal).run(options);
       errors = null;
       return result;
     } catch (e) {
@@ -42,8 +41,10 @@
     }
   }
   let debugCompare = false;
-  $: lintRun = runLint(lint, { debugCompare });
-  let showDoubleCheck = false;
+  let showTestCases = true;
+  let showDeleteDoubleCheck = false;
+  $: currentPal = $colorStore.palettes[$colorStore.currentPal];
+  $: lintRun = runLint(lint, { debugCompare }, currentPal);
 
   $: currentTaskTypes = lint?.taskTypes || ([] as string[]);
   $: currentAffects = lint?.affectTypes || ([] as string[]);
@@ -70,6 +71,27 @@
     },
     {} as Record<string, (typeof lints)[number][]>
   );
+
+  type TestResult = {
+    pal: Palette;
+    result: LintResult;
+    blame: any;
+  };
+  // test results
+  $: passingTestResults = (
+    (showTestCases && lint?.expectedPassingTests) ||
+    []
+  ).map((pal) => {
+    const result = runLint(lint, {}, pal);
+    return { result, pal, blame: result?.checkData };
+  }) as TestResult[];
+  $: failingTestResults = (
+    (showTestCases && lint?.expectedFailingTests) ||
+    []
+  ).map((pal) => {
+    const result = runLint(lint, {}, pal);
+    return { result, pal, blame: result?.checkData };
+  }) as TestResult[];
 </script>
 
 {#if !lint}
@@ -94,13 +116,6 @@
 {/if}
 
 {#if lint}
-  <!-- <Modal
-    showModal={true}
-    closeModal={() => {
-      lintStore.setFocusedLint(false);
-      onClose();
-    }}
-  > -->
   <div class="flex flex-col w-full text-sm">
     <!-- TOP BAR -->
     <div class="flex justify-between bg-stone-200 h-12 items-center px-4">
@@ -123,7 +138,7 @@
         </button>
       {/if}
       <div class="flex">
-        {#if showDoubleCheck}
+        {#if showDeleteDoubleCheck}
           <div class="flex">
             <div>Are you sure you want to delete this lint?</div>
             <button
@@ -136,14 +151,17 @@
               Yes
             </button>
             <button
-              on:click={() => (showDoubleCheck = false)}
+              on:click={() => (showDeleteDoubleCheck = false)}
               class={buttonStyle}
             >
               No
             </button>
           </div>
         {:else}
-          <button on:click={() => (showDoubleCheck = true)} class={buttonStyle}>
+          <button
+            on:click={() => (showDeleteDoubleCheck = true)}
+            class={buttonStyle}
+          >
             Delete this lint
           </button>
         {/if}
@@ -365,7 +383,97 @@
       {/if}
 
       <div>
-        <div class="font-bold">Test Cases</div>
+        <div class="flex w-full">
+          <div class="font-bold">Test Cases</div>
+          <Nav
+            tabs={["Show", "Hide"]}
+            isTabSelected={(x) => (showTestCases ? "Show" : "Hide") === x}
+            selectTab={(x) => {
+              showTestCases = x === "Show";
+            }}
+          />
+        </div>
+
+        {#if showTestCases}
+          <div class="font-bold">Expected to be passing:</div>
+          <div class="flex">
+            {#each passingTestResults as passing, idx}
+              <div class="flex flex-col w-fit">
+                <LintCustomizationPreview
+                  removeCase={() => {
+                    const newTests = [...lint.expectedPassingTests].filter(
+                      (_, i) => i !== idx
+                    );
+                    lintStore.setCurrentLintExpectedPassingTests(newTests);
+                  }}
+                  pal={passing.pal}
+                  blamedSet={new Set(passing.blame)}
+                  updatePal={(newPal) => {
+                    const newTests = [...lint.expectedPassingTests];
+                    newTests[idx] = newPal;
+                    lintStore.setCurrentLintExpectedPassingTests(newTests);
+                  }}
+                />
+                {#if passing.result?.passes}
+                  <div class="text-green-500">Correct</div>
+                {:else}
+                  <div class="text-red-500">Incorrect</div>
+                {/if}
+              </div>
+            {/each}
+            <button
+              class={buttonStyle}
+              on:click={() => {
+                const newTests = [
+                  ...lint.expectedPassingTests,
+                  makePalFromString(["steelblue"]),
+                ];
+                lintStore.setCurrentLintExpectedPassingTests(newTests);
+              }}
+            >
+              Add Test
+            </button>
+          </div>
+          <div class="font-bold">Expected to be failing:</div>
+          <div class="flex">
+            {#each failingTestResults as failing, idx}
+              <div class="flex flex-col w-fit">
+                <LintCustomizationPreview
+                  removeCase={() => {
+                    const newTests = [...lint.expectedFailingTests].filter(
+                      (_, i) => i !== idx
+                    );
+                    lintStore.setCurrentLintExpectedFailingTests(newTests);
+                  }}
+                  pal={failing.pal}
+                  blamedSet={new Set(failing.blame)}
+                  updatePal={(newPal) => {
+                    const newTests = [...lint.expectedFailingTests];
+                    newTests[idx] = newPal;
+                    lintStore.setCurrentLintExpectedFailingTests(newTests);
+                  }}
+                />
+                {#if !failing.result?.passes}
+                  <div class="text-green-500">Correct</div>
+                {:else}
+                  <div class="text-red-500">Incorrect</div>
+                {/if}
+              </div>
+            {/each}
+            <button
+              class={buttonStyle}
+              on:click={() => {
+                const newTests = [
+                  ...lint.expectedFailingTests,
+                  makePalFromString(["steelblue"]),
+                ];
+                lintStore.setCurrentLintExpectedFailingTests(newTests);
+              }}
+            >
+              Add Test
+            </button>
+          </div>
+        {/if}
       </div>
       <div class="flex justify-between">
         <div class="font-bold">Lint Program</div>
@@ -387,5 +495,4 @@
       />
     </div>
   </div>
-  <!-- </Modal> -->
 {/if}

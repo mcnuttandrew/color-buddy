@@ -8,7 +8,6 @@
   import type { LintResult } from "../lib/ColorLint";
 
   import MiniPalPreview from "../components/MiniPalPreview.svelte";
-  import LintCustomizationModal from "../linting/LintCustomizationModal.svelte";
   import { lint } from "../lib/api-calls";
   import Tooltip from "../components/Tooltip.svelte";
   import { buttonStyle } from "../lib/styles";
@@ -266,17 +265,3 @@
     {/each}
   </div>
 </div>
-
-{#if $lintStore.focusedLint !== false}
-  <LintCustomizationModal
-    onClose={() => {
-      setTimeout(() => {
-        // loadLints()
-        //   .then(() => lint(currentPal))
-        //   .then((res) => {
-        //     checks = res;
-        //   });
-      }, 100);
-    }}
-  />
-{/if}

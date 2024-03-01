@@ -21,5 +21,7 @@ const lint: CustomLint = {
   failMessage: ``,
   id: "discrim-power-built-in",
   blameMode: "single",
+  expectedPassingTests: [],
+  expectedFailingTests: [],
 };
 export default lint;

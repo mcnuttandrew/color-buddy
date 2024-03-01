@@ -1,4 +1,4 @@
-import { JSONToPrettyString } from "../utils";
+import { JSONToPrettyString, makePalFromString } from "../utils";
 import type { CustomLint } from "../CustomLint";
 
 const lint: CustomLint = {
@@ -31,5 +31,11 @@ const lint: CustomLint = {
   group: "design",
   id: "ugly-colors-built-in",
   blameMode: "single",
+  expectedPassingTests: [
+    makePalFromString(["#000000", "#FFFFFF", "#FF0000", "#00FF00", "#0000FF"]),
+  ],
+  expectedFailingTests: [
+    makePalFromString(["#000000", "#0010FF", "#6A7E25", "#00FF00", "#0000FF"]),
+  ],
 };
 export default lint;

@@ -2,18 +2,18 @@ import type { Palette, PalType, Affect, Context } from "../types";
 
 export type LintLevel = "error" | "warning";
 export interface LintResult {
-  name: string;
-  passes: boolean;
-  message: string;
-  level: LintLevel;
-  group: string;
-  description: string;
-  isCustom: false | string;
-  taskTypes: PalType[];
   affectTypes: Affect[];
   contextTypes: Context[];
-  subscribedFix: string;
+  description: string;
+  group: string;
+  isCustom: false | string;
+  level: LintLevel;
+  message: string;
+  name: string;
   naturalLanguageProgram: string;
+  passes: boolean;
+  subscribedFix: string;
+  taskTypes: PalType[];
 }
 
 export class ColorLint<CheckData, ParamType> {

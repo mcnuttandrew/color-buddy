@@ -1,4 +1,4 @@
-import { JSONToPrettyString } from "../utils";
+import { JSONToPrettyString, makePalFromString } from "../utils";
 import type { CustomLint } from "../CustomLint";
 import { Color } from "../Color";
 import type { LintFixer } from "../linter-tools/lint-fixer";
@@ -38,6 +38,12 @@ const lint: CustomLint = {
   id: "background-contrast-built-in",
   blameMode: "single" as const,
   subscribedFix: "fixBackgroundDifferentiability",
+  expectedFailingTests: [
+    makePalFromString(["#00ffff", "#00faff", "#00e4ff", "#fdfdfc", "#00ffff"]),
+  ],
+  expectedPassingTests: [
+    makePalFromString(["#cf5f67", "#468bbc", "#848475", "#c55eab", "#ff008c"]),
+  ],
 };
 export default lint;
 

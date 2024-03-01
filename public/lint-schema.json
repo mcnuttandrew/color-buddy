@@ -218,6 +218,7 @@
                 {
                     "additionalProperties": false, 
                     "properties": {
+                        "$schema": {"type": "string"}, 
                         "==": {
                             "additionalProperties": false, 
                             "properties": {
@@ -270,7 +271,8 @@
                             }, 
                             "required": ["left", "right"], 
                             "type": "object"
-                        }
+                        }, 
+                        "$schema": {"type": "string"}
                     }, 
                     "required": ["!="], 
                     "type": "object"
@@ -278,6 +280,7 @@
                 {
                     "additionalProperties": false, 
                     "properties": {
+                        "$schema": {"type": "string"}, 
                         "<": {
                             "additionalProperties": false, 
                             "properties": {
@@ -294,6 +297,7 @@
                 {
                     "additionalProperties": false, 
                     "properties": {
+                        "$schema": {"type": "string"}, 
                         ">": {
                             "additionalProperties": false, 
                             "properties": {
@@ -310,22 +314,7 @@
                 {
                     "additionalProperties": false, 
                     "properties": {
-                        "absDiff": {
-                            "additionalProperties": false, 
-                            "properties": {
-                                "left" : {"$ref": "#/definitions/LintValue"}, 
-                                "right": {"$ref": "#/definitions/LintValue"}  
-                            }, 
-                            "required": ["left", "right"], 
-                            "type": "object"
-                        }
-                    }, 
-                    "required": ["absDiff"], 
-                    "type": "object"
-                }, 
-                {
-                    "additionalProperties": false, 
-                    "properties": {
+                        "$schema": {"type": "string"}, 
                         "similar": {
                             "additionalProperties": false, 
                             "properties": {
@@ -348,7 +337,8 @@
                 {
                     "additionalProperties": false, 
                     "properties": {
-                        "and": { "items": {"$ref": "#/definitions/LintExpression"}, "type": "array" }
+                        "$schema": { "type": "string"                                                    }, 
+                        "and"    : { "type": "array" , "items": {"$ref": "#/definitions/LintExpression"} }  
                     }, 
                     "required": ["and"], 
                     "type": "object"
@@ -356,14 +346,15 @@
                 {
                     "additionalProperties": false, 
                     "properties": {
-                        "or": { "items": {"$ref": "#/definitions/LintExpression"}, "type": "array" }
+                        "$schema": { "type": "string"                                                    }, 
+                        "or"     : { "type": "array" , "items": {"$ref": "#/definitions/LintExpression"} }  
                     }, 
                     "required": ["or"], 
                     "type": "object"
                 }, 
                 {
                     "additionalProperties": false, 
-                    "properties": { "not": {"$ref": "#/definitions/LintExpression"} }, 
+                    "properties": { "$schema": {"type": "string"}, "not": {"$ref": "#/definitions/LintExpression"} }, 
                     "required": ["not"], 
                     "type": "object"
                 }
@@ -384,7 +375,7 @@
                 {
                     "additionalProperties": false, 
                     "properties": {
-                        "filter": {"$ref": "#/definitions/alias-1448761563-3695-3756-1448761563-0-6113"}, 
+                        "filter": {"$ref": "#/definitions/alias-1448761563-3904-3965-1448761563-0-6322"}, 
                         "func"  : {"$ref": "#/definitions/LintExpression"}                              , 
                         "varb"  : {"type": "string"}                                                      
                     }, 
@@ -395,7 +386,7 @@
                     "additionalProperties": false, 
                     "properties": {
                         "func": {"$ref": "#/definitions/LintValue"}                                   , 
-                        "map" : {"$ref": "#/definitions/alias-1448761563-3695-3756-1448761563-0-6113"}, 
+                        "map" : {"$ref": "#/definitions/alias-1448761563-3904-3965-1448761563-0-6322"}, 
                         "varb": {"type": "string"}                                                      
                     }, 
                     "required": ["map", "func", "varb"], 
@@ -404,7 +395,7 @@
                 {
                     "additionalProperties": false, 
                     "properties": {
-                        "reverse": {"$ref": "#/definitions/alias-1448761563-3695-3756-1448761563-0-6113"}
+                        "reverse": {"$ref": "#/definitions/alias-1448761563-3904-3965-1448761563-0-6322"}
                     }, 
                     "required": ["reverse"], 
                     "type": "object"
@@ -413,7 +404,7 @@
                     "additionalProperties": false, 
                     "properties": {
                         "func": {"$ref": "#/definitions/LintValue"}                                   , 
-                        "sort": {"$ref": "#/definitions/alias-1448761563-3695-3756-1448761563-0-6113"}, 
+                        "sort": {"$ref": "#/definitions/alias-1448761563-3904-3965-1448761563-0-6322"}, 
                         "varb": {"type": "string"}                                                      
                     }, 
                     "required": ["sort", "func", "varb"], 
@@ -421,7 +412,7 @@
                 }, 
                 {
                     "additionalProperties": false, 
-                    "properties": { "speed": {"$ref": "#/definitions/alias-1448761563-3695-3756-1448761563-0-6113"} }, 
+                    "properties": { "speed": {"$ref": "#/definitions/alias-1448761563-3904-3965-1448761563-0-6322"} }, 
                     "required": ["speed"], 
                     "type": "object"
                 }
@@ -507,6 +498,22 @@
                         }
                     }, 
                     "required": ["%"], 
+                    "type": "object"
+                }, 
+                {
+                    "additionalProperties": false, 
+                    "properties": {
+                        "absDiff": {
+                            "additionalProperties": false, 
+                            "properties": {
+                                "left" : {"$ref": "#/definitions/LintValue"}, 
+                                "right": {"$ref": "#/definitions/LintValue"}  
+                            }, 
+                            "required": ["left", "right"], 
+                            "type": "object"
+                        }
+                    }, 
+                    "required": ["absDiff"], 
                     "type": "object"
                 }
             ]
@@ -596,6 +603,7 @@
                 {
                     "additionalProperties": false, 
                     "properties": {
+                        "$schema": {"type": "string"}, 
                         "all": {
                             "anyOf": [
                                 {
@@ -649,6 +657,7 @@
                 {
                     "additionalProperties": false, 
                     "properties": {
+                        "$schema": {"type": "string"}, 
                         "exist": {
                             "anyOf": [
                                 {
@@ -718,7 +727,7 @@
             "description": "A LintValue is a JSON object that represents a value. It can be a string, a number, a boolean, a LintColor, a LintVariable, a LintMathOps, a LintPairOps, a LintAggregate, a LintColorFunction or a LintExpression"
         }, 
         "LintVariable": {"type": "string"}, 
-        "alias-1448761563-3695-3756-1448761563-0-6113": {
+        "alias-1448761563-3904-3965-1448761563-0-6322": {
             "anyOf": [
                 {"$ref": "#/definitions/LintVariable"}                           , 
                 { "items": {"$ref": "#/definitions/LintValue"}, "type": "array" }, 

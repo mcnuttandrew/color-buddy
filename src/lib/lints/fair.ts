@@ -1,4 +1,4 @@
-import { JSONToPrettyString } from "../utils";
+import { JSONToPrettyString, makePalFromString } from "../utils";
 import type { CustomLint } from "../CustomLint";
 
 // magic numbers supplied by the paper
@@ -34,6 +34,8 @@ const FairNominal: CustomLint = {
   failMessage: `${failMsgBase} Maximum chroma range: ${cRangeUnfair}, maximum luminance range: ${lRangeUnfair}.`,
   id: "fair-nominal-built-in",
   blameMode: "single",
+  expectedPassingTests: [makePalFromString(["#000000"])],
+  expectedFailingTests: [makePalFromString(["#debdb5", "#2a2a2a", "#76fc00"])],
 };
 const FairSequential: CustomLint = {
   ...FairNominal,
@@ -47,5 +49,7 @@ const FairSequential: CustomLint = {
   id: "fair-sequential-built-in",
   description:
     "Do the colors stand out equally? A color palette is described as fair if the luminance ranges are below a certain threshold and unfair if one of them is above a certain threshold. ",
+  expectedPassingTests: [makePalFromString(["#000000"])],
+  expectedFailingTests: [makePalFromString(["#debdb5", "#2a2a2a", "#76fc00"])],
 };
 export default [FairNominal, FairSequential];

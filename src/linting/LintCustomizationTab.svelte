@@ -473,6 +473,7 @@
               Add Test
             </button>
           </div>
+          <div class="italic">Items marked with dashed sides are blamed</div>
         {/if}
       </div>
       <div class="flex justify-between">

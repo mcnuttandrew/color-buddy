@@ -32,9 +32,10 @@ const lint: CustomLint = {
   id: "ugly-colors-built-in",
   blameMode: "single",
   expectedPassingTests: [
-    makePalFromString(["#000000", "#FFFFFF", "#FF0000", "#00FF00", "#0000FF"]),
+    makePalFromString(["#000", "#fff", "#f00", "#00c000", "#9c70ff"]),
   ],
   expectedFailingTests: [
+    makePalFromString(["#000000", "#56FF22"]),
     makePalFromString(["#000000", "#0010FF", "#6A7E25", "#00FF00", "#0000FF"]),
   ],
 };

@@ -105,6 +105,9 @@
           });
         }}
       />
+      <div>
+        Colors: [{pal.colors.map((x) => `"${x.toHex()}"`).join(", ")}]
+      </div>
     </div>
     <button slot="target" let:toggle on:click={toggle}>⚙</button>
   </Tooltip>

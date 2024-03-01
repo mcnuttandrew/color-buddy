@@ -1,4 +1,4 @@
-import { JSONToPrettyString } from "../utils";
+import { JSONToPrettyString, makePalFromString } from "../utils";
 import type { CustomLint } from "../CustomLint";
 
 const lint: CustomLint = {
@@ -31,5 +31,11 @@ const lint: CustomLint = {
   failMessage: `Some sequences of colors are too similar based on dE scores: {{blame}}. Try reordering them or making them more distinguishable`,
   id: "cat-order-similarity-built-in",
   blameMode: "pair",
+  expectedPassingTests: [
+    makePalFromString(["#0084a9", "#009de5", "#8ca9fa", "#bbc3ff", "#ecddff"]),
+  ],
+  expectedFailingTests: [
+    makePalFromString(["#0084a9", "#009de5", "#5fb1ff", "#bbc3ff", "#ecddff"]),
+  ],
 };
 export default lint;

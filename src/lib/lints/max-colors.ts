@@ -1,4 +1,4 @@
-import { JSONToPrettyString } from "../utils";
+import { JSONToPrettyString, makePalFromString } from "../utils";
 import type { CustomLint } from "../CustomLint";
 import type { LintFixer } from "../linter-tools/lint-fixer";
 
@@ -18,6 +18,12 @@ const lint: CustomLint = {
   id: "too-many-colors-built-in",
   blameMode: "single",
   subscribedFix: "fixMaxColors",
+  expectedPassingTests: [
+    makePalFromString(["#000000", "#ffffff", "#ff0000", "#00ff00", "#0000ff"]),
+  ],
+  expectedFailingTests: [
+    makePalFromString([...new Array(20)].map(() => "#000000")),
+  ],
 };
 export default lint;
 

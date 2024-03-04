@@ -56,6 +56,11 @@ export const DEMOS = [
     title: "Grid",
     filename: "./examples/grid-heatmap.json",
   },
+  {
+    type: "vega",
+    title: "Circle Pack",
+    filename: "./examples/colorpack.json",
+  },
 ];
 
 export function modifySVGForExampleStore(

@@ -71,6 +71,16 @@
   $: examples = $exampleStore.examples as any;
   $: hiddenExamples = $exampleStore.examples.filter((x: any) => x.hidden);
   $: numberHidden = hiddenExamples.length;
+
+  const navNameMap = {
+    svg: "SVG",
+    vega: "Visualizations (via Vega)",
+    swatches: "Swatches",
+  } as any;
+  const navNameMapRev = Object.keys(navNameMap).reduce((acc, key) => {
+    acc[navNameMap[key]] = key;
+    return acc;
+  }, {} as any);
 </script>
 
 <div class="flex flex-col items-center bg-stone-300 px-4 py-2">
@@ -150,11 +160,12 @@
     {/if}
   </div>
   <Nav
-    tabs={["svg", "vega", "swatches"]}
-    isTabSelected={(x) => x === $configStore.exampleRoute}
+    tabs={Object.values(navNameMap)}
+    isTabSelected={(x) => navNameMapRev[x] === $configStore.exampleRoute}
     selectTab={(x) => {
-      //@ts-ignore
-      configStore.setExampleRoute(x);
+      const val = Object.keys(navNameMapRev).find((key) => key === x);
+      // @ts-ignore
+      configStore.setExampleRoute(navNameMapRev[val]);
     }}
   />
 </div>

@@ -34,12 +34,12 @@
     {
       name: "Saturate",
       effect: (color) =>
-        color.toColorIO().set("lch.c", (c) => clamp(c ? c * 1.2 : 5, 0, 150))
+        color.toColorIO().set("hsl.s", (c) => clamp(c ? c * 1.2 : 5, 0, 100))
           .coords,
     },
     {
       name: "Desaturate",
-      effect: (color) => color.toColorIO().set("lch.c", (c) => c * 0.8).coords,
+      effect: (color) => color.toColorIO().set("hsl.s", (c) => c * 0.8).coords,
     },
     {
       name: "Convert To Opposing",

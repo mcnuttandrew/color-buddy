@@ -52,8 +52,8 @@ export function deDup(arr: Color[]): Color[] {
 
 export function clipToGamut(color: Color): [number, number, number] {
   if (color.inGamut()) {
-    console.log("branch a");
-    const channels = Object.entries(color.domains).map(([key, domain]) => {
+    const space = color.constructor as typeof Color;
+    const channels = Object.entries(space.domains).map(([key, domain]) => {
       const [min, max] = domain.sort();
       return clamp(color.channels[key], min, max);
     });

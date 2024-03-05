@@ -553,7 +553,7 @@ test("LintLanguage Avoid Extreme Colors", () => {
     },
   };
   expect(prettyPrintLL(program)).toBe(
-    "ALL a in colors, ALL b in ([#000, #fff]), a != b"
+    "ALL a in colors, ALL b in ([#000000, #ffffff]), a != b"
   );
   const { result, blame } = LLEval(program, greens);
   expect(result).toBe(true);
@@ -581,7 +581,7 @@ test("LintLanguage Avoid Extreme Colors Swapped Predicate Order (blame test)", (
     },
   };
   expect(prettyPrintLL(program)).toBe(
-    "ALL a in ([#000, #fff]), ALL b in colors, a != b"
+    "ALL a in ([#000000, #ffffff]), ALL b in colors, a != b"
   );
   const { result, blame } = LLEval(program, greens);
   expect(result).toBe(true);
@@ -835,5 +835,19 @@ test("LintLanguage Fair Weighting", () => {
   const pal = toPal(["#350d00", "#00f300", "#55e1ff", "#f4bcff"]);
   const result = LLEval(program, pal, { debugCompare: false });
   expect(result.result).toBe(false);
+  expect(result.blame).toStrictEqual([]);
+});
+
+test("LintLanguage Name Check", () => {
+  const program = {
+    "==": {
+      left: { name: "#f00" },
+      right: "red",
+    },
+  };
+  const astString = prettyPrintLL(program);
+  expect(astString).toBe("name(#f00) == red");
+  const result = LLEval(program, toPal([]));
+  expect(result.result).toBe(true);
   expect(result.blame).toStrictEqual([]);
 });

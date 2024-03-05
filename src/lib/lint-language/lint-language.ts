@@ -293,7 +293,7 @@ export class LLVariable extends LLNode {
 }
 
 export class LLColor extends LLNode {
-  constructor(private value: Color) {
+  constructor(private value: Color, private constructorString: string) {
     super();
   }
   evaluate(env: Environment): ReturnVal<Color> {
@@ -302,15 +302,16 @@ export class LLColor extends LLNode {
   }
   static tryToConstruct(value: any, options: OptionsConfig): false | LLColor {
     if (value instanceof Color) {
-      return new LLColor(value);
+      return new LLColor(value, value.toHex());
     }
     if (typeof value === "string" && Color.stringIsColor(value, "lab")) {
-      return new LLColor(Color.colorFromString(value, "lab"));
+      return new LLColor(Color.colorFromString(value, "lab"), value);
     }
     return false;
   }
   toString(): string {
-    return this.value.toHex();
+    return this.constructorString;
+    // return this.value.toHex();
   }
 }
 
@@ -423,8 +424,14 @@ function compareValues(
       return left < right;
   }
 }
-const getType = (x: any) =>
-  typeof x === "object" ? (Array.isArray(x) ? "Array" : "object") : typeof x;
+const getType = (x: any) => {
+  if (x instanceof Color) return "Color";
+  return typeof x === "object"
+    ? Array.isArray(x)
+      ? "Array"
+      : "object"
+    : typeof x;
+};
 export class LLPredicate extends LLNode {
   constructor(
     public type: (typeof predicateTypes)[number],
@@ -442,7 +449,12 @@ export class LLPredicate extends LLNode {
     let rightEval = right.evaluate(env).result;
     const leftType = getType(leftEval);
     const rightType = getType(rightEval);
-    if (leftType !== rightType) {
+    // allow comparing colors and strings
+    if (leftType === "string" && rightType === "Color") {
+      rightEval = right.toString();
+    } else if (leftType === "Color" && rightType === "string") {
+      leftEval = left.toString();
+    } else if (leftType !== rightType) {
       throw new Error(
         `Type error on predicate "${this.type}": left and right types must be the same. 
         Got ${leftType} and ${rightType}`
@@ -535,7 +547,7 @@ const VFTypes = [
   {
     primaryKey: "name",
     params: [] as string[],
-    op: (val: Color, _params: Params) => getName(val),
+    op: (val: Color, _params: Params) => getName(val).toLowerCase(),
   },
   {
     primaryKey: "toColor",

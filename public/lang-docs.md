@@ -185,7 +185,7 @@ Program:
 
 Description: Palettes that seek to be playful should have at least one light blue, beige, or gray.  See "Affective color in visualization" for more.
 
-Natural Language: EXIST c in colors, (similar(c, #add8e6) < 20 or similar(c, #f5f5dc) < 20 or similar(c, #808080) < 20)
+Natural Language: EXIST c in colors, (similar(c, lightblue) < 20 or similar(c, beige) < 20 or similar(c, gray) < 20)
 
 
 Program:
@@ -216,7 +216,7 @@ Program:
 
 Description: Palettes that seek to be positive should not have dark reds or browns.  See "Affective color in visualization" for more.
 
-Natural Language: ALL c in colors, NOT (similar(c, #8b0000) < 20 or similar(c, #a52a2a) < 20)
+Natural Language: ALL c in colors, NOT (similar(c, darkred) < 20 or similar(c, brown) < 20)
 
 
 Program:
@@ -248,7 +248,7 @@ Program:
 
 Description: Palettes that seek to be negative should not have light colors, particularly greens.  See "Affective color in visualization" for more.
 
-Natural Language: ALL c in colors, NOT (similar(c, #008000) < 20 or lab.l(c) > 70)
+Natural Language: ALL c in colors, NOT (similar(c, green) < 20 or lab.l(c) > 70)
 
 
 Program:
@@ -1013,7 +1013,7 @@ Program:
 
 Description: Colors at either end of the lightness spectrum can be hard to discriminate in some contexts, and are sometimes advised against. See https://blog.datawrapper.de/beautifulcolors/#6 for more.
 
-Natural Language: ALL a in colors, ALL b in ([#000, #fff, #00f, #f00, #0f0]), NOT a == b
+Natural Language: ALL a in colors, ALL b in ([#000000, #ffffff, #0000ff, #ff0000, #00ff00]), NOT a == b
 
 Palettes that will fail this test:
 
@@ -1400,7 +1400,7 @@ Program:
 
 Description: Colors that are close to what are known as ugly colors are sometimes advised against. See https://www.colourlovers.com/palette/1416250/The_Ugliest_Colors for more details.
 
-Natural Language: ALL a in colors, ALL b in ([#56ff00, #0010ff, #6a7e25, #ff00ef, #806e28]), deltaE(a, b, 2000) > 10
+Natural Language: ALL a in colors, ALL b in ([#56FF00, #0010FF, #6A7E25, #FF00EF, #806E28]), deltaE(a, b, 2000) > 10
 
 Palettes that will fail this test:
 

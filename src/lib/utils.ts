@@ -249,7 +249,7 @@ export function newGenericPal(name: string): StringPalette {
   return {
     ...defaultHexPal,
     name,
-    colors: pick(outfits),
+    colors: pick(outfits).map((x: string) => wrapInBlankStringSemantics(x)),
   };
 }
 export function makePalFromString(

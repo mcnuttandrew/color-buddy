@@ -41,7 +41,7 @@ function serializePalette(pal: Palette): StringPalette {
     background: pal.background.toString(),
     colors: pal.colors.map((x) => ({
       ...x,
-      color: x.toString(),
+      color: x.color.toString(),
     })),
   };
 }
@@ -51,10 +51,10 @@ function deserializePalette(pal: StringPalette): Palette {
     ...pal,
     background: Color.colorFromString(pal.background, pal.colorSpace),
     colors: pal.colors.map((x) => {
-      const color = Color.colorFromString(x.color, pal.colorSpace);
-      if (typeof x.color === "string") {
-        return wrapInBlankSemantics(color);
+      if (typeof x === "string") {
+        return wrapInBlankSemantics(Color.colorFromString(x, pal.colorSpace));
       }
+      const color = Color.colorFromString(x.color, pal.colorSpace);
       return { ...x, color };
     }),
   };

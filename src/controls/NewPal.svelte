@@ -26,7 +26,7 @@
   function newPal(newPal: StringPalette) {
     const colors = newPal.colors.map((x) => {
       const color = Color.colorFromString(x.color, colorSpace);
-      return { ...x, color };
+      return wrapInBlankSemantics(color);
     });
     const pal = {
       ...newPal,

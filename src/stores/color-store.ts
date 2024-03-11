@@ -1,6 +1,6 @@
 import { writable } from "svelte/store";
 import { Color } from "../lib/Color";
-import { deDup, newGenericPal, wrapInBlankStringSemantics } from "../lib/utils";
+import { deDup, newGenericPal, wrapInBlankSemantics } from "../lib/utils";
 
 import type {
   Palette,
@@ -27,12 +27,11 @@ function stringPalToColorPal(pal: StringPalette): Palette {
     ...pal,
     background: Color.colorFromString(pal.background, pal.colorSpace),
     colors: pal.colors.map((x) => {
-      let colorWrap = x;
-      const color = Color.colorFromString(x.color, pal.colorSpace);
       // catch old versions
       if (typeof x === "string") {
-        colorWrap = wrapInBlankStringSemantics(x);
+        return wrapInBlankSemantics(Color.colorFromString(x, pal.colorSpace));
       }
+      const color = Color.colorFromString(x.color, pal.colorSpace);
       return { ...x, color };
     }),
   };

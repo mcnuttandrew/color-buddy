@@ -169,7 +169,10 @@ export function lint(pal: Palette, computeMessage: boolean) {
     content: JSON.stringify({
       ...pal,
       background: pal.background.toString(),
-      colors: pal.colors.map((x) => x.color.toString()),
+      colors: pal.colors.map((x) => ({
+        ...x,
+        color: x.color.toString(),
+      })),
     }),
   }).then((x) => {
     return x as unknown as any[];

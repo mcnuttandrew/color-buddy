@@ -9,18 +9,18 @@
   $: focusedColorIdx = $focusStore.focusedColors[0];
   $: currentColor = currentPalette.colors[focusedColorIdx];
 
-  // const updateTags = (updatedTags: string[]) =>
-  //   updateSemantics({ ...semantics, tags: updatedTags });
-  // const updateSize = (size: (typeof sizes)[number]) =>
-  //   updateSemantics({ ...semantics, size });
+  const updateTags = (updatedTags: string[]) =>
+    updateSemantics({ ...currentColor, tags: updatedTags });
+  const updateSize = (size: (typeof sizes)[number]) =>
+    updateSemantics({ ...currentColor, size });
 
-  // const updateMarkType = (markType: (typeof markTypes)[number]) =>
-  //   updateSemantics({ ...semantics, markType });
-  // function updateSemantics(updatedSemantics: typeof semantics) {
-  //   const newSemantics = [...currentPalette.colorSemantics];
-  //   newSemantics[focusedColorIdx] = updatedSemantics;
-  //   colorStore.updateColorSemantics(newSemantics);
-  // }
+  const updateMarkType = (markType: (typeof markTypes)[number]) =>
+    updateSemantics({ ...currentColor, markType });
+  function updateSemantics(updatedColor: typeof currentColor) {
+    const updatedColors = [...currentPalette.colors];
+    updatedColors[focusedColorIdx] = updatedColor;
+    colorStore.setCurrentPalColors(updatedColors);
+  }
   let tagInput = "";
   const sizes = [undefined, "small", "medium", "large"] as const;
   const markTypes = [
@@ -38,22 +38,22 @@
 <div class="italic text-sm">
   These to mark properties like color, brand, and so on
 </div>
-
-<!-- <form
+<form
   on:submit|preventDefault|stopPropagation={() => {
-    updateTags([...semantics.tags, tagInput]);
+    updateTags([...currentColor.tags, tagInput]);
     tagInput = "";
   }}
 >
   <input type="text" placeholder="Add tag" bind:value={tagInput} />
 </form>
+
 <div class="flex">
-  {#each semantics.tags as tag}
+  {#each currentColor.tags as tag}
     <div class={buttonStyle}>
       {tag}
       <button
         on:click={() => {
-          updateTags(semantics.tags.filter((x) => x !== tag));
+          updateTags(currentColor.tags.filter((x) => x !== tag));
         }}
       >
         ✕
@@ -63,7 +63,7 @@
 </div>
 <div class="text-sm">Object for this color</div>
 <select
-  value={semantics.markType}
+  value={currentColor.markType}
   on:change={(e) => {
     // @ts-ignore
     updateMarkType(e.currentTarget.value);
@@ -76,7 +76,7 @@
 
 <div class="text-sm">Size of color</div>
 <select
-  value={semantics.size}
+  value={currentColor.size}
   on:change={(e) => {
     // @ts-ignore
     updateSize(e.currentTarget.value);
@@ -85,4 +85,4 @@
   {#each sizes as option}
     <option value={option}>{option}</option>
   {/each}
-</select> -->
+</select>

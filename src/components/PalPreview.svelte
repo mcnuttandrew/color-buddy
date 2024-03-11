@@ -9,7 +9,6 @@
   import { dealWithFocusEvent } from "../lib/utils";
 
   $: focusSet = new Set($focusStore.focusedColors);
-  console.log("todo tag presentation", pal);
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
@@ -30,7 +29,7 @@
           class={"w-6 h-6 mx-2 rounded-full transition-all"}
           class:w-8={highlightSelected && focusSet.has(idx)}
           class:h-8={highlightSelected && focusSet.has(idx)}
-          class:mb-5={highlightSelected && !focusSet.has(idx)}
+          class:mb-3={highlightSelected && !focusSet.has(idx)}
           style="background-color: {color.color.toDisplay()}"
         ></button>
       {:else}

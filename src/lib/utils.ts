@@ -1,5 +1,5 @@
 import { Color, colorPickerConfig } from "./Color";
-import type { Palette, StringPalette } from "../types";
+import type { Palette, StringPalette, ColorWrap } from "../types";
 import type { LintProgram } from "./lint-language/lint-type";
 import { Formatter, FracturedJsonOptions, EolStyle } from "fracturedjsonjs";
 import fits from "../assets/outfits.json";
@@ -42,10 +42,10 @@ export function avgColors(
   return Color.colorFromChannels(avgColor, colorSpace as any);
 }
 
-export function deDup(arr: Color[]): Color[] {
+export function deDup(arr: ColorWrap<Color>[]): ColorWrap<Color>[] {
   const seen = new Set();
   return arr.filter((item) => {
-    const k = item.toHex();
+    const k = item.color.toHex();
     return seen.has(k) ? false : seen.add(k);
   });
 }
@@ -221,10 +221,24 @@ export const makePal = (
   };
 };
 
+export const wrapInBlankSemantics = (x: Color): ColorWrap<Color> => ({
+  color: x,
+  markType: undefined,
+  size: undefined,
+  tags: [],
+});
+
+export const wrapInBlankStringSemantics = (x: string): ColorWrap<string> => ({
+  color: x,
+  markType: undefined,
+  size: undefined,
+  tags: [],
+});
+
 export function createPalFromHexes(colors: string[]): StringPalette {
   return {
     ...defaultHexPal,
-    colors,
+    colors: colors.map((x) => wrapInBlankStringSemantics(x)),
   };
 }
 const outfitToPal = (x: any) => [x.fill1, x.fill2, x.fill3];
@@ -242,7 +256,9 @@ export function makePalFromString(
 ): Palette {
   return {
     ...defaultHexPal,
-    colors: strings.map((str) => Color.colorFromString(str, "lab")),
+    colors: strings.map((str) =>
+      wrapInBlankSemantics(Color.colorFromString(str))
+    ),
     background: Color.colorFromString(bg, "lab"),
   };
 }
@@ -254,7 +270,9 @@ export const toPal = (
 ): Palette => {
   return {
     ...defaultHexPal,
-    colors: colors.map((x) => Color.colorFromString(x, colorSpace)),
+    colors: colors.map((x) =>
+      wrapInBlankSemantics(Color.colorFromString(x, colorSpace))
+    ),
     name: "mods",
     background: currentPal.background,
     type: currentPal.type,
@@ -277,7 +295,7 @@ type selectColorsFromDrag = (
   dragBox: { x: number; y: number },
   dragging: { x: number; y: number },
   parentPos: { x: number; y: number },
-  colors: Color[],
+  colors: ColorWrap<Color>[],
   config: {
     isPolar: boolean;
     plotHeight: number;
@@ -386,13 +404,13 @@ export function makeScales(
 
 type dragEventToColor = (
   e: any,
-  originalColor: Color,
+  originalColor: ColorWrap<Color>,
   originalPos: { x: number; y: number },
   config: (typeof colorPickerConfig)[string],
   scales: ReturnType<typeof makeScales>,
   colorSpace: any,
   dragDelta: { x: number; y: number }
-) => Color;
+) => ColorWrap<Color>;
 export const dragEventToColorZ: dragEventToColor = (
   e,
   originalColor,
@@ -404,13 +422,16 @@ export const dragEventToColorZ: dragEventToColor = (
 ) => {
   const { zInv, z } = scales;
   const screenPosDelta = toXY(e).y - originalPos.y + dragDelta.y;
-  const coords = originalColor.toChannels();
+  const coords = originalColor.color.toChannels();
   const zClamp = (v: number) => clampToRange(v, config.zDomain);
   coords[config.zChannelIndex] = zClamp(
-    zInv(z(originalColor) + screenPosDelta)
+    zInv(z(originalColor.color) + screenPosDelta)
   );
 
-  return Color.colorFromChannels(coords, colorSpace);
+  return {
+    ...originalColor,
+    color: Color.colorFromChannels(coords, colorSpace),
+  };
 };
 
 export const dragEventToColorXY: dragEventToColor = (
@@ -433,18 +454,21 @@ export const dragEventToColorXY: dragEventToColor = (
   const yClamp = (v: number) => clampToRange(v, config.yDomain);
   // screen coordinates
   const newPos = [
-    x(originalColor) + screenPosDelta.x,
-    y(originalColor) + screenPosDelta.y,
+    x(originalColor.color) + screenPosDelta.x,
+    y(originalColor.color) + screenPosDelta.y,
   ];
   // color space coordinates
   const newVal = [
     xClamp(xInv(newPos[0], newPos[1])),
     yClamp(yInv(newPos[0], newPos[1])),
   ];
-  const coords = originalColor.toChannels();
+  const coords = originalColor.color.toChannels();
   coords[config.xChannelIndex] = newVal[0];
   coords[config.yChannelIndex] = newVal[1];
-  return Color.colorFromChannels(coords, colorSpace);
+  return {
+    ...originalColor,
+    color: Color.colorFromChannels(coords, colorSpace),
+  };
 };
 
 export const screenSpaceAvg = (colors: { x: number; y: number }[]) => {

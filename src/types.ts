@@ -15,7 +15,7 @@ export const contexts = ["scatterplot", "linechart", "barchart", "dashboard"];
 
 export type Context = (typeof contexts)[number];
 
-// Todo make this connect witht the color system
+// Todo make this connect with the color system
 export type ColorSpace =
   | "lab"
   | "hsl"
@@ -28,22 +28,28 @@ export type ColorSpace =
   | "srgb";
 
 // pretty nervous about the role stuff bc it will mean a lot of index manipulation to keep things straight when things get reordered
-type ColorSemantics = {
-  role?: "background" | "text" | "accent" | "de-emphasize" | "main";
-  size?: "small" | "medium" | "large";
-  // what does main mean?
-  use?: "main" | "accent" | "de-emphasize";
+export type ColorWrap<A> = {
+  markType:
+    | undefined
+    | "line"
+    | "point"
+    | "bar"
+    | "area"
+    | "text"
+    | "background";
+  size: undefined | "small" | "medium" | "large";
+  tags: string[];
+  color: A;
 };
 type Pal<A> = {
   background: A;
   colorSpace: ColorSpace;
-  colors: A[];
+  colors: ColorWrap<A>[];
   evalConfig: Record<string, any>;
-  name: string;
-  type: PalType;
   intendedAffects: Affect[];
   intendedContexts: Context[];
-  // todo: colorRole: Role[]
+  name: string;
+  type: PalType;
 };
 export type PalType = "sequential" | "diverging" | "categorical";
 export type Palette = Pal<Color>;

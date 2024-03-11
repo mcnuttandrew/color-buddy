@@ -65,7 +65,7 @@
     stopDragging={() => colorStore.resumePersistance()}
     blindColors={selectedBlindType === "none"
       ? []
-      : currentPal.colors.map((x) => simulate_cvd(selectedBlindType, x))}
+      : currentPal.colors.map((x) => simulate_cvd(selectedBlindType, x.color))}
   />
 
   <div class="flex flex-wrap">
@@ -83,9 +83,10 @@
   <div class="flex flex-col pl-2">
     <!-- overview / preview -->
     <PalPreview
+      allowModification={true}
       highlightSelected={true}
       pal={currentPal}
-      allowModification={true}
+      showTags={true}
     />
     <Nav
       tabs={["palette-config", "example"]}

@@ -10,24 +10,40 @@ const toPal = (colors: string[]): Palette => ({
   colorSpace: "lab",
   evalConfig: {},
   background: toColors(["#fff"])[0],
-  colors: toColors(colors),
+  colors: toColorWithSemantics(colors),
   intendedAffects: [],
   intendedContexts: [],
 });
-const toColors = (colors: string[]): Color[] =>
+const wrapWithSemantics = (color: Color) => ({
+  size: undefined,
+  markType: undefined,
+  tags: [],
+  color,
+});
+const toColors = (colors: string[]) =>
   colors.map((x) => Color.colorFromString(x, "lab"));
+const toColorWithSemantics = (colors: string[]) =>
+  colors.map((x) => wrapWithSemantics(Color.colorFromString(x, "lab")));
 const exampleColors = toPal(["#d4a8ff", "#7bb9ff", "#008694"]);
 
 test("LintLanguage basic eval - eval with no references ", () => {
   const prog1: LintProgram = {
-    "<": { left: { count: exampleColors.colors }, right: 2 },
+    "<": {
+      left: { count: exampleColors.colors.map((x) => x.color) },
+      right: 2,
+    },
   };
   expect(prettyPrintLL(prog1)).toBe("count([#d4a8ff, #7bb9ff, #008694]) < 2");
   expect(LLEval(prog1, exampleColors).result).toBe(false);
 });
 
 test("LintLanguage basic eval - eval with no references 2 ", () => {
-  const prog2 = { "<": { left: { count: exampleColors.colors }, right: 10 } };
+  const prog2 = {
+    "<": {
+      left: { count: exampleColors.colors.map((x) => x.color) },
+      right: 10,
+    },
+  };
   const prog2Result = LLEval(prog2, exampleColors);
   expect(prog2Result.result).toBe(true);
   expect(prog2Result.blame).toStrictEqual([]);

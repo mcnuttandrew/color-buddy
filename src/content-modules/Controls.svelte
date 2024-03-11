@@ -5,14 +5,15 @@
 
   import { Color } from "../lib/Color";
 
-  import AlignSelection from "../controls/AlignSelection.svelte";
-  import SuggestionModificationToSelection from "../controls/SuggestionModificationToSelection.svelte";
-  import InterpolatePoints from "../controls/InterpolatePoints.svelte";
-  import DistributePoints from "../controls/DistributePoints.svelte";
-  import AdjustColor from "../controls/AdjustColor.svelte";
   import AddColor from "../controls/AddColor.svelte";
+  import AdjustColor from "../controls/AdjustColor.svelte";
+  import AlignSelection from "../controls/AlignSelection.svelte";
   import ColorChannelPicker from "../components/ColorChannelPicker.svelte";
+  import ColorTagger from "../controls/ColorTagger.svelte";
+  import DistributePoints from "../controls/DistributePoints.svelte";
+  import InterpolatePoints from "../controls/InterpolatePoints.svelte";
   import Rotate from "../controls/Rotate.svelte";
+  import SuggestionModificationToSelection from "../controls/SuggestionModificationToSelection.svelte";
 
   $: currentPal = $colorStore.palettes[$colorStore.currentPal];
   $: colors = currentPal.colors;
@@ -51,6 +52,7 @@
         colorStore.setCurrentPalColors(updatedColors);
       }}
     />
+    <ColorTagger />
   {/if}
 
   <DistributePoints />

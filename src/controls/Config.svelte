@@ -53,6 +53,11 @@
                 colors: colors.map((c: string) =>
                   Color.colorFromString(c, colorSpace)
                 ),
+                colorSemantics: colors.map(() => ({
+                  size: undefined,
+                  markType: undefined,
+                  tags: [],
+                })),
                 evalConfig: {},
                 name,
                 type,

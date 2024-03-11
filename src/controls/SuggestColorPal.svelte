@@ -25,6 +25,11 @@
         suggestion.background,
         colorSpace as any
       ),
+      colorSemantics: suggestion.colors.map(() => ({
+        size: undefined,
+        markType: undefined,
+        tags: [],
+      })),
       name: palPrompt,
       type: "categorical",
       evalConfig: {},

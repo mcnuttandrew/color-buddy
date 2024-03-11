@@ -92,10 +92,10 @@ test("ColorLint - ColorNameDiscriminability", async () => {
   );
   const fix = await suggestLintFix(examplePal, exampleLint);
   const oldColorNames = unique<string>(
-    examplePal.colors.map((x) => getName(x))
+    examplePal.colors.map((x) => getName(x.color))
   );
   expect(oldColorNames.length).toBe(1);
-  const colorNames = unique<string>(fix[0].colors.map((x) => getName(x)));
+  const colorNames = unique<string>(fix[0].colors.map((x) => getName(x.color)));
   expect(colorNames.length).toBe(2);
 });
 
@@ -148,7 +148,7 @@ test("ColorLint - Background Contrast", async () => {
     "These colors (#fdfdfc) do not have a sufficient contrast ratio with the background and may be hard to discriminate in some contexts."
   );
   const fix = await suggestLintFix(examplePal, exampleLint).then((x) => x[0]);
-  expect(fix.colors.map((x) => x.toHex())).toMatchSnapshot();
+  expect(fix.colors.map((x) => x.color.toHex())).toMatchSnapshot();
 
   examplePal.background = Color.colorFromHex("#00e4ff", "lab");
   const exampleLint2 = new BackgroundContrastLint(examplePal).run();
@@ -157,7 +157,7 @@ test("ColorLint - Background Contrast", async () => {
     "These colors (#00e4ff) do not have a sufficient contrast ratio with the background and may be hard to discriminate in some contexts."
   );
   const fix2 = await suggestLintFix(examplePal, exampleLint2).then((x) => x[0]);
-  expect(fix2.colors.map((x) => x.toHex())).toMatchSnapshot();
+  expect(fix2.colors.map((x) => x.color.toHex())).toMatchSnapshot();
   autoTest(BackgroundContrast);
 });
 

@@ -1,0 +1,88 @@
+<script lang="ts">
+  import focusStore from "../stores/focus-store";
+  import colorStore from "../stores/color-store";
+
+  import { buttonStyle } from "../lib/styles";
+
+  $: currentPalette = $colorStore.palettes[$colorStore.currentPal];
+  // guaranteed to be a single value by usage context
+  $: focusedColorIdx = $focusStore.focusedColors[0];
+  $: semantics = currentPalette.colorSemantics[focusedColorIdx];
+
+  const updateTags = (updatedTags: string[]) =>
+    updateSemantics({ ...semantics, tags: updatedTags });
+  const updateSize = (size: (typeof sizes)[number]) =>
+    updateSemantics({ ...semantics, size });
+
+  const updateMarkType = (markType: (typeof markTypes)[number]) =>
+    updateSemantics({ ...semantics, markType });
+  function updateSemantics(updatedSemantics: typeof semantics) {
+    const newSemantics = [...currentPalette.colorSemantics];
+    newSemantics[focusedColorIdx] = updatedSemantics;
+    colorStore.updateColorSemantics(newSemantics);
+  }
+  let tagInput = "";
+  const sizes = [undefined, "small", "medium", "large"] as const;
+  const markTypes = [
+    undefined,
+    "line",
+    "point",
+    "bar",
+    "area",
+    "text",
+    "background",
+  ] as const;
+</script>
+
+<div class="font-bold">Tags</div>
+<div class="italic text-sm">
+  These to mark properties like color, brand, and so on
+</div>
+
+<form
+  on:submit|preventDefault|stopPropagation={() => {
+    updateTags([...semantics.tags, tagInput]);
+    tagInput = "";
+  }}
+>
+  <input type="text" placeholder="Add tag" bind:value={tagInput} />
+</form>
+<div class="flex">
+  {#each semantics.tags as tag}
+    <div class={buttonStyle}>
+      {tag}
+      <button
+        on:click={() => {
+          updateTags(semantics.tags.filter((x) => x !== tag));
+        }}
+      >
+        ✕
+      </button>
+    </div>
+  {/each}
+</div>
+<div class="text-sm">Object for this color</div>
+<select
+  value={semantics.markType}
+  on:change={(e) => {
+    // @ts-ignore
+    updateMarkType(e.currentTarget.value);
+  }}
+>
+  {#each markTypes as option}
+    <option value={option}>{option}</option>
+  {/each}
+</select>
+
+<div class="text-sm">Size of color</div>
+<select
+  value={semantics.size}
+  on:change={(e) => {
+    // @ts-ignore
+    updateSize(e.currentTarget.value);
+  }}
+>
+  {#each sizes as option}
+    <option value={option}>{option}</option>
+  {/each}
+</select>

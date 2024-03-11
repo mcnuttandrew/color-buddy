@@ -2,7 +2,7 @@ import * as idb from "idb-keyval";
 import { runLintChecks } from "../linter";
 import { prettyPrintLL } from "../lint-language/lint-language";
 import type { CustomLint } from "../CustomLint";
-import type { Palette } from "../../types";
+import type { Palette, StringPalette } from "../../types";
 import { Color } from "../Color";
 import type { LintResult } from "../ColorLint";
 
@@ -23,10 +23,13 @@ const getColor = (hex: string, space: string): Color => {
 };
 
 const hydratePal = (pal: string): Palette => {
-  const parsed = JSON.parse(pal);
+  const parsed = JSON.parse(pal) as StringPalette;
   return {
     background: getColor(parsed.background, parsed.colorSpace),
-    colors: parsed.colors.map((x: string) => getColor(x, parsed.colorSpace)),
+    colors: parsed.colors.map((x) => ({
+      ...x,
+      color: getColor(x.color, parsed.colorSpace),
+    })),
     type: parsed.type,
     colorSpace: parsed.colorSpace,
     name: parsed.name,

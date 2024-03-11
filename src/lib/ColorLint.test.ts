@@ -120,7 +120,7 @@ test("ColorLint - Gamut", async () => {
   expect(exampleLint.message).toMatchSnapshot();
 
   const fix = await suggestLintFix(examplePal, exampleLint);
-  expect(fix[0].colors.map((x) => x.toString())).toStrictEqual([
+  expect(fix[0].colors.map((x) => x.color.toString())).toStrictEqual([
     "lab(48.319% -27.81 -14.373)",
   ]);
 });

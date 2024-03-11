@@ -7,20 +7,20 @@
   $: currentPalette = $colorStore.palettes[$colorStore.currentPal];
   // guaranteed to be a single value by usage context
   $: focusedColorIdx = $focusStore.focusedColors[0];
-  $: semantics = currentPalette.colorSemantics[focusedColorIdx];
+  $: currentColor = currentPalette.colors[focusedColorIdx];
 
-  const updateTags = (updatedTags: string[]) =>
-    updateSemantics({ ...semantics, tags: updatedTags });
-  const updateSize = (size: (typeof sizes)[number]) =>
-    updateSemantics({ ...semantics, size });
+  // const updateTags = (updatedTags: string[]) =>
+  //   updateSemantics({ ...semantics, tags: updatedTags });
+  // const updateSize = (size: (typeof sizes)[number]) =>
+  //   updateSemantics({ ...semantics, size });
 
-  const updateMarkType = (markType: (typeof markTypes)[number]) =>
-    updateSemantics({ ...semantics, markType });
-  function updateSemantics(updatedSemantics: typeof semantics) {
-    const newSemantics = [...currentPalette.colorSemantics];
-    newSemantics[focusedColorIdx] = updatedSemantics;
-    colorStore.updateColorSemantics(newSemantics);
-  }
+  // const updateMarkType = (markType: (typeof markTypes)[number]) =>
+  //   updateSemantics({ ...semantics, markType });
+  // function updateSemantics(updatedSemantics: typeof semantics) {
+  //   const newSemantics = [...currentPalette.colorSemantics];
+  //   newSemantics[focusedColorIdx] = updatedSemantics;
+  //   colorStore.updateColorSemantics(newSemantics);
+  // }
   let tagInput = "";
   const sizes = [undefined, "small", "medium", "large"] as const;
   const markTypes = [
@@ -39,7 +39,7 @@
   These to mark properties like color, brand, and so on
 </div>
 
-<form
+<!-- <form
   on:submit|preventDefault|stopPropagation={() => {
     updateTags([...semantics.tags, tagInput]);
     tagInput = "";
@@ -85,4 +85,4 @@
   {#each sizes as option}
     <option value={option}>{option}</option>
   {/each}
-</select>
+</select> -->

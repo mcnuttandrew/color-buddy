@@ -54,7 +54,7 @@ export const fixBackgroundDifferentiability: LintFixer = async (palette) => {
   const clamp = (x: number) => Math.max(0, Math.min(100, x));
   const newL = clamp(!bgCloserToWhite ? backgroundL * 1.5 : backgroundL * 0.5);
   const colorsCloseToBackground = getColorsCloseToBackground(
-    colors,
+    colors.map((x) => x.color),
     background
   );
   const newColors = colors.map((x, idx) => {
@@ -62,12 +62,15 @@ export const fixBackgroundDifferentiability: LintFixer = async (palette) => {
       return x;
     }
     const color = colors[idx];
-    const newColor = Color.toColorSpace(color, "lab");
+    const newColor = Color.toColorSpace(color.color, "lab");
     const [_l, a, b] = newColor.toChannels();
-    return Color.toColorSpace(
-      newColor.fromChannels([newL, a, b]),
-      colorSpace as any
-    );
+    return {
+      ...x,
+      color: Color.toColorSpace(
+        newColor.fromChannels([newL, a, b]),
+        colorSpace as any
+      ),
+    };
   });
   return [{ ...palette, colors: newColors }];
 };

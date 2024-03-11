@@ -35,7 +35,7 @@ class Environment {
   get(name: string) {
     if (name === "colors") {
       const children = this.palette.colors
-        .map((x) => new LLColor(x, x.toHex()))
+        .map((x) => new LLColor(x.color, x.color.toHex()))
         .map((x) => new LLValue(x));
       return new LLValueArray(children);
     }

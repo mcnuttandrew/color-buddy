@@ -9,6 +9,7 @@
   import { dealWithFocusEvent } from "../lib/utils";
 
   $: focusSet = new Set($focusStore.focusedColors);
+  console.log("todo tag presentation", pal);
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
@@ -30,20 +31,20 @@
           class:w-8={highlightSelected && focusSet.has(idx)}
           class:h-8={highlightSelected && focusSet.has(idx)}
           class:mb-5={highlightSelected && !focusSet.has(idx)}
-          style="background-color: {color.toDisplay()}"
+          style="background-color: {color.color.toDisplay()}"
         ></button>
       {:else}
         <div
           class={"w-6 h-6 mx-1 rounded-full transition-all"}
           class:w-8={highlightSelected && focusSet.has(idx)}
           class:h-8={highlightSelected && focusSet.has(idx)}
-          style="background-color: {color.toDisplay()}"
+          style="background-color: {color.color.toDisplay()}"
         ></div>
       {/if}
       {#if showTags}
-        <div class="text-xs flex flex-col">
-          {#each pal.colorSemantics[idx].tags as tag}
-            <span>{tag}</span>
+        <div class="flex flex-col text-center">
+          {#each color.tags as tag, idx}
+            <div class="text-xs">{tag}</div>
           {/each}
         </div>
       {/if}

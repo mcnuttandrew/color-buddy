@@ -6,14 +6,14 @@
   import { suggestContextualAdjustments } from "../lib/api-calls";
   import { buttonStyle } from "../lib/styles";
   import PalDiff from "../components/PalDiff.svelte";
-  import { toPal } from "../lib/utils";
+  import { toPal, wrapInBlankSemantics } from "../lib/utils";
 
   let requestState: "idle" | "loading" | "loaded" | "failed" = "idle";
   $: currentPal = $colorStore.palettes[$colorStore.currentPal];
   $: colorSpace = currentPal ? currentPal.colorSpace : "lab";
   $: colors = currentPal.colors;
   $: selectedColors = $focusStore.focusedColors
-    .map((x) => colors[x]?.toHex())
+    .map((x) => colors[x]?.color.toHex())
     .filter((x) => x !== undefined) as string[];
   let suggestedColorSets: string[][] = [];
   let palPrompt: string = "";
@@ -24,7 +24,7 @@
       ? {
           ...currentPal,
           colors: selectedColors.map((x) =>
-            Color.colorFromString(x, colorSpace)
+            wrapInBlankSemantics(Color.colorFromString(x, colorSpace))
           ),
         }
       : currentPal;
@@ -58,20 +58,25 @@
     if (selectedColors.length) {
       let usedSuggestions = new Set<number>([]);
       newColors = colors.map((x, jdx) => {
-        const idx = selectedColors.indexOf(x.toHex());
+        const idx = selectedColors.indexOf(x.color.toHex());
         if (idx === -1) return x;
         usedSuggestions.add(idx);
-        return Color.colorFromString(suggestedColors[idx], colorSpace);
+        return {
+          ...x,
+          color: Color.colorFromString(suggestedColors[idx], colorSpace),
+        };
       });
       const unusedSuggestions = suggestedColors.filter(
         (_, idx) => !usedSuggestions.has(idx)
       );
       newColors = newColors.concat(
-        unusedSuggestions.map((x) => Color.colorFromString(x, colorSpace))
+        unusedSuggestions.map((x) =>
+          wrapInBlankSemantics(Color.colorFromString(x, colorSpace))
+        )
       );
     } else {
       newColors = suggestedColors.map((x) =>
-        Color.colorFromString(x, colorSpace)
+        wrapInBlankSemantics(Color.colorFromString(x, colorSpace))
       );
     }
     colorStore.setCurrentPalColors(newColors);

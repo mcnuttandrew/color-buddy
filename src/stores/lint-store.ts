@@ -10,7 +10,7 @@ import type {
 } from "../types";
 import { Color } from "../lib/Color";
 import type { LintResult } from "../lib/ColorLint";
-import { JSONStringify } from "../lib/utils";
+import { JSONStringify, wrapInBlankSemantics } from "../lib/utils";
 import { BUILT_INS } from "../lib/linter";
 import { loadLints } from "../lib/api-calls";
 
@@ -39,7 +39,10 @@ function serializePalette(pal: Palette): StringPalette {
   return {
     ...pal,
     background: pal.background.toString(),
-    colors: pal.colors.map((x) => x.toString()),
+    colors: pal.colors.map((x) => ({
+      ...x,
+      color: x.toString(),
+    })),
   };
 }
 
@@ -47,7 +50,13 @@ function deserializePalette(pal: StringPalette): Palette {
   return {
     ...pal,
     background: Color.colorFromString(pal.background, pal.colorSpace),
-    colors: pal.colors.map((x) => Color.colorFromString(x, pal.colorSpace)),
+    colors: pal.colors.map((x) => {
+      const color = Color.colorFromString(x.color, pal.colorSpace);
+      if (typeof x.color === "string") {
+        return wrapInBlankSemantics(color);
+      }
+      return { ...x, color };
+    }),
   };
 }
 

@@ -5,7 +5,7 @@
   import { suggestAdditionsToPalette } from "../lib/api-calls";
   import ColorButton from "../components/ColorButton.svelte";
   import AutocompleteOrSearch from "../components/AutocompleteOrSearch.svelte";
-  import { webColors } from "../lib/utils";
+  import { webColors, wrapInBlankSemantics } from "../lib/utils";
 
   $: currentPal = $colorStore.palettes[$colorStore.currentPal];
   $: colors = currentPal.colors;
@@ -51,7 +51,9 @@
     <AutocompleteOrSearch
       setValue={(x) => {
         console.log("x", x);
-        const newColor = Color.colorFromString(x, colorSpace);
+        const newColor = wrapInBlankSemantics(
+          Color.colorFromString(x, colorSpace)
+        );
         const newColors = [...colors, newColor];
         colorStore.setCurrentPalColors(newColors);
       }}
@@ -77,7 +79,9 @@
         <ColorButton
           {color}
           clickColor={() => {
-            const newColor = Color.colorFromString(color, colorSpace);
+            const newColor = wrapInBlankSemantics(
+              Color.colorFromString(color, colorSpace)
+            );
             const newColors = [...colors, newColor];
             colorStore.setCurrentPalColors(newColors);
             interpretations = interpretations.filter((x) => x !== color);

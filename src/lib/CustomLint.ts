@@ -62,12 +62,12 @@ export function CreateCustomLint(props: CustomLint) {
       if (this.blameMode === "pair") {
         blame = (this.checkData as number[][])
           .map((x) =>
-            x.map((x) => this.palette.colors[x].toHex()).join(" and ")
+            x.map((x) => this.palette.colors[x].color.toHex()).join(" and ")
           )
           .join(", ");
       } else {
         blame = (this.checkData as number[])
-          .map((x) => this.palette.colors[x].toHex())
+          .map((x) => this.palette.colors[x].color.toHex())
           .join(", ");
       }
 

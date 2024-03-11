@@ -19,20 +19,20 @@
     let sortedIndexes = focusedColors.sort((a, b) => {
       const modeToIdx = { horizontal: 1, vertical: 2, "in z space": 0 };
       const idx = modeToIdx[dir.direction] || 0;
-      const pointA = colors[a].toChannels()[idx];
-      const pointB = colors[b].toChannels()[idx];
+      const pointA = colors[a].color.toChannels()[idx];
+      const pointB = colors[b].color.toChannels()[idx];
       return pointA - pointB;
     });
     type Channels = [number, number, number];
-    const minPoint = colors[sortedIndexes[0]].toChannels() as Channels;
+    const minPoint = colors[sortedIndexes[0]].color.toChannels() as Channels;
     const maxPoint = colors[
       sortedIndexes[sortedIndexes.length - 1]
-    ].toChannels() as Channels;
+    ].color.toChannels() as Channels;
 
     const numPoints = sortedIndexes.length - 1;
     let newPoints = sortedIndexes.map((colorIdx, arrIdx) => {
       const t = arrIdx / numPoints;
-      const newPoint = colors.at(colorIdx)!.toChannels() as Channels;
+      const newPoint = colors.at(colorIdx)!.color.toChannels() as Channels;
       const xIdx = config.xChannelIndex;
       const yIdx = config.yChannelIndex;
       const zIdx = config.zChannelIndex;
@@ -51,7 +51,9 @@
 
     const newColors = [...colors].map((color, idx) => {
       const point = pointsByIndex[idx];
-      return point ? Color.colorFromChannels(point, colorSpace) : color;
+      return point
+        ? { ...color, color: Color.colorFromChannels(point, colorSpace) }
+        : color;
     });
 
     colorStore.setCurrentPalColors(newColors);

@@ -60,12 +60,12 @@
         on:click={() => {
           const newCoordinate = op(
             ...colors
-              .map((x) => x.toChannels())
+              .map((x) => x.color.toChannels())
               .filter((_, idx) => focusSet.has(idx))
               .map((x) => x[pos])
           );
           const newColors = colors
-            .map((x) => x.toChannels())
+            .map((x) => x.color.toChannels())
             .map((x, idx) => {
               let y = x;
               if (focusSet.has(idx)) {
@@ -73,7 +73,10 @@
               }
               return y;
             })
-            .map((x) => Color.colorFromChannels(x, colorSpace));
+            .map((x, idx) => ({
+              ...colors[idx],
+              color: Color.colorFromChannels(x, colorSpace),
+            }));
 
           colorStore.setCurrentPalColors(newColors);
         }}

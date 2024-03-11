@@ -215,7 +215,9 @@ export const makePal = (
   return {
     ...defaultHexPal,
     name,
-    colors: colors.map((x) => Color.colorFromString(x, colorSpace)),
+    colors: colors.map((x) =>
+      wrapInBlankSemantics(Color.colorFromString(x, colorSpace))
+    ),
     background: Color.colorFromString("#ffffff", colorSpace),
     type,
   };
@@ -320,7 +322,7 @@ export const selectColorsFromDragZ: selectColorsFromDrag = (
   const magicOffset = 15;
   const newFocusedColors = colors
     .map((color, idx) =>
-      between(config.z(color) + magicOffset, yMin, yMax) ? idx : -1
+      between(config.z(color.color) + magicOffset, yMin, yMax) ? idx : -1
     )
     .filter((x) => x !== -1);
   return [...newFocusedColors];
@@ -338,7 +340,7 @@ export const selectColorsFromDrag: selectColorsFromDrag = (
   // check if selected in screen space
   const newFocusedColors = colors
     .map((color, idx) => {
-      let [xVal, yVal] = [config.x(color), config.y(color)];
+      let [xVal, yVal] = [config.x(color.color), config.y(color.color)];
       if (config.isPolar) {
         xVal += config.plotWidth / 2;
         yVal += config.plotHeight / 2;

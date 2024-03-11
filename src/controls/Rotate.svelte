@@ -1,8 +1,8 @@
 <script lang="ts">
+  import type { ColorWrap } from "../types";
   import { Color, colorPickerConfig } from "../lib/Color";
   import colorStore from "../stores/color-store";
   import focusStore from "../stores/focus-store";
-  import { avgColors } from "../lib/utils";
 
   $: focusedColors = $focusStore.focusedColors;
   $: currentPal = $colorStore.palettes[$colorStore.currentPal];
@@ -14,7 +14,7 @@
   $: angle = 0;
 
   $: angle, colorSpace, rotatePoints();
-  $: memorizedColors = false as false | Color[];
+  $: memorizedColors = false as false | ColorWrap<Color>[];
 
   function rotatePoints() {
     if (focusedColors.length === 0) {
@@ -36,7 +36,7 @@
       focusedColors
         .map((x) => localColors[x])
         .map((localColor) => {
-          const color = Color.toColorSpace(localColor, colorSpace);
+          const color = Color.toColorSpace(localColor.color, colorSpace);
           const channels = color.toChannels();
           //   https://math.stackexchange.com/questions/4354438/how-to-rotate-a-point-on-a-cartesian-plane-around-something-other-than-the-origi
 
@@ -88,7 +88,9 @@
         .map((x, y) => [y, x])
     );
     const newColors = localColors.map((x, idx) =>
-      focusedColors.includes(idx) ? rotated[focusedColors.indexOf(idx)] : x
+      focusedColors.includes(idx)
+        ? { ...x, color: rotated[focusedColors.indexOf(idx)] }
+        : x
     );
     colorStore.setCurrentPalColors(newColors);
   }

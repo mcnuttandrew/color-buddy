@@ -1,6 +1,4 @@
 <script lang="ts">
-  import configStore from "../stores/config-store";
-
   import { Color, colorPickerConfig } from "../lib/Color";
   import ColorIO from "colorjs.io";
   export let color: Color;

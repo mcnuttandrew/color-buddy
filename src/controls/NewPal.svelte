@@ -6,7 +6,11 @@
   import focusStore from "../stores/focus-store";
   import Tooltip from "../components/Tooltip.svelte";
   import { buttonStyle, denseButtonStyle } from "../lib/styles";
-  import { newGenericPal, createPalFromHexes } from "../lib/utils";
+  import {
+    newGenericPal,
+    createPalFromHexes,
+    wrapInBlankSemantics,
+  } from "../lib/utils";
   import SuggestColorPal from "./SuggestColorPal.svelte";
 
   import MiniPalPreview from "../components/MiniPalPreview.svelte";
@@ -20,11 +24,13 @@
   );
 
   function newPal(newPal: StringPalette) {
+    const colors = newPal.colors.map((x) => {
+      const color = Color.colorFromString(x.color, colorSpace);
+      return { ...x, color };
+    });
     const pal = {
       ...newPal,
-      colors: newPal.colors.map((x: string) =>
-        Color.colorFromString(x, colorSpace)
-      ),
+      colors,
       background: Color.colorFromString(newPal.background, colorSpace),
       colorSpace,
     } as Palette;

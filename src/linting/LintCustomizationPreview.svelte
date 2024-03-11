@@ -3,6 +3,7 @@
   import Tooltip from "../components/Tooltip.svelte";
   import { Color } from "../lib/Color";
   import Background from "../components/Background.svelte";
+  import { wrapInBlankSemantics } from "../lib/utils";
   import type { Palette } from "../types";
   import { buttonStyle } from "../lib/styles";
   export let pal: Palette;
@@ -20,12 +21,14 @@
       <div slot="content" class="flex flex-col">
         <input
           class="mb-2"
-          value={color.toHex()}
+          value={color.color.toHex()}
           on:change={(e) => {
             // @ts-ignore
             const val = e.target.value;
             const newColors = [...pal.colors];
-            newColors[idx] = Color.colorFromString(val, pal.colorSpace);
+            newColors[idx] = wrapInBlankSemantics(
+              Color.colorFromString(val, pal.colorSpace)
+            );
             updatePal({ ...pal, colors: newColors });
           }}
         />
@@ -40,10 +43,10 @@
             });
           }}
           colorMode={pal.colorSpace}
-          {color}
+          color={color.color}
           onColorChange={(newColor) => {
             const newColors = [...pal.colors];
-            newColors[idx] = newColor;
+            newColors[idx] = wrapInBlankSemantics(newColor);
             updatePal({ ...pal, colors: newColors });
           }}
         />
@@ -66,9 +69,10 @@
         class={"w-6 h-6 mx-2 rounded-full transition-all"}
         class:border-4={blamedSet.has(idx)}
         class:border-dashed={blamedSet.has(idx)}
-        class:border-black={blamedSet.has(idx) && color.luminance() > 0.5}
-        class:border-white={blamedSet.has(idx) && color.luminance() <= 0.5}
-        style="background-color: {color.toDisplay()}"
+        class:border-black={blamedSet.has(idx) && color.color.luminance() > 0.5}
+        class:border-white={blamedSet.has(idx) &&
+          color.color.luminance() <= 0.5}
+        style="background-color: {color.color.toDisplay()}"
       ></button>
     </Tooltip>
   {/each}
@@ -77,7 +81,10 @@
       <button
         class={buttonStyle}
         on:click={() => {
-          const newColors = [...pal.colors, Color.colorFromString("steelblue")];
+          const newColors = [
+            ...pal.colors,
+            wrapInBlankSemantics(Color.colorFromString("steelblue")),
+          ];
           updatePal({ ...pal, colors: newColors });
         }}
       >
@@ -106,7 +113,7 @@
         }}
       />
       <div>
-        Colors: [{pal.colors.map((x) => `"${x.toHex()}"`).join(", ")}]
+        Colors: [{pal.colors.map((x) => `"${x.color.toHex()}"`).join(", ")}]
       </div>
     </div>
     <button slot="target" let:toggle on:click={toggle}>⚙</button>

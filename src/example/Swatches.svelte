@@ -1,4 +1,5 @@
 <script lang="ts">
+  import type { ColorWrap } from "../types";
   import { Color } from "../lib/Color";
   import colorStore from "../stores/color-store";
   import focusStore from "../stores/focus-store";
@@ -19,7 +20,10 @@
       $configStore.colorSim !== "none" &&
       $configStore.useSimulatorOnExamples
     ) {
-      colors = colors.map((x) => simulate_cvd($configStore.colorSim, x));
+      colors = colors.map((x) => ({
+        ...x,
+        color: simulate_cvd($configStore.colorSim, x.color),
+      }));
     } else {
       colors = currentPal?.colors || [];
     }
@@ -32,23 +36,27 @@
   let classes = [
     {
       className: `${common} big-swatch `,
-      styleMap: (color: Color): string => `background-color: ${color.toHex()};`,
+      styleMap: (color): string => `background-color: ${color.color.toHex()};`,
       selectionClass: "rotate-12",
     },
     {
       className: `${common} small-swatch`,
-      styleMap: (color: Color): string => `background-color: ${color.toHex()};`,
+      styleMap: (color): string => `background-color: ${color.color.toHex()};`,
       selectionClass: "rotate-12",
     },
     {
       className: `${common} small-swatch rounded-full`,
-      styleMap: (color: Color): string => `border: 2px solid ${color.toHex()};`,
+      styleMap: (color): string => `border: 2px solid ${color.color.toHex()};`,
       selectionClass: "relative top-1 left-1",
     },
-  ];
+  ] as {
+    className: string;
+    styleMap: (c: ColorWrap<Color>) => string;
+    selectionClass: string;
+  }[];
 
   $: colorsInGroupsOf3 = colors.reduce(
-    (acc: number[][], x: Color, i: number) => {
+    (acc: number[][], x: ColorWrap<Color>, i: number) => {
       const idx = Math.floor(i / 3);
       if (!acc[idx]) {
         acc[idx] = [];
@@ -79,7 +87,7 @@
     <div class="flex flex-col">
       {#each colors as color, i}
         <button
-          style={`background-color: ${color.toHex()};`}
+          style={`background-color: ${color.color.toHex()};`}
           class="wide-bar transition-all"
           class:ml-5={focusSet.has(i)}
           class:mr-5={!focusSet.has(i)}
@@ -123,7 +131,7 @@
       <div class="flex flex-wrap justify-center w-full">
         {#each colors as color, i}
           <button
-            style={`color: ${color.toHex()}; transform: rotate(${
+            style={`color: ${color.color.toHex()}; transform: rotate(${
               focusSet.has(i) ? 10 : 0
             }deg)`}
             class="mr-2 w-16"
@@ -134,7 +142,7 @@
                 );
             }}
           >
-            {color.toHex()}
+            {color.color.toHex()}
           </button>
         {/each}
       </div>

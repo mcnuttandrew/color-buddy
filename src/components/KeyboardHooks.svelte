@@ -1,9 +1,10 @@
 <script lang="ts">
   import { Color, colorPickerConfig } from "../lib/Color";
+  import type { ColorWrap } from "../types";
   import colorStore from "../stores/color-store";
   import focusStore from "../stores/focus-store";
   $: focusedSet = new Set($focusStore.focusedColors);
-  $: copiedData = [] as Color[];
+  $: copiedData = [] as ColorWrap<Color>[];
   $: currentPal = $colorStore.palettes[$colorStore.currentPal];
   $: colorSpace = currentPal ? currentPal.colorSpace : "lab";
   $: config = colorPickerConfig[colorSpace];
@@ -73,30 +74,43 @@
         if (!focusSet.has(idx)) {
           return color;
         }
-        const channels = color.toChannels();
+        const channels = color.color.toChannels();
         const xVal = channels[config.xChannelIndex];
         const yVal = channels[config.yChannelIndex];
         const zVal = channels[config.zChannelIndex];
 
+        let newColor = color.color;
         if (!optionKey && key === "arrowdown") {
-          return color.setChannel(config.yChannel, yVal + verticalDir * step);
+          newColor = newColor.setChannel(
+            config.yChannel,
+            yVal + verticalDir * step
+          );
         }
         if (!optionKey && key === "arrowup") {
-          return color.setChannel(config.yChannel, yVal - verticalDir * step);
+          newColor = newColor.setChannel(
+            config.yChannel,
+            yVal - verticalDir * step
+          );
         }
         if (optionKey && key === "arrowdown") {
-          return color.setChannel(config.zChannel, zVal + zDir * step);
+          newColor = newColor.setChannel(config.zChannel, zVal + zDir * step);
         }
         if (optionKey && key === "arrowup") {
-          return color.setChannel(config.zChannel, zVal - zDir * step);
+          newColor = newColor.setChannel(config.zChannel, zVal - zDir * step);
         }
         if (key === "arrowleft") {
-          return color.setChannel(config.xChannel, xVal - horizontalDir * step);
+          newColor = newColor.setChannel(
+            config.xChannel,
+            xVal - horizontalDir * step
+          );
         }
         if (key === "arrowright") {
-          return color.setChannel(config.xChannel, xVal + horizontalDir * step);
+          newColor = newColor.setChannel(
+            config.xChannel,
+            xVal + horizontalDir * step
+          );
         }
-        return color;
+        return { ...color, color: newColor };
       });
 
       colorStore.setCurrentPalColors(newColors);

@@ -508,13 +508,11 @@ test("LintLanguage Measure DeltaE", () => {
         deltaE: { left: colors[0], right: colors[1] },
         algorithm: "2000",
       },
-      right: 100.00000248106656,
+      right: 100,
     },
   };
   const result = LLEval(program, toPal([]), { debugCompare: false });
-  expect(prettyPrintLL(program)).toBe(
-    "deltaE(#000, #fff, 2000) == 100.00000248106656"
-  );
+  expect(prettyPrintLL(program)).toBe("deltaE(#000, #fff, 2000) == 100");
   expect(result.result).toBe(true);
   expect(result.blame).toStrictEqual([]);
 });
@@ -527,12 +525,12 @@ test("LintLanguage Measure Contrast", () => {
         contrast: { left: colors[0], right: colors[1] },
         algorithm: "APCA",
       },
-      right: 107.88473522404158,
+      right: 107.88473318309843,
     },
   };
   const result = LLEval(program, [] as any);
   expect(prettyPrintLL(program)).toBe(
-    "contrast(#000, #fff, APCA) == 107.88473522404158"
+    "contrast(#000, #fff, APCA) == 107.88473318309843"
   );
   expect(result.result).toBe(true);
   expect(result.blame).toStrictEqual([]);

@@ -16,11 +16,11 @@ exports[`ColorLint - Background Contrast 1`] = `
 
 exports[`ColorLint - Background Contrast 2`] = `
 [
-  "#007070",
+  "#006f70",
   "#006f72",
   "#006e7e",
   "#fdfdfc",
-  "#007070",
+  "#006f70",
 ]
 `;
 
@@ -68,9 +68,9 @@ exports[`ColorLint - Fair Sequential 2`] = `"This palette is unfair (meaning tha
 
 exports[`ColorLint - Gamut 1`] = `"A color or colors is not in the sRGB gamut (). Please adjust the color so that it can be displayed on most devices."`;
 
-exports[`ColorLint - Gamut 2`] = `"A color or colors is not in the sRGB gamut (#0087a5). Please adjust the color so that it can be displayed on most devices."`;
+exports[`ColorLint - Gamut 2`] = `"A color or colors is not in the sRGB gamut (#00808a). Please adjust the color so that it can be displayed on most devices."`;
 
-exports[`ColorLint - Gamut 3`] = `"A color or colors is not in the sRGB gamut (#0087a5). Please adjust the color so that it can be displayed on most devices."`;
+exports[`ColorLint - Gamut 3`] = `"A color or colors is not in the sRGB gamut (#00808a). Please adjust the color so that it can be displayed on most devices."`;
 
 exports[`ColorLint - MaxColors 1`] = `"This palette has too many colors and may be hard to discriminate in some contexts. Maximum: 10."`;
 

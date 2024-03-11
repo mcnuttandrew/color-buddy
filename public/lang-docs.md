@@ -1211,7 +1211,7 @@ Natural Language: ALL a in colors, inGamut(a) == TRUE
 
 Palettes that will fail this test:
 
-- #0087a5 with a #fff background
+- #00808a with a #fff background
 
 
 

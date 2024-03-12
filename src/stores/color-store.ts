@@ -1,6 +1,6 @@
 import { writable } from "svelte/store";
 import { Color } from "../lib/Color";
-import { deDup, newGenericPal } from "../lib/utils";
+import { deDup, newGenericPal, wrapInBlankSemantics } from "../lib/utils";
 
 import type {
   Palette,
@@ -9,6 +9,7 @@ import type {
   ColorSpace,
   Context,
   Affect,
+  ColorWrap,
 } from "../types";
 
 interface StoreData {
@@ -22,11 +23,20 @@ interface StorageData {
 }
 
 function stringPalToColorPal(pal: StringPalette): Palette {
-  return {
+  const result = {
     ...pal,
     background: Color.colorFromString(pal.background, pal.colorSpace),
-    colors: pal.colors.map((x) => Color.colorFromString(x, pal.colorSpace)),
+    colors: pal.colors.map((x) => {
+      // catch old versions
+      if (typeof x === "string") {
+        return wrapInBlankSemantics(Color.colorFromString(x, pal.colorSpace));
+      }
+      const color = Color.colorFromString(x.color, pal.colorSpace);
+      return { ...x, color };
+    }),
   };
+
+  return result;
 }
 
 const InitialStore: StorageData = {
@@ -50,7 +60,10 @@ function convertStoreColorToHex(store: StoreData): StorageData {
     palettes: store.palettes.map((x) => ({
       ...x,
       background: x.background.toString(),
-      colors: x.colors.map((y) => y.toString()),
+      colors: x.colors.map((y) => ({
+        ...y,
+        color: y.color.toString(),
+      })),
     })),
     currentPal: store.currentPal,
   };
@@ -157,7 +170,8 @@ function createStore() {
     },
 
     setCurrentPal: (pal: Palette) => palUp(() => pal),
-    setCurrentPalColors: (colors: Color[]) => palUp((n) => ({ ...n, colors })),
+    setCurrentPalColors: (colors: ColorWrap<Color>[]) =>
+      palUp((n) => ({ ...n, colors })),
     startUsingPal: (indx: number) => {
       persistUpdate((n) => ({ ...n, currentPal: indx }));
     },
@@ -182,7 +196,8 @@ function createStore() {
         const newPal = { ...n[index], name: `${n[index].name} copy` };
         return [...n.slice(0, index), newPal, ...n.slice(index)];
       }),
-    setSort: (sort: Color[]) => palUp((n) => ({ ...n, colors: deDup(sort) })),
+    setSort: (sort: ColorWrap<Color>[]) =>
+      palUp((n) => ({ ...n, colors: deDup(sort) })),
     setCurrentPalName: (name: string) => palUp((n) => ({ ...n, name })),
     setCurrentPalType: (type: PalType) => palUp((n) => ({ ...n, type })),
     setCurrentAffects: (intendedAffects: Affect[]) =>
@@ -192,7 +207,7 @@ function createStore() {
 
     setCurrentPalEvalConfig: (evalConfig: Record<string, any>) =>
       palUp((n) => ({ ...n, evalConfig: hardCopy(evalConfig) })),
-    addColorToCurrentPal: (color: Color) =>
+    addColorToCurrentPal: (color: ColorWrap<Color>) =>
       palUp((n) => ({ ...n, colors: [...n.colors, color] })),
     setBackground: (color: Color) =>
       palUp((n) => ({ ...n, background: color })),
@@ -203,7 +218,10 @@ function createStore() {
         ...n,
         colorSpace,
         background: Color.toColorSpace(n.background, colorSpace),
-        colors: n.colors.map((x) => Color.toColorSpace(x, colorSpace)),
+        colors: n.colors.map((x) => ({
+          ...x,
+          color: Color.toColorSpace(x.color, colorSpace),
+        })),
       })),
     clearPalettes: () =>
       persistUpdate(() => ({

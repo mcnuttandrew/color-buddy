@@ -12,7 +12,7 @@
     {#each pal.colors as color}
       <div
         class="h-6"
-        style="background-color: {color.toHex()}; width: {100 /
+        style="background-color: {color.color.toHex()}; width: {100 /
           pal.colors.length}%"
       ></div>
     {/each}

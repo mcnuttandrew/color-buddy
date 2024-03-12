@@ -311,6 +311,10 @@
           }}
         />
       </div>
+      <div>
+        <div class="font-bold">Lint Self Description (from the program):</div>
+        <div>{lintRun?.naturalLanguageProgram}</div>
+      </div>
       <div class="flex">
         Show Compare Debug In Terminal
         <Nav

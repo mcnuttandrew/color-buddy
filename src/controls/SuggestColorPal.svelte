@@ -6,6 +6,7 @@
   import type { Palette } from "../types";
   import PalPreview from "../components/PalPreview.svelte";
   import { buttonStyle } from "../lib/styles";
+  import { wrapInBlankSemantics } from "../lib/utils";
 
   $: currentPal = $colorStore.palettes[$colorStore.currentPal];
   $: colorSpace = currentPal ? currentPal.colorSpace : "lab";
@@ -19,7 +20,7 @@
   }): Palette {
     return {
       colors: suggestion.colors.map((x) =>
-        Color.colorFromString(x, colorSpace as any)
+        wrapInBlankSemantics(Color.colorFromString(x, colorSpace as any))
       ),
       background: Color.colorFromString(
         suggestion.background,

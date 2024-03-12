@@ -53,6 +53,11 @@
                 colors: colors.map((c: string) =>
                   Color.colorFromString(c, colorSpace)
                 ),
+                colorSemantics: colors.map(() => ({
+                  size: undefined,
+                  markType: undefined,
+                  tags: [],
+                })),
                 evalConfig: {},
                 name,
                 type,
@@ -83,7 +88,7 @@
             return {
               background: background.toHex(),
               colorSpace,
-              colors: colors.map((c) => c.toHex()),
+              colors: colors.map((c) => c.color.toHex()),
               name,
               type,
             };

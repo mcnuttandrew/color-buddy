@@ -24,7 +24,7 @@ Quantifiers
 Notes:
 
 - varbs each listed variable into the scope, as well as variables like index(a) for a variable a
-- To slice you might do something like {...where: {"<" : {left: "index(a), right: 3}}}. This is important! There is no other way to subset or filter for quantifiers. THE IN CLAUSE MUST ONLY HAVE A VARIABLE AND THING ELSE.
+- To slice you might do something like {...where: {"<" : {"left": "index(a)", "right": 3}}}. This is important! There is no other way to subset or filter for quantifiers. THE IN CLAUSE MUST ONLY HAVE A VARIABLE AND THING ELSE.
 
 Comparisons:
 {"==": {left: Value, right: Value}}
@@ -61,13 +61,14 @@ Aggregates
 {extent: Variable | Number[]}
 
 Color Manipulations:
-{toColor: Variable, space: 'lab' | 'hsl' | etc, channel: 'a' | 'b' | 'l' | etc}
+{toSpace: Variable, space: 'lab' | 'hsl' | etc, channel: 'a' | 'b' | 'l' | etc}
 {cvdSim: Variable, type: 'protanomaly' | 'deuteranomaly' | 'tritanopia' | 'grayscale'}
 {name: Variable}
 {inGamut: Variable | Color}
+{isTag: Variable | Color, value: string}
 Notes
 
-- toColor has a shorthand like {"rgb.b": Variable}
+- toSpace has a shorthand like {"rgb.b": Variable}
 - When comparing colors, it can be helpful to switch color spaces. For instance, to check if a value is blue you might switch it to HSL and check if the hue is in a certain range.
 
 Maps:

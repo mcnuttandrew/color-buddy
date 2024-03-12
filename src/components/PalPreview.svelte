@@ -4,10 +4,13 @@
   export let pal: Palette;
   export let allowModification: boolean = false;
   export let highlightSelected: boolean = false;
+  export let showTags: boolean = false;
 
   import { dealWithFocusEvent } from "../lib/utils";
 
   $: focusSet = new Set($focusStore.focusedColors);
+  $: bgLum = pal.background.luminance();
+  $: textColor = bgLum > 0.4 ? "#00000066" : "#ffffffaa";
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
@@ -18,25 +21,36 @@
   on:click={() => focusStore.clearColors()}
 >
   {#each pal.colors as color, idx}
-    {#if allowModification}
-      <button
-        on:click|stopPropagation|preventDefault={(e) =>
-          focusStore.setColors(
-            dealWithFocusEvent(e, idx, $focusStore.focusedColors)
-          )}
-        class={"w-6 h-6 mx-2 rounded-full transition-all"}
-        class:w-8={highlightSelected && focusSet.has(idx)}
-        class:h-8={highlightSelected && focusSet.has(idx)}
-        class:mb-5={highlightSelected && !focusSet.has(idx)}
-        style="background-color: {color.toDisplay()}"
-      ></button>
-    {:else}
-      <div
-        class={"w-6 h-6 mx-1 rounded-full transition-all"}
-        class:w-8={highlightSelected && focusSet.has(idx)}
-        class:h-8={highlightSelected && focusSet.has(idx)}
-        style="background-color: {color.toDisplay()}"
-      ></div>
-    {/if}
+    <div class="flex flex-col text-center relative items-center">
+      {#if allowModification}
+        <button
+          on:click|stopPropagation|preventDefault={(e) =>
+            focusStore.setColors(
+              dealWithFocusEvent(e, idx, $focusStore.focusedColors)
+            )}
+          class={"w-6 h-6 mx-2 rounded-full transition-all"}
+          class:w-8={highlightSelected && focusSet.has(idx)}
+          class:h-8={highlightSelected && focusSet.has(idx)}
+          style="background-color: {color.color.toDisplay()}"
+        ></button>
+      {:else}
+        <div
+          class={"w-6 h-6 mx-1 rounded-full transition-all"}
+          class:w-8={highlightSelected && focusSet.has(idx)}
+          class:h-8={highlightSelected && focusSet.has(idx)}
+          style="background-color: {color.color.toDisplay()}"
+        ></div>
+      {/if}
+      {#if showTags}
+        <div
+          class="flex flex-col text-center pointer-events-none"
+          style={`color: ${textColor}`}
+        >
+          {#each color.tags as tag}
+            <div class="text-xs">{tag}</div>
+          {/each}
+        </div>
+      {/if}
+    </div>
   {/each}
 </div>

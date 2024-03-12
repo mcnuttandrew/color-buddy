@@ -3,24 +3,25 @@
   import focusStore from "../stores/focus-store";
   import configStore from "../stores/config-store";
   import lintStore from "../stores/lint-store";
+  import type { ColorWrap } from "../types";
 
   import { colorNameSimple } from "../lib/lints/name-discrim";
   import EvalResponse from "./EvalResponse.svelte";
-  import simulate_cvd from "../lib/blindness";
+  import simulate_cvd from "../lib/cvd-sim";
   import { Color } from "../lib/Color";
   import { checkLevelToSymbol, dealWithFocusEvent } from "../lib/utils";
   import { buttonStyle } from "../lib/styles";
 
   $: checks = $lintStore.currentChecks;
 
-  $: colorNames = colorNameSimple(colors);
+  $: colorNames = colorNameSimple(colors.map((x) => x.color));
   $: colors = $colorStore.palettes[$colorStore.currentPal].colors;
   $: selectedBlindType = $configStore.colorSim;
   $: sim = (color: Color): string =>
     simulate_cvd(selectedBlindType, color).toHex();
 
   $: colorsToIssues = colors.map((x) => {
-    const hex = `${x.toHex()}`;
+    const hex = `${x.color.toHex()}`;
     return checks.filter(
       (check) => !check.passes && check.message.includes(hex)
     );
@@ -28,10 +29,12 @@
 
   $: currentPal = $colorStore.palettes[$colorStore.currentPal];
   $: evalConfig = currentPal.evalConfig;
-  function computeDeltas(colors: Color[], metric: string = "2000") {
+  function computeDeltas(colors: ColorWrap<Color>[], metric: string = "2000") {
     const deltas = [];
     for (let i = 1; i < colors.length; i++) {
-      deltas.push(colors[i].symmetricDeltaE(colors[i - 1], metric as any));
+      const left = colors[i - 1].color;
+      const right = colors[i].color;
+      deltas.push(left.symmetricDeltaE(right, metric as any));
     }
     return deltas;
   }
@@ -65,7 +68,7 @@
         );
       }}
       class="w-full flex flex-col justify-center items-center text-sm mt-2 transition-all relative"
-      class:text-white={color.luminance() < 0.5}
+      class:text-white={color.color.luminance() < 0.5}
       class:ml-5={$focusStore.focusedColors.includes(idx)}
       class:mr-5={!$focusStore.focusedColors.includes(idx)}
       style="min-height: 40px"
@@ -73,18 +76,18 @@
       <div class="w-full flex flex-col h-full absolute">
         <div
           class="grow h-full"
-          style="background-color: {color.toHex()}"
+          style="background-color: {color.color.toHex()}"
         ></div>
         {#if selectedBlindType !== "none"}
           <div
             class="grow h-full"
-            style={`background-color: ${sim(color)}`}
+            style={`background-color: ${sim(color.color)}`}
           ></div>
         {/if}
       </div>
       <div class="flex justify-between w-full px-2 items-center z-10">
         <span class="flex flex-col items-start">
-          <span>{color.toHex()}</span>
+          <span>{color.color.toHex()}</span>
           {#if colorNames[idx]}<span class="text-right text-xs">
               {colorNames[idx]?.word}
             </span>{/if}

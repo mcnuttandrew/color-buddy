@@ -1,10 +1,12 @@
 <script lang="ts">
   import { Color } from "../lib/Color";
+  import type { ColorWrap } from "../types";
   import configStore from "../stores/config-store";
+  import { wrapInBlankSemantics } from "../lib/utils";
   import Sort from "./Sort.svelte";
   let state: "idle" | "error" = "idle";
-  export let onChange: (colors: Color[]) => void;
-  export let colors: Color[];
+  export let onChange: (colors: ColorWrap<Color>[]) => void;
+  export let colors: ColorWrap<Color>[];
   export let colorSpace: string;
   export let allowSort: boolean;
 
@@ -14,7 +16,14 @@
         .split(",")
         .map((x) => x.replace(/"/g, "").trim())
         .filter((x) => x.length > 0)
-        .map((x) => Color.colorFromString(x, colorSpace as any));
+        .map((x) => Color.colorFromString(x, colorSpace as any))
+        .map((x, idx) => {
+          if (colors[idx]) {
+            return { ...colors[idx], color: x };
+          } else {
+            return wrapInBlankSemantics(x);
+          }
+        });
       onChange(newColors);
       state = "idle";
     } catch (e) {
@@ -51,7 +60,7 @@
     class="w-full p-2 rounded border-2"
     style="min-height: {2 * Math.ceil(colors.length / 3)}em;"
     value={colors
-      .map((color) => color.toHex())
+      .map((color) => color.color.toHex())
       .map((x) => (includeQuotes ? `"${x}"` : x))
       .join(", ")}
     on:keydown={(e) => {

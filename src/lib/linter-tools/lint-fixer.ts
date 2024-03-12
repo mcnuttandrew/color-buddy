@@ -2,12 +2,13 @@ import type { Palette } from "../../types";
 import type { LintResult } from "../ColorLint";
 import { suggestFix } from "../api-calls";
 import { Color } from "../Color";
+import { wrapInBlankSemantics } from "../utils";
 
 export async function suggestLintAIFix(
   palette: Palette,
   lint: LintResult,
   engine: string
-) {
+): Promise<Palette[]> {
   const colorSpace = palette.colorSpace;
   const msg = `${lint.message}\n\nFailed: ${lint.naturalLanguageProgram}`;
   return suggestFix(palette, msg, engine as any).then((x) => {
@@ -19,7 +20,9 @@ export async function suggestLintAIFix(
         return {
           ...palette,
           colors: el.colors.map((x) =>
-            Color.colorFromHex(x.replace("##", "#"), colorSpace)
+            wrapInBlankSemantics(
+              Color.colorFromHex(x.replace("##", "#"), colorSpace)
+            )
           ),
         };
       } catch (e) {

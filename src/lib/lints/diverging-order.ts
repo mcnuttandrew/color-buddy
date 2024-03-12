@@ -1,7 +1,7 @@
 import { ColorLint } from "../ColorLint";
 import type { PalType } from "../../types";
 import { Color } from "../Color";
-import type { Palette } from "../../types";
+import type { ColorWrap } from "../../types";
 import type { LintFixer } from "../linter-tools/lint-fixer";
 
 const meanPoint2d = (points: Color[]) => {
@@ -32,7 +32,9 @@ export default class DivergingOrder extends ColorLint<boolean, false> {
 
     const summarizedDirections = colors
       .slice(0, -1)
-      .map((x, i) => (x.luminance() > colors[i + 1].luminance() ? 1 : -1))
+      .map((x, i) =>
+        x.color.luminance() > colors[i + 1].color.luminance() ? 1 : -1
+      )
       .reduce((acc, x) => {
         if (acc.length === 0) return [x];
         if (acc[acc.length - 1] === x) return acc;
@@ -58,9 +60,9 @@ export const fixDivergingOrder: LintFixer = async (palette) => {
   //   (x) => x.luminance() < medianPoint.luminance()
   // ).length;
 
-  const sortByLum = (a: Color, b: Color) => {
-    const aL = a.luminance();
-    const bL = b.luminance();
+  const sortByLum = (a: ColorWrap<Color>, b: ColorWrap<Color>) => {
+    const aL = a.color.luminance();
+    const bL = b.color.luminance();
     if (aL === bL) return 0;
     return aL > bL ? 1 : -1;
   };
@@ -76,7 +78,9 @@ export const fixDivergingOrder: LintFixer = async (palette) => {
     const color = colors[i];
     const leftColor = leftColors.at(-1)!;
     const rightColor = rightColors.at(-1)!;
-    if (color.deltaE(leftColor) < color.deltaE(rightColor)) {
+    if (
+      color.color.deltaE(leftColor.color) < color.color.deltaE(rightColor.color)
+    ) {
       leftColors.push(color);
     } else {
       rightColors.push(color);

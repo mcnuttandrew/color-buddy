@@ -5,7 +5,7 @@
   import { Color } from "../lib/Color";
   import focusStore from "../stores/focus-store";
   import { idxToKey } from "../lib/charts";
-  import simulate_cvd from "../lib/blindness";
+  import simulate_cvd from "../lib/cvd-sim";
   export let example: string;
   export let size = 300;
   export let paletteIdx: number;
@@ -50,7 +50,10 @@
       $configStore.colorSim !== "none" &&
       $configStore.useSimulatorOnExamples
     ) {
-      colors = colors.map((x) => simulate_cvd($configStore.colorSim, x));
+      colors = colors.map((x) => ({
+        ...x,
+        color: simulate_cvd($configStore.colorSim, x.color),
+      }));
     } else {
       colors = currentPal.colors;
     }
@@ -63,7 +66,9 @@
     const color = Color.colorFromString(computedFill, "lab")
       .toHex()
       .toLowerCase();
-    const colorIdx = colors.findIndex((x) => x.toHex().toLowerCase() === color);
+    const colorIdx = colors.findIndex(
+      (x) => x.color.toHex().toLowerCase() === color
+    );
     if (colorIdx > -1) {
       focusedColor = colorIdx;
       focusStore.setColors([colorIdx]);
@@ -92,7 +97,7 @@
   }
   let container: HTMLDivElement;
   $: color = focusedColor !== false && colors[focusedColor];
-  $: mappedColors = colors.map((x) => x.toHex());
+  $: mappedColors = colors.map((x) => x.color.toHex());
 </script>
 
 <div class="relative">

@@ -31,7 +31,7 @@ Quantifiers
 Notes:
 
 - varbs each listed variable into the scope, as well as variables like index(a) for a variable a
-- To slice you might do something like {...where: {"<" : {left: "index(a), right: 3}}}. This is important! There is no other way to subset or filter for quantifiers. THE IN CLAUSE MUST ONLY HAVE A VARIABLE AND THING ELSE.
+- To slice you might do something like {...where: {"<" : {"left": "index(a)", "right": 3}}}. This is important! There is no other way to subset or filter for quantifiers. THE IN CLAUSE MUST ONLY HAVE A VARIABLE AND THING ELSE.
 
 Comparisons:
 {"==": {left: Value, right: Value}}
@@ -68,13 +68,14 @@ Aggregates
 {extent: Variable | Number[]}
 
 Color Manipulations:
-{toColor: Variable, space: 'lab' | 'hsl' | etc, channel: 'a' | 'b' | 'l' | etc}
+{toSpace: Variable, space: 'lab' | 'hsl' | etc, channel: 'a' | 'b' | 'l' | etc}
 {cvdSim: Variable, type: 'protanomaly' | 'deuteranomaly' | 'tritanopia' | 'grayscale'}
 {name: Variable}
 {inGamut: Variable | Color}
+{isTag: Variable | Color, value: string}
 Notes
 
-- toColor has a shorthand like {"rgb.b": Variable}
+- toSpace has a shorthand like {"rgb.b": Variable}
 - When comparing colors, it can be helpful to switch color spaces. For instance, to check if a value is blue you might switch it to HSL and check if the hue is in a certain range.
 
 Maps:
@@ -92,7 +93,7 @@ Maps:
 
 Description: Highly saturated light colors are not appropriate for palettes that seek to be serious.  See "Affective color in visualization" for more.
 
-Natural Language: ALL c in colors WHERE hsl.l(c) > 70, NOT hsl.s(c) > 70
+Natural Language: ALL c IN colors WHERE hsl.l(c) > 70 SUCH THAT NOT hsl.s(c) > 70
 
 
 Program:
@@ -124,7 +125,7 @@ Program:
 
 Description: Highly saturated light colors are not appropriate for palettes that seek to be trustworthy.  See "Affective color in visualization" for more.
 
-Natural Language: ALL c in colors WHERE hsl.l(c) > 70, NOT hsl.s(c) > 70
+Natural Language: ALL c IN colors WHERE hsl.l(c) > 70 SUCH THAT NOT hsl.s(c) > 70
 
 
 Program:
@@ -156,7 +157,7 @@ Program:
 
 Description: Highly saturated light colors are not appropriate for palettes that seek to be calm.  See "Affective color in visualization" for more.
 
-Natural Language: ALL c in colors WHERE hsl.l(c) > 70, NOT hsl.s(c) > 70
+Natural Language: ALL c IN colors WHERE hsl.l(c) > 70 SUCH THAT NOT hsl.s(c) > 70
 
 
 Program:
@@ -188,7 +189,7 @@ Program:
 
 Description: Palettes that seek to be playful should have at least one light blue, beige, or gray.  See "Affective color in visualization" for more.
 
-Natural Language: EXIST c in colors, (similar(c, lightblue) < 20 or similar(c, beige) < 20 or similar(c, gray) < 20)
+Natural Language: EXIST c IN colors SUCH THAT (similar(c, lightblue) < 20 OR similar(c, beige) < 20 OR similar(c, gray) < 20)
 
 
 Program:
@@ -219,7 +220,7 @@ Program:
 
 Description: Palettes that seek to be positive should not have dark reds or browns.  See "Affective color in visualization" for more.
 
-Natural Language: ALL c in colors, NOT (similar(c, darkred) < 20 or similar(c, brown) < 20)
+Natural Language: ALL c IN colors SUCH THAT NOT (similar(c, darkred) < 20 OR similar(c, brown) < 20)
 
 
 Program:
@@ -251,7 +252,7 @@ Program:
 
 Description: Palettes that seek to be negative should not have light colors, particularly greens.  See "Affective color in visualization" for more.
 
-Natural Language: ALL c in colors, NOT (similar(c, green) < 20 or lab.l(c) > 70)
+Natural Language: ALL c IN colors SUCH THAT NOT (similar(c, green) < 20 OR lab.l(c) > 70)
 
 
 Program:
@@ -281,11 +282,11 @@ Program:
 
 
 
-### Colorblind Friendly for deuteranopia
+### CVD: deuteranopia Friendly
 
 Description: All colors in a palette should be differentiable by people with deuteranopia (ie can't see green). This is because if they are not, then they will not be differentiable from each other in some contexts.
 
-Natural Language: ALL (a, b) in colors WHERE index(a) != index(b), NOT similar(cvdSim(a, deuteranopia), cvdSim(b, deuteranopia)) < 9
+Natural Language: ALL (a, b) IN colors WHERE index(a) != index(b) SUCH THAT NOT similar(cvdSim(a, deuteranopia), cvdSim(b, deuteranopia)) < 9
 
 Palettes that will fail this test:
 
@@ -325,11 +326,11 @@ Program:
 
 
 
-### Colorblind Friendly for protanopia
+### CVD: protanopia Friendly
 
 Description: All colors in a palette should be differentiable by people with protanopia (ie can't see red). This is because if they are not, then they will not be differentiable from each other in some contexts.
 
-Natural Language: ALL (a, b) in colors WHERE index(a) != index(b), NOT similar(cvdSim(a, protanopia), cvdSim(b, protanopia)) < 9
+Natural Language: ALL (a, b) IN colors WHERE index(a) != index(b) SUCH THAT NOT similar(cvdSim(a, protanopia), cvdSim(b, protanopia)) < 9
 
 Palettes that will fail this test:
 
@@ -369,11 +370,11 @@ Program:
 
 
 
-### Colorblind Friendly for tritanopia
+### CVD: tritanopia Friendly
 
 Description: All colors in a palette should be differentiable by people with tritanopia (ie can't see blue). This is because if they are not, then they will not be differentiable from each other in some contexts.
 
-Natural Language: ALL (a, b) in colors WHERE index(a) != index(b), NOT similar(cvdSim(a, tritanopia), cvdSim(b, tritanopia)) < 9
+Natural Language: ALL (a, b) IN colors WHERE index(a) != index(b) SUCH THAT NOT similar(cvdSim(a, tritanopia), cvdSim(b, tritanopia)) < 9
 
 Palettes that will fail this test:
 
@@ -417,7 +418,7 @@ Program:
 
 Description: All colors in a palette should be differentiable by people with grayscale . This is because if they are not, then they will not be differentiable from each other in some contexts.
 
-Natural Language: ALL (a, b) in colors WHERE index(a) != index(b), NOT similar(cvdSim(a, grayscale), cvdSim(b, grayscale)) < 9
+Natural Language: ALL (a, b) IN colors WHERE index(a) != index(b) SUCH THAT NOT similar(cvdSim(a, grayscale), cvdSim(b, grayscale)) < 9
 
 Palettes that will fail this test:
 
@@ -457,11 +458,92 @@ Program:
 
 
 
+### Axes should have low contrast with background
+
+Description: Axes should have low contrast with the background. Having it too high can make the axes too distracting. See "Whisper, Don't Scream: Grids and Transparency" for more.
+
+Natural Language: ALL a IN colors WHERE isTag(a, axis) SUCH THAT contrast(a, background, Lstar) < 20
+
+Palettes that will fail this test:
+
+- #000 (axis) with a #fff background
+
+
+
+Palettes that will pass this test:
+
+- #eee (axis) with a #fff background
+
+
+Program:
+
+\`\`\`json
+{
+    "$schema": "http://localhost:3000/lint-schema.json", 
+    "all": {
+        "in": "colors", 
+        "varb": "a", 
+        "where": {"isTag": "a", "value": "axis"}, 
+        "predicate": {
+            "<": {
+                "left": { "contrast": {"left": "a", "right": "background"}, "algorithm": "Lstar" }, 
+                "right": 20
+            }
+        }
+    }
+}
+
+\`\`\`
+
+    
+
+
+
+### Blue should be high probability for the basic color term blue
+
+Description: Blue should be high probability for the basic color term blue. If it's not, it can be confusing to users.
+
+Natural Language: ALL a IN colors WHERE isTag(a, blue) SUCH THAT name(a) == blue
+
+Palettes that will fail this test:
+
+- #f00 (blue), #ffa500 with a #fff background
+
+
+
+Palettes that will pass this test:
+
+- #00f (blue), #f00, #ffa500 with a #fff background
+
+- #00f, #f00, #ffa500 with a #fff background
+
+
+Program:
+
+\`\`\`json
+{
+    "$schema": "http://localhost:3000/lint-schema.json", 
+    "all": {
+        "in": "colors", 
+        "varb": "a", 
+        "where": {"isTag": "a", "value": "blue"}, 
+        "predicate": {
+            "==": { "left": {"name": "a"}, "right": "blue" }
+        }
+    }
+}
+
+\`\`\`
+
+    
+
+
+
 ### Fair
 
 Description: Do the colors stand out equally? A color palette is described as fair if both chroma and luminance ranges are below a certain threshold and unfair if one of them is above a certain threshold.
 
-Natural Language: (extent(sort(colors, x => lch.l(x))) < 50 and extent(sort(colors, x => lch.c(x))) < 80)
+Natural Language: (extent(sort(colors, x => lch.l(x))) < 50 AND extent(sort(colors, x => lch.c(x))) < 80)
 
 Palettes that will fail this test:
 
@@ -549,7 +631,7 @@ Program:
 
 Description: Background should be sufficiently desaturated. 
 
-Natural Language: (((hsl.l(background) > 90 and hsv.s(background) < 8) or hsl.l(background) > 99) or (hsl.l(background) > 10 and hsl.l(background) < 26 and hsv.s(background) < 21))
+Natural Language: (((hsl.l(background) > 90 AND hsv.s(background) < 8) OR hsl.l(background) > 99) OR (hsl.l(background) > 10 AND hsl.l(background) < 26 AND hsv.s(background) < 21))
 
 Palettes that will fail this test:
 
@@ -611,7 +693,7 @@ Program:
 
 Description: Tetradic palettes are hard to work with and are not recommended.
 
-Natural Language: NOT EXIST a in colors, (EXIST b in colors, similar(hsl.h(a), hsl.h(b) + 90) < 5 and EXIST b in colors, similar(hsl.h(a), hsl.h(b) + 90) < 5 and EXIST b in colors, similar(hsl.h(a), hsl.h(b) + 90) < 5)
+Natural Language: NOT EXIST a IN colors SUCH THAT (EXIST b IN colors SUCH THAT similar(hsl.h(a), hsl.h(b) + 90) < 5 AND EXIST b IN colors SUCH THAT similar(hsl.h(a), hsl.h(b) + 90) < 5 AND EXIST b IN colors SUCH THAT similar(hsl.h(a), hsl.h(b) + 90) < 5)
 
 Palettes that will fail this test:
 
@@ -696,7 +778,7 @@ Program:
 
 Description: When using green, make it a yellow or blue one. This makes it easier to play nicely with other colors.
 
-Natural Language: ALL a in colors, (hsl.h(a) < 90 or hsl.h(a) > 150)
+Natural Language: ALL a IN colors SUCH THAT (hsl.h(a) < 90 OR hsl.h(a) > 150)
 
 Palettes that will fail this test:
 
@@ -740,7 +822,7 @@ Program:
 
 Description: Don't make your colors too dark and saturated when you're using a bright background. If in doubt, try it out. Make your colors lighter, pull some saturation out of them and see how it feels.
 
-Natural Language: ((hsl.l(background) > 50 and ALL a in colors, contrast(a, background, WCAG21) < 10) or hsl.l(background) < 50)
+Natural Language: ((hsl.l(background) > 50 AND ALL a IN colors SUCH THAT contrast(a, background, WCAG21) < 10) OR hsl.l(background) < 50)
 
 Palettes that will fail this test:
 
@@ -794,7 +876,7 @@ Program:
 
 Description: Use color complements whenever possible
 
-Natural Language: EXIST (a, b) in colors, similar(hsl.h(a), hsl.h(b) + 180) < 5
+Natural Language: EXIST (a, b) IN colors SUCH THAT similar(hsl.h(a), hsl.h(b) + 180) < 5
 
 
 Program:
@@ -827,7 +909,7 @@ Program:
 
 Description: Pairs of colors in a palette should be differentiable from each other in Thin marks. 
 
-Natural Language: ALL (x, y) in colors WHERE index(x) != index(y), (lab.l(x) absDiff lab.l(y) > 12.58 or lab.a(x) absDiff lab.a(y) > 20.740000000000002 or lab.b(x) absDiff lab.b(y) > 34.05)
+Natural Language: ALL (x, y) IN colors WHERE index(x) != index(y) SUCH THAT (absDiff(lab.l(x), lab.l(y)) > 12.58 OR absDiff(lab.a(x), lab.a(y)) > 20.740000000000002 OR absDiff(lab.b(x), lab.b(y)) > 34.05)
 
 Palettes that will fail this test:
 
@@ -890,7 +972,7 @@ Program:
 
 Description: Pairs of colors in a palette should be differentiable from each other in Medium marks. 
 
-Natural Language: ALL (x, y) in colors WHERE index(x) != index(y), (lab.l(x) absDiff lab.l(y) > 6.58 or lab.a(x) absDiff lab.a(y) > 8.42 or lab.b(x) absDiff lab.b(y) > 11.09)
+Natural Language: ALL (x, y) IN colors WHERE index(x) != index(y) SUCH THAT (absDiff(lab.l(x), lab.l(y)) > 6.58 OR absDiff(lab.a(x), lab.a(y)) > 8.42 OR absDiff(lab.b(x), lab.b(y)) > 11.09)
 
 Palettes that will fail this test:
 
@@ -953,7 +1035,7 @@ Program:
 
 Description: Pairs of colors in a palette should be differentiable from each other in Wide marks. 
 
-Natural Language: ALL (x, y) in colors WHERE index(x) != index(y), (lab.l(x) absDiff lab.l(y) > 5.83 or lab.a(x) absDiff lab.a(y) > 6.88 or lab.b(x) absDiff lab.b(y) > 8.219999999999999)
+Natural Language: ALL (x, y) IN colors WHERE index(x) != index(y) SUCH THAT (absDiff(lab.l(x), lab.l(y)) > 5.83 OR absDiff(lab.a(x), lab.a(y)) > 6.88 OR absDiff(lab.b(x), lab.b(y)) > 8.219999999999999)
 
 Palettes that will fail this test:
 
@@ -1016,7 +1098,7 @@ Program:
 
 Description: Colors at either end of the lightness spectrum can be hard to discriminate in some contexts, and are sometimes advised against. See https://blog.datawrapper.de/beautifulcolors/#6 for more.
 
-Natural Language: ALL a in colors, ALL b in ([#000000, #ffffff, #0000ff, #ff0000, #00ff00]), NOT a == b
+Natural Language: ALL a IN colors SUCH THAT ALL b IN ([#000000, #ffffff, #0000ff, #ff0000, #00ff00]) SUCH THAT NOT a == b
 
 Palettes that will fail this test:
 
@@ -1059,7 +1141,7 @@ Program:
 
 Description: All colors in a palette should have a sufficient contrast ratio with the background color. This is because if they are not, then they will not be differentiable from each other in some contexts. Valid algorithms are "APCA", "WCAG21", "Michelson", "Weber", "Lstar", "DeltaPhi".
 
-Natural Language: ALL a in colors, contrast(a, background, WCAG21) > 1.1
+Natural Language: ALL a IN colors SUCH THAT contrast(a, background, WCAG21) > 1.1
 
 Palettes that will fail this test:
 
@@ -1099,7 +1181,7 @@ Program:
 
 Description: Opt for colors that are perceptually distinguishable in a logical sequence when designing visual elements like charts or graphs. This ensures that viewers can easily recognize the order or progression of data points. For categorical this means that when only a small number of colors are used, they should be as different as possible. For sequential and diverging, this means that the colors should be as different as possible in order.
 
-Natural Language: ALL (a, b) in colors WHERE index(a) == index(b) - 1, deltaE(a, b, 2000) > 10
+Natural Language: ALL (a, b) IN colors WHERE index(a) == index(b) - 1 SUCH THAT deltaE(a, b, 2000) > 10
 
 Palettes that will fail this test:
 
@@ -1145,7 +1227,7 @@ Program:
 
 Description: Categorical values should have an even distribution around the hue circle in LCH color space
 
-Natural Language: (std(speed(sort(colors, x => lch.h(x)),   =>  )) < 10 or std(speed(sort(colors, x => lch.h(x) + 180 % 360),   =>  )) < 10)
+Natural Language: (std(speed(sort(colors, x => lch.h(x)))) < 10 OR std(speed(sort(colors, x => lch.h(x) + 180 % 360))) < 10)
 
 Palettes that will fail this test:
 
@@ -1210,7 +1292,7 @@ Program:
 
 Description: Checks if the colors are in the sRGB gamut. This is important to ensure that the colors are visible and can be displayed on most devices.
 
-Natural Language: ALL a in colors, inGamut(a) == TRUE
+Natural Language: ALL a IN colors SUCH THAT inGamut(a) == TRUE
 
 Palettes that will fail this test:
 
@@ -1278,7 +1360,7 @@ Program:
 
 Description: All colors in a palette should be different from each other. This is because if they are not, then they will not be differentiable from each other in some contexts.
 
-Natural Language: ALL (a, b) in colors WHERE index(a) != index(b), dist(a, b, lab) > 15
+Natural Language: ALL (a, b) IN colors WHERE index(a) != index(b) SUCH THAT dist(a, b, lab) > 15
 
 Palettes that will fail this test:
 
@@ -1319,7 +1401,7 @@ Program:
 
 Description: Being able to identify colors by name is important for usability and for memorability.
 
-Natural Language: ALL (a, b) in colors WHERE index(a) != index(b), name(a) != name(b)
+Natural Language: ALL (a, b) IN colors WHERE index(a) != index(b) SUCH THAT name(a) != name(b)
 
 Palettes that will fail this test:
 
@@ -1357,7 +1439,7 @@ Program:
 
 Description: Sequential palettes should be ordered by lightness. This is a defining property of a sequential palette and ensures that values are understood as having an increase (or decreasing) value.
 
-Natural Language: (sort(colors, x => lch.l(x)) == map(colors, x => lch.l(x)) or sort(colors, x => lch.l(x)) == reverse(map(colors, x => lch.l(x)),   =>  ))
+Natural Language: (sort(colors, x => lch.l(x)) == map(colors, x => lch.l(x)) OR sort(colors, x => lch.l(x)) == reverse(map(colors, x => lch.l(x))))
 
 Palettes that will fail this test:
 
@@ -1403,7 +1485,7 @@ Program:
 
 Description: Colors that are close to what are known as ugly colors are sometimes advised against. See https://www.colourlovers.com/palette/1416250/The_Ugliest_Colors for more details.
 
-Natural Language: ALL a in colors, ALL b in ([#56FF00, #0010FF, #6A7E25, #FF00EF, #806E28]), deltaE(a, b, 2000) > 10
+Natural Language: ALL a IN colors SUCH THAT ALL b IN ([#56FF00, #0010FF, #6A7E25, #FF00EF, #806E28]) SUCH THAT deltaE(a, b, 2000) > 10
 
 Palettes that will fail this test:
 

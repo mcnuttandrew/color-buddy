@@ -1,10 +1,12 @@
 <script lang="ts">
+  import type { ColorWrap } from "../types";
   import { Color } from "../lib/Color";
   import type { Palette } from "../types";
   import colorStore from "../stores/color-store";
   import focusStore from "../stores/focus-store";
   import { buttonStyle } from "../lib/styles";
   import PalPreview from "../components/PalPreview.svelte";
+  import { wrapInBlankSemantics } from "../lib/utils";
 
   $: currentPal = $colorStore.palettes[$colorStore.currentPal];
   $: focusedColors = $focusStore.focusedColors;
@@ -41,12 +43,12 @@
 
     return points;
   }
-  function createInterpolation(): Color[] {
+  function createInterpolation(): ColorWrap<Color>[] {
     const newColors = [];
     const seenHexes = new Set<string>([]);
     const deDuppedFocusedColors = focusedColors
-      .map((x) => [x, colors[x].toHex()] as [number, string])
-      .filter(([idx, hexColor]) => {
+      .map((x) => [x, colors[x].color.toHex()] as [number, string])
+      .filter(([_idx, hexColor]) => {
         if (seenHexes.has(hexColor)) {
           return false;
         }
@@ -57,7 +59,10 @@
     for (let idx = 0; idx < deDuppedFocusedColors.length - 1; idx++) {
       const pointA = colors[deDuppedFocusedColors[idx]];
       const pointB = colors[deDuppedFocusedColors[idx + 1]];
-      const newPoints = createInterpolatedPoints(pointA, pointB);
+      const newPoints = createInterpolatedPoints(
+        pointA.color,
+        pointB.color
+      ).map((x) => wrapInBlankSemantics(x));
       newColors.push(pointA, ...newPoints);
     }
     newColors.push(

@@ -186,13 +186,14 @@
                     "properties": {
                         "channel": {"$ref": "#/definitions/ColorChannel"}, 
                         "space": {"$ref": "#/definitions/ColorSpace"}, 
-                        "toColor": {
+                        "toSpace": {
                             "anyOf": [ {"$ref": "#/definitions/LintVariable"}, {"$ref": "#/definitions/LintColor"} ]
                         }
                     }, 
-                    "required": ["toColor", "space", "channel"], 
+                    "required": ["toSpace", "space", "channel"], 
                     "type": "object"
                 }, 
+                {"$ref": "#/definitions/LintColorTagCheck"}, 
                 {
                     "additionalProperties": {
                         "anyOf": [ {"$ref": "#/definitions/LintVariable"}, {"type": "string"} ]
@@ -211,6 +212,17 @@
                 "type": { "enum": ["protanomaly", "deuteranomaly", "tritanopia", "grayscale"], "type": "string" }
             }, 
             "required": ["cvdSim", "type"], 
+            "type": "object"
+        }, 
+        "LintColorTagCheck": {
+            "additionalProperties": false, 
+            "properties": {
+                "isTag": {
+                    "anyOf": [ {"$ref": "#/definitions/LintVariable"}, {"$ref": "#/definitions/LintColor"} ]
+                }, 
+                "value": {"type": "string"}
+            }, 
+            "required": ["isTag", "value"], 
             "type": "object"
         }, 
         "LintComparison": {
@@ -363,10 +375,11 @@
         }, 
         "LintExpression": {
             "anyOf": [
-                {"$ref": "#/definitions/LintConjunction"}, 
-                {"$ref": "#/definitions/LintQuantifier" }, 
-                {"$ref": "#/definitions/LintComparison" }, 
-                {"$ref": "#/definitions/LintBoolean"    }  
+                {"$ref": "#/definitions/LintConjunction"  }, 
+                {"$ref": "#/definitions/LintQuantifier"   }, 
+                {"$ref": "#/definitions/LintComparison"   }, 
+                {"$ref": "#/definitions/LintBoolean"      }, 
+                {"$ref": "#/definitions/LintColorTagCheck"}  
             ], 
             "description": "A LintExpression is a JSON object that represents a logical expression. It is used to express a condition that is evaluated to a boolean value. It can be a conjunction, a quantifier, a comparison or a boolean value."
         }, 
@@ -375,7 +388,7 @@
                 {
                     "additionalProperties": false, 
                     "properties": {
-                        "filter": {"$ref": "#/definitions/alias-1448761563-3904-3965-1448761563-0-6322"}, 
+                        "filter": {"$ref": "#/definitions/alias-1448761563-3892-3953-1448761563-0-6459"}, 
                         "func"  : {"$ref": "#/definitions/LintExpression"}                              , 
                         "varb"  : {"type": "string"}                                                      
                     }, 
@@ -386,7 +399,7 @@
                     "additionalProperties": false, 
                     "properties": {
                         "func": {"$ref": "#/definitions/LintValue"}                                   , 
-                        "map" : {"$ref": "#/definitions/alias-1448761563-3904-3965-1448761563-0-6322"}, 
+                        "map" : {"$ref": "#/definitions/alias-1448761563-3892-3953-1448761563-0-6459"}, 
                         "varb": {"type": "string"}                                                      
                     }, 
                     "required": ["map", "func", "varb"], 
@@ -395,7 +408,7 @@
                 {
                     "additionalProperties": false, 
                     "properties": {
-                        "reverse": {"$ref": "#/definitions/alias-1448761563-3904-3965-1448761563-0-6322"}
+                        "reverse": {"$ref": "#/definitions/alias-1448761563-3892-3953-1448761563-0-6459"}
                     }, 
                     "required": ["reverse"], 
                     "type": "object"
@@ -404,7 +417,7 @@
                     "additionalProperties": false, 
                     "properties": {
                         "func": {"$ref": "#/definitions/LintValue"}                                   , 
-                        "sort": {"$ref": "#/definitions/alias-1448761563-3904-3965-1448761563-0-6322"}, 
+                        "sort": {"$ref": "#/definitions/alias-1448761563-3892-3953-1448761563-0-6459"}, 
                         "varb": {"type": "string"}                                                      
                     }, 
                     "required": ["sort", "func", "varb"], 
@@ -412,7 +425,7 @@
                 }, 
                 {
                     "additionalProperties": false, 
-                    "properties": { "speed": {"$ref": "#/definitions/alias-1448761563-3904-3965-1448761563-0-6322"} }, 
+                    "properties": { "speed": {"$ref": "#/definitions/alias-1448761563-3892-3953-1448761563-0-6459"} }, 
                     "required": ["speed"], 
                     "type": "object"
                 }
@@ -727,7 +740,7 @@
             "description": "A LintValue is a JSON object that represents a value. It can be a string, a number, a boolean, a LintColor, a LintVariable, a LintMathOps, a LintPairOps, a LintAggregate, a LintColorFunction or a LintExpression"
         }, 
         "LintVariable": {"type": "string"}, 
-        "alias-1448761563-3904-3965-1448761563-0-6322": {
+        "alias-1448761563-3892-3953-1448761563-0-6459": {
             "anyOf": [
                 {"$ref": "#/definitions/LintVariable"}                           , 
                 { "items": {"$ref": "#/definitions/LintValue"}, "type": "array" }, 

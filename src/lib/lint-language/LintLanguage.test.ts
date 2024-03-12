@@ -10,24 +10,40 @@ const toPal = (colors: string[]): Palette => ({
   colorSpace: "lab",
   evalConfig: {},
   background: toColors(["#fff"])[0],
-  colors: toColors(colors),
+  colors: toColorWithSemantics(colors),
   intendedAffects: [],
   intendedContexts: [],
 });
-const toColors = (colors: string[]): Color[] =>
+const wrapWithSemantics = (color: Color) => ({
+  size: undefined,
+  markType: undefined,
+  tags: [],
+  color,
+});
+const toColors = (colors: string[]) =>
   colors.map((x) => Color.colorFromString(x, "lab"));
+const toColorWithSemantics = (colors: string[]) =>
+  colors.map((x) => wrapWithSemantics(Color.colorFromString(x, "lab")));
 const exampleColors = toPal(["#d4a8ff", "#7bb9ff", "#008694"]);
 
 test("LintLanguage basic eval - eval with no references ", () => {
   const prog1: LintProgram = {
-    "<": { left: { count: exampleColors.colors }, right: 2 },
+    "<": {
+      left: { count: exampleColors.colors.map((x) => x.color) },
+      right: 2,
+    },
   };
   expect(prettyPrintLL(prog1)).toBe("count([#d4a8ff, #7bb9ff, #008694]) < 2");
   expect(LLEval(prog1, exampleColors).result).toBe(false);
 });
 
 test("LintLanguage basic eval - eval with no references 2 ", () => {
-  const prog2 = { "<": { left: { count: exampleColors.colors }, right: 10 } };
+  const prog2 = {
+    "<": {
+      left: { count: exampleColors.colors.map((x) => x.color) },
+      right: 10,
+    },
+  };
   const prog2Result = LLEval(prog2, exampleColors);
   expect(prog2Result.result).toBe(true);
   expect(prog2Result.blame).toStrictEqual([]);
@@ -68,7 +84,7 @@ test("LintLanguage conjunctions", () => {
   };
   expect(LLEval(prog1, exampleColors).result).toBe(true);
   expect(prettyPrintLL(prog1)).toBe(
-    "(count(colors) < 10 and count(colors) > 2)"
+    "(count(colors) < 10 AND count(colors) > 2)"
   );
 
   const prog2 = {
@@ -79,7 +95,7 @@ test("LintLanguage conjunctions", () => {
   };
   expect(LLEval(prog2, exampleColors).result).toBe(false);
   expect(prettyPrintLL(prog2)).toBe(
-    "(count(colors) < 2 or count(colors) > 10)"
+    "(count(colors) < 2 OR count(colors) > 10)"
   );
 });
 
@@ -98,14 +114,14 @@ test("LintLanguage Quantifiers All - Simple", () => {
     },
   });
   expect(prettyPrintLL(simpProg(["red"]))).toBe(
-    "EXIST a in colors, EXIST b in ([#f00]), a == b"
+    "EXIST a IN colors SUCH THAT EXIST b IN ([#f00]) SUCH THAT a == b"
   );
   const redResult = LLEval(simpProg(["red"]), exampleColors);
   expect(redResult.result).toBe(false);
   expect(redResult.blame).toStrictEqual([0, 1, 2]);
 
   expect(prettyPrintLL(simpProg(["#7bb9ff"]))).toBe(
-    "EXIST a in colors, EXIST b in ([#7bb9ff]), a == b"
+    "EXIST a IN colors SUCH THAT EXIST b IN ([#7bb9ff]) SUCH THAT a == b"
   );
   expect(LLEval(simpProg(["#7bb9ff"]), exampleColors).result).toBe(true);
 });
@@ -140,14 +156,14 @@ test("LintLanguage permutativeBlame - Quantifiers Simple", () => {
 });
 
 test("LintLanguage permutativeBlame - Quantifiers deuteranopia", () => {
-  const prog = allBlindProg("deuteranopia");
+  const prog = allCVDProg("deuteranopia");
   const pal = toPal(["#d4a8ff", "#7bb9ff", "#008694", "black"]);
   expect(permutativeBlame(prog, pal, "single")).toStrictEqual([0, 1]);
   expect(permutativeBlame(prog, pal, "pair")).toStrictEqual([[0, 1]]);
 });
 
 test("LintLanguage permutativeBlame - Tableau 10", () => {
-  const prog = allBlindProg("deuteranopia");
+  const prog = allCVDProg("deuteranopia");
   const pal = toPal([
     "#1f77b4",
     "#ff7f0e",
@@ -168,9 +184,9 @@ test("LintLanguage permutativeBlame - Tableau 10", () => {
   ]);
 });
 
-const expectedOutBlind = (type: string) =>
-  `ALL a in colors, ALL b in colors WHERE index(a) != index(b), NOT similar(cvdSim(a, ${type}), cvdSim(b, ${type})) < 9`;
-const allBlindProg = (type: string) => ({
+const expectedOutCVD = (type: string) =>
+  `ALL a IN colors SUCH THAT ALL b IN colors WHERE index(a) != index(b) SUCH THAT NOT similar(cvdSim(a, ${type}), cvdSim(b, ${type})) < 9`;
+const allCVDProg = (type: string) => ({
   all: {
     in: "colors",
     varb: "a",
@@ -193,23 +209,23 @@ const allBlindProg = (type: string) => ({
   },
 });
 test("LintLanguage Quantifiers All - deuteranopia", () => {
-  expect(prettyPrintLL(allBlindProg("deuteranopia"))).toBe(
-    expectedOutBlind("deuteranopia")
+  expect(prettyPrintLL(allCVDProg("deuteranopia"))).toBe(
+    expectedOutCVD("deuteranopia")
   );
-  const cbResult = LLEval(allBlindProg("deuteranopia"), exampleColors);
+  const cbResult = LLEval(allCVDProg("deuteranopia"), exampleColors);
   expect(cbResult.result).toBe(false);
   expect(cbResult.blame).toStrictEqual([0, 1]);
 });
 test("LintLanguage Quantifiers All - protanopia", () => {
-  expect(prettyPrintLL(allBlindProg("protanopia"))).toBe(
-    expectedOutBlind("protanopia")
+  expect(prettyPrintLL(allCVDProg("protanopia"))).toBe(
+    expectedOutCVD("protanopia")
   );
-  const cbResult = LLEval(allBlindProg("protanopia"), exampleColors);
+  const cbResult = LLEval(allCVDProg("protanopia"), exampleColors);
   expect(cbResult.result).toBe(false);
   expect(cbResult.blame).toStrictEqual([0, 1]);
 });
 test("LintLanguage Quantifiers All - tritanopia", () => {
-  const cbResult = LLEval(allBlindProg("tritanopia"), exampleColors);
+  const cbResult = LLEval(allCVDProg("tritanopia"), exampleColors);
   expect(cbResult.result).toBe(true);
   expect(cbResult.blame).toStrictEqual([]);
 });
@@ -245,7 +261,7 @@ test("LintLanguage Quantifiers Exist", () => {
     },
   };
   expect(prettyPrintLL(colorBlindExists)).toBe(
-    "NOT EXIST a in colors, EXIST b in colors, cvdSim(a, deuteranopia) != cvdSim(b, deuteranopia)"
+    "NOT EXIST a IN colors SUCH THAT EXIST b IN colors SUCH THAT cvdSim(a, deuteranopia) != cvdSim(b, deuteranopia)"
   );
   expect(LLEval(colorBlindExists, exampleColors).result).toBe(false);
 });
@@ -266,7 +282,29 @@ test("LintLanguage Quantifiers Exist - DENSE", () => {
     },
   };
   expect(prettyPrintLL(colorBlindExists)).toBe(
-    "NOT EXIST (a, b) in colors, cvdSim(a, deuteranopia) != cvdSim(b, deuteranopia)"
+    "NOT EXIST (a, b) IN colors SUCH THAT cvdSim(a, deuteranopia) != cvdSim(b, deuteranopia)"
+  );
+  expect(LLEval(colorBlindExists, exampleColors).result).toBe(false);
+});
+
+test("LintLanguage Quantifiers All - DENSE", () => {
+  const colorBlindExists = {
+    all: {
+      in: "colors",
+      varbs: ["a", "b"],
+      predicate: {
+        not: {
+          similar: {
+            left: { cvdSim: "a", type: "deuteranopia" },
+            right: { cvdSim: "b", type: "deuteranopia" },
+            threshold: 9,
+          },
+        },
+      },
+    },
+  };
+  expect(prettyPrintLL(colorBlindExists)).toBe(
+    "ALL (a, b) IN colors SUCH THAT NOT similar(cvdSim(a, deuteranopia), cvdSim(b, deuteranopia)) < 9"
   );
   expect(LLEval(colorBlindExists, exampleColors).result).toBe(false);
 });
@@ -279,7 +317,9 @@ test("LintLanguage Check exists", () => {
       predicate: { "==": { left: "a", right: "#1fbad6" } },
     },
   };
-  expect(prettyPrintLL(program)).toBe("EXIST a in colors, a == #1fbad6");
+  expect(prettyPrintLL(program)).toBe(
+    "EXIST a IN colors SUCH THAT a == #1fbad6"
+  );
   expect(LLEval(program, exampleColors).result).toBe(false);
 
   const program2 = {
@@ -289,7 +329,9 @@ test("LintLanguage Check exists", () => {
       predicate: { "!=": { left: "a", right: "#1fbad6" } },
     },
   };
-  expect(prettyPrintLL(program2)).toBe("EXIST a in colors, a != #1fbad6");
+  expect(prettyPrintLL(program2)).toBe(
+    "EXIST a IN colors SUCH THAT a != #1fbad6"
+  );
   expect(LLEval(program2, exampleColors).result).toBe(true);
 });
 
@@ -414,7 +456,7 @@ test("LintLanguage to color rotate", () => {
     },
   };
   expect(prettyPrintLL(realisticProgram)).toBe(
-    "EXIST a in colors, EXIST b in colors, similar(hsl.h(a), hsl.h(b) + 180) < 5"
+    "EXIST a IN colors SUCH THAT EXIST b IN colors SUCH THAT similar(hsl.h(a), hsl.h(b) + 180) < 5"
   );
   expect(LLEval(realisticProgram, exampleColors).result).toBe(false);
 });
@@ -434,7 +476,7 @@ test("LintLanguage Name discrimination", () => {
     },
   };
   expect(prettyPrintLL(program)).toBe(
-    "ALL (a, b) in colors WHERE index(a) != index(b), name(a) != name(b)"
+    "ALL (a, b) IN colors WHERE index(a) != index(b) SUCH THAT name(a) != name(b)"
   );
   const greenResult = LLEval(program, greens);
   expect(greenResult.result).toBe(false);
@@ -455,7 +497,7 @@ test("LintLanguage Name discrimination - dense notation", () => {
     },
   };
   expect(prettyPrintLL(program)).toBe(
-    "ALL (a, b) in colors WHERE index(a) != index(b), name(a) != name(b)"
+    "ALL (a, b) IN colors WHERE index(a) != index(b) SUCH THAT name(a) != name(b)"
   );
   expect(LLEval(program, greens).result).toBe(false);
   expect(LLEval(program, reds).result).toBe(true);
@@ -480,7 +522,7 @@ test("LintLanguage Name discrimination with a single color", () => {
     },
   };
   expect(prettyPrintLL(program)).toBe(
-    "ALL a in colors, ALL b in colors WHERE index(a) != index(b), name(a) != name(b)"
+    "ALL a IN colors SUCH THAT ALL b IN colors WHERE index(a) != index(b) SUCH THAT name(a) != name(b)"
   );
   const result = LLEval(program, toPal(["#008137"]));
   expect(result.result).toBe(true);
@@ -551,7 +593,7 @@ test("LintLanguage Avoid Extreme Colors", () => {
     },
   };
   expect(prettyPrintLL(program)).toBe(
-    "ALL a in colors, ALL b in ([#000000, #ffffff]), a != b"
+    "ALL a IN colors SUCH THAT ALL b IN ([#000000, #ffffff]) SUCH THAT a != b"
   );
   const { result, blame } = LLEval(program, greens);
   expect(result).toBe(true);
@@ -579,7 +621,7 @@ test("LintLanguage Avoid Extreme Colors Swapped Predicate Order (blame test)", (
     },
   };
   expect(prettyPrintLL(program)).toBe(
-    "ALL a in ([#000000, #ffffff]), ALL b in colors, a != b"
+    "ALL a IN ([#000000, #ffffff]) SUCH THAT ALL b IN colors SUCH THAT a != b"
   );
   const { result, blame } = LLEval(program, greens);
   expect(result).toBe(true);
@@ -636,7 +678,7 @@ test("LintLanguage Sequential Colors", () => {
   const inOrder = toPal(["#d4a8ff", "#7bb9ff", "#008694"]);
   expect(LLEval(program, inOrder).result).toBe(true);
   expect(prettyPrintLL(program)).toBe(
-    "(ALL (a, b) in colors WHERE index(a) - 1 == index(b), lab.l(a) > lab.l(b) or ALL (a, b) in colors WHERE index(a) - 1 == index(b), lab.l(a) < lab.l(b))"
+    "(ALL (a, b) IN colors WHERE index(a) - 1 == index(b) SUCH THAT lab.l(a) > lab.l(b) OR ALL (a, b) IN colors WHERE index(a) - 1 == index(b) SUCH THAT lab.l(a) < lab.l(b))"
   );
 });
 
@@ -724,7 +766,9 @@ test("LintLanguage Background differentiability", () => {
     },
   };
   const astString = prettyPrintLL(program);
-  expect(astString).toBe("ALL a in colors, NOT similar(a, background) < 15");
+  expect(astString).toBe(
+    "ALL a IN colors SUCH THAT NOT similar(a, background) < 15"
+  );
   const result = LLEval(program, toPal(["#fff", "#eee", "#000", "#ddd"]));
   expect(result.result).toBe(false);
   expect(result.blame).toStrictEqual([0, 1, 3]);
@@ -743,7 +787,7 @@ test("LintLanguage Sequential Similarity", () => {
   };
   const astString = prettyPrintLL(program);
   expect(astString).toBe(
-    "ALL (a, b) in colors WHERE index(a) != index(b), NOT similar(a, b) < 10"
+    "ALL (a, b) IN colors WHERE index(a) != index(b) SUCH THAT NOT similar(a, b) < 10"
   );
   const result = LLEval(program, toPal(["#fff", "#eee", "#000", "#ddd"]));
   expect(result.result).toBe(false);

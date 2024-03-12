@@ -76,7 +76,7 @@ export const fixColorNameDiscriminability: LintFixer = async (
 ) => {
   const colors = palette.colors;
   const colorNamesByIndex = colors.reduce((acc, color, index) => {
-    const name = getName(color);
+    const name = getName(color.color);
     acc[name] = (acc[name] || []).concat(index);
     return acc;
   }, {} as Record<string, number[]>);
@@ -84,10 +84,10 @@ export const fixColorNameDiscriminability: LintFixer = async (
   Object.values(colorNamesByIndex)
     .filter((x) => x.length > 1)
     .forEach((indices) => {
-      const localColors = indices.map((i) => newColors[i]);
+      const localColors = indices.map((i) => newColors[i].color);
       const updatedColors = suggestFixForColorsWithCommonNames(localColors);
       indices.forEach((i, j) => {
-        newColors[i] = updatedColors[j];
+        newColors[i] = { ...newColors[i], color: updatedColors[j] };
       });
     });
   return [{ ...palette, colors: newColors }];

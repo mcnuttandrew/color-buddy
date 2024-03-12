@@ -1,10 +1,17 @@
-import cvdSim from "../blindness";
-import type { Palette } from "../../types";
+import cvdSim from "../cvd-sim";
+import type { Palette, ColorWrap } from "../../types";
 import { Color, colorPickerConfig } from "../Color";
 import { getName } from "../lints/name-discrim";
 import type { LintProgram } from "./lint-type";
+import { wrapInBlankSemantics } from "../utils";
 
-type RawValues = string | number | Color | string[] | number[] | Color[];
+type RawValues =
+  | string
+  | number
+  | ColorWrap<Color>
+  | string[]
+  | number[]
+  | ColorWrap<Color>[];
 class Environment {
   constructor(
     private palette: Palette,
@@ -35,13 +42,13 @@ class Environment {
   get(name: string) {
     if (name === "colors") {
       const children = this.palette.colors
-        .map((x) => new LLColor(x, x.toHex()))
+        .map((x) => new LLColor(x, x.color.toHex()))
         .map((x) => new LLValue(x));
       return new LLValueArray(children);
     }
     if (name === "background") {
       return new LLColor(
-        this.palette.background,
+        wrapInBlankSemantics(this.palette.background),
         this.palette.background.toHex()
       );
     }
@@ -236,7 +243,9 @@ export class LLConjunction extends LLNode {
     if (this.type === "id") return this.children[0].toString();
     if (this.type === "none") return "";
     if (this.type === "not") return `NOT ${this.children[0].toString()}`;
-    return `(${this.children.map((x) => x.toString()).join(` ${this.type} `)})`;
+    return `(${this.children
+      .map((x) => x.toString())
+      .join(` ${this.type.toUpperCase()} `)})`;
   }
 }
 
@@ -296,19 +305,29 @@ export class LLVariable extends LLNode {
 }
 
 export class LLColor extends LLNode {
-  constructor(private value: Color, private constructorString: string) {
+  constructor(
+    private value: ColorWrap<Color>,
+    private constructorString: string
+  ) {
     super();
   }
-  evaluate(env: Environment): ReturnVal<Color> {
+  evaluate(env: Environment): ReturnVal<ColorWrap<Color>> {
     this.evalCheck(env);
+
     return { result: this.value, env };
   }
   static tryToConstruct(value: any, options: OptionsConfig): false | LLColor {
     if (value instanceof Color) {
-      return new LLColor(value, value.toHex());
+      return new LLColor(wrapInBlankSemantics(value), value.toHex());
+    }
+    if (typeof value === "object" && value.color instanceof Color) {
+      return new LLColor(value, value.color.toHex());
     }
     if (typeof value === "string" && Color.stringIsColor(value, "lab")) {
-      return new LLColor(Color.colorFromString(value, "lab"), value);
+      return new LLColor(
+        wrapInBlankSemantics(Color.colorFromString(value, "lab")),
+        value
+      );
     }
     return false;
   }
@@ -378,24 +397,30 @@ export class LLNumberOp extends LLNode {
     return new LLNumberOp(opType, leftType, rightType);
   }
   toString(): string {
-    return `${this.left.toString()} ${this.type} ${this.right.toString()}`;
+    const left = this.left.toString();
+    const right = this.right.toString();
+    if (this.type === "absDiff") {
+      return `absDiff(${left}, ${right})`;
+    }
+    return `${left} ${this.type} ${right}`;
   }
 }
 
 const predicateTypes = ["==", "!=", ">", "<", "similar"] as const;
 
+type CompareType = number | boolean | string | ColorWrap<Color>;
 function compareValues(
-  leftVal: any,
-  rightVal: any,
+  leftVal: CompareType,
+  rightVal: CompareType,
   pred: LLPredicate,
   showValues: boolean
 ) {
-  let isColor = leftVal instanceof Color;
+  let isColor = getType(leftVal) === "Color";
   let left = leftVal;
   let right = rightVal;
   if (isColor && pred.type !== "similar") {
-    left = leftVal.toHex();
-    right = rightVal.toHex();
+    left = (leftVal as ColorWrap<Color>).color.toHex();
+    right = (rightVal as ColorWrap<Color>).color.toHex();
   }
   if (showValues) {
     console.log(pred.type, left, right);
@@ -405,9 +430,17 @@ function compareValues(
       let thresh = pred.threshold;
       if (!thresh) throw new Error("Similarity threshold not found");
       if (isColor) {
-        const diff = left.symmetricDeltaE(right, "2000");
+        let localLeft = left as ColorWrap<Color>;
+        let localRight = right as ColorWrap<Color>;
+        const diff = localLeft.color.symmetricDeltaE(localRight.color, "2000");
         if (showValues) {
-          console.log("diff", diff, thresh, left.toHex(), right.toHex());
+          console.log(
+            "diff",
+            diff,
+            thresh,
+            localLeft.color.toHex(),
+            localRight.color.toHex()
+          );
         }
         return diff < thresh;
       }
@@ -415,7 +448,8 @@ function compareValues(
         return Math.abs(left - right) < thresh;
       }
       throw new Error(
-        "Type error. Similar must be used with colors or numbers."
+        `Type error. Similar must be used with colors or numbers. 
+        Got ${JSON.stringify(left)} and ${JSON.stringify(right)}`
       );
     case "==":
       return left === right;
@@ -428,7 +462,7 @@ function compareValues(
   }
 }
 const getType = (x: any) => {
-  if (x instanceof Color) return "Color";
+  if (x?.color instanceof Color) return "Color";
   return typeof x === "object"
     ? Array.isArray(x)
       ? "Array"
@@ -541,27 +575,41 @@ export class LLValue extends LLNode {
 }
 
 type Params = Record<string, string>;
-const VFTypes = [
+const VFTypes: {
+  primaryKey: string;
+  params: string[];
+  op: (val: ColorWrap<Color>, params: Params) => any;
+}[] = [
   {
     primaryKey: "cvdSim",
     params: ["type"] as string[],
-    op: (val: Color, params: Params) => cvdSim(params.type, val),
+    op: (val, params) => ({ ...val, color: cvdSim(params.type, val.color) }),
   },
   {
     primaryKey: "name",
     params: [] as string[],
-    op: (val: Color, _params: Params) => getName(val).toLowerCase(),
+    op: (val, _params) => getName(val.color).toLowerCase(),
   },
   {
-    primaryKey: "toColor",
+    primaryKey: "toSpace",
     params: ["space", "channel"] as string[],
-    op: (val: Color, params: Params) =>
-      Number(val.toColorSpace(params.space as any).getChannel(params.channel)),
+    op: (val, params) =>
+      Number(
+        val.color.toColorSpace(params.space as any).getChannel(params.channel)
+      ),
   },
   {
     primaryKey: "inGamut",
     params: [],
-    op: (val: Color, _params: Params) => val.inGamut(),
+    op: (val, _params) => val.color.inGamut(),
+  },
+  {
+    primaryKey: "isTag",
+    params: ["value"],
+    op: (val, params) => {
+      const tag = params.value.toLowerCase();
+      return val.tags.some((x) => x.toLowerCase() === tag);
+    },
   },
 ];
 
@@ -571,8 +619,10 @@ Object.entries(colorPickerConfig).map(([colorSpace, value]) => {
     VFTypes.push({
       primaryKey: `${colorSpace}.${channelKey.toLowerCase()}`,
       params: [] as string[],
-      op: (val: Color, _params: Params) =>
-        Number(val.toColorSpace(colorSpace as any).getChannel(channelKey)),
+      op: (val: ColorWrap<Color>, _params: Params) =>
+        Number(
+          val.color.toColorSpace(colorSpace as any).getChannel(channelKey)
+        ),
     });
   });
 });
@@ -590,7 +640,7 @@ export class LLValueFunction extends LLNode {
     const { input, params } = this;
     // get the value of the input, such as by deref
     const inputEval = input.evaluate(env).result;
-    if (!(inputEval instanceof Color)) {
+    if (!(typeof inputEval === "object" && inputEval.color instanceof Color)) {
       throw new Error(
         `Type error, was expecting a color, but got ${inputEval} in function ${this.type}`
       );
@@ -651,25 +701,29 @@ const getOp =
 const getParams = (op: any, node: any) =>
   op.params.reduce((acc: any, key: any) => ({ ...acc, [key]: node[key] }), {});
 
-const LLPairFunctionTypes = [
+const LLPairFunctionTypes: {
+  primaryKey: string;
+  params: string[];
+  op: (a: ColorWrap<Color>, b: ColorWrap<Color>, params: Params) => number;
+}[] = [
   {
     primaryKey: "dist",
     params: ["space"] as string[],
-    op: (valA: Color, valB: Color, params: Params) =>
-      valA.distance(valB, params.space as any),
+    op: (valA, valB, params) =>
+      valA.color.distance(valB.color, params.space as any),
   },
   {
     primaryKey: "deltaE",
     params: ["algorithm"] as string[],
-    op: (valA: Color, valB: Color, params: Params) =>
-      valA.symmetricDeltaE(valB, params.algorithm as any),
+    op: (valA, valB, params) =>
+      valA.color.symmetricDeltaE(valB.color, params.algorithm as any),
   },
   {
     primaryKey: "contrast",
     params: ["algorithm"] as string[],
-    op: (valA: Color, valB: Color, params: Params) => {
-      const a = valA.toColorIO();
-      const b = valB.toColorIO();
+    op: (valA, valB, params) => {
+      const a = valA.color.toColorIO();
+      const b = valB.color.toColorIO();
       return Math.abs(a.contrast(b, params.algorithm as any));
     },
   },
@@ -689,7 +743,10 @@ export class LLPairFunction extends LLNode {
     // get the value of the input, such as by deref
     const leftEval = left.evaluate(env).result;
     const rightEval = right.evaluate(env).result;
-    if (!(leftEval instanceof Color) || !(rightEval instanceof Color)) {
+    if (
+      !(leftEval?.color instanceof Color) ||
+      !(rightEval?.color instanceof Color)
+    ) {
       throw new Error("Type error");
     }
     const op = LLPairFunctionTypes.find((x) => x.primaryKey === this.type);
@@ -736,7 +793,7 @@ export class LLQuantifier extends LLNode {
     private input: LLValueArray | LLVariable | LLMap,
     private predicate: LLPredicate,
     private varbs: string[],
-    private where?: LLPredicate
+    private where?: LLPredicate | LLValueFunction
   ) {
     super();
   }
@@ -826,7 +883,7 @@ export class LLQuantifier extends LLNode {
       inputType,
       predicateType,
       varb ? [varb] : varbs,
-      where && tryTypes([LLPredicate], options)(where)
+      where && tryTypes([LLPredicate, LLValueFunction], options)(where)
     );
   }
   toString(): string {
@@ -846,7 +903,7 @@ export class LLQuantifier extends LLNode {
     }
     // const type = this.type === "exist" ? "∃" : "∀";
     const type = this.type.toUpperCase();
-    return `${type} ${varbs} in ${targ}${where}, ${this.predicate.toString()}`;
+    return `${type} ${varbs} IN ${targ}${where} SUCH THAT ${this.predicate.toString()}`;
   }
 }
 
@@ -984,7 +1041,7 @@ export class LLMap extends LLNode {
             typeof x === "number" ||
             (typeof x === "object" && x?.type === "<number>")
         );
-        const allColors = children.every((x) => x instanceof Color);
+        const allColors = children.every((x) => x?.color instanceof Color);
         if (!allNumbers && !allColors) {
           const types = children.map((x) => x);
           console.log(children);
@@ -1037,9 +1094,10 @@ export class LLMap extends LLNode {
   }
   toString(): string {
     const type = this.type;
-    return `${type}(${this.children.toString()}, ${
-      this.varb
-    } => ${this.func.toString()})`;
+    const funcStr = this.func.toString();
+    const func =
+      this.varb != " " && funcStr != " " ? `, ${this.varb} => ${funcStr}` : "";
+    return `${type}(${this.children.toString()}${func})`;
   }
 }
 

@@ -205,7 +205,9 @@
           <Tooltip>
             <div slot="content">
               <div class="font-bold">Colors</div>
-              <div>{pal.palette.colors.map((x) => x.toHex()).join(", ")}</div>
+              <div>
+                {pal.palette.colors.map((x) => x.color.toHex()).join(", ")}
+              </div>
               <div class="font-bold">Controls</div>
               <button
                 class={buttonStyle}

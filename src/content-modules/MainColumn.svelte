@@ -14,7 +14,7 @@
   import Nav from "../components/Nav.svelte";
   import PalPreview from "../components/PalPreview.svelte";
   import SetColorSpace from "../controls/SetColorSpace.svelte";
-  import simulate_cvd from "../lib/blindness";
+  import simulate_cvd from "../lib/cvd-sim";
 
   import ContentEditable from "../components/ContentEditable.svelte";
 
@@ -65,7 +65,7 @@
     stopDragging={() => colorStore.resumePersistance()}
     blindColors={selectedBlindType === "none"
       ? []
-      : currentPal.colors.map((x) => simulate_cvd(selectedBlindType, x))}
+      : currentPal.colors.map((x) => simulate_cvd(selectedBlindType, x.color))}
   />
 
   <div class="flex flex-wrap">
@@ -83,9 +83,10 @@
   <div class="flex flex-col pl-2">
     <!-- overview / preview -->
     <PalPreview
+      allowModification={true}
       highlightSelected={true}
       pal={currentPal}
-      allowModification={true}
+      showTags={true}
     />
     <Nav
       tabs={["palette-config", "example"]}

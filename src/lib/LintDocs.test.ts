@@ -15,9 +15,13 @@ const testCaseToText = (
   }
   const testMsgs = tests
     .map(
-      (x: any) =>
+      (x) =>
         `- ${x.colors
-          .map((y: any) => y.toHex())
+          .map((y) => {
+            const hex = y.color.toHex();
+            const tags = y.tags.length ? ` (${y.tags.join(", ")})` : "";
+            return `${hex}${tags}`;
+          })
           .join(", ")} with a ${x.background.toHex()} background`
     )
     .join("\n\n");

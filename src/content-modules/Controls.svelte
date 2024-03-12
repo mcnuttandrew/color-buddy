@@ -5,14 +5,15 @@
 
   import { Color } from "../lib/Color";
 
-  import AlignSelection from "../controls/AlignSelection.svelte";
-  import SuggestionModificationToSelection from "../controls/SuggestionModificationToSelection.svelte";
-  import InterpolatePoints from "../controls/InterpolatePoints.svelte";
-  import DistributePoints from "../controls/DistributePoints.svelte";
-  import AdjustColor from "../controls/AdjustColor.svelte";
   import AddColor from "../controls/AddColor.svelte";
+  import AdjustColor from "../controls/AdjustColor.svelte";
+  import AlignSelection from "../controls/AlignSelection.svelte";
   import ColorChannelPicker from "../components/ColorChannelPicker.svelte";
+  import ColorTagger from "../controls/ColorTagger.svelte";
+  import DistributePoints from "../controls/DistributePoints.svelte";
+  import InterpolatePoints from "../controls/InterpolatePoints.svelte";
   import Rotate from "../controls/Rotate.svelte";
+  import SuggestionModificationToSelection from "../controls/SuggestionModificationToSelection.svelte";
 
   $: currentPal = $colorStore.palettes[$colorStore.currentPal];
   $: colors = currentPal.colors;
@@ -28,18 +29,22 @@
     <div class="w-full border-t-2 border-black my-2"></div>
     <input
       class="w-full"
-      value={colors[focusedColors[0]].toHex()}
+      value={colors[focusedColors[0]].color.toHex()}
       on:change={(e) => {
         const updatedColors = [...colors];
-        updatedColors[focusedColors[0]] = Color.colorFromString(
+        const newColor = Color.colorFromString(
           e.currentTarget.value,
           colorSpace
         );
+        updatedColors[focusedColors[0]] = {
+          ...updatedColors[focusedColors[0]],
+          color: newColor,
+        };
         colorStore.setCurrentPalColors(updatedColors);
       }}
     />
     <ColorChannelPicker
-      color={colors[focusedColors[0]].toColorSpace(colorSpace)}
+      color={colors[focusedColors[0]].color.toColorSpace(colorSpace)}
       colorMode={$configStore.channelPickerSpace}
       onSpaceChange={(space) => {
         // @ts-ignore
@@ -47,10 +52,14 @@
       }}
       onColorChange={(color) => {
         const updatedColors = [...colors];
-        updatedColors[focusedColors[0]] = color.toColorSpace(colorSpace);
+        updatedColors[focusedColors[0]] = {
+          ...updatedColors[focusedColors[0]],
+          color: color.toColorSpace(colorSpace),
+        };
         colorStore.setCurrentPalColors(updatedColors);
       }}
     />
+    <ColorTagger />
   {/if}
 
   <DistributePoints />

@@ -84,7 +84,7 @@
         startDragging={() => {}}
         stopDragging={() => {}}
         blindColors={(showDiff
-          ? currentPal.colors.map((x) => x.toColorSpace(colorSpace))
+          ? currentPal.colors.map((x) => x.color.toColorSpace(colorSpace))
           : []
         ).slice(
           0,

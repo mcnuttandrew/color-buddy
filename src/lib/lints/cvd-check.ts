@@ -50,9 +50,7 @@ const lints: CustomLint[] = blindTypes.map((type) => ({
     },
   }),
   name:
-    type === "grayscale"
-      ? "Right in black and white"
-      : `Colorblind Friendly for ${type}`,
+    type === "grayscale" ? "Right in black and white" : `CVD: ${type} Friendly`,
   taskTypes: ["sequential", "diverging", "categorical"],
   group: "accessibility",
   description: `All colors in a palette should be differentiable by people with ${type} ${blindnessLabels[type]}. This is because if they are not, then they will not be differentiable from each other in some contexts.`,

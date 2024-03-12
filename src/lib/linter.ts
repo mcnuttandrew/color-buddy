@@ -11,7 +11,8 @@ import Affects from "./lints/affects";
 import AvoidExtremes from "./lints/avoid-extremes";
 import BackgroundDifferentiability from "./lints/background-contrast";
 import CatOrderSimilarity from "./lints/cat-order-similarity";
-import ColorBlindness from "./lints/color-blindness";
+import CVDCheck from "./lints/cvd-check";
+import ColorTags from "./lints/color-tags";
 import EvenDistribution from "./lints/even-distribution";
 import Fair from "./lints/fair";
 import Gamut from "./lints/in-gamut";
@@ -25,7 +26,8 @@ import UglyColors from "./lints/ugly-colors";
 
 export const BUILT_INS: CustomLint[] = [
   ...Affects,
-  ...ColorBlindness,
+  ...CVDCheck,
+  ...ColorTags,
   ...Fair,
   ...MuthGuidelines,
   ...SizeDiscrim,

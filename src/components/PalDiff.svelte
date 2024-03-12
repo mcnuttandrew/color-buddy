@@ -12,7 +12,7 @@
   $: arrows = beforePal.colors.reduce(
     (acc, x, idx) => {
       const afterIdx = afterPal.colors.findIndex(
-        (y) => y.toHex() === x.toHex()
+        (y) => y.color.toHex() === x.color.toHex()
       );
       if (afterIdx === -1) return acc;
       acc.push({
@@ -56,7 +56,7 @@
       cx={idx * xStep + xMargin}
       cy={rowHeight / 2}
       r={radius}
-      fill={color.toHex()}
+      fill={color.color.toHex()}
     />
   {/each}
 
@@ -65,7 +65,7 @@
       cx={idx * xStep + xMargin}
       cy={rowHeight * 1.5}
       r={radius}
-      fill={color.toHex()}
+      fill={color.color.toHex()}
     />
   {/each}
   <text

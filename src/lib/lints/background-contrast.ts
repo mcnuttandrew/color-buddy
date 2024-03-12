@@ -1,4 +1,8 @@
-import { JSONToPrettyString, makePalFromString } from "../utils";
+import {
+  JSONToPrettyString,
+  makePalFromString,
+  createPalWithTags,
+} from "../utils";
 import type { CustomLint } from "../ColorLint";
 import { Color } from "../Color";
 import type { LintFixer } from "../linter-tools/lint-fixer";
@@ -49,12 +53,8 @@ const lintBase: CustomLint = {
   id: "background-contrast-built-in",
   blameMode: "single" as const,
   subscribedFix: "fixBackgroundDifferentiability",
-  expectedFailingTests: [
-    makePalFromString(["#00ffff", "#00faff", "#00e4ff", "#fdfdfc", "#00ffff"]),
-  ],
-  expectedPassingTests: [
-    makePalFromString(["#cf5f67", "#468bbc", "#848475", "#c55eab", "#ff008c"]),
-  ],
+  expectedFailingTests: [],
+  expectedPassingTests: [],
 };
 
 const contrastGraphicalObjects: CustomLint = {
@@ -62,6 +62,8 @@ const contrastGraphicalObjects: CustomLint = {
   program: JSONToPrettyString(buildProgram(3, false)),
   name: "WCAG Contrast Graphical Objects",
   id: "contrast-graphical-objects-built-in",
+  expectedFailingTests: [makePalFromString(["#feed72", "#f8f4d2", "#eb717b"])],
+  expectedPassingTests: [makePalFromString(["#cf5f67", "#468bbc", "#848475"])],
 };
 
 const contrastTextAA: CustomLint = {
@@ -69,12 +71,24 @@ const contrastTextAA: CustomLint = {
   program: JSONToPrettyString(buildProgram(4.5, true)),
   name: "WCAG Text Contrast: AA",
   id: "contrast-aa-built-in",
+  expectedFailingTests: [
+    createPalWithTags(["#feed72", "#f8f4d2", "#eb717b"], [[2, "text"]]),
+  ],
+  expectedPassingTests: [
+    createPalWithTags(["#feed72", "#f8f4d2", "#af3b4b"], [[2, "text"]]),
+  ],
 };
 const contrastTextAAA: CustomLint = {
   ...lintBase,
   program: JSONToPrettyString(buildProgram(7, true)),
   name: "WCAG Text Contrast: AAA",
   id: "contrast-aaa-built-in",
+  expectedFailingTests: [
+    createPalWithTags(["#feed72", "#f8f4d2", "#af3b4b"], [[2, "text"]]),
+  ],
+  expectedPassingTests: [
+    createPalWithTags(["#feed72", "#f8f4d2", "#6c001a"], [[2, "text"]]),
+  ],
 };
 
 export default [contrastGraphicalObjects, contrastTextAA, contrastTextAAA];

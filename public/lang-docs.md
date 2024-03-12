@@ -94,13 +94,13 @@ Natural Language: ALL a IN colors SUCH THAT contrast(a, background, WCAG21) > 3
 
 Palettes that will fail this test:
 
-- #0ff, #00faff, #00e4ff, #fdfdfc, #0ff with a #fff background
+- #feed72, #f8f4d2, #eb717b with a #fff background
 
 
 
 Palettes that will pass this test:
 
-- #cf5f67, #468bbc, #848475, #c55eab, #ff008c with a #fff background
+- #cf5f67, #468bbc, #848475 with a #fff background
 
 
 Program:
@@ -126,7 +126,7 @@ Program:
 
 
 
-### WCAG Contrast: AA
+### WCAG Text Contrast: AA
 
 Description: All colors in a palette should have a sufficient contrast ratio with the background color. This is because if they are not, then they will not be differentiable from each other in some contexts. Valid algorithms are "APCA", "WCAG21", "Michelson", "Weber", "Lstar", "DeltaPhi".
 
@@ -134,13 +134,13 @@ Natural Language: ALL a IN colors WHERE isTag(a, text) SUCH THAT contrast(a, bac
 
 Palettes that will fail this test:
 
-- #0ff, #00faff, #00e4ff, #fdfdfc, #0ff with a #fff background
+- #feed72, #f8f4d2, #eb717b (text) with a #fff background
 
 
 
 Palettes that will pass this test:
 
-- #cf5f67, #468bbc, #848475, #c55eab, #ff008c with a #fff background
+- #feed72, #f8f4d2, #af3b4b (text) with a #fff background
 
 
 Program:
@@ -167,7 +167,7 @@ Program:
 
 
 
-### WCAG Contrast: AAA
+### WCAG Text Contrast: AAA
 
 Description: All colors in a palette should have a sufficient contrast ratio with the background color. This is because if they are not, then they will not be differentiable from each other in some contexts. Valid algorithms are "APCA", "WCAG21", "Michelson", "Weber", "Lstar", "DeltaPhi".
 
@@ -175,13 +175,13 @@ Natural Language: ALL a IN colors WHERE isTag(a, text) SUCH THAT contrast(a, bac
 
 Palettes that will fail this test:
 
-- #0ff, #00faff, #00e4ff, #fdfdfc, #0ff with a #fff background
+- #feed72, #f8f4d2, #af3b4b (text) with a #fff background
 
 
 
 Palettes that will pass this test:
 
-- #cf5f67, #468bbc, #848475, #c55eab, #ff008c with a #fff background
+- #feed72, #f8f4d2, #6c001a (text) with a #fff background
 
 
 Program:

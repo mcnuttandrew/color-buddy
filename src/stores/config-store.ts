@@ -113,8 +113,6 @@ function createStore() {
       persist((old) => ({ ...old, showGamutMarkers: n })),
     setUseSimulatorOnExamples: (n: StoreData["useSimulatorOnExamples"]) =>
       persist((old) => ({ ...old, useSimulatorOnExamples: n })),
-    setMainColumnRoute: (n: StoreData["mainColumnRoute"]) =>
-      persist((old) => ({ ...old, mainColumnRoute: n })),
     setMainColumnSelectedExample: (n: StoreData["mainColumnSelectedExample"]) =>
       persist((old) => ({ ...old, mainColumnSelectedExample: n })),
     setCompareSelectedExample: (n: StoreData["compareSelectedExample"]) =>

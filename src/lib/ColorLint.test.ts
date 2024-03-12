@@ -142,11 +142,11 @@ test("ColorLint - CVD: Grayscale", async () => {
 const ughWhat = ["#00ffff", "#00faff", "#00e4ff", "#fdfdfc", "#00ffff"];
 test("ColorLint - Background Contrast", async () => {
   const examplePal = makePalFromString(ughWhat);
-  const BackgroundContrastLint = CreateCustomLint(BackgroundContrast);
+  const BackgroundContrastLint = CreateCustomLint(BackgroundContrast[0]);
   const exampleLint = new BackgroundContrastLint(examplePal).run();
   expect(exampleLint.passes).toBe(false);
   expect(exampleLint.message).toBe(
-    "These colors (#fdfdfc) do not have a sufficient contrast ratio with the background and may be hard to discriminate in some contexts."
+    "These colors (#0ff, #00faff, #00e4ff, #fdfdfc, #0ff) do not have a sufficient contrast ratio with the background and may be hard to discriminate in some contexts."
   );
   const fix = await suggestLintFix(examplePal, exampleLint).then((x) => x[0]);
   expect(fix.colors.map((x) => x.color.toHex())).toMatchSnapshot();
@@ -155,11 +155,23 @@ test("ColorLint - Background Contrast", async () => {
   const exampleLint2 = new BackgroundContrastLint(examplePal).run();
   expect(exampleLint2.passes).toBe(false);
   expect(exampleLint2.message).toBe(
-    "These colors (#00e4ff) do not have a sufficient contrast ratio with the background and may be hard to discriminate in some contexts."
+    "These colors (#0ff, #00faff, #00e4ff, #fdfdfc, #0ff) do not have a sufficient contrast ratio with the background and may be hard to discriminate in some contexts."
   );
   const fix2 = await suggestLintFix(examplePal, exampleLint2).then((x) => x[0]);
   expect(fix2.colors.map((x) => x.color.toHex())).toMatchSnapshot();
-  autoTest(BackgroundContrast);
+  autoTest(BackgroundContrast[0]);
+});
+
+test("ColorLint - Contrast (1) contrastGraphicalObjects", () => {
+  autoTest(BackgroundContrast[0]);
+});
+
+test("ColorLint - Contrast (2) contrastTextAA", () => {
+  autoTest(BackgroundContrast[1]);
+});
+
+test("ColorLint - Contrast (3) contrastTextAAA", () => {
+  autoTest(BackgroundContrast[2]);
 });
 
 test("ColorLint - MuthGuidelines (1) Background desaturation sufficient", () => {

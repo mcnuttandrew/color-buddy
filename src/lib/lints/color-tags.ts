@@ -1,13 +1,9 @@
-import { JSONToPrettyString, makePalFromString } from "../utils";
+import {
+  JSONToPrettyString,
+  makePalFromString,
+  createPalWithTags,
+} from "../utils";
 import type { CustomLint } from "../ColorLint";
-
-function createPalWithTags(colors: string[], tags: [number, string][]) {
-  const pal = makePalFromString(colors);
-  tags.forEach(([index, tag]) => {
-    pal.colors[index].tags.push(tag);
-  });
-  return pal;
-}
 
 // If Semantic Tag == Context then the color should be low contrast with the background (Whisper, Don't Scream work)
 

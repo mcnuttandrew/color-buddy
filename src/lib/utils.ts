@@ -260,6 +260,14 @@ export function makePalFromString(
   };
 }
 
+export function createPalWithTags(colors: string[], tags: [number, string][]) {
+  const pal = makePalFromString(colors);
+  tags.forEach(([index, tag]) => {
+    pal.colors[index].tags.push(tag);
+  });
+  return pal;
+}
+
 export const toPal = (
   colors: string[],
   currentPal: Palette,

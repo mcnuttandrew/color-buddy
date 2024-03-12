@@ -92,13 +92,13 @@
   };
   $: taggedAxisColor = findColorWithTag(colors, "axis");
   $: axisColor = taggedAxisColor
-    ? taggedAxisColor.color
+    ? taggedAxisColor.color.toHex()
     : bgLum > 0.4
       ? "#00000022"
       : "#ffffff55";
   $: taggedTextColor = findColorWithTag(colors, "text");
   $: textColor = taggedTextColor
-    ? taggedTextColor.color
+    ? taggedTextColor.color.toHex()
     : bgLum > 0.4
       ? "#00000066"
       : "#ffffffaa";

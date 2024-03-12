@@ -30,8 +30,7 @@
       type: "categorical",
       evalConfig: {},
       colorSpace: colorSpace as any,
-      intendedAffects: [],
-      intendedContexts: [],
+      tags: [],
     };
   }
 

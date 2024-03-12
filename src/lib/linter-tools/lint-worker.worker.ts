@@ -1,7 +1,6 @@
 import * as idb from "idb-keyval";
 import { runLintChecks } from "../linter";
-import { prettyPrintLL } from "../lint-language/lint-language";
-import type { CustomLint } from "../CustomLint";
+import type { CustomLint } from "../ColorLint";
 import type { Palette, StringPalette } from "../../types";
 import { Color } from "../Color";
 import type { LintResult } from "../ColorLint";
@@ -34,8 +33,7 @@ const hydratePal = (pal: string): Palette => {
     colorSpace: parsed.colorSpace,
     name: parsed.name,
     evalConfig: parsed.evalConfig,
-    intendedAffects: parsed.intendedAffects,
-    intendedContexts: parsed.intendedContexts,
+    tags: parsed.tags,
   };
 };
 
@@ -86,8 +84,7 @@ async function dispatch(cmd: Command) {
           isCustom: x.isCustom,
           taskTypes: x.taskTypes as any,
           subscribedFix: x.subscribedFix,
-          affectTypes: x.affectTypes,
-          contextTypes: x.contextTypes,
+          requiredTags: x.requiredTags,
           naturalLanguageProgram: x.naturalLanguageProgram,
         };
       });

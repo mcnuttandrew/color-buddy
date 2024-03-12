@@ -61,8 +61,7 @@
                 evalConfig: {},
                 name,
                 type,
-                intendedAffects: [],
-                intendedContexts: [],
+                tags: [],
               };
             });
           colorStore.setPalettes(pals);
@@ -76,7 +75,7 @@
 
 <Tooltip>
   <button class={buttonStyle} slot="target" let:toggle on:click={toggle}>
-    {`Config ⚙`}
+    Config ⚙
   </button>
   <div slot="content">
     <div class="flex mb-4">

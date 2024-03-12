@@ -20,7 +20,6 @@ interface StoreData {
   showColorBackground: boolean;
   tooltipXY?: [string, string];
   useSimulatorOnExamples: boolean;
-  mainColumnRoute: "palette-config" | "example";
   mainColumnSelectedExample: number;
   xZoom: [number, number];
   yZoom: [number, number];
@@ -44,7 +43,6 @@ const InitialStore: StoreData = {
   showColorBackground: true,
   showGamutMarkers: true,
   tooltipXY: undefined,
-  mainColumnRoute: "palette-config",
   mainColumnSelectedExample: -1,
   useSimulatorOnExamples: false,
   channelPickerSpace: "lab",

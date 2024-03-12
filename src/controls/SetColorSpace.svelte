@@ -25,7 +25,12 @@
       </button>
     {/each}
   </div>
-  <button slot="target" class={buttonStyle} let:toggle on:click={toggle}>
+  <button
+    slot="target"
+    class={`${buttonStyle} pl-0`}
+    let:toggle
+    on:click={toggle}
+  >
     Color Space: {colorSpace.toUpperCase()}
   </button>
 </Tooltip>

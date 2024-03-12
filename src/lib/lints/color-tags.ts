@@ -1,5 +1,5 @@
 import { JSONToPrettyString, makePalFromString } from "../utils";
-import type { CustomLint } from "../CustomLint";
+import type { CustomLint } from "../ColorLint";
 
 function createPalWithTags(colors: string[], tags: [number, string][]) {
   const pal = makePalFromString(colors);
@@ -43,6 +43,7 @@ const whisperScream: CustomLint = {
   blameMode: "single",
   expectedPassingTests: [createPalWithTags(["#eee"], [[0, "axis"]])],
   expectedFailingTests: [createPalWithTags(["#000"], [[0, "axis"]])],
+  requiredTags: [],
 };
 lints.push(whisperScream);
 
@@ -73,6 +74,7 @@ const blueBasicColor: CustomLint = {
     makePalFromString(colorNames),
   ],
   expectedFailingTests: [createPalWithTags(colorNames.slice(1), [[0, "blue"]])],
+  requiredTags: [],
 };
 lints.push(blueBasicColor);
 export default lints;

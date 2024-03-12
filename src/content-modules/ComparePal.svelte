@@ -43,6 +43,8 @@
       <div class="font-bold">
         <span class="italic">Compare: {ComparisonPal.name}</span>
       </div>
+      <!-- keep even with the tags line -->
+      <div>&nbsp;</div>
       <div class="flex">
         <SetColorSpace
           {colorSpace}
@@ -83,7 +85,7 @@
         onFocusedColorsChange={() => {}}
         startDragging={() => {}}
         stopDragging={() => {}}
-        blindColors={(showDiff
+        annotationColors={(showDiff
           ? currentPal.colors.map((x) => x.color.toColorSpace(colorSpace))
           : []
         ).slice(
@@ -100,7 +102,12 @@
   </div>
   <div class="flex">
     <Tooltip>
-      <button class={buttonStyle} slot="target" let:toggle on:click={toggle}>
+      <button
+        class={`${buttonStyle} pl-0`}
+        slot="target"
+        let:toggle
+        on:click={toggle}
+      >
         Change Compared Palette
       </button>
       <div class="flex flex-col w-80" slot="content">
@@ -136,12 +143,7 @@
     /> -->
     </div>
   {/if}
-  <Nav
-    tabs={["example"]}
-    selectTab={() => {}}
-    isTabSelected={() => true}
-    className="mt-4"
-  />
+
   {#if compareIdx !== undefined}
     <div class="example-holder flex justify-center-center flex-col">
       <ExampleAlaCart

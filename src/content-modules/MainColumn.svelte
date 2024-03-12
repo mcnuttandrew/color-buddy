@@ -9,9 +9,9 @@
   import ColorScatterPlot from "../scatterplot/ColorScatterPlot.svelte";
   import ExampleAlaCart from "../example/ExampleAlaCarte.svelte";
   import PalTypeConfig from "../controls/PalTypeConfig.svelte";
+  import GetColorsFromString from "../controls/GetColorsFromString.svelte";
 
   import ModifySelection from "../controls/ModifySelection.svelte";
-  import Nav from "../components/Nav.svelte";
   import PalPreview from "../components/PalPreview.svelte";
   import SetColorSpace from "../controls/SetColorSpace.svelte";
   import simulate_cvd from "../lib/cvd-sim";
@@ -21,20 +21,34 @@
   export let scatterSize = 450;
 
   $: currentPal = $colorStore.palettes[$colorStore.currentPal];
-  $: selectedBlindType = $configStore.colorSim;
+  $: selectedCVDType = $configStore.colorSim;
 </script>
 
 <div class="flex flex-col h-full px-4">
   <!-- naming stuff -->
-  <div class="flex font-bold">
-    <span class="italic">Current Pal:</span>
+  <div class="flex font-bold justify-between">
     <div class="flex">
-      <span>✎</span>
-      <ContentEditable
-        onChange={(x) => colorStore.setCurrentPalName(x)}
-        value={currentPal.name}
-      />
+      <span class="italic">Current Pal:</span>
+      <div class="flex">
+        <span>✎</span>
+        <ContentEditable
+          onChange={(x) => colorStore.setCurrentPalName(x)}
+          value={currentPal.name}
+        />
+      </div>
     </div>
+    <PalTypeConfig />
+  </div>
+  <!-- tags -->
+  <div class="flex text-sm italic">
+    {#if currentPal.tags.length}
+      Tags:
+      {#each currentPal.tags as tag}
+        <div class="ml-2">{tag}</div>
+      {/each}
+    {:else}
+      <div>&nbsp;</div>
+    {/if}
   </div>
   <div class="flex">
     <SetColorSpace
@@ -63,14 +77,14 @@
     onFocusedColorsChange={(x) => focusStore.setColors(x)}
     startDragging={() => colorStore.pausePersistance()}
     stopDragging={() => colorStore.resumePersistance()}
-    blindColors={selectedBlindType === "none"
+    annotationColors={selectedCVDType === "none"
       ? []
-      : currentPal.colors.map((x) => simulate_cvd(selectedBlindType, x.color))}
+      : currentPal.colors.map((x) => simulate_cvd(selectedCVDType, x.color))}
   />
 
   <div class="flex flex-wrap">
     <button
-      class={buttonStyle}
+      class={`${buttonStyle} pl-0`}
       on:click={() => configStore.setScatterplotMode("putting")}
     >
       Add color {#if $configStore.scatterplotMode === "putting"}(move mouse on
@@ -88,25 +102,18 @@
       pal={currentPal}
       showTags={true}
     />
-    <Nav
-      tabs={["palette-config", "example"]}
-      isTabSelected={(x) => x === $configStore.mainColumnRoute}
-      selectTab={(x) => {
-        //@ts-ignore
-        configStore.setMainColumnRoute(x);
-      }}
+    <GetColorsFromString
+      allowSort={true}
+      onChange={(colors) => colorStore.setCurrentPalColors(colors)}
+      colorSpace={currentPal.colorSpace}
+      colors={currentPal.colors}
     />
-    {#if $configStore.mainColumnRoute === "palette-config"}
-      <PalTypeConfig />
-    {/if}
-    {#if $configStore.mainColumnRoute === "example"}
-      <ExampleAlaCart
-        paletteIdx={$colorStore.currentPal}
-        exampleIdx={$configStore.mainColumnSelectedExample}
-        setExampleIdx={(idx) => configStore.setMainColumnSelectedExample(idx)}
-        allowModification={true}
-        bgColor={currentPal.background.toHex()}
-      />
-    {/if}
+    <ExampleAlaCart
+      paletteIdx={$colorStore.currentPal}
+      exampleIdx={$configStore.mainColumnSelectedExample}
+      setExampleIdx={(idx) => configStore.setMainColumnSelectedExample(idx)}
+      allowModification={true}
+      bgColor={currentPal.background.toHex()}
+    />
   </div>
 </div>

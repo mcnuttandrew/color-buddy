@@ -58,7 +58,6 @@
   <textarea
     id="current-colors"
     class="w-full p-2 rounded border-2"
-    style="min-height: {2 * Math.ceil(colors.length / 3)}em;"
     value={colors
       .map((color) => color.color.toHex())
       .map((x) => (includeQuotes ? `"${x}"` : x))

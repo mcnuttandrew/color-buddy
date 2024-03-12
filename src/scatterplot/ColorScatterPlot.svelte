@@ -31,7 +31,7 @@
   export let startDragging: () => void;
   export let stopDragging: () => void;
   export let colorSpace: any;
-  export let blindColors: Color[] = [];
+  export let annotationColors: Color[] = [];
 
   $: focusSet = new Set(focusedColors);
 
@@ -411,20 +411,20 @@
                 />
               {/if}
             {/each}
-            {#each blindColors as blindColor, i}
+            {#each annotationColors as annotationColor, i}
               <line
                 stroke-dasharray="5,5"
-                x1={x(blindColor)}
-                y1={y(blindColor)}
+                x1={x(annotationColor)}
+                y1={y(annotationColor)}
                 x2={x(colors[i].color)}
                 y2={y(colors[i].color)}
-                stroke={blindColor.toDisplay()}
+                stroke={annotationColor.toDisplay()}
                 stroke-width="1"
               />
               <circle
-                {...CircleProps(blindColor, i)}
+                {...CircleProps(annotationColor, i)}
                 class="cursor-pointer"
-                stroke={blindColor.toDisplay()}
+                stroke={annotationColor.toDisplay()}
                 fill={bg.toDisplay()}
                 stroke-width="4"
                 on:touchstart|preventDefault={(e) => {
@@ -561,7 +561,7 @@
                 />
               {/if}
             {/each}
-            {#each blindColors as color, i}
+            {#each annotationColors as color, i}
               <rect
                 {...RectProps(color, i)}
                 stroke={color.toDisplay()}

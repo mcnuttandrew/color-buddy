@@ -83,7 +83,7 @@
   {#if !hideHeader}
     <div class="bg-stone-300 w-full justify-between flex p-1">Swatches</div>
   {/if}
-  <div style={`background-color: ${bg}; max-width: 600px`} class="flex">
+  <div style={`background-color: ${bg}; max-width: 600px`} class="flex p-1">
     <div class="flex flex-col">
       {#each colors as color, i}
         <button

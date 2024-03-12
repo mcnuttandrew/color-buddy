@@ -1,5 +1,5 @@
 import { JSONToPrettyString, makePalFromString } from "../utils";
-import type { CustomLint } from "../CustomLint";
+import type { CustomLint } from "../ColorLint";
 
 const lint: CustomLint = {
   name: "Palette does not have ugly colors",
@@ -30,6 +30,7 @@ const lint: CustomLint = {
   level: "warning",
   group: "design",
   id: "ugly-colors-built-in",
+  requiredTags: [],
   blameMode: "single",
   expectedPassingTests: [
     makePalFromString(["#000", "#fff", "#f00", "#00c000", "#9c70ff"]),

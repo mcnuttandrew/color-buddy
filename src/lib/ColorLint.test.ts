@@ -3,11 +3,11 @@ import fs from "fs/promises";
 
 import { Color } from "./Color";
 
-import { CreateCustomLint } from "./CustomLint";
+import { CreateCustomLint } from "./ColorLint";
 import { suggestLintFix } from "./linter-tools/lint-fixer";
 import { makePalFromString } from "./utils";
 
-import type { CustomLint } from "./CustomLint";
+import type { CustomLint } from "./ColorLint";
 
 // Lints
 import AvoidExtremes from "./lints/avoid-extremes";

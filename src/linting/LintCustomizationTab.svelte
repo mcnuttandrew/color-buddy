@@ -6,13 +6,11 @@
   import MonacoEditor from "../components/MonacoEditor.svelte";
   import Nav from "../components/Nav.svelte";
   import PalPreview from "../components/PalPreview.svelte";
-  import { CreateCustomLint } from "../lib/CustomLint";
   import { buttonStyle } from "../lib/styles";
   import { JSONStringify, makePalFromString } from "../lib/utils";
-  import type { CustomLint } from "../lib/CustomLint";
-  import { affects, contexts } from "../types";
+  import { CreateCustomLint } from "../lib/ColorLint";
   import type { Palette } from "../types";
-  import type { LintResult } from "../lib/ColorLint";
+  import type { LintResult, CustomLint } from "../lib/ColorLint";
   import LintCustomizationPreview from "./LintCustomizationPreview.svelte";
 
   $: lint = $lintStore.lints.find(
@@ -47,8 +45,6 @@
   $: lintRun = runLint(lint, { debugCompare }, currentPal);
 
   $: currentTaskTypes = lint?.taskTypes || ([] as string[]);
-  $: currentAffects = lint?.affectTypes || ([] as string[]);
-  $: currentContexts = lint?.contextTypes || ([] as string[]);
 
   $: checkData = lintRun?.checkData || [];
   $: pairData = checkData as number[][];
@@ -92,6 +88,7 @@
     const result = runLint(lint, {}, pal);
     return { result, pal, blame: result?.checkData };
   }) as TestResult[];
+  $: console.log("todo fix affects tags");
 </script>
 
 {#if !lint}
@@ -210,7 +207,9 @@
         <Nav
           tabs={["usability", "accessibility", "design", "custom"]}
           isTabSelected={(x) => x === lint.group}
-          selectTab={(x) => lintStore.setCurrentLintGroup(x)}
+          selectTab={(x) =>
+            // @ts-ignore
+            lintStore.setCurrentLintGroup(x)}
         />
       </div>
       <!-- TASK TYPES -->
@@ -236,53 +235,8 @@
           {/each}
         </div>
       </div>
-      <!-- AFFECTS -->
-      <div class="flex">
-        <div class="mr-2 font-bold">Affects:</div>
-        <div class="flex flex-wrap">
-          {#each affects as affectType}
-            <div class="flex items-center mr-4">
-              <label>
-                <input
-                  type="checkbox"
-                  checked={currentAffects.includes(affectType)}
-                  on:change={(e) => {
-                    const newAffects = currentAffects.includes(affectType)
-                      ? currentAffects.filter((x) => x !== affectType)
-                      : [...currentAffects, affectType];
-                    lintStore.setCurrentAffects(newAffects);
-                  }}
-                />
-                {affectType}
-              </label>
-            </div>
-          {/each}
-        </div>
-      </div>
-
-      <!-- CONTEXTS -->
-      <div class="flex">
-        <div class="mr-2 font-bold">Contexts:</div>
-        <div class="flex flex-wrap">
-          {#each contexts as context}
-            <div class="flex items-center mr-4">
-              <label>
-                <input
-                  type="checkbox"
-                  checked={currentContexts.includes(context)}
-                  on:change={(e) => {
-                    const newContext = currentContexts.includes(context)
-                      ? currentContexts.filter((x) => x !== context)
-                      : [...currentContexts, context];
-                    lintStore.setCurrentContext(newContext);
-                  }}
-                />
-                {context}
-              </label>
-            </div>
-          {/each}
-        </div>
-      </div>
+      <!-- TAGS -->
+      <!-- TODO -->
 
       <div>
         <div class="font-bold">Lint Description:</div>

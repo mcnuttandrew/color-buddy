@@ -86,6 +86,128 @@ Maps:
 # Examples
 
 
+### WCAG Contrast Graphical Objects
+
+Description: All colors in a palette should have a sufficient contrast ratio with the background color. This is because if they are not, then they will not be differentiable from each other in some contexts. Valid algorithms are "APCA", "WCAG21", "Michelson", "Weber", "Lstar", "DeltaPhi".
+
+Natural Language: ALL a IN colors SUCH THAT contrast(a, background, WCAG21) > 3
+
+Palettes that will fail this test:
+
+- #0ff, #00faff, #00e4ff, #fdfdfc, #0ff with a #fff background
+
+
+
+Palettes that will pass this test:
+
+- #cf5f67, #468bbc, #848475, #c55eab, #ff008c with a #fff background
+
+
+Program:
+
+```json
+{
+    "$schema": "http://localhost:3000/lint-schema.json", 
+    "all": {
+        "in": "colors", 
+        "varb": "a", 
+        "predicate": {
+            ">": {
+                "left": { "contrast": {"left": "a", "right": "background"}, "algorithm": "WCAG21" }, 
+                "right": 3
+            }
+        }
+    }
+}
+
+```
+
+    
+
+
+
+### WCAG Contrast: AA
+
+Description: All colors in a palette should have a sufficient contrast ratio with the background color. This is because if they are not, then they will not be differentiable from each other in some contexts. Valid algorithms are "APCA", "WCAG21", "Michelson", "Weber", "Lstar", "DeltaPhi".
+
+Natural Language: ALL a IN colors WHERE isTag(a, text) SUCH THAT contrast(a, background, WCAG21) > 4.5
+
+Palettes that will fail this test:
+
+- #0ff, #00faff, #00e4ff, #fdfdfc, #0ff with a #fff background
+
+
+
+Palettes that will pass this test:
+
+- #cf5f67, #468bbc, #848475, #c55eab, #ff008c with a #fff background
+
+
+Program:
+
+```json
+{
+    "$schema": "http://localhost:3000/lint-schema.json", 
+    "all": {
+        "in": "colors", 
+        "varb": "a", 
+        "where": {"isTag": "a", "value": "text"}, 
+        "predicate": {
+            ">": {
+                "left": { "contrast": {"left": "a", "right": "background"}, "algorithm": "WCAG21" }, 
+                "right": 4.5
+            }
+        }
+    }
+}
+
+```
+
+    
+
+
+
+### WCAG Contrast: AAA
+
+Description: All colors in a palette should have a sufficient contrast ratio with the background color. This is because if they are not, then they will not be differentiable from each other in some contexts. Valid algorithms are "APCA", "WCAG21", "Michelson", "Weber", "Lstar", "DeltaPhi".
+
+Natural Language: ALL a IN colors WHERE isTag(a, text) SUCH THAT contrast(a, background, WCAG21) > 7
+
+Palettes that will fail this test:
+
+- #0ff, #00faff, #00e4ff, #fdfdfc, #0ff with a #fff background
+
+
+
+Palettes that will pass this test:
+
+- #cf5f67, #468bbc, #848475, #c55eab, #ff008c with a #fff background
+
+
+Program:
+
+```json
+{
+    "$schema": "http://localhost:3000/lint-schema.json", 
+    "all": {
+        "in": "colors", 
+        "varb": "a", 
+        "where": {"isTag": "a", "value": "text"}, 
+        "predicate": {
+            ">": {
+                "left": { "contrast": {"left": "a", "right": "background"}, "algorithm": "WCAG21" }, 
+                "right": 7
+            }
+        }
+    }
+}
+
+```
+
+    
+
+
+
 ### Saturated not appropriate for serious affect
 
 Description: Highly saturated light colors are not appropriate for palettes that seek to be serious.  See "Affective color in visualization" for more.
@@ -279,7 +401,7 @@ Program:
 
 
 
-### CVD: deuteranopia Friendly
+### CVD: Deuteranopia Friendly
 
 Description: All colors in a palette should be differentiable by people with deuteranopia (ie can't see green). This is because if they are not, then they will not be differentiable from each other in some contexts.
 
@@ -323,7 +445,7 @@ Program:
 
 
 
-### CVD: protanopia Friendly
+### CVD: Protanopia Friendly
 
 Description: All colors in a palette should be differentiable by people with protanopia (ie can't see red). This is because if they are not, then they will not be differentiable from each other in some contexts.
 
@@ -367,7 +489,7 @@ Program:
 
 
 
-### CVD: tritanopia Friendly
+### CVD: Tritanopia Friendly
 
 Description: All colors in a palette should be differentiable by people with tritanopia (ie can't see blue). This is because if they are not, then they will not be differentiable from each other in some contexts.
 
@@ -1123,46 +1245,6 @@ Program:
                 "predicate": {
                     "not": { "==": {"left": "a", "right": "b"} }
                 }
-            }
-        }
-    }
-}
-
-```
-
-    
-
-
-
-### Background Contrast
-
-Description: All colors in a palette should have a sufficient contrast ratio with the background color. This is because if they are not, then they will not be differentiable from each other in some contexts. Valid algorithms are "APCA", "WCAG21", "Michelson", "Weber", "Lstar", "DeltaPhi".
-
-Natural Language: ALL a IN colors SUCH THAT contrast(a, background, WCAG21) > 1.1
-
-Palettes that will fail this test:
-
-- #0ff, #00faff, #00e4ff, #fdfdfc, #0ff with a #fff background
-
-
-
-Palettes that will pass this test:
-
-- #cf5f67, #468bbc, #848475, #c55eab, #ff008c with a #fff background
-
-
-Program:
-
-```json
-{
-    "$schema": "http://localhost:3000/lint-schema.json", 
-    "all": {
-        "in": "colors", 
-        "varb": "a", 
-        "predicate": {
-            ">": {
-                "left": { "contrast": {"left": "a", "right": "background"}, "algorithm": "WCAG21" }, 
-                "right": 1.1
             }
         }
     }

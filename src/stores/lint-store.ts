@@ -1,13 +1,7 @@
 import { writable } from "svelte/store";
 import * as idb from "idb-keyval";
-import type { CustomLint } from "../lib/CustomLint";
-import type {
-  PalType,
-  Affect,
-  Context,
-  Palette,
-  StringPalette,
-} from "../types";
+import type { CustomLint } from "../lib/ColorLint";
+import type { Palette, StringPalette } from "../types";
 import { Color } from "../lib/Color";
 import type { LintResult } from "../lib/ColorLint";
 import { JSONStringify, wrapInBlankSemantics } from "../lib/utils";
@@ -145,21 +139,18 @@ function createStore() {
       lintUpdate((old) => ({ ...old, program })),
     setCurrentLintName: (name: string) =>
       lintUpdate((old) => ({ ...old, name })),
-    setCurrentLintTaskTypes: (taskTypes: PalType[]) =>
+    setCurrentLintTaskTypes: (taskTypes: CustomLint["taskTypes"]) =>
       lintUpdate((old) => ({ ...old, taskTypes })),
-    setCurrentAffects: (affects: Affect[]) =>
-      lintUpdate((old) => ({ ...old, affects })),
-    setCurrentContext: (contexts: Context[]) =>
-      lintUpdate((old) => ({ ...old, contexts })),
+    setCurrentTags: (tags: string[]) => lintUpdate((old) => ({ ...old, tags })),
     setCurrentLintLevel: (level: "error" | "warning") =>
       lintUpdate((old) => ({ ...old, level })),
-    setCurrentLintGroup: (group: string) =>
+    setCurrentLintGroup: (group: CustomLint["group"]) =>
       lintUpdate((old) => ({ ...old, group })),
     setCurrentLintDescription: (description: string) =>
       lintUpdate((old) => ({ ...old, description })),
     setCurrentLintFailMessage: (failMessage: string) =>
       lintUpdate((old) => ({ ...old, failMessage })),
-    setCurrentLintBlameMode: (blameMode: "pair" | "single" | "none") =>
+    setCurrentLintBlameMode: (blameMode: CustomLint["blameMode"]) =>
       lintUpdate((old) => ({ ...old, blameMode })),
     setCurrentLintExpectedFailingTests: (expectedFailingTests: Palette[]) =>
       lintUpdate((old) => ({ ...old, expectedFailingTests })),
@@ -210,17 +201,18 @@ export function newId() {
 
 function newLint(newLintFrag: Partial<CustomLint>): CustomLint {
   return {
-    program: JSONStringify("{}"),
-    name: "New lint",
-    taskTypes: ["categorical", "sequential", "diverging"],
-    level: "warning",
-    group: "custom",
-    description: "v confusing",
-    failMessage: "v confusing",
-    id: newId(),
     blameMode: "none",
+    description: "v confusing",
     expectedFailingTests: [...(newLintFrag.expectedFailingTests || [])],
     expectedPassingTests: [...(newLintFrag.expectedPassingTests || [])],
+    failMessage: "v confusing",
+    group: "custom",
+    id: newId(),
+    level: "warning",
+    name: "New lint",
+    program: JSONStringify("{}"),
+    requiredTags: [],
+    taskTypes: ["categorical", "sequential", "diverging"],
     ...newLintFrag,
   };
 }

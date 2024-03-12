@@ -1,5 +1,5 @@
 import { JSONToPrettyString, makePalFromString } from "../utils";
-import type { CustomLint } from "../CustomLint";
+import type { CustomLint } from "../ColorLint";
 
 // "Highly saturated light colors will not be appropriate for SERIOUS/TRUST/CALM": ALL (FILTER colors c, lab(c) > threshold) b, NOT hsl(b) > threshold
 const lints: CustomLint[] = [];
@@ -20,7 +20,7 @@ theseAffects.forEach((affect) => {
       },
     }),
     taskTypes: ["sequential", "diverging", "categorical"] as const,
-    affectTypes: [affect],
+    requiredTags: [affect],
     level: "warning",
     group: "design",
     description: `Highly saturated light colors are not appropriate for palettes that seek to be ${affect}.  See "Affective color in visualization" for more.`,
@@ -53,7 +53,7 @@ const lint1: CustomLint = {
     },
   }),
   taskTypes: ["sequential", "diverging", "categorical"] as const,
-  affectTypes: ["playful"],
+  requiredTags: ["playful"],
   level: "warning",
   group: "design",
   description: `Palettes that seek to be playful should have at least one light blue, beige, or gray.  See "Affective color in visualization" for more.`,
@@ -85,7 +85,7 @@ const lint2: CustomLint = {
     },
   }),
   taskTypes: ["sequential", "diverging", "categorical"] as const,
-  affectTypes: ["positive"],
+  requiredTags: ["positive"],
   level: "warning",
   group: "design",
   description: `Palettes that seek to be positive should not have dark reds or browns.  See "Affective color in visualization" for more.`,
@@ -117,7 +117,7 @@ const lint3: CustomLint = {
     },
   }),
   taskTypes: ["sequential", "diverging", "categorical"],
-  affectTypes: ["negative"],
+  requiredTags: ["negative"],
   level: "warning",
   group: "design",
   description: `Palettes that seek to be negative should not have light colors, particularly greens.  See "Affective color in visualization" for more.`,
@@ -151,7 +151,7 @@ lints.push(lint3);
 //     ],
 //   }),
 //   taskTypes: ["sequential", "diverging", "categorical"] as const,
-//   affectTypes: ["trustworthy"],
+//   requiredTags: ["trustworthy"],
 //   level: "warning",
 //   group: "design",
 //   description: `Palettes that seek to be trustworthy should have two thematic strategies (blue-gray, green-gray) bridged by a common color (yellow). See "Affective color in visualization" for more.`,

@@ -1,5 +1,5 @@
 import { JSONToPrettyString, makePalFromString } from "../utils";
-import type { CustomLint } from "../CustomLint";
+import type { CustomLint } from "../ColorLint";
 
 const lints: CustomLint[] = [];
 
@@ -35,7 +35,7 @@ const bgDeSaturated: CustomLint = {
     ],
   }),
   taskTypes: ["sequential", "diverging", "categorical"] as const,
-  affectTypes: [],
+  requiredTags: [],
   level: "warning",
   group: "design",
   description: "Background should be sufficiently desaturated. ",
@@ -81,7 +81,7 @@ const avoidTetradic: CustomLint = {
     },
   }),
   taskTypes: ["sequential", "diverging", "categorical"] as const,
-  affectTypes: [],
+  requiredTags: [],
   level: "warning",
   group: "design",
   description: `Tetradic palettes are hard to work with and are not recommended.`,
@@ -117,7 +117,7 @@ const avoidGreen: CustomLint = {
     },
   }),
   taskTypes: ["sequential", "diverging", "categorical"] as const,
-  affectTypes: [],
+  requiredTags: [],
   level: "warning",
   group: "design",
   description: `When using green, make it a yellow or blue one. This makes it easier to play nicely with other colors.`,
@@ -163,7 +163,7 @@ const AvoidTooMuchContrastWithTheBackground: CustomLint = {
     ],
   }),
   taskTypes: ["sequential", "diverging", "categorical"] as const,
-  affectTypes: [],
+  requiredTags: [],
   level: "warning",
   group: "design",
   description: `Don't make your colors too dark and saturated when you're using a bright background. If in doubt, try it out. Make your colors lighter, pull some saturation out of them and see how it feels.`,
@@ -199,7 +199,7 @@ const requireColorComplements: CustomLint = {
     },
   }),
   taskTypes: ["sequential", "diverging", "categorical"] as const,
-  affectTypes: [],
+  requiredTags: [],
   level: "warning",
   group: "design",
   description: `Use color complements whenever possible`,

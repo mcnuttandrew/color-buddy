@@ -282,7 +282,7 @@ Program:
 
 
 
-### CVD: deuteranopia Friendly
+### CVD: Deuteranopia Friendly
 
 Description: All colors in a palette should be differentiable by people with deuteranopia (ie can't see green). This is because if they are not, then they will not be differentiable from each other in some contexts.
 
@@ -326,7 +326,7 @@ Program:
 
 
 
-### CVD: protanopia Friendly
+### CVD: Protanopia Friendly
 
 Description: All colors in a palette should be differentiable by people with protanopia (ie can't see red). This is because if they are not, then they will not be differentiable from each other in some contexts.
 
@@ -370,7 +370,7 @@ Program:
 
 
 
-### CVD: tritanopia Friendly
+### CVD: Tritanopia Friendly
 
 Description: All colors in a palette should be differentiable by people with tritanopia (ie can't see blue). This is because if they are not, then they will not be differentiable from each other in some contexts.
 

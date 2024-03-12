@@ -83,7 +83,7 @@
   }, {} as any);
 </script>
 
-<div class="flex flex-col items-center bg-stone-300 px-4 py-2">
+<div class="flex flex-col bg-stone-300 px-4 py-2">
   <div class="flex">
     <button
       class={buttonStyle}
@@ -159,15 +159,17 @@
       </Tooltip>
     {/if}
   </div>
-  <Nav
-    tabs={Object.values(navNameMap)}
-    isTabSelected={(x) => navNameMapRev[x] === $configStore.exampleRoute}
-    selectTab={(x) => {
-      const val = Object.keys(navNameMapRev).find((key) => key === x);
-      // @ts-ignore
-      configStore.setExampleRoute(navNameMapRev[val]);
-    }}
-  />
+  <div class="flex">
+    <Nav
+      tabs={Object.values(navNameMap)}
+      isTabSelected={(x) => navNameMapRev[x] === $configStore.exampleRoute}
+      selectTab={(x) => {
+        const val = Object.keys(navNameMapRev).find((key) => key === x);
+        // @ts-ignore
+        configStore.setExampleRoute(navNameMapRev[val]);
+      }}
+    />
+  </div>
 </div>
 <div
   class="flex flex-wrap overflow-auto p-4 w-full bg-stone-100"

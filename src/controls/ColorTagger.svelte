@@ -1,6 +1,7 @@
 <script lang="ts">
   import focusStore from "../stores/focus-store";
   import colorStore from "../stores/color-store";
+  import Tooltip from "../components/Tooltip.svelte";
 
   import { buttonStyle } from "../lib/styles";
 
@@ -9,80 +10,64 @@
   $: focusedColorIdx = $focusStore.focusedColors[0];
   $: currentColor = currentPalette.colors[focusedColorIdx];
 
-  const updateTags = (updatedTags: string[]) =>
-    updateSemantics({ ...currentColor, tags: updatedTags });
-  const updateSize = (size: (typeof sizes)[number]) =>
-    updateSemantics({ ...currentColor, size });
-
-  const updateMarkType = (markType: (typeof markTypes)[number]) =>
-    updateSemantics({ ...currentColor, markType });
-  function updateSemantics(updatedColor: typeof currentColor) {
+  function updateTags(updatedTags: string[]) {
     const updatedColors = [...currentPalette.colors];
-    updatedColors[focusedColorIdx] = updatedColor;
+    updatedColors[focusedColorIdx] = { ...currentColor, tags: updatedTags };
     colorStore.setCurrentPalColors(updatedColors);
   }
   let tagInput = "";
-  const sizes = [undefined, "small", "medium", "large"] as const;
-  const markTypes = [
-    undefined,
-    "line",
-    "point",
-    "bar",
-    "area",
-    "text",
-    "background",
-  ] as const;
+  $: commonTags = ["text", "axis"].filter(
+    (x) =>
+      !currentColor.tags.map((x) => x.toLowerCase()).includes(x.toLowerCase())
+  );
 </script>
 
 <div class="font-bold">Tags</div>
-<div class="italic text-sm">
-  These to mark properties like color, brand, and so on
-</div>
-<form
-  on:submit|preventDefault|stopPropagation={() => {
-    updateTags([...currentColor.tags, tagInput]);
-    tagInput = "";
-  }}
->
-  <input type="text" placeholder="Add tag" bind:value={tagInput} />
-</form>
 
 <div class="flex">
   {#each currentColor.tags as tag}
-    <div class={buttonStyle}>
-      {tag}
-      <button
-        on:click={() => {
-          updateTags(currentColor.tags.filter((x) => x !== tag));
-        }}
-      >
-        ✕
-      </button>
+    <div>
+      <div class={buttonStyle}>
+        {tag}
+        <button
+          on:click={() => {
+            updateTags(currentColor.tags.filter((x) => x !== tag));
+          }}
+        >
+          ✕
+        </button>
+      </div>
     </div>
   {/each}
-</div>
-<div class="text-sm">Object for this color</div>
-<select
-  value={currentColor.markType}
-  on:change={(e) => {
-    // @ts-ignore
-    updateMarkType(e.currentTarget.value);
-  }}
->
-  {#each markTypes as option}
-    <option value={option}>{option}</option>
-  {/each}
-</select>
+  <Tooltip>
+    <div slot="content" class="max-w-md">
+      <div class="font-bold">Color Tags</div>
+      <div class="italic text-sm">
+        These to mark properties like color, brand, and so on. {#if commonTags.length}
+          Here are some common ones that are have specific effects in the app.{/if}
+      </div>
+      {#each commonTags as tag}
+        <button
+          class={buttonStyle}
+          on:click={() => updateTags([...currentColor.tags, tag])}
+        >
+          {tag}
+        </button>
+      {/each}
 
-<div class="text-sm">Size of color</div>
-<select
-  value={currentColor.size}
-  on:change={(e) => {
-    // @ts-ignore
-    updateSize(e.currentTarget.value);
-  }}
->
-  {#each sizes as option}
-    <option value={option}>{option}</option>
-  {/each}
-</select>
+      <div class="font-bold">Custom</div>
+
+      <form
+        on:submit|preventDefault|stopPropagation={() => {
+          updateTags([...currentColor.tags, tagInput]);
+          tagInput = "";
+        }}
+      >
+        <input type="text" placeholder="Add tag" bind:value={tagInput} />
+      </form>
+    </div>
+    <button class={buttonStyle} slot="target" let:toggle on:click={toggle}>
+      Add Tag
+    </button>
+  </Tooltip>
+</div>

@@ -14,7 +14,7 @@
   import Nav from "../components/Nav.svelte";
   import PalPreview from "../components/PalPreview.svelte";
   import SetColorSpace from "../controls/SetColorSpace.svelte";
-  import simulate_cvd from "../lib/blindness";
+  import simulate_cvd from "../lib/cvd-sim";
 
   import ContentEditable from "../components/ContentEditable.svelte";
 

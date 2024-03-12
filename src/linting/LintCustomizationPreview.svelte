@@ -59,6 +59,40 @@
         >
           Remove
         </button>
+        <div class="font-bold">Tags</div>
+        <div class="flex flex-wrap">
+          {#each color.tags as tag, jdx}
+            <div class={buttonStyle}>
+              {tag}
+              <button
+                on:click={() => {
+                  const newColors = [...pal.colors];
+                  newColors[idx] = {
+                    ...newColors[idx],
+                    tags: newColors[idx].tags.filter((_, i) => i !== jdx),
+                  };
+                  updatePal({ ...pal, colors: newColors });
+                }}
+              >
+                ✕
+              </button>
+            </div>
+          {/each}
+        </div>
+        <input
+          placeholder="Enter tag here"
+          on:keydown={(e) => {
+            if (e.key === "Enter") {
+              const newColors = [...pal.colors];
+              newColors[idx] = {
+                ...newColors[idx],
+                tags: [...newColors[idx].tags, e.currentTarget.value],
+              };
+              updatePal({ ...pal, colors: newColors });
+              e.currentTarget.value = "";
+            }
+          }}
+        />
       </div>
       <button
         let:toggle

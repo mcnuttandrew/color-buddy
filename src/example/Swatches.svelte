@@ -4,7 +4,7 @@
   import colorStore from "../stores/color-store";
   import focusStore from "../stores/focus-store";
   import configStore from "../stores/config-store";
-  import simulate_cvd from "../lib/blindness";
+  import simulate_cvd from "../lib/cvd-sim";
 
   import { dealWithFocusEvent } from "../lib/utils";
 

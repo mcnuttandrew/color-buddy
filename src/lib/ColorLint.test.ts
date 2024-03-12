@@ -13,8 +13,9 @@ import type { CustomLint } from "./CustomLint";
 import AvoidExtremes from "./lints/avoid-extremes";
 import BackgroundContrast from "./lints/background-contrast";
 import CatOrderSimilarity from "./lints/cat-order-similarity";
-import ColorBlindness from "./lints/color-blindness";
+import CVDCheck from "./lints/cvd-check";
 import ColorNameDiscriminability, { getName } from "./lints/name-discrim";
+import ColorTags from "./lints/color-tags";
 import EvenDistribution from "./lints/even-distribution";
 import Fair from "./lints/fair";
 import Gamut from "./lints/in-gamut";
@@ -125,17 +126,17 @@ test("ColorLint - Gamut", async () => {
   ]);
 });
 
-test("ColorLint - ColorBlind: Deuteranopia", async () => {
-  autoTest(ColorBlindness[0]);
+test("ColorLint - CVD: Deuteranopia", async () => {
+  autoTest(CVDCheck[0]);
 });
-test("ColorLint - ColorBlind: Protanopia", async () => {
-  autoTest(ColorBlindness[1]);
+test("ColorLint - CVD: Protanopia", async () => {
+  autoTest(CVDCheck[1]);
 });
-test("ColorLint - ColorBlind: Tritanopia", async () => {
-  autoTest(ColorBlindness[2]);
+test("ColorLint - CVD: Tritanopia", async () => {
+  autoTest(CVDCheck[2]);
 });
-test("ColorLint - ColorBlind: Grayscale", async () => {
-  autoTest(ColorBlindness[3]);
+test("ColorLint - CVD: Grayscale", async () => {
+  autoTest(CVDCheck[3]);
 });
 
 const ughWhat = ["#00ffff", "#00faff", "#00e4ff", "#fdfdfc", "#00ffff"];
@@ -175,4 +176,12 @@ test("ColorLint - MuthGuidelines (3) Prefer yellowish or blueish greens", () => 
 
 test("ColorLint - MuthGuidelines (4) Avoid too much contrast with the background", () => {
   autoTest(MuthGuidelines[3]);
+});
+
+test("ColorLnt - ColorTags (1) Whisper don't scream", () => {
+  autoTest(ColorTags[0]);
+});
+
+test("ColorLnt - ColorTags (2) Blue should be high probability for the basic color term blue", () => {
+  autoTest(ColorTags[1]);
 });

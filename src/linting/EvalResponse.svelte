@@ -82,17 +82,6 @@
     {/if}
 
     <div class="font-bold mt-4">Actions</div>
-    {#if check.isCustom}
-      <button
-        class={buttonStyle}
-        on:click={() => {
-          lintStore.setFocusedLint(check.isCustom);
-          configStore.setEvalDisplayMode("lint-customization");
-        }}
-      >
-        Customize
-      </button>
-    {/if}
     {#if cbMatch}
       <button
         class={buttonStyle}
@@ -144,6 +133,17 @@
         }}
       >
         Re-enable
+      </button>
+    {/if}
+    {#if check.isCustom}
+      <button
+        class={buttonStyle}
+        on:click={() => {
+          lintStore.setFocusedLint(check.isCustom);
+          configStore.setEvalDisplayMode("lint-customization");
+        }}
+      >
+        Customize
       </button>
     {/if}
 

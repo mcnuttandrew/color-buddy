@@ -1,4 +1,3 @@
-import { Color } from "../Color";
 /**
  * Lint Language
  * Lint Language is a language for expressing color logic. It is used to define color rules and constraints in the Lint system.
@@ -12,7 +11,8 @@ export type LintExpression =
   | LintConjunction
   | LintQuantifier
   | LintComparison
-  | LintBoolean;
+  | LintBoolean
+  | LintColorTagCheck;
 
 /**
  * A logical conjunction expression. It is used to express the logical AND, OR and NOT operations.
@@ -149,11 +149,17 @@ export type LintColorFunction =
   | { name: LintVariable | LintColor }
   | { inGamut: LintVariable | LintColor }
   | {
-      toColor: LintVariable | LintColor;
+      toSpace: LintVariable | LintColor;
       space: ColorSpace;
       channel: ColorChannel;
     }
+  | LintColorTagCheck
   | { [cmd: string]: LintVariable | string };
+
+export type LintColorTagCheck = {
+  isTag: LintVariable | LintColor;
+  value: string;
+};
 
 /**
  * Converts a Color to a color space component. Has syntax like colorSpace.channel, where colorSpace is a color space and channel is a channel in that color space. Available spaces: hsl, hsv, jzazbz, lab, lch, oklab, oklch, rgb
@@ -208,5 +214,6 @@ export type LintValue =
 // raw values
 export type LintBoolean = boolean;
 export type LintVariable = string;
+import { Color } from "../Color";
 export type LintColor = string | Color | LintVariable;
 // export type LintColor = string | LintVariable;

@@ -31,7 +31,7 @@ Quantifiers
 Notes:
 
 - varbs each listed variable into the scope, as well as variables like index(a) for a variable a
-- To slice you might do something like {...where: {"<" : {left: "index(a), right: 3}}}. This is important! There is no other way to subset or filter for quantifiers. THE IN CLAUSE MUST ONLY HAVE A VARIABLE AND THING ELSE.
+- To slice you might do something like {...where: {"<" : {"left": "index(a)", "right": 3}}}. This is important! There is no other way to subset or filter for quantifiers. THE IN CLAUSE MUST ONLY HAVE A VARIABLE AND THING ELSE.
 
 Comparisons:
 {"==": {left: Value, right: Value}}
@@ -68,13 +68,14 @@ Aggregates
 {extent: Variable | Number[]}
 
 Color Manipulations:
-{toColor: Variable, space: 'lab' | 'hsl' | etc, channel: 'a' | 'b' | 'l' | etc}
+{toSpace: Variable, space: 'lab' | 'hsl' | etc, channel: 'a' | 'b' | 'l' | etc}
 {cvdSim: Variable, type: 'protanomaly' | 'deuteranomaly' | 'tritanopia' | 'grayscale'}
 {name: Variable}
 {inGamut: Variable | Color}
+{isTag: Variable | Color, value: string}
 Notes
 
-- toColor has a shorthand like {"rgb.b": Variable}
+- toSpace has a shorthand like {"rgb.b": Variable}
 - When comparing colors, it can be helpful to switch color spaces. For instance, to check if a value is blue you might switch it to HSL and check if the hue is in a certain range.
 
 Maps:
@@ -281,7 +282,7 @@ Program:
 
 
 
-### Colorblind Friendly for deuteranopia
+### CVD: deuteranopia Friendly
 
 Description: All colors in a palette should be differentiable by people with deuteranopia (ie can't see green). This is because if they are not, then they will not be differentiable from each other in some contexts.
 
@@ -325,7 +326,7 @@ Program:
 
 
 
-### Colorblind Friendly for protanopia
+### CVD: protanopia Friendly
 
 Description: All colors in a palette should be differentiable by people with protanopia (ie can't see red). This is because if they are not, then they will not be differentiable from each other in some contexts.
 
@@ -369,7 +370,7 @@ Program:
 
 
 
-### Colorblind Friendly for tritanopia
+### CVD: tritanopia Friendly
 
 Description: All colors in a palette should be differentiable by people with tritanopia (ie can't see blue). This is because if they are not, then they will not be differentiable from each other in some contexts.
 
@@ -447,6 +448,87 @@ Program:
                     "threshold": 9
                 }
             }
+        }
+    }
+}
+
+\`\`\`
+
+    
+
+
+
+### Axes should have low contrast with background
+
+Description: Axes should have low contrast with the background. Having it too high can make the axes too distracting. See "Whisper, Don't Scream: Grids and Transparency" for more.
+
+Natural Language: ALL a in colors WHERE isTag(a, axis), contrast(a, background, Lstar) < 20
+
+Palettes that will fail this test:
+
+- #000 (axis) with a #fff background
+
+
+
+Palettes that will pass this test:
+
+- #eee (axis) with a #fff background
+
+
+Program:
+
+\`\`\`json
+{
+    "$schema": "http://localhost:3000/lint-schema.json", 
+    "all": {
+        "in": "colors", 
+        "varb": "a", 
+        "where": {"isTag": "a", "value": "axis"}, 
+        "predicate": {
+            "<": {
+                "left": { "contrast": {"left": "a", "right": "background"}, "algorithm": "Lstar" }, 
+                "right": 20
+            }
+        }
+    }
+}
+
+\`\`\`
+
+    
+
+
+
+### Blue should be high probability for the basic color term blue
+
+Description: Blue should be high probability for the basic color term blue. If it's not, it can be confusing to users.
+
+Natural Language: ALL a in colors WHERE isTag(a, blue), name(a) == blue
+
+Palettes that will fail this test:
+
+- #f00 (blue), #ffa500 with a #fff background
+
+
+
+Palettes that will pass this test:
+
+- #00f (blue), #f00, #ffa500 with a #fff background
+
+- #00f, #f00, #ffa500 with a #fff background
+
+
+Program:
+
+\`\`\`json
+{
+    "$schema": "http://localhost:3000/lint-schema.json", 
+    "all": {
+        "in": "colors", 
+        "varb": "a", 
+        "where": {"isTag": "a", "value": "blue"}, 
+        "predicate": {
+            "==": { "left": {"name": "a"}, "right": "blue" }
         }
     }
 }

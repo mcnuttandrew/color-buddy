@@ -29,15 +29,15 @@ export type ColorSpace =
 
 // pretty nervous about the role stuff bc it will mean a lot of index manipulation to keep things straight when things get reordered
 export type ColorWrap<A> = {
-  markType:
-    | undefined
-    | "line"
-    | "point"
-    | "bar"
-    | "area"
-    | "text"
-    | "background";
-  size: undefined | "small" | "medium" | "large";
+  // markType:
+  //   | undefined
+  //   | "line"
+  //   | "point"
+  //   | "bar"
+  //   | "area"
+  //   | "text"
+  //   | "background";
+  // size: undefined | "small" | "medium" | "large";
   tags: string[];
   color: A;
 };

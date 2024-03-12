@@ -7,7 +7,7 @@
 
   import { colorNameSimple } from "../lib/lints/name-discrim";
   import EvalResponse from "./EvalResponse.svelte";
-  import simulate_cvd from "../lib/blindness";
+  import simulate_cvd from "../lib/cvd-sim";
   import { Color } from "../lib/Color";
   import { checkLevelToSymbol, dealWithFocusEvent } from "../lib/utils";
   import { buttonStyle } from "../lib/styles";

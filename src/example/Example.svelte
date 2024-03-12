@@ -5,7 +5,7 @@
   import { Color } from "../lib/Color";
   import focusStore from "../stores/focus-store";
   import { idxToKey } from "../lib/charts";
-  import simulate_cvd from "../lib/blindness";
+  import simulate_cvd from "../lib/cvd-sim";
   export let example: string;
   export let size = 300;
   export let paletteIdx: number;

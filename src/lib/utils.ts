@@ -225,15 +225,11 @@ export const makePal = (
 
 export const wrapInBlankSemantics = (x: Color): ColorWrap<Color> => ({
   color: x,
-  markType: undefined,
-  size: undefined,
   tags: [],
 });
 
 export const wrapInBlankStringSemantics = (x: string): ColorWrap<string> => ({
   color: x,
-  markType: undefined,
-  size: undefined,
   tags: [],
 });
 

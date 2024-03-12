@@ -9,6 +9,8 @@
   import { dealWithFocusEvent } from "../lib/utils";
 
   $: focusSet = new Set($focusStore.focusedColors);
+  $: bgLum = pal.background.luminance();
+  $: textColor = bgLum > 0.4 ? "#00000066" : "#ffffffaa";
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
@@ -19,7 +21,7 @@
   on:click={() => focusStore.clearColors()}
 >
   {#each pal.colors as color, idx}
-    <div class="flex flex-col text-center">
+    <div class="flex flex-col text-center relative items-center">
       {#if allowModification}
         <button
           on:click|stopPropagation|preventDefault={(e) =>
@@ -29,7 +31,6 @@
           class={"w-6 h-6 mx-2 rounded-full transition-all"}
           class:w-8={highlightSelected && focusSet.has(idx)}
           class:h-8={highlightSelected && focusSet.has(idx)}
-          class:mb-3={highlightSelected && !focusSet.has(idx)}
           style="background-color: {color.color.toDisplay()}"
         ></button>
       {:else}
@@ -41,8 +42,11 @@
         ></div>
       {/if}
       {#if showTags}
-        <div class="flex flex-col text-center">
-          {#each color.tags as tag, idx}
+        <div
+          class="flex flex-col text-center pointer-events-none"
+          style={`color: ${textColor}`}
+        >
+          {#each color.tags as tag}
             <div class="text-xs">{tag}</div>
           {/each}
         </div>

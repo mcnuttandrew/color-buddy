@@ -28,25 +28,25 @@ exports[`ColorLint - Background Contrast 3`] = `"These colors () do not have a s
 
 exports[`ColorLint - Background Contrast 4`] = `"These colors (#fdfdfc) do not have a sufficient contrast ratio with the background and may be hard to discriminate in some contexts."`;
 
+exports[`ColorLint - CVD: Deuteranopia 1`] = `"This palette is not colorblind friendly for deuteranopia color blindness (ie can't see green). The following pairs are undifferentiable: ()"`;
+
+exports[`ColorLint - CVD: Deuteranopia 2`] = `"This palette is not colorblind friendly for deuteranopia color blindness (ie can't see green). The following pairs are undifferentiable: (#0078b4 and #8c69bc, #ff7e0e and #c4bc27, #3d9f2f and #da2827, #e179c1 and #00becf)"`;
+
+exports[`ColorLint - CVD: Grayscale 1`] = `"This palette may not work in black and white. The following pairs are hard to tell the difference between: ()"`;
+
+exports[`ColorLint - CVD: Grayscale 2`] = `"This palette may not work in black and white. The following pairs are hard to tell the difference between: (#0078b4 and #da2827, #0078b4 and #8c69bc, #0078b4 and #8e564b, #0078b4 and #7f7f7f, #ff7e0e and #3d9f2f, #ff7e0e and #e179c1, #ff7e0e and #c4bc27, #ff7e0e and #00becf, #3d9f2f and #8c69bc, #3d9f2f and #e179c1, #3d9f2f and #7f7f7f, #da2827 and #8c69bc, #da2827 and #8e564b, #da2827 and #7f7f7f, #8c69bc and #8e564b, #8c69bc and #7f7f7f, #e179c1 and #c4bc27, #e179c1 and #00becf, #c4bc27 and #00becf)"`;
+
+exports[`ColorLint - CVD: Protanopia 1`] = `"This palette is not colorblind friendly for protanopia color blindness (ie can't see red). The following pairs are undifferentiable: ()"`;
+
+exports[`ColorLint - CVD: Protanopia 2`] = `"This palette is not colorblind friendly for protanopia color blindness (ie can't see red). The following pairs are undifferentiable: (#0078b4 and #8c69bc, #ff7e0e and #3d9f2f, #da2827 and #8e564b)"`;
+
+exports[`ColorLint - CVD: Tritanopia 1`] = `"This palette is not colorblind friendly for tritanopia color blindness (ie can't see blue). The following pairs are undifferentiable: ()"`;
+
+exports[`ColorLint - CVD: Tritanopia 2`] = `"This palette is not colorblind friendly for tritanopia color blindness (ie can't see blue). The following pairs are undifferentiable: (#ff7e0e and #e179c1, #8c69bc and #7f7f7f)"`;
+
 exports[`ColorLint - CatOrderSimilarity 1`] = `"Some sequences of colors are too similar based on dE scores: . Try reordering them or making them more distinguishable"`;
 
 exports[`ColorLint - CatOrderSimilarity 2`] = `"Some sequences of colors are too similar based on dE scores: #009de5 and #5fb1ff. Try reordering them or making them more distinguishable"`;
-
-exports[`ColorLint - ColorBlind: Deuteranopia 1`] = `"This palette is not colorblind friendly for deuteranopia color blindness (ie can't see green). The following pairs are undifferentiable: ()"`;
-
-exports[`ColorLint - ColorBlind: Deuteranopia 2`] = `"This palette is not colorblind friendly for deuteranopia color blindness (ie can't see green). The following pairs are undifferentiable: (#0078b4 and #8c69bc, #ff7e0e and #c4bc27, #3d9f2f and #da2827, #e179c1 and #00becf)"`;
-
-exports[`ColorLint - ColorBlind: Grayscale 1`] = `"This palette may not work in black and white. The following pairs are hard to tell the difference between: ()"`;
-
-exports[`ColorLint - ColorBlind: Grayscale 2`] = `"This palette may not work in black and white. The following pairs are hard to tell the difference between: (#0078b4 and #da2827, #0078b4 and #8c69bc, #0078b4 and #8e564b, #0078b4 and #7f7f7f, #ff7e0e and #3d9f2f, #ff7e0e and #e179c1, #ff7e0e and #c4bc27, #ff7e0e and #00becf, #3d9f2f and #8c69bc, #3d9f2f and #e179c1, #3d9f2f and #7f7f7f, #da2827 and #8c69bc, #da2827 and #8e564b, #da2827 and #7f7f7f, #8c69bc and #8e564b, #8c69bc and #7f7f7f, #e179c1 and #c4bc27, #e179c1 and #00becf, #c4bc27 and #00becf)"`;
-
-exports[`ColorLint - ColorBlind: Protanopia 1`] = `"This palette is not colorblind friendly for protanopia color blindness (ie can't see red). The following pairs are undifferentiable: ()"`;
-
-exports[`ColorLint - ColorBlind: Protanopia 2`] = `"This palette is not colorblind friendly for protanopia color blindness (ie can't see red). The following pairs are undifferentiable: (#0078b4 and #8c69bc, #ff7e0e and #3d9f2f, #da2827 and #8e564b)"`;
-
-exports[`ColorLint - ColorBlind: Tritanopia 1`] = `"This palette is not colorblind friendly for tritanopia color blindness (ie can't see blue). The following pairs are undifferentiable: ()"`;
-
-exports[`ColorLint - ColorBlind: Tritanopia 2`] = `"This palette is not colorblind friendly for tritanopia color blindness (ie can't see blue). The following pairs are undifferentiable: (#ff7e0e and #e179c1, #8c69bc and #7f7f7f)"`;
 
 exports[`ColorLint - ColorNameDiscriminability 1`] = `"The following pairs of colors have the same name: "`;
 
@@ -117,3 +117,13 @@ exports[`ColorLint - UglyColors 1`] = `"This palette has some colors (specifical
 exports[`ColorLint - UglyColors 2`] = `"This palette has some colors (specifically #56ff22) that are close to what are known as ugly colors"`;
 
 exports[`ColorLint - UglyColors 3`] = `"This palette has some colors (specifically #0010ff, #6a7e25, #0f0, #00f) that are close to what are known as ugly colors"`;
+
+exports[`ColorLnt - ColorTags (1) Whisper don't scream 1`] = `"Axes should not have high contrast with the background. This can make the axes too distracting. "`;
+
+exports[`ColorLnt - ColorTags (1) Whisper don't scream 2`] = `"Axes should not have high contrast with the background. This can make the axes too distracting. #000"`;
+
+exports[`ColorLnt - ColorTags (2) Blue should be high probability for the basic color term blue 1`] = `"Blue should be high probability for the basic color term blue. If it's not, it can be confusing to users. "`;
+
+exports[`ColorLnt - ColorTags (2) Blue should be high probability for the basic color term blue 2`] = `"Blue should be high probability for the basic color term blue. If it's not, it can be confusing to users. "`;
+
+exports[`ColorLnt - ColorTags (2) Blue should be high probability for the basic color term blue 3`] = `"Blue should be high probability for the basic color term blue. If it's not, it can be confusing to users. #f00"`;

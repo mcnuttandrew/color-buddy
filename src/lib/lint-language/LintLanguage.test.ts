@@ -287,6 +287,28 @@ test("LintLanguage Quantifiers Exist - DENSE", () => {
   expect(LLEval(colorBlindExists, exampleColors).result).toBe(false);
 });
 
+test("LintLanguage Quantifiers All - DENSE", () => {
+  const colorBlindExists = {
+    all: {
+      in: "colors",
+      varbs: ["a", "b"],
+      predicate: {
+        not: {
+          similar: {
+            left: { cvdSim: "a", type: "deuteranopia" },
+            right: { cvdSim: "b", type: "deuteranopia" },
+            threshold: 9,
+          },
+        },
+      },
+    },
+  };
+  expect(prettyPrintLL(colorBlindExists)).toBe(
+    "ALL (a, b) in colors, NOT similar(cvdSim(a, deuteranopia), cvdSim(b, deuteranopia)) < 9"
+  );
+  expect(LLEval(colorBlindExists, exampleColors).result).toBe(false);
+});
+
 test("LintLanguage Check exists", () => {
   const program = {
     exist: {

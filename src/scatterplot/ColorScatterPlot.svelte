@@ -49,9 +49,10 @@
     .map((el) => [x(el), y(el), z(el)]);
   $: config = colorPickerConfig[colorSpace];
   $: bg = Pal.background;
-  $: colors = Pal.colors.map((x) =>
-    wrapInBlankSemantics(Color.toColorSpace(x.color, colorSpace))
-  );
+  $: colors = Pal.colors.map((x) => ({
+    ...x,
+    color: Color.toColorSpace(x.color, colorSpace),
+  }));
 
   $: domainXScale = scaleLinear().domain([0, 1]).range(config.xDomain);
   $: xScale = scaleLinear()
@@ -81,8 +82,26 @@
 
   let originalColors = [] as ColorWrap<Color>[];
   $: bgLum = bg.luminance();
-  $: axisColor = bgLum > 0.4 ? "#00000022" : "#ffffff55";
-  $: textColor = bgLum > 0.4 ? "#00000066" : "#ffffffaa";
+  const findColorWithTag = (
+    colors: ColorWrap<Color>[],
+    tag: string
+  ): ColorWrap<Color> | undefined => {
+    return colors.find((x) =>
+      x.tags.some((y) => y.toLowerCase() === tag.toLowerCase())
+    );
+  };
+  $: taggedAxisColor = findColorWithTag(colors, "axis");
+  $: axisColor = taggedAxisColor
+    ? taggedAxisColor.color
+    : bgLum > 0.4
+      ? "#00000022"
+      : "#ffffff55";
+  $: taggedTextColor = findColorWithTag(colors, "text");
+  $: textColor = taggedTextColor
+    ? taggedTextColor.color
+    : bgLum > 0.4
+      ? "#00000066"
+      : "#ffffffaa";
   $: selectionColor = bgLum > 0.35 ? "#55330066" : "#ffeeccaa";
 
   let hoveredIndex: number | false = false;

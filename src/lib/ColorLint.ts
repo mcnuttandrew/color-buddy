@@ -32,6 +32,7 @@ export class ColorLint<CheckData, ParamType> {
   naturalLanguageProgram: string = "";
   level: LintLevel = "error";
   subscribedFix: string = "none";
+  program: string = "";
 
   constructor(Palette: Palette) {
     this.palette = Palette;

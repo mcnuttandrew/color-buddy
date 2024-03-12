@@ -243,7 +243,9 @@ export class LLConjunction extends LLNode {
     if (this.type === "id") return this.children[0].toString();
     if (this.type === "none") return "";
     if (this.type === "not") return `NOT ${this.children[0].toString()}`;
-    return `(${this.children.map((x) => x.toString()).join(` ${this.type} `)})`;
+    return `(${this.children
+      .map((x) => x.toString())
+      .join(` ${this.type.toUpperCase()} `)})`;
   }
 }
 
@@ -395,7 +397,12 @@ export class LLNumberOp extends LLNode {
     return new LLNumberOp(opType, leftType, rightType);
   }
   toString(): string {
-    return `${this.left.toString()} ${this.type} ${this.right.toString()}`;
+    const left = this.left.toString();
+    const right = this.right.toString();
+    if (this.type === "absDiff") {
+      return `absDiff(${left}, ${right})`;
+    }
+    return `${left} ${this.type} ${right}`;
   }
 }
 
@@ -896,7 +903,7 @@ export class LLQuantifier extends LLNode {
     }
     // const type = this.type === "exist" ? "∃" : "∀";
     const type = this.type.toUpperCase();
-    return `${type} ${varbs} in ${targ}${where}, ${this.predicate.toString()}`;
+    return `${type} ${varbs} IN ${targ}${where} SUCH THAT ${this.predicate.toString()}`;
   }
 }
 
@@ -1087,9 +1094,10 @@ export class LLMap extends LLNode {
   }
   toString(): string {
     const type = this.type;
-    return `${type}(${this.children.toString()}, ${
-      this.varb
-    } => ${this.func.toString()})`;
+    const funcStr = this.func.toString();
+    const func =
+      this.varb != " " && funcStr != " " ? `, ${this.varb} => ${funcStr}` : "";
+    return `${type}(${this.children.toString()}${func})`;
   }
 }
 

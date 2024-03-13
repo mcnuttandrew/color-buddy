@@ -1,6 +1,5 @@
 import { JSONToPrettyString, makePalFromString } from "../utils";
-import type { CustomLint } from "../CustomLint";
-import type { LintFixer } from "../linter-tools/lint-fixer";
+import type { CustomLint } from "../ColorLint";
 
 const lint: CustomLint = {
   name: "Discriminative Power Sufficient",
@@ -23,5 +22,6 @@ const lint: CustomLint = {
   blameMode: "single",
   expectedPassingTests: [],
   expectedFailingTests: [],
+  requiredTags: [],
 };
 export default lint;

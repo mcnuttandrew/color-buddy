@@ -26,10 +26,15 @@
       if (!acc[check.group]) {
         acc[check.group] = [];
       }
-      acc[check.group].push(check);
+      // extremely dumb hack to move wcags to the top
+      if (check.name.startsWith("WCAG")) {
+        acc[check.group].push(check);
+      } else {
+        acc[check.group].push(check);
+      }
       return acc;
     },
-    { accessibility: [], design: [], usability: [] } as Record<
+    { accessibility: [], usability: [], design: [] } as Record<
       string,
       LintResult[]
     >

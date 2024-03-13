@@ -92,15 +92,19 @@
       </div>
 
       <div class="grow">
-        <Nav
-          className="bg-stone-800 text-white h-12 items-center"
-          {tabs}
-          isTabSelected={(x) => $configStore.route === x}
-          selectTab={(x) => {
-            // @ts-ignore
-            configStore.setRoute(x);
-          }}
-        />
+        <div class="bg-stone-800">
+          <div class="flex">
+            <Nav
+              className="bg-stone-800 text-white h-12 items-center"
+              {tabs}
+              isTabSelected={(x) => $configStore.route === x}
+              selectTab={(x) => {
+                // @ts-ignore
+                configStore.setRoute(x);
+              }}
+            />
+          </div>
+        </div>
         {#if palPresent}
           {#if $configStore.route === "examples"}
             <Examples />

@@ -22,7 +22,8 @@ const findMinDistPoint = (points: Color[], pos: { x: number; y: number }) => {
 export default class DivergingOrder extends ColorLint<boolean, false> {
   name = "Diverging Palettes order";
   taskTypes = ["diverging"] as PalType[];
-  group = "usability";
+  group = "usability" as const;
+  requiredTags = [];
   description: string = `Diverging palettes should have a middle color that is the lightest or darkest color. This is because if they are not, then they will not be differentiable from each other in some contexts.`;
   _runCheck() {
     const { colors } = this.palette;

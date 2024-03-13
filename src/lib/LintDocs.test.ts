@@ -1,7 +1,7 @@
 import { BUILT_INS } from "./linter";
 import { prettyPrintLL } from "./lint-language/lint-language";
 import { expect, test } from "vitest";
-import type { CustomLint } from "./CustomLint";
+import type { CustomLint } from "./ColorLint";
 import fs from "fs/promises";
 
 const testCaseToText = (

@@ -18,7 +18,7 @@
 
 <div class="flex flex-col">
   <Tooltip>
-    <div slot="content">
+    <div slot="content" class="max-w-md">
       <button
         class={buttonStyle}
         on:click={() => {
@@ -38,7 +38,12 @@
         </button>
       {/each}
     </div>
-    <button slot="target" let:toggle class={buttonStyle} on:click={toggle}>
+    <button
+      slot="target"
+      let:toggle
+      class={`${buttonStyle} pl-0`}
+      on:click={toggle}
+    >
       Change example: {example?.name || "Swatches"}
     </button>
   </Tooltip>

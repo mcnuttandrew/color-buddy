@@ -203,8 +203,7 @@ const defaultHexPal: StringPalette = {
   type: "categorical",
   evalConfig: {},
   colorSpace: "lab",
-  intendedAffects: [],
-  intendedContexts: [],
+  tags: [],
 };
 export const makePal = (
   name: string,
@@ -259,6 +258,14 @@ export function makePalFromString(
     ),
     background: Color.colorFromString(bg, "lab"),
   };
+}
+
+export function createPalWithTags(colors: string[], tags: [number, string][]) {
+  const pal = makePalFromString(colors);
+  tags.forEach(([index, tag]) => {
+    pal.colors[index].tags.push(tag);
+  });
+  return pal;
 }
 
 export const toPal = (
@@ -636,15 +643,10 @@ const oxfordJoin = (arr: string[]) => {
 };
 
 export function summarizePal(pal: Palette) {
-  const affects = pal.intendedAffects;
-  const affectMsg = affects.length
-    ? ` It is intended to convey ${oxfordJoin(pal.intendedAffects)} affects.`
+  const tagsMsg = pal.tags.length
+    ? ` It is has the following properties: ${oxfordJoin(pal.tags)}.`
     : "";
-  const contexts = pal.intendedContexts.map((x) => `${x}s`);
-  const contextMsg = contexts.length
-    ? ` It is intended to be used ${oxfordJoin(contexts)}.`
-    : "";
-  return `This is a ${pal.type} palette called '${pal.name}'.${affectMsg}${contextMsg}`;
+  return `This is a ${pal.type} palette called '${pal.name}'.${tagsMsg}`;
 }
 
 export function dealWithFocusEvent(

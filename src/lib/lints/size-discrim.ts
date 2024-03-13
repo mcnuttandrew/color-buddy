@@ -1,5 +1,5 @@
 import { JSONToPrettyString, makePalFromString } from "../utils";
-import type { CustomLint } from "../CustomLint";
+import type { CustomLint } from "../ColorLint";
 
 // https://github.com/connorgr/d3-jnd/blob/master/src/jnd.js
 
@@ -135,6 +135,7 @@ const lints: CustomLint[] = keys.map((key) => {
     blameMode: "pair",
     expectedPassingTests: testCase[key].passing,
     expectedFailingTests: testCase[key].failing,
+    requiredTags: [],
   };
 });
 

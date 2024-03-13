@@ -11,8 +11,7 @@ const toPal = (colors: string[]): Palette => ({
   evalConfig: {},
   background: toColors(["#fff"])[0],
   colors: toColorWithSemantics(colors),
-  intendedAffects: [],
-  intendedContexts: [],
+  tags: [],
 });
 const wrapWithSemantics = (color: Color) => ({
   size: undefined,
@@ -240,7 +239,7 @@ test("LintLanguage Boolean values", () => {
 });
 
 test("LintLanguage Quantifiers Exist", () => {
-  const colorBlindExists = {
+  const cvdExists = {
     not: {
       exist: {
         in: "colors",
@@ -260,14 +259,14 @@ test("LintLanguage Quantifiers Exist", () => {
       },
     },
   };
-  expect(prettyPrintLL(colorBlindExists)).toBe(
+  expect(prettyPrintLL(cvdExists)).toBe(
     "NOT EXIST a IN colors SUCH THAT EXIST b IN colors SUCH THAT cvdSim(a, deuteranopia) != cvdSim(b, deuteranopia)"
   );
-  expect(LLEval(colorBlindExists, exampleColors).result).toBe(false);
+  expect(LLEval(cvdExists, exampleColors).result).toBe(false);
 });
 
 test("LintLanguage Quantifiers Exist - DENSE", () => {
-  const colorBlindExists = {
+  const cvdExists = {
     not: {
       exist: {
         in: "colors",
@@ -281,14 +280,14 @@ test("LintLanguage Quantifiers Exist - DENSE", () => {
       },
     },
   };
-  expect(prettyPrintLL(colorBlindExists)).toBe(
+  expect(prettyPrintLL(cvdExists)).toBe(
     "NOT EXIST (a, b) IN colors SUCH THAT cvdSim(a, deuteranopia) != cvdSim(b, deuteranopia)"
   );
-  expect(LLEval(colorBlindExists, exampleColors).result).toBe(false);
+  expect(LLEval(cvdExists, exampleColors).result).toBe(false);
 });
 
 test("LintLanguage Quantifiers All - DENSE", () => {
-  const colorBlindExists = {
+  const cvdExists = {
     all: {
       in: "colors",
       varbs: ["a", "b"],
@@ -303,10 +302,10 @@ test("LintLanguage Quantifiers All - DENSE", () => {
       },
     },
   };
-  expect(prettyPrintLL(colorBlindExists)).toBe(
+  expect(prettyPrintLL(cvdExists)).toBe(
     "ALL (a, b) IN colors SUCH THAT NOT similar(cvdSim(a, deuteranopia), cvdSim(b, deuteranopia)) < 9"
   );
-  expect(LLEval(colorBlindExists, exampleColors).result).toBe(false);
+  expect(LLEval(cvdExists, exampleColors).result).toBe(false);
 });
 
 test("LintLanguage Check exists", () => {

@@ -16,9 +16,9 @@
 
   $: colorNames = colorNameSimple(colors.map((x) => x.color));
   $: colors = $colorStore.palettes[$colorStore.currentPal].colors;
-  $: selectedBlindType = $configStore.colorSim;
+  $: selectedCVDType = $configStore.colorSim;
   $: sim = (color: Color): string =>
-    simulate_cvd(selectedBlindType, color).toHex();
+    simulate_cvd(selectedCVDType, color).toHex();
 
   $: colorsToIssues = colors.map((x) => {
     const hex = `${x.color.toHex()}`;
@@ -57,7 +57,7 @@
       class={`${buttonStyle} ml-0 pl-0 mt-4`}
       on:click|stopPropagation={() => configStore.setColorSim("none")}
     >
-      Disable Color Blindness Simulation
+      Disable Color Vision Deficiency Simulation
     </button>
   {/if}
   {#each colors as color, idx}
@@ -78,7 +78,7 @@
           class="grow h-full"
           style="background-color: {color.color.toHex()}"
         ></div>
-        {#if selectedBlindType !== "none"}
+        {#if selectedCVDType !== "none"}
           <div
             class="grow h-full"
             style={`background-color: ${sim(color.color)}`}

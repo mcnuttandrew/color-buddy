@@ -20,7 +20,6 @@ interface StoreData {
   showColorBackground: boolean;
   tooltipXY?: [string, string];
   useSimulatorOnExamples: boolean;
-  mainColumnRoute: "palette-config" | "example";
   mainColumnSelectedExample: number;
   xZoom: [number, number];
   yZoom: [number, number];
@@ -44,7 +43,6 @@ const InitialStore: StoreData = {
   showColorBackground: true,
   showGamutMarkers: true,
   tooltipXY: undefined,
-  mainColumnRoute: "palette-config",
   mainColumnSelectedExample: -1,
   useSimulatorOnExamples: false,
   channelPickerSpace: "lab",
@@ -115,8 +113,6 @@ function createStore() {
       persist((old) => ({ ...old, showGamutMarkers: n })),
     setUseSimulatorOnExamples: (n: StoreData["useSimulatorOnExamples"]) =>
       persist((old) => ({ ...old, useSimulatorOnExamples: n })),
-    setMainColumnRoute: (n: StoreData["mainColumnRoute"]) =>
-      persist((old) => ({ ...old, mainColumnRoute: n })),
     setMainColumnSelectedExample: (n: StoreData["mainColumnSelectedExample"]) =>
       persist((old) => ({ ...old, mainColumnSelectedExample: n })),
     setCompareSelectedExample: (n: StoreData["compareSelectedExample"]) =>

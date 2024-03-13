@@ -1,36 +1,40 @@
-import type { Palette, PalType, Affect, Context } from "../types";
+import type { Palette } from "../types";
 
-export type LintLevel = "error" | "warning";
+import {
+  LLEval,
+  prettyPrintLL,
+  permutativeBlame,
+} from "./lint-language/lint-language";
+import * as Json from "jsonc-parser";
+
 export interface LintResult {
-  affectTypes: Affect[];
-  contextTypes: Context[];
   description: string;
   group: string;
   isCustom: false | string;
-  level: LintLevel;
+  level: CustomLint["level"];
   message: string;
   name: string;
   naturalLanguageProgram: string;
   passes: boolean;
   subscribedFix: string;
-  taskTypes: PalType[];
+  taskTypes: Palette["type"][];
+  requiredTags: string[];
 }
 
 export class ColorLint<CheckData, ParamType> {
   name: string = "";
-  taskTypes: PalType[] = [];
-  affectTypes: Affect[] = [];
-  contextTypes: Context[] = [];
+  taskTypes: Palette["type"][] = [];
+  requiredTags: string[] = [];
   passes: boolean;
   checkData: CheckData;
   palette: Palette;
   message: string = "";
   isCustom: false | string = false;
-  group: string = "";
+  group: CustomLint["group"] = "design";
   description: string = "";
-  blameMode: "pair" | "single" | "none" = "none";
+  blameMode: CustomLint["blameMode"] = "none";
   naturalLanguageProgram: string = "";
-  level: LintLevel = "error";
+  level: CustomLint["level"] = "error";
   subscribedFix: string = "none";
   program: string = "";
 
@@ -55,4 +59,72 @@ export class ColorLint<CheckData, ParamType> {
   buildMessage(): string {
     return "";
   }
+}
+
+export interface CustomLint {
+  blameMode: "pair" | "single" | "none";
+  description: string;
+  failMessage: string;
+  group: "design" | "accessibility" | "usability" | "custom";
+  id: string;
+  level: "error" | "warning";
+  name: string;
+  program: string;
+  subscribedFix?: string;
+  taskTypes: Palette["type"][];
+  requiredTags: string[];
+  expectedPassingTests: Palette[];
+  expectedFailingTests: Palette[];
+}
+
+export function CreateCustomLint(props: CustomLint) {
+  let natProg = "";
+  try {
+    natProg = prettyPrintLL(Json.parse(props.program));
+  } catch (e) {}
+  return class CustomLint extends ColorLint<number[] | number[][], any> {
+    blameMode = props.blameMode;
+    description = props.description;
+    group = props.group;
+    isCustom = props.id;
+    level = props.level;
+    name = props.name;
+    naturalLanguageProgram = natProg;
+    program = props.program;
+    requiredTags = props.requiredTags;
+    subscribedFix = props.subscribedFix || "none";
+    taskTypes = props.taskTypes;
+
+    _runCheck(options: any) {
+      const prog = Json.parse(props.program);
+      const { blame, result } = LLEval(prog, this.palette, {
+        debugCompare: false,
+        ...options,
+      });
+      if (result) return { passCheck: true, data: blame };
+      let newBlame: number[] | number[][] = [];
+      if (this.blameMode !== "none") {
+        newBlame = permutativeBlame(prog, this.palette, this.blameMode);
+      }
+
+      return { passCheck: result, data: newBlame };
+    }
+
+    buildMessage() {
+      let blame = "";
+      if (this.blameMode === "pair") {
+        blame = (this.checkData as number[][])
+          .map((x) =>
+            x.map((x) => this.palette.colors[x].color.toHex()).join(" and ")
+          )
+          .join(", ");
+      } else {
+        blame = (this.checkData as number[])
+          .map((x) => this.palette.colors[x].color.toHex())
+          .join(", ");
+      }
+
+      return props.failMessage.replaceAll("{{blame}}", blame);
+    }
+  };
 }

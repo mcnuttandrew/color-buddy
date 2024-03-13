@@ -1,5 +1,5 @@
 import { JSONToPrettyString, makePalFromString } from "../utils";
-import type { CustomLint } from "../CustomLint";
+import type { CustomLint } from "../ColorLint";
 
 const lint: CustomLint = {
   name: "Colors distinguishable in order",
@@ -37,5 +37,6 @@ const lint: CustomLint = {
   expectedFailingTests: [
     makePalFromString(["#0084a9", "#009de5", "#5fb1ff", "#bbc3ff", "#ecddff"]),
   ],
+  requiredTags: [],
 };
 export default lint;

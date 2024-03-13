@@ -1,19 +1,19 @@
 import { Color } from "./lib/Color";
 
-export const affects = [
-  "calm",
-  "exciting",
-  "positive",
-  "negative",
-  "serious",
-  "playful",
-  "trustworthy",
-  "disturbing",
-];
-export type Affect = (typeof affects)[number];
-export const contexts = ["scatterplot", "linechart", "barchart", "dashboard"];
+// export const affects = [
+//   "calm",
+//   "exciting",
+//   "positive",
+//   "negative",
+//   "serious",
+//   "playful",
+//   "trustworthy",
+//   "disturbing",
+// ];
+// export type Affect = (typeof affects)[number];
+// export const contexts = ["scatterplot", "linechart", "barchart", "dashboard"];
 
-export type Context = (typeof contexts)[number];
+// export type Context = (typeof contexts)[number];
 
 // Todo make this connect with the color system
 export type ColorSpace =
@@ -46,8 +46,7 @@ type Pal<A> = {
   colorSpace: ColorSpace;
   colors: ColorWrap<A>[];
   evalConfig: Record<string, any>;
-  intendedAffects: Affect[];
-  intendedContexts: Context[];
+  tags: string[];
   name: string;
   type: PalType;
 };

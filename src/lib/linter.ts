@@ -1,7 +1,7 @@
 import { ColorLint } from "./ColorLint";
 import type { Palette } from "../types";
-import type { CustomLint } from "./CustomLint";
-import { CreateCustomLint } from "./CustomLint";
+import type { CustomLint } from "./ColorLint";
+import { CreateCustomLint } from "./ColorLint";
 
 // manual lints
 import DivergingOrder from "./lints/diverging-order";
@@ -9,7 +9,7 @@ import DivergingOrder from "./lints/diverging-order";
 // custom lints
 import Affects from "./lints/affects";
 import AvoidExtremes from "./lints/avoid-extremes";
-import BackgroundDifferentiability from "./lints/background-contrast";
+import Contrast from "./lints/background-contrast";
 import CatOrderSimilarity from "./lints/cat-order-similarity";
 import CVDCheck from "./lints/cvd-check";
 import ColorTags from "./lints/color-tags";
@@ -25,6 +25,7 @@ import SizeDiscrim from "./lints/size-discrim";
 import UglyColors from "./lints/ugly-colors";
 
 export const BUILT_INS: CustomLint[] = [
+  ...Contrast,
   ...Affects,
   ...CVDCheck,
   ...ColorTags,
@@ -32,7 +33,6 @@ export const BUILT_INS: CustomLint[] = [
   ...MuthGuidelines,
   ...SizeDiscrim,
   AvoidExtremes,
-  BackgroundDifferentiability,
   CatOrderSimilarity,
   EvenDistribution,
   Gamut,
@@ -48,8 +48,6 @@ export function runLintChecks(
   customLints: CustomLint[]
 ): ColorLint<any, any>[] {
   const ignoreList = palette.evalConfig;
-  const affects = palette.intendedAffects;
-  const contexts = palette.intendedContexts;
   const globallyIgnoredLints = palette.evalConfig?.globallyIgnoredLints || [];
   const lints = [
     DivergingOrder,
@@ -61,15 +59,10 @@ export function runLintChecks(
       .filter((x) => !globallyIgnoredLints.includes(x.isCustom))
       // task type
       .filter((x) => x.taskTypes.includes(palette.type))
-      // affect type
+      // tag type
       .filter((x) => {
-        if (x.affectTypes.length === 0) return true;
-        return x.affectTypes.some((a) => affects.includes(a));
-      })
-      // context type
-      .filter((x) => {
-        if (x.contextTypes.length === 0) return true;
-        return x.contextTypes.some((a) => contexts.includes(a));
+        if (x.requiredTags.length === 0) return true;
+        return x.requiredTags.some((a) => palette.tags.includes(a));
       })
       .map((x) => {
         if (ignoreList[x.name] && ignoreList[x.name].ignore) {

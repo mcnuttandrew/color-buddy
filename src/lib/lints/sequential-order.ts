@@ -1,5 +1,5 @@
 import { JSONToPrettyString, makePalFromString } from "../utils";
-import type { CustomLint } from "../CustomLint";
+import type { CustomLint } from "../ColorLint";
 import { Color } from "../Color";
 import type { Palette } from "../../types";
 import type { LintFixer } from "../linter-tools/lint-fixer";
@@ -29,6 +29,7 @@ const lint: CustomLint = {
   taskTypes: ["sequential"] as const,
   level: "error",
   group: "usability",
+  requiredTags: [],
   description:
     "Sequential palettes should be ordered by lightness. This is a defining property of a sequential palette and ensures that values are understood as having an increase (or decreasing) value.",
   failMessage: `This pal should be ordered by lightness if being used as a sequential palette. {{blame}} may be to blame.`,

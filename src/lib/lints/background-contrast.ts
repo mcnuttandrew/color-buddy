@@ -1,5 +1,9 @@
-import { JSONToPrettyString, makePalFromString } from "../utils";
-import type { CustomLint } from "../CustomLint";
+import {
+  JSONToPrettyString,
+  makePalFromString,
+  createPalWithTags,
+} from "../utils";
+import type { CustomLint } from "../ColorLint";
 import { Color } from "../Color";
 import type { LintFixer } from "../linter-tools/lint-fixer";
 
@@ -10,26 +14,37 @@ const getColorsCloseToBackground = (colors: Color[], background: Color) => {
   }, [] as number[]);
 };
 
-const lint: CustomLint = {
-  program: JSONToPrettyString({
+type LintProgram = Parameters<typeof JSONToPrettyString>[0];
+const buildProgram = (level: number, textOnly: boolean): LintProgram => {
+  const program: LintProgram = {
     // @ts-ignore
     $schema: `${location.href}lint-schema.json`,
     all: {
       in: "colors",
       varb: "a",
-
+      where: { isTag: "a", value: "text" },
       predicate: {
         ">": {
           left: {
             contrast: { left: "a", right: "background" },
             algorithm: "WCAG21",
           },
-          right: 1.1,
+          right: level,
         },
       },
     },
-  }),
-  name: "Background Contrast",
+  };
+  if (!textOnly) {
+    delete (program.all as any).where;
+  }
+
+  return program;
+};
+
+const lintBase: CustomLint = {
+  program: JSONToPrettyString(false),
+  requiredTags: [],
+  name: "WCAG Contrast -- AA",
   taskTypes: ["sequential", "diverging", "categorical"] as const,
   level: "error",
   group: "accessibility",
@@ -38,14 +53,45 @@ const lint: CustomLint = {
   id: "background-contrast-built-in",
   blameMode: "single" as const,
   subscribedFix: "fixBackgroundDifferentiability",
+  expectedFailingTests: [],
+  expectedPassingTests: [],
+};
+
+const contrastGraphicalObjects: CustomLint = {
+  ...lintBase,
+  program: JSONToPrettyString(buildProgram(3, false)),
+  name: "WCAG Contrast Graphical Objects",
+  id: "contrast-graphical-objects-built-in",
+  expectedFailingTests: [makePalFromString(["#feed72", "#f8f4d2", "#eb717b"])],
+  expectedPassingTests: [makePalFromString(["#cf5f67", "#468bbc", "#848475"])],
+};
+
+const contrastTextAA: CustomLint = {
+  ...lintBase,
+  program: JSONToPrettyString(buildProgram(4.5, true)),
+  name: "WCAG Text Contrast: AA",
+  id: "contrast-aa-built-in",
   expectedFailingTests: [
-    makePalFromString(["#00ffff", "#00faff", "#00e4ff", "#fdfdfc", "#00ffff"]),
+    createPalWithTags(["#feed72", "#f8f4d2", "#eb717b"], [[2, "text"]]),
   ],
   expectedPassingTests: [
-    makePalFromString(["#cf5f67", "#468bbc", "#848475", "#c55eab", "#ff008c"]),
+    createPalWithTags(["#feed72", "#f8f4d2", "#af3b4b"], [[2, "text"]]),
   ],
 };
-export default lint;
+const contrastTextAAA: CustomLint = {
+  ...lintBase,
+  program: JSONToPrettyString(buildProgram(7, true)),
+  name: "WCAG Text Contrast: AAA",
+  id: "contrast-aaa-built-in",
+  expectedFailingTests: [
+    createPalWithTags(["#feed72", "#f8f4d2", "#af3b4b"], [[2, "text"]]),
+  ],
+  expectedPassingTests: [
+    createPalWithTags(["#feed72", "#f8f4d2", "#6c001a"], [[2, "text"]]),
+  ],
+};
+
+export default [contrastGraphicalObjects, contrastTextAA, contrastTextAAA];
 
 export const fixBackgroundDifferentiability: LintFixer = async (palette) => {
   const { colors, background, colorSpace } = palette;

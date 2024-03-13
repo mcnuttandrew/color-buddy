@@ -1,5 +1,5 @@
 import { JSONToPrettyString, makePalFromString } from "../utils";
-import type { CustomLint } from "../CustomLint";
+import type { CustomLint } from "../ColorLint";
 
 // old algorithm - https://github.dev/gka/palettes
 //     let distanceNorm = colorA.symmetricDeltaE(colorB);
@@ -9,15 +9,13 @@ import type { CustomLint } from "../CustomLint";
 //   distanceNorm / distanceSim > ratioThreshold &&
 //   distanceSim < smallestPerceivableDistance;
 
-const blindnessLabels = {
+const cvdLabels = {
   deuteranopia: "(ie can't see green)",
   protanopia: "(ie can't see red)",
   tritanopia: "(ie can't see blue)",
   grayscale: "",
 };
-const blindTypes = Object.keys(
-  blindnessLabels
-) as (keyof typeof blindnessLabels)[];
+const cvdTypes = Object.keys(cvdLabels) as (keyof typeof cvdLabels)[];
 const tableau10 = [
   "#0078b4",
   "#ff7e0e",
@@ -30,7 +28,8 @@ const tableau10 = [
   "#c4bc27",
   "#00becf",
 ];
-const lints: CustomLint[] = blindTypes.map((type) => ({
+const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
+const lints: CustomLint[] = cvdTypes.map((type) => ({
   program: JSONToPrettyString({
     // @ts-ignore
     $schema: `${location.href}lint-schema.json`,
@@ -50,20 +49,23 @@ const lints: CustomLint[] = blindTypes.map((type) => ({
     },
   }),
   name:
-    type === "grayscale" ? "Right in black and white" : `CVD: ${type} Friendly`,
+    type === "grayscale"
+      ? "Right in black and white"
+      : `CVD: ${capitalize(type)} Friendly`,
   taskTypes: ["sequential", "diverging", "categorical"],
   group: "accessibility",
-  description: `All colors in a palette should be differentiable by people with ${type} ${blindnessLabels[type]}. This is because if they are not, then they will not be differentiable from each other in some contexts.`,
+  description: `All colors in a palette should be differentiable by people with ${type} ${cvdLabels[type]}. This is because if they are not, then they will not be differentiable from each other in some contexts.`,
   level: "error" as const,
   failMessage:
     type === "grayscale"
       ? `This palette may not work in black and white. The following pairs are hard to tell the difference between: ({{blame}})`
-      : `This palette is not colorblind friendly for ${type} color blindness ${blindnessLabels[type]}. The following pairs are undifferentiable: ({{blame}})`,
-  id: `colorblind-friendly-${type}-built-in`,
+      : `This palette is not friendly for people with ${type} color vision deficiency ${cvdLabels[type]}. The following pairs are undifferentiable: ({{blame}})`,
+  id: `cvd-friendly-${type}-built-in`,
   blameMode: "pair" as const,
   expectedPassingTests: [
     makePalFromString(["#000000", "#ffffff", "#ff0000", "#0000ff"]),
   ],
   expectedFailingTests: [makePalFromString(tableau10)],
+  requiredTags: [],
 }));
 export default lints;

@@ -1,5 +1,5 @@
 import { JSONToPrettyString, makePalFromString } from "../utils";
-import type { CustomLint } from "../CustomLint";
+import type { CustomLint } from "../ColorLint";
 import namer from "color-namer";
 import { Color } from "../Color";
 import type { Palette } from "../../types";
@@ -64,6 +64,7 @@ const lint: CustomLint = {
   id: "color-name-discriminability-built-in",
   blameMode: "pair" as const,
   subscribedFix: "fixColorNameDiscriminability",
+  requiredTags: [],
   expectedPassingTests: [
     makePalFromString(["#000", "#fff", "#f00", "#0f0", "#00f"]),
   ],

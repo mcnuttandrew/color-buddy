@@ -43,7 +43,7 @@
     <div slot="content" class="max-w-md">
       <div class="font-bold">Color Tags</div>
       <div class="italic text-sm">
-        These to mark properties like color, brand, and so on. {#if commonTags.length}
+        These mark properties like color, brand, and so on. {#if commonTags.length}
           Here are some common ones that are have specific effects in the app.{/if}
       </div>
       {#each commonTags as tag}

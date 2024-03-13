@@ -1,5 +1,5 @@
 import { JSONToPrettyString, makePalFromString } from "../utils";
-import type { CustomLint } from "../CustomLint";
+import type { CustomLint } from "../ColorLint";
 
 const lint: CustomLint = {
   name: "Even Distribution",
@@ -41,6 +41,7 @@ const lint: CustomLint = {
   taskTypes: ["categorical"] as const,
   level: "warning",
   group: "design",
+  requiredTags: [],
   description:
     "Categorical values should have an even distribution around the hue circle in LCH color space",
   failMessage: `This palette does not evenly distribute the colors around its range correctly. Try making the spacing between the colors more regular to resolve this issue. `,

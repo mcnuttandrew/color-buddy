@@ -1,5 +1,5 @@
 import { JSONToPrettyString, makePalFromString } from "../utils";
-import type { CustomLint } from "../CustomLint";
+import type { CustomLint } from "../ColorLint";
 import type { LintFixer } from "../linter-tools/lint-fixer";
 import { clipToGamut } from "../utils";
 
@@ -22,6 +22,7 @@ const lint: CustomLint = {
   failMessage: `A color or colors is not in the sRGB gamut ({{blame}}). Please adjust the color so that it can be displayed on most devices.`,
   id: "gamut-check-built-in",
   blameMode: "single",
+  requiredTags: [],
   subscribedFix: "fixGamut",
   expectedPassingTests: [
     makePalFromString(["#0084a9", "#009de5", "#8ca9fa", "#ff0000"]),

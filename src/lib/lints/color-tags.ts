@@ -1,13 +1,9 @@
-import { JSONToPrettyString, makePalFromString } from "../utils";
-import type { CustomLint } from "../CustomLint";
-
-function createPalWithTags(colors: string[], tags: [number, string][]) {
-  const pal = makePalFromString(colors);
-  tags.forEach(([index, tag]) => {
-    pal.colors[index].tags.push(tag);
-  });
-  return pal;
-}
+import {
+  JSONToPrettyString,
+  makePalFromString,
+  createPalWithTags,
+} from "../utils";
+import type { CustomLint } from "../ColorLint";
 
 // If Semantic Tag == Context then the color should be low contrast with the background (Whisper, Don't Scream work)
 
@@ -43,6 +39,7 @@ const whisperScream: CustomLint = {
   blameMode: "single",
   expectedPassingTests: [createPalWithTags(["#eee"], [[0, "axis"]])],
   expectedFailingTests: [createPalWithTags(["#000"], [[0, "axis"]])],
+  requiredTags: [],
 };
 lints.push(whisperScream);
 
@@ -73,6 +70,7 @@ const blueBasicColor: CustomLint = {
     makePalFromString(colorNames),
   ],
   expectedFailingTests: [createPalWithTags(colorNames.slice(1), [[0, "blue"]])],
+  requiredTags: [],
 };
 lints.push(blueBasicColor);
 export default lints;

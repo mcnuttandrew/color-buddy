@@ -141,7 +141,8 @@ function createStore() {
       lintUpdate((old) => ({ ...old, name })),
     setCurrentLintTaskTypes: (taskTypes: CustomLint["taskTypes"]) =>
       lintUpdate((old) => ({ ...old, taskTypes })),
-    setCurrentTags: (tags: string[]) => lintUpdate((old) => ({ ...old, tags })),
+    setCurrentTags: (requiredTags: string[]) =>
+      lintUpdate((old) => ({ ...old, requiredTags })),
     setCurrentLintLevel: (level: "error" | "warning") =>
       lintUpdate((old) => ({ ...old, level })),
     setCurrentLintGroup: (group: CustomLint["group"]) =>

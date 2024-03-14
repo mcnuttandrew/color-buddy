@@ -36,7 +36,7 @@ theseAffects.forEach((affect) => {
 // "light blues, beiges, and grays are appropriate for PLAYFUL"
 // reframed asn assertion: PLAYFUL should have at least one light blue, beige, or gray
 const lint1: CustomLint = {
-  name: `Playful affect issues`,
+  name: `Playful affects can have light blues, beiges, and grays`,
   program: JSONToPrettyString({
     // @ts-ignore
     $schema: `${location.href}lint-schema.json`,
@@ -99,7 +99,7 @@ lints.push(lint2);
 
 // "light colors, particularly greens, do not communicate NEGATIVE": ALL colors c, NOT (c similar to "GREEN" AND lab(l) > threshold) maybe more messaging that one?
 const lint3: CustomLint = {
-  name: `Negative palette affect issues`,
+  name: `Negative palettes should not have light colors, particularly greens`,
   program: JSONToPrettyString({
     // @ts-ignore
     $schema: `${location.href}lint-schema.json`,

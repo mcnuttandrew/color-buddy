@@ -105,7 +105,7 @@
       </button>
       {#if check.subscribedFix !== "none"}
         <button class={buttonStyle} on:click={() => proposeFix(false)}>
-          Try to fix (hueristics)
+          Try to fix (ColorBuddy)
         </button>
       {/if}
     {/if}

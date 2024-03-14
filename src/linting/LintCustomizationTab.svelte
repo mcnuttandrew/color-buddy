@@ -88,7 +88,12 @@
     const result = runLint(lint, {}, pal);
     return { result, pal, blame: result?.checkData };
   }) as TestResult[];
-  $: console.log("todo fix affects tags");
+  let requiredTagAdd = "";
+
+  $: currentLintAppliesToCurrentPalette = (lint?.requiredTags || []).every(
+    (tag) =>
+      currentPal.tags.map((x) => x.toLowerCase()).includes(tag.toLowerCase())
+  );
 </script>
 
 {#if !lint}
@@ -214,7 +219,7 @@
       </div>
       <!-- TASK TYPES -->
       <div class="flex">
-        <div class="mr-2 font-bold">Lint Task Types:</div>
+        <div class="mr-2 font-bold">Task Types:</div>
         <div class="flex flex-wrap">
           {#each taskTypes as taskType}
             <div class="flex items-center mr-4">
@@ -236,8 +241,41 @@
         </div>
       </div>
       <!-- TAGS -->
-      <!-- TODO -->
-
+      <div class="flex">
+        <div class="mr-2 font-bold">Required Tags:</div>
+        <div class="flex flex-wrap">
+          {#each lint.requiredTags as tag}
+            <div>
+              {tag}
+              <button
+                class={buttonStyle}
+                on:click={() => {
+                  const newTags = lint.requiredTags.filter((x) => x !== tag);
+                  lintStore.setCurrentTags(newTags);
+                }}
+              >
+                X
+              </button>
+            </div>
+          {/each}
+        </div>
+      </div>
+      <div class="flex">
+        <span>Add tag</span>
+        <form
+          on:submit|preventDefault|stopPropagation={() => {
+            console.log("what", requiredTagAdd);
+            lintStore.setCurrentTags([...lint.requiredTags, requiredTagAdd]);
+            requiredTagAdd = "";
+          }}
+        >
+          <input
+            class="border-2 border-gray-300 rounded px-2 py-1"
+            type="text"
+            bind:value={requiredTagAdd}
+          />
+        </form>
+      </div>
       <div>
         <div class="font-bold">Lint Description:</div>
         <textarea
@@ -269,77 +307,83 @@
         <div class="font-bold">Lint Self Description (from the program):</div>
         <div>{lintRun?.naturalLanguageProgram}</div>
       </div>
-      <div class="flex">
-        Show Compare Debug In Terminal
-        <Nav
-          tabs={["Show", "Hide"]}
-          isTabSelected={(x) => (debugCompare ? "Show" : "Hide") === x}
-          selectTab={(x) => {
-            debugCompare = x === "Show";
-          }}
-        />
-      </div>
-      <!-- <div class="font-bold">
+      {#if currentLintAppliesToCurrentPalette}
+        <div class="flex">
+          Show Compare Debug In Terminal
+          <Nav
+            tabs={["Show", "Hide"]}
+            isTabSelected={(x) => (debugCompare ? "Show" : "Hide") === x}
+            selectTab={(x) => {
+              debugCompare = x === "Show";
+            }}
+          />
+        </div>
+        <!-- <div class="font-bold">
         Current Palette:
         <PalPreview pal={currentPal} allowModification={false} />
       </div> -->
-      {#if lintRun?.passes}
-        <div class="text-green-500">
-          This lint passes for the current palette
-        </div>
-      {/if}
-      {#if !lintRun?.passes && !errors}
-        <div>
-          <div class="flex">
-            <div class="text-red-500 mr-2">
-              This lint fails for the current palette.
-            </div>
-            The following colors are blamed. Using
-            <select
-              value={lint.blameMode}
-              class="mx-2"
-              on:change={() => {
-                // @ts-ignore
-                lintStore.setCurrentLintBlameMode(event.target.value);
-              }}
-            >
-              <option>none</option>
-              <option>single</option>
-              <option>pair</option>
-            </select>
-            Blame mode
+        {#if lintRun?.passes}
+          <div class="text-green-500">
+            This lint passes for the current palette
           </div>
-          {#if lint.blameMode === "pair"}
-            <div class="flex flex-wrap">
-              {#each pairData as pair}
-                <div class="mr-2 mb-1 border-2 border-black rounded">
-                  <PalPreview
-                    pal={{
-                      ...currentPal,
-                      colors: pair.map((x) => currentPal.colors[x]),
-                    }}
-                    allowModification={false}
-                  />
-                </div>
-              {/each}
+        {/if}
+        {#if !lintRun?.passes && !errors}
+          <div>
+            <div class="flex">
+              <div class="text-red-500 mr-2">
+                This lint fails for the current palette.
+              </div>
+              The following colors are blamed. Using
+              <select
+                value={lint.blameMode}
+                class="mx-2"
+                on:change={() => {
+                  // @ts-ignore
+                  lintStore.setCurrentLintBlameMode(event.target.value);
+                }}
+              >
+                <option>none</option>
+                <option>single</option>
+                <option>pair</option>
+              </select>
+              Blame mode
             </div>
-          {:else}
-            <PalPreview
-              pal={{
-                ...currentPal,
-                colors: checkData
-                  .flatMap((x) => x)
-                  .map((x) => currentPal.colors[x]),
-              }}
-              allowModification={false}
-            />
-          {/if}
+            {#if lint.blameMode === "pair"}
+              <div class="flex flex-wrap">
+                {#each pairData as pair}
+                  <div class="mr-2 mb-1 border-2 border-black rounded">
+                    <PalPreview
+                      pal={{
+                        ...currentPal,
+                        colors: pair.map((x) => currentPal.colors[x]),
+                      }}
+                      allowModification={false}
+                    />
+                  </div>
+                {/each}
+              </div>
+            {:else}
+              <PalPreview
+                pal={{
+                  ...currentPal,
+                  colors: checkData
+                    .flatMap((x) => x)
+                    .map((x) => currentPal.colors[x]),
+                }}
+                allowModification={false}
+              />
+            {/if}
+          </div>
+        {/if}
+      {:else}
+        <div class="text-red-500">
+          This lint does not apply to the current palette due to a mismatch
+          between its tags and the palette's tags
         </div>
       {/if}
       {#if errors}
         <div class="text-red-500">{errors.message}</div>
       {/if}
-
       <div>
         <div class="flex w-full">
           <div class="font-bold">Test Cases</div>

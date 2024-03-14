@@ -2,6 +2,7 @@
   import lintStore, { newId } from "../stores/lint-store";
   import { BUILT_INS } from "../lib/linter";
   import colorStore from "../stores/color-store";
+  import Tooltip from "../components/Tooltip.svelte";
 
   import MonacoEditor from "../components/MonacoEditor.svelte";
   import Nav from "../components/Nav.svelte";
@@ -183,7 +184,7 @@
 
     <div class="px-4 flex flex-col">
       <!-- MAIN CONTENT -->
-      <div class="flex">
+      <div class="flex flex-col">
         <div class="font-bold">Lint Name:</div>
         <input
           class="ml-2 border border-gray-300 rounded px-2 py-1"
@@ -197,85 +198,112 @@
         />
       </div>
       <div class="flex">
-        <div class="font-bold">Lint Level:</div>
-        <Nav
-          tabs={["error", "warning"]}
-          isTabSelected={(x) => x === lint.level}
-          selectTab={(x) => {
-            // @ts-ignore
-            lintStore.setCurrentLintLevel(x);
-          }}
-        />
-      </div>
-      <div class="flex">
-        <div class="font-bold">Lint Group:</div>
-        <Nav
-          tabs={["usability", "accessibility", "design", "custom"]}
-          isTabSelected={(x) => x === lint.group}
-          selectTab={(x) =>
-            // @ts-ignore
-            lintStore.setCurrentLintGroup(x)}
-        />
-      </div>
-      <!-- TASK TYPES -->
-      <div class="flex">
-        <div class="mr-2 font-bold">Task Types:</div>
-        <div class="flex flex-wrap">
-          {#each taskTypes as taskType}
-            <div class="flex items-center mr-4">
-              <label>
-                <input
-                  type="checkbox"
-                  checked={currentTaskTypes.includes(taskType)}
-                  on:change={(e) => {
-                    const newTasks = currentTaskTypes.includes(taskType)
-                      ? currentTaskTypes.filter((x) => x !== taskType)
-                      : [...currentTaskTypes, taskType];
-                    lintStore.setCurrentLintTaskTypes(newTasks);
-                  }}
-                />
-                {taskType}
-              </label>
-            </div>
-          {/each}
+        <div>
+          <div class="font-bold">Lint Level:</div>
+          <select
+            class="px-2"
+            on:change={(e) => {
+              // @ts-ignore
+              lintStore.setCurrentLintLevel(e.currentTarget.value);
+            }}
+            value={lint.level}
+          >
+            {#each ["error", "warning"] as level}
+              <option value={level}>{level.toUpperCase()}</option>
+            {/each}
+          </select>
         </div>
-      </div>
-      <!-- TAGS -->
-      <div class="flex">
-        <div class="mr-2 font-bold">Required Tags:</div>
-        <div class="flex flex-wrap">
-          {#each lint.requiredTags as tag}
-            <div>
-              {tag}
-              <button
-                class={buttonStyle}
-                on:click={() => {
-                  const newTags = lint.requiredTags.filter((x) => x !== tag);
-                  lintStore.setCurrentTags(newTags);
+        <div class="mx-4">
+          <div class="font-bold">Lint Group:</div>
+          <select value={lint.group} class="px-2">
+            {#each ["usability", "accessibility", "design", "custom"] as group}
+              <option
+                value={group}
+                on:change={(e) => {
+                  // @ts-ignore
+                  lintStore.setCurrentLintGroup(e.currentTarget.value);
                 }}
               >
-                X
+                {group}
+              </option>
+            {/each}
+          </select>
+        </div>
+        <!-- TASK TYPES -->
+        <div class="flex flex-col">
+          <div class="mr-2 font-bold">Task Types:</div>
+          <div class="flex flex-wrap">
+            {#each taskTypes as taskType}
+              <div class="flex items-center mr-4">
+                <label>
+                  <input
+                    type="checkbox"
+                    checked={currentTaskTypes.includes(taskType)}
+                    on:change={(e) => {
+                      const newTasks = currentTaskTypes.includes(taskType)
+                        ? currentTaskTypes.filter((x) => x !== taskType)
+                        : [...currentTaskTypes, taskType];
+                      lintStore.setCurrentLintTaskTypes(newTasks);
+                    }}
+                  />
+                  {taskType}
+                </label>
+              </div>
+            {/each}
+          </div>
+        </div>
+        <!-- TAGS -->
+        <div class="flex flex-col">
+          <div class="flex">
+            <div class="mr-2 font-bold">Required Tags</div>
+            <Tooltip positionAlongRightEdge={true}>
+              <button
+                class={`${buttonStyle} px-0`}
+                slot="target"
+                let:toggle
+                on:click={toggle}
+              >
+                (Add tag)
               </button>
-            </div>
-          {/each}
+
+              <div class="" slot="content">
+                <form
+                  on:submit|preventDefault|stopPropagation={() => {
+                    lintStore.setCurrentTags([
+                      ...lint.requiredTags,
+                      requiredTagAdd,
+                    ]);
+                    requiredTagAdd = "";
+                  }}
+                >
+                  <input
+                    class="border-2 border-gray-300 rounded px-2 py-1"
+                    type="text"
+                    bind:value={requiredTagAdd}
+                  />
+                </form>
+              </div>
+            </Tooltip>
+          </div>
+          <div class="flex flex-wrap">
+            {#each lint.requiredTags as tag}
+              <div>
+                {tag}
+                <button
+                  class={buttonStyle}
+                  on:click={() => {
+                    const newTags = lint.requiredTags.filter((x) => x !== tag);
+                    lintStore.setCurrentTags(newTags);
+                  }}
+                >
+                  X
+                </button>
+              </div>
+            {/each}
+          </div>
         </div>
       </div>
-      <div class="flex">
-        <span>Add tag</span>
-        <form
-          on:submit|preventDefault|stopPropagation={() => {
-            console.log("what", requiredTagAdd);
-            lintStore.setCurrentTags([...lint.requiredTags, requiredTagAdd]);
-            requiredTagAdd = "";
-          }}
-        >
-          <input
-            class="border-2 border-gray-300 rounded px-2 py-1"
-            type="text"
-            bind:value={requiredTagAdd}
-          />
-        </form>
-      </div>
+
       <div>
         <div class="font-bold">Lint Description:</div>
         <textarea
@@ -289,9 +317,11 @@
         />
       </div>
       <div>
-        <div class="font-bold">Lint Error Message:</div>
-        <div class="text-sm italic">
-          {"If failures of your lint rule can be attributed to a specific color or colors, include {{blame}} in this message"}
+        <div class="flex">
+          <div class="font-bold">Lint Error Message:</div>
+          <div class="text-sm italic ml-4">
+            {"If lint failures caused by specific color can mark them via {{blame}}"}
+          </div>
         </div>
         <textarea
           class="ml-2 border-2 border-gray-300 rounded px-2 py-1 w-full"
@@ -303,21 +333,8 @@
           }}
         />
       </div>
-      <div>
-        <div class="font-bold">Lint Self Description (from the program):</div>
-        <div>{lintRun?.naturalLanguageProgram}</div>
-      </div>
+
       {#if currentLintAppliesToCurrentPalette}
-        <div class="flex">
-          Show Compare Debug In Terminal
-          <Nav
-            tabs={["Show", "Hide"]}
-            isTabSelected={(x) => (debugCompare ? "Show" : "Hide") === x}
-            selectTab={(x) => {
-              debugCompare = x === "Show";
-            }}
-          />
-        </div>
         <!-- <div class="font-bold">
         Current Palette:
         <PalPreview pal={currentPal} allowModification={false} />
@@ -384,99 +401,10 @@
       {#if errors}
         <div class="text-red-500">{errors.message}</div>
       {/if}
-      <div>
-        <div class="flex w-full">
-          <div class="font-bold">Test Cases</div>
-          <Nav
-            tabs={["Show", "Hide"]}
-            isTabSelected={(x) => (showTestCases ? "Show" : "Hide") === x}
-            selectTab={(x) => {
-              showTestCases = x === "Show";
-            }}
-          />
-        </div>
 
-        {#if showTestCases}
-          <div class="font-bold">Expected to be passing:</div>
-          <div class="flex">
-            {#each passingTestResults as passing, idx}
-              <div class="flex flex-col w-fit">
-                <LintCustomizationPreview
-                  removeCase={() => {
-                    const newTests = [...lint.expectedPassingTests].filter(
-                      (_, i) => i !== idx
-                    );
-                    lintStore.setCurrentLintExpectedPassingTests(newTests);
-                  }}
-                  pal={passing.pal}
-                  blamedSet={new Set(passing.blame)}
-                  updatePal={(newPal) => {
-                    const newTests = [...lint.expectedPassingTests];
-                    newTests[idx] = newPal;
-                    lintStore.setCurrentLintExpectedPassingTests(newTests);
-                  }}
-                />
-                {#if passing.result?.passes}
-                  <div class="text-green-500">Correct</div>
-                {:else}
-                  <div class="text-red-500">Incorrect</div>
-                {/if}
-              </div>
-            {/each}
-            <button
-              class={buttonStyle}
-              on:click={() => {
-                const newTests = [
-                  ...lint.expectedPassingTests,
-                  makePalFromString(["steelblue"]),
-                ];
-                lintStore.setCurrentLintExpectedPassingTests(newTests);
-              }}
-            >
-              Add Test
-            </button>
-          </div>
-          <div class="font-bold">Expected to be failing:</div>
-          <div class="flex">
-            {#each failingTestResults as failing, idx}
-              <div class="flex flex-col w-fit">
-                <LintCustomizationPreview
-                  removeCase={() => {
-                    const newTests = [...lint.expectedFailingTests].filter(
-                      (_, i) => i !== idx
-                    );
-                    lintStore.setCurrentLintExpectedFailingTests(newTests);
-                  }}
-                  pal={failing.pal}
-                  blamedSet={new Set(failing.blame)}
-                  updatePal={(newPal) => {
-                    const newTests = [...lint.expectedFailingTests];
-                    newTests[idx] = newPal;
-                    lintStore.setCurrentLintExpectedFailingTests(newTests);
-                  }}
-                />
-                {#if !failing.result?.passes}
-                  <div class="text-green-500">Correct</div>
-                {:else}
-                  <div class="text-red-500">Incorrect</div>
-                {/if}
-              </div>
-            {/each}
-            <button
-              class={buttonStyle}
-              on:click={() => {
-                const newTests = [
-                  ...lint.expectedFailingTests,
-                  makePalFromString(["steelblue"]),
-                ];
-                lintStore.setCurrentLintExpectedFailingTests(newTests);
-              }}
-            >
-              Add Test
-            </button>
-          </div>
-          <div class="italic">Items marked with dashed sides are blamed</div>
-        {/if}
+      <div>
+        <div class="font-bold">Lint Self Description (from the program):</div>
+        <div>{lintRun?.naturalLanguageProgram}</div>
       </div>
       <div class="flex justify-between">
         <div class="font-bold">Lint Program</div>
@@ -496,6 +424,126 @@
         }}
         language="json"
       />
+      <div class="flex justify-between">
+        <div class="flex flex-col">
+          <div class="font-bold">Show Compare Debug In Terminal</div>
+          <div>
+            <Nav
+              tabs={["Show", "Hide"]}
+              isTabSelected={(x) => (debugCompare ? "Show" : "Hide") === x}
+              selectTab={(x) => {
+                debugCompare = x === "Show";
+              }}
+            />
+          </div>
+        </div>
+        <div class="flex flex-col">
+          <div class="font-bold">Test Cases</div>
+          <div>
+            <Nav
+              tabs={["Show", "Hide"]}
+              isTabSelected={(x) => (showTestCases ? "Show" : "Hide") === x}
+              selectTab={(x) => {
+                showTestCases = x === "Show";
+              }}
+            />
+          </div>
+        </div>
+      </div>
+
+      <div>
+        {#if showTestCases}
+          <div class="flex">
+            <div class="flex flex-col w-1/2">
+              <div class="flex">
+                <div class="font-bold">Expected to be passing:</div>
+                <button
+                  class={buttonStyle}
+                  on:click={() => {
+                    const newTests = [
+                      ...lint.expectedPassingTests,
+                      makePalFromString(["steelblue"]),
+                    ];
+                    lintStore.setCurrentLintExpectedPassingTests(newTests);
+                  }}
+                >
+                  (Add Test)
+                </button>
+              </div>
+              <div class="flex">
+                {#each passingTestResults as passing, idx}
+                  <div class="flex flex-col w-fit">
+                    <LintCustomizationPreview
+                      removeCase={() => {
+                        const newTests = [...lint.expectedPassingTests].filter(
+                          (_, i) => i !== idx
+                        );
+                        lintStore.setCurrentLintExpectedPassingTests(newTests);
+                      }}
+                      pal={passing.pal}
+                      blamedSet={new Set(passing.blame)}
+                      updatePal={(newPal) => {
+                        const newTests = [...lint.expectedPassingTests];
+                        newTests[idx] = newPal;
+                        lintStore.setCurrentLintExpectedPassingTests(newTests);
+                      }}
+                    />
+                    {#if passing.result?.passes}
+                      <div class="text-green-500">Correct</div>
+                    {:else}
+                      <div class="text-red-500">Incorrect</div>
+                    {/if}
+                  </div>
+                {/each}
+              </div>
+            </div>
+            <div class="flex flex-col w-1/2">
+              <div class="flex">
+                <div class="font-bold">Expected to be failing</div>
+                <button
+                  class={buttonStyle}
+                  on:click={() => {
+                    const newTests = [
+                      ...lint.expectedFailingTests,
+                      makePalFromString(["steelblue"]),
+                    ];
+                    lintStore.setCurrentLintExpectedFailingTests(newTests);
+                  }}
+                >
+                  (Add Test)
+                </button>
+              </div>
+              <div class="flex">
+                {#each failingTestResults as failing, idx}
+                  <div class="flex flex-col w-fit">
+                    <LintCustomizationPreview
+                      removeCase={() => {
+                        const newTests = [...lint.expectedFailingTests].filter(
+                          (_, i) => i !== idx
+                        );
+                        lintStore.setCurrentLintExpectedFailingTests(newTests);
+                      }}
+                      pal={failing.pal}
+                      blamedSet={new Set(failing.blame)}
+                      updatePal={(newPal) => {
+                        const newTests = [...lint.expectedFailingTests];
+                        newTests[idx] = newPal;
+                        lintStore.setCurrentLintExpectedFailingTests(newTests);
+                      }}
+                    />
+                    {#if !failing.result?.passes}
+                      <div class="text-green-500">Correct</div>
+                    {:else}
+                      <div class="text-red-500">Incorrect</div>
+                    {/if}
+                  </div>
+                {/each}
+              </div>
+            </div>
+          </div>
+          <div class="italic">Items marked with dashed sides are blamed</div>
+        {/if}
+      </div>
     </div>
   </div>
 {/if}

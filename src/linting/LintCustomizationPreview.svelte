@@ -13,7 +13,7 @@
 </script>
 
 <div
-  class="flex flex-wrap rounded p-2 grow"
+  class="flex flex-wrap rounded p-2 grow items-center"
   style="background-color: {pal.background.toDisplay()};"
 >
   {#each pal.colors as color, idx}

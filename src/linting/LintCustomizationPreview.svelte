@@ -1,4 +1,5 @@
 <script lang="ts">
+  import colorStore from "../stores/color-store";
   import ColorChannelPicker from "../components/ColorChannelPicker.svelte";
   import Tooltip from "../components/Tooltip.svelte";
   import { Color } from "../lib/Color";
@@ -10,6 +11,7 @@
   export let blamedSet: Set<number> = new Set();
   export let updatePal: (newPal: Palette) => void;
   export let removeCase: () => void;
+  export let pivotRight: boolean = false;
 </script>
 
 <div
@@ -110,7 +112,7 @@
       ></button>
     </Tooltip>
   {/each}
-  <Tooltip>
+  <Tooltip positionAlongRightEdge={pivotRight}>
     <div slot="content" class="flex flex-col items-start">
       <button
         class={buttonStyle}
@@ -131,6 +133,14 @@
         }}
       >
         Remove Test Case
+      </button>
+      <button
+        class={buttonStyle}
+        on:click={() => {
+          colorStore.createNewPal(pal);
+        }}
+      >
+        Create As Palette
       </button>
       <Background
         onChange={(newColor) => updatePal({ ...pal, background: newColor })}

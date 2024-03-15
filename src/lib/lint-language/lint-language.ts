@@ -354,7 +354,7 @@ export class LLNumber extends LLNode {
   }
 }
 
-const LLNumberOpTypes = ["+", "-", "*", "/", "absDiff", "%"] as const;
+const LLNumberOpTypes = ["+", "-", "*", "/", "//", "absDiff", "%"] as const;
 export class LLNumberOp extends LLNode {
   constructor(
     private type: (typeof LLNumberOpTypes)[number],
@@ -376,6 +376,8 @@ export class LLNumberOp extends LLNode {
         return { result: left * right, env };
       case "/":
         return { result: left / right, env };
+      case "//":
+        return { result: Math.round(left / right), env };
       case "absDiff":
         return { result: Math.abs(left - right), env };
       case "%":
@@ -500,7 +502,9 @@ export class LLPredicate extends LLNode {
     // array
     if (Array.isArray(leftEval)) {
       if (leftEval.length !== rightEval.length) {
-        throw new Error("Array length mismatch");
+        throw new Error(
+          `Array length mismatch. Left: ${leftEval.length}, Right: ${rightEval.length}`
+        );
       }
       return {
         result: leftEval.every((x, i) =>
@@ -654,7 +658,7 @@ export class LLValueFunction extends LLNode {
     return { result, env };
   }
   static tryToConstruct(node: any, options: OptionsConfig) {
-    const inputTypes = [LLColor, LLVariable];
+    const inputTypes = [LLAggregate, LLColor, LLVariable];
     // find the appropriate type and do a simple type check
     const op = getOp(VFTypes)(node);
     if (!op) return false;
@@ -822,7 +826,7 @@ export class LLQuantifier extends LLNode {
         const newEnv = varbIndex.reduce((acc, [varb, [index, x]]) => {
           return acc.set(varb, x).set(`index(${varb})`, idxType(index + 1));
         }, env);
-
+        ("");
         if (this.where && !this.where.evaluate(newEnv).result) {
           return "skip";
         }
@@ -915,6 +919,7 @@ const reduceTypes = [
   "mean",
   "std",
   "first",
+  "middle",
   "last",
   "extent",
 ] as const;
@@ -940,6 +945,8 @@ export class LLAggregate extends LLNode {
         return { result: children[0], env };
       case "last":
         return { result: children[children.length - 1], env };
+      case "middle":
+        return { result: children[Math.floor(children.length / 2)], env };
       case "sum":
         return { result: children.reduce((a, b) => a + b, 0), env };
       case "std":

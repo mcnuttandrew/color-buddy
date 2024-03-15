@@ -84,6 +84,8 @@ export type LintMathOps =
   | { "-": { left: LintValue; right: LintValue } }
   | { "*": { left: LintValue; right: LintValue } }
   | { "/": { left: LintValue; right: LintValue } }
+  // division with round
+  | { "//": { left: LintValue; right: LintValue } }
   | { "%": { left: LintValue; right: LintValue } }
   | { absDiff: { left: LintValue; right: LintValue } };
 
@@ -129,6 +131,7 @@ export type LintAggregate =
   | { count: LintArrayValue }
   | { extent: LintArrayValue }
   | { first: LintArrayValue }
+  | { middle: LintArrayValue }
   | { last: LintArrayValue }
   | { max: LintArrayValue }
   | { mean: LintArrayValue }
@@ -149,12 +152,12 @@ export type LintColorFunction =
   | { name: LintVariable | LintColor }
   | { inGamut: LintVariable | LintColor }
   | {
-      toSpace: LintVariable | LintColor;
+      toSpace: LintVariable | LintColor | LintAggregate;
       space: ColorSpace;
       channel: ColorChannel;
     }
   | LintColorTagCheck
-  | { [cmd: string]: LintVariable | string };
+  | { [cmd: string]: LintVariable | LintAggregate | string };
 
 export type LintColorTagCheck = {
   isTag: LintVariable | LintColor;

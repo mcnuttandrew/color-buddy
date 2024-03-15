@@ -84,6 +84,7 @@
               failMessage: "",
               program: "true",
             });
+            configStore.setEvalDisplayMode("lint-customization");
           }}
         >
           Just give me a blank one

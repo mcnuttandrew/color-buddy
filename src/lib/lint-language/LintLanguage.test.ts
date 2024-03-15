@@ -681,7 +681,7 @@ test("LintLanguage Sequential Colors", () => {
   );
 });
 
-test.only("LintLanguage Diverging Colors", () => {
+test("LintLanguage Diverging Colors", () => {
   const middleIndex = { "//": { left: { count: "colors" }, right: 2 } };
   const leftFilter = {
     filter: "colors",
@@ -755,7 +755,10 @@ test.only("LintLanguage Diverging Colors", () => {
   ]);
   const result = LLEval(prog, divergingColors, { debugCompare: false });
   expect(result.result).toBe(true);
-  const result2 = LLEval(prog, toPal(["#be4704", "#e00050", "#008000"]));
+  const result2 = LLEval(
+    prog,
+    toPal(["#be4704", "#008000", "#1a1a1a", "#e00050"])
+  );
   expect(result2.result).toBe(false);
 });
 

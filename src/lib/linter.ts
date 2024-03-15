@@ -34,7 +34,6 @@ export const BUILT_INS: CustomLint[] = [
   ...SizeDiscrim,
   AvoidExtremes,
   CatOrderSimilarity,
-  DivergingOrder,
   EvenDistribution,
   Gamut,
   MaxColors,
@@ -50,7 +49,10 @@ export function runLintChecks(
 ): ColorLint<any, any>[] {
   const ignoreList = palette.evalConfig;
   const globallyIgnoredLints = palette.evalConfig?.globallyIgnoredLints || [];
-  const lints = customLints.map((x) => CreateCustomLint(x));
+  const lints = [
+    DivergingOrder,
+    ...customLints.map((x) => CreateCustomLint(x)),
+  ] as (typeof ColorLint)[];
   return (
     lints
       .map((x) => new x(palette))

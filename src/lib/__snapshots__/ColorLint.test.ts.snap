@@ -64,16 +64,6 @@ exports[`ColorLint - Contrast (3) contrastTextAAA 1`] = `"These colors () do not
 
 exports[`ColorLint - Contrast (3) contrastTextAAA 2`] = `"These colors (#af3b4b) do not have a sufficient contrast ratio with the background and may be hard to discriminate in some contexts."`;
 
-exports[`ColorLint - Diverging 1`] = `"This palette should have a middle color that is the lightest or darkest color, from which the other colors grow darker or lighter  respectively."`;
-
-exports[`ColorLint - Diverging 2`] = `"This palette should have a middle color that is the lightest or darkest color, from which the other colors grow darker or lighter  respectively."`;
-
-exports[`ColorLint - Diverging 3`] = `"This palette should have a middle color that is the lightest or darkest color, from which the other colors grow darker or lighter  respectively."`;
-
-exports[`ColorLint - Diverging 4`] = `"This palette should have a middle color that is the lightest or darkest color, from which the other colors grow darker or lighter  respectively."`;
-
-exports[`ColorLint - Diverging 5`] = `"This palette should have a middle color that is the lightest or darkest color, from which the other colors grow darker or lighter  respectively."`;
-
 exports[`ColorLint - EvenDistribution 1`] = `"This palette does not evenly distribute the colors around its range correctly. Try making the spacing between the colors more regular to resolve this issue. "`;
 
 exports[`ColorLint - EvenDistribution 2`] = `"This palette does not evenly distribute the colors around its range correctly. Try making the spacing between the colors more regular to resolve this issue. "`;

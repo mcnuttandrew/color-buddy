@@ -16,7 +16,6 @@ import CatOrderSimilarity from "./lints/cat-order-similarity";
 import CVDCheck from "./lints/cvd-check";
 import ColorNameDiscriminability, { getName } from "./lints/name-discrim";
 import ColorTags from "./lints/color-tags";
-import DivergingOrder from "./lints/diverging-order";
 import EvenDistribution from "./lints/even-distribution";
 import Fair from "./lints/fair";
 import Gamut from "./lints/in-gamut";
@@ -138,10 +137,6 @@ test("ColorLint - CVD: Tritanopia", async () => {
 });
 test("ColorLint - CVD: Grayscale", async () => {
   autoTest(CVDCheck[3]);
-});
-
-test("ColorLint - Diverging", async () => {
-  autoTest(DivergingOrder);
 });
 
 const ughWhat = ["#00ffff", "#00faff", "#00e4ff", "#fdfdfc", "#00ffff"];

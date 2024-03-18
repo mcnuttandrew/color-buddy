@@ -203,7 +203,7 @@ const requireColorComplements: CustomLint = {
   level: "warning",
   group: "design",
   description: `Use color complements whenever possible`,
-  failMessage: `This palette has colors that do not have good contrast.`,
+  failMessage: `Color complements are a great way to make your colors pop. Try to use them whenever possible.`,
   id: `require-color-complements-built-in`,
   blameMode: "pair",
   expectedPassingTests: [],

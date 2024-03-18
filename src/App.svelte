@@ -28,6 +28,8 @@
   import SetSimulation from "./controls/SetSimulation.svelte";
   import Zoom from "./controls/Zoom.svelte";
   import Browse from "./content-modules/Browse.svelte";
+  import TourProvider from "./content-modules/TourProvider.svelte";
+  import { buttonStyle } from "./lib/styles";
 
   const tabs = ["examples", "compare", "eval"];
   // const tabs = ["examples", "compare", "eval", "browse"];
@@ -76,6 +78,14 @@
         <div class="w-full flex bg-stone-800 px-2 py-3 text-white">
           <SetSimulation />
           <Zoom />
+          <div>
+            <button
+              class={buttonStyle}
+              on:click={() => configStore.setTour(true)}
+            >
+              Tour
+            </button>
+          </div>
         </div>
         {#if $configStore.route !== "browse"}
           {#if palPresent}
@@ -91,7 +101,7 @@
         {/if}
       </div>
 
-      <div class="grow">
+      <div class="grow" id="right-col">
         <div class="bg-stone-800">
           <div class="flex">
             <Nav
@@ -125,6 +135,9 @@
 
 <KeyboardHooks />
 <svelte:window bind:innerWidth />
+{#if $configStore.tour}
+  <TourProvider />
+{/if}
 
 <style>
   .main-content {

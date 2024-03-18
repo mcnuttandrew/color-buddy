@@ -82,7 +82,7 @@
       : currentPal.colors.map((x) => simulate_cvd(selectedCVDType, x.color))}
   />
 
-  <div class="flex flex-wrap">
+  <div class="flex flex-wrap" id="scatterplot-controls">
     <button
       class={`${buttonStyle} pl-0`}
       on:click={() => configStore.setScatterplotMode("putting")}

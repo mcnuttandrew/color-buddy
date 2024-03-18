@@ -20,7 +20,7 @@
   <div class="text-4xl font-bold bg-stone-800 text-white px-2 py-1">
     Color Buddy 𑁍
   </div>
-  <section class="flex flex-col flex-none">
+  <section class="flex flex-col flex-none" id="top-controls">
     <div class="flex w-full justify-between items-start">
       <div class="flex ml-1">
         <NewPal />
@@ -45,7 +45,7 @@
     <div class="flex justify-center z-50"></div>
   </section>
 
-  <section class="flex flex-col flex-1 overflow-auto p-1">
+  <section class="flex flex-col flex-1 overflow-auto p-1" id="left-panel">
     <div class="flex justify-center items-center">
       <Nav
         tabs={leftPanelTabs}

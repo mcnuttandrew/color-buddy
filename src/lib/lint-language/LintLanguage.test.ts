@@ -681,60 +681,66 @@ test("LintLanguage Sequential Colors", () => {
   );
 });
 
-test.skip("LintLanguage Diverging Colors - dense notation", () => {
-  const sequential = {
+test("LintLanguage Diverging Colors", () => {
+  const middleIndex = { "//": { left: { count: "colors" }, right: 2 } };
+  const leftFilter = {
+    filter: "colors",
+    varb: "x",
+    func: { "<": { left: "index(x)", right: middleIndex } },
+  };
+  const rightFilter = {
+    filter: "colors",
+    varb: "x",
+    func: { ">": { left: "index(x)", right: middleIndex } },
+  };
+  const middlePred = {
+    left: { "lab.l": { middle: "colors" } },
+    right: { "lab.l": "z" },
+  };
+  const allLighter = {
+    all: {
+      in: "colors",
+      varb: "z",
+      where: { "!=": { left: "index(z)", right: middleIndex } },
+      predicate: { ">": middlePred },
+    },
+  };
+  const allDarker = {
+    all: {
+      in: "colors",
+      varb: "z",
+      where: { "!=": { left: "index(z)", right: middleIndex } },
+      predicate: { "<": middlePred },
+    },
+  };
+  const prog: LintProgram = {
     and: [
-      { "<": { left: "index(a)", right: "index(c)" } },
+      // order
       {
         "==": {
-          left: "index(a)",
-          right: { "-": { left: "index(b)", right: 1 } },
+          left: { sort: leftFilter, varb: "y", func: { "lab.l": "y" } },
+          right: { map: leftFilter, varb: "y", func: { "lab.l": "y" } },
         },
       },
-    ],
-  };
-  const prog = {
-    or: [
       {
-        exist: {
-          in: "colors",
-          varb: "c",
-          predicate: {
-            all: {
-              in: "colors",
-              varbs: ["a", "b"],
-              where: sequential,
-              predicate: {
-                and: [
-                  { "<": { left: { "lab.l": "a" }, right: { "lab.l": "c" } } },
-                  { ">": { left: { "lab.l": "b" }, right: { "lab.l": "a" } } },
-                ],
-              },
+        "==": {
+          left: { sort: rightFilter, varb: "y", func: { "lab.l": "y" } },
+          right: {
+            reverse: {
+              map: rightFilter,
+              varb: "y",
+              func: { "lab.l": "y" },
             },
           },
         },
       },
-      {
-        exist: {
-          in: "colors",
-          varb: "c",
-          predicate: {
-            all: {
-              in: "colors",
-              varbs: ["a", "b"],
-              where: sequential,
-              predicate: {
-                and: [
-                  { ">": { left: { "lab.l": "a" }, right: { "lab.l": "c" } } },
-                  { "<": { left: { "lab.l": "b" }, right: { "lab.l": "a" } } },
-                ],
-              },
-            },
-          },
-        },
-      },
+      // darkest or lightest is in the middle
+
+      { or: [allLighter, allDarker] },
+      // todo last step is to check if average hues in the arms are sufficiently different
     ],
   };
+
   const divergingColors = toPal([
     "#67001f",
     "#b2182b",
@@ -748,9 +754,12 @@ test.skip("LintLanguage Diverging Colors - dense notation", () => {
     "#4d4d4d",
     "#1a1a1a",
   ]);
-  const result = LLEval(prog, divergingColors);
+  const result = LLEval(prog, divergingColors, { debugCompare: false });
   expect(result.result).toBe(true);
-  const result2 = LLEval(prog, toPal(["#be4704", "#008000", "#e00050"]));
+  const result2 = LLEval(
+    prog,
+    toPal(["#be4704", "#008000", "#1a1a1a", "#e00050"])
+  );
   expect(result2.result).toBe(false);
 });
 
@@ -860,6 +869,28 @@ test("LintLanguage Array Compare Color", () => {
 
   const result = LLEval(program, toPal(["#fff", "#eee", "#000", "#ddd"]));
   expect(result.result).toBe(false);
+  expect(result.blame).toStrictEqual([]);
+});
+
+test("LintLanguage Array Filter", () => {
+  const program: LintProgram = {
+    "==": {
+      left: {
+        filter: "colors",
+        varb: "x",
+        func: { "<": { left: "index(x)", right: 3 } },
+      },
+      right: toColors(["#fff", "#000"]),
+    },
+  };
+
+  const printed = prettyPrintLL(program);
+  expect(printed).toBe("filter(colors, x => index(x) < 3) == [#fff, #000]");
+
+  const result = LLEval(program, toPal(["#fff", "#000", "#eee", "#ddd"]), {
+    debugCompare: false,
+  });
+  expect(result.result).toBe(true);
   expect(result.blame).toStrictEqual([]);
 });
 

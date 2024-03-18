@@ -13,6 +13,7 @@
   import type { Palette } from "../types";
   import type { LintResult, CustomLint } from "../lib/ColorLint";
   import LintCustomizationPreview from "./LintCustomizationPreview.svelte";
+  import NewLintSuggestion from "./NewLintSuggestion.svelte";
 
   $: lint = $lintStore.lints.find(
     (lint) => lint.id === $lintStore.focusedLint
@@ -100,6 +101,7 @@
 {#if !lint}
   <div class="flex flex-col p-4">
     <div class="font-bold">Select a lint</div>
+    <NewLintSuggestion />
     <div>
       {#each Object.keys(sortedLintsByGroup) as group}
         <div class="font-bold">{group}</div>
@@ -517,6 +519,7 @@
                 {#each failingTestResults as failing, idx}
                   <div class="flex flex-col w-fit">
                     <LintCustomizationPreview
+                      pivotRight={true}
                       removeCase={() => {
                         const newTests = [...lint.expectedFailingTests].filter(
                           (_, i) => i !== idx

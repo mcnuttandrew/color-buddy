@@ -44,9 +44,14 @@ Math Operations:
 {"\*": {left: Number | Variable, right: Number | Variable}}
 {"+": {left: Number | Variable, right: Number | Variable}}
 {"/": {left: Number | Variable, right: Number | Variable}}
+{"//": {left: Number | Variable, right: Number | Variable}}
 {"-": {left: Number | Variable, right: Number | Variable}}
 {absDiff: {left: Number | Variable, right: Number | Variable}}
 {"%": {left: Number | Variable, right: Number | Variable}}
+
+Notes
+
+- // is division with round
 
 Value Comparisons:
 {dist: {left: Color | Variable, right: Color | Variable}, space: COLOR_SPACE }
@@ -61,6 +66,7 @@ Aggregates
 {mean: Variable | Number[]}
 {std: Variable | Number[]}
 {first: Variable | Number[]}
+{middle: Variable | Number[]}
 {last: Variable | Number[]}
 {extent: Variable | Number[]}
 

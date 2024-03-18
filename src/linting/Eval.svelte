@@ -52,11 +52,6 @@
 
   let innerWidth = window.innerWidth;
   $: showEvalColumn = innerWidth >= 1600;
-  $: {
-    if (showEvalColumn && $configStore.leftRoute === "colors") {
-      configStore.setLeftPanelRoute("controls");
-    }
-  }
 </script>
 
 <div class="bg-stone-300 w-full flex">

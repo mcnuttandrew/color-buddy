@@ -12,12 +12,7 @@
 
   import SavedPals from "./SavedPals.svelte";
 
-  let innerWidth = window.innerWidth;
-
-  $: leftPanelTabs =
-    innerWidth < 1600
-      ? ["palettes", "controls", "colors"]
-      : ["palettes", "controls"];
+  $: leftPanelTabs = ["palettes", "controls", "colors"];
 </script>
 
 <!-- left panel -->
@@ -73,7 +68,6 @@
     {/if}
   </section>
 </div>
-<svelte:window bind:innerWidth />
 
 <style>
   .container {

@@ -14,6 +14,7 @@ interface StoreData {
   currentChecks: LintResult[];
   globallyIgnoredLints: string[];
   loadState?: "loading" | "idle";
+  firstLoad: boolean;
 }
 
 const InitialStore: StoreData = {
@@ -22,7 +23,44 @@ const InitialStore: StoreData = {
   currentChecks: [],
   globallyIgnoredLints: [],
   loadState: "idle",
+  firstLoad: true,
 };
+
+// for setting the default allowed lints
+export const GLOBAL_OKAY_LIST = [
+  "Medium-discrim-built-in",
+  "Thin-discrim-built-in",
+  "Wide-discrim-built-in",
+  // "avoid-green-built-in",
+  // "avoid-tetradic-built-in",
+  // "avoid-too-much-contrast-with-the-background-built-in",
+  "background-contrast-built-in",
+  // "background-de-saturation-built-in",
+  "cat-order-similarity-built-in",
+  "color-name-discriminability-built-in",
+  "cvd-friendly-deuteranopia-built-in",
+  // "cvd-friendly-grayscale-built-in",
+  "cvd-friendly-protanopia-built-in",
+  "cvd-friendly-tritanopia-built-in",
+  "dark-reds-browns-positive-built-in",
+  // "discrim-power-built-in",
+  // "even-colors-built-in",
+  "extreme-colors-built-in",
+  "fair-nominal-built-in",
+  "fair-sequential-built-in",
+  "gamut-check-built-in",
+  "light-blues-beiges-grays-playful-built-in",
+  "light-colors-greens-negative-built-in",
+  "mutually-distinct-built-in",
+  // "require-color-complements-built-in",
+  "saturated-calm-built-in",
+  "saturated-serious-built-in",
+  "saturated-trustworthy-built-in",
+  "sequential-order-built-in",
+  "too-many-colors-built-in",
+  "ugly-colors-built-in",
+];
+const GLOBAL_OKAY_LIST_SET = new Set(GLOBAL_OKAY_LIST);
 
 const builtInIndex = BUILT_INS.reduce((acc, x) => {
   acc[x.id] = x;
@@ -71,15 +109,21 @@ function serializeStore(store: StoreData) {
 function deserializeStore(store: any) {
   return {
     ...store,
-    lints: store.lints.map((x: any) => ({
-      ...x,
-      expectedFailingTests: (x.expectedFailingTests || []).map(
-        deserializePalette
-      ),
-      expectedPassingTests: (x.expectedPassingTests || []).map(
-        deserializePalette
-      ),
-    })),
+    lints: store.lints
+      .map((x: any) => ({
+        requiredTags: [],
+        taskTypes: [],
+        ...x,
+        expectedFailingTests: (x.expectedFailingTests || []).map(
+          deserializePalette
+        ),
+        expectedPassingTests: (x.expectedPassingTests || []).map(
+          deserializePalette
+        ),
+      }))
+      .filter((x: CustomLint) => {
+        return x.id;
+      }),
   };
 }
 
@@ -104,6 +148,11 @@ function createStore() {
     }));
     // TODO reverse these
     const newStore = { ...storeBase, lints: [...lints, ...missingBuiltIns] };
+    if (newStore.firstLoad) {
+      newStore.globallyIgnoredLints = newStore.lints
+        .map((x: CustomLint) => x.id)
+        .filter((x: string) => GLOBAL_OKAY_LIST_SET.has(x));
+    }
     set(newStore);
     idb.set(storeName, serializeStore(newStore));
   });

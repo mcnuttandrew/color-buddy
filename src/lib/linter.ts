@@ -57,6 +57,8 @@ export function runLintChecks(
     lints
       .map((x) => new x(palette))
       .filter((x) => !globallyIgnoredLints.includes(x.isCustom))
+      // some undefine-s creeping in?
+      .filter((x) => !!x.group)
       // task type
       .filter((x) => x.taskTypes.includes(palette.type))
       // tag type

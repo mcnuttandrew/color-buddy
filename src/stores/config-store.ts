@@ -1,26 +1,27 @@
 import { writable } from "svelte/store";
 
 interface StoreData {
-  colorSim: "deuteranopia" | "protanopia" | "tritanopia" | "none" | "grayscale";
-  comparePal: number | undefined;
-  compareSelectedExample: number;
   channelPickerSpace: "lab" | "lch" | "hsl" | "hsv" | "rgb";
   channelPickerSpaceBackground: "lab" | "lch" | "hsl" | "hsv" | "rgb";
+  colorSim: "deuteranopia" | "protanopia" | "tritanopia" | "none" | "grayscale";
   compareBackground: string | undefined;
   compareBackgroundSpace: "lab" | "lch" | "hsl" | "hsv" | "rgb";
+  comparePal: number | undefined;
+  compareSelectedExample: number;
   engine: "openai" | "google";
-  evalDisplayMode: "regular" | "compact" | "lint-customization";
   evalDeltaDisplay: "none" | "76" | "CMC" | "2000" | "ITP" | "Jz" | "OK";
+  evalDisplayMode: "regular" | "compact" | "lint-customization";
   exampleRoute: "svg" | "vega" | "swatches";
   includeQuotes: boolean;
   leftRoute: "controls" | "palettes" | "colors";
+  mainColumnSelectedExample: number;
   route: "examples" | "compare" | "eval" | "browse";
   scatterplotMode: "moving" | "putting";
-  showGamutMarkers: boolean;
   showColorBackground: boolean;
+  showGamutMarkers: boolean;
   tooltipXY?: [string, string];
+  tour: boolean;
   useSimulatorOnExamples: boolean;
-  mainColumnSelectedExample: number;
   xZoom: [number, number];
   yZoom: [number, number];
   zZoom: [number, number];
@@ -28,25 +29,26 @@ interface StoreData {
 
 const InitialStore: StoreData = {
   colorSim: "none",
-  comparePal: undefined,
-  compareSelectedExample: -1,
+  channelPickerSpace: "lab",
+  channelPickerSpaceBackground: "lab",
   compareBackground: undefined,
   compareBackgroundSpace: "lab",
+  comparePal: undefined,
+  compareSelectedExample: -1,
   engine: "openai",
-  evalDisplayMode: "regular",
   evalDeltaDisplay: "none",
+  evalDisplayMode: "regular",
   exampleRoute: "vega",
   includeQuotes: false,
   leftRoute: "palettes",
+  mainColumnSelectedExample: -1,
   route: "examples",
   scatterplotMode: "moving",
   showColorBackground: true,
   showGamutMarkers: true,
   tooltipXY: undefined,
-  mainColumnSelectedExample: -1,
+  tour: false,
   useSimulatorOnExamples: false,
-  channelPickerSpace: "lab",
-  channelPickerSpaceBackground: "lab",
   xZoom: [0, 1],
   yZoom: [0, 1],
   zZoom: [0, 1],
@@ -128,6 +130,7 @@ function createStore() {
       persist((old) => ({ ...old, compareBackground: n })),
     setCompareBackgroundSpace: (n: StoreData["compareBackgroundSpace"]) =>
       persist((old) => ({ ...old, compareBackgroundSpace: n })),
+    setTour: (n: StoreData["tour"]) => persist((old) => ({ ...old, tour: n })),
   };
 }
 

@@ -324,7 +324,7 @@
 
 <!-- svelte-ignore a11y-no-static-element-interactions -->
 <!-- svelte-ignore a11y-no-static-element-interactions -->
-<div class="flex pb-2" style="background: {bg.toDisplay()}">
+<div class="flex pb-2" style="background: {bg.toDisplay()}" id="scatterplot">
   <div class="flex flex-col items-center">
     <div class="flex h-full">
       <div class="h-full py-4" style="max-height: {height}px"></div>

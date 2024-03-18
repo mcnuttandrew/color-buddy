@@ -151,7 +151,8 @@ function createStore() {
     if (newStore.firstLoad) {
       newStore.globallyIgnoredLints = newStore.lints
         .map((x: CustomLint) => x.id)
-        .filter((x: string) => GLOBAL_OKAY_LIST_SET.has(x));
+        .filter((x: string) => !GLOBAL_OKAY_LIST_SET.has(x));
+      newStore.firstLoad = false;
     }
     set(newStore);
     idb.set(storeName, serializeStore(newStore));

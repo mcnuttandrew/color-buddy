@@ -15,6 +15,8 @@
       const newColors = body
         .split(",")
         .map((x) => x.replace(/"/g, "").trim())
+        // remove all parens and brackets
+        .map((x) => x.replace(/[\(\)\[\]]/g, ""))
         .filter((x) => x.length > 0)
         .map((x) => Color.colorFromString(x, colorSpace as any))
         .map((x, idx) => {

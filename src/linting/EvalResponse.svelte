@@ -29,19 +29,13 @@
   function proposeFix(useAi: boolean = false) {
     requestState = "loading";
     let hasRetried = false;
-    const getFix = () => {
-      if (useAi) {
-        return suggestLintAIFix(palette, check, engine).then((x) => {
-          suggestions = x;
+    const getFix = () =>
+      (useAi ? suggestLintAIFix : suggestLintFix)(palette, check, engine).then(
+        (x) => {
+          suggestions = [...suggestions, ...x];
           requestState = "loaded";
-        });
-      } else {
-        return suggestLintFix(palette, check, engine).then((x) => {
-          suggestions = x;
-          requestState = "loaded";
-        });
-      }
-    };
+        }
+      );
 
     getFix().catch((e) => {
       console.log(e);
@@ -151,40 +145,39 @@
       <div>Loading...</div>
     {:else if requestState === "failed"}
       <div>Failed to generate suggestions</div>
-    {:else if requestState === "loaded"}
-      {#each suggestions as suggestion}
-        <div class="flex">
-          <PalDiff beforePal={currentPal} afterPal={suggestion} />
-          <div class="flex flex-col justify-between">
-            <button
-              class={buttonStyle}
-              on:click={() => {
-                if (suggestion) {
-                  colorStore.setCurrentPal(suggestion);
-                  focusStore.clearColors();
-                  requestState = "idle";
-                  suggestions = [];
-                  onClick();
-                }
-              }}
-            >
-              Use
-            </button>
-            <button
-              class={buttonStyle}
-              on:click={() => {
-                suggestions = suggestions.filter((x) => x !== suggestion);
-                if (suggestions.length === 0) {
-                  requestState = "idle";
-                }
-              }}
-            >
-              Reject
-            </button>
-          </div>
-        </div>
-      {/each}
     {/if}
+    {#each suggestions as suggestion}
+      <div class="flex">
+        <PalDiff beforePal={currentPal} afterPal={suggestion} />
+        <div class="flex flex-col justify-between">
+          <button
+            class={buttonStyle}
+            on:click={() => {
+              if (suggestion) {
+                colorStore.setCurrentPal(suggestion);
+                focusStore.clearColors();
+                requestState = "idle";
+                suggestions = [];
+                onClick();
+              }
+            }}
+          >
+            Use
+          </button>
+          <button
+            class={buttonStyle}
+            on:click={() => {
+              suggestions = suggestions.filter((x) => x !== suggestion);
+              if (suggestions.length === 0) {
+                requestState = "idle";
+              }
+            }}
+          >
+            Reject
+          </button>
+        </div>
+      </div>
+    {/each}
   </div>
   <button
     slot="target"

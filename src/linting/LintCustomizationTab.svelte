@@ -459,18 +459,44 @@
             <div class="flex flex-col w-1/2">
               <div class="flex">
                 <div class="font-bold">Expected to be passing:</div>
-                <button
-                  class={buttonStyle}
-                  on:click={() => {
-                    const newTests = [
-                      ...lint.expectedPassingTests,
-                      makePalFromString(["steelblue"]),
-                    ];
-                    lintStore.setCurrentLintExpectedPassingTests(newTests);
-                  }}
-                >
-                  (Add Test)
-                </button>
+                <Tooltip>
+                  <div slot="content" let:onClick>
+                    <button
+                      class={buttonStyle}
+                      on:click={() => {
+                        const newTests = [
+                          ...lint.expectedPassingTests,
+                          makePalFromString(["steelblue"]),
+                        ];
+                        lintStore.setCurrentLintExpectedPassingTests(newTests);
+                        onClick();
+                      }}
+                    >
+                      From blank
+                    </button>
+                    <button
+                      class={buttonStyle}
+                      on:click={() => {
+                        const newTests = [
+                          ...lint.expectedPassingTests,
+                          currentPal,
+                        ];
+                        lintStore.setCurrentLintExpectedPassingTests(newTests);
+                        onClick();
+                      }}
+                    >
+                      From current palette
+                    </button>
+                  </div>
+                  <button
+                    slot="target"
+                    let:toggle
+                    on:click={toggle}
+                    class={buttonStyle}
+                  >
+                    (Add Test)
+                  </button>
+                </Tooltip>
               </div>
               <div class="flex">
                 {#each passingTestResults as passing, idx}

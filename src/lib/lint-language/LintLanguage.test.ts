@@ -737,6 +737,7 @@ test("LintLanguage Diverging Colors", () => {
       // darkest or lightest is in the middle
 
       { or: [allLighter, allDarker] },
+      // todo last step is to check if average hues in the arms are sufficiently different
     ],
   };
 

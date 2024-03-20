@@ -411,7 +411,7 @@ Program:
 
 Description: All colors in a palette should be differentiable by people with deuteranopia (ie can't see green). This is because if they are not, then they will not be differentiable from each other in some contexts.
 
-Natural Language: ALL (a, b) IN colors WHERE index(a) != index(b) SUCH THAT NOT similar(cvdSim(a, deuteranopia), cvdSim(b, deuteranopia)) < 9
+Natural Language: ALL a, b IN colors WHERE index(a) != index(b) SUCH THAT NOT similar(cvdSim(a, deuteranopia), cvdSim(b, deuteranopia)) < 9
 
 Palettes that will fail this test:
 
@@ -455,7 +455,7 @@ Program:
 
 Description: All colors in a palette should be differentiable by people with protanopia (ie can't see red). This is because if they are not, then they will not be differentiable from each other in some contexts.
 
-Natural Language: ALL (a, b) IN colors WHERE index(a) != index(b) SUCH THAT NOT similar(cvdSim(a, protanopia), cvdSim(b, protanopia)) < 9
+Natural Language: ALL a, b IN colors WHERE index(a) != index(b) SUCH THAT NOT similar(cvdSim(a, protanopia), cvdSim(b, protanopia)) < 9
 
 Palettes that will fail this test:
 
@@ -499,7 +499,7 @@ Program:
 
 Description: All colors in a palette should be differentiable by people with tritanopia (ie can't see blue). This is because if they are not, then they will not be differentiable from each other in some contexts.
 
-Natural Language: ALL (a, b) IN colors WHERE index(a) != index(b) SUCH THAT NOT similar(cvdSim(a, tritanopia), cvdSim(b, tritanopia)) < 9
+Natural Language: ALL a, b IN colors WHERE index(a) != index(b) SUCH THAT NOT similar(cvdSim(a, tritanopia), cvdSim(b, tritanopia)) < 9
 
 Palettes that will fail this test:
 
@@ -543,7 +543,7 @@ Program:
 
 Description: All colors in a palette should be differentiable by people with grayscale . This is because if they are not, then they will not be differentiable from each other in some contexts.
 
-Natural Language: ALL (a, b) IN colors WHERE index(a) != index(b) SUCH THAT NOT similar(cvdSim(a, grayscale), cvdSim(b, grayscale)) < 9
+Natural Language: ALL a, b IN colors WHERE index(a) != index(b) SUCH THAT NOT similar(cvdSim(a, grayscale), cvdSim(b, grayscale)) < 9
 
 Palettes that will fail this test:
 
@@ -1001,7 +1001,7 @@ Program:
 
 Description: Use color complements whenever possible
 
-Natural Language: EXIST (a, b) IN colors SUCH THAT similar(hsl.h(a), hsl.h(b) + 180) < 5
+Natural Language: EXIST a, b IN colors SUCH THAT similar(hsl.h(a), hsl.h(b) + 180) < 5
 
 
 Program:
@@ -1034,7 +1034,7 @@ Program:
 
 Description: Pairs of colors in a palette should be differentiable from each other in Thin marks. 
 
-Natural Language: ALL (x, y) IN colors WHERE index(x) != index(y) SUCH THAT (absDiff(lab.l(x), lab.l(y)) > 12.58 OR absDiff(lab.a(x), lab.a(y)) > 20.740000000000002 OR absDiff(lab.b(x), lab.b(y)) > 34.05)
+Natural Language: ALL x, y IN colors WHERE index(x) != index(y) SUCH THAT (|lab.l(x) - lab.l(y)| > 12.58 OR |lab.a(x) - lab.a(y)| > 20.740000000000002 OR |lab.b(x) - lab.b(y)| > 34.05)
 
 Palettes that will fail this test:
 
@@ -1097,7 +1097,7 @@ Program:
 
 Description: Pairs of colors in a palette should be differentiable from each other in Medium marks. 
 
-Natural Language: ALL (x, y) IN colors WHERE index(x) != index(y) SUCH THAT (absDiff(lab.l(x), lab.l(y)) > 6.58 OR absDiff(lab.a(x), lab.a(y)) > 8.42 OR absDiff(lab.b(x), lab.b(y)) > 11.09)
+Natural Language: ALL x, y IN colors WHERE index(x) != index(y) SUCH THAT (|lab.l(x) - lab.l(y)| > 6.58 OR |lab.a(x) - lab.a(y)| > 8.42 OR |lab.b(x) - lab.b(y)| > 11.09)
 
 Palettes that will fail this test:
 
@@ -1160,7 +1160,7 @@ Program:
 
 Description: Pairs of colors in a palette should be differentiable from each other in Wide marks. 
 
-Natural Language: ALL (x, y) IN colors WHERE index(x) != index(y) SUCH THAT (absDiff(lab.l(x), lab.l(y)) > 5.83 OR absDiff(lab.a(x), lab.a(y)) > 6.88 OR absDiff(lab.b(x), lab.b(y)) > 8.219999999999999)
+Natural Language: ALL x, y IN colors WHERE index(x) != index(y) SUCH THAT (|lab.l(x) - lab.l(y)| > 5.83 OR |lab.a(x) - lab.a(y)| > 6.88 OR |lab.b(x) - lab.b(y)| > 8.219999999999999)
 
 Palettes that will fail this test:
 
@@ -1266,7 +1266,7 @@ Program:
 
 Description: Opt for colors that are perceptually distinguishable in a logical sequence when designing visual elements like charts or graphs. This ensures that viewers can easily recognize the order or progression of data points. For categorical this means that when only a small number of colors are used, they should be as different as possible. For sequential and diverging, this means that the colors should be as different as possible in order.
 
-Natural Language: ALL (a, b) IN colors WHERE index(a) == index(b) - 1 SUCH THAT deltaE(a, b, 2000) > 10
+Natural Language: ALL a, b IN colors WHERE index(a) == index(b) - 1 SUCH THAT deltaE(a, b, 2000) > 10
 
 Palettes that will fail this test:
 
@@ -1445,7 +1445,7 @@ Program:
 
 Description: All colors in a palette should be different from each other. This is because if they are not, then they will not be differentiable from each other in some contexts.
 
-Natural Language: ALL (a, b) IN colors WHERE index(a) != index(b) SUCH THAT dist(a, b, lab) > 15
+Natural Language: ALL a, b IN colors WHERE index(a) != index(b) SUCH THAT dist(a, b, lab) > 15
 
 Palettes that will fail this test:
 
@@ -1486,7 +1486,7 @@ Program:
 
 Description: Being able to identify colors by name is important for usability and for memorability.
 
-Natural Language: ALL (a, b) IN colors WHERE index(a) != index(b) SUCH THAT name(a) != name(b)
+Natural Language: ALL a, b IN colors WHERE index(a) != index(b) SUCH THAT name(a) != name(b)
 
 Palettes that will fail this test:
 

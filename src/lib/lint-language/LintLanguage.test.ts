@@ -281,7 +281,7 @@ test("LintLanguage Quantifiers Exist - DENSE", () => {
     },
   };
   expect(prettyPrintLL(cvdExists)).toBe(
-    "NOT EXIST (a, b) IN colors SUCH THAT cvdSim(a, deuteranopia) != cvdSim(b, deuteranopia)"
+    "NOT EXIST a, b IN colors SUCH THAT cvdSim(a, deuteranopia) != cvdSim(b, deuteranopia)"
   );
   expect(LLEval(cvdExists, exampleColors).result).toBe(false);
 });
@@ -303,7 +303,7 @@ test("LintLanguage Quantifiers All - DENSE", () => {
     },
   };
   expect(prettyPrintLL(cvdExists)).toBe(
-    "ALL (a, b) IN colors SUCH THAT NOT similar(cvdSim(a, deuteranopia), cvdSim(b, deuteranopia)) < 9"
+    "ALL a, b IN colors SUCH THAT NOT similar(cvdSim(a, deuteranopia), cvdSim(b, deuteranopia)) < 9"
   );
   expect(LLEval(cvdExists, exampleColors).result).toBe(false);
 });
@@ -475,7 +475,7 @@ test("LintLanguage Name discrimination", () => {
     },
   };
   expect(prettyPrintLL(program)).toBe(
-    "ALL (a, b) IN colors WHERE index(a) != index(b) SUCH THAT name(a) != name(b)"
+    "ALL a, b IN colors WHERE index(a) != index(b) SUCH THAT name(a) != name(b)"
   );
   const greenResult = LLEval(program, greens);
   expect(greenResult.result).toBe(false);
@@ -496,7 +496,7 @@ test("LintLanguage Name discrimination - dense notation", () => {
     },
   };
   expect(prettyPrintLL(program)).toBe(
-    "ALL (a, b) IN colors WHERE index(a) != index(b) SUCH THAT name(a) != name(b)"
+    "ALL a, b IN colors WHERE index(a) != index(b) SUCH THAT name(a) != name(b)"
   );
   expect(LLEval(program, greens).result).toBe(false);
   expect(LLEval(program, reds).result).toBe(true);
@@ -677,7 +677,7 @@ test("LintLanguage Sequential Colors", () => {
   const inOrder = toPal(["#d4a8ff", "#7bb9ff", "#008694"]);
   expect(LLEval(program, inOrder).result).toBe(true);
   expect(prettyPrintLL(program)).toBe(
-    "(ALL (a, b) IN colors WHERE index(a) - 1 == index(b) SUCH THAT lab.l(a) > lab.l(b) OR ALL (a, b) IN colors WHERE index(a) - 1 == index(b) SUCH THAT lab.l(a) < lab.l(b))"
+    "(ALL a, b IN colors WHERE index(a) - 1 == index(b) SUCH THAT lab.l(a) > lab.l(b) OR ALL a, b IN colors WHERE index(a) - 1 == index(b) SUCH THAT lab.l(a) < lab.l(b))"
   );
 });
 
@@ -795,7 +795,7 @@ test("LintLanguage Sequential Similarity", () => {
   };
   const astString = prettyPrintLL(program);
   expect(astString).toBe(
-    "ALL (a, b) IN colors WHERE index(a) != index(b) SUCH THAT NOT similar(a, b) < 10"
+    "ALL a, b IN colors WHERE index(a) != index(b) SUCH THAT NOT similar(a, b) < 10"
   );
   const result = LLEval(program, toPal(["#fff", "#eee", "#000", "#ddd"]));
   expect(result.result).toBe(false);

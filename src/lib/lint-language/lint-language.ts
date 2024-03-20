@@ -402,7 +402,8 @@ export class LLNumberOp extends LLNode {
     const left = this.left.toString();
     const right = this.right.toString();
     if (this.type === "absDiff") {
-      return `absDiff(${left}, ${right})`;
+      // return `absDiff(${left}, ${right})`;
+      return `|${left} - ${right}|`;
     }
     return `${left} ${this.type} ${right}`;
   }
@@ -891,15 +892,10 @@ export class LLQuantifier extends LLNode {
     );
   }
   toString(): string {
-    let varbs = "";
-    if (this.varbs.length > 1) {
-      varbs = `(${this.varbs.join(", ")})`;
-    } else {
-      varbs = this.varbs.join(", ");
-    }
-    let targ = this.input.toString();
-    if (targ !== "colors") {
-      targ = `(${targ})`;
+    const varbs = this.varbs.join(", ");
+    let target = this.input.toString();
+    if (target !== "colors") {
+      target = `(${target})`;
     }
     let where = "";
     if (this.where) {
@@ -907,7 +903,8 @@ export class LLQuantifier extends LLNode {
     }
     // const type = this.type === "exist" ? "∃" : "∀";
     const type = this.type.toUpperCase();
-    return `${type} ${varbs} IN ${targ}${where} SUCH THAT ${this.predicate.toString()}`;
+    const pred = this.predicate.toString();
+    return `${type} ${varbs} IN ${target}${where} SUCH THAT ${pred}`;
   }
 }
 

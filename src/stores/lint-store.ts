@@ -59,6 +59,10 @@ export const GLOBAL_OKAY_LIST = [
   "sequential-order-built-in",
   "too-many-colors-built-in",
   "ugly-colors-built-in",
+
+  "contrast-graphical-objects-built-in",
+  "contrast-aa-built-in",
+  "contrast-aaa-built-in",
 ];
 const GLOBAL_OKAY_LIST_SET = new Set(GLOBAL_OKAY_LIST);
 

@@ -14,6 +14,7 @@
   import type { LintResult, CustomLint } from "../lib/ColorLint";
   import LintCustomizationPreview from "./LintCustomizationPreview.svelte";
   import NewLintSuggestion from "./NewLintSuggestion.svelte";
+  import LintCustomizationAddTest from "./LintCustomizationAddTest.svelte";
 
   $: lint = $lintStore.lints.find(
     (lint) => lint.id === $lintStore.focusedLint
@@ -459,44 +460,12 @@
             <div class="flex flex-col w-1/2">
               <div class="flex">
                 <div class="font-bold">Expected to be passing:</div>
-                <Tooltip>
-                  <div slot="content" let:onClick>
-                    <button
-                      class={buttonStyle}
-                      on:click={() => {
-                        const newTests = [
-                          ...lint.expectedPassingTests,
-                          makePalFromString(["steelblue"]),
-                        ];
-                        lintStore.setCurrentLintExpectedPassingTests(newTests);
-                        onClick();
-                      }}
-                    >
-                      From blank
-                    </button>
-                    <button
-                      class={buttonStyle}
-                      on:click={() => {
-                        const newTests = [
-                          ...lint.expectedPassingTests,
-                          currentPal,
-                        ];
-                        lintStore.setCurrentLintExpectedPassingTests(newTests);
-                        onClick();
-                      }}
-                    >
-                      From current palette
-                    </button>
-                  </div>
-                  <button
-                    slot="target"
-                    let:toggle
-                    on:click={toggle}
-                    class={buttonStyle}
-                  >
-                    (Add Test)
-                  </button>
-                </Tooltip>
+                <LintCustomizationAddTest
+                  currentTests={lint.expectedPassingTests}
+                  {currentPal}
+                  setNewTests={(tests) =>
+                    lintStore.setCurrentLintExpectedPassingTests(tests)}
+                />
               </div>
               <div class="flex">
                 {#each passingTestResults as passing, idx}
@@ -528,18 +497,12 @@
             <div class="flex flex-col w-1/2">
               <div class="flex">
                 <div class="font-bold">Expected to be failing</div>
-                <button
-                  class={buttonStyle}
-                  on:click={() => {
-                    const newTests = [
-                      ...lint.expectedFailingTests,
-                      makePalFromString(["steelblue"]),
-                    ];
-                    lintStore.setCurrentLintExpectedFailingTests(newTests);
-                  }}
-                >
-                  (Add Test)
-                </button>
+                <LintCustomizationAddTest
+                  currentTests={lint.expectedFailingTests}
+                  {currentPal}
+                  setNewTests={(tests) =>
+                    lintStore.setCurrentLintExpectedFailingTests(tests)}
+                />
               </div>
               <div class="flex">
                 {#each failingTestResults as failing, idx}

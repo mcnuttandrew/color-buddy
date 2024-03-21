@@ -61,9 +61,11 @@ test("ColorLint - UglyColors", () => {
   autoTest(UglyColors);
 });
 
-test("ColorLint - EvenDistribution", () => {
-  autoTest(EvenDistribution);
-});
+test("ColorLint - EvenDistribution (1) Hue", () =>
+  autoTest(EvenDistribution[0]));
+
+test("ColorLint - EvenDistribution (2) Lightness", () =>
+  autoTest(EvenDistribution[1]));
 
 test("ColorLint - Fair Nominal", () => {
   autoTest(Fair[0]);

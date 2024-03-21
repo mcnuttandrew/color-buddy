@@ -26,7 +26,7 @@
       if (!acc[check.group]) {
         acc[check.group] = [];
       }
-      // extremely dumb hack to move wcags to the top
+      // extremely dumb hack to move WCAGs to the top
       if (check.name.startsWith("WCAG")) {
         acc[check.group].push(check);
       } else {
@@ -73,6 +73,10 @@
           .then((res) => {
             checks = res;
           });
+      }
+      if (x === "lint-customization") {
+        // unset the current lint
+        lintStore.setFocusedLint(false);
       }
       //@ts-ignore
       configStore.setEvalDisplayMode(x);

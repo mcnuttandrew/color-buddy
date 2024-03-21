@@ -461,7 +461,7 @@
               <div class="flex">
                 <div class="font-bold">Expected to be passing:</div>
                 <LintCustomizationAddTest
-                  {lint}
+                  currentTests={lint.expectedPassingTests}
                   {currentPal}
                   setNewTests={(tests) =>
                     lintStore.setCurrentLintExpectedPassingTests(tests)}
@@ -498,7 +498,7 @@
               <div class="flex">
                 <div class="font-bold">Expected to be failing</div>
                 <LintCustomizationAddTest
-                  {lint}
+                  currentTests={lint.expectedFailingTests}
                   {currentPal}
                   setNewTests={(tests) =>
                     lintStore.setCurrentLintExpectedFailingTests(tests)}

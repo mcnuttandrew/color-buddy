@@ -6,7 +6,7 @@
   import type { Palette } from "../types";
 
   export let currentPal: Palette;
-  export let lint: CustomLint;
+  export let currentTests: CustomLint["expectedPassingTests"];
   export let setNewTests: (tests: CustomLint["expectedPassingTests"]) => void;
 </script>
 
@@ -15,12 +15,8 @@
     <button
       class={buttonStyle}
       on:click={() => {
-        const newTests = [
-          ...lint.expectedPassingTests,
-          makePalFromString(["steelblue"]),
-        ];
+        const newTests = [...currentTests, makePalFromString(["steelblue"])];
         setNewTests(newTests);
-        // lintStore.setCurrentLintExpectedPassingTests(newTests);
         onClick();
       }}
     >
@@ -29,9 +25,8 @@
     <button
       class={buttonStyle}
       on:click={() => {
-        const newTests = [...lint.expectedPassingTests, currentPal];
+        const newTests = [...currentTests, currentPal];
         setNewTests(newTests);
-        // lintStore.setCurrentLintExpectedPassingTests(newTests);
         onClick();
       }}
     >

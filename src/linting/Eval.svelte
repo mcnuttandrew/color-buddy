@@ -26,7 +26,7 @@
       if (!acc[check.group]) {
         acc[check.group] = [];
       }
-      // extremely dumb hack to move wcags to the top
+      // extremely dumb hack to move WCAGs to the top
       if (check.name.startsWith("WCAG")) {
         acc[check.group].push(check);
       } else {

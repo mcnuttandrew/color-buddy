@@ -664,6 +664,113 @@ Program:
 
 
 
+### Even Distribution in Hue
+
+Description: Categorical values should have an even distribution around the hue circle in LCH color space
+
+Natural Language: (std(speed(sort(colors, x => lch.h(x)))) < 10 OR std(speed(sort(colors, x => lch.h(x) + 180 % 360))) < 10)
+
+Palettes that will fail this test:
+
+- #ffb9ba, #67de25, #25d4c3, #724dd6, #6d0e44 with a #fff background
+
+
+
+Palettes that will pass this test:
+
+- #ffc5b8, #00dec1, #006095, #b7d119, #6e0074 with a #fff background
+
+- #4682b4 with a #fff background
+
+
+Program:
+
+```json
+{
+    "$schema": "http://localhost:8888/lint-schema.json", 
+    "or": [
+        {
+            "<": {
+                "left": {
+                    "std": {
+                        "speed": { "sort": "colors", "func": {"lch.h": "x"}, "varb": "x" }
+                    }
+                }, 
+                "right": 10
+            }
+        }, 
+        {
+            "<": {
+                "left": {
+                    "std": {
+                        "speed": {
+                            "sort": "colors", 
+                            "varb": "x", 
+                            "func": {
+                                "%": {
+                                    "left": {
+                                        "+": { "left": {"lch.h": "x"}, "right": 180 }
+                                    }, 
+                                    "right": 360
+                                }
+                            }
+                        }
+                    }
+                }, 
+                "right": 10
+            }
+        }
+    ]
+}
+
+```
+
+    
+
+
+
+### Even Distribution in Lightness
+
+Description: Values should be space evenly in lightness in LCH color space
+
+Natural Language: std(speed(sort(colors, x => lch.l(x)))) < 5
+
+Palettes that will fail this test:
+
+- #ffb9ba, #67de25, #25d4c3, #724dd6, #6d0e44 with a #fff background
+
+- #174c00, #166100, #267500, #78c12d, #b7ff6d with a #fff background
+
+
+
+Palettes that will pass this test:
+
+- #1a4400, #1f6e00, #4a9500, #74bd28, #9ee754 with a #fff background
+
+- #4682b4 with a #fff background
+
+
+Program:
+
+```json
+{
+    "$schema": "http://localhost:8888/lint-schema.json", 
+    "<": {
+        "left": {
+            "std": {
+                "speed": { "sort": "colors", "func": {"lch.l": "x"}, "varb": "x" }
+            }
+        }, 
+        "right": 5
+    }
+}
+
+```
+
+    
+
+
+
 ### Fair
 
 Description: Do the colors stand out equally? A color palette is described as fair if both chroma and luminance ranges are below a certain threshold and unfair if one of them is above a certain threshold.
@@ -1300,71 +1407,6 @@ Program:
             }
         }
     }
-}
-
-```
-
-    
-
-
-
-### Even Distribution
-
-Description: Categorical values should have an even distribution around the hue circle in LCH color space
-
-Natural Language: (std(speed(sort(colors, x => lch.h(x)))) < 10 OR std(speed(sort(colors, x => lch.h(x) + 180 % 360))) < 10)
-
-Palettes that will fail this test:
-
-- #ffb9ba, #67de25, #25d4c3, #724dd6, #6d0e44 with a #fff background
-
-
-
-Palettes that will pass this test:
-
-- #ffc5b8, #00dec1, #006095, #b7d119, #6e0074 with a #fff background
-
-- #4682b4 with a #fff background
-
-
-Program:
-
-```json
-{
-    "$schema": "http://localhost:8888/lint-schema.json", 
-    "or": [
-        {
-            "<": {
-                "left": {
-                    "std": {
-                        "speed": { "sort": "colors", "func": {"lch.h": "x"}, "varb": "x" }
-                    }
-                }, 
-                "right": 10
-            }
-        }, 
-        {
-            "<": {
-                "left": {
-                    "std": {
-                        "speed": {
-                            "sort": "colors", 
-                            "varb": "x", 
-                            "func": {
-                                "%": {
-                                    "left": {
-                                        "+": { "left": {"lch.h": "x"}, "right": 180 }
-                                    }, 
-                                    "right": 360
-                                }
-                            }
-                        }
-                    }
-                }, 
-                "right": 10
-            }
-        }
-    ]
 }
 
 ```

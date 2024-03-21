@@ -64,11 +64,19 @@ exports[`ColorLint - Contrast (3) contrastTextAAA 1`] = `"These colors () do not
 
 exports[`ColorLint - Contrast (3) contrastTextAAA 2`] = `"These colors (#af3b4b) do not have a sufficient contrast ratio with the background and may be hard to discriminate in some contexts."`;
 
-exports[`ColorLint - EvenDistribution 1`] = `"This palette does not evenly distribute the colors around its range correctly. Try making the spacing between the colors more regular to resolve this issue. "`;
+exports[`ColorLint - EvenDistribution (1) Hue 1`] = `"This palette does not evenly distribute the colors around its range correctly. Try making the spacing between the colors more regular to resolve this issue. "`;
 
-exports[`ColorLint - EvenDistribution 2`] = `"This palette does not evenly distribute the colors around its range correctly. Try making the spacing between the colors more regular to resolve this issue. "`;
+exports[`ColorLint - EvenDistribution (1) Hue 2`] = `"This palette does not evenly distribute the colors around its range correctly. Try making the spacing between the colors more regular to resolve this issue. "`;
 
-exports[`ColorLint - EvenDistribution 3`] = `"This palette does not evenly distribute the colors around its range correctly. Try making the spacing between the colors more regular to resolve this issue. "`;
+exports[`ColorLint - EvenDistribution (1) Hue 3`] = `"This palette does not evenly distribute the colors around its range correctly. Try making the spacing between the colors more regular to resolve this issue. "`;
+
+exports[`ColorLint - EvenDistribution (2) Lightness 1`] = `"This palette does not evenly distribute the colors in lightness (in LCH space) correctly. Try making the spacing between the colors more regular to resolve this issue."`;
+
+exports[`ColorLint - EvenDistribution (2) Lightness 2`] = `"This palette does not evenly distribute the colors in lightness (in LCH space) correctly. Try making the spacing between the colors more regular to resolve this issue."`;
+
+exports[`ColorLint - EvenDistribution (2) Lightness 3`] = `"This palette does not evenly distribute the colors in lightness (in LCH space) correctly. Try making the spacing between the colors more regular to resolve this issue."`;
+
+exports[`ColorLint - EvenDistribution (2) Lightness 4`] = `"This palette does not evenly distribute the colors in lightness (in LCH space) correctly. Try making the spacing between the colors more regular to resolve this issue."`;
 
 exports[`ColorLint - Fair Nominal 1`] = `"This palette is unfair (meaning that some values may unduely stand out). Note that this check is naturally at odds with color vision deficiency friendly palettes. Maximum chroma range: 80, maximum luminance range: 50."`;
 

@@ -40,11 +40,17 @@ import { fixDivergingOrder } from "../lints/diverging-order";
 import { fixGamut } from "../lints/in-gamut";
 import { fixMaxColors } from "../lints/max-colors";
 import { fixSequentialOrder } from "../lints/sequential-order";
+import {
+  fixLightnessDistribution,
+  fixHueDistribution,
+} from "../lints/even-distribution";
 const fixDirectory: Record<string, LintFixer> = {
   fixBackgroundDifferentiability,
   fixColorNameDiscriminability,
   fixDivergingOrder,
   fixGamut,
+  fixHueDistribution,
+  fixLightnessDistribution,
   fixMaxColors,
   fixSequentialOrder,
 };

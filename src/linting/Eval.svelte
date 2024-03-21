@@ -74,6 +74,10 @@
             checks = res;
           });
       }
+      if (x === "lint-customization") {
+        // unset the current lint
+        lintStore.setFocusedLint(false);
+      }
       //@ts-ignore
       configStore.setEvalDisplayMode(x);
     }}

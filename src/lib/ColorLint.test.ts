@@ -11,7 +11,7 @@ import type { CustomLint } from "./ColorLint";
 
 // Lints
 import AvoidExtremes from "./lints/avoid-extremes";
-import BackgroundContrast from "./lints/background-contrast";
+import BGContrast from "./lints/background-contrast";
 import CatOrderSimilarity from "./lints/cat-order-similarity";
 import CVDCheck from "./lints/cvd-check";
 import ColorNameDiscriminability, { getName } from "./lints/name-discrim";
@@ -45,21 +45,10 @@ function autoTest(lint: CustomLint) {
   expect(lint.expectedPassingTests.length).toBeGreaterThan(0);
 }
 
-test("ColorLint - AvoidExtremes", () => {
-  autoTest(AvoidExtremes);
-});
-
-test("ColorLint - MutuallyDistinct", () => {
-  autoTest(MutuallyDistinct);
-});
-
-test("ColorLint - MaxColors", () => {
-  autoTest(MaxColors);
-});
-
-test("ColorLint - UglyColors", () => {
-  autoTest(UglyColors);
-});
+test("ColorLint - AvoidExtremes", () => autoTest(AvoidExtremes));
+test("ColorLint - MutuallyDistinct", () => autoTest(MutuallyDistinct));
+test("ColorLint - MaxColors", () => autoTest(MaxColors));
+test("ColorLint - UglyColors", () => autoTest(UglyColors));
 
 test("ColorLint - EvenDistribution (1) Hue", () =>
   autoTest(EvenDistribution[0]));
@@ -67,21 +56,10 @@ test("ColorLint - EvenDistribution (1) Hue", () =>
 test("ColorLint - EvenDistribution (2) Lightness", () =>
   autoTest(EvenDistribution[1]));
 
-test("ColorLint - Fair Nominal", () => {
-  autoTest(Fair[0]);
-});
-
-test("ColorLint - Fair Sequential", () => {
-  autoTest(Fair[1]);
-});
-
-test("ColorLint - SequentialOrder", () => {
-  autoTest(SequentialOrder);
-});
-
-test("ColorLint - CatOrderSimilarity", () => {
-  autoTest(CatOrderSimilarity);
-});
+test("ColorLint - Fair Nominal", () => autoTest(Fair[0]));
+test("ColorLint - Fair Sequential", () => autoTest(Fair[1]));
+test("ColorLint - SequentialOrder", () => autoTest(SequentialOrder));
+test("ColorLint - CatOrderSimilarity", () => autoTest(CatOrderSimilarity));
 
 test("ColorLint - ColorNameDiscriminability", async () => {
   autoTest(ColorNameDiscriminability);
@@ -102,17 +80,9 @@ test("ColorLint - ColorNameDiscriminability", async () => {
   expect(colorNames.length).toBe(2);
 });
 
-test("ColorLint - SizeDiscrim (Thin)", () => {
-  autoTest(SizeDiscrims[0]);
-});
-
-test("ColorLint - SizeDiscrim (Medium)", () => {
-  autoTest(SizeDiscrims[1]);
-});
-
-test("ColorLint - SizeDiscrim (Wide)", () => {
-  autoTest(SizeDiscrims[2]);
-});
+test("ColorLint - SizeDiscrim (Thin)", () => autoTest(SizeDiscrims[0]));
+test("ColorLint - SizeDiscrim (Medium)", () => autoTest(SizeDiscrims[1]));
+test("ColorLint - SizeDiscrim (Wide)", () => autoTest(SizeDiscrims[2]));
 
 test("ColorLint - Gamut", async () => {
   autoTest(Gamut);
@@ -128,23 +98,15 @@ test("ColorLint - Gamut", async () => {
   ]);
 });
 
-test("ColorLint - CVD: Deuteranopia", async () => {
-  autoTest(CVDCheck[0]);
-});
-test("ColorLint - CVD: Protanopia", async () => {
-  autoTest(CVDCheck[1]);
-});
-test("ColorLint - CVD: Tritanopia", async () => {
-  autoTest(CVDCheck[2]);
-});
-test("ColorLint - CVD: Grayscale", async () => {
-  autoTest(CVDCheck[3]);
-});
+test("ColorLint - CVD: Deuteranopia", () => autoTest(CVDCheck[0]));
+test("ColorLint - CVD: Protanopia", () => autoTest(CVDCheck[1]));
+test("ColorLint - CVD: Tritanopia", () => autoTest(CVDCheck[2]));
+test("ColorLint - CVD: Grayscale", () => autoTest(CVDCheck[3]));
 
 const ughWhat = ["#00ffff", "#00faff", "#00e4ff", "#fdfdfc", "#00ffff"];
 test("ColorLint - Background Contrast", async () => {
   const examplePal = makePalFromString(ughWhat);
-  const BackgroundContrastLint = CreateCustomLint(BackgroundContrast[0]);
+  const BackgroundContrastLint = CreateCustomLint(BGContrast[0]);
   const exampleLint = new BackgroundContrastLint(examplePal).run();
   expect(exampleLint.passes).toBe(false);
   expect(exampleLint.message).toBe(
@@ -161,41 +123,26 @@ test("ColorLint - Background Contrast", async () => {
   );
   const fix2 = await suggestLintFix(examplePal, exampleLint2).then((x) => x[0]);
   expect(fix2.colors.map((x) => x.color.toHex())).toMatchSnapshot();
-  autoTest(BackgroundContrast[0]);
 });
 
-test("ColorLint - Contrast (1) contrastGraphicalObjects", () => {
-  autoTest(BackgroundContrast[0]);
-});
+test("ColorLint - Contrast (1) GraphicalObjs", () => autoTest(BGContrast[0]));
+test("ColorLint - Contrast (2) contrastTextAA", () => autoTest(BGContrast[1]));
+test("ColorLint - Contrast (3) contrastTextAAA", () => autoTest(BGContrast[2]));
 
-test("ColorLint - Contrast (2) contrastTextAA", () => {
-  autoTest(BackgroundContrast[1]);
-});
+test("ColorLint - MuthGuidelines (1) Background desaturation sufficient", () =>
+  autoTest(MuthGuidelines[0]));
 
-test("ColorLint - Contrast (3) contrastTextAAA", () => {
-  autoTest(BackgroundContrast[2]);
-});
+test("ColorLint - MuthGuidelines (2) Avoid Tetradic Palettes", () =>
+  autoTest(MuthGuidelines[1]));
 
-test("ColorLint - MuthGuidelines (1) Background desaturation sufficient", () => {
-  autoTest(MuthGuidelines[0]);
-});
+test("ColorLint - MuthGuidelines (3) Prefer yellowish or blueish greens", () =>
+  autoTest(MuthGuidelines[2]));
 
-test("ColorLint - MuthGuidelines (2) Avoid Tetradic Palettes", () => {
-  autoTest(MuthGuidelines[1]);
-});
+test("ColorLint - MuthGuidelines (4) Avoid too much contrast with the background", () =>
+  autoTest(MuthGuidelines[3]));
 
-test("ColorLint - MuthGuidelines (3) Prefer yellowish or blueish greens", () => {
-  autoTest(MuthGuidelines[2]);
-});
+test("ColorLnt - ColorTags (1) Whisper don't scream", () =>
+  autoTest(ColorTags[0]));
 
-test("ColorLint - MuthGuidelines (4) Avoid too much contrast with the background", () => {
-  autoTest(MuthGuidelines[3]);
-});
-
-test("ColorLnt - ColorTags (1) Whisper don't scream", () => {
-  autoTest(ColorTags[0]);
-});
-
-test("ColorLnt - ColorTags (2) Blue should be high probability for the basic color term blue", () => {
-  autoTest(ColorTags[1]);
-});
+test("ColorLnt - ColorTags (2) Blue should be high probability for the basic color term blue", () =>
+  autoTest(ColorTags[1]));

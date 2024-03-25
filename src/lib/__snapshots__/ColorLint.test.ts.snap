@@ -24,10 +24,6 @@ exports[`ColorLint - Background Contrast 2`] = `
 ]
 `;
 
-exports[`ColorLint - Background Contrast 3`] = `"These colors () do not have a sufficient contrast ratio with the background and may be hard to discriminate in some contexts."`;
-
-exports[`ColorLint - Background Contrast 4`] = `"These colors (#feed72, #f8f4d2, #eb717b) do not have a sufficient contrast ratio with the background and may be hard to discriminate in some contexts."`;
-
 exports[`ColorLint - CVD: Deuteranopia 1`] = `"This palette is not friendly for people with deuteranopia color vision deficiency (ie can't see green). The following pairs are undifferentiable: ()"`;
 
 exports[`ColorLint - CVD: Deuteranopia 2`] = `"This palette is not friendly for people with deuteranopia color vision deficiency (ie can't see green). The following pairs are undifferentiable: (#0078b4 and #8c69bc, #ff7e0e and #c4bc27, #3d9f2f and #da2827, #e179c1 and #00becf)"`;
@@ -52,9 +48,9 @@ exports[`ColorLint - ColorNameDiscriminability 1`] = `"The following pairs of co
 
 exports[`ColorLint - ColorNameDiscriminability 2`] = `"The following pairs of colors have the same name: #5260d1 and #005ebe"`;
 
-exports[`ColorLint - Contrast (1) contrastGraphicalObjects 1`] = `"These colors () do not have a sufficient contrast ratio with the background and may be hard to discriminate in some contexts."`;
+exports[`ColorLint - Contrast (1) GraphicalObjs 1`] = `"These colors () do not have a sufficient contrast ratio with the background and may be hard to discriminate in some contexts."`;
 
-exports[`ColorLint - Contrast (1) contrastGraphicalObjects 2`] = `"These colors (#feed72, #f8f4d2, #eb717b) do not have a sufficient contrast ratio with the background and may be hard to discriminate in some contexts."`;
+exports[`ColorLint - Contrast (1) GraphicalObjs 2`] = `"These colors (#feed72, #f8f4d2, #eb717b) do not have a sufficient contrast ratio with the background and may be hard to discriminate in some contexts."`;
 
 exports[`ColorLint - Contrast (2) contrastTextAA 1`] = `"These colors () do not have a sufficient contrast ratio with the background and may be hard to discriminate in some contexts."`;
 

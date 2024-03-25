@@ -9,21 +9,36 @@
   const notAllowed = new Set(["rgb", "oklch", "srgb", "jzazbz", "oklab"]);
   $: options = Object.keys(colorPickerConfig)
     .filter((x) => !notAllowed.has(x))
-    .sort();
+    .sort((a, b) => {
+      if (a === "lab") return -1;
+      if (b === "lab") return 1;
+      return a.localeCompare(b);
+    });
 </script>
 
 <Tooltip>
-  <div slot="content" class="flex flex-col" let:onClick>
-    <div>Set Color Space</div>
-    {#each options as space}
-      <button
-        class={buttonStyle}
-        class:font-bold={space === colorSpace}
-        on:click={() => onChange(space)}
-      >
-        {space.toUpperCase()}
-      </button>
-    {/each}
+  <div slot="content" class="flex flex-col max-w-md" let:onClick>
+    <div class="font-bold">Set Color Space</div>
+    <div class="text-sm">
+      Note that changing between color space can be a lossy process and colors
+      may alter slightly
+    </div>
+    <div class="grid grid-cols-4 mt-2">
+      {#each options as space}
+        <!-- <div class="flex"> -->
+        <button
+          class={`${buttonStyle} justify-self-start`}
+          class:font-bold={space === colorSpace}
+          on:click={() => onChange(space)}
+        >
+          {space.toUpperCase()}
+        </button>
+        <span class="text-sm italic col-span-3">
+          {colorPickerConfig[space].description}
+        </span>
+        <!-- </div> -->
+      {/each}
+    </div>
   </div>
   <button
     slot="target"

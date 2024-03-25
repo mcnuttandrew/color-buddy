@@ -1,5 +1,5 @@
 import { expect, test } from "vitest";
-import { Color } from "./Color";
+import { Color, colorPickerConfig } from "./Color";
 
 test("Color string extractor works", () => {
   expect(Color.stringToChannels("lab", "lab(50% 0 0)")).toStrictEqual([
@@ -25,4 +25,33 @@ test("Color string extractor works", () => {
   expect(Color.stringToChannels("rgb", "rgb(86,17,229)")).toStrictEqual([
     86, 17, 229,
   ]);
+});
+
+test("All color spaces do round trip to each other correctly", () => {
+  const colors = ["#d390b6", "#30421e", "#ce7985", "#0086ac", "#ffeae0"];
+  const skipped = new Set(["rgb"]);
+  const spaces = Object.keys(colorPickerConfig).filter((x) => !skipped.has(x));
+  colors.forEach((color) => {
+    spaces.forEach((spaceA) =>
+      spaces.forEach((spaceB) => {
+        const oldColor = Color.colorFromHex(color, spaceA as any);
+        const newColor = oldColor.toColorSpace(spaceB as any);
+        expect(
+          newColor.toHex(),
+          `One Way: Translating ${spaceA} to ${spaceB}`
+        ).toBe(oldColor.toHex());
+        const finalColor = newColor.toColorSpace(spaceA as any);
+        expect(
+          finalColor.toHex(),
+          `Round trip: translating ${spaceA} to ${spaceB} to ${spaceA}`
+        ).toBe(oldColor.toHex());
+
+        const altColor = Color.colorFromHex(color, spaceB as any);
+        expect(
+          altColor.toHex(),
+          `Alt color: ${color} in ${spaceB} should be ${color}`
+        ).toBe(color);
+      })
+    );
+  });
 });

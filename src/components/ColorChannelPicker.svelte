@@ -1,6 +1,7 @@
 <script lang="ts">
   import { Color, colorPickerConfig } from "../lib/Color";
   import ColorIO from "colorjs.io";
+  import { buttonStyle } from "../lib/styles";
   export let color: Color;
   export let onColorChange: (color: Color) => void;
   export let onSpaceChange: (space: string) => void;
@@ -52,6 +53,16 @@
         { name: "c", min: 0, max: 150, step: 1 },
         { name: "h", min: 0, max: 360, step: 1 },
       ],
+      // hct: [
+      //   { name: "h", min: 0, max: 360, step: 1 },
+      //   { name: "c", min: 0, max: 145, step: 1 },
+      //   { name: "t", min: 0, max: 100, step: 1 },
+      // ],
+      // "cam16-jmh": [
+      //   { name: "j", min: 0, max: 100, step: 1 },
+      //   { name: "m", min: 0, max: 105, step: 1 },
+      //   { name: "h", min: 0, max: 360, step: 1 },
+      // ],
       // jzazbz: [
       //   { name: "jz", min: 0, max: 1, step: 0.01 },
       //   { name: "az", min: -0.5, max: 0.5, step: 0.01 },
@@ -74,6 +85,7 @@
         // @ts-ignore
         let newVal = typeof val === "object" ? val.valueOf() : val;
         if (colorMode === "rgb") newVal *= 255;
+        // if (colorMode === "hct") newVal *= 100;
         colorConfigs[colorMode][idx].value = newVal;
       });
 

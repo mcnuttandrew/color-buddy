@@ -503,7 +503,7 @@
           />
         {/if}
 
-        {#if typeof hoveredPoint !== "boolean"}
+        {#if typeof hoveredPoint !== "boolean" && focusedColors.length < 2}
           <g transform={`translate(0, ${height - margin.bottom})`}>
             <circle
               fill={hoveredPoint.color.toDisplay()}

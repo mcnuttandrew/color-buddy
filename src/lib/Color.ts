@@ -349,14 +349,15 @@ class LCH extends Color {
 //   static description =
 //     "OKLAB is a perceptually uniform color space. It is a refinement of CIELAB. ";
 //   toString(): string {
-//     const [l, a, b] = Object.values(this.channels).map((x) =>
-//       x.toLocaleString("fullwide", { useGrouping: false })
-//     );
-//     return `oklab(${l} ${a} ${b})`;
+//     const [l, a, b] = Object.values(this.channels)
+//       .map((x, idx) => (idx ? x : x * 100))
+//       .map((x) => x.toLocaleString("fullwide", { useGrouping: false }));
+//     console.log("oklab", l, a, b);
+//     return `oklab(${l}% ${a} ${b})`;
 //   }
 //   toPrettyString(): string {
 //     const [l, a, b] = this.prettyChannels();
-//     return `oklab(${l} ${a} ${b})`;
+//     return `oklab(${l}% ${a} ${b})`;
 //   }
 // }
 

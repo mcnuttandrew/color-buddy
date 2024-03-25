@@ -77,7 +77,6 @@
     "hct",
     "hsv",
     "cam16-jmh",
-    //  "oklab",
     //  "oklch",
     "srgb",
   ] as const;

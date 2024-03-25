@@ -165,7 +165,7 @@ export type LintColorTagCheck = {
 };
 
 /**
- * Converts a Color to a color space component. Has syntax like colorSpace.channel, where colorSpace is a color space and channel is a channel in that color space. Available spaces: hsl, hsv, jzazbz, lab, lch, oklab, oklch, rgb
+ * Converts a Color to a color space component. Has syntax like colorSpace.channel, where colorSpace is a color space and channel is a channel in that color space. Available spaces: hsl, hsv, jzazbz, lab, lch, hct, cam16-jmh, oklch, rgb
  */
 export type LintColorFunctionToColorShortHand = Record<
   string,
@@ -173,12 +173,14 @@ export type LintColorFunctionToColorShortHand = Record<
 >;
 
 export type ColorSpace =
+  // | "oklab"
+  | "cam16-jmh"
+  | "hct"
   | "hsl"
   | "hsv"
   | "jzazbz"
   | "lab"
   | "lch"
-  | "oklab"
   | "oklch"
   | "rgb"
   | "srgb";

@@ -159,7 +159,7 @@ export class Color {
   copy(): Color {
     return this.fromChannels(this.toChannels());
   }
-  toColorSpace(colorSpace: keyof typeof colorDirectory): Color {
+  toColorSpace(colorSpace: ColorSpace): Color {
     return toColorSpace(this, colorSpace);
   }
   stringChannels() {
@@ -337,27 +337,28 @@ class LCH extends Color {
   axisLabel = (num: number) => `${Math.round(num)}`;
 }
 
-class OKLAB extends Color {
-  static name = "OKLAB";
-  static channelNames = ["l", "a", "b"];
-  channels = { l: 0, a: 0, b: 0 };
-  spaceName = "oklab" as const;
-  static domains = { l: [1, 0], a: [-0.4, 0.4], b: [0.4, -0.4] } as Domain;
-  static stepSize: Channels = [0.01, 0.01, 0.01];
-  static dimensionToChannel = { x: "a", y: "b", z: "l" };
-  static description =
-    "OKLAB is a perceptually uniform color space. It is a refinement of CIELAB. ";
-  toString(): string {
-    const [l, a, b] = Object.values(this.channels).map((x) =>
-      x.toLocaleString("fullwide", { useGrouping: false })
-    );
-    return `oklab(${l} ${a} ${b})`;
-  }
-  toPrettyString(): string {
-    const [l, a, b] = this.prettyChannels();
-    return `oklab(${l} ${a} ${b})`;
-  }
-}
+// OKLAB still cursed
+// class OKLAB extends Color {
+//   static name = "OKLAB";
+//   static channelNames = ["l", "a", "b"];
+//   channels = { l: 0, a: 0, b: 0 };
+//   spaceName = "oklab" as const;
+//   static domains = { l: [1, 0], a: [-0.4, 0.4], b: [0.4, -0.4] } as Domain;
+//   static stepSize: Channels = [0.01, 0.01, 0.01];
+//   static dimensionToChannel = { x: "a", y: "b", z: "l" };
+//   static description =
+//     "OKLAB is a perceptually uniform color space. It is a refinement of CIELAB. ";
+//   toString(): string {
+//     const [l, a, b] = Object.values(this.channels).map((x) =>
+//       x.toLocaleString("fullwide", { useGrouping: false })
+//     );
+//     return `oklab(${l} ${a} ${b})`;
+//   }
+//   toPrettyString(): string {
+//     const [l, a, b] = this.prettyChannels();
+//     return `oklab(${l} ${a} ${b})`;
+//   }
+// }
 
 class OKLCH extends Color {
   static name = "OKLCH";
@@ -485,9 +486,9 @@ function toColorSpace(
 
 const colorDirectory = {
   "cam16-jmh": CAM16,
+  hct: HCT,
   hsl: HSL,
   hsv: HSV,
-  hct: HCT,
   jzazbz: JZAZBZ,
   lab: CIELAB,
   lch: LCH,
@@ -498,7 +499,7 @@ const colorDirectory = {
   srgb: SRGB,
 };
 
-type ColorSpace = keyof typeof colorDirectory | string;
+type ColorSpace = keyof typeof colorDirectory;
 
 export const colorPickerConfig = Object.fromEntries(
   (Object.keys(colorDirectory) as ColorSpace[]).map((name: ColorSpace) => {

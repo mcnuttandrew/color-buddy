@@ -39,7 +39,7 @@
       {/each}
     </div>
 
-    <div class="font-bold">Advanced Color Space</div>
+    <div class="font-bold">Advanced Color Spaces</div>
     <div class="text-sm">
       These color spaces provide more control over the color representation, but
       may be less intuitive or familiar

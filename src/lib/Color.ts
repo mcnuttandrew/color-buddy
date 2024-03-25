@@ -4,6 +4,7 @@ type Domain = Record<string, [number, number]>;
 type Channels = [number, number, number];
 const hexCache = new Map<string, string>();
 const stringChannelsCache = new Map<string, Channels>();
+type DistAlgorithm = "76" | "CMC" | "2000" | "ITP" | "Jz" | "OK";
 export class Color {
   static name: string = "";
   channels: Record<string, number> = {};
@@ -138,10 +139,7 @@ export class Color {
   luminance(): number {
     return this.toColorIO().luminance;
   }
-  deltaE(
-    color: Color,
-    algorithm: "76" | "CMC" | "2000" | "ITP" | "Jz" | "OK" = "2000"
-  ): number {
+  deltaE(color: Color, algorithm: DistAlgorithm = "2000"): number {
     const left = this.toColorIO().to("srgb");
     const right = color.toColorIO().to("srgb");
     return left.deltaE(right, algorithm);
@@ -153,10 +151,7 @@ export class Color {
     const right = color.toColorIO().to(targetSpace);
     return left.distance(right);
   }
-  symmetricDeltaE(
-    color: Color,
-    algorithm: "76" | "CMC" | "2000" | "ITP" | "Jz" | "OK" = "2000"
-  ): number {
+  symmetricDeltaE(color: Color, algorithm: DistAlgorithm = "2000"): number {
     const left = this.deltaE(color, algorithm);
     const right = color.deltaE(this, algorithm);
     return 0.5 * (left + right);
@@ -353,7 +348,9 @@ class OKLAB extends Color {
   static description =
     "OKLAB is a perceptually uniform color space. It is a refinement of CIELAB. ";
   toString(): string {
-    const [l, a, b] = Object.values(this.channels);
+    const [l, a, b] = Object.values(this.channels).map((x) =>
+      x.toLocaleString("fullwide", { useGrouping: false })
+    );
     return `oklab(${l} ${a} ${b})`;
   }
   toPrettyString(): string {
@@ -494,7 +491,7 @@ const colorDirectory = {
   jzazbz: JZAZBZ,
   lab: CIELAB,
   lch: LCH,
-  oklab: OKLAB,
+  // oklab: OKLAB,
   oklch: OKLCH,
   rgb: RGB,
   // srgb: RGB,

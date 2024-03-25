@@ -28,7 +28,18 @@ test("Color string extractor works", () => {
 });
 
 test("All color spaces do round trip to each other correctly", () => {
-  const colors = ["#d390b6", "#30421e", "#ce7985", "#0086ac", "#ffeae0"];
+  const colors = [
+    "#d390b6",
+    "#30421e",
+    "#ce7985",
+    "#0086ac",
+    "#ffeae0",
+    "#fff",
+    "#000",
+    "#f00",
+    "#0f0",
+    "#00f",
+  ];
   const skipped = new Set(["rgb"]);
   const spaces = Object.keys(colorPickerConfig).filter((x) => !skipped.has(x));
   colors.forEach((color) => {

@@ -12,6 +12,7 @@ export class Color {
   static stepSize: Channels = [1, 1, 1];
   static channelNames: string[] = [];
   static description: string = "";
+  static advancedSpace = true;
   static dimensionToChannel: Record<"x" | "y" | "z", string> = {
     x: "",
     y: "",
@@ -229,6 +230,7 @@ class CIELAB extends Color {
   static dimensionToChannel = { x: "a", y: "b", z: "L" };
   static description =
     "CIELAB is a perceptually uniform color space. Roughly, L is lightness, a is red-green, and b is blue-yellow. This is the default color space for Color Buddy.";
+  static advancedSpace = false;
   axisLabel = (num: number) => `${Math.round(num)}`;
 
   toString(): string {
@@ -250,6 +252,7 @@ class HSV extends Color {
   static dimensionToChannel = { x: "s", y: "h", z: "v" };
   static description =
     "HSV is a cylindrical color space. H is hue, S is saturation, and V is value.";
+  static advancedSpace = false;
   toString(): string {
     const [h, s, v] = this.stringChannels();
     return `color(hsv ${h} ${s} ${v})`;
@@ -312,6 +315,7 @@ class HSL extends Color {
   static dimensionToChannel = { x: "s", y: "h", z: "l" };
   static description =
     "HSL is a cylindrical color space. H is hue, S is saturation, and L is lightness.";
+  static advancedSpace = false;
   isPolar = true;
 
   toString(): string {
@@ -333,6 +337,7 @@ class LCH extends Color {
   static dimensionToChannel = { x: "c", y: "h", z: "l" };
   static description =
     "LCH is a cylindrical color space. L is lightness, C is chroma, and H is hue.";
+  static advancedSpace = false;
   isPolar = true;
   axisLabel = (num: number) => `${Math.round(num)}`;
 }
@@ -347,6 +352,14 @@ class OKLAB extends Color {
   static dimensionToChannel = { x: "a", y: "b", z: "l" };
   static description =
     "OKLAB is a perceptually uniform color space. It is a refinement of CIELAB. ";
+  toString(): string {
+    const [l, a, b] = Object.values(this.channels);
+    return `oklab(${l} ${a} ${b})`;
+  }
+  toPrettyString(): string {
+    const [l, a, b] = this.prettyChannels();
+    return `oklab(${l} ${a} ${b})`;
+  }
 }
 
 class OKLCH extends Color {
@@ -481,8 +494,8 @@ const colorDirectory = {
   jzazbz: JZAZBZ,
   lab: CIELAB,
   lch: LCH,
-  // oklab: OKLAB,
-  // oklch: OKLCH,
+  oklab: OKLAB,
+  oklch: OKLCH,
   rgb: RGB,
   // srgb: RGB,
   srgb: SRGB,
@@ -498,6 +511,7 @@ export const colorPickerConfig = Object.fromEntries(
     return [
       name,
       {
+        advancedSpace: space.advancedSpace,
         axisLabel: exampleColor.axisLabel,
         description: space.description,
         isPolar: exampleColor.isPolar,

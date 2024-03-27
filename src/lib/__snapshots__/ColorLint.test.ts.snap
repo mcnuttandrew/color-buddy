@@ -4,6 +4,26 @@ exports[`ColorLint - AvoidExtremes 1`] = `"Colors at either end of the lightness
 
 exports[`ColorLint - AvoidExtremes 2`] = `"Colors at either end of the lightness spectrum #000, #fff, #0f0, #00f are hard to discriminate in some contexts, and are sometimes advised against"`;
 
+exports[`ColorLint - Background Contrast 1`] = `
+[
+  "#0ff",
+  "#00faff",
+  "#00e4ff",
+  "#777776",
+  "#0ff",
+]
+`;
+
+exports[`ColorLint - Background Contrast 2`] = `
+[
+  "#006f70",
+  "#006f72",
+  "#006e7e",
+  "#fdfdfc",
+  "#006f70",
+]
+`;
+
 exports[`ColorLint - CVD: Deuteranopia 1`] = `"This palette is not friendly for people with deuteranopia color vision deficiency. The following pairs are undifferentiable: ()"`;
 
 exports[`ColorLint - CVD: Deuteranopia 2`] = `"This palette is not friendly for people with deuteranopia color vision deficiency. The following pairs are undifferentiable: (#0078b4 and #8c69bc, #ff7e0e and #c4bc27, #3d9f2f and #da2827, #e179c1 and #00becf)"`;

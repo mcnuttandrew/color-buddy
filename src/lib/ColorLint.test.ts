@@ -110,7 +110,7 @@ test("ColorLint - Background Contrast", async () => {
   const exampleLint = new BackgroundContrastLint(examplePal).run();
   expect(exampleLint.passes).toBe(false);
   expect(exampleLint.message).toBe(
-    "These colors (#0ff, #00faff, #00e4ff, #fdfdfc, #0ff) do not have a sufficient contrast ratio with the background and may be hard to discriminate in some contexts."
+    "These colors (#0ff, #00faff, #00e4ff, #fdfdfc, #0ff) do not have a sufficient contrast do not have sufficient contrast with the background to be easily readable."
   );
   const fix = await suggestLintFix(examplePal, exampleLint).then((x) => x[0]);
   expect(fix.colors.map((x) => x.color.toHex())).toMatchSnapshot();
@@ -119,7 +119,7 @@ test("ColorLint - Background Contrast", async () => {
   const exampleLint2 = new BackgroundContrastLint(examplePal).run();
   expect(exampleLint2.passes).toBe(false);
   expect(exampleLint2.message).toBe(
-    "These colors (#0ff, #00faff, #00e4ff, #fdfdfc, #0ff) do not have a sufficient contrast ratio with the background and may be hard to discriminate in some contexts."
+    "These colors (#0ff, #00faff, #00e4ff, #fdfdfc, #0ff) do not have a sufficient contrast do not have sufficient contrast with the background to be easily readable."
   );
   const fix2 = await suggestLintFix(examplePal, exampleLint2).then((x) => x[0]);
   expect(fix2.colors.map((x) => x.color.toHex())).toMatchSnapshot();

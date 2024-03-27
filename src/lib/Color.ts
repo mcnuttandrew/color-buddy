@@ -4,6 +4,7 @@ type Domain = Record<string, [number, number]>;
 type Channels = [number, number, number];
 const hexCache = new Map<string, string>();
 const stringChannelsCache = new Map<string, Channels>();
+type DistAlgorithm = "76" | "CMC" | "2000" | "ITP" | "Jz" | "OK";
 export class Color {
   static name: string = "";
   channels: Record<string, number> = {};
@@ -12,6 +13,7 @@ export class Color {
   static stepSize: Channels = [1, 1, 1];
   static channelNames: string[] = [];
   static description: string = "";
+  static advancedSpace = true;
   static dimensionToChannel: Record<"x" | "y" | "z", string> = {
     x: "",
     y: "",
@@ -137,10 +139,7 @@ export class Color {
   luminance(): number {
     return this.toColorIO().luminance;
   }
-  deltaE(
-    color: Color,
-    algorithm: "76" | "CMC" | "2000" | "ITP" | "Jz" | "OK" = "2000"
-  ): number {
+  deltaE(color: Color, algorithm: DistAlgorithm = "2000"): number {
     const left = this.toColorIO().to("srgb");
     const right = color.toColorIO().to("srgb");
     return left.deltaE(right, algorithm);
@@ -152,10 +151,7 @@ export class Color {
     const right = color.toColorIO().to(targetSpace);
     return left.distance(right);
   }
-  symmetricDeltaE(
-    color: Color,
-    algorithm: "76" | "CMC" | "2000" | "ITP" | "Jz" | "OK" = "2000"
-  ): number {
+  symmetricDeltaE(color: Color, algorithm: DistAlgorithm = "2000"): number {
     const left = this.deltaE(color, algorithm);
     const right = color.deltaE(this, algorithm);
     return 0.5 * (left + right);
@@ -163,7 +159,7 @@ export class Color {
   copy(): Color {
     return this.fromChannels(this.toChannels());
   }
-  toColorSpace(colorSpace: keyof typeof colorDirectory): Color {
+  toColorSpace(colorSpace: ColorSpace): Color {
     return toColorSpace(this, colorSpace);
   }
   stringChannels() {
@@ -229,6 +225,7 @@ class CIELAB extends Color {
   static dimensionToChannel = { x: "a", y: "b", z: "L" };
   static description =
     "CIELAB is a perceptually uniform color space. Roughly, L is lightness, a is red-green, and b is blue-yellow. This is the default color space for Color Buddy.";
+  static advancedSpace = false;
   axisLabel = (num: number) => `${Math.round(num)}`;
 
   toString(): string {
@@ -250,6 +247,7 @@ class HSV extends Color {
   static dimensionToChannel = { x: "s", y: "h", z: "v" };
   static description =
     "HSV is a cylindrical color space. H is hue, S is saturation, and V is value.";
+  static advancedSpace = false;
   toString(): string {
     const [h, s, v] = this.stringChannels();
     return `color(hsv ${h} ${s} ${v})`;
@@ -312,6 +310,7 @@ class HSL extends Color {
   static dimensionToChannel = { x: "s", y: "h", z: "l" };
   static description =
     "HSL is a cylindrical color space. H is hue, S is saturation, and L is lightness.";
+  static advancedSpace = false;
   isPolar = true;
 
   toString(): string {
@@ -333,21 +332,34 @@ class LCH extends Color {
   static dimensionToChannel = { x: "c", y: "h", z: "l" };
   static description =
     "LCH is a cylindrical color space. L is lightness, C is chroma, and H is hue.";
+  static advancedSpace = false;
   isPolar = true;
   axisLabel = (num: number) => `${Math.round(num)}`;
 }
 
-class OKLAB extends Color {
-  static name = "OKLAB";
-  static channelNames = ["l", "a", "b"];
-  channels = { l: 0, a: 0, b: 0 };
-  spaceName = "oklab" as const;
-  static domains = { l: [1, 0], a: [-0.4, 0.4], b: [0.4, -0.4] } as Domain;
-  static stepSize: Channels = [0.01, 0.01, 0.01];
-  static dimensionToChannel = { x: "a", y: "b", z: "l" };
-  static description =
-    "OKLAB is a perceptually uniform color space. It is a refinement of CIELAB. ";
-}
+// OKLAB still cursed
+// class OKLAB extends Color {
+//   static name = "OKLAB";
+//   static channelNames = ["l", "a", "b"];
+//   channels = { l: 0, a: 0, b: 0 };
+//   spaceName = "oklab" as const;
+//   static domains = { l: [1, 0], a: [-0.4, 0.4], b: [0.4, -0.4] } as Domain;
+//   static stepSize: Channels = [0.01, 0.01, 0.01];
+//   static dimensionToChannel = { x: "a", y: "b", z: "l" };
+//   static description =
+//     "OKLAB is a perceptually uniform color space. It is a refinement of CIELAB. ";
+//   toString(): string {
+//     const [l, a, b] = Object.values(this.channels)
+//       .map((x, idx) => (idx ? x : x * 100))
+//       .map((x) => x.toLocaleString("fullwide", { useGrouping: false }));
+//     console.log("oklab", l, a, b);
+//     return `oklab(${l}% ${a} ${b})`;
+//   }
+//   toPrettyString(): string {
+//     const [l, a, b] = this.prettyChannels();
+//     return `oklab(${l}% ${a} ${b})`;
+//   }
+// }
 
 class OKLCH extends Color {
   static name = "OKLCH";
@@ -475,20 +487,20 @@ function toColorSpace(
 
 const colorDirectory = {
   "cam16-jmh": CAM16,
+  hct: HCT,
   hsl: HSL,
   hsv: HSV,
-  hct: HCT,
   jzazbz: JZAZBZ,
   lab: CIELAB,
   lch: LCH,
   // oklab: OKLAB,
-  // oklch: OKLCH,
+  oklch: OKLCH,
   rgb: RGB,
   // srgb: RGB,
   srgb: SRGB,
 };
 
-type ColorSpace = keyof typeof colorDirectory | string;
+type ColorSpace = keyof typeof colorDirectory;
 
 export const colorPickerConfig = Object.fromEntries(
   (Object.keys(colorDirectory) as ColorSpace[]).map((name: ColorSpace) => {
@@ -498,6 +510,7 @@ export const colorPickerConfig = Object.fromEntries(
     return [
       name,
       {
+        advancedSpace: space.advancedSpace,
         axisLabel: exampleColor.axisLabel,
         description: space.description,
         isPolar: exampleColor.isPolar,

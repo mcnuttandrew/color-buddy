@@ -564,6 +564,7 @@
             {#each annotationColors as color, i}
               <rect
                 {...RectProps(color, i)}
+                width={35}
                 stroke={color.toDisplay()}
                 fill={"none"}
                 on:mousedown|preventDefault={pointMouseDown}

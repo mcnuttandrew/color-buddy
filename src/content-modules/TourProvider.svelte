@@ -49,10 +49,10 @@
       {
         element: "#scatterplot",
         popover: {
-          title: "Scatterplot",
+          title: "Edit plane",
           onCloseClick: closeClick,
           description:
-            "The scatterplot shows the colors in your palette in a 2D space. You can drag the colors around to adjust their position. You can also drag a box around a group of colors and move it around, just like you would in a graphics editor.",
+            "The edit plane shows the colors in your palette in a 2D space as a scatterplot and a strip plot. You can drag the colors around to adjust their position. You can also drag a box around a group of colors and move it around, just like you would in a graphics editor.",
           onNextClick: () => {
             configStore.setColorSim("deuteranopia");
             driverObj.moveNext();

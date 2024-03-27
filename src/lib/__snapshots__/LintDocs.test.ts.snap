@@ -97,7 +97,7 @@ Maps:
 
 ### WCAG Contrast Graphical Objects
 
-Description: All colors in a palette should have a sufficient contrast ratio with the background color. This is because if they are not, then they will not be differentiable from each other in some contexts. Valid algorithms are "APCA", "WCAG21", "Michelson", "Weber", "Lstar", "DeltaPhi".
+Description: All colors in a palette should have a sufficient contrast ratio with the background color. This is because if they are not, then they will not be differentiable from each other in some contexts. Valid algorithms are "APCA", "WCAG21", "Michelson", "Weber", "Lstar", "DeltaPhi". If this lint is not failing and you believe it should be, ensure that a color has been selected as having the "text" tag.
 
 Natural Language: ALL a IN colors SUCH THAT contrast(a, background, WCAG21) > 3
 
@@ -135,9 +135,9 @@ Program:
 
 
 
-### WCAG Text Contrast: AA
+### WCAG Text Contrast: AA (text colors only)
 
-Description: All colors in a palette should have a sufficient contrast ratio with the background color. This is because if they are not, then they will not be differentiable from each other in some contexts. Valid algorithms are "APCA", "WCAG21", "Michelson", "Weber", "Lstar", "DeltaPhi".
+Description: All colors in a palette should have a sufficient contrast ratio with the background color. This is because if they are not, then they will not be differentiable from each other in some contexts. Valid algorithms are "APCA", "WCAG21", "Michelson", "Weber", "Lstar", "DeltaPhi". If this lint is not failing and you believe it should be, ensure that a color has been selected as having the "text" tag.
 
 Natural Language: ALL a IN colors WHERE isTag(a, text) SUCH THAT contrast(a, background, WCAG21) > 4.5
 
@@ -176,9 +176,9 @@ Program:
 
 
 
-### WCAG Text Contrast: AAA
+### WCAG Text Contrast: AAA (text colors only)
 
-Description: All colors in a palette should have a sufficient contrast ratio with the background color. This is because if they are not, then they will not be differentiable from each other in some contexts. Valid algorithms are "APCA", "WCAG21", "Michelson", "Weber", "Lstar", "DeltaPhi".
+Description: All colors in a palette should have a sufficient contrast ratio with the background color. This is because if they are not, then they will not be differentiable from each other in some contexts. Valid algorithms are "APCA", "WCAG21", "Michelson", "Weber", "Lstar", "DeltaPhi". If this lint is not failing and you believe it should be, ensure that a color has been selected as having the "text" tag.
 
 Natural Language: ALL a IN colors WHERE isTag(a, text) SUCH THAT contrast(a, background, WCAG21) > 7
 
@@ -412,7 +412,7 @@ Program:
 
 ### CVD: Deuteranopia Friendly
 
-Description: All colors in a palette should be differentiable by people with deuteranopia (ie can't see green). This is because if they are not, then they will not be differentiable from each other in some contexts.
+Description: All colors in a palette should be differentiable by people with deuteranopia (effects 0.56% of population). This is because if they are not, then they will not be differentiable from each other in some contexts.
 
 Natural Language: ALL a, b IN colors WHERE index(a) != index(b) SUCH THAT NOT similar(cvdSim(a, deuteranopia), cvdSim(b, deuteranopia)) < 9
 
@@ -456,7 +456,7 @@ Program:
 
 ### CVD: Protanopia Friendly
 
-Description: All colors in a palette should be differentiable by people with protanopia (ie can't see red). This is because if they are not, then they will not be differentiable from each other in some contexts.
+Description: All colors in a palette should be differentiable by people with protanopia (effects 0.59% of population). This is because if they are not, then they will not be differentiable from each other in some contexts.
 
 Natural Language: ALL a, b IN colors WHERE index(a) != index(b) SUCH THAT NOT similar(cvdSim(a, protanopia), cvdSim(b, protanopia)) < 9
 
@@ -500,7 +500,7 @@ Program:
 
 ### CVD: Tritanopia Friendly
 
-Description: All colors in a palette should be differentiable by people with tritanopia (ie can't see blue). This is because if they are not, then they will not be differentiable from each other in some contexts.
+Description: All colors in a palette should be differentiable by people with tritanopia . This is because if they are not, then they will not be differentiable from each other in some contexts.
 
 Natural Language: ALL a, b IN colors WHERE index(a) != index(b) SUCH THAT NOT similar(cvdSim(a, tritanopia), cvdSim(b, tritanopia)) < 9
 

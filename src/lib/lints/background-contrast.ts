@@ -44,12 +44,12 @@ const buildProgram = (level: number, textOnly: boolean): LintProgram => {
 const lintBase: CustomLint = {
   program: JSONToPrettyString(false),
   requiredTags: [],
-  name: "WCAG Contrast -- AA",
+  name: "WCAG Contrast -- AA (text colors only)",
   taskTypes: ["sequential", "diverging", "categorical"] as const,
   level: "error",
   group: "accessibility",
-  description: `All colors in a palette should have a sufficient contrast ratio with the background color. This is because if they are not, then they will not be differentiable from each other in some contexts. Valid algorithms are "APCA", "WCAG21", "Michelson", "Weber", "Lstar", "DeltaPhi".`,
-  failMessage: `These colors ({{blame}}) do not have a sufficient contrast ratio with the background and may be hard to discriminate in some contexts.`,
+  description: `All colors in a palette should have a sufficient contrast ratio with the background color. This is because if they are not, then they will not be differentiable from each other in some contexts. Valid algorithms are "APCA", "WCAG21", "Michelson", "Weber", "Lstar", "DeltaPhi". If this lint is not failing and you believe it should be, ensure that a color has been selected as having the "text" tag.`,
+  failMessage: `These text colors ({{blame}) do not have a sufficient contrast do not have sufficient contrast with the background to be easily readable.`,
   id: "background-contrast-built-in",
   blameMode: "single" as const,
   subscribedFix: "fixBackgroundDifferentiability",
@@ -64,12 +64,13 @@ const contrastGraphicalObjects: CustomLint = {
   id: "contrast-graphical-objects-built-in",
   expectedFailingTests: [makePalFromString(["#feed72", "#f8f4d2", "#eb717b"])],
   expectedPassingTests: [makePalFromString(["#cf5f67", "#468bbc", "#848475"])],
+  failMessage: `These colors ({{blame}}) do not have a sufficient contrast do not have sufficient contrast with the background to be easily readable.`,
 };
 
 const contrastTextAA: CustomLint = {
   ...lintBase,
   program: JSONToPrettyString(buildProgram(4.5, true)),
-  name: "WCAG Text Contrast: AA",
+  name: "WCAG Text Contrast: AA (text colors only)",
   id: "contrast-aa-built-in",
   expectedFailingTests: [
     createPalWithTags(["#feed72", "#f8f4d2", "#eb717b"], [[2, "text"]]),
@@ -81,7 +82,7 @@ const contrastTextAA: CustomLint = {
 const contrastTextAAA: CustomLint = {
   ...lintBase,
   program: JSONToPrettyString(buildProgram(7, true)),
-  name: "WCAG Text Contrast: AAA",
+  name: "WCAG Text Contrast: AAA (text colors only)",
   id: "contrast-aaa-built-in",
   expectedFailingTests: [
     createPalWithTags(["#feed72", "#f8f4d2", "#af3b4b"], [[2, "text"]]),

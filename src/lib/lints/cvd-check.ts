@@ -10,9 +10,12 @@ import type { CustomLint } from "../ColorLint";
 //   distanceSim < smallestPerceivableDistance;
 
 const cvdLabels = {
-  deuteranopia: "(ie can't see green)",
-  protanopia: "(ie can't see red)",
-  tritanopia: "(ie can't see blue)",
+  // deuteranopia: "(ie can't see green)",
+  // protanopia: "(ie can't see red)",
+  // tritanopia: "(ie can't see blue)",
+  deuteranopia: "(effects 0.56% of population)",
+  protanopia: "(effects 0.59% of population)",
+  tritanopia: "",
   grayscale: "",
 };
 const cvdTypes = Object.keys(cvdLabels) as (keyof typeof cvdLabels)[];
@@ -59,7 +62,7 @@ const lints: CustomLint[] = cvdTypes.map((type) => ({
   failMessage:
     type === "grayscale"
       ? `This palette may not work in black and white. The following pairs are hard to tell the difference between: ({{blame}})`
-      : `This palette is not friendly for people with ${type} color vision deficiency ${cvdLabels[type]}. The following pairs are undifferentiable: ({{blame}})`,
+      : `This palette is not friendly for people with ${type} color vision deficiency. The following pairs are undifferentiable: ({{blame}})`,
   id: `cvd-friendly-${type}-built-in`,
   blameMode: "pair" as const,
   expectedPassingTests: [

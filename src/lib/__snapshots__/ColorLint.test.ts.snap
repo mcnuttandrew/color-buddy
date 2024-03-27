@@ -24,21 +24,21 @@ exports[`ColorLint - Background Contrast 2`] = `
 ]
 `;
 
-exports[`ColorLint - CVD: Deuteranopia 1`] = `"This palette is not friendly for people with deuteranopia color vision deficiency (ie can't see green). The following pairs are undifferentiable: ()"`;
+exports[`ColorLint - CVD: Deuteranopia 1`] = `"This palette is not friendly for people with deuteranopia color vision deficiency. The following pairs are undifferentiable: ()"`;
 
-exports[`ColorLint - CVD: Deuteranopia 2`] = `"This palette is not friendly for people with deuteranopia color vision deficiency (ie can't see green). The following pairs are undifferentiable: (#0078b4 and #8c69bc, #ff7e0e and #c4bc27, #3d9f2f and #da2827, #e179c1 and #00becf)"`;
+exports[`ColorLint - CVD: Deuteranopia 2`] = `"This palette is not friendly for people with deuteranopia color vision deficiency. The following pairs are undifferentiable: (#0078b4 and #8c69bc, #ff7e0e and #c4bc27, #3d9f2f and #da2827, #e179c1 and #00becf)"`;
 
 exports[`ColorLint - CVD: Grayscale 1`] = `"This palette may not work in black and white. The following pairs are hard to tell the difference between: ()"`;
 
 exports[`ColorLint - CVD: Grayscale 2`] = `"This palette may not work in black and white. The following pairs are hard to tell the difference between: (#0078b4 and #da2827, #0078b4 and #8c69bc, #0078b4 and #8e564b, #0078b4 and #7f7f7f, #ff7e0e and #3d9f2f, #ff7e0e and #e179c1, #ff7e0e and #c4bc27, #ff7e0e and #00becf, #3d9f2f and #8c69bc, #3d9f2f and #e179c1, #3d9f2f and #7f7f7f, #da2827 and #8c69bc, #da2827 and #8e564b, #da2827 and #7f7f7f, #8c69bc and #8e564b, #8c69bc and #7f7f7f, #e179c1 and #c4bc27, #e179c1 and #00becf, #c4bc27 and #00becf)"`;
 
-exports[`ColorLint - CVD: Protanopia 1`] = `"This palette is not friendly for people with protanopia color vision deficiency (ie can't see red). The following pairs are undifferentiable: ()"`;
+exports[`ColorLint - CVD: Protanopia 1`] = `"This palette is not friendly for people with protanopia color vision deficiency. The following pairs are undifferentiable: ()"`;
 
-exports[`ColorLint - CVD: Protanopia 2`] = `"This palette is not friendly for people with protanopia color vision deficiency (ie can't see red). The following pairs are undifferentiable: (#0078b4 and #8c69bc, #ff7e0e and #3d9f2f, #da2827 and #8e564b)"`;
+exports[`ColorLint - CVD: Protanopia 2`] = `"This palette is not friendly for people with protanopia color vision deficiency. The following pairs are undifferentiable: (#0078b4 and #8c69bc, #ff7e0e and #3d9f2f, #da2827 and #8e564b)"`;
 
-exports[`ColorLint - CVD: Tritanopia 1`] = `"This palette is not friendly for people with tritanopia color vision deficiency (ie can't see blue). The following pairs are undifferentiable: ()"`;
+exports[`ColorLint - CVD: Tritanopia 1`] = `"This palette is not friendly for people with tritanopia color vision deficiency. The following pairs are undifferentiable: ()"`;
 
-exports[`ColorLint - CVD: Tritanopia 2`] = `"This palette is not friendly for people with tritanopia color vision deficiency (ie can't see blue). The following pairs are undifferentiable: (#ff7e0e and #e179c1, #8c69bc and #7f7f7f)"`;
+exports[`ColorLint - CVD: Tritanopia 2`] = `"This palette is not friendly for people with tritanopia color vision deficiency. The following pairs are undifferentiable: (#ff7e0e and #e179c1, #8c69bc and #7f7f7f)"`;
 
 exports[`ColorLint - CatOrderSimilarity 1`] = `"Some sequences of colors are too similar based on dE scores: . Try reordering them or making them more distinguishable"`;
 
@@ -48,17 +48,17 @@ exports[`ColorLint - ColorNameDiscriminability 1`] = `"The following pairs of co
 
 exports[`ColorLint - ColorNameDiscriminability 2`] = `"The following pairs of colors have the same name: #5260d1 and #005ebe"`;
 
-exports[`ColorLint - Contrast (1) GraphicalObjs 1`] = `"These colors () do not have a sufficient contrast ratio with the background and may be hard to discriminate in some contexts."`;
+exports[`ColorLint - Contrast (1) GraphicalObjs 1`] = `"These colors () do not have a sufficient contrast do not have sufficient contrast with the background to be easily readable."`;
 
-exports[`ColorLint - Contrast (1) GraphicalObjs 2`] = `"These colors (#feed72, #f8f4d2, #eb717b) do not have a sufficient contrast ratio with the background and may be hard to discriminate in some contexts."`;
+exports[`ColorLint - Contrast (1) GraphicalObjs 2`] = `"These colors (#feed72, #f8f4d2, #eb717b) do not have a sufficient contrast do not have sufficient contrast with the background to be easily readable."`;
 
-exports[`ColorLint - Contrast (2) contrastTextAA 1`] = `"These colors () do not have a sufficient contrast ratio with the background and may be hard to discriminate in some contexts."`;
+exports[`ColorLint - Contrast (2) contrastTextAA 1`] = `"These text colors ({{blame}) do not have a sufficient contrast do not have sufficient contrast with the background to be easily readable."`;
 
-exports[`ColorLint - Contrast (2) contrastTextAA 2`] = `"These colors (#eb717b) do not have a sufficient contrast ratio with the background and may be hard to discriminate in some contexts."`;
+exports[`ColorLint - Contrast (2) contrastTextAA 2`] = `"These text colors ({{blame}) do not have a sufficient contrast do not have sufficient contrast with the background to be easily readable."`;
 
-exports[`ColorLint - Contrast (3) contrastTextAAA 1`] = `"These colors () do not have a sufficient contrast ratio with the background and may be hard to discriminate in some contexts."`;
+exports[`ColorLint - Contrast (3) contrastTextAAA 1`] = `"These text colors ({{blame}) do not have a sufficient contrast do not have sufficient contrast with the background to be easily readable."`;
 
-exports[`ColorLint - Contrast (3) contrastTextAAA 2`] = `"These colors (#af3b4b) do not have a sufficient contrast ratio with the background and may be hard to discriminate in some contexts."`;
+exports[`ColorLint - Contrast (3) contrastTextAAA 2`] = `"These text colors ({{blame}) do not have a sufficient contrast do not have sufficient contrast with the background to be easily readable."`;
 
 exports[`ColorLint - EvenDistribution (1) Hue 1`] = `"This palette does not evenly distribute the colors around its range correctly. Try making the spacing between the colors more regular to resolve this issue. "`;
 

@@ -109,11 +109,9 @@
           <NewLintSuggestion />
         </div>
         <div class="text-sm">
-          This collection of checks validates whether or not your palette
-          matches a number of commonly held beliefs about best practices. They
-          wont fit every situation. So don't feel shamed if you ignore some of
-          them. They are just a good starting point for thinking about how to
-          improve your palette.
+          This collection of checks (called lints) validates whether or not your
+          palette matches a number of commonly held beliefs about best
+          practices. They wont fit every situation.
         </div>
         {#each Object.entries(checkGroups) as checkGroup}
           <div class="flex mt-4">

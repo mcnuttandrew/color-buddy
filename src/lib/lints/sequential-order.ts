@@ -5,7 +5,7 @@ import type { Palette } from "../../types";
 import type { LintFixer } from "../linter-tools/lint-fixer";
 
 const lint: CustomLint = {
-  name: "Sequential Pal Order",
+  name: "Sequential Palette Order",
   program: JSONToPrettyString({
     // @ts-ignore
     $schema: `${location.href}lint-schema.json`,
@@ -32,7 +32,7 @@ const lint: CustomLint = {
   requiredTags: [],
   description:
     "Sequential palettes should be ordered by lightness. This is a defining property of a sequential palette and ensures that values are understood as having an increase (or decreasing) value.",
-  failMessage: `This pal should be ordered by lightness if being used as a sequential palette. {{blame}} may be to blame.`,
+  failMessage: `This palette should be ordered by lightness if being used as a sequential palette. {{blame}} may be to blame.`,
   id: "sequential-order-built-in",
   blameMode: "single",
   subscribedFix: "fixSequentialOrder",

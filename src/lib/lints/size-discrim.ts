@@ -87,7 +87,7 @@ const lints: CustomLint[] = keys.map((key) => {
   const s = key as keyof typeof sMap;
   const jnd = jndLabInterval(p, s);
   return {
-    name: `Mark size legibility: ${key}`,
+    name: `Color Distinctness: ${key} Size Objects`,
     program: JSONToPrettyString({
       // @ts-ignore
       $schema: `${location.href}lint-schema.json`,

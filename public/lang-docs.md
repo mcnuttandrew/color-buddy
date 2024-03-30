@@ -92,7 +92,7 @@ Maps:
 # Examples
 
 
-### WCAG Contrast Graphical Objects
+### WCAG Contrast Graphical Objects [sequential, diverging, categorical] 
 
 Description: All colors in a palette should have a sufficient contrast ratio with the background color. This is because if they are not, then they will not be differentiable from each other in some contexts. Valid algorithms are "APCA", "WCAG21", "Michelson", "Weber", "Lstar", "DeltaPhi". If this lint is not failing and you believe it should be, ensure that a color has been selected as having the "text" tag.
 
@@ -132,7 +132,7 @@ Program:
 
 
 
-### WCAG Text Contrast: AA (text colors only)
+### WCAG Text Contrast: AA (text colors only) [sequential, diverging, categorical] 
 
 Description: All colors in a palette should have a sufficient contrast ratio with the background color. This is because if they are not, then they will not be differentiable from each other in some contexts. Valid algorithms are "APCA", "WCAG21", "Michelson", "Weber", "Lstar", "DeltaPhi". If this lint is not failing and you believe it should be, ensure that a color has been selected as having the "text" tag.
 
@@ -173,7 +173,7 @@ Program:
 
 
 
-### WCAG Text Contrast: AAA (text colors only)
+### WCAG Text Contrast: AAA (text colors only) [sequential, diverging, categorical] 
 
 Description: All colors in a palette should have a sufficient contrast ratio with the background color. This is because if they are not, then they will not be differentiable from each other in some contexts. Valid algorithms are "APCA", "WCAG21", "Michelson", "Weber", "Lstar", "DeltaPhi". If this lint is not failing and you believe it should be, ensure that a color has been selected as having the "text" tag.
 
@@ -214,7 +214,7 @@ Program:
 
 
 
-### Saturated not appropriate for serious affect
+### Saturated not appropriate for serious affect [sequential, diverging, categorical] tags required: (serious)
 
 Description: Highly saturated light colors are not appropriate for palettes that seek to be serious.  See "Affective color in visualization" for more.
 
@@ -246,7 +246,7 @@ Program:
 
 
 
-### Saturated not appropriate for trustworthy affect
+### Saturated not appropriate for trustworthy affect [sequential, diverging, categorical] tags required: (trustworthy)
 
 Description: Highly saturated light colors are not appropriate for palettes that seek to be trustworthy.  See "Affective color in visualization" for more.
 
@@ -278,7 +278,7 @@ Program:
 
 
 
-### Saturated not appropriate for calm affect
+### Saturated not appropriate for calm affect [sequential, diverging, categorical] tags required: (calm)
 
 Description: Highly saturated light colors are not appropriate for palettes that seek to be calm.  See "Affective color in visualization" for more.
 
@@ -310,7 +310,7 @@ Program:
 
 
 
-### Playful affects can have light blues, beiges, and grays
+### Playful affects can have light blues, beiges, and grays [sequential, diverging, categorical] tags required: (playful)
 
 Description: Palettes that seek to be playful should have at least one light blue, beige, or gray.  See "Affective color in visualization" for more.
 
@@ -341,7 +341,7 @@ Program:
 
 
 
-### Dark reds and browns are not positive
+### Dark reds and browns are not positive [sequential, diverging, categorical] tags required: (positive)
 
 Description: Palettes that seek to be positive should not have dark reds or browns.  See "Affective color in visualization" for more.
 
@@ -373,7 +373,7 @@ Program:
 
 
 
-### Negative palettes should not have light colors, particularly greens
+### Negative palettes should not have light colors, particularly greens [sequential, diverging, categorical] tags required: (negative)
 
 Description: Palettes that seek to be negative should not have light colors, particularly greens.  See "Affective color in visualization" for more.
 
@@ -407,7 +407,7 @@ Program:
 
 
 
-### CVD: Deuteranopia Friendly
+### CVD: Deuteranopia Friendly [sequential, diverging, categorical] 
 
 Description: All colors in a palette should be differentiable by people with deuteranopia (effects 0.56% of population). This is because if they are not, then they will not be differentiable from each other in some contexts.
 
@@ -451,7 +451,7 @@ Program:
 
 
 
-### CVD: Protanopia Friendly
+### CVD: Protanopia Friendly [sequential, diverging, categorical] 
 
 Description: All colors in a palette should be differentiable by people with protanopia (effects 0.59% of population). This is because if they are not, then they will not be differentiable from each other in some contexts.
 
@@ -495,7 +495,7 @@ Program:
 
 
 
-### CVD: Tritanopia Friendly
+### CVD: Tritanopia Friendly [sequential, diverging, categorical] 
 
 Description: All colors in a palette should be differentiable by people with tritanopia . This is because if they are not, then they will not be differentiable from each other in some contexts.
 
@@ -539,7 +539,7 @@ Program:
 
 
 
-### Right in black and white
+### Right in black and white [sequential, diverging, categorical] 
 
 Description: All colors in a palette should be differentiable by people with grayscale . This is because if they are not, then they will not be differentiable from each other in some contexts.
 
@@ -583,7 +583,7 @@ Program:
 
 
 
-### Axes should have low contrast with background
+### Axes should have low contrast with background [sequential, diverging, categorical] 
 
 Description: Axes should have low contrast with the background. Having it too high can make the axes too distracting. See "Whisper, Don't Scream: Grids and Transparency" for more.
 
@@ -624,7 +624,7 @@ Program:
 
 
 
-### Blue should be high probability for the basic color term blue
+### Blue should be high probability for the basic color term blue [sequential, diverging, categorical] 
 
 Description: Blue should be high probability for the basic color term blue. If it's not, it can be confusing to users.
 
@@ -664,7 +664,7 @@ Program:
 
 
 
-### Even Distribution in Hue
+### Even Distribution in Hue [categorical] 
 
 Description: Categorical values should have an even distribution around the hue circle in LCH color space
 
@@ -729,7 +729,7 @@ Program:
 
 
 
-### Even Distribution in Lightness
+### Even Distribution in Lightness [categorical, diverging, sequential] 
 
 Description: Values should be space evenly in lightness in LCH color space
 
@@ -771,7 +771,7 @@ Program:
 
 
 
-### Fair
+### Fair [categorical] 
 
 Description: Do the colors stand out equally? A color palette is described as fair if both chroma and luminance ranges are below a certain threshold and unfair if one of them is above a certain threshold.
 
@@ -819,7 +819,7 @@ Program:
 
 
 
-### Fair
+### Fair [sequential, diverging] 
 
 Description: Do the colors stand out equally? A color palette is described as fair if the luminance ranges are below a certain threshold and unfair if one of them is above a certain threshold. 
 
@@ -859,7 +859,7 @@ Program:
 
 
 
-### Background desaturation sufficient
+### Background desaturation sufficient [sequential, diverging, categorical] 
 
 Description: Background should be sufficiently desaturated. 
 
@@ -921,7 +921,7 @@ Program:
 
 
 
-### Avoid Tetradic Palettes
+### Avoid Tetradic Palettes [sequential, diverging, categorical] 
 
 Description: Tetradic palettes are hard to work with and are not recommended.
 
@@ -1006,7 +1006,7 @@ Program:
 
 
 
-### Prefer yellowish or blueish greens
+### Prefer yellowish or blueish greens [sequential, diverging, categorical] 
 
 Description: When using green, make it a yellow or blue one. This makes it easier to play nicely with other colors.
 
@@ -1050,7 +1050,7 @@ Program:
 
 
 
-### Avoid too much contrast with the background
+### Avoid too much contrast with the background [sequential, diverging, categorical] 
 
 Description: Don't make your colors too dark and saturated when you're using a bright background. If in doubt, try it out. Make your colors lighter, pull some saturation out of them and see how it feels.
 
@@ -1104,7 +1104,7 @@ Program:
 
 
 
-### Require color complements
+### Require color complements [sequential, diverging, categorical] 
 
 Description: Use color complements whenever possible
 
@@ -1137,7 +1137,7 @@ Program:
 
 
 
-### Mark size legibility: Thin
+### Color Distinctness: Thin Size Objects [sequential, diverging, categorical] 
 
 Description: Pairs of colors in a palette should be differentiable from each other in Thin marks. 
 
@@ -1200,7 +1200,7 @@ Program:
 
 
 
-### Mark size legibility: Medium
+### Color Distinctness: Medium Size Objects [sequential, diverging, categorical] 
 
 Description: Pairs of colors in a palette should be differentiable from each other in Medium marks. 
 
@@ -1263,7 +1263,7 @@ Program:
 
 
 
-### Mark size legibility: Wide
+### Color Distinctness: Wide Size Objects [sequential, diverging, categorical] 
 
 Description: Pairs of colors in a palette should be differentiable from each other in Wide marks. 
 
@@ -1326,7 +1326,7 @@ Program:
 
 
 
-### Avoid extreme colors
+### Avoid extreme colors [sequential, diverging, categorical] 
 
 Description: Colors at either end of the lightness spectrum can be hard to discriminate in some contexts, and are sometimes advised against. See https://blog.datawrapper.de/beautifulcolors/#6 for more.
 
@@ -1369,7 +1369,7 @@ Program:
 
 
 
-### Colors distinguishable in order
+### Colors distinguishable in order [categorical] 
 
 Description: Opt for colors that are perceptually distinguishable in a logical sequence when designing visual elements like charts or graphs. This ensures that viewers can easily recognize the order or progression of data points. For categorical this means that when only a small number of colors are used, they should be as different as possible. For sequential and diverging, this means that the colors should be as different as possible in order.
 
@@ -1415,7 +1415,7 @@ Program:
 
 
 
-### In Gamut
+### In Gamut [sequential, diverging, categorical] 
 
 Description: Checks if the colors are in the sRGB gamut. This is important to ensure that the colors are visible and can be displayed on most devices.
 
@@ -1452,7 +1452,7 @@ Program:
 
 
 
-### Max Colors
+### Max Colors [sequential, diverging, categorical] 
 
 Description: Palettes should have a maximum number of colors. Higher numbers of colors can make it hard to identify specific values.
 
@@ -1483,7 +1483,7 @@ Program:
 
 
 
-### Mutually Distinct
+### Mutually Distinct [categorical] 
 
 Description: All colors in a palette should be different from each other. This is because if they are not, then they will not be differentiable from each other in some contexts.
 
@@ -1524,7 +1524,7 @@ Program:
 
 
 
-### Color Name Discriminability
+### Color Name Discriminability [sequential, categorical, diverging] 
 
 Description: Being able to identify colors by name is important for usability and for memorability.
 
@@ -1562,7 +1562,7 @@ Program:
 
 
 
-### Sequential Pal Order
+### Sequential Palette Order [sequential] 
 
 Description: Sequential palettes should be ordered by lightness. This is a defining property of a sequential palette and ensures that values are understood as having an increase (or decreasing) value.
 
@@ -1608,7 +1608,7 @@ Program:
 
 
 
-### Palette does not have ugly colors
+### Palette does not have ugly colors [categorical] 
 
 Description: Colors that are close to what are known as ugly colors are sometimes advised against. See https://www.colourlovers.com/palette/1416250/The_Ugliest_Colors for more details.
 

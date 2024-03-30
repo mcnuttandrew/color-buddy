@@ -36,7 +36,11 @@ ${testMsgs}
 
 function lintToText(lint: CustomLint) {
   return `
-### ${lint.name}
+### ${lint.name} [${lint.taskTypes.join(", ")}] ${
+    lint.requiredTags.length
+      ? `tags required: (${lint.requiredTags.join(", ")})`
+      : ""
+  }
 
 Description: ${lint.description}
 

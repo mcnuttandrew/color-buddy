@@ -112,9 +112,9 @@ exports[`ColorLint - MutuallyDistinct 1`] = `"Some colors in this palette () are
 
 exports[`ColorLint - MutuallyDistinct 2`] = `"Some colors in this palette (#f5f5dc and #d7fcef) are not differentiable from each other."`;
 
-exports[`ColorLint - SequentialOrder 1`] = `"This pal should be ordered by lightness if being used as a sequential palette.  may be to blame."`;
+exports[`ColorLint - SequentialOrder 1`] = `"This palette should be ordered by lightness if being used as a sequential palette.  may be to blame."`;
 
-exports[`ColorLint - SequentialOrder 2`] = `"This pal should be ordered by lightness if being used as a sequential palette. #ecddff, #bbc3ff may be to blame."`;
+exports[`ColorLint - SequentialOrder 2`] = `"This palette should be ordered by lightness if being used as a sequential palette. #ecddff, #bbc3ff may be to blame."`;
 
 exports[`ColorLint - SizeDiscrim (Medium) 1`] = `"This palette has some colors () that are close to each other in perceptual space and will not be resolvable for Medium areas. This involves elements like medium blocks such as bars in a bar chart or small graphics"`;
 

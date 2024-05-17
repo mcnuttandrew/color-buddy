@@ -1,28 +1,9 @@
 import { expect, test } from "vitest";
 import { LLEval, prettyPrintLL, permutativeBlame } from "./lint-language";
-import { Color } from "../Color";
-import type { Palette } from "../../types";
-import type { LintProgram } from "./lint-type";
 
-const toPal = (colors: string[]): Palette => ({
-  name: "test",
-  type: "sequential",
-  colorSpace: "lab",
-  evalConfig: {},
-  background: toColors(["#fff"])[0],
-  colors: toColorWithSemantics(colors),
-  tags: [],
-});
-const wrapWithSemantics = (color: Color) => ({
-  size: undefined,
-  markType: undefined,
-  tags: [],
-  color,
-});
-const toColors = (colors: string[]) =>
-  colors.map((x) => Color.colorFromString(x, "lab"));
-const toColorWithSemantics = (colors: string[]) =>
-  colors.map((x) => wrapWithSemantics(Color.colorFromString(x, "lab")));
+import type { LintProgram } from "./lint-type";
+import { toPal, toColors } from "../test-utils";
+
 const exampleColors = toPal(["#d4a8ff", "#7bb9ff", "#008694"]);
 
 test("LintLanguage basic eval - eval with no references ", () => {

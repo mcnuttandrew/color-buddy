@@ -15,13 +15,14 @@ export const doMonteCarloFix = (
   const yStep = config.yStep;
   const zStep = config.zStep;
 
-  let newPalette = palette;
+  let newPalette = { ...palette };
   let passing = false;
   let stepCount = 0;
   while (!passing) {
     stepCount++;
     if (stepCount > 1000) {
       console.log("timed out");
+      passing = true;
       break;
     }
     // run lints on new palette
@@ -40,7 +41,7 @@ export const doMonteCarloFix = (
     const blamed = [...new Set(blamedWithDuplicates)];
     newPalette.colors = [...newPalette.colors].map((color, i) => {
       // do nothing if the color is not blamed
-      if (!blamed.includes(color.color.toHex())) {
+      if (!blamed.includes(color.color.toString())) {
         return color;
       }
       // take random steps for each of the blamed colors

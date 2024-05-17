@@ -5,12 +5,7 @@ import type { Palette, StringPalette } from "../../types";
 import { Color } from "../Color";
 import type { LintResult } from "../ColorLint";
 import { doMonteCarloFix } from "./monte-carlo-fix";
-
-type Command =
-  | { type: "load-lints"; content: ""; id: string }
-  | { type: "run-lint"; content: ""; id: string }
-  | { type: "run-lint-no-message"; content: ""; id: string }
-  | { type: "monte-carlo-fix"; content: ""; id: string };
+import type { WorkerCommand } from "./worker-types";
 
 const cache: Record<string, Color> = {};
 const getColor = (hex: string, space: string): Color => {
@@ -43,7 +38,7 @@ let lintStore: CustomLint[] = [];
 let storeLoaded = false;
 const storeName = "color-pal-lints";
 let simpleLintCache = new Map<string, any>();
-async function dispatch(cmd: Command) {
+async function dispatch(cmd: WorkerCommand) {
   let computeMessage = true;
   switch (cmd.type) {
     case "load-lints":
@@ -95,21 +90,22 @@ async function dispatch(cmd: Command) {
       return result;
     case "monte-carlo-fix":
       // to do throw caching in front of this?
-      const { palString, lintId } = JSON.parse(cmd.content);
-      console.log(palString, lintId);
+      const { palString, lintIds } = JSON.parse(cmd.content);
       const newPal = hydratePal(palString);
-      const lint = lintStore.find((x) => x.id === lintId);
-      if (!lint) {
+      const lintIdSet = new Set(lintIds);
+      // const lint = lintStore.find((x) => x.id === lintId);
+      const lints = lintStore.filter((x) => lintIdSet.has(x.id));
+      if (lints.length === 0) {
         return [];
       }
-      const fixedPalette = doMonteCarloFix(newPal, lint);
+      const fixedPalette = doMonteCarloFix(newPal, lints);
       return fixedPalette.colors.map((x) => x.color.toString());
     default:
       return "no-op";
   }
 }
 
-self.onmessage = async (event: MessageEvent<Command>) => {
+self.onmessage = async (event: MessageEvent<WorkerCommand>) => {
   const result = await dispatch(event.data);
   self.postMessage({ id: event.data.id, content: result });
 };

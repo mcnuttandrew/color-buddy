@@ -7,7 +7,7 @@ import { CreateCustomLint } from "../ColorLint";
 
 export const doMonteCarloFix = (
   palette: Palette,
-  lint: CustomLint
+  lints: CustomLint[]
 ): Palette => {
   // identify the step sizes for this color space
   const config = colorPickerConfig[palette.colorSpace];
@@ -20,18 +20,25 @@ export const doMonteCarloFix = (
   let stepCount = 0;
   while (!passing) {
     stepCount++;
+    console.log(stepCount);
     if (stepCount > 1000) {
       break;
     }
     // run lint on new palette
-    const newLint = new (CreateCustomLint(lint))(newPalette);
-    newLint.run();
-    if (newLint.passes) {
+    const newLints = lints.map(
+      (lint) => new (CreateCustomLint(lint))(newPalette)
+    );
+    newLints.forEach((lint) => lint.run());
+    if (newLints.every((lint) => lint.passes)) {
       passing = true;
       break;
     }
     // generate blame for this lint
-    const blamed = newLint.getBlamedColors();
+    // const blamed = newLint.getBlamedColors();
+    const blamedWithDuplicates = newLints.flatMap((lint) =>
+      lint.getBlamedColors()
+    );
+    const blamed = [...new Set(blamedWithDuplicates)];
     newPalette.colors = [...newPalette.colors].map((color, i) => {
       // do nothing if the color is not blamed
       if (!blamed.includes(color.color.toHex())) {

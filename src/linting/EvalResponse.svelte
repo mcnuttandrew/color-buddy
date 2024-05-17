@@ -103,12 +103,12 @@
     {/if}
 
     {#if !check.passes}
-      <button class={buttonStyle} on:click={() => proposeFix("ai")}>
+      <!-- <button class={buttonStyle} on:click={() => proposeFix("ai")}>
         Try to fix (AI)
-      </button>
+      </button> -->
       {#if lint}
         <button class={buttonStyle} on:click={() => proposeFix("monte")}>
-          Try to fix (monte)
+          Try to fix (AI)
         </button>
       {/if}
       {#if check.subscribedFix !== "none"}

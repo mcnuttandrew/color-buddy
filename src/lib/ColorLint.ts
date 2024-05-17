@@ -19,6 +19,7 @@ export interface LintResult {
   subscribedFix: string;
   taskTypes: Palette["type"][];
   requiredTags: string[];
+  id: string | undefined;
 }
 
 export class ColorLint<CheckData, ParamType> {
@@ -37,6 +38,7 @@ export class ColorLint<CheckData, ParamType> {
   level: CustomLint["level"] = "error";
   subscribedFix: string = "none";
   program: string = "";
+  id: string | undefined = undefined;
 
   constructor(Palette: Palette) {
     this.palette = Palette;
@@ -94,6 +96,7 @@ export function CreateCustomLint(props: CustomLint) {
     requiredTags = props.requiredTags;
     subscribedFix = props.subscribedFix || "none";
     taskTypes = props.taskTypes;
+    id = props.id;
 
     _runCheck(options: any) {
       const prog = Json.parse(props.program);
@@ -108,6 +111,18 @@ export function CreateCustomLint(props: CustomLint) {
       }
 
       return { passCheck: result, data: newBlame };
+    }
+
+    getBlamedColors(): string[] {
+      if (this.blameMode === "pair") {
+        return (this.checkData as number[][]).flatMap((x) =>
+          x.map((x) => this.palette.colors[x].color.toString())
+        );
+      } else {
+        return (this.checkData as number[]).map((x) =>
+          this.palette.colors[x].color.toString()
+        );
+      }
     }
 
     buildMessage() {

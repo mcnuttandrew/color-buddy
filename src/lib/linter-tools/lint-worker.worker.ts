@@ -4,11 +4,8 @@ import type { CustomLint } from "../ColorLint";
 import type { Palette, StringPalette } from "../../types";
 import { Color } from "../Color";
 import type { LintResult } from "../ColorLint";
-
-type Command =
-  | { type: "load-lints"; content: ""; id: string }
-  | { type: "run-lint"; content: ""; id: string }
-  | { type: "run-lint-no-message"; content: ""; id: string };
+import { doMonteCarloFix } from "./monte-carlo-fix";
+import type { WorkerCommand } from "./worker-types";
 
 const cache: Record<string, Color> = {};
 const getColor = (hex: string, space: string): Color => {
@@ -41,7 +38,7 @@ let lintStore: CustomLint[] = [];
 let storeLoaded = false;
 const storeName = "color-pal-lints";
 let simpleLintCache = new Map<string, any>();
-async function dispatch(cmd: Command) {
+async function dispatch(cmd: WorkerCommand) {
   let computeMessage = true;
   switch (cmd.type) {
     case "load-lints":
@@ -76,6 +73,7 @@ async function dispatch(cmd: Command) {
       ).map((x) => {
         return {
           name: x.name,
+          id: x.id,
           passes: x.passes,
           message: x.message,
           level: x.level,
@@ -90,12 +88,22 @@ async function dispatch(cmd: Command) {
       });
       simpleLintCache.set(cmd.content, result);
       return result;
+    case "monte-carlo-fix":
+      const { palString, lintIds } = JSON.parse(cmd.content);
+      const newPal = hydratePal(palString);
+      const lintIdSet = new Set(lintIds);
+      const lints = lintStore.filter((x) => lintIdSet.has(x.id));
+      if (lints.length === 0) {
+        return [];
+      }
+      const fixedPalette = doMonteCarloFix(newPal, lints);
+      return fixedPalette.colors.map((x) => x.color.toString());
     default:
       return "no-op";
   }
 }
 
-self.onmessage = async (event: MessageEvent<Command>) => {
+self.onmessage = async (event: MessageEvent<WorkerCommand>) => {
   const result = await dispatch(event.data);
   self.postMessage({ id: event.data.id, content: result });
 };

@@ -21,6 +21,7 @@ export const doMonteCarloFix = (
   while (!passing) {
     stepCount++;
     if (stepCount > 1000) {
+      console.log("timed out");
       break;
     }
     // run lints on new palette
@@ -50,7 +51,6 @@ export const doMonteCarloFix = (
       newChannels[config.zChannelIndex] += 3 * (Math.random() - 0.5) * zStep;
       const newColor = Color.colorFromChannels(newChannels, palette.colorSpace);
 
-      // console.log(newColor.toHex());
       return wrapInBlankSemantics(newColor);
     });
     newPalette = { ...newPalette };

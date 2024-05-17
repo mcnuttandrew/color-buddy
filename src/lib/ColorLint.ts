@@ -116,11 +116,11 @@ export function CreateCustomLint(props: CustomLint) {
     getBlamedColors(): string[] {
       if (this.blameMode === "pair") {
         return (this.checkData as number[][]).flatMap((x) =>
-          x.map((x) => this.palette.colors[x].color.toHex())
+          x.map((x) => this.palette.colors[x].color.toString())
         );
       } else {
         return (this.checkData as number[]).map((x) =>
-          this.palette.colors[x].color.toHex()
+          this.palette.colors[x].color.toString()
         );
       }
     }

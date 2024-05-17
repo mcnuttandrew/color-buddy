@@ -20,11 +20,10 @@ export const doMonteCarloFix = (
   let stepCount = 0;
   while (!passing) {
     stepCount++;
-    console.log(stepCount);
     if (stepCount > 1000) {
       break;
     }
-    // run lint on new palette
+    // run lints on new palette
     const newLints = lints.map(
       (lint) => new (CreateCustomLint(lint))(newPalette)
     );
@@ -33,8 +32,7 @@ export const doMonteCarloFix = (
       passing = true;
       break;
     }
-    // generate blame for this lint
-    // const blamed = newLint.getBlamedColors();
+    // generate blame for the new lints
     const blamedWithDuplicates = newLints.flatMap((lint) =>
       lint.getBlamedColors()
     );

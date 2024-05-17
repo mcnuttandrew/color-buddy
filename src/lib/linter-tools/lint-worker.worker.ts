@@ -89,11 +89,9 @@ async function dispatch(cmd: WorkerCommand) {
       simpleLintCache.set(cmd.content, result);
       return result;
     case "monte-carlo-fix":
-      // to do throw caching in front of this?
       const { palString, lintIds } = JSON.parse(cmd.content);
       const newPal = hydratePal(palString);
       const lintIdSet = new Set(lintIds);
-      // const lint = lintStore.find((x) => x.id === lintId);
       const lints = lintStore.filter((x) => lintIdSet.has(x.id));
       if (lints.length === 0) {
         return [];

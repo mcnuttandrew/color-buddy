@@ -103,6 +103,7 @@
     {/if}
 
     {#if !check.passes}
+      <!-- hiding the LLM based solution, bc it works poorly -->
       <!-- <button class={buttonStyle} on:click={() => proposeFix("ai")}>
         Try to fix (AI)
       </button> -->

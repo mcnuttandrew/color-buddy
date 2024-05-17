@@ -36,29 +36,7 @@ export const suggestLintAIFix: SuggestFix = async (palette, lint, engine) => {
 
 export const suggestLintMonteFix: SuggestFix = async (palette, lint) => {
   const colorSpace = palette.colorSpace;
-  // todo abstract out this logic
   return suggestMonteFix(palette, [lint.id!]).then((newPal) => {
-    if (newPal.length === 0) {
-      throw new Error("No suggestions");
-    }
-    try {
-      return [{ ...palette, colors: parsePalette(newPal, colorSpace) }];
-    } catch (e) {
-      console.log(e);
-      return [palette];
-    }
-  });
-};
-
-export const suggestMultiLintMonteFix = async (
-  palette: Palette,
-  lints: LintResult[]
-) => {
-  const colorSpace = palette.colorSpace;
-  return suggestMonteFix(
-    palette,
-    lints.map((x) => x.id!)
-  ).then((newPal) => {
     if (newPal.length === 0) {
       throw new Error("No suggestions");
     }

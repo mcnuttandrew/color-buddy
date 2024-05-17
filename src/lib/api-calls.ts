@@ -141,7 +141,6 @@ export function suggestLintMetadata(lintProgram: string, engine: Engine) {
 const ViteWorker = new LintWorker();
 
 // send and receive messages from the worker
-// type Message = { type: string; content: string; id?: string };
 const randID = () => Math.random().toString(36).substring(7);
 function workerDispatch() {
   const waitingCallbacks: { [key: string]: (msg: string) => void } = {};

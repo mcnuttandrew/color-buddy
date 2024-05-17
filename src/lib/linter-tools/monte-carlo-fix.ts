@@ -20,7 +20,6 @@ export const doMonteCarloFix = (
   let stepCount = 0;
   while (!passing) {
     stepCount++;
-    console.log(stepCount);
     if (stepCount > 1000) {
       break;
     }
@@ -33,11 +32,12 @@ export const doMonteCarloFix = (
     }
     // generate blame for this lint
     const blamed = newLint.getBlamedColors();
-    // take random steps for each of the blamed colors
     newPalette.colors = [...newPalette.colors].map((color, i) => {
+      // do nothing if the color is not blamed
       if (!blamed.includes(color.color.toHex())) {
         return color;
       }
+      // take random steps for each of the blamed colors
       const channels = color.color.toChannels();
       const newChannels = [...channels] as [number, number, number];
       newChannels[config.xChannelIndex] += 3 * (Math.random() - 0.5) * xStep;

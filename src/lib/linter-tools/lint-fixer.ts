@@ -10,6 +10,12 @@ type SuggestFix = (
   engine: string
 ) => Promise<Palette[]>;
 
+function parsePalette(colors: string[], colorSpace: Palette["colorSpace"]) {
+  return colors.map((x) =>
+    wrapInBlankSemantics(Color.colorFromHex(x.replace("##", "#"), colorSpace))
+  );
+}
+
 export const suggestLintAIFix: SuggestFix = async (palette, lint, engine) => {
   const colorSpace = palette.colorSpace;
   const msg = `${lint.message}\n\nFailed: ${lint.naturalLanguageProgram}`;
@@ -19,14 +25,7 @@ export const suggestLintAIFix: SuggestFix = async (palette, lint, engine) => {
     }
     return x.map((el) => {
       try {
-        return {
-          ...palette,
-          colors: el.colors.map((x) =>
-            wrapInBlankSemantics(
-              Color.colorFromHex(x.replace("##", "#"), colorSpace)
-            )
-          ),
-        };
+        return { ...palette, colors: parsePalette(el.colors, colorSpace) };
       } catch (e) {
         console.log(e);
         return palette;
@@ -38,21 +37,11 @@ export const suggestLintAIFix: SuggestFix = async (palette, lint, engine) => {
 export const suggestLintMonteFix: SuggestFix = async (palette, lint) => {
   const colorSpace = palette.colorSpace;
   return suggestMonteFix(palette, lint.id!).then((newPal) => {
-    console.log(newPal);
     if (newPal.length === 0) {
       throw new Error("No suggestions");
     }
     try {
-      return [
-        {
-          ...palette,
-          colors: newPal.map((color) =>
-            wrapInBlankSemantics(
-              Color.colorFromHex(color.replace("##", "#"), colorSpace)
-            )
-          ),
-        },
-      ];
+      return [{ ...palette, colors: parsePalette(newPal, colorSpace) }];
     } catch (e) {
       console.log(e);
       return [palette];

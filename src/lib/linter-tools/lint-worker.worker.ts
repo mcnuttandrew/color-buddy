@@ -4,11 +4,13 @@ import type { CustomLint } from "../ColorLint";
 import type { Palette, StringPalette } from "../../types";
 import { Color } from "../Color";
 import type { LintResult } from "../ColorLint";
+import { doMonteCarloFix } from "./monte-carlo-fix";
 
 type Command =
   | { type: "load-lints"; content: ""; id: string }
   | { type: "run-lint"; content: ""; id: string }
-  | { type: "run-lint-no-message"; content: ""; id: string };
+  | { type: "run-lint-no-message"; content: ""; id: string }
+  | { type: "monte-carlo-fix"; content: ""; id: string };
 
 const cache: Record<string, Color> = {};
 const getColor = (hex: string, space: string): Color => {
@@ -76,6 +78,7 @@ async function dispatch(cmd: Command) {
       ).map((x) => {
         return {
           name: x.name,
+          id: x.id,
           passes: x.passes,
           message: x.message,
           level: x.level,
@@ -90,6 +93,17 @@ async function dispatch(cmd: Command) {
       });
       simpleLintCache.set(cmd.content, result);
       return result;
+    case "monte-carlo-fix":
+      // to do throw caching in front of this?
+      const { palString, lintId } = JSON.parse(cmd.content);
+      console.log(palString, lintId);
+      const newPal = hydratePal(palString);
+      const lint = lintStore.find((x) => x.id === lintId);
+      if (!lint) {
+        return [];
+      }
+      const fixedPalette = doMonteCarloFix(newPal, lint);
+      return fixedPalette.colors.map((x) => x.color.toString());
     default:
       return "no-op";
   }

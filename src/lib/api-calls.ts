@@ -162,18 +162,22 @@ function workerDispatch() {
 }
 const dispatch = workerDispatch();
 
+function prepPalForWorker(pal: Palette) {
+  return JSON.stringify({
+    ...pal,
+    background: pal.background.toString(),
+    colors: pal.colors.map((x) => ({
+      ...x,
+      color: x.color.toString(),
+    })),
+  });
+}
+
 export function lint(pal: Palette, computeMessage: boolean) {
   // this may be too deep a copy?
   return dispatch({
     type: computeMessage ? "run-lint" : "run-lint-no-message",
-    content: JSON.stringify({
-      ...pal,
-      background: pal.background.toString(),
-      colors: pal.colors.map((x) => ({
-        ...x,
-        color: x.color.toString(),
-      })),
-    }),
+    content: prepPalForWorker(pal),
   }).then((x) => {
     return x as unknown as any[];
   });
@@ -181,4 +185,16 @@ export function lint(pal: Palette, computeMessage: boolean) {
 
 export function loadLints() {
   return dispatch({ type: "load-lints", content: "" });
+}
+
+export function suggestMonteFix(pal: Palette, lintId: string) {
+  return dispatch({
+    type: "monte-carlo-fix",
+    content: JSON.stringify({
+      palString: prepPalForWorker(pal),
+      lintId,
+    }),
+  }).then((x) => {
+    return x as unknown as any[];
+  });
 }

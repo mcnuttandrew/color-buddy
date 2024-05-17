@@ -1,14 +1,16 @@
 import type { Palette } from "../../types";
 import type { LintResult } from "../ColorLint";
-import { suggestFix } from "../api-calls";
+import { suggestFix, suggestMonteFix } from "../api-calls";
 import { Color } from "../Color";
 import { wrapInBlankSemantics } from "../utils";
 
-export async function suggestLintAIFix(
-  palette: Palette,
+type SuggestFix = (
+  pal: Palette,
   lint: LintResult,
   engine: string
-): Promise<Palette[]> {
+) => Promise<Palette[]>;
+
+export const suggestLintAIFix: SuggestFix = async (palette, lint, engine) => {
   const colorSpace = palette.colorSpace;
   const msg = `${lint.message}\n\nFailed: ${lint.naturalLanguageProgram}`;
   return suggestFix(palette, msg, engine as any).then((x) => {
@@ -31,7 +33,32 @@ export async function suggestLintAIFix(
       }
     });
   });
-}
+};
+
+export const suggestLintMonteFix: SuggestFix = async (palette, lint) => {
+  const colorSpace = palette.colorSpace;
+  return suggestMonteFix(palette, lint.id!).then((newPal) => {
+    console.log(newPal);
+    if (newPal.length === 0) {
+      throw new Error("No suggestions");
+    }
+    try {
+      return [
+        {
+          ...palette,
+          colors: newPal.map((color) =>
+            wrapInBlankSemantics(
+              Color.colorFromHex(color.replace("##", "#"), colorSpace)
+            )
+          ),
+        },
+      ];
+    } catch (e) {
+      console.log(e);
+      return [palette];
+    }
+  });
+};
 
 export type LintFixer = (pal: Palette, lint: LintResult) => Promise<Palette[]>;
 import { fixBackgroundDifferentiability } from "../lints/background-contrast";

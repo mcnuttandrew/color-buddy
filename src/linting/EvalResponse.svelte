@@ -13,6 +13,7 @@
   import {
     suggestLintAIFix,
     suggestLintFix,
+    suggestLintMonteFix,
   } from "../lib/linter-tools/lint-fixer";
 
   import { buttonStyle } from "../lib/styles";
@@ -25,17 +26,25 @@
   $: engine = $configStore.engine;
   $: suggestions = [] as Palette[];
   $: colorSpace = palette.colorSpace;
+  $: lint = $lintStore.lints.find((x) => x.id === check.id);
 
-  function proposeFix(useAi: boolean = false) {
+  function proposeFix(fixType: "ai" | "monte" | "heuristic") {
     requestState = "loading";
     let hasRetried = false;
-    const getFix = () =>
-      (useAi ? suggestLintAIFix : suggestLintFix)(palette, check, engine).then(
-        (x) => {
-          suggestions = [...suggestions, ...x];
-          requestState = "loaded";
-        }
-      );
+    const getFix = () => {
+      let fix;
+      if (fixType === "ai") {
+        fix = suggestLintAIFix(palette, check, engine);
+      } else if (fixType === "monte" && lint) {
+        fix = suggestLintMonteFix(palette, check, engine);
+      } else {
+        fix = suggestLintFix(palette, check, engine);
+      }
+      return fix.then((x) => {
+        suggestions = [...suggestions, ...x];
+        requestState = "loaded";
+      });
+    };
 
     getFix().catch((e) => {
       console.log(e);
@@ -94,11 +103,16 @@
     {/if}
 
     {#if !check.passes}
-      <button class={buttonStyle} on:click={() => proposeFix(true)}>
+      <button class={buttonStyle} on:click={() => proposeFix("ai")}>
         Try to fix (AI)
       </button>
+      {#if lint}
+        <button class={buttonStyle} on:click={() => proposeFix("monte")}>
+          Try to fix (monte)
+        </button>
+      {/if}
       {#if check.subscribedFix !== "none"}
-        <button class={buttonStyle} on:click={() => proposeFix(false)}>
+        <button class={buttonStyle} on:click={() => proposeFix("heuristic")}>
           Try to fix (ColorBuddy)
         </button>
       {/if}

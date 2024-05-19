@@ -163,9 +163,9 @@ export class Color {
     return toColorSpace(this, colorSpace);
   }
   stringChannels() {
-    return Object.values(this.channels)
-      .map((x) => x || 0)
-      .map((x) => x.toLocaleString("fullwide", { useGrouping: false }));
+    return Object.values(this.channels).map((x) =>
+      (x || 0).toFixed(3).replace(/\.?0+$/, "")
+    );
   }
   static stringIsColor = (str: string, spaceName: string) => {
     // todo add cache

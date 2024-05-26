@@ -9,7 +9,7 @@
   import ColorScatterPlot from "../scatterplot/ColorScatterPlot.svelte";
   import ExampleAlaCart from "../example/ExampleAlaCarte.svelte";
   import PalTypeConfig from "../controls/PalTypeConfig.svelte";
-  import GetColorsFromString from "../controls/GetColorsFromString.svelte";
+  import Sort from "../controls/Sort.svelte";
 
   import ModifySelection from "../controls/ModifySelection.svelte";
   import PalPreview from "../components/PalPreview.svelte";
@@ -93,6 +93,7 @@
     <AdjustOrder />
 
     <ModifySelection />
+    <Sort />
   </div>
   <div class="flex flex-col pl-2">
     <!-- overview / preview -->
@@ -102,12 +103,7 @@
       pal={currentPal}
       showTags={true}
     />
-    <GetColorsFromString
-      allowSort={true}
-      onChange={(colors) => colorStore.setCurrentPalColors(colors)}
-      colorSpace={currentPal.colorSpace}
-      colors={currentPal.colors}
-    />
+
     <ExampleAlaCart
       paletteIdx={$colorStore.currentPal}
       exampleIdx={$configStore.mainColumnSelectedExample}

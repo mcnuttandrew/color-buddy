@@ -12,7 +12,13 @@
 
   import SavedPals from "./SavedPals.svelte";
 
-  $: leftPanelTabs = ["palettes", "controls", "colors"];
+  $: leftPanelTabs = ["controls", "colors"];
+
+  $: {
+    if (!new Set(["controls", "colors"]).has($configStore.leftRoute)) {
+      configStore.setLeftPanelRoute("controls");
+    }
+  }
 </script>
 
 <!-- left panel -->
@@ -59,9 +65,6 @@
     <div class="w-full border-t-2 border-black my-2"></div>
     {#if $configStore.leftRoute === "controls"}
       <Controls />
-    {/if}
-    {#if $configStore.leftRoute === "palettes"}
-      <SavedPals />
     {/if}
     {#if $configStore.leftRoute === "colors"}
       <EvalColorColumn />

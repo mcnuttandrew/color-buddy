@@ -37,14 +37,38 @@
   let colorSpace = ComparisonPal?.colorSpace || "lab";
 </script>
 
-<div style={`max-width: ${scatterSize + 150}px`}>
-  <div class="flex flex-col">
+<!-- style={`max-width: ${scatterSize + 150}px`} -->
+<div>
+  <div class="flex flex-col w-full">
     {#if ComparisonPal !== undefined}
-      <div class="font-bold">
-        <span class="italic">Compare: {ComparisonPal.name}</span>
+      <div class="w-full bg-stone-200 px-6 flex flex-col">
+        <div class="font-bold">
+          <span class="italic">Compare: {ComparisonPal.name}</span>
+        </div>
+        <Tooltip>
+          <button
+            class={`${buttonStyle} pl-0`}
+            slot="target"
+            let:toggle
+            on:click={toggle}
+          >
+            Change Compared Palette
+          </button>
+          <div class="flex flex-col w-80" slot="content">
+            <div>Saved Palettes:</div>
+            <div class="flex flex-wrap">
+              {#each $colorStore.palettes as pal, idx (idx)}
+                <MiniPalPreview
+                  {pal}
+                  className={compareIdx === idx ? "border-2 border-black" : ""}
+                  onClick={() => configStore.setComparePal(idx)}
+                />
+              {/each}
+            </div>
+          </div>
+        </Tooltip>
       </div>
       <!-- keep even with the tags line -->
-      <div>&nbsp;</div>
       <div class="flex">
         <SetColorSpace
           {colorSpace}
@@ -100,30 +124,7 @@
       </div>
     {/if}
   </div>
-  <div class="flex">
-    <Tooltip>
-      <button
-        class={`${buttonStyle} pl-0`}
-        slot="target"
-        let:toggle
-        on:click={toggle}
-      >
-        Change Compared Palette
-      </button>
-      <div class="flex flex-col w-80" slot="content">
-        <div>Saved Palettes:</div>
-        <div class="flex flex-wrap">
-          {#each $colorStore.palettes as pal, idx (idx)}
-            <MiniPalPreview
-              {pal}
-              className={compareIdx === idx ? "border-2 border-black" : ""}
-              onClick={() => configStore.setComparePal(idx)}
-            />
-          {/each}
-        </div>
-      </div>
-    </Tooltip>
-  </div>
+  <div>&nbsp;</div>
   {#if ComparisonPal !== undefined}
     <div class="flex flex-col pl-2">
       <PalPreview
@@ -134,13 +135,6 @@
         }}
         allowModification={false}
       />
-
-      <!-- <GetColorsFromString
-      allowSort={false}
-      colors={ComparisonPal.colors}
-      onChange={() => {}}
-      {colorSpace}
-    /> -->
     </div>
   {/if}
 

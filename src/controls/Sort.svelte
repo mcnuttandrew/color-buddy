@@ -75,7 +75,20 @@
     </button>
   </span>
 
-  <span slot="target" let:toggle>
-    <button class={buttonStyle} on:click={toggle}>Sort</button>
-  </span>
+  <button
+    slot="target"
+    id="sort-button"
+    let:toggle
+    class={buttonStyle}
+    on:click={toggle}
+  >
+    Sort
+  </button>
 </Tooltip>
+
+<style>
+  #sort-button {
+    top: -2px;
+    position: relative;
+  }
+</style>

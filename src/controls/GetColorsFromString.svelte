@@ -3,12 +3,11 @@
   import type { ColorWrap } from "../types";
   import configStore from "../stores/config-store";
   import { wrapInBlankSemantics } from "../lib/utils";
-  import Sort from "./Sort.svelte";
+
   let state: "idle" | "error" = "idle";
   export let onChange: (colors: ColorWrap<Color>[]) => void;
   export let colors: ColorWrap<Color>[];
   export let colorSpace: string;
-  export let allowSort: boolean;
 
   function processBodyInput(body: string) {
     try {
@@ -37,29 +36,14 @@
   $: includeQuotes = $configStore.includeQuotes;
 </script>
 
+<div class="w-full border-t-2 border-black my-2"></div>
 <div class="mt-2">
-  <div class="flex justify-between w-full">
-    {#if allowSort}
-      <Sort />
-    {:else}
-      <div></div>
-    {/if}
-    <!-- <label for="current-colors">Current Colors</label> -->
-    <!-- switch for including quotes -->
-    <div class="flex items-center">
-      <label for="include-quotes" class="mr-2">Include quotes</label>
-      <input
-        type="checkbox"
-        id="include-quotes"
-        class="mr-2"
-        checked={includeQuotes}
-        on:change={() => configStore.setIncludeQuotes(!includeQuotes)}
-      />
-    </div>
-  </div>
+  {#if state === "error"}
+    <div class="text-red-500">Error parsing colors</div>
+  {/if}
   <textarea
     id="current-colors"
-    class="w-full p-2 rounded border-2"
+    class="w-full p-2 rounded border-2 text-sm"
     value={colors
       .map((color) => color.color.toHex())
       .map((x) => (includeQuotes ? `"${x}"` : x))
@@ -73,7 +57,24 @@
     }}
     on:change={(e) => processBodyInput(e.currentTarget.value)}
   />
-  {#if state === "error"}
-    <div class="text-red-500">Error parsing colors</div>
-  {/if}
+  <div class="flex justify-between w-full text-sm">
+    <label for="current-colors">Current Colors</label>
+    <div class="flex items-center">
+      <label for="include-quotes" class="mr-2">Include quotes</label>
+      <input
+        type="checkbox"
+        id="include-quotes"
+        class="mr-2"
+        checked={includeQuotes}
+        on:change={() => configStore.setIncludeQuotes(!includeQuotes)}
+      />
+    </div>
+  </div>
 </div>
+
+<style>
+  #current-colors {
+    height: 6rem;
+    resize: vertical;
+  }
+</style>

@@ -2,6 +2,7 @@
   import focusStore from "../stores/focus-store";
   import colorStore from "../stores/color-store";
   import configStore from "../stores/config-store";
+  import GetColorsFromString from "../controls/GetColorsFromString.svelte";
 
   import { Color } from "../lib/Color";
 
@@ -69,4 +70,9 @@
   {/if}
 
   <InterpolatePoints />
+  <GetColorsFromString
+    onChange={(colors) => colorStore.setCurrentPalColors(colors)}
+    colorSpace={currentPal.colorSpace}
+    colors={currentPal.colors}
+  />
 </div>

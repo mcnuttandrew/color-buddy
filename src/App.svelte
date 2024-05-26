@@ -32,7 +32,9 @@
   import TourProvider from "./content-modules/TourProvider.svelte";
   import { buttonStyle } from "./lib/styles";
 
-  const tabs = ["manage", "browse", "examples", "compare", "eval"];
+  const palettesTabs = ["manage", "browse"];
+
+  const currentPalTabs = ["examples", "compare", "eval"];
 
   import { lint } from "./lib/api-calls";
   import { debounce } from "vega";
@@ -99,15 +101,24 @@
       <div class="grow" id="right-col">
         <div class="bg-stone-800">
           <div class="flex">
-            <Nav
-              className="bg-stone-800 text-white h-12 items-center"
-              {tabs}
-              isTabSelected={(x) => $configStore.route === x}
-              selectTab={(x) => {
-                // @ts-ignore
-                configStore.setRoute(x);
-              }}
-            />
+            {#each [{ tabs: palettesTabs, name: "Palettes" }, { tabs: currentPalTabs, name: "Current Palette" }] as { tabs, name }}
+              <div class="flex flex-col relative">
+                <div
+                  class="uppercase text-xs text-white absolute italic left-2"
+                >
+                  {name}
+                </div>
+                <Nav
+                  className="bg-stone-800 text-white h-12 items-center"
+                  {tabs}
+                  isTabSelected={(x) => $configStore.route === x}
+                  selectTab={(x) => {
+                    // @ts-ignore
+                    configStore.setRoute(x);
+                  }}
+                />
+              </div>
+            {/each}
           </div>
         </div>
         {#if palPresent}

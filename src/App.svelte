@@ -29,12 +29,10 @@
   import SetSimulation from "./controls/SetSimulation.svelte";
   import Zoom from "./controls/Zoom.svelte";
   import NewBrowse from "./content-modules/NewBrowse.svelte";
-  // import Browse from "./content-modules/Browse.svelte";
   import TourProvider from "./content-modules/TourProvider.svelte";
   import { buttonStyle } from "./lib/styles";
 
   const tabs = ["manage", "browse", "examples", "compare", "eval"];
-  // const tabs = ["examples", "compare", "eval", "browse"];
 
   import { lint } from "./lib/api-calls";
   import { debounce } from "vega";
@@ -127,10 +125,6 @@
         {/if}
       </div>
     </div>
-    <!-- {#if $configStore.route === "browse"}
-      <Browse />
-    {/if} -->
-    <!-- bottom row -->
   </div>
 </main>
 

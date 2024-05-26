@@ -5,6 +5,7 @@
   import colorStore from "../stores/color-store";
   import focusStore from "../stores/focus-store";
   import BrowseCard from "../example/BrowseCard.svelte";
+  import ColorSimControl from "../example/ColorSimControl.svelte";
   import PreviewSelector from "../example/PreviewSelector.svelte";
   import NewExampleModal from "../example/NewExampleModal.svelte";
 
@@ -25,6 +26,7 @@
   <div class="flex">
     <PreviewSelector exampleName={example?.name || "Discs"} />
     <NewExampleModal editTarget={null} onClose={() => {}} />
+    <ColorSimControl />
   </div>
   <div class="flex">
     <div class="mr-2">Search for palettes</div>
@@ -37,6 +39,7 @@
       <BrowseCard
         {palette}
         allowInteraction={false}
+        allowResize={false}
         previewIndex={$configStore.manageBrowsePreviewIdx}
         operations={[
           {

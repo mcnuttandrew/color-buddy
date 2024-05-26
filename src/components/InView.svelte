@@ -1,7 +1,7 @@
 <script lang="ts">
   import { onMount } from "svelte";
 
-  export let root = undefined;
+  export let root = undefined as any;
   export let isInViewProp = false;
 
   let isInView = false;

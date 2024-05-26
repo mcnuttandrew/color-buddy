@@ -5,7 +5,6 @@
   import type { StringPalette, Palette } from "../types";
 
   import { buttonStyle, denseButtonStyle } from "../lib/styles";
-  // import Modal from "../components/Modal.svelte";
   import Tooltip from "../components/Tooltip.svelte";
   import {
     newGenericPal,
@@ -52,19 +51,13 @@
     <div class="">
       <button
         class={buttonStyle}
-        on:click={() => {
-          newPal(createPalFromHexes([]));
-          // modalState = "closed";
-        }}
+        on:click={() => newPal(createPalFromHexes([]))}
       >
         New blank
       </button>
       <button
         class={buttonStyle}
-        on:click={() => {
-          newPal(newGenericPal("new palette"));
-          // modalState = "closed";
-        }}
+        on:click={() => newPal(newGenericPal("new palette"))}
       >
         New categorical
       </button>
@@ -80,7 +73,6 @@
           ]);
           pal.type = "sequential";
           newPal(pal);
-          // modalState = "closed";
         }}
       >
         New sequential
@@ -97,7 +89,6 @@
           ]);
           pal.type = "diverging";
           newPal(pal);
-          // modalState = "closed";
         }}
       >
         New diverging
@@ -114,12 +105,10 @@
           e.preventDefault();
           processBodyInput(e.currentTarget.value);
           e.currentTarget.blur();
-          // modalState = "closed";
         }
       }}
       on:change={(e) => {
         processBodyInput(e.currentTarget.value);
-        // modalState = "closed";
       }}
     />
     <div class="mt-5 border-t-2 border-black"></div>

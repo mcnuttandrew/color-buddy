@@ -37,7 +37,7 @@
 
   $: {
     if (editTarget !== null) {
-      const example = $exampleStore.examples[editTarget];
+      const example = $exampleStore.examples[editTarget] as any;
       if (example.svg) {
         value = example.svg;
         modalState = "input-svg";
@@ -202,7 +202,6 @@
             modalState = "closed";
             value = "";
             onClose();
-            // modifyingExample = false;
           }}
         >
           {editTarget !== null ? "Update" : "Add"} Example
@@ -248,7 +247,6 @@
             modalState = "closed";
             value = "";
             onClose();
-            // modifyingExample = false;
           }}
         >
           {editTarget !== null ? "Update" : "Add"} Example
@@ -265,11 +263,3 @@
 >
   Add New Example
 </button>
-<!-- <button
-  class={buttonStyle}
-  on:click={() => {
-    modalState = "input-svg";
-  }}
->
-  <slot />
-</button> -->

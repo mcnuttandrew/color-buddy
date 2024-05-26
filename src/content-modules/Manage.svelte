@@ -4,6 +4,7 @@
   import configStore from "../stores/config-store";
   import BrowseCard from "../example/BrowseCard.svelte";
   import PreviewSelector from "../example/PreviewSelector.svelte";
+  import ColorSimControl from "../example/ColorSimControl.svelte";
   import NewExampleModal from "../example/NewExampleModal.svelte";
 
   import type { Palette } from "../types";
@@ -65,6 +66,7 @@
 <div class="bg-stone-300 py-2 px-6 flex">
   <PreviewSelector exampleName={example?.name || "Discs"} />
   <NewExampleModal editTarget={null} onClose={() => {}} />
+  <ColorSimControl />
 </div>
 
 <div class="flex flex-wrap bg-stone-100 h-full overflow-auto p-4">
@@ -76,6 +78,7 @@
         colorStore.setPalettes(newPals);
       }}
       allowInteraction={false}
+      allowResize={false}
       palette={pal}
       previewIndex={$configStore.manageBrowsePreviewIdx}
       operations={makeOperations(paletteIdx, pal)}

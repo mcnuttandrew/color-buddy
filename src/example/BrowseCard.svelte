@@ -8,14 +8,20 @@
   import type { Palette } from "../types";
   import ContentEditable from "../components/ContentEditable.svelte";
 
+  export let allowResize: boolean;
+  export let allowInteraction: boolean;
+  export let onRename: false | ((name: string) => void) = false;
+  export let operations: { name: string; action: () => void }[];
   export let palette: Palette;
   export let previewIndex: number;
-  export let operations: { name: string; action: () => void }[];
-  export let onRename: false | ((name: string) => void) = false;
-  export let allowInteraction: boolean;
 
   $: minHeight = previewIndex === -1 ? 50 : 400;
-  $: example = $exampleStore.examples[previewIndex] as any;
+  $: example = { ...$exampleStore.examples[previewIndex] } as any;
+  $: {
+    if (example && !allowResize) {
+      example.size = 250;
+    }
+  }
 </script>
 
 <div

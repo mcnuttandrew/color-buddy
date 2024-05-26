@@ -20,7 +20,7 @@
           description:
             "Color buddy is an application that helps you build excellent color palettes. These are mainly for data visualization, however they work for any use case. Let's take a quick tour of the application to get you started.",
           onNextClick: () => {
-            configStore.setLeftPanelRoute("palettes");
+            configStore.setLeftPanelRoute("controls");
             configStore.setRoute("examples");
             focusStore.clearColors();
             configStore.setColorSim("none");
@@ -28,24 +28,7 @@
           },
         },
       },
-      {
-        element: "#top-controls",
-        popover: {
-          title: "Top Controls",
-          onCloseClick: closeClick,
-          description:
-            "The top controls allow you to create a new palette, undo and redo changes, and configure the application. You can also use the top controls to upload and download palettes.",
-        },
-      },
-      {
-        element: "#left-panel",
-        popover: {
-          title: "Palettes View",
-          onCloseClick: closeClick,
-          description:
-            "The palettes view allows you to see all of the palettes you have created. You can click on a palette to select it, and then you can edit it using the controls panel. You can also delete or duplicate palettes (such as for versioning).",
-        },
-      },
+
       {
         element: "#scatterplot",
         popover: {
@@ -82,16 +65,21 @@
         },
       },
       {
+        element: "#top-controls",
+        popover: {
+          title: "Top Controls",
+          onCloseClick: closeClick,
+          description:
+            "The top controls allow you to create a new palette, undo and redo changes, and configure the application. You can also use the top controls to upload and download palettes.",
+        },
+      },
+      {
         element: "#left-panel",
         popover: {
           title: "Controls: Nothing selected",
           onCloseClick: closeClick,
           description:
             "The controls panel allows you to add colors to your palette, remove colors from your palette, and adjust the order of your colors. When none are selected, it just gives you a way to add colors. Let's select a colors and see what happens.",
-          onPrevClick: () => {
-            configStore.setLeftPanelRoute("palettes");
-            driverObj.movePrevious();
-          },
           onNextClick: () => {
             focusStore.setColors([0]);
             driverObj.moveNext();
@@ -126,6 +114,24 @@
             focusStore.setColors([0]);
             driverObj.movePrevious();
           },
+          onNextClick: () => {
+            configStore.setRoute("manage");
+            driverObj.moveNext();
+          },
+        },
+      },
+      {
+        element: "#right-col",
+        popover: {
+          title: "Manage Palettes",
+          onCloseClick: closeClick,
+          description:
+            "The palettes view allows you to see all of the palettes you have created. You can click on a palette using the gear and then you can edit it using the controls panel. You can also delete or duplicate palettes (such as for versioning).",
+
+          onNextClick: () => {
+            configStore.setRoute("examples");
+            driverObj.moveNext();
+          },
         },
       },
       {
@@ -142,6 +148,10 @@
             configStore.setRoute("compare");
             configStore.setComparePal(1);
             driverObj.moveNext();
+          },
+          onPrevClick: () => {
+            configStore.setRoute("manage");
+            driverObj.movePrevious();
           },
         },
       },

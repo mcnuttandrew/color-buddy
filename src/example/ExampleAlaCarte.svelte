@@ -63,10 +63,20 @@
     />
   {:else}
     {#if example.svg}
-      <Example example={example.svg} size={example.size} {palette} />
+      <Example
+        example={example.svg}
+        size={example.size}
+        {palette}
+        allowInteraction={true}
+      />
     {/if}
     {#if example.vega}
-      <Vega spec={example.vega} size={example.size} {palette} />
+      <Vega
+        spec={example.vega}
+        size={example.size}
+        {palette}
+        allowInteraction={true}
+      />
     {/if}
   {/if}
 </div>

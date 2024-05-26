@@ -9,6 +9,7 @@
   import Tooltip from "../components/Tooltip.svelte";
   import Nav from "../components/Nav.svelte";
   import NewExampleModal from "./NewExampleModal.svelte";
+  import ColorSimControl from "./ColorSimControl.svelte";
 
   $: currentPal = $colorStore.palettes[$colorStore.currentPal];
   let editTarget = null as null | number;
@@ -40,7 +41,7 @@
   }, {} as any);
 
   function makeOperations(idx: number) {
-    let exampleIsSoled = $exampleStore.examples.length - 1 === numberHidden;
+    let exampleIsSoled = $exampleStore.examples[idx].size === 600;
     return [
       {
         name: "Edit",
@@ -122,23 +123,7 @@
         Reset to defaults
       </button>
     </Tooltip>
-    {#if $configStore.colorSim !== "none"}
-      <div>
-        <button
-          class={buttonStyle}
-          on:click={() =>
-            configStore.setUseSimulatorOnExamples(
-              !$configStore.useSimulatorOnExamples
-            )}
-        >
-          {#if $configStore.useSimulatorOnExamples}
-            Use original colors
-          {:else}
-            Use simulated colors
-          {/if}
-        </button>
-      </div>
-    {/if}
+    <ColorSimControl />
     {#if numberHidden > 0}
       <Tooltip>
         <div slot="content">
@@ -190,6 +175,7 @@
     {#if exampleShowMap[idx]}
       <BrowseCard
         allowInteraction={true}
+        allowResize={true}
         palette={currentPal}
         previewIndex={idx}
         onRename={(name) => {

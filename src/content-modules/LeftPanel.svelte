@@ -12,7 +12,7 @@
 
   import SavedPals from "./SavedPals.svelte";
 
-  $: leftPanelTabs = ["palettes", "controls", "colors"];
+  $: leftPanelTabs = ["controls", "colors"];
 </script>
 
 <!-- left panel -->

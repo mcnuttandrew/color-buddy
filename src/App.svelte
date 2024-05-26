@@ -24,6 +24,7 @@
   import Eval from "./linting/Eval.svelte";
   import KeyboardHooks from "./components/KeyboardHooks.svelte";
   import ComparePal from "./content-modules/ComparePal.svelte";
+  import Manage from "./content-modules/Manage.svelte";
   import MainColumn from "./content-modules/MainColumn.svelte";
   import SetSimulation from "./controls/SetSimulation.svelte";
   import Zoom from "./controls/Zoom.svelte";
@@ -31,7 +32,7 @@
   import TourProvider from "./content-modules/TourProvider.svelte";
   import { buttonStyle } from "./lib/styles";
 
-  const tabs = ["examples", "compare", "eval"];
+  const tabs = ["manage", "examples", "compare", "eval"];
   // const tabs = ["examples", "compare", "eval", "browse"];
 
   import { lint } from "./lib/api-calls";
@@ -122,6 +123,8 @@
             <ComparePal {scatterSize} />
           {:else if $configStore.route === "eval"}
             <Eval />
+          {:else if $configStore.route === "manage"}
+            <Manage />
           {/if}
         {/if}
       </div>

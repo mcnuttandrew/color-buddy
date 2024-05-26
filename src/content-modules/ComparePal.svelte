@@ -40,34 +40,38 @@
 <!-- style={`max-width: ${scatterSize + 150}px`} -->
 <div>
   <div class="flex flex-col w-full">
-    {#if ComparisonPal !== undefined}
-      <div class="w-full bg-stone-200 px-6 flex flex-col">
-        <div class="font-bold">
-          <span class="italic">Compare: {ComparisonPal.name}</span>
-        </div>
-        <Tooltip>
-          <button
-            class={`${buttonStyle} pl-0`}
-            slot="target"
-            let:toggle
-            on:click={toggle}
-          >
-            Change Compared Palette
-          </button>
-          <div class="flex flex-col w-80" slot="content">
-            <div>Saved Palettes:</div>
-            <div class="flex flex-wrap">
-              {#each $colorStore.palettes as pal, idx (idx)}
-                <MiniPalPreview
-                  {pal}
-                  className={compareIdx === idx ? "border-2 border-black" : ""}
-                  onClick={() => configStore.setComparePal(idx)}
-                />
-              {/each}
-            </div>
-          </div>
-        </Tooltip>
+    <div class="w-full bg-stone-200 px-6 flex flex-col">
+      <div class="font-bold italic">
+        {#if ComparisonPal !== undefined}
+          Compare: {ComparisonPal.name}
+        {:else}
+          No Palette Selected
+        {/if}
       </div>
+      <Tooltip>
+        <button
+          class={`${buttonStyle} pl-0`}
+          slot="target"
+          let:toggle
+          on:click={toggle}
+        >
+          Change Compared Palette
+        </button>
+        <div class="flex flex-col w-80" slot="content">
+          <div>Saved Palettes:</div>
+          <div class="flex flex-wrap">
+            {#each $colorStore.palettes as pal, idx (idx)}
+              <MiniPalPreview
+                {pal}
+                className={compareIdx === idx ? "border-2 border-black" : ""}
+                onClick={() => configStore.setComparePal(idx)}
+              />
+            {/each}
+          </div>
+        </div>
+      </Tooltip>
+    </div>
+    {#if ComparisonPal !== undefined}
       <!-- keep even with the tags line -->
       <div class="flex">
         <SetColorSpace

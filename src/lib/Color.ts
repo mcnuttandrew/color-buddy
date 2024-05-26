@@ -35,10 +35,9 @@ export class Color {
   }
   toString(): string {
     const channelsString = Object.values(this.channels)
-      .map((x) => x || 0)
-      .map((x) => (x < 1e-5 ? 0 : x))
-      .join(", ");
-    return `${this.spaceName}(${channelsString})`;
+      .map((x) => Number(x || 0))
+      .map((x) => (x < 1e-5 ? 0 : x));
+    return `${this.spaceName}(${channelsString.join(", ")})`;
   }
   prettyChannels(): string[] {
     return Object.values(this.channels).map((x) => this.axisLabel(x));
@@ -163,9 +162,9 @@ export class Color {
     return toColorSpace(this, colorSpace);
   }
   stringChannels() {
-    return Object.values(this.channels).map((x) =>
-      (x || 0).toFixed(3).replace(/\.?0+$/, "")
-    );
+    return Object.values(this.channels)
+      .map((x) => (isNaN(x) ? 0 : x))
+      .map((x) => (x || 0).toFixed(3).replace(/\.?0+$/, ""));
   }
   static stringIsColor = (str: string, spaceName: string) => {
     // todo add cache
@@ -371,6 +370,7 @@ class OKLCH extends Color {
   static dimensionToChannel = { x: "c", y: "h", z: "l" };
   static description =
     "OKLCH is a cylindrical color space. It is a refinement of LCH.";
+  isPolar = true;
 }
 
 class JZAZBZ extends Color {
@@ -385,7 +385,9 @@ class JZAZBZ extends Color {
     "JzAzBz is a refinement of CIELAB Lab, with much better perceptual uniformity, and also supports High Dynamic Range (HDR), or very bright colors brighter than a paper white.";
 
   toString(): string {
-    const [jz, az, bz] = Object.values(this.channels);
+    const [jz, az, bz] = Object.values(this.channels).map((x) =>
+      isNaN(x) ? 0 : x
+    );
     return `color(jzazbz ${jz} ${az} ${bz})`;
   }
   toPrettyString(): string {
@@ -407,7 +409,9 @@ class HCT extends Color {
     "HCT is Google's attempt to create a perceptually uniform color space. H is hue, C is chroma, and T is tone.";
 
   toString(): string {
-    const [h, c, t] = Object.values(this.channels);
+    const [h, c, t] = Object.values(this.channels).map((x) =>
+      isNaN(x) ? 0 : x
+    );
     return `color(--hct ${h} ${c} ${t})`;
   }
   toPrettyString(): string {
@@ -425,9 +429,12 @@ class CAM16 extends Color {
   static dimensionToChannel = { x: "m", y: "h", z: "j" };
   static description =
     "CAM16 is a perceptually uniform color space. J is lightness, M is colorfulness, and H is hue.";
+  isPolar = true;
 
   toString(): string {
-    const [h, c, t] = Object.values(this.channels);
+    const [h, c, t] = Object.values(this.channels).map((x) =>
+      isNaN(x) ? 0 : x
+    );
     return `color(--cam16-jmh ${h} ${c} ${t})`;
   }
   toPrettyString(): string {

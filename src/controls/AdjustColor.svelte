@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Color } from "../lib/Color";
+  import { Color, colorPickerConfig } from "../lib/Color";
   import colorStore from "../stores/color-store";
   import focusStore from "../stores/focus-store";
   import { clipToGamut, clamp } from "../lib/utils";
@@ -52,6 +52,20 @@
     {
       name: "Clip to gamut",
       effect: (color) => clipToGamut(color),
+    },
+    {
+      name: "Jitter",
+      effect: (color) => {
+        const newChannels = [...color.toChannels()];
+        const config = colorPickerConfig[colorSpace];
+        const xStep = config.xStep;
+        const yStep = config.yStep;
+        const zStep = config.zStep;
+        newChannels[config.xChannelIndex] += xStep * (Math.random() - 0.5);
+        newChannels[config.yChannelIndex] += yStep * (Math.random() - 0.5);
+        newChannels[config.zChannelIndex] += zStep * (Math.random() - 0.5);
+        return newChannels as [number, number, number];
+      },
     },
   ];
 </script>

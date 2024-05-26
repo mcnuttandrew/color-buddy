@@ -39,6 +39,13 @@ test("All color spaces do round trip to each other correctly", () => {
     "#f00",
     "#0f0",
     "#00f",
+    "#9bc0b8",
+    "#dad668",
+    "#668757",
+    "#546a3b",
+    "#346859",
+    "#949934",
+    "#ff3681",
   ];
   const skipped = new Set(["rgb"]);
   const spaces = Object.keys(colorPickerConfig).filter((x) => !skipped.has(x));
@@ -51,6 +58,7 @@ test("All color spaces do round trip to each other correctly", () => {
           newColor.toHex(),
           `One Way: Translating ${spaceA} to ${spaceB}`
         ).toBe(oldColor.toHex());
+        expect(newColor.toDisplay()).toBe(oldColor.toHex());
         const finalColor = newColor.toColorSpace(spaceA as any);
         expect(
           finalColor.toHex(),

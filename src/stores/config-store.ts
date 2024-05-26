@@ -13,9 +13,10 @@ interface StoreData {
   evalDisplayMode: "regular" | "compact" | "lint-customization";
   exampleRoute: "svg" | "vega" | "swatches";
   includeQuotes: boolean;
-  leftRoute: "controls" | "palettes" | "colors";
+  leftRoute: "controls" | "colors";
   mainColumnSelectedExample: number;
-  route: "examples" | "compare" | "eval" | "browse";
+  manageBrowsePreviewIdx: number;
+  route: "examples" | "compare" | "eval" | "browse" | "manage";
   scatterplotMode: "moving" | "putting";
   showColorBackground: boolean;
   showGamutMarkers: boolean;
@@ -40,8 +41,9 @@ const InitialStore: StoreData = {
   evalDisplayMode: "regular",
   exampleRoute: "vega",
   includeQuotes: false,
-  leftRoute: "palettes",
+  leftRoute: "controls",
   mainColumnSelectedExample: -1,
+  manageBrowsePreviewIdx: -1,
   route: "examples",
   scatterplotMode: "moving",
   showColorBackground: true,
@@ -131,6 +133,8 @@ function createStore() {
     setCompareBackgroundSpace: (n: StoreData["compareBackgroundSpace"]) =>
       persist((old) => ({ ...old, compareBackgroundSpace: n })),
     setTour: (n: StoreData["tour"]) => persist((old) => ({ ...old, tour: n })),
+    setManageBrowsePreviewIdx: (n: StoreData["manageBrowsePreviewIdx"]) =>
+      persist((old) => ({ ...old, manageBrowsePreviewIdx: n })),
   };
 }
 

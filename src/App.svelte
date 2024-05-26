@@ -28,11 +28,12 @@
   import MainColumn from "./content-modules/MainColumn.svelte";
   import SetSimulation from "./controls/SetSimulation.svelte";
   import Zoom from "./controls/Zoom.svelte";
-  import Browse from "./content-modules/Browse.svelte";
+  import NewBrowse from "./content-modules/NewBrowse.svelte";
+  // import Browse from "./content-modules/Browse.svelte";
   import TourProvider from "./content-modules/TourProvider.svelte";
   import { buttonStyle } from "./lib/styles";
 
-  const tabs = ["manage", "examples", "compare", "eval"];
+  const tabs = ["manage", "browse", "examples", "compare", "eval"];
   // const tabs = ["examples", "compare", "eval", "browse"];
 
   import { lint } from "./lib/api-calls";
@@ -71,10 +72,7 @@
 <main class="flex h-full">
   <LeftPanel />
   <div class="h-full flex flex-col grow main-content">
-    <div
-      class="flex w-full grow overflow-auto"
-      class:top-bar={$configStore.route === "browse"}
-    >
+    <div class="flex w-full grow overflow-auto">
       <div class="flex flex-col">
         <div class="w-full flex bg-stone-800 px-2 py-3 text-white">
           <SetSimulation />
@@ -88,17 +86,15 @@
             </button>
           </div>
         </div>
-        {#if $configStore.route !== "browse"}
-          {#if palPresent}
-            <MainColumn {scatterSize} />
-          {:else}
-            <div class="flex-grow flex justify-center items-center">
-              <div class="text-2xl max-w-md text-center">
-                No palettes present, click "New" in the upper left to create a
-                new one
-              </div>
+        {#if palPresent}
+          <MainColumn {scatterSize} />
+        {:else}
+          <div class="flex-grow flex justify-center items-center">
+            <div class="text-2xl max-w-md text-center">
+              No palettes present, click "New" in the upper left to create a new
+              one
             </div>
-          {/if}
+          </div>
         {/if}
       </div>
 
@@ -125,13 +121,15 @@
             <Eval />
           {:else if $configStore.route === "manage"}
             <Manage />
+          {:else if $configStore.route === "browse"}
+            <NewBrowse />
           {/if}
         {/if}
       </div>
     </div>
-    {#if $configStore.route === "browse"}
+    <!-- {#if $configStore.route === "browse"}
       <Browse />
-    {/if}
+    {/if} -->
     <!-- bottom row -->
   </div>
 </main>

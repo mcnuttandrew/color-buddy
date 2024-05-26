@@ -1,5 +1,6 @@
 <script lang="ts">
   import exampleStore from "../stores/example-store";
+  import colorStore from "../stores/color-store";
   import Example from "./Example.svelte";
   import Vega from "./Vega.svelte";
   import Swatches from "./Swatches.svelte";
@@ -14,6 +15,7 @@
     ...$exampleStore.examples[exampleIdx],
     size: 400,
   } as any;
+  $: palette = $colorStore.palettes[paletteIdx];
 </script>
 
 <div class="flex flex-col">
@@ -61,10 +63,10 @@
     />
   {:else}
     {#if example.svg}
-      <Example example={example.svg} size={example.size} {paletteIdx} />
+      <Example example={example.svg} size={example.size} {palette} />
     {/if}
     {#if example.vega}
-      <Vega spec={example.vega} size={example.size} {paletteIdx} />
+      <Vega spec={example.vega} size={example.size} {palette} />
     {/if}
   {/if}
 </div>

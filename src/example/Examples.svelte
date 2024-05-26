@@ -1,60 +1,17 @@
 <script lang="ts">
-  import { Color } from "../lib/Color";
-  import exampleStore, {
-    DEMOS,
-    detectColorsInSvgString,
-    modifySVGForExampleStore,
-  } from "../stores/example-store";
+  import exampleStore from "../stores/example-store";
   import colorStore from "../stores/color-store";
   import configStore from "../stores/config-store";
 
-  import ExampleWrapper from "./ExampleWrapper.svelte";
-  import Modal from "../components/Modal.svelte";
+  import BrowseCard from "./BrowseCard.svelte";
   import { buttonStyle } from "../lib/styles";
-  import MonacoEditor from "../components/MonacoEditor.svelte";
   import Swatches from "./Swatches.svelte";
   import Tooltip from "../components/Tooltip.svelte";
-  import { makePalFromString } from "../lib/utils";
   import Nav from "../components/Nav.svelte";
+  import NewExampleModal from "./NewExampleModal.svelte";
 
-  let modalState: "closed" | "input-svg" | "input-vega" | "edit-colors" =
-    "closed";
-  let modifyingExample: number | false = false;
   $: currentPal = $colorStore.palettes[$colorStore.currentPal];
-  $: bg = currentPal.background;
-  $: colorSpace = currentPal.colorSpace;
-  let value = "";
-
-  $: detectedColors = [] as string[];
-
-  let validJSON = false;
-  $: {
-    if (modalState === "input-vega") {
-      try {
-        JSON.parse(value);
-        validJSON = true;
-      } catch (e) {
-        validJSON = false;
-      }
-    }
-  }
-  function clickExample(example: { svg?: string; vega?: string }, idx: number) {
-    if (example.svg) {
-      value = example.svg;
-      modalState = "input-svg";
-    }
-    if (example.vega) {
-      value = example.vega;
-      modalState = "input-vega";
-    }
-    modifyingExample = idx;
-  }
-
-  async function fileUpload(e: any) {
-    const file = e.target.files[0];
-    const text = await file.text();
-    value = text;
-  }
+  let editTarget = null as null | number;
 
   $: exampleShowMap = $exampleStore.examples.map((x: any) => {
     if (x.hidden) {
@@ -81,18 +38,66 @@
     acc[navNameMap[key]] = key;
     return acc;
   }, {} as any);
+
+  function makeOperations(idx: number) {
+    let exampleIsSoled = $exampleStore.examples.length - 1 === numberHidden;
+    return [
+      {
+        name: "Edit",
+        action: () => {
+          editTarget = idx;
+        },
+      },
+      {
+        name: "Delete",
+        action: () => exampleStore.deleteExample(idx),
+      },
+      {
+        name: "Hide",
+        action: () => exampleStore.toggleHidden(idx),
+      },
+
+      !exampleIsSoled && {
+        name: "Focus (expand and hide others)",
+        action: () => {
+          exampleStore.hideAllExcept(idx);
+          exampleStore.setExampleSize(idx, 600);
+        },
+      },
+      exampleIsSoled && {
+        name: "Unfocus (restore group)",
+        action: () => {
+          exampleStore.restoreHiddenExamples();
+          exampleStore.setExampleSize(idx, 250);
+        },
+      },
+      // {
+      //   name: "Expand",
+      //   action: () => exampleStore.setExampleSize(idx, 600),
+      //   condition: size !== 600,
+      // },
+      // {
+      //   name: "Reset size",
+      //   action: () => exampleStore.setExampleSize(idx, 250),
+      //   condition: size !== 250,
+      // },
+      // {
+      //   name: "Shrink",
+      //   action: () => exampleStore.setExampleSize(idx, 50),
+      //   condition: size !== 50,
+      // },
+    ].filter((x) => x) as any[] as { name: string; action: () => void }[];
+  }
 </script>
 
 <div class="flex flex-col bg-stone-300 px-4 py-2">
   <div class="flex">
-    <button
-      class={buttonStyle}
-      on:click={() => {
-        modalState = "input-svg";
+    <NewExampleModal
+      {editTarget}
+      onClose={() => {
+        editTarget = null;
       }}
-    >
-      Add New Example
-    </button>
+    />
     <Tooltip>
       <div slot="content" let:onClick class="max-w-md">
         <div>
@@ -176,210 +181,22 @@
   style={`height: calc(100% - 100px)`}
 >
   {#if $configStore.exampleRoute === "swatches"}
-    <Swatches paletteIdx={$colorStore.currentPal} bg={bg.toString()} />
+    <Swatches
+      paletteIdx={$colorStore.currentPal}
+      bg={currentPal.background.toString()}
+    />
   {/if}
   {#each examples as example, idx}
     {#if exampleShowMap[idx]}
-      <ExampleWrapper {example} {idx} bg={bg.toHex()} {clickExample} />
+      <BrowseCard
+        allowInteraction={true}
+        palette={currentPal}
+        previewIndex={idx}
+        onRename={(name) => {
+          exampleStore.setExampleName(idx, name);
+        }}
+        operations={makeOperations(idx)}
+      />
     {/if}
   {/each}
 </div>
-{#if modalState !== "closed"}
-  <Modal
-    showModal={true}
-    closeModal={() => {
-      modalState = "closed";
-    }}
-  >
-    <div class="bg-stone-200 h-12 flex justify-between items-center px-4">
-      <div class="font-bold">Add an Example</div>
-      <div>
-        {#each ["svg", "vega (or vega-lite)"] as mode}
-          <button
-            class={buttonStyle}
-            class:font-bold={(modalState === "input-svg" && mode === "svg") ||
-              (modalState === "input-vega" && mode === "vega (or vega-lite)")}
-            on:click={() => {
-              modalState = mode === "svg" ? "input-svg" : "input-vega";
-            }}
-          >
-            {mode}
-          </button>
-        {/each}
-      </div>
-    </div>
-    <div class="h-96 overflow-auto px-4" style="width: 700px;">
-      <div>
-        {#if modalState === "input-svg" || modalState === "input-vega"}
-          Demos:
-          {#each DEMOS.filter((demo) => {
-            return modalState === "input-svg" ? demo.type === "svg" : demo.type === "vega";
-          }) as demo}
-            <button
-              class={buttonStyle}
-              on:click={() => {
-                let initialMode = modalState;
-                fetch(demo.filename)
-                  .then((response) => response.text())
-                  .then((text) => {
-                    value = text;
-                    modalState = initialMode;
-                  })
-                  .catch((e) => {
-                    console.error(e);
-                  });
-              }}
-            >
-              {demo.title}
-            </button>
-          {/each}
-        {/if}
-      </div>
-      {#if modalState === "input-svg"}
-        <MonacoEditor language="xml" onChange={(x) => (value = x)} {value} />
-        <div>
-          <input
-            accept="image/svg"
-            id="fileUpload"
-            name="fileUpload"
-            type="file"
-            on:change={(e) => fileUpload(e)}
-          />
-          <label for="fileUpload">Or upload a file</label>
-        </div>
-      {/if}
-
-      {#if modalState === "input-vega"}
-        {#if !validJSON}
-          <div class="text-red-500">Invalid JSON</div>
-        {/if}
-        <MonacoEditor language="json" onChange={(x) => (value = x)} {value} />
-      {/if}
-
-      {#if modalState === "edit-colors"}
-        <div>
-          <h3>
-            We detect the following colors, remove any that you do NOT want to
-            be replaced in the editor
-          </h3>
-          <div class="flex">
-            <div class="flex flex-col">
-              {#each detectedColors as color, idx}
-                <div class="flex">
-                  <div
-                    class="w-24 h-8"
-                    class:text-white={Color.colorFromString(
-                      color,
-                      colorSpace
-                    ).luminance() < 0.5}
-                    style="background-color: {color};"
-                  >
-                    {color}
-                  </div>
-                  <button
-                    class={buttonStyle}
-                    on:click={() => {
-                      detectedColors = detectedColors.filter(
-                        (x) => x !== color
-                      );
-                    }}
-                  >
-                    Remove
-                  </button>
-                  {#if idx}
-                    <button
-                      class={buttonStyle}
-                      on:click={() => {
-                        detectedColors = [
-                          ...detectedColors.slice(0, idx - 1),
-                          detectedColors[idx],
-                          detectedColors[idx - 1],
-                          ...detectedColors.slice(idx + 1),
-                        ];
-                      }}
-                    >
-                      Move up
-                    </button>
-                  {/if}
-                </div>
-              {/each}
-            </div>
-            <div>
-              {@html value}
-            </div>
-          </div>
-        </div>
-      {/if}
-    </div>
-    <div>
-      {#if modalState === "edit-colors"}
-        <button
-          class={buttonStyle}
-          on:click={() => {
-            const svg = modifySVGForExampleStore(value, detectedColors);
-            const example = {
-              svg,
-              numColors: detectedColors.length,
-              name: "Custom Example",
-            };
-            if (modifyingExample !== false) {
-              exampleStore.updateExample(example, modifyingExample);
-            } else {
-              exampleStore.addExample(example);
-            }
-            modalState = "closed";
-            value = "";
-            modifyingExample = false;
-          }}
-        >
-          {modifyingExample ? "Update" : "Add"} Example
-        </button>
-        <button
-          class={buttonStyle}
-          on:click={() => {
-            modalState = "input-svg";
-          }}
-        >
-          Back to editing SVG
-        </button>
-        <button
-          class={buttonStyle}
-          on:click={() => {
-            colorStore.createNewPal(makePalFromString(detectedColors));
-          }}
-        >
-          Use identified colors as new palette
-        </button>
-      {/if}
-      {#if modalState === "input-svg"}
-        <button
-          class={buttonStyle}
-          on:click={() => {
-            modalState = "edit-colors";
-            detectedColors = detectColorsInSvgString(value);
-          }}
-        >
-          Mark Colors
-        </button>
-      {/if}
-      {#if modalState === "input-vega" && validJSON}
-        <button
-          class={buttonStyle}
-          on:click={() => {
-            const example = { vega: value, name: "Custom Example", size: 300 };
-            if (modifyingExample !== false) {
-              exampleStore.updateExample(example, modifyingExample);
-            } else {
-              exampleStore.addExample(example);
-            }
-            modalState = "closed";
-            value = "";
-            modifyingExample = false;
-          }}
-        >
-          {modifyingExample ? "Update" : "Add"} Example
-        </button>
-      {/if}
-    </div>
-  </Modal>
-{/if}

@@ -1,14 +1,18 @@
 <script lang="ts">
   import { tick } from "svelte";
-  import colorStore from "../stores/color-store";
   import configStore from "../stores/config-store";
   import { Color } from "../lib/Color";
   import focusStore from "../stores/focus-store";
   import { idxToKey } from "../lib/charts";
   import simulate_cvd from "../lib/cvd-sim";
+  import InView from "../components/InView.svelte";
+  import type { Palette } from "../types";
+
   export let example: string;
   export let size = 300;
-  export let paletteIdx: number;
+  export let palette: Palette;
+  export let allowInteraction = true;
+
   let focusedColor = false as false | number;
   function countNumberOfExamplesInUse(example: string): number {
     let inUse = 0;
@@ -43,7 +47,7 @@
     }
     return svg;
   }
-  $: currentPal = $colorStore.palettes[paletteIdx];
+  $: currentPal = palette;
   $: colors = currentPal.colors;
   $: {
     if (
@@ -77,6 +81,9 @@
 
   const query = "path,circle,rect,line";
   async function attachListeners() {
+    if (!allowInteraction) {
+      return;
+    }
     if (!container) {
       await new Promise((resolve) => setTimeout(resolve, 3000));
     }
@@ -96,20 +103,17 @@
     });
   }
   let container: HTMLDivElement;
-  $: color = focusedColor !== false && colors[focusedColor];
   $: mappedColors = colors.map((x) => x.color.toHex());
 </script>
 
 <div class="relative">
-  <div bind:this={container} class="example-container">
-    {@html insertColorsToExample(example, mappedColors, bg.toHex(), size)}
+  <div
+    bind:this={container}
+    class="flex justify-center items-center"
+    class:example-container={allowInteraction}
+  >
+    <InView>
+      {@html insertColorsToExample(example, mappedColors, bg.toHex(), size)}
+    </InView>
   </div>
 </div>
-
-<style>
-  .example-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-</style>

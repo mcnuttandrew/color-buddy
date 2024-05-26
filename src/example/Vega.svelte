@@ -1,17 +1,17 @@
 <script lang="ts">
-  import colorStore from "../stores/color-store";
   import Example from "./Example.svelte";
   import { getSVG } from "../lib/charts";
+  import type { Palette } from "../types";
 
-  export let paletteIdx: number;
+  export let palette: Palette;
   export let spec: any;
   export let size = 300;
+  export let allowInteraction: boolean;
 
   let producedSVG: string = "";
-  $: currentPal = $colorStore.palettes[paletteIdx];
-  $: getSVG(spec, currentPal).then((x) => {
+  $: getSVG(spec, palette).then((x) => {
     producedSVG = x;
   });
 </script>
 
-<Example example={producedSVG} {size} {paletteIdx} />
+<Example example={producedSVG} {size} {palette} {allowInteraction} />

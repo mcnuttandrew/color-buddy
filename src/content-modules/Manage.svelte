@@ -19,6 +19,13 @@
   ): { name: string; action: () => void }[] {
     return [
       {
+        name: "Use",
+        action: () => {
+          colorStore.setCurrentPal(pal);
+          configStore.setRoute("examples");
+        },
+      },
+      {
         name: "Compare with current",
         action: () => {
           configStore.setComparePal(paletteIdx);

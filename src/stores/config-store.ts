@@ -1,4 +1,5 @@
 import { writable } from "svelte/store";
+import type { Engine } from "../lib/api-calls";
 
 interface StoreData {
   channelPickerSpace: "lab" | "lch" | "hsl" | "hsv" | "rgb";
@@ -8,7 +9,7 @@ interface StoreData {
   compareBackgroundSpace: "lab" | "lch" | "hsl" | "hsv" | "rgb";
   comparePal: number | undefined;
   compareSelectedExample: number;
-  engine: "openai" | "google";
+  engine: Engine;
   evalDeltaDisplay: "none" | "76" | "CMC" | "2000" | "ITP" | "Jz" | "OK";
   evalDisplayMode: "regular" | "compact" | "lint-customization";
   exampleRoute: "svg" | "vega" | "swatches";

@@ -5,7 +5,7 @@
   import Tooltip from "../components/Tooltip.svelte";
   import colorStore from "../stores/color-store";
   import { buttonStyle } from "../lib/styles";
-  const aiModes = ["google", "openai"] as const;
+  const aiModes = ["google", "openai", "anthropic"] as const;
   $: showBg = $configStore.showColorBackground;
   $: showOutOfGamut = $configStore.showGamutMarkers;
 

@@ -4,12 +4,22 @@ import LintWorker from "./linter-tools/lint-worker.worker?worker";
 import { summarizePal } from "./utils";
 import type { WorkerCommand } from "./linter-tools/worker-types";
 
-type Engine = "openai" | "google";
+export type Engine = "openai" | "google" | "anthropic";
 type SimplePal = { background: string; colors: string[] };
 const palToString = (pal: Palette) => ({
   background: pal.background.toHex(),
   colors: pal.colors.map((x) => x.color.toHex()),
 });
+
+const postCreds = {
+  method: "POST",
+  mode: "cors",
+  cache: "no-cache",
+  credentials: "same-origin",
+  headers: { "Content-Type": "application/json" },
+  redirect: "follow",
+  referrerPolicy: "no-referrer",
+} as any;
 
 function openAIScaffold<A>(
   api: string,
@@ -17,13 +27,7 @@ function openAIScaffold<A>(
   parseAsJSON: boolean
 ): Promise<A[]> {
   return fetch(`/.netlify/functions/${api}?engine=openai`, {
-    method: "POST",
-    mode: "cors",
-    cache: "no-cache",
-    credentials: "same-origin",
-    headers: { "Content-Type": "application/json" },
-    redirect: "follow",
-    referrerPolicy: "no-referrer",
+    ...postCreds,
     body,
   })
     .then((response) => response.json())
@@ -36,19 +40,32 @@ function openAIScaffold<A>(
     });
 }
 
+function anthropicScaffold<A>(
+  api: string,
+  body: string,
+  parseAsJSON: boolean
+): Promise<A[]> {
+  return fetch(`/.netlify/functions/${api}?engine=anthropic`, {
+    ...postCreds,
+    body,
+  })
+    .then((response) => response.json())
+    .then((x: any) => {
+      console.log(x);
+      return x.content
+        .map((x: any) => x?.text)
+        .filter((x: any) => x)
+        .flatMap((x: any) => (parseAsJSON ? Json.parse(x) : x));
+    });
+}
+
 function googleScaffold<A>(
   api: string,
   body: string,
   parseAsJSON: boolean
 ): Promise<A[]> {
   return fetch(`/.netlify/functions/${api}?engine=google`, {
-    method: "POST",
-    mode: "cors",
-    cache: "no-cache",
-    credentials: "same-origin",
-    headers: { "Content-Type": "application/json" },
-    redirect: "follow",
-    referrerPolicy: "no-referrer",
+    ...postCreds,
     body,
   })
     .then((response) => response.json())
@@ -67,6 +84,7 @@ function googleScaffold<A>(
 const engineToScaffold = {
   openai: openAIScaffold,
   google: googleScaffold,
+  anthropic: anthropicScaffold,
 };
 
 // supports the add color search function

@@ -77,7 +77,8 @@
     onFocusedColorsChange={(x) => focusStore.setColors(x)}
     startDragging={() => colorStore.pausePersistance()}
     stopDragging={() => colorStore.resumePersistance()}
-    annotationColors={$configStore.suggestedPalAsDiff
+    annotationColors={$configStore.suggestedPalAsDiff &&
+    $configStore.suggestedPalAsDiff?.colors?.length
       ? $configStore.suggestedPalAsDiff.colors.map((x) => x.color)
       : selectedCVDType === "none"
         ? []

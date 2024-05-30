@@ -19,6 +19,7 @@
     editor = monaco.editor.create(editorContainer, {
       minimap: { enabled: false },
       wordWrap: "on",
+      automaticLayout: true,
     });
     const model = monaco.editor.createModel(value, language);
     editor.setModel(model);
@@ -37,14 +38,15 @@
   });
 </script>
 
-<div>
-  <div class="container" bind:this={editorContainer} />
-</div>
+<div class="container" bind:this={editorContainer} />
 
 <style>
   .container {
     width: 100%;
     min-width: 100%;
-    height: 400px;
+    /* height: 400px; */
+    min-height: 400px;
+    height: 100%;
+    display: flex;
   }
 </style>

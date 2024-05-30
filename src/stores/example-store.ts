@@ -194,6 +194,17 @@ function createStore() {
           examples: newExamples,
         };
       }),
+    duplicateExample: (idx: number) =>
+      persistUpdate((old) => {
+        const newExamples = [...old.examples];
+        const example = JSON.parse(JSON.stringify(newExamples[idx]));
+        example.name = `${example.name} (copy)`;
+        newExamples.splice(idx + 1, 0, example);
+        return {
+          ...old,
+          examples: newExamples,
+        };
+      }),
     onlySwatches: () =>
       persistUpdate((old) => {
         return { ...old, examples: hideAllExamples(old.examples) };

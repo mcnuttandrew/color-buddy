@@ -178,10 +178,10 @@
         allowResize={true}
         palette={currentPal}
         previewIndex={idx}
-        onRename={(name) => {
-          exampleStore.setExampleName(idx, name);
-        }}
+        onRename={(name) => exampleStore.setExampleName(idx, name)}
         operations={makeOperations(idx)}
+        titleClick={false}
+        title={example.name}
       />
     {/if}
   {/each}

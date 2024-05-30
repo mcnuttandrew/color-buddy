@@ -2,6 +2,8 @@
   export let onChange: (str: string) => void;
   export let value: string;
   export let limitWidth: boolean = false;
+  export let useEditButton: boolean = false;
+  export let onClick: () => void = () => {};
 
   let focused = false;
 </script>
@@ -22,9 +24,21 @@
     }}
   />
 {:else}
-  <button on:click={() => (focused = true)} class:wrap-title={limitWidth}>
+  <button
+    on:click={() => {
+      if (useEditButton) {
+        onClick();
+      } else {
+        focused = true;
+      }
+    }}
+    class:wrap-title={limitWidth}
+  >
     {value}
   </button>
+{/if}
+{#if useEditButton}
+  <button on:click={() => (focused = true)}>✎</button>
 {/if}
 
 <style>

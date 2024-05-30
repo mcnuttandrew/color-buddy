@@ -14,8 +14,10 @@
   export let operations: { name: string; action: () => void }[];
   export let palette: Palette;
   export let previewIndex: number;
+  export let titleClick: (() => void) | false;
+  export let title: string;
 
-  $: minHeight = previewIndex === -1 ? 50 : 400;
+  $: minHeight = previewIndex === -1 ? 50 : 270;
   $: example = { ...$exampleStore.examples[previewIndex] } as any;
   $: {
     if (example && !allowResize) {
@@ -32,12 +34,20 @@
     <div class="flex">
       {#if onRename}
         <ContentEditable
-          value={palette.name}
+          value={title}
           onChange={onRename}
           limitWidth={true}
+          useEditButton={true}
+          onClick={() => titleClick && titleClick()}
         />
+      {:else if titleClick}
+        <button class="mr-1 title" on:click={titleClick}>
+          {title}
+        </button>
       {:else}
-        <div class="mr-1 title">{palette.name}</div>
+        <div class="mr-1 title">
+          {title}
+        </div>
       {/if}
     </div>
 

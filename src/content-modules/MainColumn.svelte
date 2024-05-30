@@ -30,10 +30,10 @@
     <div class="flex">
       <span class="italic">Current Pal:</span>
       <div class="flex">
-        <span>✎</span>
         <ContentEditable
           onChange={(x) => colorStore.setCurrentPalName(x)}
           value={currentPal.name}
+          useEditButton={true}
         />
       </div>
     </div>

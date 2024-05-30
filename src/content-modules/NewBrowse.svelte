@@ -8,6 +8,7 @@
   import ColorSimControl from "../example/ColorSimControl.svelte";
   import PreviewSelector from "../example/PreviewSelector.svelte";
   import NewExampleModal from "../example/NewExampleModal.svelte";
+  import type { Palette } from "../types";
 
   $: familiarPals = $examplePalStore.palettes.map((x) => x.palette);
 
@@ -20,6 +21,13 @@
   $: example = $exampleStore.examples[
     $configStore.manageBrowsePreviewIdx
   ] as any;
+
+  function usePal(palette: Palette) {
+    console.log("Using palette", palette);
+    colorStore.createNewPal(palette);
+    focusStore.clearColors();
+    configStore.setRoute("examples");
+  }
 </script>
 
 <div class="bg-stone-300 py-2 px-6">
@@ -41,15 +49,10 @@
         allowInteraction={false}
         allowResize={false}
         previewIndex={$configStore.manageBrowsePreviewIdx}
+        titleClick={() => usePal(palette)}
+        title={palette.name}
         operations={[
-          {
-            name: "Use the palette",
-            action: () => {
-              colorStore.createNewPal(palette);
-              focusStore.clearColors();
-              configStore.setRoute("examples");
-            },
-          },
+          { name: "Use the palette", action: () => usePal(palette) },
         ]}
       />
     {/each}

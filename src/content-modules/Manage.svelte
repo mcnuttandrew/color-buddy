@@ -87,6 +87,11 @@
       allowInteraction={false}
       allowResize={false}
       palette={pal}
+      titleClick={() => {
+        colorStore.setCurrentPal(pal);
+        configStore.setRoute("examples");
+      }}
+      title={pal.name}
       previewIndex={$configStore.manageBrowsePreviewIdx}
       operations={makeOperations(paletteIdx, pal)}
     />

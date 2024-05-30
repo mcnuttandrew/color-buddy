@@ -33,6 +33,8 @@
   export let colorSpace: any;
   export let annotationColors: Color[] = [];
 
+  $: console.log("scatterplot", annotationColors, Pal);
+
   $: focusSet = new Set(focusedColors);
 
   let margin = { top: 20, right: 15, bottom: 15, left: 15 };

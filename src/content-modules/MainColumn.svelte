@@ -22,7 +22,6 @@
 
   $: currentPal = $colorStore.palettes[$colorStore.currentPal];
   $: selectedCVDType = $configStore.colorSim;
-  $: console.log($configStore.suggestedPalAsDiff);
 </script>
 
 <div class="flex flex-col h-full px-4">

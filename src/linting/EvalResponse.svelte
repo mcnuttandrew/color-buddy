@@ -75,7 +75,12 @@
   $: ignored = !!evalConfig[check.name]?.ignore;
 </script>
 
-<Tooltip {positionAlongRightEdge}>
+<Tooltip
+  {positionAlongRightEdge}
+  onClose={() => {
+    configStore.setSuggestedPalAsDiff(false);
+  }}
+>
   <div slot="content" let:onClick class="max-w-2xl eval-tooltip">
     <div class="font-bold">{check.name}</div>
     {#if check.passes || ignored}
@@ -178,6 +183,14 @@
             }}
           >
             Use
+          </button>
+          <button
+            class={buttonStyle}
+            on:click={() => {
+              configStore.setSuggestedPalAsDiff(suggestion);
+            }}
+          >
+            Preview as diff
           </button>
           <button
             class={buttonStyle}

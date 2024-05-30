@@ -22,6 +22,7 @@
 
   $: currentPal = $colorStore.palettes[$colorStore.currentPal];
   $: selectedCVDType = $configStore.colorSim;
+  $: console.log($configStore.suggestedPalAsDiff);
 </script>
 
 <div class="flex flex-col h-full px-4">
@@ -77,9 +78,11 @@
     onFocusedColorsChange={(x) => focusStore.setColors(x)}
     startDragging={() => colorStore.pausePersistance()}
     stopDragging={() => colorStore.resumePersistance()}
-    annotationColors={selectedCVDType === "none"
-      ? []
-      : currentPal.colors.map((x) => simulate_cvd(selectedCVDType, x.color))}
+    annotationColors={$configStore.suggestedPalAsDiff
+      ? $configStore.suggestedPalAsDiff.colors.map((x) => x.color)
+      : selectedCVDType === "none"
+        ? []
+        : currentPal.colors.map((x) => simulate_cvd(selectedCVDType, x.color))}
   />
 
   <div class="flex flex-wrap" id="scatterplot-controls">

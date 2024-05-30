@@ -1,5 +1,6 @@
 import { writable } from "svelte/store";
 import type { Engine } from "../lib/api-calls";
+import type { Palette } from "../types";
 
 interface StoreData {
   channelPickerSpace: "lab" | "lch" | "hsl" | "hsv" | "rgb";
@@ -21,6 +22,7 @@ interface StoreData {
   scatterplotMode: "moving" | "putting";
   showColorBackground: boolean;
   showGamutMarkers: boolean;
+  suggestedPalAsDiff: Palette | false;
   tooltipXY?: [string, string];
   tour: boolean;
   useSimulatorOnExamples: boolean;
@@ -49,6 +51,7 @@ const InitialStore: StoreData = {
   scatterplotMode: "moving",
   showColorBackground: true,
   showGamutMarkers: true,
+  suggestedPalAsDiff: false,
   tooltipXY: undefined,
   tour: false,
   useSimulatorOnExamples: false,
@@ -136,6 +139,8 @@ function createStore() {
     setTour: (n: StoreData["tour"]) => persist((old) => ({ ...old, tour: n })),
     setManageBrowsePreviewIdx: (n: StoreData["manageBrowsePreviewIdx"]) =>
       persist((old) => ({ ...old, manageBrowsePreviewIdx: n })),
+    setSuggestedPalAsDiff: (n: StoreData["suggestedPalAsDiff"]) =>
+      persist((old) => ({ ...old, suggestedPalAsDiff: n })),
   };
 }
 

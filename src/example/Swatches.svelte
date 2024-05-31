@@ -83,22 +83,7 @@
   {#if !hideHeader}
     <div class="bg-stone-300 w-full justify-between flex p-1">Swatches</div>
   {/if}
-  <div style={`background-color: ${bg}; max-width: 600px`} class="flex p-1">
-    <div class="flex flex-col">
-      {#each colors as color, i}
-        <button
-          style={`background-color: ${color.color.toHex()};`}
-          class="wide-bar transition-all"
-          class:ml-5={focusSet.has(i)}
-          class:mr-5={!focusSet.has(i)}
-          on:click|preventDefault|stopPropagation={(e) =>
-            allowInteraction &&
-            focusStore.setColors(
-              dealWithFocusEvent(e, i, $focusStore.focusedColors)
-            )}
-        ></button>
-      {/each}
-    </div>
+  <div class="flex p-1 flex-wrap">
     <div class="flex flex-col flex-initial">
       <div class="flex">
         {#each classes as { className, styleMap, selectionClass }}
@@ -128,7 +113,7 @@
           </div>
         {/each}
       </div>
-      <div class="flex flex-wrap justify-center w-full">
+      <div class="flex flex-wrap justify-center">
         {#each colors as color, i}
           <button
             style={`color: ${color.color.toHex()}; transform: rotate(${
@@ -146,6 +131,21 @@
           </button>
         {/each}
       </div>
+    </div>
+    <div class="flex flex-col">
+      {#each colors as color, i}
+        <button
+          style={`background-color: ${color.color.toHex()};`}
+          class="wide-bar transition-all w-full"
+          class:ml-5={focusSet.has(i)}
+          class:mr-5={!focusSet.has(i)}
+          on:click|preventDefault|stopPropagation={(e) =>
+            allowInteraction &&
+            focusStore.setColors(
+              dealWithFocusEvent(e, i, $focusStore.focusedColors)
+            )}
+        ></button>
+      {/each}
     </div>
   </div>
 </div>

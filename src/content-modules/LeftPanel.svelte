@@ -5,12 +5,12 @@
   import Nav from "../components/Nav.svelte";
   import NewPal from "../controls/NewPal.svelte";
   import EvalColorColumn from "../linting/EvalColorColumn.svelte";
+  import SetSimulation from "../controls/SetSimulation.svelte";
+  import Zoom from "../controls/Zoom.svelte";
 
   import Config from "../controls/Config.svelte";
   import Controls from "./Controls.svelte";
-  import { denseButtonStyle } from "../lib/styles";
-
-  import SavedPals from "./SavedPals.svelte";
+  import { denseButtonStyle, buttonStyle } from "../lib/styles";
 
   $: leftPanelTabs = ["controls", "colors"];
 
@@ -47,6 +47,15 @@
         </button>
       </div>
       <Config />
+    </div>
+    <div class="flex w-full justify-between items-start">
+      <SetSimulation />
+      <Zoom />
+      <div>
+        <button class={buttonStyle} on:click={() => configStore.setTour(true)}>
+          Tour
+        </button>
+      </div>
     </div>
     <div class="flex justify-center z-50"></div>
   </section>

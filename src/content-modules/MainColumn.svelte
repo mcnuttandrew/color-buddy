@@ -28,7 +28,7 @@
   <!-- naming stuff -->
   <div class="flex font-bold justify-between">
     <div class="flex">
-      <span class="italic">Current Pal:</span>
+      <span class="italic">Current:</span>
       <div class="flex">
         <ContentEditable
           onChange={(x) => colorStore.setCurrentPalName(x)}
@@ -110,6 +110,7 @@
       setExampleIdx={(idx) => configStore.setMainColumnSelectedExample(idx)}
       allowModification={true}
       bgColor={currentPal.background.toHex()}
+      size={scatterSize}
     />
   </div>
 </div>

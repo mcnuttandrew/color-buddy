@@ -72,7 +72,9 @@
 
 <div class="bg-stone-300 py-2 px-6 flex">
   <PreviewSelector exampleName={example?.name || "Discs"} />
-  <NewExampleModal editTarget={null} onClose={() => {}} />
+  <div>
+    <NewExampleModal editTarget={null} onClose={() => {}} />
+  </div>
   <ColorSimControl />
 </div>
 

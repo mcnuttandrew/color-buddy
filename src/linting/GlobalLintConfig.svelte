@@ -80,6 +80,6 @@
     </div>
   </div>
   <button slot="target" let:toggle on:click={toggle} class={buttonStyle}>
-    SETTINGS
+    Settings
   </button>
 </Tooltip>

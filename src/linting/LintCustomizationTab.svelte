@@ -15,6 +15,7 @@
   import LintCustomizationPreview from "./LintCustomizationPreview.svelte";
   import NewLintSuggestion from "./NewLintSuggestion.svelte";
   import LintCustomizationAddTest from "./LintCustomizationAddTest.svelte";
+  export let maxWidth: number;
 
   $: lint = $lintStore.lints.find(
     (lint) => lint.id === $lintStore.focusedLint
@@ -185,7 +186,7 @@
       </div>
     </div>
 
-    <div class="px-4 flex flex-col">
+    <div class="px-4 flex flex-col" style={`max-width: ${maxWidth}px`}>
       <!-- MAIN CONTENT -->
       <div class="flex flex-col">
         <div class="font-bold">Lint Name:</div>
@@ -200,7 +201,7 @@
           }}
         />
       </div>
-      <div class="flex">
+      <div class="flex flex-wrap">
         <div>
           <div class="font-bold">Lint Level:</div>
           <select

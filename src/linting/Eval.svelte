@@ -16,6 +16,7 @@
   import type { LintResult } from "../lib/ColorLint";
 
   import { loadLints } from "../lib/api-calls";
+  export let maxWidth: number;
 
   $: currentPal = $colorStore.palettes[$colorStore.currentPal];
   $: evalConfig = currentPal.evalConfig;
@@ -82,11 +83,10 @@
       configStore.setEvalDisplayMode(x);
     }}
   />
-  <GlobalLintConfig />
 </div>
 <div class="flex h-full bg-stone-100">
   {#if displayMode === "lint-customization"}
-    <LintCustomizationModal />
+    <LintCustomizationModal {maxWidth} />
   {:else}
     {#if showEvalColumn}
       <div class="bg-stone-300">
@@ -94,7 +94,10 @@
       </div>
     {/if}
     <div class="flex flex-col ml-2">
-      <div class="overflow-auto h-full max-w-lg mb-28 px-2">
+      <div
+        class="overflow-auto h-full max-w-lg mb-28 px-2"
+        style={`max-width: ${maxWidth - 4}px`}
+      >
         <div class="flex items-start justify-start">
           {#if Object.keys(currentPal.evalConfig)}
             <div>
@@ -107,6 +110,7 @@
             </div>
           {/if}
           <NewLintSuggestion />
+          <GlobalLintConfig />
         </div>
         <div class="text-sm">
           This collection of checks (called lints) validates whether or not your

@@ -66,15 +66,39 @@
   $: globalString, updateSearchDebounced([currentPal, globalString]);
 
   let innerWidth = window.innerWidth;
-  $: scatterSize = Math.max(Math.min(innerWidth * 0.3, 450), 350);
+  let leftPanelWidth = 320;
+  $: columnWidth = (innerWidth - leftPanelWidth) / 2;
+  const padding = 40;
+  const zWidth = 110;
+  $: scatterSize = Math.max(Math.min(columnWidth - zWidth - padding, 420), 200);
 </script>
 
 <main class="flex h-full">
   <LeftPanel />
   <div class="h-full flex flex-col grow main-content">
-    <div class="flex w-full grow overflow-auto">
+    <div class="bg-stone-800">
+      <div class="flex">
+        {#each [{ tabs: palettesTabs, name: "Palettes" }, { tabs: currentPalTabs, name: "Current Palette" }] as { tabs, name }}
+          <div class="flex flex-col relative">
+            <div class="uppercase text-xs text-white absolute italic left-2">
+              {name}
+            </div>
+            <Nav
+              className="bg-stone-800 text-white h-12 items-center"
+              {tabs}
+              isTabSelected={(x) => $configStore.route === x}
+              selectTab={(x) => {
+                // @ts-ignore
+                configStore.setRoute(x);
+              }}
+            />
+          </div>
+        {/each}
+      </div>
+    </div>
+    <div class="flex w-full grow overflow-y-auto overflow-x-hidden">
       <div class="flex flex-col">
-        <div class="w-full flex bg-stone-800 px-2 py-3 text-white">
+        <!-- <div class="w-full flex bg-stone-800 px-2 py-3 text-white">
           <SetSimulation />
           <Zoom />
           <div>
@@ -85,7 +109,7 @@
               Tour
             </button>
           </div>
-        </div>
+        </div> -->
         {#if palPresent}
           <MainColumn {scatterSize} />
         {:else}
@@ -99,7 +123,7 @@
       </div>
 
       <div class="grow" id="right-col">
-        <div class="bg-stone-800">
+        <!-- <div class="bg-stone-800">
           <div class="flex">
             {#each [{ tabs: palettesTabs, name: "Palettes" }, { tabs: currentPalTabs, name: "Current Palette" }] as { tabs, name }}
               <div class="flex flex-col relative">
@@ -120,14 +144,14 @@
               </div>
             {/each}
           </div>
-        </div>
+        </div> -->
         {#if palPresent}
           {#if $configStore.route === "examples"}
             <Examples />
           {:else if $configStore.route === "compare"}
             <ComparePal {scatterSize} />
           {:else if $configStore.route === "eval"}
-            <Eval />
+            <Eval maxWidth={columnWidth} />
           {:else if $configStore.route === "manage"}
             <Manage />
           {:else if $configStore.route === "browse"}

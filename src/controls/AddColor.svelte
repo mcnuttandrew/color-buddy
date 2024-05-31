@@ -50,7 +50,6 @@
   <div class="flex w-full justify-between items-center">
     <AutocompleteOrSearch
       setValue={(x) => {
-        console.log("x", x);
         const newColor = wrapInBlankSemantics(
           Color.colorFromString(x, colorSpace)
         );

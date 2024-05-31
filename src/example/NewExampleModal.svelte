@@ -6,7 +6,6 @@
     modifySVGForExampleStore,
   } from "../stores/example-store";
   import colorStore from "../stores/color-store";
-  import type { Palette } from "../types";
 
   import Modal from "../components/Modal.svelte";
   import { buttonStyle } from "../lib/styles";
@@ -61,6 +60,7 @@
     showModal={true}
     closeModal={() => {
       modalState = "closed";
+      onClose();
     }}
   >
     <div class="bg-stone-200 h-12 flex justify-between items-center px-4">
@@ -80,7 +80,29 @@
         {/each}
       </div>
     </div>
-    <div class="h-96 overflow-auto px-4" style="width: 700px;">
+    <div class="h-full px-4" style="width: 700px;">
+      <div>
+        {#if modalState === "input-svg"}
+          <p>
+            Paste in the contents of an SVG file. After you are satisfied with
+            the SVG, you can automatically extract the colors from the SVG and
+            add it as an example.
+          </p>
+        {/if}
+        {#if modalState === "input-vega"}
+          <p>
+            Paste in a Vega or Vega-Lite JSON specification. After you are
+            satisfied with the JSON, you can add it as an example. You can find
+            examples to use at the <a
+              class="underline text-blue-500"
+              href="https://vega.github.io/vega-lite/examples/"
+            >
+              Vega-Lite Gallery
+            </a>
+            .
+          </p>
+        {/if}
+      </div>
       <div>
         {#if modalState === "input-svg" || modalState === "input-vega"}
           Demos:
@@ -110,6 +132,7 @@
       {#if modalState === "input-svg"}
         <MonacoEditor language="xml" onChange={(x) => (value = x)} {value} />
         <div>
+          <label class={buttonStyle} for="fileUpload">Or upload a file</label>
           <input
             accept="image/svg"
             id="fileUpload"
@@ -117,14 +140,10 @@
             type="file"
             on:change={(e) => fileUpload(e)}
           />
-          <label for="fileUpload">Or upload a file</label>
         </div>
       {/if}
 
       {#if modalState === "input-vega"}
-        {#if !validJSON}
-          <div class="text-red-500">Invalid JSON</div>
-        {/if}
         <MonacoEditor language="json" onChange={(x) => (value = x)} {value} />
       {/if}
 
@@ -183,7 +202,9 @@
         </div>
       {/if}
     </div>
-    <div>
+    <div class="px-4">
+      <div>Next Step</div>
+
       {#if modalState === "edit-colors"}
         <button
           class={buttonStyle}
@@ -193,6 +214,7 @@
               svg,
               numColors: detectedColors.length,
               name: "Custom Example",
+              size: 250,
             };
             if (editTarget !== null) {
               exampleStore.updateExample(example, editTarget);
@@ -234,6 +256,9 @@
           Mark Colors
         </button>
       {/if}
+      {#if modalState === "input-vega" && !validJSON}
+        <div class="text-red-500">Invalid JSON</div>
+      {/if}
       {#if modalState === "input-vega" && validJSON}
         <button
           class={buttonStyle}
@@ -259,6 +284,7 @@
   class={buttonStyle}
   on:click={() => {
     modalState = "input-svg";
+    value = "";
   }}
 >
   Add New Example

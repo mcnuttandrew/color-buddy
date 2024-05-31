@@ -54,6 +54,10 @@
         action: () => exampleStore.deleteExample(idx),
       },
       {
+        name: "Duplicate",
+        action: () => exampleStore.duplicateExample(idx),
+      },
+      {
         name: "Hide",
         action: () => exampleStore.toggleHidden(idx),
       },
@@ -162,7 +166,7 @@
   </div>
 </div>
 <div
-  class="flex flex-wrap overflow-auto p-4 w-full bg-stone-100"
+  class="flex flex-wrap overflow-auto p-4 w-full bg-stone-100 pb-20"
   style={`height: calc(100% - 100px)`}
 >
   {#if $configStore.exampleRoute === "swatches"}

@@ -2,44 +2,56 @@
   import { Color } from "../lib/Color";
   import type { ColorWrap } from "../types";
   import configStore from "../stores/config-store";
-  import { wrapInBlankSemantics } from "../lib/utils";
+  import { wrapInBlankSemantics, processBodyTextToColors } from "../lib/utils";
 
   let state: "idle" | "error" = "idle";
   export let onChange: (colors: ColorWrap<Color>[]) => void;
   export let colors: ColorWrap<Color>[];
   export let colorSpace: string;
+  let errorMsg = "";
 
   function processBodyInput(body: string) {
+    console.log("asd");
     try {
-      const newColors = body
-        .split(",")
-        .map((x) => x.replace(/"/g, "").trim())
-        // remove all parens and brackets
-        .map((x) => x.replace(/[\(\)\[\]]/g, ""))
-        .filter((x) => x.length > 0)
-        .map((x) => Color.colorFromString(x, colorSpace as any))
-        .map((x, idx) => {
+      const newColors = processBodyTextToColors(body, colorSpace).map(
+        (x, idx) => {
           if (colors[idx]) {
             return { ...colors[idx], color: x };
           } else {
             return wrapInBlankSemantics(x);
           }
-        });
+        }
+      );
       onChange(newColors);
       state = "idle";
     } catch (e) {
       console.error(e);
+      errorMsg = e.message;
       state = "error";
       return;
     }
   }
   $: includeQuotes = $configStore.includeQuotes;
+  $: console.log("state", state);
 </script>
 
 <div class="w-full border-t-2 border-black my-2"></div>
 <div class="mt-2">
+  <div class="flex justify-between w-full text-sm">
+    <label for="current-colors">Current Colors</label>
+    <div class="flex items-center">
+      <label for="include-quotes" class="mr-2">Include quotes</label>
+      <input
+        type="checkbox"
+        id="include-quotes"
+        class="mr-2"
+        checked={includeQuotes}
+        on:change={() => configStore.setIncludeQuotes(!includeQuotes)}
+      />
+    </div>
+  </div>
   {#if state === "error"}
-    <div class="text-red-500">Error parsing colors</div>
+    <div class="text-red-500">Error parsing colors. {errorMsg}</div>
   {/if}
   <textarea
     id="current-colors"
@@ -57,19 +69,6 @@
     }}
     on:change={(e) => processBodyInput(e.currentTarget.value)}
   />
-  <div class="flex justify-between w-full text-sm">
-    <label for="current-colors">Current Colors</label>
-    <div class="flex items-center">
-      <label for="include-quotes" class="mr-2">Include quotes</label>
-      <input
-        type="checkbox"
-        id="include-quotes"
-        class="mr-2"
-        checked={includeQuotes}
-        on:change={() => configStore.setIncludeQuotes(!includeQuotes)}
-      />
-    </div>
-  </div>
 </div>
 
 <style>

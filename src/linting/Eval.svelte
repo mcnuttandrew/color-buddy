@@ -84,7 +84,7 @@
     }}
   />
 </div>
-<div class="flex h-full bg-stone-100">
+<div class="flex h-full bg-stone-100" style={`width: ${maxWidth}px`}>
   {#if displayMode === "lint-customization"}
     <LintCustomizationModal {maxWidth} />
   {:else}

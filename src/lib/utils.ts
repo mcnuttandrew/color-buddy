@@ -759,3 +759,19 @@ export function splitMessageIntoTextAndColors(message: string): ParseBlock[] {
 
   return output;
 }
+
+export function processBodyTextToColors(body: string, colorSpace: string) {
+  return body
+    .split(",")
+    .map((x) =>
+      x
+        // remove all quotes
+        .replace(/"/g, "")
+        .replace(/'/g, "")
+        // remove all parens and brackets
+        .replace(/[\(\)\[\]]/g, "")
+        .trim()
+    )
+    .filter((x) => x.length > 0)
+    .map((x) => Color.colorFromString(x, colorSpace as any, true));
+}

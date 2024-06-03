@@ -137,7 +137,4 @@
   .main-content {
     min-width: 0;
   }
-  .top-bar {
-    min-height: 50px !important;
-  }
 </style>

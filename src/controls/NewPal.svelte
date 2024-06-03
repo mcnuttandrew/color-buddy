@@ -4,6 +4,7 @@
 
   import type { StringPalette, Palette } from "../types";
 
+  import { processBodyTextToColors } from "../lib/utils";
   import { buttonStyle, denseButtonStyle } from "../lib/styles";
   import Tooltip from "../components/Tooltip.svelte";
   import {
@@ -21,10 +22,12 @@
       const color = Color.colorFromString(x.color, colorSpace);
       return wrapInBlankSemantics(color);
     });
+    const background = Color.colorFromString(newPal.background, colorSpace);
+    console.log(background.toHex(), newPal.background);
     const pal = {
       ...newPal,
       colors,
-      background: Color.colorFromString(newPal.background, colorSpace),
+      background,
       colorSpace,
     } as Palette;
     colorStore.createNewPal(pal);
@@ -32,12 +35,11 @@
 
   let inputString = "";
   function processBodyInput(body: string) {
+    if (body.length === 0) {
+      return;
+    }
     try {
-      const newColors = body
-        .split(",")
-        .map((x) => x.replace(/"/g, "").trim())
-        .filter((x) => x.length > 0)
-        .map((x) => Color.colorFromString(x, colorSpace as any));
+      const newColors = processBodyTextToColors(body, colorSpace as any);
       newPal(createPalFromHexes(newColors.map((x) => x.toHex())));
     } catch (e) {
       console.error(e);
@@ -103,12 +105,12 @@
       on:keydown={(e) => {
         if (e.key === "Enter") {
           e.preventDefault();
-          processBodyInput(e.currentTarget.value);
           e.currentTarget.blur();
         }
       }}
-      on:change={(e) => {
+      on:blur={(e) => {
         processBodyInput(e.currentTarget.value);
+        inputString = "";
       }}
     />
     <div class="mt-5 border-t-2 border-black"></div>

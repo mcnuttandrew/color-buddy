@@ -11,7 +11,6 @@
   export let paletteIdx: number;
   export let allowInteraction: boolean = true;
   export let hideHeader: boolean = false;
-  export let bg: string;
 
   $: currentPal = $colorStore.palettes[paletteIdx];
   $: colors = currentPal?.colors || [];

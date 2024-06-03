@@ -29,6 +29,7 @@ export class Color {
     if (hexCache.has(str)) {
       return hexCache.get(str) as string;
     }
+
     const newHex = this.toColorIO().to("srgb").toString({ format: "hex" });
     hexCache.set(str, newHex);
     return newHex;
@@ -73,21 +74,6 @@ export class Color {
     const result = this.toColorIO().inGamut("srgb");
     this.cachedInGamut = result;
     return result;
-
-    // // return new ColorIO(this.spaceName, this.toChannels()).inGamut();
-    // let clr = this.toColorIO().to("srgb", { inGamut: false });
-    // let cssColor = clr.display();
-    // // cssColor.color.inGamut();
-    // return cssColor.color.inGamut();
-
-    // const x = this.toHex();
-    // const y = this.toColorIO().to("srgb").toString({ format: "hex" });
-    // if (x !== y) {
-    //   console.log("x", x, "y", y);
-    // }
-    // const result = x === y;
-    // this.cachedInGamut = result;
-    // return result;
   }
   toColorIO(): ColorIO {
     if (this.cachedColorIO) {
@@ -103,9 +89,10 @@ export class Color {
     }
   }
 
-  fromString(colorString: string): Color {
-    if (stringChannelsCache.has(colorString)) {
-      return this.fromChannels(stringChannelsCache.get(colorString)!);
+  fromString(colorString: string, allowError?: boolean): Color {
+    let key = `${colorString}-${this.spaceName}`;
+    if (stringChannelsCache.has(key)) {
+      return this.fromChannels(stringChannelsCache.get(key)!);
     }
     // const isTargetSpace = colorString.startsWith(`${this.spaceName}(`);
     // const isHex = colorString.startsWith("#");
@@ -120,11 +107,13 @@ export class Color {
       try {
         channels = new ColorIO(`#${colorString}`).to(this.spaceName).coords;
       } catch (e) {
-        console.log("error", e, colorString);
+        if (allowError) {
+          throw new Error("Invalid color string: " + colorString);
+        }
         channels = [0, 0, 0];
       }
     }
-    stringChannelsCache.set(colorString, channels);
+    stringChannelsCache.set(key, channels.map((x) => Number(x)) as Channels);
     return this.fromChannels(channels);
   }
   fromChannels(channels: Channels): Color {
@@ -445,9 +434,13 @@ class CAM16 extends Color {
 
 function colorFromString(
   colorString: string,
-  colorSpace: keyof typeof colorDirectory = "lab"
+  colorSpace: keyof typeof colorDirectory = "lab",
+  allowError?: boolean
 ): Color {
-  const result = new colorDirectory[colorSpace]().fromString(colorString);
+  const result = new colorDirectory[colorSpace]().fromString(
+    colorString,
+    allowError
+  );
   return result;
 }
 

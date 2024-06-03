@@ -12,6 +12,7 @@
   import Controls from "./Controls.svelte";
   import { denseButtonStyle, buttonStyle } from "../lib/styles";
 
+  $: currentPal = $colorStore.palettes[$colorStore.currentPal];
   $: leftPanelTabs = ["controls", "colors"];
 
   $: {
@@ -72,10 +73,10 @@
       />
     </div>
     <div class="w-full border-t-2 border-black my-2"></div>
-    {#if $configStore.leftRoute === "controls"}
+    {#if $configStore.leftRoute === "controls" && currentPal}
       <Controls />
     {/if}
-    {#if $configStore.leftRoute === "colors"}
+    {#if $configStore.leftRoute === "colors" && currentPal}
       <EvalColorColumn />
     {/if}
   </section>

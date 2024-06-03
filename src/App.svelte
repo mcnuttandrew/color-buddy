@@ -98,28 +98,29 @@
         {#if palPresent}
           <MainColumn {scatterSize} />
         {:else}
-          <div class="flex-grow flex justify-center items-center">
+          <div
+            class="flex-grow flex justify-center items-center"
+            style={`width: ${columnWidth}px`}
+          >
             <div class="text-2xl max-w-md text-center">
               No palettes present, click "New" in the upper left to create a new
-              one
+              one, or "Browse" to pick from existing ones.
             </div>
           </div>
         {/if}
       </div>
 
       <div class="grow" id="right-col">
-        {#if palPresent}
-          {#if $configStore.route === "examples"}
-            <Examples />
-          {:else if $configStore.route === "compare"}
-            <ComparePal {scatterSize} />
-          {:else if $configStore.route === "eval"}
-            <Eval maxWidth={columnWidth} />
-          {:else if $configStore.route === "manage"}
-            <Manage />
-          {:else if $configStore.route === "browse"}
-            <NewBrowse />
-          {/if}
+        {#if palPresent && $configStore.route === "examples"}
+          <Examples />
+        {:else if palPresent && $configStore.route === "compare"}
+          <ComparePal {scatterSize} />
+        {:else if palPresent && $configStore.route === "eval"}
+          <Eval maxWidth={columnWidth} />
+        {:else if $configStore.route === "manage"}
+          <Manage />
+        {:else if $configStore.route === "browse"}
+          <NewBrowse />
         {/if}
       </div>
     </div>

@@ -23,7 +23,6 @@
   ] as any;
 
   function usePal(palette: Palette) {
-    console.log("Using palette", palette);
     colorStore.createNewPal(palette);
     focusStore.clearColors();
     configStore.setRoute("examples");

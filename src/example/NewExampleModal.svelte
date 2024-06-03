@@ -18,7 +18,7 @@
   export let onClose: () => void;
   let value = "";
   $: currentPal = $colorStore.palettes[$colorStore.currentPal];
-  $: colorSpace = currentPal.colorSpace;
+  $: colorSpace = currentPal?.colorSpace || "lab";
 
   $: detectedColors = [] as string[];
 

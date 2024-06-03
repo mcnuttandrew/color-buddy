@@ -78,11 +78,13 @@
 <Tooltip {positionAlongRightEdge}>
   <div slot="content" let:onClick class="max-w-2xl eval-tooltip">
     <div class="font-bold">{check.name}</div>
-    {#if check.passes || ignored}
-      <div class="text-sm">{check.description}</div>
-    {:else}
-      <ExplanationViewer {check} />
-    {/if}
+    <div class="max-h-52 overflow-y-auto">
+      {#if check.passes || ignored}
+        <div class="text-sm">{check.description}</div>
+      {:else}
+        <ExplanationViewer {check} />
+      {/if}
+    </div>
 
     <div class="font-bold mt-4">Actions</div>
     {#if cbMatch}

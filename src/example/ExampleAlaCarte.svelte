@@ -11,10 +11,8 @@
   export let paletteIdx: number;
   export let allowModification: boolean = false;
   export let bgColor: string = "white";
-  $: example = {
-    ...$exampleStore.examples[exampleIdx],
-    size: 400,
-  } as any;
+  export let size: number = 400;
+  $: example = { ...$exampleStore.examples[exampleIdx], size } as any;
   $: palette = $colorStore.palettes[paletteIdx];
 </script>
 

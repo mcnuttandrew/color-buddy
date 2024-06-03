@@ -26,6 +26,7 @@
 
   export let width = 256;
   export let height = 256;
+  $: zWidth = 80;
   export let onColorsChange: (color: ColorWrap<Color>[]) => void;
   export let onFocusedColorsChange: (color: number[]) => void;
   export let startDragging: () => void;
@@ -133,7 +134,7 @@
     fill: color.toDisplay(),
     x: 10 - (focusSet.has(i) ? 5 : 0),
     height: 5,
-    width: 80 - 10 * 2 + (focusSet.has(i) ? 10 : 0),
+    width: zWidth - 10 * 2 + (focusSet.has(i) ? 10 : 0),
   });
   $: outerDottedBoxStyle = {
     fill: "white",
@@ -269,10 +270,10 @@
     opacity: 0,
     fill: "white",
   };
-  const fillParamsZ = {
+  $: fillParamsZ = {
     x: margin.left,
     y: 0,
-    width: 80,
+    width: zWidth,
     height,
     opacity: 0,
     fill: "white",
@@ -524,7 +525,7 @@
     <!-- svelte-ignore a11y-no-static-element-interactions -->
     <div class="flex h-full">
       <div class="flex flex-col">
-        <svg {height} width={80 + margin.left + margin.right} class="mt-1">
+        <svg {height} width={zWidth + margin.left + margin.right} class="mt-1">
           <ColorScatterPlotZGuide {...guideProps} {zScale} {margin} />
           <rect
             {...fillParamsZ}
@@ -584,7 +585,7 @@
               <rect
                 x={5}
                 y={pos.zPos - 5}
-                width={80 - 10}
+                width={zWidth - 10}
                 height={pos.selectionDepth + 15}
                 {...outerDottedBoxStyle}
                 on:touchstart|preventDefault={(e) => dragStart(e)}
@@ -600,7 +601,7 @@
               <rect
                 {...selectionBoxStyle}
                 x={margin.left + 5}
-                width={80 - 10}
+                width={zWidth - 10}
               />
             {/if}
             <!-- selection target -->

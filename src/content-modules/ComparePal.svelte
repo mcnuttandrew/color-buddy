@@ -37,8 +37,7 @@
   let colorSpace = ComparisonPal?.colorSpace || "lab";
 </script>
 
-<!-- style={`max-width: ${scatterSize + 150}px`} -->
-<div>
+<div class="w-full">
   <div class="flex flex-col w-full">
     <div class="w-full bg-stone-200 px-6 flex flex-col">
       <div class="font-bold italic">
@@ -73,7 +72,7 @@
     </div>
     {#if ComparisonPal !== undefined}
       <!-- keep even with the tags line -->
-      <div class="flex">
+      <div class="flex flex-wrap w-full">
         <SetColorSpace
           {colorSpace}
           onChange={(space) => {
@@ -150,17 +149,18 @@
         setExampleIdx={(idx) => configStore.setCompareSelectedExample(idx)}
         allowModification={false}
         bgColor={bg}
+        size={scatterSize}
       />
     </div>
   {/if}
 </div>
 
 <style>
-  .empty-pal-holder {
+  /* .empty-pal-holder {
     height: 600px;
     width: 600px;
   }
   .example-holder {
     width: 600px;
-  }
+  } */
 </style>

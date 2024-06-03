@@ -23,7 +23,6 @@
   ] as any;
 
   function usePal(palette: Palette) {
-    console.log("Using palette", palette);
     colorStore.createNewPal(palette);
     focusStore.clearColors();
     configStore.setRoute("examples");
@@ -33,7 +32,9 @@
 <div class="bg-stone-300 py-2 px-6">
   <div class="flex">
     <PreviewSelector exampleName={example?.name || "Discs"} />
-    <NewExampleModal editTarget={null} onClose={() => {}} />
+    <div>
+      <NewExampleModal editTarget={null} onClose={() => {}} />
+    </div>
     <ColorSimControl />
   </div>
   <div class="flex">

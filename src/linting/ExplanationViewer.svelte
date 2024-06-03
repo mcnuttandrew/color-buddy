@@ -3,47 +3,12 @@
   import colorStore from "../stores/color-store";
   import type { LintResult } from "../lib/ColorLint";
 
-  import { dealWithFocusEvent } from "../lib/utils";
+  import {
+    dealWithFocusEvent,
+    splitMessageIntoTextAndColors,
+  } from "../lib/utils";
 
   export let check: LintResult;
-
-  type ParseBlock = { content: string; type: "text" | "color" };
-  function splitMessageIntoTextAndColors(message: string): ParseBlock[] {
-    const output = [] as ParseBlock[];
-    let currentTextBlock = "";
-    let idx = 0;
-    while (idx < message.length) {
-      if (message[idx] === "#") {
-        const allowedChars = new Set("0123456789abcdefABCDEF");
-        let hexLength = 0;
-        while (
-          allowedChars.has(message[idx + hexLength + 1]) &&
-          hexLength < 7
-        ) {
-          hexLength++;
-        }
-        if (currentTextBlock.length > 0) {
-          output.push({ content: currentTextBlock, type: "text" });
-          currentTextBlock = "";
-        }
-        let color = message.slice(idx, idx + hexLength + 1);
-        if (hexLength === 3 || hexLength === 6) {
-          output.push({ content: color, type: "color" });
-        } else {
-          output.push({ content: color, type: "text" });
-        }
-        idx += hexLength;
-      } else {
-        currentTextBlock += message[idx];
-      }
-      idx++;
-    }
-    if (currentTextBlock.length > 0) {
-      output.push({ content: currentTextBlock, type: "text" });
-    }
-
-    return output;
-  }
 
   $: currentPal = $colorStore.palettes[$colorStore.currentPal];
   $: colors = currentPal.colors;

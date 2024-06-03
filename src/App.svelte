@@ -26,11 +26,8 @@
   import ComparePal from "./content-modules/ComparePal.svelte";
   import Manage from "./content-modules/Manage.svelte";
   import MainColumn from "./content-modules/MainColumn.svelte";
-  import SetSimulation from "./controls/SetSimulation.svelte";
-  import Zoom from "./controls/Zoom.svelte";
   import NewBrowse from "./content-modules/NewBrowse.svelte";
   import TourProvider from "./content-modules/TourProvider.svelte";
-  import { buttonStyle } from "./lib/styles";
 
   const palettesTabs = ["manage", "browse"];
 
@@ -98,18 +95,6 @@
     </div>
     <div class="flex w-full grow overflow-y-auto overflow-x-hidden">
       <div class="flex flex-col">
-        <!-- <div class="w-full flex bg-stone-800 px-2 py-3 text-white">
-          <SetSimulation />
-          <Zoom />
-          <div>
-            <button
-              class={buttonStyle}
-              on:click={() => configStore.setTour(true)}
-            >
-              Tour
-            </button>
-          </div>
-        </div> -->
         {#if palPresent}
           <MainColumn {scatterSize} />
         {:else}
@@ -123,28 +108,6 @@
       </div>
 
       <div class="grow" id="right-col">
-        <!-- <div class="bg-stone-800">
-          <div class="flex">
-            {#each [{ tabs: palettesTabs, name: "Palettes" }, { tabs: currentPalTabs, name: "Current Palette" }] as { tabs, name }}
-              <div class="flex flex-col relative">
-                <div
-                  class="uppercase text-xs text-white absolute italic left-2"
-                >
-                  {name}
-                </div>
-                <Nav
-                  className="bg-stone-800 text-white h-12 items-center"
-                  {tabs}
-                  isTabSelected={(x) => $configStore.route === x}
-                  selectTab={(x) => {
-                    // @ts-ignore
-                    configStore.setRoute(x);
-                  }}
-                />
-              </div>
-            {/each}
-          </div>
-        </div> -->
         {#if palPresent}
           {#if $configStore.route === "examples"}
             <Examples />

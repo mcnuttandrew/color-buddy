@@ -27,7 +27,6 @@
   export let width = 256;
   export let height = 256;
   $: zWidth = 80;
-  // $: zWidth = Math.min(Math.max(width / 4, 40), 80);
   export let onColorsChange: (color: ColorWrap<Color>[]) => void;
   export let onFocusedColorsChange: (color: number[]) => void;
   export let startDragging: () => void;
@@ -271,7 +270,7 @@
     opacity: 0,
     fill: "white",
   };
-  const fillParamsZ = {
+  $: fillParamsZ = {
     x: margin.left,
     y: 0,
     width: zWidth,

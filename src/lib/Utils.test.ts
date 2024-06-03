@@ -56,6 +56,7 @@ const rvColorsShort = `
   '#EF5D28'
 ]
 `;
+// color spaces
 const spaces = [
   "lab",
   "hsl",
@@ -64,8 +65,6 @@ const spaces = [
   "hsv",
 ];
 test("processBodyTextToColors", async () => {
-  // color spaces
-
   spaces.forEach((space) => {
     console.log(space);
     const result1 = processBodyTextToColors(reactVisColors, space);

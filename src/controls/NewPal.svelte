@@ -39,19 +39,8 @@
       return;
     }
     try {
-      // const newColors = body
-      //   .split(",")
-      //   .map((x) => x.replace(/"/g, "").trim())
-      //   .filter((x) => x.length > 0)
-      const newColors = processBodyTextToColors(body, colorSpace as any).map(
-        (x) => x.toHex()
-      );
-      const builtPal = createPalFromHexes(newColors);
-      console.log(builtPal);
-      // .map(
-      //   (x) => Color.colorFromString(x, colorSpace as any)
-      // );
-      newPal(builtPal);
+      const newColors = processBodyTextToColors(body, colorSpace as any);
+      newPal(createPalFromHexes(newColors.map((x) => x.toHex())));
     } catch (e) {
       console.error(e);
       return;

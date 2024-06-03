@@ -11,7 +11,6 @@
   let errorMsg = "";
 
   function processBodyInput(body: string) {
-    console.log("asd");
     try {
       const newColors = processBodyTextToColors(body, colorSpace).map(
         (x, idx) => {
@@ -26,13 +25,12 @@
       state = "idle";
     } catch (e) {
       console.error(e);
-      errorMsg = e.message;
+      errorMsg = (e as any)?.message;
       state = "error";
       return;
     }
   }
   $: includeQuotes = $configStore.includeQuotes;
-  $: console.log("state", state);
 </script>
 
 <div class="w-full border-t-2 border-black my-2"></div>

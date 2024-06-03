@@ -765,6 +765,7 @@ export function processBodyTextToColors(body: string, colorSpace: string) {
     .split(",")
     .map((x) =>
       x
+        // remove all quotes
         .replace(/"/g, "")
         .replace(/'/g, "")
         // remove all parens and brackets
@@ -772,9 +773,5 @@ export function processBodyTextToColors(body: string, colorSpace: string) {
         .trim()
     )
     .filter((x) => x.length > 0)
-    .map((x) => {
-      // console.log(x, Color.colorFromString(x, colorSpace as any).toHex());
-      return x;
-    })
     .map((x) => Color.colorFromString(x, colorSpace as any, true));
 }

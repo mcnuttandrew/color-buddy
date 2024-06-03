@@ -29,21 +29,6 @@ export class Color {
     if (hexCache.has(str)) {
       return hexCache.get(str) as string;
     }
-    // const newColor = this.toColorIO().to("srgb");
-    // console.log(this.channels, newColor.coords);
-    // // convert [0, 1] to [0, 255] hex value
-    // const clamp = (x: number) => Math.min(255, Math.max(0, x));
-    // const coordAsHex = newColor.coords.map((x) =>
-    //   clamp(Math.round(x * 255))
-    //     .toString(16)
-    //     .padStart(2, "0")
-    // );
-
-    // let newHex = `#${coordAsHex.join("")}`;
-    // // if all channels are the same, return the three digit hex
-    // if (coordAsHex.every((x) => x[0] === x[1])) {
-    //   newHex = `#${coordAsHex[0][0]}${coordAsHex[1][0]}${coordAsHex[2][0]}`;
-    // }
 
     const newHex = this.toColorIO().to("srgb").toString({ format: "hex" });
     hexCache.set(str, newHex);

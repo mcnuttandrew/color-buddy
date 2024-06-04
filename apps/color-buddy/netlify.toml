@@ -1,0 +1,10 @@
+[dev]
+    targetPort = 5173
+    functionsPort = 8081
+    envFiles=[".env.development"]
+    framework = "vite"
+    
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200

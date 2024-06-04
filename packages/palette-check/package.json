@@ -1,0 +1,26 @@
+{
+  "name": "@color-buddy/palette-check",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "main": "src/main.ts",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage"
+  },
+  "devDependencies": {
+    "typescript": "^5.2.2",
+    "vite": "^5.2.0",
+    "vitest": "^1.6.0"
+  },
+  "dependencies": {
+    "@color-buddy/color-lists": "*",
+    "color-namer": "^1.4.0",
+    "colorjs.io": "^0.5.0",
+    "fracturedjsonjs": "^4.0.1"
+  }
+}

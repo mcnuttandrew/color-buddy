@@ -1,0 +1,19 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "width": 250,
+  "height": 200,
+  "data": { "url": "data/penguins.json" },
+  "mark": { "type": "area", "opacity": 0.5 },
+  "transform": [
+    {
+      "density": "Body Mass (g)",
+      "groupby": ["Species"],
+      "extent": [2500, 6500]
+    }
+  ],
+  "encoding": {
+    "x": { "field": "value", "type": "quantitative", "title": "Body Mass (g)" },
+    "y": { "field": "density", "type": "quantitative", "stack": null },
+    "color": { "field": "Species", "type": "nominal" }
+  }
+}

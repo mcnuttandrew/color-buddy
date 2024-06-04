@@ -49,7 +49,7 @@
       </div>
       <Config />
     </div>
-    <div class="flex w-full justify-between items-start">
+    <div class="flex w-full justify-between items-start flex-wrap">
       <SetSimulation />
       <Zoom />
       <div>

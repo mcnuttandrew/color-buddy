@@ -7,13 +7,6 @@ import type { CustomLint } from "../ColorLint";
 import { Color } from "../Color";
 import type { LintFixer } from "../linter-tools/lint-fixer";
 
-const getColorsCloseToBackground = (colors: Color[], background: Color) => {
-  return colors.reduce((acc, x, idx) => {
-    const pass = x.symmetricDeltaE(background) < 15;
-    return pass ? [...acc, idx] : acc;
-  }, [] as number[]);
-};
-
 type LintProgram = Parameters<typeof JSONToPrettyString>[0];
 const buildProgram = (level: number, textOnly: boolean): LintProgram => {
   const program: LintProgram = {
@@ -94,30 +87,51 @@ const contrastTextAAA: CustomLint = {
 
 export default [contrastGraphicalObjects, contrastTextAA, contrastTextAAA];
 
+const getColorsCloseToBackground = (colors: Color[], background: Color) => {
+  return colors.reduce((acc, x, idx) => {
+    const contrast = x.toColorIO().contrast(background.toColorIO(), "WCAG21");
+    return contrast <= 3 ? [...acc, idx] : acc;
+  }, [] as number[]);
+};
+
 export const fixBackgroundDifferentiability: LintFixer = async (palette) => {
   const { colors, background, colorSpace } = palette;
   const backgroundL = background.toColorIO().to("lab").coords[0];
   const bgCloserToWhite = backgroundL > 50;
   const clamp = (x: number) => Math.max(0, Math.min(100, x));
-  const newL = clamp(!bgCloserToWhite ? backgroundL * 1.5 : backgroundL * 0.5);
-  const colorsCloseToBackground = getColorsCloseToBackground(
+  // const newL = clamp(!bgCloserToWhite ? backgroundL * 1.5 : backgroundL * 0.5);
+  let colorsCloseToBackground = getColorsCloseToBackground(
     colors.map((x) => x.color),
     background
   );
-  const newColors = colors.map((x, idx) => {
-    if (!colorsCloseToBackground.includes(idx)) {
-      return x;
-    }
-    const color = colors[idx];
-    const newColor = Color.toColorSpace(color.color, "lab");
-    const [_l, a, b] = newColor.toChannels();
-    return {
-      ...x,
-      color: Color.toColorSpace(
-        newColor.fromChannels([newL, a, b]),
+  let insufficientContrast = true;
+  let newColors = colors;
+  let ticker = 0;
+  while (insufficientContrast && ticker < 100) {
+    ticker++;
+    getColorsCloseToBackground(
+      newColors.map((x) => x.color),
+      background
+    );
+    newColors = newColors.map((x, idx) => {
+      if (!colorsCloseToBackground.includes(idx)) {
+        return x;
+      }
+      const [l, a, b] = x.color.toColorSpace("lab").toChannels();
+      const newL = clamp(bgCloserToWhite ? l - 1 : l + 1);
+      const color = Color.colorFromChannels([newL, a, b], "lab").toColorSpace(
         colorSpace as any
-      ),
-    };
-  });
+      );
+      return { ...x, color };
+    });
+    colorsCloseToBackground = getColorsCloseToBackground(
+      newColors.map((x) => x.color),
+      background
+    );
+    if (colorsCloseToBackground.length === 0) {
+      insufficientContrast = false;
+    }
+  }
+
   return [{ ...palette, colors: newColors }];
 };

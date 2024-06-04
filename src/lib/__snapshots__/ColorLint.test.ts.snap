@@ -6,21 +6,21 @@ exports[`ColorLint - AvoidExtremes 2`] = `"Colors at either end of the lightness
 
 exports[`ColorLint - Background Contrast 1`] = `
 [
-  "#0ff",
-  "#00faff",
-  "#00e4ff",
-  "#777776",
-  "#0ff",
+  "#00a6a6",
+  "#00a4a9",
+  "#00a4bc",
+  "#949493",
+  "#00a6a6",
 ]
 `;
 
 exports[`ColorLint - Background Contrast 2`] = `
 [
-  "#006f70",
-  "#006f72",
-  "#006e7e",
-  "#fdfdfc",
-  "#006f70",
+  "#008081",
+  "#008286",
+  "#007f92",
+  "#737372",
+  "#008081",
 ]
 `;
 
@@ -46,7 +46,7 @@ exports[`ColorLint - CatOrderSimilarity 2`] = `"Some sequences of colors are too
 
 exports[`ColorLint - ColorNameDiscriminability 1`] = `"The following pairs of colors have the same name: "`;
 
-exports[`ColorLint - ColorNameDiscriminability 2`] = `"The following pairs of colors have the same name: #5260d1 and #005ebe"`;
+exports[`ColorLint - ColorNameDiscriminability 2`] = `"The following pairs of colors have the same name: #5260d1 and #684ac0"`;
 
 exports[`ColorLint - Contrast (1) GraphicalObjs 1`] = `"These colors () do not have a sufficient contrast do not have sufficient contrast with the background to be easily readable."`;
 

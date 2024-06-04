@@ -1,6 +1,6 @@
 import * as monaco from "monaco-editor";
 import chroma from "chroma-js";
-import { webColors } from "../lib/utils";
+import { webColors } from "../lib/color-lists";
 
 // Import the workers in a production-safe way.
 // This is different than in Monaco's documentation for Vite,

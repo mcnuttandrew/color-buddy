@@ -5,6 +5,7 @@
   export let runSearch: (x: string) => void;
   export let setValue: (x: string) => void;
   export let optionsAreColors: boolean = false;
+  import { colorCentersFromStoneHeer } from "../lib/color-lists";
   let value = "";
   let selectedIndex: number = -1;
 
@@ -86,7 +87,8 @@
             {#if optionsAreColors}
               <div
                 class="w-3 h-3 rounded-full mr-2"
-                style="background-color: {option}"
+                style="background-color: {colorCentersFromStoneHeer[option] ||
+                  option}"
               ></div>
             {/if}
 

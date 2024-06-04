@@ -628,7 +628,7 @@ Program:
 
 Description: Blue should be high probability for the basic color term blue. If it's not, it can be confusing to users.
 
-Natural Language: ALL a IN colors WHERE isTag(a, blue) SUCH THAT name(a) == blue
+Natural Language: ALL a IN colors WHERE isTag(a, blue) SUCH THAT name(a) == electricBlue
 
 Palettes that will fail this test:
 
@@ -638,7 +638,7 @@ Palettes that will fail this test:
 
 Palettes that will pass this test:
 
-- #00f (blue), #f00, #ffa500 with a #fff background
+- #00f (electricBlue), #f00, #ffa500 with a #fff background
 
 - #00f, #f00, #ffa500 with a #fff background
 
@@ -653,7 +653,7 @@ Program:
         "varb": "a", 
         "where": {"isTag": "a", "value": "blue"}, 
         "predicate": {
-            "==": { "left": {"name": "a"}, "right": "blue" }
+            "==": { "left": {"name": "a"}, "right": "electricBlue" }
         }
     }
 }
@@ -1532,7 +1532,7 @@ Natural Language: ALL a, b IN colors WHERE index(a) != index(b) SUCH THAT name(a
 
 Palettes that will fail this test:
 
-- #5260d1, #005ebe with a #fff background
+- #5260d1, #684ac0 with a #fff background
 
 
 

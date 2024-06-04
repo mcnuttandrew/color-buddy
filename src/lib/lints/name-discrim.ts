@@ -1,10 +1,25 @@
-import { JSONToPrettyString, makePalFromString } from "../utils";
+import {
+  JSONToPrettyString,
+  makePalFromString,
+  wrapInBlankSemantics,
+} from "../utils";
 import type { CustomLint } from "../ColorLint";
 import namer from "color-namer";
 import { Color } from "../Color";
 import type { Palette } from "../../types";
 import { titleCase } from "../utils";
 import type { LintFixer } from "../linter-tools/lint-fixer";
+import { colorCentersFromStoneHeer } from "../color-lists";
+
+const namerCustomList = Object.entries(colorCentersFromStoneHeer).map(
+  ([name, hex]) => ({ name, hex })
+);
+(namer as any).lists.heerStone = namerCustomList;
+
+const getNames = (hex: string): { heerStone: namer.Color[] } =>
+  (namer as any)(hex, {
+    pick: ["heerStone"],
+  });
 
 function findSmallest<A>(arr: A[], accessor: (x: A) => number): A {
   let smallest = arr[0];
@@ -25,7 +40,8 @@ export const getName = (color: Color) => {
   if (nameCache.has(hex)) {
     return nameCache.get(hex)!;
   }
-  const name = namer(hex, { pick: ["html"] });
+  // const name = namer(hex, { pick: ["html"] });
+  const name = getNames(hex);
   const guess = findSmallest<any>(
     Object.values(name).map((x: any) => x[0]),
     (x) => x.distance
@@ -34,15 +50,6 @@ export const getName = (color: Color) => {
   nameCache.set(hex, result);
   return result;
 };
-
-function suggestFixForColorsWithCommonNames(colors: Color[]): Color[] {
-  const hex = colors[0].toHex().toUpperCase();
-  let guesses = { ...namer(hex, { pick: ["html"] }) };
-  return [...colors].map((color, idx) => {
-    const newColor = guesses.html[idx];
-    return Color.colorFromHex(newColor.hex, color.spaceName);
-  });
-}
 
 const lint: CustomLint = {
   program: JSONToPrettyString({
@@ -68,7 +75,7 @@ const lint: CustomLint = {
   expectedPassingTests: [
     makePalFromString(["#000", "#fff", "#f00", "#0f0", "#00f"]),
   ],
-  expectedFailingTests: [makePalFromString(["#5260d1", "#005ebe"])],
+  expectedFailingTests: [makePalFromString(["#5260d1", "#684ac0"])],
 };
 export default lint;
 
@@ -76,20 +83,44 @@ export const fixColorNameDiscriminability: LintFixer = async (
   palette: Palette
 ) => {
   const colors = palette.colors;
-  const colorNamesByIndex = colors.reduce((acc, color, index) => {
+  const colorNames = colors.map((x) => getName(x.color));
+  const colorNameByIndex = colors.reduce((acc, color, index) => {
     const name = getName(color.color);
     acc[name] = (acc[name] || []).concat(index);
     return acc;
   }, {} as Record<string, number[]>);
-  const newColors = [...colors];
-  Object.values(colorNamesByIndex)
+  const conflictedIndices = Object.values(colorNameByIndex)
     .filter((x) => x.length > 1)
-    .forEach((indices) => {
-      const localColors = indices.map((i) => newColors[i].color);
-      const updatedColors = suggestFixForColorsWithCommonNames(localColors);
-      indices.forEach((i, j) => {
-        newColors[i] = { ...newColors[i], color: updatedColors[j] };
-      });
-    });
-  return [{ ...palette, colors: newColors }];
+    .flatMap((x) => x);
+  const nonConflictedNames = new Set<string>(
+    colorNames
+      .filter((_, x) => !conflictedIndices.includes(x))
+      .map((x) => x.toLowerCase())
+  );
+  const selectedNames = new Set<string>();
+
+  const updatedColors = Object.fromEntries(
+    conflictedIndices.map((idx) => {
+      const color = colors[idx].color;
+      const hex = color.toHex().toUpperCase();
+      const names = getNames(hex).heerStone;
+      const possibleNames = names.filter(
+        (x) =>
+          // don't try to take from the names that aren't conflicted
+          !nonConflictedNames.has(x.name) &&
+          // don't try to take from the names that have already been selected
+          !selectedNames.has(x.name)
+      );
+      const name = possibleNames[0];
+      selectedNames.add(name.name);
+      return [
+        idx,
+        wrapInBlankSemantics(Color.colorFromHex(name.hex, color.spaceName)),
+      ];
+    })
+  );
+
+  return [
+    { ...palette, colors: colors.map((x, idx) => updatedColors[idx] || x) },
+  ];
 };

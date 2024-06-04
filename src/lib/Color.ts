@@ -1,9 +1,11 @@
 import ColorIO from "colorjs.io";
+import { colorCentersFromStoneHeer } from "./color-lists";
 
 type Domain = Record<string, [number, number]>;
 type Channels = [number, number, number];
 const hexCache = new Map<string, string>();
 const stringChannelsCache = new Map<string, Channels>();
+const stringIsColorCache = new Map<string, boolean>();
 type DistAlgorithm = "76" | "CMC" | "2000" | "ITP" | "Jz" | "OK";
 export class Color {
   static name: string = "";
@@ -156,17 +158,29 @@ export class Color {
       .map((x) => (x || 0).toFixed(3).replace(/\.?0+$/, ""));
   }
   static stringIsColor = (str: string, spaceName: string) => {
+    const key = `${str.toLowerCase()}-${spaceName}`;
+    if (stringIsColorCache.has(key)) {
+      return stringIsColorCache.get(key)!;
+    }
     // todo add cache
+    let result = true;
     try {
-      new ColorIO(str).to(spaceName).coords;
+      new ColorIO(str).to(spaceName);
     } catch (ea) {
       try {
-        new ColorIO(`#${str}`).to(spaceName).coords;
+        new ColorIO(`#${str}`).to(spaceName);
       } catch (eb) {
-        return false;
+        try {
+          new ColorIO(colorCentersFromStoneHeer[str.toLowerCase()]).to(
+            spaceName
+          );
+        } catch (ec) {
+          result = false;
+        }
       }
     }
-    return true;
+    stringIsColorCache.set(key, result);
+    return result;
   };
   static toColorSpace = toColorSpace;
   static stringToChannels = stringToChannels;

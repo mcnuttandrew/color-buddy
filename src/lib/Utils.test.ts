@@ -66,7 +66,6 @@ const spaces = [
 ];
 test("processBodyTextToColors", async () => {
   spaces.forEach((space) => {
-    console.log(space);
     const result1 = processBodyTextToColors(reactVisColors, space);
     expect(
       result1.map((x) => x.toHex().toUpperCase()),

@@ -5,7 +5,8 @@
   import { suggestAdditionsToPalette } from "../lib/api-calls";
   import ColorButton from "../components/ColorButton.svelte";
   import AutocompleteOrSearch from "../components/AutocompleteOrSearch.svelte";
-  import { webColors, wrapInBlankSemantics } from "../lib/utils";
+  import { wrapInBlankSemantics } from "../lib/utils";
+  import { colorCentersFromStoneHeer } from "../lib/color-lists";
 
   $: currentPal = $colorStore.palettes[$colorStore.currentPal];
   $: colors = currentPal.colors;
@@ -39,8 +40,6 @@
         requestState = "failed";
       });
   }
-  const trimQuotes = (x: string) => x.replace(/"/g, "");
-  const webColorsClean = webColors.map(trimQuotes);
 </script>
 
 <div class="flex w-full justify-between">
@@ -51,13 +50,13 @@
     <AutocompleteOrSearch
       setValue={(x) => {
         const newColor = wrapInBlankSemantics(
-          Color.colorFromString(x, colorSpace)
+          Color.colorFromString(colorCentersFromStoneHeer[x], colorSpace)
         );
         const newColors = [...colors, newColor];
         colorStore.setCurrentPalColors(newColors);
       }}
       optionsAreColors={true}
-      searchOptions={webColorsClean}
+      searchOptions={Object.keys(colorCentersFromStoneHeer)}
       placeholder="e.g. purple or red"
       runSearch={(x) => {
         getColorForSearch(x);

@@ -54,7 +54,7 @@ const blueBasicColor: CustomLint = {
       in: "colors",
       varb: "a",
       where: { isTag: "a", value: "blue" },
-      predicate: { "==": { left: { name: "a" }, right: "blue" } },
+      predicate: { "==": { left: { name: "a" }, right: "electricBlue" } },
     },
   }),
 
@@ -66,7 +66,7 @@ const blueBasicColor: CustomLint = {
   id: "blue-basic-color-term-built-in",
   blameMode: "single",
   expectedPassingTests: [
-    createPalWithTags(colorNames, [[0, "blue"]]),
+    createPalWithTags(colorNames, [[0, "electricBlue"]]),
     makePalFromString(colorNames),
   ],
   expectedFailingTests: [createPalWithTags(colorNames.slice(1), [[0, "blue"]])],

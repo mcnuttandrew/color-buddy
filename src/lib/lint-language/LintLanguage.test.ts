@@ -895,11 +895,11 @@ test("LintLanguage Name Check", () => {
   const program = {
     "==": {
       left: { name: "#f00" },
-      right: "red",
+      right: "brightred",
     },
   };
   const astString = prettyPrintLL(program);
-  expect(astString).toBe("name(#f00) == red");
+  expect(astString).toBe("name(#f00) == brightred");
   const result = LLEval(program, toPal([]));
   expect(result.result).toBe(true);
   expect(result.blame).toStrictEqual([]);

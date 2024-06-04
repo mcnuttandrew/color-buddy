@@ -1,5 +1,4 @@
 import { expect, test } from "vitest";
-import fs from "fs/promises";
 
 import { Color } from "./Color";
 
@@ -11,7 +10,9 @@ import type { CustomLint } from "./ColorLint";
 
 // Lints
 import AvoidExtremes from "./lints/avoid-extremes";
-import BGContrast from "./lints/background-contrast";
+import BGContrast, {
+  fixBackgroundDifferentiability,
+} from "./lints/background-contrast";
 import CatOrderSimilarity from "./lints/cat-order-similarity";
 import CVDCheck from "./lints/cvd-check";
 import ColorNameDiscriminability, { getName } from "./lints/name-discrim";
@@ -61,23 +62,44 @@ test("ColorLint - Fair Sequential", () => autoTest(Fair[1]));
 test("ColorLint - SequentialOrder", () => autoTest(SequentialOrder));
 test("ColorLint - CatOrderSimilarity", () => autoTest(CatOrderSimilarity));
 
+function addNumberSuffix(numb: number): string {
+  const lastDigit = numb % 10;
+  if (lastDigit === 1) return `${numb}st`;
+  if (lastDigit === 2) return `${numb}nd`;
+  if (lastDigit === 3) return `${numb}rd`;
+  return `${numb}th`;
+}
+
 test("ColorLint - ColorNameDiscriminability", async () => {
   autoTest(ColorNameDiscriminability);
-
-  const examplePal = makePalFromString(["#5260d1", "#005ebe"]);
   const lint = CreateCustomLint(ColorNameDiscriminability);
-  const exampleLint = new lint(examplePal).run();
-  expect(exampleLint.passes).toBe(false);
-  expect(exampleLint.message).toBe(
-    "The following pairs of colors have the same name: #5260d1 and #005ebe"
-  );
-  const fix = await suggestLintFix(examplePal, exampleLint);
-  const oldColorNames = unique<string>(
-    examplePal.colors.map((x) => getName(x.color))
-  );
-  expect(oldColorNames.length).toBe(1);
-  const colorNames = unique<string>(fix[0].colors.map((x) => getName(x.color)));
-  expect(colorNames.length).toBe(2);
+
+  // tacit configuration: the first two in the set should have the same name
+  const sets = [
+    ["#5260d1", "#684ac0"],
+    ["#001615", "#001a1a", "#002633"],
+  ];
+  for (let idx = 0; idx < sets.length; idx++) {
+    const colors = sets[idx];
+    const examplePal = makePalFromString(colors);
+    const exampleLint = new lint(examplePal).run();
+    expect(exampleLint.passes).toBe(false);
+    expect(exampleLint.message).toBe(
+      `The following pairs of colors have the same name: ${colors[0]} and ${colors[1]}`
+    );
+    const fix = await suggestLintFix(examplePal, exampleLint);
+    const oldColorNames = unique<string>(
+      examplePal.colors.map((x) => getName(x.color))
+    );
+    expect(oldColorNames.length).toBe(colors.length - 1);
+    const colorNames = unique<string>(
+      fix[0].colors.map((x) => getName(x.color))
+    );
+    expect(
+      colorNames.length,
+      `The ${addNumberSuffix(idx)} set of colors should be corrected properly`
+    ).toBe(colors.length);
+  }
 });
 
 test("ColorLint - SizeDiscrim (Thin)", () => autoTest(SizeDiscrims[0]));
@@ -123,6 +145,24 @@ test("ColorLint - Background Contrast", async () => {
   );
   const fix2 = await suggestLintFix(examplePal, exampleLint2).then((x) => x[0]);
   expect(fix2.colors.map((x) => x.color.toHex())).toMatchSnapshot();
+});
+
+test("Background Contrast - Fix", async () => {
+  const examplePal = makePalFromString([
+    "#3b3b6d",
+    "#a9a9a9",
+    "#8b0000",
+    "#f5f5dc",
+    "#2e8b57",
+  ]);
+  examplePal.background = Color.colorFromHex("#00201d", "lab");
+  const BackgroundContrastLint = CreateCustomLint(BGContrast[0]);
+  const exampleLint = new BackgroundContrastLint(examplePal).run();
+  expect(exampleLint.passes).toBe(false);
+  const fix = await fixBackgroundDifferentiability(examplePal, exampleLint);
+  expect(fix.length).toBe(1);
+
+  expect(new BackgroundContrastLint(fix[0]).run().passes).toBe(true);
 });
 
 test("ColorLint - Contrast (1) GraphicalObjs", () => autoTest(BGContrast[0]));

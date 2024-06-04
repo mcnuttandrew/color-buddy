@@ -62,23 +62,44 @@ test("ColorLint - Fair Sequential", () => autoTest(Fair[1]));
 test("ColorLint - SequentialOrder", () => autoTest(SequentialOrder));
 test("ColorLint - CatOrderSimilarity", () => autoTest(CatOrderSimilarity));
 
+function addNumberSuffix(numb: number): string {
+  const lastDigit = numb % 10;
+  if (lastDigit === 1) return `${numb}st`;
+  if (lastDigit === 2) return `${numb}nd`;
+  if (lastDigit === 3) return `${numb}rd`;
+  return `${numb}th`;
+}
+
 test("ColorLint - ColorNameDiscriminability", async () => {
   autoTest(ColorNameDiscriminability);
-
-  const examplePal = makePalFromString(["#5260d1", "#684ac0"]);
   const lint = CreateCustomLint(ColorNameDiscriminability);
-  const exampleLint = new lint(examplePal).run();
-  expect(exampleLint.passes).toBe(false);
-  expect(exampleLint.message).toBe(
-    "The following pairs of colors have the same name: #5260d1 and #684ac0"
-  );
-  const fix = await suggestLintFix(examplePal, exampleLint);
-  const oldColorNames = unique<string>(
-    examplePal.colors.map((x) => getName(x.color))
-  );
-  expect(oldColorNames.length).toBe(1);
-  const colorNames = unique<string>(fix[0].colors.map((x) => getName(x.color)));
-  expect(colorNames.length).toBe(2);
+
+  // tacit configuration: the first two in the set should have the same name
+  const sets = [
+    ["#5260d1", "#684ac0"],
+    ["#001615", "#001a1a", "#002633"],
+  ];
+  for (let idx = 0; idx < sets.length; idx++) {
+    const colors = sets[idx];
+    const examplePal = makePalFromString(colors);
+    const exampleLint = new lint(examplePal).run();
+    expect(exampleLint.passes).toBe(false);
+    expect(exampleLint.message).toBe(
+      `The following pairs of colors have the same name: ${colors[0]} and ${colors[1]}`
+    );
+    const fix = await suggestLintFix(examplePal, exampleLint);
+    const oldColorNames = unique<string>(
+      examplePal.colors.map((x) => getName(x.color))
+    );
+    expect(oldColorNames.length).toBe(colors.length - 1);
+    const colorNames = unique<string>(
+      fix[0].colors.map((x) => getName(x.color))
+    );
+    expect(
+      colorNames.length,
+      `The ${addNumberSuffix(idx)} set of colors should be corrected properly`
+    ).toBe(colors.length);
+  }
 });
 
 test("ColorLint - SizeDiscrim (Thin)", () => autoTest(SizeDiscrims[0]));

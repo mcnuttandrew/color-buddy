@@ -1,4 +1,8 @@
-import { JSONToPrettyString, makePalFromString } from "../utils";
+import {
+  JSONToPrettyString,
+  makePalFromString,
+  wrapInBlankSemantics,
+} from "../utils";
 import type { CustomLint } from "../ColorLint";
 import namer from "color-namer";
 import { Color } from "../Color";
@@ -75,33 +79,48 @@ const lint: CustomLint = {
 };
 export default lint;
 
-function suggestFixForColorsWithCommonNames(colors: Color[]): Color[] {
-  const hex = colors[0].toHex().toUpperCase();
-  let guesses = getNames(hex);
-  return [...colors].map((color, idx) => {
-    const newColor = guesses.heerStone[idx];
-    return Color.colorFromHex(newColor.hex, color.spaceName);
-  });
-}
-
 export const fixColorNameDiscriminability: LintFixer = async (
   palette: Palette
 ) => {
   const colors = palette.colors;
-  const colorNamesByIndex = colors.reduce((acc, color, index) => {
+  const colorNames = colors.map((x) => getName(x.color));
+  const colorNameByIndex = colors.reduce((acc, color, index) => {
     const name = getName(color.color);
     acc[name] = (acc[name] || []).concat(index);
     return acc;
   }, {} as Record<string, number[]>);
-  const newColors = [...colors];
-  Object.values(colorNamesByIndex)
+  const conflictedIndices = Object.values(colorNameByIndex)
     .filter((x) => x.length > 1)
-    .forEach((indices) => {
-      const localColors = indices.map((i) => newColors[i].color);
-      const updatedColors = suggestFixForColorsWithCommonNames(localColors);
-      indices.forEach((i, j) => {
-        newColors[i] = { ...newColors[i], color: updatedColors[j] };
-      });
-    });
-  return [{ ...palette, colors: newColors }];
+    .flatMap((x) => x);
+  const nonConflictedNames = new Set<string>(
+    colorNames
+      .filter((_, x) => !conflictedIndices.includes(x))
+      .map((x) => x.toLowerCase())
+  );
+  const selectedNames = new Set<string>();
+
+  const updatedColors = Object.fromEntries(
+    conflictedIndices.map((idx) => {
+      const color = colors[idx].color;
+      const hex = color.toHex().toUpperCase();
+      const names = getNames(hex).heerStone;
+      const possibleNames = names.filter(
+        (x) =>
+          // don't try to take from the names that aren't conflicted
+          !nonConflictedNames.has(x.name) &&
+          // don't try to take from the names that have already been selected
+          !selectedNames.has(x.name)
+      );
+      const name = possibleNames[0];
+      selectedNames.add(name.name);
+      return [
+        idx,
+        wrapInBlankSemantics(Color.colorFromHex(name.hex, color.spaceName)),
+      ];
+    })
+  );
+
+  return [
+    { ...palette, colors: colors.map((x, idx) => updatedColors[idx] || x) },
+  ];
 };

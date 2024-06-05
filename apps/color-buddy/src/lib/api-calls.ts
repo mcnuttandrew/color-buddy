@@ -1,4 +1,4 @@
-import type { Palette } from "@color-buddy/palette-check";
+import type { Palette } from "@color-buddy/palette-lint";
 import * as Json from "jsonc-parser";
 import LintWorker from "./lint-worker.worker?worker";
 import { summarizePal } from "./utils";

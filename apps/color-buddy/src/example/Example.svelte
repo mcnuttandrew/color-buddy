@@ -1,8 +1,8 @@
 <script lang="ts">
   import { tick } from "svelte";
 
-  import { Color, simulateCVD } from "@color-buddy/palette-check";
-  import type { Palette } from "@color-buddy/palette-check";
+  import { Color, simulateCVD } from "@color-buddy/palette-lint";
+  import type { Palette } from "@color-buddy/palette-lint";
 
   import configStore from "../stores/config-store";
   import focusStore from "../stores/focus-store";

@@ -1,11 +1,11 @@
 import * as idb from "idb-keyval";
-import { Color, linter, generateMCFix } from "@color-buddy/palette-check";
+import { Color, linter, generateMCFix } from "@color-buddy/palette-lint";
 import type {
   Palette,
   StringPalette,
   CustomLint,
   LintResult,
-} from "@color-buddy/palette-check";
+} from "@color-buddy/palette-lint";
 
 import type { WorkerCommand } from "./worker-types";
 

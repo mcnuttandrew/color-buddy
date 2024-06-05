@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { Color, utils } from "@color-buddy/palette-check";
-  import type { StringPalette, Palette } from "@color-buddy/palette-check";
+  import { Color, utils } from "@color-buddy/palette-lint";
+  import type { StringPalette, Palette } from "@color-buddy/palette-lint";
 
   import colorStore from "../stores/color-store";
 

@@ -1,11 +1,11 @@
 import { writable } from "svelte/store";
-import { Color, utils } from "@color-buddy/palette-check";
+import { Color, utils } from "@color-buddy/palette-lint";
 import type {
   Palette,
   StringPalette,
   ColorWrap,
   ColorSpace,
-} from "@color-buddy/palette-check";
+} from "@color-buddy/palette-lint";
 
 import { deDup, newGenericPal } from "../lib/utils";
 

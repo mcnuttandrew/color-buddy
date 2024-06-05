@@ -1,6 +1,6 @@
 import { suggestFix, suggestMonteFix } from "./api-calls";
-import { Color, utils } from "@color-buddy/palette-check";
-import type { LintResult, Palette } from "@color-buddy/palette-check";
+import { Color, utils } from "@color-buddy/palette-lint";
+import type { LintResult, Palette } from "@color-buddy/palette-lint";
 
 type SuggestFix = (
   pal: Palette,

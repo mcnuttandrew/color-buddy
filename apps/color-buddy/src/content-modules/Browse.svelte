@@ -5,7 +5,7 @@
 
   import { onMount } from "svelte";
 
-  import type { LintResult } from "@color-buddy/palette-check";
+  import type { LintResult } from "@color-buddy/palette-lint";
 
   import MiniPalPreview from "../components/MiniPalPreview.svelte";
   import { lint } from "../lib/api-calls";

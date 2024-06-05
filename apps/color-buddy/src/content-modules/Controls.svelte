@@ -4,7 +4,7 @@
   import configStore from "../stores/config-store";
   import GetColorsFromString from "../controls/GetColorsFromString.svelte";
 
-  import { Color } from "@color-buddy/palette-check";
+  import { Color } from "@color-buddy/palette-lint";
 
   import AddColor from "../controls/AddColor.svelte";
   import AdjustColor from "../controls/AdjustColor.svelte";

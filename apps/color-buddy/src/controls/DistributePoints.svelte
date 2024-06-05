@@ -3,7 +3,7 @@
   import focusStore from "../stores/focus-store";
   import { buttonStyle } from "../lib/styles";
   import { colorPickerConfig } from "../lib/utils";
-  import { distributePoints } from "@color-buddy/palette-check";
+  import { distributePoints } from "@color-buddy/palette-lint";
 
   $: currentPal = $colorStore.palettes[$colorStore.currentPal];
   $: colors = currentPal.colors;

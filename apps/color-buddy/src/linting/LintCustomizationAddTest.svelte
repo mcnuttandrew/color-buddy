@@ -1,6 +1,6 @@
 <script lang="ts">
-  import type { CustomLint, Palette } from "@color-buddy/palette-check";
-  import { utils } from "@color-buddy/palette-check";
+  import type { CustomLint, Palette } from "@color-buddy/palette-lint";
+  import { utils } from "@color-buddy/palette-lint";
 
   import Tooltip from "../components/Tooltip.svelte";
   import { buttonStyle } from "../lib/styles";

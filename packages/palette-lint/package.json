@@ -1,5 +1,5 @@
 {
-  "name": "@color-buddy/palette-check",
+  "name": "@color-buddy/palette-lint",
   "private": true,
   "version": "0.0.0",
   "type": "module",

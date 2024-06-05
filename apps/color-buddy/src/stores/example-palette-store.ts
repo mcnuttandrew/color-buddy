@@ -1,7 +1,7 @@
 import { writable } from "svelte/store";
 import * as idb from "idb-keyval";
-import { Color, utils } from "@color-buddy/palette-check";
-import type { Palette, LintResult } from "@color-buddy/palette-check";
+import { Color, utils } from "@color-buddy/palette-lint";
+import type { Palette, LintResult } from "@color-buddy/palette-lint";
 
 export interface PaletteWrap {
   palette: Palette;

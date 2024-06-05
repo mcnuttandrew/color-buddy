@@ -1,7 +1,7 @@
 <script lang="ts">
   import colorStore from "../stores/color-store";
   import configStore from "../stores/config-store";
-  import { Color, utils } from "@color-buddy/palette-check";
+  import { Color, utils } from "@color-buddy/palette-lint";
   import { suggestAdditionsToPalette } from "../lib/api-calls";
   import ColorButton from "../components/ColorButton.svelte";
   import AutocompleteOrSearch from "../components/AutocompleteOrSearch.svelte";

@@ -1,10 +1,10 @@
 <script lang="ts">
-  import { utils } from "@color-buddy/palette-check";
+  import { utils } from "@color-buddy/palette-lint";
 
   import colorStore from "../stores/color-store";
   import focusStore from "../stores/focus-store";
   import configStore from "../stores/config-store";
-  import { Color } from "@color-buddy/palette-check";
+  import { Color } from "@color-buddy/palette-lint";
   import { suggestContextualAdjustments } from "../lib/api-calls";
   import { buttonStyle } from "../lib/styles";
   import PalDiff from "../components/PalDiff.svelte";

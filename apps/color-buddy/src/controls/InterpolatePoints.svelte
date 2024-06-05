@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { Color, utils } from "@color-buddy/palette-check";
-  import type { Palette, ColorWrap } from "@color-buddy/palette-check";
+  import { Color, utils } from "@color-buddy/palette-lint";
+  import type { Palette, ColorWrap } from "@color-buddy/palette-lint";
   import colorStore from "../stores/color-store";
   import focusStore from "../stores/focus-store";
   import { buttonStyle } from "../lib/styles";

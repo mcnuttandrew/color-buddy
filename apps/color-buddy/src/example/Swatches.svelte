@@ -10,6 +10,7 @@
   export let paletteIdx: number;
   export let allowInteraction: boolean = true;
   export let hideHeader: boolean = false;
+  export let maxWidth: number | undefined = undefined;
 
   $: currentPal = $colorStore.palettes[paletteIdx];
   $: colors = currentPal?.colors || [];
@@ -72,6 +73,7 @@
 
 <div
   class="mr-4 mb-2"
+  style={`max-width: ${maxWidth ? `${maxWidth}px` : "100%"}`}
   on:click={(e) => {
     if (allowInteraction) {
       focusStore.clearColors();
@@ -81,6 +83,24 @@
   {#if !hideHeader}
     <div class="bg-stone-300 w-full justify-between flex p-1">Swatches</div>
   {/if}
+  <div class="flex flex-wrap justify-center">
+    {#each colors as color, i}
+      <button
+        style={`color: ${color.color.toHex()}; transform: rotate(${
+          focusSet.has(i) ? 10 : 0
+        }deg)`}
+        class="mr-2 w-16"
+        on:click|preventDefault|stopPropagation={(e) => {
+          allowInteraction &&
+            focusStore.setColors(
+              dealWithFocusEvent(e, i, $focusStore.focusedColors)
+            );
+        }}
+      >
+        {color.color.toHex()}
+      </button>
+    {/each}
+  </div>
   <div class="flex p-1 flex-wrap">
     <div class="flex flex-col flex-initial">
       <div class="flex">
@@ -109,24 +129,6 @@
               </div>
             {/each}
           </div>
-        {/each}
-      </div>
-      <div class="flex flex-wrap justify-center">
-        {#each colors as color, i}
-          <button
-            style={`color: ${color.color.toHex()}; transform: rotate(${
-              focusSet.has(i) ? 10 : 0
-            }deg)`}
-            class="mr-2 w-16"
-            on:click|preventDefault|stopPropagation={(e) => {
-              allowInteraction &&
-                focusStore.setColors(
-                  dealWithFocusEvent(e, i, $focusStore.focusedColors)
-                );
-            }}
-          >
-            {color.color.toHex()}
-          </button>
         {/each}
       </div>
     </div>

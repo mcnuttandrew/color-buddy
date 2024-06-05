@@ -57,6 +57,7 @@
       {paletteIdx}
       hideHeader={true}
       allowInteraction={allowModification}
+      maxWidth={size}
     />
   {:else}
     {#if example.svg}

@@ -17,7 +17,7 @@
           if (colors[idx]) {
             return { ...colors[idx], color: x };
           } else {
-            return utils.wrapSemantics(x);
+            return utils.wrapColor(x);
           }
         }
       );

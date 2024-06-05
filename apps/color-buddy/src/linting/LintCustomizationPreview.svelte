@@ -28,7 +28,7 @@
             // @ts-ignore
             const val = e.target.value;
             const newColors = [...pal.colors];
-            newColors[idx] = utils.wrapSemantics(
+            newColors[idx] = utils.wrapColor(
               Color.colorFromString(val, pal.colorSpace)
             );
             updatePal({ ...pal, colors: newColors });
@@ -48,7 +48,7 @@
           color={color.color}
           onColorChange={(newColor) => {
             const newColors = [...pal.colors];
-            newColors[idx] = utils.wrapSemantics(newColor);
+            newColors[idx] = utils.wrapColor(newColor);
             updatePal({ ...pal, colors: newColors });
           }}
         />
@@ -119,7 +119,7 @@
         on:click={() => {
           const newColors = [
             ...pal.colors,
-            utils.wrapSemantics(Color.colorFromString("steelblue")),
+            utils.wrapColor(Color.colorFromString("steelblue")),
           ];
           updatePal({ ...pal, colors: newColors });
         }}

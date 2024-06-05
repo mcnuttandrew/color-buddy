@@ -315,7 +315,7 @@
 
   function puttingEnd() {
     if (!puttingPreview) return;
-    onColorsChange([...colors, utils.wrapSemantics(puttingPreview as Color)]);
+    onColorsChange([...colors, utils.wrapColor(puttingPreview as Color)]);
     setTimeout(() => {
       configStore.setScatterplotMode("moving");
     }, 10);

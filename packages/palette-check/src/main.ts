@@ -18,14 +18,14 @@ import {
   distributePoints,
   makePalFromString,
   toPal,
-  wrapSemantics,
+  wrapColor,
 } from "./utils";
 
 import { suggestLintFix } from "./linter-tools/lint-fixer";
 
 const utils = {
   toPal,
-  wrapSemantics,
+  wrapColor,
   makePalFromString,
 };
 export {

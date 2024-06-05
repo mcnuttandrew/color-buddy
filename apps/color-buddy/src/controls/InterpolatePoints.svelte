@@ -60,7 +60,7 @@
       const newPoints = createInterpolatedPoints(
         pointA.color,
         pointB.color
-      ).map((x) => utils.wrapSemantics(x));
+      ).map((x) => utils.wrapColor(x));
       newColors.push(pointA, ...newPoints);
     }
     newColors.push(

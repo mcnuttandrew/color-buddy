@@ -1,7 +1,7 @@
 import type { Palette } from "../types";
 
 import { Color, ColorSpaceDirectory } from "../Color";
-import { wrapSemantics } from "../utils";
+import { wrapColor } from "../utils";
 import type { CustomLint } from "../ColorLint";
 import { CreateCustomLint } from "../ColorLint";
 
@@ -57,7 +57,7 @@ export const generateMCFix = (
       newChannels[config.zChannelIndex] += 3 * (Math.random() - 0.5) * zStep;
       const newColor = Color.colorFromChannels(newChannels, palette.colorSpace);
 
-      return wrapSemantics(newColor);
+      return wrapColor(newColor);
     });
     newPalette = { ...newPalette };
   }
@@ -99,7 +99,7 @@ export const generateMCFix = (
 //       return (channelA + channelB) / 2;
 //     }) as [number, number, number];
 //     const newColor = Color.colorFromChannels(newChannels, palA.colorSpace);
-//     return wrapSemantics(newColor);
+//     return wrapColor(newColor);
 //   });
 //   return {
 //     ...palA,

@@ -20,7 +20,7 @@
   }): Palette {
     return {
       colors: suggestion.colors.map((x) =>
-        utils.wrapSemantics(Color.colorFromString(x, colorSpace as any))
+        utils.wrapColor(Color.colorFromString(x, colorSpace as any))
       ),
       background: Color.colorFromString(
         suggestion.background,

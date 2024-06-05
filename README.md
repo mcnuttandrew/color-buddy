@@ -33,3 +33,4 @@ The app does not check to see if your keys work, so if you are encountering trou
 - pull out the color naming stuff into its own thing
 - write documentation, get docs site
 - fix json schema stuff
+- make the colorLint/customColorLint/lintResult stuff cleaner

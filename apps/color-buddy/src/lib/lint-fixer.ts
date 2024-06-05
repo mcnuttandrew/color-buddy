@@ -10,7 +10,7 @@ type SuggestFix = (
 
 function parsePalette(colors: string[], colorSpace: Palette["colorSpace"]) {
   return colors.map((x) =>
-    utils.wrapSemantics(Color.colorFromHex(x.replace("##", "#"), colorSpace))
+    utils.wrapColor(Color.colorFromHex(x.replace("##", "#"), colorSpace))
   );
 }
 

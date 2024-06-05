@@ -90,7 +90,7 @@ function deserializePalette(pal: StringPalette): Palette {
     background: Color.colorFromString(pal.background, pal.colorSpace),
     colors: pal.colors.map((x) => {
       if (typeof x === "string") {
-        return utils.wrapSemantics(Color.colorFromString(x, pal.colorSpace));
+        return utils.wrapColor(Color.colorFromString(x, pal.colorSpace));
       }
       const color = Color.colorFromString(x.color, pal.colorSpace);
       return { ...x, color };

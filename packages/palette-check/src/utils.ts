@@ -13,7 +13,7 @@ const defaultHexPal: StringPalette = {
   tags: [],
 };
 
-export const wrapSemantics = (x: Color): ColorWrap<Color> => ({
+export const wrapColor = (x: Color): ColorWrap<Color> => ({
   color: x,
   tags: [],
 });
@@ -29,7 +29,7 @@ export function makePalFromString(
 ): Palette {
   return {
     ...defaultHexPal,
-    colors: strings.map((str) => wrapSemantics(Color.colorFromString(str))),
+    colors: strings.map((str) => wrapColor(Color.colorFromString(str))),
     background: Color.colorFromString(bg, "lab"),
   };
 }
@@ -49,9 +49,7 @@ export const toPal = (
 ): Palette => {
   return {
     ...defaultHexPal,
-    colors: colors.map((x) =>
-      wrapSemantics(Color.colorFromString(x, colorSpace))
-    ),
+    colors: colors.map((x) => wrapColor(Color.colorFromString(x, colorSpace))),
     name: "mods",
     background: currentPal.background,
     type: currentPal.type,

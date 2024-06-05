@@ -26,7 +26,7 @@ function stringPalToColorPal(pal: StringPalette): Palette {
     colors: pal.colors.map((x) => {
       // catch old versions
       if (typeof x === "string") {
-        return utils.wrapSemantics(Color.colorFromString(x, pal.colorSpace));
+        return utils.wrapColor(Color.colorFromString(x, pal.colorSpace));
       }
       const color = Color.colorFromString(x.color, pal.colorSpace);
       return { ...x, color };

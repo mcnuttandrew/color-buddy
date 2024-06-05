@@ -48,7 +48,7 @@
   <div class="flex w-full justify-between items-center">
     <AutocompleteOrSearch
       setValue={(x) => {
-        const newColor = utils.wrapSemantics(
+        const newColor = utils.wrapColor(
           Color.colorFromString(colorCentersFromStoneHeer[x], colorSpace)
         );
         const newColors = [...colors, newColor];
@@ -76,7 +76,7 @@
         <ColorButton
           {color}
           clickColor={() => {
-            const newColor = utils.wrapSemantics(
+            const newColor = utils.wrapColor(
               Color.colorFromString(color, colorSpace)
             );
             const newColors = [...colors, newColor];

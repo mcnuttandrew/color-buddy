@@ -3,7 +3,7 @@ import type { Palette, ColorWrap } from "../types";
 import { Color, ColorSpaceDirectory } from "../Color";
 import { getName } from "../lints/name-discrim";
 import type { LintProgram } from "./lint-type";
-import { wrapSemantics } from "../utils";
+import { wrapColor } from "../utils";
 
 type RawValues =
   | string
@@ -48,7 +48,7 @@ class Environment {
     }
     if (name === "background") {
       return new LLColor(
-        wrapSemantics(this.palette.background),
+        wrapColor(this.palette.background),
         this.palette.background.toHex()
       );
     }
@@ -318,16 +318,13 @@ export class LLColor extends LLNode {
   }
   static tryToConstruct(value: any, _options: OptionsConfig): false | LLColor {
     if (value instanceof Color) {
-      return new LLColor(wrapSemantics(value), value.toHex());
+      return new LLColor(wrapColor(value), value.toHex());
     }
     if (typeof value === "object" && value.color instanceof Color) {
       return new LLColor(value, value.color.toHex());
     }
     if (typeof value === "string" && Color.stringIsColor(value, "lab")) {
-      return new LLColor(
-        wrapSemantics(Color.colorFromString(value, "lab")),
-        value
-      );
+      return new LLColor(wrapColor(Color.colorFromString(value, "lab")), value);
     }
     return false;
   }

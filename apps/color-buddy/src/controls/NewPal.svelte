@@ -14,7 +14,7 @@
 
   function newPal(newPal: Palette) {
     const colors = newPal.colors.map((x) =>
-      utils.wrapSemantics(x.color.toColorSpace(colorSpace))
+      utils.wrapColor(x.color.toColorSpace(colorSpace))
     );
     const background = newPal.background.toColorSpace(colorSpace);
     const pal = {

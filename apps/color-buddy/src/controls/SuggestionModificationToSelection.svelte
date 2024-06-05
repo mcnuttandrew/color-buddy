@@ -25,7 +25,7 @@
       ? {
           ...currentPal,
           colors: selectedColors.map((x) =>
-            utils.wrapSemantics(Color.colorFromString(x, colorSpace))
+            utils.wrapColor(Color.colorFromString(x, colorSpace))
           ),
         }
       : currentPal;
@@ -72,12 +72,12 @@
       );
       newColors = newColors.concat(
         unusedSuggestions.map((x) =>
-          utils.wrapSemantics(Color.colorFromString(x, colorSpace))
+          utils.wrapColor(Color.colorFromString(x, colorSpace))
         )
       );
     } else {
       newColors = suggestedColors.map((x) =>
-        utils.wrapSemantics(Color.colorFromString(x, colorSpace))
+        utils.wrapColor(Color.colorFromString(x, colorSpace))
       );
     }
     colorStore.setCurrentPalColors(newColors);

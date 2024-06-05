@@ -1,6 +1,6 @@
 import cvdSim from "../cvd-sim";
-import type { Palette, ColorWrap } from "../../types";
-import { Color, colorPickerConfig } from "../Color";
+import type { Palette, ColorWrap } from "../types";
+import { Color, ColorSpaceDirectory } from "../Color";
 import { getName } from "../lints/name-discrim";
 import type { LintProgram } from "./lint-type";
 import { wrapInBlankSemantics } from "../utils";
@@ -156,7 +156,7 @@ export class LLNode {
     return;
   }
   static tryToConstruct(node: any, options: OptionsConfig): false | LLNode {
-    throw new Error("Invalid node", node);
+    throw new Error("Invalid node" + node);
   }
   toString() {
     return "Node";
@@ -618,9 +618,9 @@ const VFTypes: {
   },
 ];
 
-Object.entries(colorPickerConfig).map(([colorSpace, value]) => {
-  (["xChannel", "yChannel", "zChannel"] as const).forEach((channel) => {
-    const channelKey = value[channel];
+Object.entries(ColorSpaceDirectory).map(([colorSpace, space]) => {
+  (["x", "y", "z"] as const).forEach((channel) => {
+    const channelKey = space.dimensionToChannel[channel];
     VFTypes.push({
       primaryKey: `${colorSpace}.${channelKey.toLowerCase()}`,
       params: [] as string[],
@@ -1109,8 +1109,7 @@ function parseToAST(root: any, options: OptionsConfig) {
   const node = LLExpression.tryToConstruct(root, options);
   if (!node)
     throw new Error(
-      "Parsing failed. There was an invalid node somewhere.",
-      root
+      "Parsing failed. There was an invalid node somewhere." + root
     );
   return node;
 }

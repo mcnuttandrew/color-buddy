@@ -1,12 +1,12 @@
 <script lang="ts">
+  import { Color, wrapInBlankSemantics } from "@color-buddy/palette-check";
+  import type { Palette } from "@color-buddy/palette-check";
+
   import colorStore from "../stores/color-store";
   import configStore from "../stores/config-store";
-  import { Color } from "@color-buddy/palette-check";
   import { suggestPal } from "../lib/api-calls";
-  import type { Palette } from "../types";
   import PalPreview from "../components/PalPreview.svelte";
   import { buttonStyle } from "../lib/styles";
-  import { wrapInBlankSemantics } from "../lib/utils";
 
   $: currentPal = $colorStore.palettes[$colorStore.currentPal];
   $: colorSpace = currentPal ? currentPal.colorSpace : "lab";

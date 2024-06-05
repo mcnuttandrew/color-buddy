@@ -1,4 +1,6 @@
 <script lang="ts">
+  import type { Palette } from "@color-buddy/palette-check";
+
   import colorStore from "../stores/color-store";
   import exampleStore from "../stores/example-store";
   import configStore from "../stores/config-store";
@@ -6,8 +8,6 @@
   import PreviewSelector from "../example/PreviewSelector.svelte";
   import ColorSimControl from "../example/ColorSimControl.svelte";
   import NewExampleModal from "../example/NewExampleModal.svelte";
-
-  import type { Palette } from "../types";
 
   $: example = $exampleStore.examples[
     $configStore.manageBrowsePreviewIdx

@@ -1,7 +1,7 @@
 <script lang="ts">
+  import type { Palette } from "@color-buddy/palette-check";
   import Example from "./Example.svelte";
   import { getSVG } from "../lib/charts";
-  import type { Palette } from "../types";
 
   export let palette: Palette;
   export let spec: any;

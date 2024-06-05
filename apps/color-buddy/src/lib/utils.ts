@@ -1,9 +1,16 @@
-import { Color, ColorSpaceDirectory } from "@color-buddy/palette-check";
-import type { Palette, ColorWrap } from "@color-buddy/palette-check";
+import {
+  Color,
+  ColorSpaceDirectory,
+  wrapInBlankStringSemantics,
+} from "@color-buddy/palette-check";
+import type {
+  Palette,
+  ColorWrap,
+  StringPalette,
+} from "@color-buddy/palette-check";
 
-// import type { LintProgram } from "./lint-language/lint-type";
 import { Formatter, FracturedJsonOptions, EolStyle } from "fracturedjsonjs";
-// import fits from "../assets/outfits.json";
+import fits from "../assets/outfits.json";
 
 const options = new FracturedJsonOptions();
 options.MaxTotalLineLength = 120;
@@ -80,24 +87,6 @@ export function deDup(arr: ColorWrap<Color>[]): ColorWrap<Color>[] {
     const k = item.color.toHex();
     return seen.has(k) ? false : seen.add(k);
   });
-}
-
-export function clipToGamut(color: Color): [number, number, number] {
-  if (color.inGamut()) {
-    const space = color.constructor as typeof Color;
-    const channels = Object.entries(space.domains).map(([key, domain]) => {
-      const [min, max] = domain.sort();
-      return clamp(color.channels[key], min, max);
-    });
-    return channels as [number, number, number];
-  } else {
-    const newChannels = color
-      .toColorIO()
-      .to("srgb")
-      .toGamut()
-      .to(color.spaceName).coords;
-    return newChannels;
-  }
 }
 
 export function draggable(node: any) {
@@ -218,15 +207,24 @@ export const clampToRange = (val: number, range: number[]) => {
   return Math.min(Math.max(val, min), max);
 };
 
-// // const outfitToPal = (x: any) => [x.fill1, x.fill2, x.fill3];
-// // const outfits = fits.map((x) => outfitToPal(x));
-// export function newGenericPal(name: string): StringPalette {
-//   return {
-//     ...defaultHexPal,
-//     name,
-//     colors: pick(outfits).map((x: string) => wrapInBlankStringSemantics(x)),
-//   };
-// }
+const outfitToPal = (x: any) => [x.fill1, x.fill2, x.fill3];
+const outfits = fits.map((x) => outfitToPal(x));
+const defaultHexPal: StringPalette = {
+  name: "new palette",
+  colors: [],
+  background: "#ffffff",
+  type: "categorical",
+  evalConfig: {},
+  colorSpace: "lab",
+  tags: [],
+};
+export function newGenericPal(name: string): StringPalette {
+  return {
+    ...defaultHexPal,
+    name,
+    colors: pick(outfits).map((x: string) => wrapInBlankStringSemantics(x)),
+  };
+}
 
 const dragExtent = (
   dragBox: { x: number; y: number },
@@ -465,60 +463,6 @@ export function dealWithFocusEvent(
     return [clickedItem];
   }
   return itemInFocus ? [clickedItem] : [];
-}
-
-export interface Direction {
-  direction: "horizontal" | "vertical" | "in z space";
-  name: string;
-}
-export function distributePoints(
-  dir: Direction,
-  focusedColors: number[],
-  colors: ColorWrap<Color>[],
-  colorSpace: string
-) {
-  const config = colorPickerConfig[colorSpace];
-  let sortedIndexes = focusedColors.sort((a, b) => {
-    const modeToIdx = { horizontal: 1, vertical: 2, "in z space": 0 };
-    const idx = modeToIdx[dir.direction] || 0;
-    const pointA = colors[a].color.toChannels()[idx];
-    const pointB = colors[b].color.toChannels()[idx];
-    return pointA - pointB;
-  });
-  type Channels = [number, number, number];
-  const minPoint = colors[sortedIndexes[0]].color.toChannels() as Channels;
-  const maxPoint = colors[
-    sortedIndexes[sortedIndexes.length - 1]
-  ].color.toChannels() as Channels;
-
-  const numPoints = sortedIndexes.length - 1;
-  let newPoints = sortedIndexes.map((colorIdx, arrIdx) => {
-    const t = arrIdx / numPoints;
-    const newPoint = colors.at(colorIdx)!.color.toChannels() as Channels;
-    const xIdx = config.xChannelIndex;
-    const yIdx = config.yChannelIndex;
-    const zIdx = config.zChannelIndex;
-    if (dir.direction === "horizontal") {
-      newPoint[xIdx] = minPoint[xIdx] * (1 - t) + maxPoint[xIdx] * t;
-    } else if (dir.direction === "vertical") {
-      newPoint[yIdx] = minPoint[yIdx] * (1 - t) + maxPoint[yIdx] * t;
-    } else {
-      newPoint[zIdx] = minPoint[zIdx] * (1 - t) + maxPoint[zIdx] * t;
-    }
-    return newPoint as Channels;
-  });
-  const zip = <T, U>(arr1: T[], arr2: U[]) =>
-    arr1.map((k, i) => [k, arr2[i]] as [T, U]);
-  const pointsByIndex = Object.fromEntries(zip(sortedIndexes, newPoints));
-
-  const newColors = [...colors].map((color, idx) => {
-    const point = pointsByIndex[idx];
-    return point
-      ? { ...color, color: Color.colorFromChannels(point, colorSpace as any) }
-      : color;
-  });
-  return newColors;
-  // colorStore.setCurrentPalColors(newColors);
 }
 
 type ParseBlock = { content: string; type: "text" | "color" };

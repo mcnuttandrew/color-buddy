@@ -1,5 +1,5 @@
 import { expect, test } from "vitest";
-import { Color, colorPickerConfig } from "./Color";
+import { Color, ColorSpaceDirectory } from "./Color";
 
 test("Color string extractor works", () => {
   expect(Color.stringToChannels("lab", "lab(50% 0 0)")).toStrictEqual([
@@ -48,7 +48,9 @@ test("All color spaces do round trip to each other correctly", () => {
     "#ff3681",
   ];
   const skipped = new Set(["rgb"]);
-  const spaces = Object.keys(colorPickerConfig).filter((x) => !skipped.has(x));
+  const spaces = Object.keys(ColorSpaceDirectory).filter(
+    (x) => !skipped.has(x)
+  );
   colors.forEach((color) => {
     spaces.forEach((spaceA) =>
       spaces.forEach((spaceB) => {

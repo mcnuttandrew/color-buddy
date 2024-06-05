@@ -1,17 +1,17 @@
 <script lang="ts">
-  import { Color } from "@color-buddy/palette-check";
-  import colorStore from "../stores/color-store";
+  import {
+    Color,
+    wrapInBlankSemantics,
+    createPalFromHexes,
+  } from "@color-buddy/palette-check";
+  import type { StringPalette, Palette } from "@color-buddy/palette-check";
 
-  import type { StringPalette, Palette } from "../types";
+  import colorStore from "../stores/color-store";
 
   import { processBodyTextToColors } from "../lib/utils";
   import { buttonStyle, denseButtonStyle } from "../lib/styles";
   import Tooltip from "../components/Tooltip.svelte";
-  import {
-    newGenericPal,
-    createPalFromHexes,
-    wrapInBlankSemantics,
-  } from "../lib/utils";
+  import { newGenericPal } from "../lib/utils";
   import SuggestColorPal from "./SuggestColorPal.svelte";
 
   $: currentPal = $colorStore.palettes[$colorStore.currentPal];

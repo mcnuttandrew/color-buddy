@@ -1,12 +1,10 @@
 <script lang="ts">
-  import type { ColorWrap } from "../types";
-  import { Color } from "@color-buddy/palette-check";
-  import type { Palette } from "../types";
+  import { Color, wrapInBlankSemantics } from "@color-buddy/palette-check";
+  import type { Palette, ColorWrap } from "@color-buddy/palette-check";
   import colorStore from "../stores/color-store";
   import focusStore from "../stores/focus-store";
   import { buttonStyle } from "../lib/styles";
   import PalPreview from "../components/PalPreview.svelte";
-  import { wrapInBlankSemantics } from "../lib/utils";
 
   $: currentPal = $colorStore.palettes[$colorStore.currentPal];
   $: focusedColors = $focusStore.focusedColors;

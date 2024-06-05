@@ -1,11 +1,13 @@
 <script lang="ts">
+  import type { Palette } from "@color-buddy/palette-check";
+
   import { buttonStyle } from "../lib/styles";
   import exampleStore from "../stores/example-store";
   import Vega from "./Vega.svelte";
   import Example from "./Example.svelte";
   import Tooltip from "../components/Tooltip.svelte";
   import PalPreview from "../components/PalPreview.svelte";
-  import type { Palette } from "../types";
+
   import ContentEditable from "../components/ContentEditable.svelte";
 
   export let allowResize: boolean;

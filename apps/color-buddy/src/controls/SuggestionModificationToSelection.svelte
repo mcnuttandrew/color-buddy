@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { wrapInBlankSemantics, toPal } from "@color-buddy/palette-check";
+
   import colorStore from "../stores/color-store";
   import focusStore from "../stores/focus-store";
   import configStore from "../stores/config-store";
@@ -6,7 +8,6 @@
   import { suggestContextualAdjustments } from "../lib/api-calls";
   import { buttonStyle } from "../lib/styles";
   import PalDiff from "../components/PalDiff.svelte";
-  import { toPal, wrapInBlankSemantics } from "../lib/utils";
 
   let requestState: "idle" | "loading" | "loaded" | "failed" = "idle";
   $: currentPal = $colorStore.palettes[$colorStore.currentPal];

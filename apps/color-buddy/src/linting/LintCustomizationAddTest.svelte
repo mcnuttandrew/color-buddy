@@ -1,9 +1,10 @@
 <script lang="ts">
+  import type { CustomLint, Palette } from "@color-buddy/palette-check";
+  import { makePalFromString } from "@color-buddy/palette-check";
+
   import Tooltip from "../components/Tooltip.svelte";
   import { buttonStyle } from "../lib/styles";
-  import { makePalFromString } from "../lib/utils";
-  import type { CustomLint } from "../lib/ColorLint";
-  import type { Palette } from "../types";
+  import {} from "../lib/utils";
 
   export let currentPal: Palette;
   export let currentTests: CustomLint["expectedPassingTests"];

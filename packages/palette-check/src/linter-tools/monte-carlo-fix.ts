@@ -1,6 +1,6 @@
 import type { Palette } from "../types";
 
-import { Color, colorPickerConfig } from "../Color";
+import { Color, ColorSpaceDirectory } from "../Color";
 import { wrapInBlankSemantics } from "../utils";
 import type { CustomLint } from "../ColorLint";
 import { CreateCustomLint } from "../ColorLint";
@@ -10,11 +10,16 @@ export const doMonteCarloFix = (
   lints: CustomLint[]
 ): Palette => {
   // identify the step sizes for this color space
-  const config = colorPickerConfig[palette.colorSpace];
-  const xStep = config.xStep;
-  const yStep = config.yStep;
-  const zStep = config.zStep;
-
+  const space = ColorSpaceDirectory[palette.colorSpace];
+  const xStep = space.stepSize[1];
+  const yStep = space.stepSize[2];
+  const zStep = space.stepSize[0];
+  const { x, y, z } = space.dimensionToChannel;
+  const config = {
+    xChannelIndex: space.channelNames.indexOf(x),
+    yChannelIndex: space.channelNames.indexOf(y),
+    zChannelIndex: space.channelNames.indexOf(z),
+  };
   let newPalette = { ...palette };
   let passing = false;
   let stepCount = 0;

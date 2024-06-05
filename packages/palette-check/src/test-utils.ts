@@ -1,5 +1,5 @@
 import { Color } from "./Color";
-import type { Palette } from "../types";
+import type { Palette } from "./types";
 
 export const toPal = (colors: string[]): Palette => ({
   name: "test",

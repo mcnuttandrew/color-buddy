@@ -1,4 +1,6 @@
 <script lang="ts">
+  import type { LintResult } from "@color-buddy/palette-check";
+
   import colorStore from "../stores/color-store";
   import configStore from "../stores/config-store";
   import lintStore from "../stores/lint-store";
@@ -12,8 +14,6 @@
   import { titleCase } from "../lib/utils";
   import EvalColorColumn from "./EvalColorColumn.svelte";
   import GlobalLintConfig from "./GlobalLintConfig.svelte";
-
-  import type { LintResult } from "../lib/ColorLint";
 
   import { loadLints } from "../lib/api-calls";
   export let maxWidth: number;

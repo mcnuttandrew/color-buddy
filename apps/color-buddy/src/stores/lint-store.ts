@@ -1,14 +1,16 @@
 import { writable } from "svelte/store";
 import * as idb from "idb-keyval";
-import type {
+import {
   Color,
-  CustomLint,
-  Palette,
-  StringPalette,
   wrapInBlankSemantics,
   BUILT_INS,
 } from "@color-buddy/palette-check";
-import type { LintResult } from "@color-buddy/palette-check";
+import type {
+  LintResult,
+  CustomLint,
+  Palette,
+  StringPalette,
+} from "@color-buddy/palette-check";
 import { JSONStringify } from "../lib/utils";
 import { loadLints } from "../lib/api-calls";
 

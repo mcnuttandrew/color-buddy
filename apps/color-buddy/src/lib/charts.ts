@@ -1,6 +1,6 @@
+import type { Palette } from "@color-buddy/palette-check";
 import * as vega from "vega";
 import * as vegaLite from "vega-lite";
-import type { Palette } from "../types";
 
 export const idxToKey = (idx: number) => `#${idx}A${idx}0${idx}${idx}`;
 

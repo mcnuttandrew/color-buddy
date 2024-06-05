@@ -1,5 +1,5 @@
 import { ColorLint } from "./ColorLint";
-import type { Palette } from "../types";
+import type { Palette } from "./types";
 import type { CustomLint } from "./ColorLint";
 import { CreateCustomLint } from "./ColorLint";
 

@@ -1,4 +1,4 @@
-import type { Palette, StringPalette, ColorWrap } from "./types";
+import type { Palette, StringPalette, ColorWrap, ColorSpace } from "./types";
 
 import { colorNameSimple } from "./lints/name-discrim";
 
@@ -13,7 +13,18 @@ import { doMonteCarloFix } from "./linter-tools/monte-carlo-fix";
 
 import simulateCVD from "./cvd-sim";
 
-import { wrapInBlankSemantics, makePal, toHex } from "./utils";
+import {
+  wrapInBlankSemantics,
+  wrapInBlankStringSemantics,
+  makePal,
+  toHex,
+  distributePoints,
+  clipToGamut,
+  createPalFromHexes,
+  createPalWithTags,
+  makePalFromString,
+  toPal,
+} from "./utils";
 
 import { suggestLintFix } from "./linter-tools/lint-fixer";
 
@@ -31,5 +42,19 @@ export {
   suggestLintFix,
   makePal,
   toHex,
+  distributePoints,
+  clipToGamut,
+  wrapInBlankStringSemantics,
+  createPalFromHexes,
+  createPalWithTags,
+  makePalFromString,
+  toPal,
 };
-export type { Palette, StringPalette, ColorWrap, LintResult, CustomLint };
+export type {
+  Palette,
+  StringPalette,
+  ColorWrap,
+  LintResult,
+  CustomLint,
+  ColorSpace,
+};

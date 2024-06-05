@@ -1,8 +1,8 @@
 <script lang="ts">
-  import { Color } from "@color-buddy/palette-check";
-  import type { ColorWrap } from "../types";
+  import { Color, wrapInBlankSemantics } from "@color-buddy/palette-check";
+  import type { ColorWrap } from "@color-buddy/palette-check";
   import configStore from "../stores/config-store";
-  import { wrapInBlankSemantics, processBodyTextToColors } from "../lib/utils";
+  import { processBodyTextToColors } from "../lib/utils";
 
   let state: "idle" | "error" = "idle";
   export let onChange: (colors: ColorWrap<Color>[]) => void;

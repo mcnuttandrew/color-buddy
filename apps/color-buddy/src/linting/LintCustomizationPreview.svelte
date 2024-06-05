@@ -1,11 +1,11 @@
 <script lang="ts">
+  import { Color, wrapInBlankSemantics } from "@color-buddy/palette-check";
+  import type { Palette } from "@color-buddy/palette-check";
+
   import colorStore from "../stores/color-store";
   import ColorChannelPicker from "../components/ColorChannelPicker.svelte";
   import Tooltip from "../components/Tooltip.svelte";
-  import { Color } from "@color-buddy/palette-check";
   import Background from "../components/Background.svelte";
-  import { wrapInBlankSemantics } from "../lib/utils";
-  import type { Palette } from "../types";
   import { buttonStyle } from "../lib/styles";
   export let pal: Palette;
   export let blamedSet: Set<number> = new Set();

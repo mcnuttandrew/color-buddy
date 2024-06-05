@@ -1,8 +1,9 @@
 <script lang="ts">
+  import type { LintResult } from "@color-buddy/palette-check";
+
   import colorStore from "../stores/color-store";
   import configStore from "../stores/config-store";
 
-  import type { LintResult } from "../lib/ColorLint";
   import { buttonStyle } from "../lib/styles";
   import ExplanationViewer from "./ExplanationViewer.svelte";
   import EvalResponse from "./EvalResponse.svelte";

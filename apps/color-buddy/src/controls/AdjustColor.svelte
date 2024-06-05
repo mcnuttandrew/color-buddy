@@ -1,9 +1,9 @@
 <script lang="ts">
-  import { Color } from "@color-buddy/palette-check";
+  import { Color, clipToGamut } from "@color-buddy/palette-check";
   import { colorPickerConfig } from "../lib/utils";
   import colorStore from "../stores/color-store";
   import focusStore from "../stores/focus-store";
-  import { clipToGamut, clamp } from "../lib/utils";
+  import { clamp } from "../lib/utils";
 
   import { buttonStyle } from "../lib/styles";
 

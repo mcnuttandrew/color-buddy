@@ -1,7 +1,6 @@
 import { ColorLint } from "../ColorLint";
-import type { PalType } from "../../types";
+import type { PalType, ColorWrap } from "../types";
 import { Color } from "../Color";
-import type { ColorWrap } from "../../types";
 import type { LintFixer } from "../linter-tools/lint-fixer";
 
 const meanPoint2d = (points: Color[]) => {

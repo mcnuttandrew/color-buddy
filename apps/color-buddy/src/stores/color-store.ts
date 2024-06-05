@@ -1,8 +1,13 @@
 import { writable } from "svelte/store";
-import { Color } from "@color-buddy/palette-check";
-import { deDup, newGenericPal, wrapInBlankSemantics } from "../lib/utils";
+import { Color, wrapInBlankSemantics } from "@color-buddy/palette-check";
+import type {
+  Palette,
+  StringPalette,
+  ColorWrap,
+  ColorSpace,
+} from "@color-buddy/palette-check";
 
-import type { Palette, StringPalette, ColorSpace, ColorWrap } from "../types";
+import { deDup, newGenericPal } from "../lib/utils";
 
 interface StoreData {
   palettes: Palette[];

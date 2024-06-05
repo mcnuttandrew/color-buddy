@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Color } from "@color-buddy/palette-check";
+  import { Color, makePalFromString } from "@color-buddy/palette-check";
   import exampleStore, {
     DEMOS,
     detectColorsInSvgString,
@@ -10,7 +10,6 @@
   import Modal from "../components/Modal.svelte";
   import { buttonStyle } from "../lib/styles";
   import MonacoEditor from "../components/MonacoEditor.svelte";
-  import { makePalFromString } from "../lib/utils";
   let modalState: "closed" | "input-svg" | "input-vega" | "edit-colors" =
     "closed";
 

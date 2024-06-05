@@ -1,7 +1,8 @@
 <script lang="ts">
+  import type { LintResult } from "@color-buddy/palette-check";
+
   import focusStore from "../stores/focus-store";
   import colorStore from "../stores/color-store";
-  import type { LintResult } from "../lib/ColorLint";
 
   import {
     dealWithFocusEvent,

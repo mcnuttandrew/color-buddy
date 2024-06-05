@@ -2,8 +2,8 @@
   import colorStore from "../stores/color-store";
   import focusStore from "../stores/focus-store";
   import { buttonStyle } from "../lib/styles";
-  import { distributePoints, colorPickerConfig } from "../lib/utils";
-  import type { Direction } from "../lib/utils";
+  import { colorPickerConfig } from "../lib/utils";
+  import { distributePoints } from "@color-buddy/palette-check";
 
   $: currentPal = $colorStore.palettes[$colorStore.currentPal];
   $: colors = currentPal.colors;
@@ -16,7 +16,7 @@
     { direction: "horizontal", name: config.isPolar ? "radial" : "horizontal" },
     { direction: "vertical", name: config.isPolar ? "angle" : "vertical" },
     { direction: "in z space", name: `in ${zName.toUpperCase()} space` },
-  ] as Direction[];
+  ] as Parameters<typeof distributePoints>[0][];
 </script>
 
 {#if focusedColors.length > 2}

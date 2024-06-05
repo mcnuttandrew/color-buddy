@@ -1,9 +1,9 @@
-import { Color, ColorSpaceDirectory, utils } from "@color-buddy/palette-check";
+import { Color, ColorSpaceDirectory, utils } from "@color-buddy/palette-lint";
 import type {
   Palette,
   ColorWrap,
   StringPalette,
-} from "@color-buddy/palette-check";
+} from "@color-buddy/palette-lint";
 
 import { Formatter, FracturedJsonOptions, EolStyle } from "fracturedjsonjs";
 import fits from "../assets/outfits.json";

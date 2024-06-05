@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { Color, utils } from "@color-buddy/palette-check";
-  import type { Palette, ColorWrap } from "@color-buddy/palette-check";
+  import { Color, utils } from "@color-buddy/palette-lint";
+  import type { Palette, ColorWrap } from "@color-buddy/palette-lint";
 
   import { colorPickerConfig } from "../lib/utils";
   import {

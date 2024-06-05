@@ -1,6 +1,6 @@
 <script lang="ts">
-  import type { LintResult, Palette } from "@color-buddy/palette-check";
-  import { suggestLintFix } from "@color-buddy/palette-check";
+  import type { LintResult, Palette } from "@color-buddy/palette-lint";
+  import { suggestLintFix } from "@color-buddy/palette-lint";
   import { suggestLintAIFix, suggestLintMonteFix } from "../lib/lint-fixer";
 
   import colorStore from "../stores/color-store";

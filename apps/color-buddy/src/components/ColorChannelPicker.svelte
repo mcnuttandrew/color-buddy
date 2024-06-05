@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Color } from "@color-buddy/palette-check";
+  import { Color } from "@color-buddy/palette-lint";
   import { colorPickerConfig } from "../lib/utils";
   import ColorIO from "colorjs.io";
 

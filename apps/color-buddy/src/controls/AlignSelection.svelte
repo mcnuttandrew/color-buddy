@@ -1,7 +1,7 @@
 <script lang="ts">
   import focusStore from "../stores/focus-store";
   import colorStore from "../stores/color-store";
-  import { Color } from "@color-buddy/palette-check";
+  import { Color } from "@color-buddy/palette-lint";
   import { colorPickerConfig } from "../lib/utils";
   import { buttonStyle } from "../lib/styles";
 

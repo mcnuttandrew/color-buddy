@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { Color, utils } from "@color-buddy/palette-check";
-  import type { ColorWrap } from "@color-buddy/palette-check";
+  import { Color, utils } from "@color-buddy/palette-lint";
+  import type { ColorWrap } from "@color-buddy/palette-lint";
   import configStore from "../stores/config-store";
   import { processBodyTextToColors } from "../lib/utils";
 

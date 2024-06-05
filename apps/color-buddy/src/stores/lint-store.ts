@@ -1,12 +1,12 @@
 import { writable } from "svelte/store";
 import * as idb from "idb-keyval";
-import { Color, utils, PREBUILT_LINTS } from "@color-buddy/palette-check";
+import { Color, utils, PREBUILT_LINTS } from "@color-buddy/palette-lint";
 import type {
   LintResult,
   CustomLint,
   Palette,
   StringPalette,
-} from "@color-buddy/palette-check";
+} from "@color-buddy/palette-lint";
 import { JSONStringify } from "../lib/utils";
 import { loadLints } from "../lib/api-calls";
 

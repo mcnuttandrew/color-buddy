@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { Color, simulateCVD } from "@color-buddy/palette-check";
-  import type { ColorWrap } from "@color-buddy/palette-check";
+  import { Color, simulateCVD } from "@color-buddy/palette-lint";
+  import type { ColorWrap } from "@color-buddy/palette-lint";
   import colorStore from "../stores/color-store";
   import focusStore from "../stores/focus-store";
   import configStore from "../stores/config-store";

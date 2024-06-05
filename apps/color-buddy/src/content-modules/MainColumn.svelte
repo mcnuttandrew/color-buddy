@@ -14,7 +14,7 @@
   import ModifySelection from "../controls/ModifySelection.svelte";
   import PalPreview from "../components/PalPreview.svelte";
   import SetColorSpace from "../controls/SetColorSpace.svelte";
-  import { simulateCVD } from "@color-buddy/palette-check";
+  import { simulateCVD } from "@color-buddy/palette-lint";
 
   import ContentEditable from "../components/ContentEditable.svelte";
 

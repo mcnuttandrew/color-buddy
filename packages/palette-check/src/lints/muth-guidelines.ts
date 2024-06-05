@@ -70,7 +70,7 @@ const avoidTetradic: CustomLint = {
                 predicate: {
                   similar: {
                     left: { "hsl.h": "a" },
-                    right: { "+": { left: { "hsl.h": "b" }, right: 90 } },
+                    right: { "+": { left: { "hsl.h": "b" }, right: angle } },
                     threshold: 5,
                   },
                 },

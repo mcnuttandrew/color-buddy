@@ -46,7 +46,7 @@ export const PREBUILT_LINTS: CustomLint[] = [
 export function linter(
   palette: Palette,
   customLints: CustomLint[]
-): ColorLint<any, any>[] {
+): ColorLint<any>[] {
   const ignoreList = palette.evalConfig;
   const globallyIgnoredLints = palette.evalConfig?.globallyIgnoredLints || [];
   const lints = [

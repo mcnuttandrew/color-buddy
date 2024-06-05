@@ -19,7 +19,7 @@ export interface LintResult {
   id: string | undefined;
 }
 
-export class ColorLint<CheckData, ParamType> {
+export class ColorLint<CheckData> {
   name: string = "";
   taskTypes: Palette["type"][] = [];
   requiredTags: string[] = [];
@@ -81,7 +81,7 @@ export function CreateCustomLint(props: CustomLint) {
   try {
     natProg = prettyPrintLL(Json.parse(props.program));
   } catch (e) {}
-  return class CustomLint extends ColorLint<number[] | number[][], any> {
+  return class CustomLint extends ColorLint<number[] | number[][]> {
     blameMode = props.blameMode;
     description = props.description;
     group = props.group;
@@ -136,7 +136,11 @@ export function CreateCustomLint(props: CustomLint) {
           .join(", ");
       }
 
-      return props.failMessage.replaceAll("{{blame}}", blame);
+      return replaceAll(props.failMessage, "{{blame}}", blame);
     }
   };
+}
+
+function replaceAll(str: string, find: string, replace: string) {
+  return str.split(find).join(replace);
 }

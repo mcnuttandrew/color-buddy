@@ -3,6 +3,7 @@ import type { PalType, ColorWrap } from "../types";
 import { Color } from "../Color";
 import type { LintFixer } from "../linter-tools/lint-fixer";
 
+// @ts-ignore
 const meanPoint2d = (points: Color[]) => {
   const labPoints = points.map((x) => x.toColorIO().to("lab").coords);
   const xs = labPoints.map((x) => x[1]);
@@ -11,6 +12,7 @@ const meanPoint2d = (points: Color[]) => {
   const y = ys.reduce((a, b) => a + b, 0) / ys.length;
   return { x, y };
 };
+// @ts-ignore
 const findMinDistPoint = (points: Color[], pos: { x: number; y: number }) => {
   const labPoints = points.map((x) => x.toColorIO().to("lab").coords);
   const { x, y } = pos;
@@ -18,7 +20,7 @@ const findMinDistPoint = (points: Color[], pos: { x: number; y: number }) => {
   const minDist = Math.min(...distances);
   return points[distances.indexOf(minDist)];
 };
-export default class DivergingOrder extends ColorLint<boolean, false> {
+export default class DivergingOrder extends ColorLint<boolean> {
   name = "Diverging Palettes order";
   taskTypes = ["diverging"] as PalType[];
   group = "usability" as const;

@@ -44,7 +44,7 @@ export const generateMCFix = (
       lint.getBlamedColors()
     );
     const blamed = [...new Set(blamedWithDuplicates)];
-    newPalette.colors = [...newPalette.colors].map((color, i) => {
+    newPalette.colors = [...newPalette.colors].map((color) => {
       // do nothing if the color is not blamed
       if (!blamed.includes(color.color.toString())) {
         return color;

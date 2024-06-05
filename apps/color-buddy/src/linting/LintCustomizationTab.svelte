@@ -1,6 +1,6 @@
 <script lang="ts">
   import lintStore, { newId } from "../stores/lint-store";
-  import { BUILT_INS, CreateCustomLint } from "@color-buddy/palette-check";
+  import { PREBUILT_LINTS, CreateCustomLint } from "@color-buddy/palette-check";
   import type {
     Palette,
     LintResult,
@@ -26,7 +26,7 @@
   )!;
   $: program = lint ? lint.program : "";
 
-  $: builtInLint = BUILT_INS.find((x) => x.id === $lintStore.focusedLint);
+  $: builtInLint = PREBUILT_LINTS.find((x) => x.id === $lintStore.focusedLint);
   $: isBuiltInThatsBeenModified =
     builtInLint && lint?.program !== builtInLint?.program;
 

@@ -24,7 +24,7 @@ import SequentialOrder from "./lints/sequential-order";
 import SizeDiscrim from "./lints/size-discrim";
 import UglyColors from "./lints/ugly-colors";
 
-export const BUILT_INS: CustomLint[] = [
+export const PREBUILT_LINTS: CustomLint[] = [
   ...Contrast,
   ...Affects,
   ...CVDCheck,

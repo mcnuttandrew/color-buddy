@@ -28,5 +28,5 @@ jobs:
 
       - name: Test
         run: |
-          cd packages/color-buddy
+          cd packages/palette-check
           yarn test

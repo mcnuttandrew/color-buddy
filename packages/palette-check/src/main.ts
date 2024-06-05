@@ -4,7 +4,7 @@ import { colorNameSimple } from "./lints/name-discrim";
 
 import { Color, ColorSpaceDirectory } from "./Color";
 
-import { BUILT_INS, runLintChecks } from "./linter";
+import { PREBUILT_LINTS, runLintChecks } from "./linter";
 
 import { CreateCustomLint, ColorLint } from "./ColorLint";
 import type { LintResult, CustomLint } from "./ColorLint";
@@ -14,41 +14,39 @@ import { doMonteCarloFix } from "./linter-tools/monte-carlo-fix";
 import simulateCVD from "./cvd-sim";
 
 import {
-  wrapInBlankSemantics,
-  wrapInBlankStringSemantics,
-  makePal,
-  toHex,
-  distributePoints,
   clipToGamut,
   createPalFromHexes,
-  createPalWithTags,
+  distributePoints,
+  makePal,
   makePalFromString,
+  toHex,
   toPal,
+  wrapInBlankSemantics,
+  wrapInBlankStringSemantics,
 } from "./utils";
 
 import { suggestLintFix } from "./linter-tools/lint-fixer";
 
 export {
-  runLintChecks,
+  PREBUILT_LINTS,
   Color,
-  ColorSpaceDirectory,
-  BUILT_INS,
-  CreateCustomLint,
   ColorLint,
-  colorNameSimple,
-  simulateCVD,
-  doMonteCarloFix,
-  wrapInBlankSemantics,
-  suggestLintFix,
-  makePal,
-  toHex,
-  distributePoints,
+  ColorSpaceDirectory,
+  CreateCustomLint,
   clipToGamut,
-  wrapInBlankStringSemantics,
+  colorNameSimple,
   createPalFromHexes,
-  createPalWithTags,
+  distributePoints,
+  doMonteCarloFix,
+  makePal,
   makePalFromString,
+  runLintChecks,
+  simulateCVD,
+  suggestLintFix,
+  toHex,
   toPal,
+  wrapInBlankSemantics,
+  wrapInBlankStringSemantics,
 };
 export type {
   Palette,

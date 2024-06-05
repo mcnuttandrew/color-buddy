@@ -1,4 +1,4 @@
-import { BUILT_INS } from "./linter";
+import { PREBUILT_LINTS } from "./linter";
 import { prettyPrintLL } from "./lint-language/lint-language";
 import { expect, test } from "vitest";
 import type { CustomLint } from "./ColorLint";
@@ -59,7 +59,7 @@ ${lint.program}
 async function buildDocs() {
   const aiDocs = await fs.readFile("./src/ai-docs.md", "utf-8");
 
-  const examples = BUILT_INS.map(lintToText).join("\n\n\n");
+  const examples = PREBUILT_LINTS.map(lintToText).join("\n\n\n");
   const newDocs = `# Language Docs
 
 These docs provide a high-level overview of the language and its built-in functions. The first section covers the syntax of the language in its concrete JSON syntax, with a particular set of notes meant to guide LLM usage of the language. The second section provides all of the built in lints as examples.

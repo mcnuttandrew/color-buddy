@@ -3,7 +3,7 @@ import * as idb from "idb-keyval";
 import {
   Color,
   wrapInBlankSemantics,
-  BUILT_INS,
+  PREBUILT_LINTS,
 } from "@color-buddy/palette-check";
 import type {
   LintResult,
@@ -72,7 +72,7 @@ export const GLOBAL_OKAY_LIST = [
 ];
 const GLOBAL_OKAY_LIST_SET = new Set(GLOBAL_OKAY_LIST);
 
-const builtInIndex = BUILT_INS.reduce((acc, x) => {
+const builtInIndex = PREBUILT_LINTS.reduce((acc, x) => {
   acc[x.id] = x;
   return acc;
 }, {} as Record<string, CustomLint>);
@@ -149,7 +149,7 @@ function createStore() {
     let lints = (storeBase.lints || []).map(
       (x: CustomLint) => builtInIndex[x.id] || x
     ) as CustomLint[];
-    const missingBuiltIns = BUILT_INS.filter(
+    const missingBuiltIns = PREBUILT_LINTS.filter(
       (x) => !lints.find((y) => y.id === x.id)
     ).map((x) => ({
       ...x,

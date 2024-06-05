@@ -25,5 +25,4 @@ Where your keys are for gemini and openai respectively. The app does not check t
 
 ## REFACTOR TODOS
 
-- BUILT_INS is dumb rename
 - pull out the color naming stuff into its own thing

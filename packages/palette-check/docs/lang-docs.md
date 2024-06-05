@@ -925,7 +925,7 @@ Program:
 
 Description: Tetradic palettes are hard to work with and are not recommended.
 
-Natural Language: NOT EXIST a IN colors SUCH THAT (EXIST b IN colors SUCH THAT similar(hsl.h(a), hsl.h(b) + 90) < 5 AND EXIST b IN colors SUCH THAT similar(hsl.h(a), hsl.h(b) + 90) < 5 AND EXIST b IN colors SUCH THAT similar(hsl.h(a), hsl.h(b) + 90) < 5)
+Natural Language: NOT EXIST a IN colors SUCH THAT (EXIST b IN colors SUCH THAT similar(hsl.h(a), hsl.h(b) + 90 % 360) < 5 AND EXIST b IN colors SUCH THAT similar(hsl.h(a), hsl.h(b) + 180 % 360) < 5 AND EXIST b IN colors SUCH THAT similar(hsl.h(a), hsl.h(b) + 270 % 360) < 5)
 
 Palettes that will fail this test:
 
@@ -957,7 +957,12 @@ Program:
                                 "similar": {
                                     "left": {"hsl.h": "a"}, 
                                     "right": {
-                                        "+": { "left": {"hsl.h": "b"}, "right": 90 }
+                                        "%": {
+                                            "left": {
+                                                "+": { "left": {"hsl.h": "b"}, "right": 90 }
+                                            }, 
+                                            "right": 360
+                                        }
                                     }, 
                                     "threshold": 5
                                 }
@@ -972,7 +977,12 @@ Program:
                                 "similar": {
                                     "left": {"hsl.h": "a"}, 
                                     "right": {
-                                        "+": { "left": {"hsl.h": "b"}, "right": 90 }
+                                        "%": {
+                                            "left": {
+                                                "+": { "left": {"hsl.h": "b"}, "right": 180 }
+                                            }, 
+                                            "right": 360
+                                        }
                                     }, 
                                     "threshold": 5
                                 }
@@ -987,7 +997,12 @@ Program:
                                 "similar": {
                                     "left": {"hsl.h": "a"}, 
                                     "right": {
-                                        "+": { "left": {"hsl.h": "b"}, "right": 90 }
+                                        "%": {
+                                            "left": {
+                                                "+": { "left": {"hsl.h": "b"}, "right": 270 }
+                                            }, 
+                                            "right": 360
+                                        }
                                     }, 
                                     "threshold": 5
                                 }

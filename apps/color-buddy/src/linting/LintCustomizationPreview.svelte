@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Color, wrapInBlankSemantics } from "@color-buddy/palette-check";
+  import { Color, utils } from "@color-buddy/palette-check";
   import type { Palette } from "@color-buddy/palette-check";
 
   import colorStore from "../stores/color-store";
@@ -28,7 +28,7 @@
             // @ts-ignore
             const val = e.target.value;
             const newColors = [...pal.colors];
-            newColors[idx] = wrapInBlankSemantics(
+            newColors[idx] = utils.wrapSemantics(
               Color.colorFromString(val, pal.colorSpace)
             );
             updatePal({ ...pal, colors: newColors });
@@ -48,7 +48,7 @@
           color={color.color}
           onColorChange={(newColor) => {
             const newColors = [...pal.colors];
-            newColors[idx] = wrapInBlankSemantics(newColor);
+            newColors[idx] = utils.wrapSemantics(newColor);
             updatePal({ ...pal, colors: newColors });
           }}
         />
@@ -119,7 +119,7 @@
         on:click={() => {
           const newColors = [
             ...pal.colors,
-            wrapInBlankSemantics(Color.colorFromString("steelblue")),
+            utils.wrapSemantics(Color.colorFromString("steelblue")),
           ];
           updatePal({ ...pal, colors: newColors });
         }}

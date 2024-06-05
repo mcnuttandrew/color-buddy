@@ -3,7 +3,7 @@ import type { Palette, ColorWrap } from "../types";
 import { Color, ColorSpaceDirectory } from "../Color";
 import { getName } from "../lints/name-discrim";
 import type { LintProgram } from "./lint-type";
-import { wrapInBlankSemantics } from "../utils";
+import { wrapSemantics } from "../utils";
 
 type RawValues =
   | string
@@ -48,7 +48,7 @@ class Environment {
     }
     if (name === "background") {
       return new LLColor(
-        wrapInBlankSemantics(this.palette.background),
+        wrapSemantics(this.palette.background),
         this.palette.background.toHex()
       );
     }
@@ -155,7 +155,7 @@ export class LLNode {
     }
     return;
   }
-  static tryToConstruct(node: any, options: OptionsConfig): false | LLNode {
+  static tryToConstruct(node: any, _options: OptionsConfig): false | LLNode {
     throw new Error("Invalid node" + node);
   }
   toString() {
@@ -277,7 +277,7 @@ export class LLBool extends LLNode {
     this.evalCheck(env);
     return { result: !!this.value, env };
   }
-  static tryToConstruct(value: any, options: OptionsConfig) {
+  static tryToConstruct(value: any, _options: OptionsConfig) {
     if (typeof value !== "boolean") return false;
     return new LLBool(value);
   }
@@ -295,7 +295,7 @@ export class LLVariable extends LLNode {
     const varDeRef = env.get(this.value);
     return varDeRef.evaluate(env);
   }
-  static tryToConstruct(value: any, options: OptionsConfig) {
+  static tryToConstruct(value: any, _options: OptionsConfig) {
     if (typeof value !== "string") return false;
     return new LLVariable(value);
   }
@@ -316,16 +316,16 @@ export class LLColor extends LLNode {
 
     return { result: this.value, env };
   }
-  static tryToConstruct(value: any, options: OptionsConfig): false | LLColor {
+  static tryToConstruct(value: any, _options: OptionsConfig): false | LLColor {
     if (value instanceof Color) {
-      return new LLColor(wrapInBlankSemantics(value), value.toHex());
+      return new LLColor(wrapSemantics(value), value.toHex());
     }
     if (typeof value === "object" && value.color instanceof Color) {
       return new LLColor(value, value.color.toHex());
     }
     if (typeof value === "string" && Color.stringIsColor(value, "lab")) {
       return new LLColor(
-        wrapInBlankSemantics(Color.colorFromString(value, "lab")),
+        wrapSemantics(Color.colorFromString(value, "lab")),
         value
       );
     }
@@ -345,7 +345,7 @@ export class LLNumber extends LLNode {
     this.evalCheck(env);
     return { result: this.value, env };
   }
-  static tryToConstruct(value: any, options: OptionsConfig) {
+  static tryToConstruct(value: any, _options: OptionsConfig) {
     if (typeof value !== "number") return false;
     return new LLNumber(value);
   }
@@ -1148,94 +1148,4 @@ export function prettyPrintLL(
   const opts = { ...DEFAULT_OPTIONS, ...options };
   const ast = parseToAST({ id: [root] }, opts);
   return ast.toString();
-}
-
-export function permutativeBlame(
-  root: LintProgram,
-  palette: Palette,
-  mode: "single" | "pair"
-): number[] | number[][] {
-  const initialRun = LLEval(root, palette);
-  if (initialRun.result) return [];
-  // dont compute blame if it doesn't matter
-  const hasColorsRef = JSON.stringify(root).includes("colors");
-  const hasBgRef = JSON.stringify(root).includes("background");
-  if (!hasColorsRef && !hasBgRef) {
-    return [];
-  }
-
-  // single blame
-  const allIndices = palette.colors.map((_, i) => i);
-  let blamedIndices = [] as number[];
-  if (mode === "single") {
-    // constructive blame
-    allIndices.forEach((x) => {
-      const tempPalette = { ...palette, colors: [palette.colors[x]] };
-      const result = LLEval(root, tempPalette);
-      if (!result.result) {
-        blamedIndices.push(x);
-      }
-    });
-    if (blamedIndices.length > 0) return blamedIndices;
-    blamedIndices = palette.colors
-      .map((_, i) => {
-        const tempPalette = {
-          ...palette,
-          colors: palette.colors.filter((_, j) => i !== j),
-        };
-        const result = LLEval(root, tempPalette);
-        // if it passes then this index is the problem
-
-        return result.result ? i : -1;
-      })
-      .filter((x) => x !== -1);
-  } else if (mode === "pair") {
-    // pair blame
-    // todo add trimming as appropriate
-    let checkIndices = new Set<string>();
-    const pairBlame = [] as number[][];
-    // constructive blame
-    allIndices.forEach((x) => {
-      allIndices.forEach((y) => {
-        if (x === y) return;
-        const key = [x, y].sort().join(",");
-        if (checkIndices.has(key)) return;
-        checkIndices.add(key);
-        const tempPalette = {
-          ...palette,
-          colors: [palette.colors[x], palette.colors[y]],
-        };
-        const result = LLEval(root, tempPalette);
-        if (!result.result) {
-          pairBlame.push([x, y]);
-        }
-      });
-      if (pairBlame.length > 0) return pairBlame;
-      // reductive blame
-      blamedIndices.forEach((x) => {
-        blamedIndices.forEach((y) => {
-          const key = [x, y].sort().join(",");
-          if (checkIndices.has(key)) return;
-          if (x === y) return;
-          checkIndices.add(key);
-          // try out filter the pairs of blamed indices as pairs
-          const tempPalette = {
-            ...palette,
-            colors: palette.colors.filter((_, j) => x !== j && y !== j),
-          };
-          const result = LLEval(root, tempPalette);
-          if (result.result) {
-            pairBlame.push([x, y]);
-          }
-        });
-      });
-    });
-
-    return pairBlame;
-  }
-  if (blamedIndices.length === 0) {
-    blamedIndices = [...allIndices];
-  }
-
-  return blamedIndices;
 }

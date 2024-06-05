@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Color, wrapInBlankSemantics } from "@color-buddy/palette-check";
+  import { Color, utils } from "@color-buddy/palette-check";
   import type { Palette } from "@color-buddy/palette-check";
 
   import colorStore from "../stores/color-store";
@@ -20,7 +20,7 @@
   }): Palette {
     return {
       colors: suggestion.colors.map((x) =>
-        wrapInBlankSemantics(Color.colorFromString(x, colorSpace as any))
+        utils.wrapSemantics(Color.colorFromString(x, colorSpace as any))
       ),
       background: Color.colorFromString(
         suggestion.background,

@@ -1,9 +1,5 @@
 import * as idb from "idb-keyval";
-import {
-  Color,
-  runLintChecks,
-  doMonteCarloFix,
-} from "@color-buddy/palette-check";
+import { Color, linter, generateMCFix } from "@color-buddy/palette-check";
 import type {
   Palette,
   StringPalette,
@@ -68,7 +64,7 @@ async function dispatch(cmd: WorkerCommand) {
         await new Promise((resolve) => setTimeout(resolve, 100));
       }
 
-      const result: LintResult[] = runLintChecks(
+      const result: LintResult[] = linter(
         pal,
         lintStore.map((x) => {
           if (!computeMessage) {
@@ -102,7 +98,7 @@ async function dispatch(cmd: WorkerCommand) {
       if (lints.length === 0) {
         return [];
       }
-      const fixedPalette = doMonteCarloFix(newPal, lints);
+      const fixedPalette = generateMCFix(newPal, lints);
       return fixedPalette.colors.map((x) => x.color.toString());
     default:
       return "no-op";

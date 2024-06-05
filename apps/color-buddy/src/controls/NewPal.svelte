@@ -1,29 +1,22 @@
 <script lang="ts">
-  import {
-    Color,
-    wrapInBlankSemantics,
-    createPalFromHexes,
-  } from "@color-buddy/palette-check";
+  import { Color, utils } from "@color-buddy/palette-check";
   import type { StringPalette, Palette } from "@color-buddy/palette-check";
 
   import colorStore from "../stores/color-store";
 
-  import { processBodyTextToColors } from "../lib/utils";
+  import { processBodyTextToColors, newGenericPal } from "../lib/utils";
   import { buttonStyle, denseButtonStyle } from "../lib/styles";
   import Tooltip from "../components/Tooltip.svelte";
-  import { newGenericPal } from "../lib/utils";
   import SuggestColorPal from "./SuggestColorPal.svelte";
 
   $: currentPal = $colorStore.palettes[$colorStore.currentPal];
   $: colorSpace = currentPal ? currentPal.colorSpace : "lab";
 
-  function newPal(newPal: StringPalette) {
-    const colors = newPal.colors.map((x) => {
-      const color = Color.colorFromString(x.color, colorSpace);
-      return wrapInBlankSemantics(color);
-    });
-    const background = Color.colorFromString(newPal.background, colorSpace);
-    console.log(background.toHex(), newPal.background);
+  function newPal(newPal: Palette) {
+    const colors = newPal.colors.map((x) =>
+      utils.wrapSemantics(x.color.toColorSpace(colorSpace))
+    );
+    const background = newPal.background.toColorSpace(colorSpace);
     const pal = {
       ...newPal,
       colors,
@@ -40,7 +33,7 @@
     }
     try {
       const newColors = processBodyTextToColors(body, colorSpace as any);
-      newPal(createPalFromHexes(newColors.map((x) => x.toHex())));
+      newPal(utils.makePalFromString(newColors.map((x) => x.toHex())));
     } catch (e) {
       console.error(e);
       return;
@@ -53,7 +46,7 @@
     <div class="">
       <button
         class={buttonStyle}
-        on:click={() => newPal(createPalFromHexes([]))}
+        on:click={() => newPal(utils.makePalFromString([]))}
       >
         New blank
       </button>
@@ -66,7 +59,7 @@
       <button
         class={buttonStyle}
         on:click={() => {
-          const pal = createPalFromHexes([
+          const pal = utils.makePalFromString([
             "#0084a9",
             "#009de5",
             "#5fb1ff",
@@ -82,7 +75,7 @@
       <button
         class={buttonStyle}
         on:click={() => {
-          const pal = createPalFromHexes([
+          const pal = utils.makePalFromString([
             "#0084ae",
             "#8db3c7",
             "#e5e3e0",

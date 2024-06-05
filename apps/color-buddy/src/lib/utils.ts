@@ -1,8 +1,4 @@
-import {
-  Color,
-  ColorSpaceDirectory,
-  wrapInBlankStringSemantics,
-} from "@color-buddy/palette-check";
+import { Color, ColorSpaceDirectory, utils } from "@color-buddy/palette-check";
 import type {
   Palette,
   ColorWrap,
@@ -209,21 +205,11 @@ export const clampToRange = (val: number, range: number[]) => {
 
 const outfitToPal = (x: any) => [x.fill1, x.fill2, x.fill3];
 const outfits = fits.map((x) => outfitToPal(x));
-const defaultHexPal: StringPalette = {
-  name: "new palette",
-  colors: [],
-  background: "#ffffff",
-  type: "categorical",
-  evalConfig: {},
-  colorSpace: "lab",
-  tags: [],
-};
-export function newGenericPal(name: string): StringPalette {
-  return {
-    ...defaultHexPal,
-    name,
-    colors: pick(outfits).map((x: string) => wrapInBlankStringSemantics(x)),
-  };
+
+export function newGenericPal(name: string): Palette {
+  const newPal = utils.makePalFromString(pick(outfits));
+  newPal.name = name;
+  return newPal;
 }
 
 const dragExtent = (

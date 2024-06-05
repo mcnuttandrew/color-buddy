@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Color, wrapInBlankSemantics } from "@color-buddy/palette-check";
+  import { Color, utils } from "@color-buddy/palette-check";
   import type { ColorWrap } from "@color-buddy/palette-check";
   import configStore from "../stores/config-store";
   import { processBodyTextToColors } from "../lib/utils";
@@ -17,7 +17,7 @@
           if (colors[idx]) {
             return { ...colors[idx], color: x };
           } else {
-            return wrapInBlankSemantics(x);
+            return utils.wrapSemantics(x);
           }
         }
       );

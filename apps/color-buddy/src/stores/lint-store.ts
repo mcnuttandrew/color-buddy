@@ -1,10 +1,6 @@
 import { writable } from "svelte/store";
 import * as idb from "idb-keyval";
-import {
-  Color,
-  wrapInBlankSemantics,
-  PREBUILT_LINTS,
-} from "@color-buddy/palette-check";
+import { Color, utils, PREBUILT_LINTS } from "@color-buddy/palette-check";
 import type {
   LintResult,
   CustomLint,
@@ -94,7 +90,7 @@ function deserializePalette(pal: StringPalette): Palette {
     background: Color.colorFromString(pal.background, pal.colorSpace),
     colors: pal.colors.map((x) => {
       if (typeof x === "string") {
-        return wrapInBlankSemantics(Color.colorFromString(x, pal.colorSpace));
+        return utils.wrapSemantics(Color.colorFromString(x, pal.colorSpace));
       }
       const color = Color.colorFromString(x.color, pal.colorSpace);
       return { ...x, color };

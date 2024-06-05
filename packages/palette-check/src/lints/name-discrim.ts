@@ -1,8 +1,4 @@
-import {
-  JSONToPrettyString,
-  makePalFromString,
-  wrapInBlankSemantics,
-} from "../utils";
+import { JSONToPrettyString, makePalFromString, wrapSemantics } from "../utils";
 import type { CustomLint } from "../ColorLint";
 import namer from "color-namer";
 import { Color } from "../Color";
@@ -115,7 +111,7 @@ export const fixColorNameDiscriminability: LintFixer = async (
       selectedNames.add(name.name);
       return [
         idx,
-        wrapInBlankSemantics(Color.colorFromHex(name.hex, color.spaceName)),
+        wrapSemantics(Color.colorFromHex(name.hex, color.spaceName)),
       ];
     })
   );

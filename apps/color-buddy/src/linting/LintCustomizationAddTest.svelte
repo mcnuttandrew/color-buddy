@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { CustomLint, Palette } from "@color-buddy/palette-check";
-  import { makePalFromString } from "@color-buddy/palette-check";
+  import { utils } from "@color-buddy/palette-check";
 
   import Tooltip from "../components/Tooltip.svelte";
   import { buttonStyle } from "../lib/styles";
@@ -16,7 +16,10 @@
     <button
       class={buttonStyle}
       on:click={() => {
-        const newTests = [...currentTests, makePalFromString(["steelblue"])];
+        const newTests = [
+          ...currentTests,
+          utils.makePalFromString(["steelblue"]),
+        ];
         setNewTests(newTests);
         onClick();
       }}

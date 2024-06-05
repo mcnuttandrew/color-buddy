@@ -1,5 +1,5 @@
 import { writable } from "svelte/store";
-import { Color, wrapInBlankSemantics } from "@color-buddy/palette-check";
+import { Color, utils } from "@color-buddy/palette-check";
 import type {
   Palette,
   StringPalette,
@@ -26,7 +26,7 @@ function stringPalToColorPal(pal: StringPalette): Palette {
     colors: pal.colors.map((x) => {
       // catch old versions
       if (typeof x === "string") {
-        return wrapInBlankSemantics(Color.colorFromString(x, pal.colorSpace));
+        return utils.wrapSemantics(Color.colorFromString(x, pal.colorSpace));
       }
       const color = Color.colorFromString(x.color, pal.colorSpace);
       return { ...x, color };
@@ -36,11 +36,20 @@ function stringPalToColorPal(pal: StringPalette): Palette {
   return result;
 }
 
+function colorPalToStringPal(pal: Palette): StringPalette {
+  return {
+    ...pal,
+    background: pal.background.toString(),
+    colors: pal.colors.map((x) => ({ ...x, color: x.color.toString() })),
+  };
+}
+const makeExample = (name: string) => colorPalToStringPal(newGenericPal(name));
+
 const InitialStore: StorageData = {
   palettes: [
-    newGenericPal("Example 1"),
-    newGenericPal("Example 2"),
-    newGenericPal("Example 3"),
+    makeExample("Example 1"),
+    makeExample("Example 2"),
+    makeExample("Example 3"),
   ],
   currentPal: 0,
 };

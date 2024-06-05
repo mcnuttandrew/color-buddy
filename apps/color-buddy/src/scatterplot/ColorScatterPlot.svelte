@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Color, wrapInBlankSemantics } from "@color-buddy/palette-check";
+  import { Color, utils } from "@color-buddy/palette-check";
   import type { Palette, ColorWrap } from "@color-buddy/palette-check";
 
   import { colorPickerConfig } from "../lib/utils";
@@ -315,7 +315,7 @@
 
   function puttingEnd() {
     if (!puttingPreview) return;
-    onColorsChange([...colors, wrapInBlankSemantics(puttingPreview as Color)]);
+    onColorsChange([...colors, utils.wrapSemantics(puttingPreview as Color)]);
     setTimeout(() => {
       configStore.setScatterplotMode("moving");
     }, 10);

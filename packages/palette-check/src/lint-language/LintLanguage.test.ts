@@ -1,5 +1,6 @@
 import { expect, test } from "vitest";
-import { LLEval, prettyPrintLL, permutativeBlame } from "./lint-language";
+import { LLEval, prettyPrintLL } from "./lint-language";
+import { permutativeBlame } from "../linter-tools/blame";
 
 import type { LintProgram } from "./lint-type";
 import { toPal, toColors } from "../test-utils";

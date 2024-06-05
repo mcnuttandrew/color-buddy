@@ -1,11 +1,11 @@
 import type { Palette } from "../types";
 
 import { Color, ColorSpaceDirectory } from "../Color";
-import { wrapInBlankSemantics } from "../utils";
+import { wrapSemantics } from "../utils";
 import type { CustomLint } from "../ColorLint";
 import { CreateCustomLint } from "../ColorLint";
 
-export const doMonteCarloFix = (
+export const generateMCFix = (
   palette: Palette,
   lints: CustomLint[]
 ): Palette => {
@@ -57,7 +57,7 @@ export const doMonteCarloFix = (
       newChannels[config.zChannelIndex] += 3 * (Math.random() - 0.5) * zStep;
       const newColor = Color.colorFromChannels(newChannels, palette.colorSpace);
 
-      return wrapInBlankSemantics(newColor);
+      return wrapSemantics(newColor);
     });
     newPalette = { ...newPalette };
   }
@@ -99,7 +99,7 @@ export const doMonteCarloFix = (
 //       return (channelA + channelB) / 2;
 //     }) as [number, number, number];
 //     const newColor = Color.colorFromChannels(newChannels, palA.colorSpace);
-//     return wrapInBlankSemantics(newColor);
+//     return wrapSemantics(newColor);
 //   });
 //   return {
 //     ...palA,

@@ -1,10 +1,7 @@
 import type { Palette } from "./types";
 
-import {
-  LLEval,
-  prettyPrintLL,
-  permutativeBlame,
-} from "./lint-language/lint-language";
+import { LLEval, prettyPrintLL } from "./lint-language/lint-language";
+import { permutativeBlame } from "./linter-tools/blame";
 import * as Json from "jsonc-parser";
 
 export interface LintResult {

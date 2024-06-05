@@ -43,7 +43,7 @@ export const PREBUILT_LINTS: CustomLint[] = [
   UglyColors,
 ];
 
-export function runLintChecks(
+export function linter(
   palette: Palette,
   customLints: CustomLint[]
 ): ColorLint<any, any>[] {

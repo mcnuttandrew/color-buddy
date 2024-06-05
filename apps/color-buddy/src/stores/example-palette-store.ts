@@ -1,6 +1,6 @@
 import { writable } from "svelte/store";
 import * as idb from "idb-keyval";
-import { Color, makePal, toHex } from "@color-buddy/palette-check";
+import { Color, utils } from "@color-buddy/palette-check";
 import type { Palette, LintResult } from "@color-buddy/palette-check";
 
 export interface PaletteWrap {
@@ -31,10 +31,39 @@ export const VegaColors = {
   set1: "e41a1c377eb84daf4a984ea3ff7f00ffff33a65628f781bf999999",
 };
 
+const colorStringToHex = (x: string) => {
+  let idx = 0;
+  const colors = [];
+  while (idx < x.length) {
+    colors.push(`#${x.slice(idx, idx + 6)}`);
+    idx += 6;
+  }
+  return colors;
+};
+
+export const makePal = (
+  name: string,
+  colors: string[],
+  colorSpace: any,
+  type: any = "categorical"
+) => {
+  const pal = utils.makePalFromString(colors);
+  pal.colors = pal.colors.map((x) => {
+    x.color = x.color.toColorSpace(colorSpace);
+    return x;
+  });
+  return {
+    ...pal,
+    name,
+    background: Color.colorFromString("#ffffff", colorSpace),
+    type,
+  };
+};
+
 async function buildAllExamples(): Promise<PaletteWrap[]> {
   const newPals: Palette[] = [];
   Object.entries(VegaColors).forEach(([name, colors]) => {
-    newPals.push(makePal(name, toHex(colors), "lab"));
+    newPals.push(makePal(name, colorStringToHex(colors), "lab"));
   });
 
   const get = (url: string) => fetch(url).then((x) => x.json());

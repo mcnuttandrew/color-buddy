@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Color, wrapInBlankSemantics } from "@color-buddy/palette-check";
+  import { Color, utils } from "@color-buddy/palette-check";
   import type { Palette, ColorWrap } from "@color-buddy/palette-check";
   import colorStore from "../stores/color-store";
   import focusStore from "../stores/focus-store";
@@ -60,7 +60,7 @@
       const newPoints = createInterpolatedPoints(
         pointA.color,
         pointB.color
-      ).map((x) => wrapInBlankSemantics(x));
+      ).map((x) => utils.wrapSemantics(x));
       newColors.push(pointA, ...newPoints);
     }
     newColors.push(

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Color, makePalFromString } from "@color-buddy/palette-check";
+  import { Color, utils } from "@color-buddy/palette-check";
   import exampleStore, {
     DEMOS,
     detectColorsInSvgString,
@@ -238,7 +238,7 @@
         <button
           class={buttonStyle}
           on:click={() => {
-            colorStore.createNewPal(makePalFromString(detectedColors));
+            colorStore.createNewPal(utils.makePalFromString(detectedColors));
           }}
         >
           Use identified colors as new palette

@@ -10,7 +10,6 @@
   import MiniPalPreview from "../components/MiniPalPreview.svelte";
   import PalPreview from "../components/PalPreview.svelte";
   import Tooltip from "../components/Tooltip.svelte";
-  import Nav from "../components/Nav.svelte";
 
   import { buttonStyle } from "../lib/styles";
 
@@ -37,16 +36,18 @@
   let colorSpace = ComparisonPal?.colorSpace || "lab";
 </script>
 
-<div class="w-full">
-  <div class="flex flex-col w-full">
-    <div class="w-full bg-stone-200 px-6 flex flex-col">
-      <div class="font-bold italic">
-        {#if ComparisonPal !== undefined}
-          Compare: {ComparisonPal.name}
-        {:else}
-          No Palette Selected
-        {/if}
-      </div>
+<div class="w-full border-l-8 border-stone-200 h-full">
+  <!-- <div class="flex flex-col w-full"> -->
+  <!-- header -->
+  <div class="w-full bg-stone-200 px-6 flex flex-col">
+    <div class="font-bold italic">
+      {#if ComparisonPal !== undefined}
+        Compare: {ComparisonPal.name}
+      {:else}
+        No Palette Selected
+      {/if}
+    </div>
+    <div class="flex">
       <Tooltip>
         <button
           class={`${buttonStyle} pl-0`}
@@ -69,7 +70,15 @@
           </div>
         </div>
       </Tooltip>
+      <div>
+        <button class={buttonStyle} on:click={() => (showDiff = !showDiff)}>
+          {#if showDiff}Hide{:else}Show{/if} diff
+        </button>
+      </div>
     </div>
+  </div>
+  <!-- main -->
+  <div class="px-6">
     {#if ComparisonPal !== undefined}
       <!-- keep even with the tags line -->
       <div class="flex flex-wrap w-full">
@@ -91,11 +100,6 @@
           bg={Color.colorFromHex(bg, colorSpace)}
           colorSpace={$configStore.compareBackgroundSpace}
         />
-        <div>
-          <button class={buttonStyle} on:click={() => (showDiff = !showDiff)}>
-            {#if showDiff}Hide{:else}Show{/if} diff
-          </button>
-        </div>
       </div>
       <ColorScatterPlot
         scatterPlotMode="looking"
@@ -126,41 +130,34 @@
         below
       </div>
     {/if}
+    <div>&nbsp;</div>
+    {#if ComparisonPal !== undefined}
+      <div class="flex flex-col pl-2">
+        <PalPreview
+          highlightSelected={false}
+          pal={{
+            ...ComparisonPal,
+            background: Color.colorFromHex(bg, colorSpace),
+          }}
+          allowModification={false}
+        />
+      </div>
+    {/if}
+
+    {#if compareIdx !== undefined}
+      <div
+        class="flex justify-center-center flex-col"
+        style={`max-width: ${scatterSize + 110}px`}
+      >
+        <ExampleAlaCart
+          paletteIdx={compareIdx}
+          exampleIdx={$configStore.compareSelectedExample}
+          setExampleIdx={(idx) => configStore.setCompareSelectedExample(idx)}
+          allowModification={false}
+          bgColor={bg}
+          size={scatterSize}
+        />
+      </div>
+    {/if}
   </div>
-  <div>&nbsp;</div>
-  {#if ComparisonPal !== undefined}
-    <div class="flex flex-col pl-2">
-      <PalPreview
-        highlightSelected={false}
-        pal={{
-          ...ComparisonPal,
-          background: Color.colorFromHex(bg, colorSpace),
-        }}
-        allowModification={false}
-      />
-    </div>
-  {/if}
-
-  {#if compareIdx !== undefined}
-    <div class="example-holder flex justify-center-center flex-col">
-      <ExampleAlaCart
-        paletteIdx={compareIdx}
-        exampleIdx={$configStore.compareSelectedExample}
-        setExampleIdx={(idx) => configStore.setCompareSelectedExample(idx)}
-        allowModification={false}
-        bgColor={bg}
-        size={scatterSize}
-      />
-    </div>
-  {/if}
 </div>
-
-<style>
-  /* .empty-pal-holder {
-    height: 600px;
-    width: 600px;
-  }
-  .example-holder {
-    width: 600px;
-  } */
-</style>

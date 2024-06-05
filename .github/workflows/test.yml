@@ -1,7 +1,7 @@
 name: Test
 on: [push]
 jobs:
-  build-and-deploy:
+  test-app:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout 🛎️
@@ -13,5 +13,20 @@ jobs:
 
       - name: Test
         run: |
+          cd apps/color-buddy
           yarn test
           npm run check
+  test-lib:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout 🛎️
+        uses: actions/checkout@v2.3.1
+
+      - name: Install and test
+        run: |
+          yarn
+
+      - name: Test
+        run: |
+          cd packages/palette-check
+          yarn test

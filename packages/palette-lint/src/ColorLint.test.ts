@@ -189,7 +189,7 @@ test("ColorLnt - ColorTags (1) Whisper don't scream", () =>
 test("ColorLnt - ColorTags (2) Blue should be high probability for the basic color term blue", () =>
   autoTest(ColorTags[1]));
 
-test.only("ColorLint - Diverging Order", async () => {
+test("ColorLint - Diverging Order", async () => {
   async function divTestHelper(
     pal: string[],
     adjustment: (pal: string[]) => string[],

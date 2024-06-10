@@ -1,6 +1,7 @@
 import { expect, test } from "vitest";
 
 import { Color } from "./Color";
+import type { Palette } from "./types";
 
 import { CreateCustomLint } from "./ColorLint";
 import { suggestLintFix } from "./linter-tools/lint-fixer";
@@ -17,6 +18,7 @@ import CatOrderSimilarity from "./lints/cat-order-similarity";
 import CVDCheck from "./lints/cvd-check";
 import ColorNameDiscriminability, { getName } from "./lints/name-discrim";
 import ColorTags from "./lints/color-tags";
+import DivergingOrder, { fixDivergingOrder } from "./lints/diverging-order";
 import EvenDistribution from "./lints/even-distribution";
 import Fair from "./lints/fair";
 import Gamut from "./lints/in-gamut";
@@ -186,3 +188,64 @@ test("ColorLnt - ColorTags (1) Whisper don't scream", () =>
 
 test("ColorLnt - ColorTags (2) Blue should be high probability for the basic color term blue", () =>
   autoTest(ColorTags[1]));
+
+test.only("ColorLint - Diverging Order", async () => {
+  async function divTestHelper(
+    pal: string[],
+    adjustment: (pal: string[]) => string[],
+    name: string
+  ) {
+    const divPal = makePalFromString(pal);
+
+    const exampleLint1 = new DivergingOrder(divPal).run();
+    expect(exampleLint1.passes, `${name} initial pal order`).toBe(true);
+    expect(
+      exampleLint1.message,
+      `${name} initial pal order msg`
+    ).toMatchSnapshot();
+
+    const adjustedPal = adjustment(pal);
+    const divPal2 = makePalFromString(adjustedPal);
+
+    const exampleLint2 = new DivergingOrder(divPal2).run();
+    expect(exampleLint2.passes, `${name} alteration correctly fails`).toBe(
+      false
+    );
+    expect(
+      exampleLint2.message,
+      `${name} alteration correctly generates failure message`
+    ).toMatchSnapshot();
+
+    const fixedExample2 = await fixDivergingOrder(divPal2, exampleLint2);
+    expect(fixedExample2.length).toBeGreaterThan(0);
+    expect(
+      new DivergingOrder(fixedExample2[0]).run().passes,
+      `${name} fix fixes alteration`
+    ).toBe(true);
+    expect(
+      fixedExample2[0].colors.map((x) => x.color.toHex()),
+      `${name} fix restores original order`
+    ).toEqual(divPal.colors.map((x) => x.color.toHex()));
+  }
+
+  await divTestHelper(
+    ["#0084ae", "#8db3c7", "#e5e3e0", "#eca288", "#e25c36"],
+    (pal) => {
+      const newPal = [...pal];
+      newPal[3] = pal[4];
+      newPal[4] = pal[3];
+      return newPal;
+    },
+    "Diverging Order (1)"
+  );
+  // await divTestHelper(
+  //   ["#0084ae", "#8db3c7", "#e5e3e0", "#eca288", "#e25c36"],
+  //   (pal) => {
+  //     const newPal = [...pal];
+  //     newPal[2] = pal[3];
+  //     newPal[3] = pal[2];
+  //     return newPal;
+  //   },
+  //   "Diverging Order (2)"
+  // );
+});

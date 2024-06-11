@@ -7,8 +7,8 @@ type promptInput = {
   context: string;
 };
 const prompt = (pal: promptInput) => `
-You are a color expert. You take in a color palette and an error it has and fix it. Your fixes should be clever but respect the original vibe of the palette. Present your fixes as a single JSON object that describes the color palette. It should have a type like {"background: string; colors: string[]}. 
-Addition criteria:
+You are a color expert. You take in a color palette and an error it has and fix it. Your fixes should be clever but respect the original vibe of the palette. Present your fixes as a single JSON object that describes the color palette. It should have a type like {"background": string; "colors": string[]}. 
+Additional criteria:
 - As much as possible, do not provide fixes by simply removing a color from the palette. 
 - DO NOT JUST RETURN THE SAME COLORS. That is not a fix. You must change at least one color.
 

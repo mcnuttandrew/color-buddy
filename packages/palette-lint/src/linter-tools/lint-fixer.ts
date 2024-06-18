@@ -31,6 +31,6 @@ export async function suggestLintFix(
   if (fixDirectory[lint.subscribedFix]) {
     return fixDirectory[lint.subscribedFix](palette, lint);
   }
-  console.log("check failed", lint, fixDirectory);
+  // console.log("check failed", lint, fixDirectory);
   return [];
 }

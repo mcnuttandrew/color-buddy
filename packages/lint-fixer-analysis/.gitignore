@@ -22,14 +22,3 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
-coverage/
-
-# Local Netlify folder
-.netlify
-public/data/*
-apps/color-buddy/public/data/*
-
-.env.development
-
-**/.env
-**/**/venv

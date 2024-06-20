@@ -21,7 +21,7 @@
       {
         name: "Use",
         action: () => {
-          colorStore.setCurrentPal(pal);
+          colorStore.startUsingPal(paletteIdx);
           configStore.setRoute("examples");
         },
       },
@@ -90,7 +90,7 @@
       allowResize={false}
       palette={pal}
       titleClick={() => {
-        colorStore.setCurrentPal(pal);
+        colorStore.startUsingPal(paletteIdx);
         configStore.setRoute("examples");
       }}
       title={pal.name}

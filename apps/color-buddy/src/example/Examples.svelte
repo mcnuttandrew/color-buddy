@@ -26,7 +26,7 @@
     }
     return false;
   });
-  $: examples = $exampleStore.examples as any;
+  $: examples = $exampleStore.examples;
   $: hiddenExamples = $exampleStore.examples.filter((x: any) => x.hidden);
   $: numberHidden = hiddenExamples.length;
 
@@ -40,7 +40,7 @@
     return acc;
   }, {} as any);
 
-  function makeOperations(idx: number) {
+  function makeOperations(idx: number, name: string) {
     let exampleIsSoled = $exampleStore.examples[idx].size === 600;
     return [
       {
@@ -180,7 +180,7 @@
         palette={currentPal}
         previewIndex={idx}
         onRename={(name) => exampleStore.setExampleName(idx, name)}
-        operations={makeOperations(idx)}
+        operations={makeOperations(idx, example.name)}
         titleClick={false}
         title={example.name}
       />

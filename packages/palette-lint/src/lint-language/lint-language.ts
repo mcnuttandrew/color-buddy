@@ -1104,10 +1104,12 @@ export class LLMap extends LLNode {
 
 function parseToAST(root: any, options: OptionsConfig) {
   const node = LLExpression.tryToConstruct(root, options);
-  if (!node)
+  if (!node) {
+    console.log(root);
     throw new Error(
       "Parsing failed. There was an invalid node somewhere." + root
     );
+  }
   return node;
 }
 

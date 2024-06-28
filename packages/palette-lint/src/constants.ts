@@ -1,2 +1,1 @@
-export const schema =
-  "https://radiant-speculoos-7f8b2f.netlify.app/lint-schema.json";
+export const schema = "https://color-buddy-docs.netlify.app/lint-schema.json";

@@ -1,105 +1,54 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
 exports[`Docs have not changed 1`] = `
-"# Language Docs
+"# Language Examples
 
-These docs provide a high-level overview of the language and its built-in functions. The first section covers the syntax of the language in its concrete JSON syntax, with a particular set of notes meant to guide LLM usage of the language. The second section provides all of the built in lints as examples.
+This page contains examples of the language used to define palettes and the expected behavior of the linter.
 
-# Color check language documentation
-
-A valid program starts with an expression, as described below. The only allowed syntax is listed here.
-
-Expressions
-Conjunction | Quantifier | Comparison | Boolean
-
-Value = Variable | Number | Boolean | ColorString
-Notes:
-
-- ColorString: strings defined using web valid hex colors, such as #ff00ff
-- Variable is a string that is a variable name
-
-Predefined variables: colors, background
-
-Conjunctions:
-{and: [EXPR, EXPR, ...]}
-{or: [EXPR, EXPR, EXPR]}
-{not: EXPR}
-
-Quantifiers
-{all: {varbs: Variable, predicate: EXPR, where?: EXPR, in: Variable | Map}}
-{exist: {varbs: Variable, predicate: EXPR, where?: EXPR, in: Variable | Map}}
-Notes:
-
-- varbs each listed variable into the scope, as well as variables like index(a) for a variable a
-- To slice you might do something like {...where: {"<" : {"left": "index(a)", "right": 3}}}. This is important! There is no other way to subset or filter for quantifiers. THE IN CLAUSE MUST ONLY HAVE A VARIABLE AND THING ELSE.
-
-Comparisons:
-{"==": {left: Value, right: Value}}
-{"!=": {left: Value, right: Value}}
-{"<": {left: Value, right: Value}}
-{">": {left: Value, right: Value}}
-{"similar": {left: Value, right: Value, threshold: Number}}
-Notes
-
-- Threshold has units of dE2000s, so 10 would be glance-ably different.
-
-Math Operations:
-{"\\*": {left: Number | Variable, right: Number | Variable}}
-{"+": {left: Number | Variable, right: Number | Variable}}
-{"/": {left: Number | Variable, right: Number | Variable}}
-{"//": {left: Number | Variable, right: Number | Variable}}
-{"-": {left: Number | Variable, right: Number | Variable}}
-{absDiff: {left: Number | Variable, right: Number | Variable}}
-{"%": {left: Number | Variable, right: Number | Variable}}
-
-Notes
-
-- // is division with round
-
-Value Comparisons:
-{dist: {left: Color | Variable, right: Color | Variable}, space: COLOR_SPACE }
-{deltaE: {left: Color | Variable, right: Color | Variable}, algorithm: '2000' | etc }
-{contrast: {left: Color | Variable, right: Color | Variable}, algorithm: | "APCA" | "WCAG21" | "Michelson" | "Weber" | "Lstar" | "DeltaPhi"}
-
-Aggregates
-{count: Variable | Number[] | Color[]}
-{sum: Variable | Number[]}
-{min: Variable | Number[]}
-{max: Variable | Number[]}
-{mean: Variable | Number[]}
-{std: Variable | Number[]}
-{first: Variable | Number[]}
-{middle: Variable | Number[]}
-{last: Variable | Number[]}
-{extent: Variable | Number[]}
-
-Color Manipulations:
-{toSpace: Variable, space: 'lab' | 'hsl' | etc, channel: 'a' | 'b' | 'l' | etc}
-{cvdSim: Variable, type: 'protanomaly' | 'deuteranomaly' | 'tritanopia' | 'grayscale'}
-{name: Variable}
-{inGamut: Variable | Color}
-{isTag: Variable | Color, value: string}
-Notes
-
-- toSpace has a shorthand like {"rgb.b": Variable}
-- When comparing colors, it can be helpful to switch color spaces. For instance, to check if a value is blue you might switch it to HSL and check if the hue is in a certain range.
-
-Maps:
-{map: Variable | Value[], func: Operation, varb: Variable}
-{sort: Variable | Value[], func: Operation, varb: Variable}
-{filter: Variable | Value[], func: EXPR, varb: Variable}
-{reverse: Variable | Value[]}
-{speed: Variable | Value[]}
+- [WCAG Contrast Graphical Objects](#wcag-contrast-graphical-objects)
+- [WCAG Text Contrast: AA (text colors only)](#wcag-text-contrast--aa--text-colors-only-)
+- [WCAG Text Contrast: AAA (text colors only)](#wcag-text-contrast--aaa--text-colors-only-)
+- [Saturated not appropriate for serious affect](#saturated-not-appropriate-for-serious-affect)
+- [Saturated not appropriate for trustworthy affect](#saturated-not-appropriate-for-trustworthy-affect)
+- [Saturated not appropriate for calm affect](#saturated-not-appropriate-for-calm-affect)
+- [Playful affects can have light blues, beiges, and grays](#playful-affects-can-have-light-blues--beiges--and-grays)
+- [Dark reds and browns are not positive](#dark-reds-and-browns-are-not-positive)
+- [Negative palettes should not have light colors, particularly greens](#negative-palettes-should-not-have-light-colors--particularly-greens)
+- [CVD: Deuteranopia Friendly](#cvd--deuteranopia-friendly)
+- [CVD: Protanopia Friendly](#cvd--protanopia-friendly)
+- [CVD: Tritanopia Friendly](#cvd--tritanopia-friendly)
+- [Right in black and white](#right-in-black-and-white)
+- [Axes should have low contrast with background](#axes-should-have-low-contrast-with-background)
+- [Blue should be high probability for the basic color term blue](#blue-should-be-high-probability-for-the-basic-color-term-blue)
+- [Even Distribution in Hue](#even-distribution-in-hue)
+- [Even Distribution in Lightness](#even-distribution-in-lightness)
+- [Fair](#fair)
+- [Fair](#fair)
+- [Background desaturation sufficient](#background-desaturation-sufficient)
+- [Avoid Tetradic Palettes](#avoid-tetradic-palettes)
+- [Prefer yellowish or blueish greens](#prefer-yellowish-or-blueish-greens)
+- [Avoid too much contrast with the background](#avoid-too-much-contrast-with-the-background)
+- [Require color complements](#require-color-complements)
+- [Color Distinctness: Thin Size Objects](#color-distinctness--thin-size-objects)
+- [Color Distinctness: Medium Size Objects](#color-distinctness--medium-size-objects)
+- [Color Distinctness: Wide Size Objects](#color-distinctness--wide-size-objects)
+- [Avoid extreme colors](#avoid-extreme-colors)
+- [Colors distinguishable in order](#colors-distinguishable-in-order)
+- [In Gamut](#in-gamut)
+- [Max Colors](#max-colors)
+- [Mutually Distinct](#mutually-distinct)
+- [Color Name Discriminability](#color-name-discriminability)
+- [Sequential Palette Order](#sequential-palette-order)
+- [Palette does not have ugly colors](#palette-does-not-have-ugly-colors)
 
 
-# Examples
+### WCAG Contrast Graphical Objects
+**Tasks**: sequential, diverging, categorical
 
 
-### WCAG Contrast Graphical Objects [sequential, diverging, categorical] 
+**Description**: All colors in a palette should have a sufficient contrast ratio with the background color. This is because if they are not, then they will not be differentiable from each other in some contexts. Valid algorithms are "APCA", "WCAG21", "Michelson", "Weber", "Lstar", "DeltaPhi". If this lint is not failing and you believe it should be, ensure that a color has been selected as having the "text" tag.
 
-Description: All colors in a palette should have a sufficient contrast ratio with the background color. This is because if they are not, then they will not be differentiable from each other in some contexts. Valid algorithms are "APCA", "WCAG21", "Michelson", "Weber", "Lstar", "DeltaPhi". If this lint is not failing and you believe it should be, ensure that a color has been selected as having the "text" tag.
-
-Natural Language: ALL a IN colors SUCH THAT contrast(a, background, WCAG21) > 3
+**Natural Language**: ALL a IN colors SUCH THAT contrast(a, background, WCAG21) > 3
 
 Palettes that will fail this test:
 
@@ -112,11 +61,11 @@ Palettes that will pass this test:
 - #cf5f67, #468bbc, #848475 with a #fff background
 
 
-Program:
+**Program**:
 
 \`\`\`json
 {
-    "$schema": "https://radiant-speculoos-7f8b2f.netlify.app/lint-schema.json", 
+    "$schema": "https://color-buddy-docs.netlify.app/lint-schema.json", 
     "all": {
         "in": "colors", 
         "varb": "a", 
@@ -135,11 +84,13 @@ Program:
 
 
 
-### WCAG Text Contrast: AA (text colors only) [sequential, diverging, categorical] 
+### WCAG Text Contrast: AA (text colors only)
+**Tasks**: sequential, diverging, categorical
 
-Description: All colors in a palette should have a sufficient contrast ratio with the background color. This is because if they are not, then they will not be differentiable from each other in some contexts. Valid algorithms are "APCA", "WCAG21", "Michelson", "Weber", "Lstar", "DeltaPhi". If this lint is not failing and you believe it should be, ensure that a color has been selected as having the "text" tag.
 
-Natural Language: ALL a IN colors WHERE isTag(a, text) SUCH THAT contrast(a, background, WCAG21) > 4.5
+**Description**: All colors in a palette should have a sufficient contrast ratio with the background color. This is because if they are not, then they will not be differentiable from each other in some contexts. Valid algorithms are "APCA", "WCAG21", "Michelson", "Weber", "Lstar", "DeltaPhi". If this lint is not failing and you believe it should be, ensure that a color has been selected as having the "text" tag.
+
+**Natural Language**: ALL a IN colors WHERE isTag(a, text) SUCH THAT contrast(a, background, WCAG21) > 4.5
 
 Palettes that will fail this test:
 
@@ -152,11 +103,11 @@ Palettes that will pass this test:
 - #feed72, #f8f4d2, #af3b4b (text) with a #fff background
 
 
-Program:
+**Program**:
 
 \`\`\`json
 {
-    "$schema": "https://radiant-speculoos-7f8b2f.netlify.app/lint-schema.json", 
+    "$schema": "https://color-buddy-docs.netlify.app/lint-schema.json", 
     "all": {
         "in": "colors", 
         "varb": "a", 
@@ -176,11 +127,13 @@ Program:
 
 
 
-### WCAG Text Contrast: AAA (text colors only) [sequential, diverging, categorical] 
+### WCAG Text Contrast: AAA (text colors only)
+**Tasks**: sequential, diverging, categorical
 
-Description: All colors in a palette should have a sufficient contrast ratio with the background color. This is because if they are not, then they will not be differentiable from each other in some contexts. Valid algorithms are "APCA", "WCAG21", "Michelson", "Weber", "Lstar", "DeltaPhi". If this lint is not failing and you believe it should be, ensure that a color has been selected as having the "text" tag.
 
-Natural Language: ALL a IN colors WHERE isTag(a, text) SUCH THAT contrast(a, background, WCAG21) > 7
+**Description**: All colors in a palette should have a sufficient contrast ratio with the background color. This is because if they are not, then they will not be differentiable from each other in some contexts. Valid algorithms are "APCA", "WCAG21", "Michelson", "Weber", "Lstar", "DeltaPhi". If this lint is not failing and you believe it should be, ensure that a color has been selected as having the "text" tag.
+
+**Natural Language**: ALL a IN colors WHERE isTag(a, text) SUCH THAT contrast(a, background, WCAG21) > 7
 
 Palettes that will fail this test:
 
@@ -193,11 +146,11 @@ Palettes that will pass this test:
 - #feed72, #f8f4d2, #6c001a (text) with a #fff background
 
 
-Program:
+**Program**:
 
 \`\`\`json
 {
-    "$schema": "https://radiant-speculoos-7f8b2f.netlify.app/lint-schema.json", 
+    "$schema": "https://color-buddy-docs.netlify.app/lint-schema.json", 
     "all": {
         "in": "colors", 
         "varb": "a", 
@@ -217,18 +170,20 @@ Program:
 
 
 
-### Saturated not appropriate for serious affect [sequential, diverging, categorical] tags required: (serious)
+### Saturated not appropriate for serious affect
+**Tasks**: sequential, diverging, categorical
+**Tags Required**: (serious)
 
-Description: Highly saturated light colors are not appropriate for palettes that seek to be serious.  See "Affective color in visualization" for more.
+**Description**: Highly saturated light colors are not appropriate for palettes that seek to be serious.  See "Affective color in visualization" for more.
 
-Natural Language: ALL c IN colors WHERE hsl.l(c) > 70 SUCH THAT NOT hsl.s(c) > 70
+**Natural Language**: ALL c IN colors WHERE hsl.l(c) > 70 SUCH THAT NOT hsl.s(c) > 70
 
 
-Program:
+**Program**:
 
 \`\`\`json
 {
-    "$schema": "https://radiant-speculoos-7f8b2f.netlify.app/lint-schema.json", 
+    "$schema": "https://color-buddy-docs.netlify.app/lint-schema.json", 
     "all": {
         "in": "colors", 
         "varb": "c", 
@@ -249,18 +204,20 @@ Program:
 
 
 
-### Saturated not appropriate for trustworthy affect [sequential, diverging, categorical] tags required: (trustworthy)
+### Saturated not appropriate for trustworthy affect
+**Tasks**: sequential, diverging, categorical
+**Tags Required**: (trustworthy)
 
-Description: Highly saturated light colors are not appropriate for palettes that seek to be trustworthy.  See "Affective color in visualization" for more.
+**Description**: Highly saturated light colors are not appropriate for palettes that seek to be trustworthy.  See "Affective color in visualization" for more.
 
-Natural Language: ALL c IN colors WHERE hsl.l(c) > 70 SUCH THAT NOT hsl.s(c) > 70
+**Natural Language**: ALL c IN colors WHERE hsl.l(c) > 70 SUCH THAT NOT hsl.s(c) > 70
 
 
-Program:
+**Program**:
 
 \`\`\`json
 {
-    "$schema": "https://radiant-speculoos-7f8b2f.netlify.app/lint-schema.json", 
+    "$schema": "https://color-buddy-docs.netlify.app/lint-schema.json", 
     "all": {
         "in": "colors", 
         "varb": "c", 
@@ -281,18 +238,20 @@ Program:
 
 
 
-### Saturated not appropriate for calm affect [sequential, diverging, categorical] tags required: (calm)
+### Saturated not appropriate for calm affect
+**Tasks**: sequential, diverging, categorical
+**Tags Required**: (calm)
 
-Description: Highly saturated light colors are not appropriate for palettes that seek to be calm.  See "Affective color in visualization" for more.
+**Description**: Highly saturated light colors are not appropriate for palettes that seek to be calm.  See "Affective color in visualization" for more.
 
-Natural Language: ALL c IN colors WHERE hsl.l(c) > 70 SUCH THAT NOT hsl.s(c) > 70
+**Natural Language**: ALL c IN colors WHERE hsl.l(c) > 70 SUCH THAT NOT hsl.s(c) > 70
 
 
-Program:
+**Program**:
 
 \`\`\`json
 {
-    "$schema": "https://radiant-speculoos-7f8b2f.netlify.app/lint-schema.json", 
+    "$schema": "https://color-buddy-docs.netlify.app/lint-schema.json", 
     "all": {
         "in": "colors", 
         "varb": "c", 
@@ -313,18 +272,20 @@ Program:
 
 
 
-### Playful affects can have light blues, beiges, and grays [sequential, diverging, categorical] tags required: (playful)
+### Playful affects can have light blues, beiges, and grays
+**Tasks**: sequential, diverging, categorical
+**Tags Required**: (playful)
 
-Description: Palettes that seek to be playful should have at least one light blue, beige, or gray.  See "Affective color in visualization" for more.
+**Description**: Palettes that seek to be playful should have at least one light blue, beige, or gray.  See "Affective color in visualization" for more.
 
-Natural Language: EXIST c IN colors SUCH THAT (similar(c, lightblue) < 20 OR similar(c, beige) < 20 OR similar(c, gray) < 20)
+**Natural Language**: EXIST c IN colors SUCH THAT (similar(c, lightblue) < 20 OR similar(c, beige) < 20 OR similar(c, gray) < 20)
 
 
-Program:
+**Program**:
 
 \`\`\`json
 {
-    "$schema": "https://radiant-speculoos-7f8b2f.netlify.app/lint-schema.json", 
+    "$schema": "https://color-buddy-docs.netlify.app/lint-schema.json", 
     "exist": {
         "in": "colors", 
         "varb": "c", 
@@ -344,18 +305,20 @@ Program:
 
 
 
-### Dark reds and browns are not positive [sequential, diverging, categorical] tags required: (positive)
+### Dark reds and browns are not positive
+**Tasks**: sequential, diverging, categorical
+**Tags Required**: (positive)
 
-Description: Palettes that seek to be positive should not have dark reds or browns.  See "Affective color in visualization" for more.
+**Description**: Palettes that seek to be positive should not have dark reds or browns.  See "Affective color in visualization" for more.
 
-Natural Language: ALL c IN colors SUCH THAT NOT (similar(c, darkred) < 20 OR similar(c, brown) < 20)
+**Natural Language**: ALL c IN colors SUCH THAT NOT (similar(c, darkred) < 20 OR similar(c, brown) < 20)
 
 
-Program:
+**Program**:
 
 \`\`\`json
 {
-    "$schema": "https://radiant-speculoos-7f8b2f.netlify.app/lint-schema.json", 
+    "$schema": "https://color-buddy-docs.netlify.app/lint-schema.json", 
     "all": {
         "in": "colors", 
         "varb": "c", 
@@ -376,18 +339,20 @@ Program:
 
 
 
-### Negative palettes should not have light colors, particularly greens [sequential, diverging, categorical] tags required: (negative)
+### Negative palettes should not have light colors, particularly greens
+**Tasks**: sequential, diverging, categorical
+**Tags Required**: (negative)
 
-Description: Palettes that seek to be negative should not have light colors, particularly greens.  See "Affective color in visualization" for more.
+**Description**: Palettes that seek to be negative should not have light colors, particularly greens.  See "Affective color in visualization" for more.
 
-Natural Language: ALL c IN colors SUCH THAT NOT (similar(c, green) < 20 OR lab.l(c) > 70)
+**Natural Language**: ALL c IN colors SUCH THAT NOT (similar(c, green) < 20 OR lab.l(c) > 70)
 
 
-Program:
+**Program**:
 
 \`\`\`json
 {
-    "$schema": "https://radiant-speculoos-7f8b2f.netlify.app/lint-schema.json", 
+    "$schema": "https://color-buddy-docs.netlify.app/lint-schema.json", 
     "all": {
         "in": "colors", 
         "varb": "c", 
@@ -410,11 +375,13 @@ Program:
 
 
 
-### CVD: Deuteranopia Friendly [sequential, diverging, categorical] 
+### CVD: Deuteranopia Friendly
+**Tasks**: sequential, diverging, categorical
 
-Description: All colors in a palette should be differentiable by people with deuteranopia (effects 0.56% of population). This is because if they are not, then they will not be differentiable from each other in some contexts.
 
-Natural Language: ALL a, b IN colors WHERE index(a) != index(b) SUCH THAT NOT similar(cvdSim(a, deuteranopia), cvdSim(b, deuteranopia)) < 9
+**Description**: All colors in a palette should be differentiable by people with deuteranopia (effects 0.56% of population). This is because if they are not, then they will not be differentiable from each other in some contexts.
+
+**Natural Language**: ALL a, b IN colors WHERE index(a) != index(b) SUCH THAT NOT similar(cvdSim(a, deuteranopia), cvdSim(b, deuteranopia)) < 9
 
 Palettes that will fail this test:
 
@@ -427,11 +394,11 @@ Palettes that will pass this test:
 - #000, #fff, #f00, #00f with a #fff background
 
 
-Program:
+**Program**:
 
 \`\`\`json
 {
-    "$schema": "https://radiant-speculoos-7f8b2f.netlify.app/lint-schema.json", 
+    "$schema": "https://color-buddy-docs.netlify.app/lint-schema.json", 
     "all": {
         "in": "colors", 
         "varbs": ["a", "b"], 
@@ -454,11 +421,13 @@ Program:
 
 
 
-### CVD: Protanopia Friendly [sequential, diverging, categorical] 
+### CVD: Protanopia Friendly
+**Tasks**: sequential, diverging, categorical
 
-Description: All colors in a palette should be differentiable by people with protanopia (effects 0.59% of population). This is because if they are not, then they will not be differentiable from each other in some contexts.
 
-Natural Language: ALL a, b IN colors WHERE index(a) != index(b) SUCH THAT NOT similar(cvdSim(a, protanopia), cvdSim(b, protanopia)) < 9
+**Description**: All colors in a palette should be differentiable by people with protanopia (effects 0.59% of population). This is because if they are not, then they will not be differentiable from each other in some contexts.
+
+**Natural Language**: ALL a, b IN colors WHERE index(a) != index(b) SUCH THAT NOT similar(cvdSim(a, protanopia), cvdSim(b, protanopia)) < 9
 
 Palettes that will fail this test:
 
@@ -471,11 +440,11 @@ Palettes that will pass this test:
 - #000, #fff, #f00, #00f with a #fff background
 
 
-Program:
+**Program**:
 
 \`\`\`json
 {
-    "$schema": "https://radiant-speculoos-7f8b2f.netlify.app/lint-schema.json", 
+    "$schema": "https://color-buddy-docs.netlify.app/lint-schema.json", 
     "all": {
         "in": "colors", 
         "varbs": ["a", "b"], 
@@ -498,11 +467,13 @@ Program:
 
 
 
-### CVD: Tritanopia Friendly [sequential, diverging, categorical] 
+### CVD: Tritanopia Friendly
+**Tasks**: sequential, diverging, categorical
 
-Description: All colors in a palette should be differentiable by people with tritanopia . This is because if they are not, then they will not be differentiable from each other in some contexts.
 
-Natural Language: ALL a, b IN colors WHERE index(a) != index(b) SUCH THAT NOT similar(cvdSim(a, tritanopia), cvdSim(b, tritanopia)) < 9
+**Description**: All colors in a palette should be differentiable by people with tritanopia . This is because if they are not, then they will not be differentiable from each other in some contexts.
+
+**Natural Language**: ALL a, b IN colors WHERE index(a) != index(b) SUCH THAT NOT similar(cvdSim(a, tritanopia), cvdSim(b, tritanopia)) < 9
 
 Palettes that will fail this test:
 
@@ -515,11 +486,11 @@ Palettes that will pass this test:
 - #000, #fff, #f00, #00f with a #fff background
 
 
-Program:
+**Program**:
 
 \`\`\`json
 {
-    "$schema": "https://radiant-speculoos-7f8b2f.netlify.app/lint-schema.json", 
+    "$schema": "https://color-buddy-docs.netlify.app/lint-schema.json", 
     "all": {
         "in": "colors", 
         "varbs": ["a", "b"], 
@@ -542,11 +513,13 @@ Program:
 
 
 
-### Right in black and white [sequential, diverging, categorical] 
+### Right in black and white
+**Tasks**: sequential, diverging, categorical
 
-Description: All colors in a palette should be differentiable by people with grayscale . This is because if they are not, then they will not be differentiable from each other in some contexts.
 
-Natural Language: ALL a, b IN colors WHERE index(a) != index(b) SUCH THAT NOT similar(cvdSim(a, grayscale), cvdSim(b, grayscale)) < 9
+**Description**: All colors in a palette should be differentiable by people with grayscale . This is because if they are not, then they will not be differentiable from each other in some contexts.
+
+**Natural Language**: ALL a, b IN colors WHERE index(a) != index(b) SUCH THAT NOT similar(cvdSim(a, grayscale), cvdSim(b, grayscale)) < 9
 
 Palettes that will fail this test:
 
@@ -559,11 +532,11 @@ Palettes that will pass this test:
 - #000, #fff, #f00, #00f with a #fff background
 
 
-Program:
+**Program**:
 
 \`\`\`json
 {
-    "$schema": "https://radiant-speculoos-7f8b2f.netlify.app/lint-schema.json", 
+    "$schema": "https://color-buddy-docs.netlify.app/lint-schema.json", 
     "all": {
         "in": "colors", 
         "varbs": ["a", "b"], 
@@ -586,11 +559,13 @@ Program:
 
 
 
-### Axes should have low contrast with background [sequential, diverging, categorical] 
+### Axes should have low contrast with background
+**Tasks**: sequential, diverging, categorical
 
-Description: Axes should have low contrast with the background. Having it too high can make the axes too distracting. See "Whisper, Don't Scream: Grids and Transparency" for more.
 
-Natural Language: ALL a IN colors WHERE isTag(a, axis) SUCH THAT contrast(a, background, Lstar) < 20
+**Description**: Axes should have low contrast with the background. Having it too high can make the axes too distracting. See "Whisper, Don't Scream: Grids and Transparency" for more.
+
+**Natural Language**: ALL a IN colors WHERE isTag(a, axis) SUCH THAT contrast(a, background, Lstar) < 20
 
 Palettes that will fail this test:
 
@@ -603,11 +578,11 @@ Palettes that will pass this test:
 - #eee (axis) with a #fff background
 
 
-Program:
+**Program**:
 
 \`\`\`json
 {
-    "$schema": "https://radiant-speculoos-7f8b2f.netlify.app/lint-schema.json", 
+    "$schema": "https://color-buddy-docs.netlify.app/lint-schema.json", 
     "all": {
         "in": "colors", 
         "varb": "a", 
@@ -627,11 +602,13 @@ Program:
 
 
 
-### Blue should be high probability for the basic color term blue [sequential, diverging, categorical] 
+### Blue should be high probability for the basic color term blue
+**Tasks**: sequential, diverging, categorical
 
-Description: Blue should be high probability for the basic color term blue. If it's not, it can be confusing to users.
 
-Natural Language: ALL a IN colors WHERE isTag(a, blue) SUCH THAT name(a) == electricBlue
+**Description**: Blue should be high probability for the basic color term blue. If it's not, it can be confusing to users.
+
+**Natural Language**: ALL a IN colors WHERE isTag(a, blue) SUCH THAT name(a) == electricBlue
 
 Palettes that will fail this test:
 
@@ -646,11 +623,11 @@ Palettes that will pass this test:
 - #00f, #f00, #ffa500 with a #fff background
 
 
-Program:
+**Program**:
 
 \`\`\`json
 {
-    "$schema": "https://radiant-speculoos-7f8b2f.netlify.app/lint-schema.json", 
+    "$schema": "https://color-buddy-docs.netlify.app/lint-schema.json", 
     "all": {
         "in": "colors", 
         "varb": "a", 
@@ -667,11 +644,13 @@ Program:
 
 
 
-### Even Distribution in Hue [categorical] 
+### Even Distribution in Hue
+**Tasks**: categorical
 
-Description: Categorical values should have an even distribution around the hue circle in LCH color space
 
-Natural Language: (std(speed(sort(colors, x => lch.h(x)))) < 10 OR std(speed(sort(colors, x => lch.h(x) + 180 % 360))) < 10)
+**Description**: Categorical values should have an even distribution around the hue circle in LCH color space
+
+**Natural Language**: (std(speed(sort(colors, x => lch.h(x)))) < 10 OR std(speed(sort(colors, x => lch.h(x) + 180 % 360))) < 10)
 
 Palettes that will fail this test:
 
@@ -686,11 +665,11 @@ Palettes that will pass this test:
 - #4682b4 with a #fff background
 
 
-Program:
+**Program**:
 
 \`\`\`json
 {
-    "$schema": "https://radiant-speculoos-7f8b2f.netlify.app/lint-schema.json", 
+    "$schema": "https://color-buddy-docs.netlify.app/lint-schema.json", 
     "or": [
         {
             "<": {
@@ -732,11 +711,13 @@ Program:
 
 
 
-### Even Distribution in Lightness [categorical, diverging, sequential] 
+### Even Distribution in Lightness
+**Tasks**: categorical, diverging, sequential
 
-Description: Values should be space evenly in lightness in LCH color space
 
-Natural Language: std(speed(sort(colors, x => lch.l(x)))) < 5
+**Description**: Values should be space evenly in lightness in LCH color space
+
+**Natural Language**: std(speed(sort(colors, x => lch.l(x)))) < 5
 
 Palettes that will fail this test:
 
@@ -753,11 +734,11 @@ Palettes that will pass this test:
 - #4682b4 with a #fff background
 
 
-Program:
+**Program**:
 
 \`\`\`json
 {
-    "$schema": "https://radiant-speculoos-7f8b2f.netlify.app/lint-schema.json", 
+    "$schema": "https://color-buddy-docs.netlify.app/lint-schema.json", 
     "<": {
         "left": {
             "std": {
@@ -774,11 +755,13 @@ Program:
 
 
 
-### Fair [categorical] 
+### Fair
+**Tasks**: categorical
 
-Description: Do the colors stand out equally? A color palette is described as fair if both chroma and luminance ranges are below a certain threshold and unfair if one of them is above a certain threshold.
 
-Natural Language: (extent(sort(colors, x => lch.l(x))) < 50 AND extent(sort(colors, x => lch.c(x))) < 80)
+**Description**: Do the colors stand out equally? A color palette is described as fair if both chroma and luminance ranges are below a certain threshold and unfair if one of them is above a certain threshold.
+
+**Natural Language**: (extent(sort(colors, x => lch.l(x))) < 50 AND extent(sort(colors, x => lch.c(x))) < 80)
 
 Palettes that will fail this test:
 
@@ -791,11 +774,11 @@ Palettes that will pass this test:
 - #000 with a #fff background
 
 
-Program:
+**Program**:
 
 \`\`\`json
 {
-    "$schema": "https://radiant-speculoos-7f8b2f.netlify.app/lint-schema.json", 
+    "$schema": "https://color-buddy-docs.netlify.app/lint-schema.json", 
     "and": [
         {
             "<": {
@@ -822,11 +805,13 @@ Program:
 
 
 
-### Fair [sequential, diverging] 
+### Fair
+**Tasks**: sequential, diverging
 
-Description: Do the colors stand out equally? A color palette is described as fair if the luminance ranges are below a certain threshold and unfair if one of them is above a certain threshold. 
 
-Natural Language: (extent(sort(colors, x => lch.l(x))) < 50)
+**Description**: Do the colors stand out equally? A color palette is described as fair if the luminance ranges are below a certain threshold and unfair if one of them is above a certain threshold. 
+
+**Natural Language**: (extent(sort(colors, x => lch.l(x))) < 50)
 
 Palettes that will fail this test:
 
@@ -839,11 +824,11 @@ Palettes that will pass this test:
 - #000 with a #fff background
 
 
-Program:
+**Program**:
 
 \`\`\`json
 {
-    "$schema": "https://radiant-speculoos-7f8b2f.netlify.app/lint-schema.json", 
+    "$schema": "https://color-buddy-docs.netlify.app/lint-schema.json", 
     "and": [
         {
             "<": {
@@ -862,11 +847,13 @@ Program:
 
 
 
-### Background desaturation sufficient [sequential, diverging, categorical] 
+### Background desaturation sufficient
+**Tasks**: sequential, diverging, categorical
 
-Description: Background should be sufficiently desaturated. 
 
-Natural Language: (((hsl.l(background) > 90 AND hsv.s(background) < 8) OR hsl.l(background) > 99) OR (hsl.l(background) > 10 AND hsl.l(background) < 26 AND hsv.s(background) < 21))
+**Description**: Background should be sufficiently desaturated. 
+
+**Natural Language**: (((hsl.l(background) > 90 AND hsv.s(background) < 8) OR hsl.l(background) > 99) OR (hsl.l(background) > 10 AND hsl.l(background) < 26 AND hsv.s(background) < 21))
 
 Palettes that will fail this test:
 
@@ -879,11 +866,11 @@ Palettes that will pass this test:
 - #0084a9, #009de5, #5fb1ff, #bbc3ff with a #f4e3e3 background
 
 
-Program:
+**Program**:
 
 \`\`\`json
 {
-    "$schema": "https://radiant-speculoos-7f8b2f.netlify.app/lint-schema.json", 
+    "$schema": "https://color-buddy-docs.netlify.app/lint-schema.json", 
     "or": [
         {
             "or": [
@@ -924,11 +911,13 @@ Program:
 
 
 
-### Avoid Tetradic Palettes [sequential, diverging, categorical] 
+### Avoid Tetradic Palettes
+**Tasks**: sequential, diverging, categorical
 
-Description: Tetradic palettes are hard to work with and are not recommended.
 
-Natural Language: NOT EXIST a IN colors SUCH THAT (EXIST b IN colors SUCH THAT similar(hsl.h(a), hsl.h(b) + 90 % 360) < 5 AND EXIST b IN colors SUCH THAT similar(hsl.h(a), hsl.h(b) + 180 % 360) < 5 AND EXIST b IN colors SUCH THAT similar(hsl.h(a), hsl.h(b) + 270 % 360) < 5)
+**Description**: Tetradic palettes are hard to work with and are not recommended.
+
+**Natural Language**: NOT EXIST a IN colors SUCH THAT (EXIST b IN colors SUCH THAT similar(hsl.h(a), hsl.h(b) + 90 % 360) < 5 AND EXIST b IN colors SUCH THAT similar(hsl.h(a), hsl.h(b) + 180 % 360) < 5 AND EXIST b IN colors SUCH THAT similar(hsl.h(a), hsl.h(b) + 270 % 360) < 5)
 
 Palettes that will fail this test:
 
@@ -941,11 +930,11 @@ Palettes that will pass this test:
 - #0084a9, #009de5, #5fb1ff, #bbc3ff with a #fff background
 
 
-Program:
+**Program**:
 
 \`\`\`json
 {
-    "$schema": "https://radiant-speculoos-7f8b2f.netlify.app/lint-schema.json", 
+    "$schema": "https://color-buddy-docs.netlify.app/lint-schema.json", 
     "not": {
         "exist": {
             "varb": "a", 
@@ -1024,11 +1013,13 @@ Program:
 
 
 
-### Prefer yellowish or blueish greens [sequential, diverging, categorical] 
+### Prefer yellowish or blueish greens
+**Tasks**: sequential, diverging, categorical
 
-Description: When using green, make it a yellow or blue one. This makes it easier to play nicely with other colors.
 
-Natural Language: ALL a IN colors SUCH THAT (hsl.h(a) < 90 OR hsl.h(a) > 150)
+**Description**: When using green, make it a yellow or blue one. This makes it easier to play nicely with other colors.
+
+**Natural Language**: ALL a IN colors SUCH THAT (hsl.h(a) < 90 OR hsl.h(a) > 150)
 
 Palettes that will fail this test:
 
@@ -1041,11 +1032,11 @@ Palettes that will pass this test:
 - #bee38d, #bbc3ff with a #fff background
 
 
-Program:
+**Program**:
 
 \`\`\`json
 {
-    "$schema": "https://radiant-speculoos-7f8b2f.netlify.app/lint-schema.json", 
+    "$schema": "https://color-buddy-docs.netlify.app/lint-schema.json", 
     "all": {
         "varb": "a", 
         "in": "colors", 
@@ -1068,11 +1059,13 @@ Program:
 
 
 
-### Avoid too much contrast with the background [sequential, diverging, categorical] 
+### Avoid too much contrast with the background
+**Tasks**: sequential, diverging, categorical
 
-Description: Don't make your colors too dark and saturated when you're using a bright background. If in doubt, try it out. Make your colors lighter, pull some saturation out of them and see how it feels.
 
-Natural Language: ((hsl.l(background) > 50 AND ALL a IN colors SUCH THAT contrast(a, background, WCAG21) < 10) OR hsl.l(background) < 50)
+**Description**: Don't make your colors too dark and saturated when you're using a bright background. If in doubt, try it out. Make your colors lighter, pull some saturation out of them and see how it feels.
+
+**Natural Language**: ((hsl.l(background) > 50 AND ALL a IN colors SUCH THAT contrast(a, background, WCAG21) < 10) OR hsl.l(background) < 50)
 
 Palettes that will fail this test:
 
@@ -1085,11 +1078,11 @@ Palettes that will pass this test:
 - #f4b05d, #3c828d, #1c4b76 with a #f9f9f9 background
 
 
-Program:
+**Program**:
 
 \`\`\`json
 {
-    "$schema": "https://radiant-speculoos-7f8b2f.netlify.app/lint-schema.json", 
+    "$schema": "https://color-buddy-docs.netlify.app/lint-schema.json", 
     "or": [
         {
             "and": [
@@ -1122,18 +1115,20 @@ Program:
 
 
 
-### Require color complements [sequential, diverging, categorical] 
-
-Description: Use color complements whenever possible
-
-Natural Language: EXIST a, b IN colors SUCH THAT similar(hsl.h(a), hsl.h(b) + 180) < 5
+### Require color complements
+**Tasks**: sequential, diverging, categorical
 
 
-Program:
+**Description**: Use color complements whenever possible
+
+**Natural Language**: EXIST a, b IN colors SUCH THAT similar(hsl.h(a), hsl.h(b) + 180) < 5
+
+
+**Program**:
 
 \`\`\`json
 {
-    "$schema": "https://radiant-speculoos-7f8b2f.netlify.app/lint-schema.json", 
+    "$schema": "https://color-buddy-docs.netlify.app/lint-schema.json", 
     "exist": {
         "in": "colors", 
         "varbs": ["a", "b"], 
@@ -1155,11 +1150,13 @@ Program:
 
 
 
-### Color Distinctness: Thin Size Objects [sequential, diverging, categorical] 
+### Color Distinctness: Thin Size Objects
+**Tasks**: sequential, diverging, categorical
 
-Description: Pairs of colors in a palette should be differentiable from each other in Thin marks. 
 
-Natural Language: ALL x, y IN colors WHERE index(x) != index(y) SUCH THAT (|lab.l(x) - lab.l(y)| > 12.58 OR |lab.a(x) - lab.a(y)| > 20.740000000000002 OR |lab.b(x) - lab.b(y)| > 34.05)
+**Description**: Pairs of colors in a palette should be differentiable from each other in Thin marks. 
+
+**Natural Language**: ALL x, y IN colors WHERE index(x) != index(y) SUCH THAT (|lab.l(x) - lab.l(y)| > 12.58 OR |lab.a(x) - lab.a(y)| > 20.740000000000002 OR |lab.b(x) - lab.b(y)| > 34.05)
 
 Palettes that will fail this test:
 
@@ -1172,11 +1169,11 @@ Palettes that will pass this test:
 - #0084a9, #bad, #008000 with a #fff background
 
 
-Program:
+**Program**:
 
 \`\`\`json
 {
-    "$schema": "https://radiant-speculoos-7f8b2f.netlify.app/lint-schema.json", 
+    "$schema": "https://color-buddy-docs.netlify.app/lint-schema.json", 
     "all": {
         "in": "colors", 
         "varbs": ["x", "y"], 
@@ -1218,11 +1215,13 @@ Program:
 
 
 
-### Color Distinctness: Medium Size Objects [sequential, diverging, categorical] 
+### Color Distinctness: Medium Size Objects
+**Tasks**: sequential, diverging, categorical
 
-Description: Pairs of colors in a palette should be differentiable from each other in Medium marks. 
 
-Natural Language: ALL x, y IN colors WHERE index(x) != index(y) SUCH THAT (|lab.l(x) - lab.l(y)| > 6.58 OR |lab.a(x) - lab.a(y)| > 8.42 OR |lab.b(x) - lab.b(y)| > 11.09)
+**Description**: Pairs of colors in a palette should be differentiable from each other in Medium marks. 
+
+**Natural Language**: ALL x, y IN colors WHERE index(x) != index(y) SUCH THAT (|lab.l(x) - lab.l(y)| > 6.58 OR |lab.a(x) - lab.a(y)| > 8.42 OR |lab.b(x) - lab.b(y)| > 11.09)
 
 Palettes that will fail this test:
 
@@ -1235,11 +1234,11 @@ Palettes that will pass this test:
 - #cf5f67, #468bbc, #848475, #c55eab, #ff008c with a #fff background
 
 
-Program:
+**Program**:
 
 \`\`\`json
 {
-    "$schema": "https://radiant-speculoos-7f8b2f.netlify.app/lint-schema.json", 
+    "$schema": "https://color-buddy-docs.netlify.app/lint-schema.json", 
     "all": {
         "in": "colors", 
         "varbs": ["x", "y"], 
@@ -1281,11 +1280,13 @@ Program:
 
 
 
-### Color Distinctness: Wide Size Objects [sequential, diverging, categorical] 
+### Color Distinctness: Wide Size Objects
+**Tasks**: sequential, diverging, categorical
 
-Description: Pairs of colors in a palette should be differentiable from each other in Wide marks. 
 
-Natural Language: ALL x, y IN colors WHERE index(x) != index(y) SUCH THAT (|lab.l(x) - lab.l(y)| > 5.83 OR |lab.a(x) - lab.a(y)| > 6.88 OR |lab.b(x) - lab.b(y)| > 8.219999999999999)
+**Description**: Pairs of colors in a palette should be differentiable from each other in Wide marks. 
+
+**Natural Language**: ALL x, y IN colors WHERE index(x) != index(y) SUCH THAT (|lab.l(x) - lab.l(y)| > 5.83 OR |lab.a(x) - lab.a(y)| > 6.88 OR |lab.b(x) - lab.b(y)| > 8.219999999999999)
 
 Palettes that will fail this test:
 
@@ -1298,11 +1299,11 @@ Palettes that will pass this test:
 - #cf5f67, #468bbc, #848475, #c55eab, #ff008c with a #fff background
 
 
-Program:
+**Program**:
 
 \`\`\`json
 {
-    "$schema": "https://radiant-speculoos-7f8b2f.netlify.app/lint-schema.json", 
+    "$schema": "https://color-buddy-docs.netlify.app/lint-schema.json", 
     "all": {
         "in": "colors", 
         "varbs": ["x", "y"], 
@@ -1344,11 +1345,13 @@ Program:
 
 
 
-### Avoid extreme colors [sequential, diverging, categorical] 
+### Avoid extreme colors
+**Tasks**: sequential, diverging, categorical
 
-Description: Colors at either end of the lightness spectrum can be hard to discriminate in some contexts, and are sometimes advised against. See https://blog.datawrapper.de/beautifulcolors/#6 for more.
 
-Natural Language: ALL a IN colors SUCH THAT ALL b IN ([#000000, #ffffff, #0000ff, #ff0000, #00ff00]) SUCH THAT NOT a == b
+**Description**: Colors at either end of the lightness spectrum can be hard to discriminate in some contexts, and are sometimes advised against. See https://blog.datawrapper.de/beautifulcolors/#6 for more.
+
+**Natural Language**: ALL a IN colors SUCH THAT ALL b IN ([#000000, #ffffff, #0000ff, #ff0000, #00ff00]) SUCH THAT NOT a == b
 
 Palettes that will fail this test:
 
@@ -1361,11 +1364,11 @@ Palettes that will pass this test:
 - #ff7e0e with a #fff background
 
 
-Program:
+**Program**:
 
 \`\`\`json
 {
-    "$schema": "https://radiant-speculoos-7f8b2f.netlify.app/lint-schema.json", 
+    "$schema": "https://color-buddy-docs.netlify.app/lint-schema.json", 
     "all": {
         "in": "colors", 
         "varb": "a", 
@@ -1387,11 +1390,13 @@ Program:
 
 
 
-### Colors distinguishable in order [categorical] 
+### Colors distinguishable in order
+**Tasks**: categorical
 
-Description: Opt for colors that are perceptually distinguishable in a logical sequence when designing visual elements like charts or graphs. This ensures that viewers can easily recognize the order or progression of data points. For categorical this means that when only a small number of colors are used, they should be as different as possible. For sequential and diverging, this means that the colors should be as different as possible in order.
 
-Natural Language: ALL a, b IN colors WHERE index(a) == index(b) - 1 SUCH THAT deltaE(a, b, 2000) > 10
+**Description**: Opt for colors that are perceptually distinguishable in a logical sequence when designing visual elements like charts or graphs. This ensures that viewers can easily recognize the order or progression of data points. For categorical this means that when only a small number of colors are used, they should be as different as possible. For sequential and diverging, this means that the colors should be as different as possible in order.
+
+**Natural Language**: ALL a, b IN colors WHERE index(a) == index(b) - 1 SUCH THAT deltaE(a, b, 2000) > 10
 
 Palettes that will fail this test:
 
@@ -1404,11 +1409,11 @@ Palettes that will pass this test:
 - #0084a9, #009de5, #8ca9fa, #bbc3ff, #ecddff with a #fff background
 
 
-Program:
+**Program**:
 
 \`\`\`json
 {
-    "$schema": "https://radiant-speculoos-7f8b2f.netlify.app/lint-schema.json", 
+    "$schema": "https://color-buddy-docs.netlify.app/lint-schema.json", 
     "all": {
         "in": "colors", 
         "varbs": ["a", "b"], 
@@ -1433,11 +1438,13 @@ Program:
 
 
 
-### In Gamut [sequential, diverging, categorical] 
+### In Gamut
+**Tasks**: sequential, diverging, categorical
 
-Description: Checks if the colors are in the sRGB gamut. This is important to ensure that the colors are visible and can be displayed on most devices.
 
-Natural Language: ALL a IN colors SUCH THAT inGamut(a) == TRUE
+**Description**: Checks if the colors are in the sRGB gamut. This is important to ensure that the colors are visible and can be displayed on most devices.
+
+**Natural Language**: ALL a IN colors SUCH THAT inGamut(a) == TRUE
 
 Palettes that will fail this test:
 
@@ -1450,11 +1457,11 @@ Palettes that will pass this test:
 - #0084a9, #009de5, #8ca9fa, #f00 with a #fff background
 
 
-Program:
+**Program**:
 
 \`\`\`json
 {
-    "$schema": "https://radiant-speculoos-7f8b2f.netlify.app/lint-schema.json", 
+    "$schema": "https://color-buddy-docs.netlify.app/lint-schema.json", 
     "all": {
         "in": "colors", 
         "varb": "a", 
@@ -1470,11 +1477,13 @@ Program:
 
 
 
-### Max Colors [sequential, diverging, categorical] 
+### Max Colors
+**Tasks**: sequential, diverging, categorical
 
-Description: Palettes should have a maximum number of colors. Higher numbers of colors can make it hard to identify specific values.
 
-Natural Language: count(colors) < 11
+**Description**: Palettes should have a maximum number of colors. Higher numbers of colors can make it hard to identify specific values.
+
+**Natural Language**: count(colors) < 11
 
 Palettes that will fail this test:
 
@@ -1487,11 +1496,11 @@ Palettes that will pass this test:
 - #000, #fff, #f00, #0f0, #00f with a #fff background
 
 
-Program:
+**Program**:
 
 \`\`\`json
 {
-    "$schema": "https://radiant-speculoos-7f8b2f.netlify.app/lint-schema.json", 
+    "$schema": "https://color-buddy-docs.netlify.app/lint-schema.json", 
     "<": { "left": {"count": "colors"}, "right": 11 }
 }
 
@@ -1501,11 +1510,13 @@ Program:
 
 
 
-### Mutually Distinct [categorical] 
+### Mutually Distinct
+**Tasks**: categorical
 
-Description: All colors in a palette should be different from each other. This is because if they are not, then they will not be differentiable from each other in some contexts.
 
-Natural Language: ALL a, b IN colors WHERE index(a) != index(b) SUCH THAT dist(a, b, lab) > 15
+**Description**: All colors in a palette should be different from each other. This is because if they are not, then they will not be differentiable from each other in some contexts.
+
+**Natural Language**: ALL a, b IN colors WHERE index(a) != index(b) SUCH THAT dist(a, b, lab) > 15
 
 Palettes that will fail this test:
 
@@ -1518,11 +1529,11 @@ Palettes that will pass this test:
 - #000, #fff, #f00, #0f0, #00f with a #fff background
 
 
-Program:
+**Program**:
 
 \`\`\`json
 {
-    "$schema": "https://radiant-speculoos-7f8b2f.netlify.app/lint-schema.json", 
+    "$schema": "https://color-buddy-docs.netlify.app/lint-schema.json", 
     "all": {
         "in": "colors", 
         "varbs": ["a", "b"], 
@@ -1542,11 +1553,13 @@ Program:
 
 
 
-### Color Name Discriminability [sequential, categorical, diverging] 
+### Color Name Discriminability
+**Tasks**: sequential, categorical, diverging
 
-Description: Being able to identify colors by name is important for usability and for memorability.
 
-Natural Language: ALL a, b IN colors WHERE index(a) != index(b) SUCH THAT name(a) != name(b)
+**Description**: Being able to identify colors by name is important for usability and for memorability.
+
+**Natural Language**: ALL a, b IN colors WHERE index(a) != index(b) SUCH THAT name(a) != name(b)
 
 Palettes that will fail this test:
 
@@ -1559,11 +1572,11 @@ Palettes that will pass this test:
 - #000, #fff, #f00, #0f0, #00f with a #fff background
 
 
-Program:
+**Program**:
 
 \`\`\`json
 {
-    "$schema": "https://radiant-speculoos-7f8b2f.netlify.app/lint-schema.json", 
+    "$schema": "https://color-buddy-docs.netlify.app/lint-schema.json", 
     "all": {
         "in": "colors", 
         "varbs": ["a", "b"], 
@@ -1580,11 +1593,13 @@ Program:
 
 
 
-### Sequential Palette Order [sequential] 
+### Sequential Palette Order
+**Tasks**: sequential
 
-Description: Sequential palettes should be ordered by lightness. This is a defining property of a sequential palette and ensures that values are understood as having an increase (or decreasing) value.
 
-Natural Language: (sort(colors, x => lch.l(x)) == map(colors, x => lch.l(x)) OR sort(colors, x => lch.l(x)) == reverse(map(colors, x => lch.l(x))))
+**Description**: Sequential palettes should be ordered by lightness. This is a defining property of a sequential palette and ensures that values are understood as having an increase (or decreasing) value.
+
+**Natural Language**: (sort(colors, x => lch.l(x)) == map(colors, x => lch.l(x)) OR sort(colors, x => lch.l(x)) == reverse(map(colors, x => lch.l(x))))
 
 Palettes that will fail this test:
 
@@ -1597,11 +1612,11 @@ Palettes that will pass this test:
 - #0084a9, #009de5, #5fb1ff, #bbc3ff, #ecddff with a #fff background
 
 
-Program:
+**Program**:
 
 \`\`\`json
 {
-    "$schema": "https://radiant-speculoos-7f8b2f.netlify.app/lint-schema.json", 
+    "$schema": "https://color-buddy-docs.netlify.app/lint-schema.json", 
     "or": [
         {
             "==": {
@@ -1626,11 +1641,13 @@ Program:
 
 
 
-### Palette does not have ugly colors [categorical] 
+### Palette does not have ugly colors
+**Tasks**: categorical
 
-Description: Colors that are close to what are known as ugly colors are sometimes advised against. See https://www.colourlovers.com/palette/1416250/The_Ugliest_Colors for more details.
 
-Natural Language: ALL a IN colors SUCH THAT ALL b IN ([#56FF00, #0010FF, #6A7E25, #FF00EF, #806E28]) SUCH THAT deltaE(a, b, 2000) > 10
+**Description**: Colors that are close to what are known as ugly colors are sometimes advised against. See https://www.colourlovers.com/palette/1416250/The_Ugliest_Colors for more details.
+
+**Natural Language**: ALL a IN colors SUCH THAT ALL b IN ([#56FF00, #0010FF, #6A7E25, #FF00EF, #806E28]) SUCH THAT deltaE(a, b, 2000) > 10
 
 Palettes that will fail this test:
 
@@ -1645,11 +1662,11 @@ Palettes that will pass this test:
 - #000, #fff, #f00, #00c000, #9c70ff with a #fff background
 
 
-Program:
+**Program**:
 
 \`\`\`json
 {
-    "$schema": "https://radiant-speculoos-7f8b2f.netlify.app/lint-schema.json", 
+    "$schema": "https://color-buddy-docs.netlify.app/lint-schema.json", 
     "all": {
         "in": "colors", 
         "varb": "a", 

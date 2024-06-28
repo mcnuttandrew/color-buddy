@@ -4,6 +4,8 @@ import { expect, test } from "vitest";
 import type { CustomLint } from "./ColorLint";
 import fs from "fs/promises";
 
+const DOC_LOCATION = "../../apps/docs/docs/lang-examples.md";
+
 const testCaseToText = (
   tests:
     | CustomLint["expectedFailingTests"]
@@ -36,18 +38,20 @@ ${testMsgs}
 
 function lintToText(lint: CustomLint) {
   return `
-### ${lint.name} [${lint.taskTypes.join(", ")}] ${
-    lint.requiredTags.length
-      ? `tags required: (${lint.requiredTags.join(", ")})`
-      : ""
-  }
+### ${lint.name}
+**Tasks**: ${lint.taskTypes.join(", ")}
+${
+  lint.requiredTags.length
+    ? `**Tags Required**: (${lint.requiredTags.join(", ")})`
+    : ""
+}
 
-Description: ${lint.description}
+**Description**: ${lint.description}
 
-Natural Language: ${prettyPrintLL(JSON.parse(lint.program))}
+**Natural Language**: ${prettyPrintLL(JSON.parse(lint.program))}
 ${testCaseToText(lint.expectedFailingTests || [], "fail")}
 ${testCaseToText(lint.expectedPassingTests || [], "pass")}
-Program:
+**Program**:
 
 \`\`\`json
 ${lint.program}
@@ -56,27 +60,31 @@ ${lint.program}
     `;
 }
 
+function prepName(name: string) {
+  return name.replace(/[^a-zA-Z0-9]/g, "-").toLowerCase();
+}
+
 async function buildDocs() {
-  const aiDocs = await fs.readFile("./src/ai-docs.md", "utf-8");
-
   const examples = PREBUILT_LINTS.map(lintToText).join("\n\n\n");
-  const newDocs = `# Language Docs
+  const exampleLinks = PREBUILT_LINTS.map(
+    (x) => `- [${x.name}](#${prepName(x.name)})`
+  ).join("\n");
+  const newDocs = `
+# Language Examples
 
-These docs provide a high-level overview of the language and its built-in functions. The first section covers the syntax of the language in its concrete JSON syntax, with a particular set of notes meant to guide LLM usage of the language. The second section provides all of the built in lints as examples.
+This page contains examples of the language used to define palettes and the expected behavior of the linter.
 
-${aiDocs}
-
-# Examples
+${exampleLinks}
 
 ${examples}
 
   `;
 
-  await fs.writeFile("./docs/lang-docs.md", newDocs.trim());
+  await fs.writeFile(DOC_LOCATION, newDocs.trim());
 }
 
 test("Docs have not changed", async () => {
   await buildDocs();
-  const docs = await fs.readFile("./docs/lang-docs.md", "utf-8");
+  const docs = await fs.readFile(DOC_LOCATION, "utf-8");
   expect(docs).toMatchSnapshot();
 });

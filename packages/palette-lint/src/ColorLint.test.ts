@@ -1,6 +1,7 @@
 import { expect, test } from "vitest";
 
 import { Color, makePalFromString } from "@color-buddy/palette";
+import { getName } from "@color-buddy/color-namer";
 
 import { CreateCustomLint } from "./ColorLint";
 import { suggestLintFix } from "./linter-tools/lint-fixer";
@@ -14,7 +15,8 @@ import BGContrast, {
 } from "./lints/background-contrast";
 import CatOrderSimilarity from "./lints/cat-order-similarity";
 import CVDCheck from "./lints/cvd-check";
-import ColorNameDiscriminability, { getName } from "./lints/name-discrim";
+import ColorNameDiscriminability from "./lints/name-discrim";
+
 import ColorTags from "./lints/color-tags";
 import DivergingOrder, { fixDivergingOrder } from "./lints/diverging-order";
 import EvenDistribution from "./lints/even-distribution";

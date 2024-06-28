@@ -11,6 +11,9 @@ const defaultHexPal: StringPalette = {
   tags: [],
 };
 
+/**
+ * Creates a palette from an array of strings. The background color can be specified as a string.
+ */
 export function makePalFromString(
   strings: string[],
   bg: string = "#ffffff"
@@ -22,6 +25,9 @@ export function makePalFromString(
   };
 }
 
+/**
+ * Converts an array of hex strings to a palette.
+ */
 export const toPal = (
   colors: string[],
   currentPal: Palette,
@@ -44,6 +50,9 @@ export const wrapColor = (x: Color): ColorWrap<Color> => ({
 const clamp = (x: number, min: number, max: number) =>
   Math.min(Math.max(x, min), max);
 
+/**
+ * Clips a color to the gamut of its color space. Return the clipped color as an array of channels in the originating color space.
+ */
 export function clipToGamut(color: Color): [number, number, number] {
   if (color.inGamut()) {
     const space = color.constructor as typeof Color;
@@ -62,6 +71,9 @@ export function clipToGamut(color: Color): [number, number, number] {
   }
 }
 
+/**
+ * Distributes colors in a palette along a direction in color space. The direction can be horizontal, vertical, or in z space. 
+ */
 export function distributePoints(
   dir: {
     direction: "horizontal" | "vertical" | "in z space";

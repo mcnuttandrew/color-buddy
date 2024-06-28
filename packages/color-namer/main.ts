@@ -21,13 +21,16 @@ function findSmallest<A>(arr: A[], accessor: (x: A) => number): A {
   return smallest;
 }
 
-// Simpler version of the color name stuff
-export function colorNameSimple(colors: Color[]) {
+//
+/**
+ * Simpler version of the color name stuff
+ */
+export function colorNameSimple(colors: Color[]): { word: string; hex: string }[]{
   return colors.map((x) => ({ word: getName(x), hex: x.toHex() }));
 }
 
 const nameCache = new Map<string, string>();
-export const getName = (color: Color) => {
+export const getName = (color: Color): string => {
   const hex = color.toHex().toUpperCase();
   if (nameCache.has(hex)) {
     return nameCache.get(hex)!;

@@ -18,7 +18,7 @@ export default defineConfig({
       },
       {
         text: "Packages",
-        items: [{ text: "Palette Lint", link: "/palette-lint-api" }],
+        items: [{ text: "Palette Lint", link: "/x/palette-lint" }],
       },
       {
         text: "Palette Lint",

@@ -1,0 +1,1 @@
+cp ../../packages/palette-lint/README.md ./docs/x/palette-lint.md

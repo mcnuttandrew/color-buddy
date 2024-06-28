@@ -28,6 +28,18 @@ ANTHROPIC_KEY = "YOUR KEY HERE"
 
 The app does not check to see if your keys work, so if you are encountering trouble (such as various auto fixes not returning content), please ensure that your keys are correct. It is not necessary to have keys for both services as the front end has an option to select which of them you wish to use (see the config menu in the upper left).
 
+## SETUP (for Docs)
+
+Install: `yarn`
+
+This will install the deps across the monorepo.
+
+Navigate to the docs: `cd apps/docs`
+
+Run: `yarn docs:dev`
+
+Use: should point to localhost:5147 if all is well
+
 ## POST REFACTOR TODOs
 
 - pull out the color naming stuff into its own thing

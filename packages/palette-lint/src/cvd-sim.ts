@@ -4,7 +4,7 @@ import { Color } from "./Color";
 type Channels = [number, number, number];
 
 // Code adapted from libDaltonLens https://daltonlens.org (public domain)
-// then adapted to color-pal-builder from https://github.com/MaPePeR/jsColorblindSimulator
+// then adapted to color-buddy from https://github.com/MaPePeR/jsColorblindSimulator
 
 const brettelFunctions: Record<string, (v: Channels) => Channels> = {
   normal: (v) => v,

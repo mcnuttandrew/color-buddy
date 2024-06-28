@@ -1,6 +1,8 @@
 <script lang="ts">
+  import { colorNameSimple } from "@color-buddy/color-namer";
   import { simulateCVD } from "@color-buddy/palette-lint";
-  import type { ColorWrap } from "@color-buddy/palette-lint";
+  import type { ColorWrap } from "@color-buddy/palette";
+  import { Color } from "@color-buddy/palette";
 
   import colorStore from "../stores/color-store";
   import focusStore from "../stores/focus-store";
@@ -8,7 +10,6 @@
   import lintStore from "../stores/lint-store";
 
   import EvalResponse from "./EvalResponse.svelte";
-  import { Color, colorNameSimple } from "@color-buddy/palette-lint";
   import { checkLevelToSymbol, dealWithFocusEvent } from "../lib/utils";
   import { buttonStyle } from "../lib/styles";
 

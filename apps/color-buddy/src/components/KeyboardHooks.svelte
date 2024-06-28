@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { Color } from "@color-buddy/palette-lint";
-  import type { ColorWrap } from "@color-buddy/palette-lint";
+  import { Color } from "@color-buddy/palette";
+  import type { ColorWrap } from "@color-buddy/palette";
   import { colorPickerConfig } from "../lib/utils";
   import colorStore from "../stores/color-store";
   import focusStore from "../stores/focus-store";

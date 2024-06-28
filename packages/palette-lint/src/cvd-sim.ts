@@ -1,5 +1,5 @@
 import ColorIO from "colorjs.io";
-import { Color } from "./Color";
+import { Color } from "../../palette/src/Color";
 
 type Channels = [number, number, number];
 

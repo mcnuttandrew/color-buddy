@@ -1,11 +1,11 @@
 import { writable } from "svelte/store";
-import { Color, utils } from "@color-buddy/palette-lint";
+import { Color, wrapColor } from "@color-buddy/palette";
 import type {
   Palette,
   StringPalette,
   ColorWrap,
   ColorSpace,
-} from "@color-buddy/palette-lint";
+} from "@color-buddy/palette";
 
 import { deDup, newGenericPal } from "../lib/utils";
 
@@ -26,7 +26,7 @@ function stringPalToColorPal(pal: StringPalette): Palette {
     colors: pal.colors.map((x) => {
       // catch old versions
       if (typeof x === "string") {
-        return utils.wrapColor(Color.colorFromString(x, pal.colorSpace));
+        return wrapColor(Color.colorFromString(x, pal.colorSpace));
       }
       const color = Color.colorFromString(x.color, pal.colorSpace);
       return { ...x, color };

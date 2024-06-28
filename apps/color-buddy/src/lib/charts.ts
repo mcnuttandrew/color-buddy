@@ -1,4 +1,4 @@
-import type { Palette } from "@color-buddy/palette-lint";
+import type { Palette } from "@color-buddy/palette";
 import * as vega from "vega";
 import * as vegaLite from "vega-lite";
 

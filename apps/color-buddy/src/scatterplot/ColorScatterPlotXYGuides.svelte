@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Color } from "@color-buddy/palette-lint";
+  import { Color } from "@color-buddy/palette";
   import { colorPickerConfig } from "../lib/utils";
   import focusStore from "../stores/focus-store";
   import colorStore from "../stores/color-store";

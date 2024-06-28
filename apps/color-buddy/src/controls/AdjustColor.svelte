@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Color, clipToGamut } from "@color-buddy/palette-lint";
+  import { Color, clipToGamut } from "@color-buddy/palette";
   import { colorPickerConfig } from "../lib/utils";
   import colorStore from "../stores/color-store";
   import focusStore from "../stores/focus-store";

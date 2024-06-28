@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { Palette } from "@color-buddy/palette-lint";
+  import type { Palette } from "@color-buddy/palette";
   import Example from "./Example.svelte";
   import { getSVG } from "../lib/charts";
 

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { Palette } from "@color-buddy/palette-lint";
+  import type { Palette } from "@color-buddy/palette";
   export let beforePal: Palette;
   export let afterPal: Palette;
   const xStep = 30;

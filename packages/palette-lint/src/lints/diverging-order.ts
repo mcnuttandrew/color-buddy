@@ -1,6 +1,6 @@
 import { ColorLint } from "../ColorLint";
-import type { PalType, ColorWrap } from "../types";
-import { Color } from "../Color";
+import type { PalType, ColorWrap } from "@color-buddy/palette";
+import { Color } from "@color-buddy/palette";
 import type { LintFixer } from "../linter-tools/lint-fixer";
 
 function isDiverging(colors: ColorWrap<Color>[]): boolean {

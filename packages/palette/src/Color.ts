@@ -7,6 +7,11 @@ const hexCache = new Map<string, string>();
 const stringChannelsCache = new Map<string, Channels>();
 const stringIsColorCache = new Map<string, boolean>();
 type DistAlgorithm = "76" | "CMC" | "2000" | "ITP" | "Jz" | "OK";
+
+/**
+ * The base class for all color spaces
+ *
+ */
 export class Color {
   static name: string = "";
   channels: Record<string, number> = {};
@@ -182,6 +187,9 @@ export class Color {
     stringIsColorCache.set(key, result);
     return result;
   };
+  /**
+   * Convert a color string to a color object
+   */
   static toColorSpace = toColorSpace;
   static stringToChannels = stringToChannels;
   static colorFromString = colorFromString;

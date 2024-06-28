@@ -1,7 +1,6 @@
-import { Color } from "./Color";
-import type { ColorSpace as LintColorSpace } from "./lint-language/lint-type";
+import { Color, ColorSpaceDirectory } from "./Color";
 
-export type ColorSpace = LintColorSpace;
+export type ColorSpace = keyof typeof ColorSpaceDirectory;
 
 export type ColorWrap<A> = {
   tags: string[];

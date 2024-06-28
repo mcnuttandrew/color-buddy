@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { Color, utils } from "@color-buddy/palette-lint";
-  import type { StringPalette, Palette } from "@color-buddy/palette-lint";
+  import { makePalFromString, wrapColor } from "@color-buddy/palette";
+  import type { Palette } from "@color-buddy/palette";
 
   import colorStore from "../stores/color-store";
 
@@ -14,7 +14,7 @@
 
   function newPal(newPal: Palette) {
     const colors = newPal.colors.map((x) =>
-      utils.wrapColor(x.color.toColorSpace(colorSpace))
+      wrapColor(x.color.toColorSpace(colorSpace))
     );
     const background = newPal.background.toColorSpace(colorSpace);
     const pal = {
@@ -33,7 +33,7 @@
     }
     try {
       const newColors = processBodyTextToColors(body, colorSpace as any);
-      newPal(utils.makePalFromString(newColors.map((x) => x.toHex())));
+      newPal(makePalFromString(newColors.map((x) => x.toHex())));
     } catch (e) {
       console.error(e);
       return;
@@ -46,7 +46,7 @@
     <div class="">
       <button
         class={buttonStyle}
-        on:click={() => newPal(utils.makePalFromString([]))}
+        on:click={() => newPal(makePalFromString([]))}
       >
         New blank
       </button>
@@ -59,7 +59,7 @@
       <button
         class={buttonStyle}
         on:click={() => {
-          const pal = utils.makePalFromString([
+          const pal = makePalFromString([
             "#0084a9",
             "#009de5",
             "#5fb1ff",
@@ -75,7 +75,7 @@
       <button
         class={buttonStyle}
         on:click={() => {
-          const pal = utils.makePalFromString([
+          const pal = makePalFromString([
             "#0084ae",
             "#8db3c7",
             "#e5e3e0",

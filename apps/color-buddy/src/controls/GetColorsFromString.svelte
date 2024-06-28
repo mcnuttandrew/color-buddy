@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { Color, utils } from "@color-buddy/palette-lint";
-  import type { ColorWrap } from "@color-buddy/palette-lint";
+  import { Color, wrapColor } from "@color-buddy/palette";
+  import type { ColorWrap } from "@color-buddy/palette";
   import configStore from "../stores/config-store";
   import { processBodyTextToColors } from "../lib/utils";
 
@@ -17,7 +17,7 @@
           if (colors[idx]) {
             return { ...colors[idx], color: x };
           } else {
-            return utils.wrapColor(x);
+            return wrapColor(x);
           }
         }
       );

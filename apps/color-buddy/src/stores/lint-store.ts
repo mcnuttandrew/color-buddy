@@ -1,12 +1,9 @@
 import { writable } from "svelte/store";
 import * as idb from "idb-keyval";
-import { Color, utils, PREBUILT_LINTS } from "@color-buddy/palette-lint";
-import type {
-  LintResult,
-  CustomLint,
-  Palette,
-  StringPalette,
-} from "@color-buddy/palette-lint";
+import type { LintResult, CustomLint } from "@color-buddy/palette-lint";
+import { PREBUILT_LINTS } from "@color-buddy/palette-lint";
+import { Color, wrapColor } from "@color-buddy/palette";
+import type { Palette, StringPalette } from "@color-buddy/palette";
 import { JSONStringify } from "../lib/utils";
 import { loadLints } from "../lib/api-calls";
 
@@ -90,7 +87,7 @@ function deserializePalette(pal: StringPalette): Palette {
     background: Color.colorFromString(pal.background, pal.colorSpace),
     colors: pal.colors.map((x) => {
       if (typeof x === "string") {
-        return utils.wrapColor(Color.colorFromString(x, pal.colorSpace));
+        return wrapColor(Color.colorFromString(x, pal.colorSpace));
       }
       const color = Color.colorFromString(x.color, pal.colorSpace);
       return { ...x, color };

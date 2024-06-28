@@ -3,4 +3,6 @@
 layout: doc
 ---
 
-Hello!!
+# Color Buddy
+
+A system for building excellent color palettes for data visualization.

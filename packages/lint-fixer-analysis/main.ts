@@ -1,17 +1,14 @@
-import outfits from "./pals/outfits.json";
-import pals from "./pals/pal-sets.json";
-import tableauColors from "./pals/tableau-colors.json";
+// import outfits from "./pals/outfits.json";
+// import tableauColors from "./pals/tableau-colors.json";
 import brewerColors from "./pals/small-brewer.json";
 import fs from "fs/promises";
 import {
   PREBUILT_LINTS,
   CreateCustomLint,
-  Color,
-  utils,
   generateMCFix,
-  Palette,
   suggestLintFix,
 } from "@color-buddy/palette-lint";
+import { Palette, makePalFromString } from "@color-buddy/palette";
 
 import prompter from "./prompter";
 
@@ -21,17 +18,17 @@ const brewerSets = brewerColors as {
   colors: string[];
   type: string;
 }[];
-const tableauSets = tableauColors as {
-  type: string;
-  colors: string[];
-  name: string;
-}[];
-const outfitSets = outfits as {
-  name: string;
-  fill1: string;
-  fill2: string;
-  fill3: string;
-}[];
+// const tableauSets = tableauColors as {
+//   type: string;
+//   colors: string[];
+//   name: string;
+// }[];
+// const outfitSets = outfits as {
+//   name: string;
+//   fill1: string;
+//   fill2: string;
+//   fill3: string;
+// }[];
 // function lookupBrewerSchemeType(schemeName: string): string {
 //   return (
 //     Object.keys(brewerSets.schemeGroups).find(([_type, schemes]) =>

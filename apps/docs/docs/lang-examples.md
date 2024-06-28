@@ -62,7 +62,7 @@ Palettes that will pass this test:
 
 ```json
 {
-    "$schema": "https://radiant-speculoos-7f8b2f.netlify.app/lint-schema.json", 
+    "$schema": "https://color-buddy-docs.netlify.app/lint-schema.json", 
     "all": {
         "in": "colors", 
         "varb": "a", 
@@ -104,7 +104,7 @@ Palettes that will pass this test:
 
 ```json
 {
-    "$schema": "https://radiant-speculoos-7f8b2f.netlify.app/lint-schema.json", 
+    "$schema": "https://color-buddy-docs.netlify.app/lint-schema.json", 
     "all": {
         "in": "colors", 
         "varb": "a", 
@@ -147,7 +147,7 @@ Palettes that will pass this test:
 
 ```json
 {
-    "$schema": "https://radiant-speculoos-7f8b2f.netlify.app/lint-schema.json", 
+    "$schema": "https://color-buddy-docs.netlify.app/lint-schema.json", 
     "all": {
         "in": "colors", 
         "varb": "a", 
@@ -180,7 +180,7 @@ Palettes that will pass this test:
 
 ```json
 {
-    "$schema": "https://radiant-speculoos-7f8b2f.netlify.app/lint-schema.json", 
+    "$schema": "https://color-buddy-docs.netlify.app/lint-schema.json", 
     "all": {
         "in": "colors", 
         "varb": "c", 
@@ -214,7 +214,7 @@ Palettes that will pass this test:
 
 ```json
 {
-    "$schema": "https://radiant-speculoos-7f8b2f.netlify.app/lint-schema.json", 
+    "$schema": "https://color-buddy-docs.netlify.app/lint-schema.json", 
     "all": {
         "in": "colors", 
         "varb": "c", 
@@ -248,7 +248,7 @@ Palettes that will pass this test:
 
 ```json
 {
-    "$schema": "https://radiant-speculoos-7f8b2f.netlify.app/lint-schema.json", 
+    "$schema": "https://color-buddy-docs.netlify.app/lint-schema.json", 
     "all": {
         "in": "colors", 
         "varb": "c", 
@@ -282,7 +282,7 @@ Palettes that will pass this test:
 
 ```json
 {
-    "$schema": "https://radiant-speculoos-7f8b2f.netlify.app/lint-schema.json", 
+    "$schema": "https://color-buddy-docs.netlify.app/lint-schema.json", 
     "exist": {
         "in": "colors", 
         "varb": "c", 
@@ -315,7 +315,7 @@ Palettes that will pass this test:
 
 ```json
 {
-    "$schema": "https://radiant-speculoos-7f8b2f.netlify.app/lint-schema.json", 
+    "$schema": "https://color-buddy-docs.netlify.app/lint-schema.json", 
     "all": {
         "in": "colors", 
         "varb": "c", 
@@ -349,7 +349,7 @@ Palettes that will pass this test:
 
 ```json
 {
-    "$schema": "https://radiant-speculoos-7f8b2f.netlify.app/lint-schema.json", 
+    "$schema": "https://color-buddy-docs.netlify.app/lint-schema.json", 
     "all": {
         "in": "colors", 
         "varb": "c", 
@@ -395,7 +395,7 @@ Palettes that will pass this test:
 
 ```json
 {
-    "$schema": "https://radiant-speculoos-7f8b2f.netlify.app/lint-schema.json", 
+    "$schema": "https://color-buddy-docs.netlify.app/lint-schema.json", 
     "all": {
         "in": "colors", 
         "varbs": ["a", "b"], 
@@ -441,7 +441,7 @@ Palettes that will pass this test:
 
 ```json
 {
-    "$schema": "https://radiant-speculoos-7f8b2f.netlify.app/lint-schema.json", 
+    "$schema": "https://color-buddy-docs.netlify.app/lint-schema.json", 
     "all": {
         "in": "colors", 
         "varbs": ["a", "b"], 
@@ -487,7 +487,7 @@ Palettes that will pass this test:
 
 ```json
 {
-    "$schema": "https://radiant-speculoos-7f8b2f.netlify.app/lint-schema.json", 
+    "$schema": "https://color-buddy-docs.netlify.app/lint-schema.json", 
     "all": {
         "in": "colors", 
         "varbs": ["a", "b"], 
@@ -533,7 +533,7 @@ Palettes that will pass this test:
 
 ```json
 {
-    "$schema": "https://radiant-speculoos-7f8b2f.netlify.app/lint-schema.json", 
+    "$schema": "https://color-buddy-docs.netlify.app/lint-schema.json", 
     "all": {
         "in": "colors", 
         "varbs": ["a", "b"], 
@@ -579,7 +579,7 @@ Palettes that will pass this test:
 
 ```json
 {
-    "$schema": "https://radiant-speculoos-7f8b2f.netlify.app/lint-schema.json", 
+    "$schema": "https://color-buddy-docs.netlify.app/lint-schema.json", 
     "all": {
         "in": "colors", 
         "varb": "a", 
@@ -624,7 +624,7 @@ Palettes that will pass this test:
 
 ```json
 {
-    "$schema": "https://radiant-speculoos-7f8b2f.netlify.app/lint-schema.json", 
+    "$schema": "https://color-buddy-docs.netlify.app/lint-schema.json", 
     "all": {
         "in": "colors", 
         "varb": "a", 
@@ -666,7 +666,7 @@ Palettes that will pass this test:
 
 ```json
 {
-    "$schema": "https://radiant-speculoos-7f8b2f.netlify.app/lint-schema.json", 
+    "$schema": "https://color-buddy-docs.netlify.app/lint-schema.json", 
     "or": [
         {
             "<": {
@@ -735,7 +735,7 @@ Palettes that will pass this test:
 
 ```json
 {
-    "$schema": "https://radiant-speculoos-7f8b2f.netlify.app/lint-schema.json", 
+    "$schema": "https://color-buddy-docs.netlify.app/lint-schema.json", 
     "<": {
         "left": {
             "std": {
@@ -775,7 +775,7 @@ Palettes that will pass this test:
 
 ```json
 {
-    "$schema": "https://radiant-speculoos-7f8b2f.netlify.app/lint-schema.json", 
+    "$schema": "https://color-buddy-docs.netlify.app/lint-schema.json", 
     "and": [
         {
             "<": {
@@ -825,7 +825,7 @@ Palettes that will pass this test:
 
 ```json
 {
-    "$schema": "https://radiant-speculoos-7f8b2f.netlify.app/lint-schema.json", 
+    "$schema": "https://color-buddy-docs.netlify.app/lint-schema.json", 
     "and": [
         {
             "<": {
@@ -867,7 +867,7 @@ Palettes that will pass this test:
 
 ```json
 {
-    "$schema": "https://radiant-speculoos-7f8b2f.netlify.app/lint-schema.json", 
+    "$schema": "https://color-buddy-docs.netlify.app/lint-schema.json", 
     "or": [
         {
             "or": [
@@ -931,7 +931,7 @@ Palettes that will pass this test:
 
 ```json
 {
-    "$schema": "https://radiant-speculoos-7f8b2f.netlify.app/lint-schema.json", 
+    "$schema": "https://color-buddy-docs.netlify.app/lint-schema.json", 
     "not": {
         "exist": {
             "varb": "a", 
@@ -1033,7 +1033,7 @@ Palettes that will pass this test:
 
 ```json
 {
-    "$schema": "https://radiant-speculoos-7f8b2f.netlify.app/lint-schema.json", 
+    "$schema": "https://color-buddy-docs.netlify.app/lint-schema.json", 
     "all": {
         "varb": "a", 
         "in": "colors", 
@@ -1079,7 +1079,7 @@ Palettes that will pass this test:
 
 ```json
 {
-    "$schema": "https://radiant-speculoos-7f8b2f.netlify.app/lint-schema.json", 
+    "$schema": "https://color-buddy-docs.netlify.app/lint-schema.json", 
     "or": [
         {
             "and": [
@@ -1125,7 +1125,7 @@ Palettes that will pass this test:
 
 ```json
 {
-    "$schema": "https://radiant-speculoos-7f8b2f.netlify.app/lint-schema.json", 
+    "$schema": "https://color-buddy-docs.netlify.app/lint-schema.json", 
     "exist": {
         "in": "colors", 
         "varbs": ["a", "b"], 
@@ -1170,7 +1170,7 @@ Palettes that will pass this test:
 
 ```json
 {
-    "$schema": "https://radiant-speculoos-7f8b2f.netlify.app/lint-schema.json", 
+    "$schema": "https://color-buddy-docs.netlify.app/lint-schema.json", 
     "all": {
         "in": "colors", 
         "varbs": ["x", "y"], 
@@ -1235,7 +1235,7 @@ Palettes that will pass this test:
 
 ```json
 {
-    "$schema": "https://radiant-speculoos-7f8b2f.netlify.app/lint-schema.json", 
+    "$schema": "https://color-buddy-docs.netlify.app/lint-schema.json", 
     "all": {
         "in": "colors", 
         "varbs": ["x", "y"], 
@@ -1300,7 +1300,7 @@ Palettes that will pass this test:
 
 ```json
 {
-    "$schema": "https://radiant-speculoos-7f8b2f.netlify.app/lint-schema.json", 
+    "$schema": "https://color-buddy-docs.netlify.app/lint-schema.json", 
     "all": {
         "in": "colors", 
         "varbs": ["x", "y"], 
@@ -1365,7 +1365,7 @@ Palettes that will pass this test:
 
 ```json
 {
-    "$schema": "https://radiant-speculoos-7f8b2f.netlify.app/lint-schema.json", 
+    "$schema": "https://color-buddy-docs.netlify.app/lint-schema.json", 
     "all": {
         "in": "colors", 
         "varb": "a", 
@@ -1410,7 +1410,7 @@ Palettes that will pass this test:
 
 ```json
 {
-    "$schema": "https://radiant-speculoos-7f8b2f.netlify.app/lint-schema.json", 
+    "$schema": "https://color-buddy-docs.netlify.app/lint-schema.json", 
     "all": {
         "in": "colors", 
         "varbs": ["a", "b"], 
@@ -1458,7 +1458,7 @@ Palettes that will pass this test:
 
 ```json
 {
-    "$schema": "https://radiant-speculoos-7f8b2f.netlify.app/lint-schema.json", 
+    "$schema": "https://color-buddy-docs.netlify.app/lint-schema.json", 
     "all": {
         "in": "colors", 
         "varb": "a", 
@@ -1497,7 +1497,7 @@ Palettes that will pass this test:
 
 ```json
 {
-    "$schema": "https://radiant-speculoos-7f8b2f.netlify.app/lint-schema.json", 
+    "$schema": "https://color-buddy-docs.netlify.app/lint-schema.json", 
     "<": { "left": {"count": "colors"}, "right": 11 }
 }
 
@@ -1530,7 +1530,7 @@ Palettes that will pass this test:
 
 ```json
 {
-    "$schema": "https://radiant-speculoos-7f8b2f.netlify.app/lint-schema.json", 
+    "$schema": "https://color-buddy-docs.netlify.app/lint-schema.json", 
     "all": {
         "in": "colors", 
         "varbs": ["a", "b"], 
@@ -1573,7 +1573,7 @@ Palettes that will pass this test:
 
 ```json
 {
-    "$schema": "https://radiant-speculoos-7f8b2f.netlify.app/lint-schema.json", 
+    "$schema": "https://color-buddy-docs.netlify.app/lint-schema.json", 
     "all": {
         "in": "colors", 
         "varbs": ["a", "b"], 
@@ -1613,7 +1613,7 @@ Palettes that will pass this test:
 
 ```json
 {
-    "$schema": "https://radiant-speculoos-7f8b2f.netlify.app/lint-schema.json", 
+    "$schema": "https://color-buddy-docs.netlify.app/lint-schema.json", 
     "or": [
         {
             "==": {
@@ -1663,7 +1663,7 @@ Palettes that will pass this test:
 
 ```json
 {
-    "$schema": "https://radiant-speculoos-7f8b2f.netlify.app/lint-schema.json", 
+    "$schema": "https://color-buddy-docs.netlify.app/lint-schema.json", 
     "all": {
         "in": "colors", 
         "varb": "a", 

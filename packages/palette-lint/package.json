@@ -11,7 +11,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
-    "gen-schema": "npx ts-json-schema-generator --path src/lint-language/lint-type.ts --type LintProgram > public/lint-schema.json --minify && vite-node scripts/pretty-schema.ts"
+    "gen-schema": "npx ts-json-schema-generator --path src/lint-language/lint-type.ts --type LintProgram > ./lint-schema.json --minify && vite-node scripts/pretty-schema.ts && mv lint-schema.json ../../apps/docs/docs/public/lint-schema.json"
   },
   "devDependencies": {
     "@types/color-namer": "^1.3.3",

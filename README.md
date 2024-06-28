@@ -2,7 +2,7 @@
 
 This is the code repo for Color Buddy. You can see docs for the language in the public/lang-docs.md file.
 
-## SETUP
+## SETUP (for Color Buddy App)
 
 Install: `yarn`
 
@@ -31,6 +31,4 @@ The app does not check to see if your keys work, so if you are encountering trou
 ## POST REFACTOR TODOs
 
 - pull out the color naming stuff into its own thing
-- write documentation, get docs site
-- fix json schema stuff
 - make the colorLint/customColorLint/lintResult stuff cleaner

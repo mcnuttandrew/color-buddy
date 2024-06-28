@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { Palette } from "@color-buddy/palette-lint";
+  import type { Palette } from "@color-buddy/palette";
   export let pal: Palette;
   export let onClick: () => void;
   export let className = "";

@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { Color, utils } from "@color-buddy/palette-lint";
-  import type { Palette, ColorWrap } from "@color-buddy/palette-lint";
+  import { Color, wrapColor } from "@color-buddy/palette";
+  import type { Palette, ColorWrap } from "@color-buddy/palette";
 
   import { colorPickerConfig } from "../lib/utils";
   import {
@@ -315,7 +315,7 @@
 
   function puttingEnd() {
     if (!puttingPreview) return;
-    onColorsChange([...colors, utils.wrapColor(puttingPreview as Color)]);
+    onColorsChange([...colors, wrapColor(puttingPreview as Color)]);
     setTimeout(() => {
       configStore.setScatterplotMode("moving");
     }, 10);

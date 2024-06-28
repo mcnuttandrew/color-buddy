@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { Palette } from "@color-buddy/palette-lint";
+  import type { Palette } from "@color-buddy/palette";
 
   import { buttonStyle } from "../lib/styles";
   import exampleStore from "../stores/example-store";

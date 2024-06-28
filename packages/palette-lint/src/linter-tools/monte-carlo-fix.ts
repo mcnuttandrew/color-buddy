@@ -1,7 +1,7 @@
-import type { Palette } from "../types";
+import type { Palette } from "@color-buddy/palette";
 
-import { Color, ColorSpaceDirectory } from "../Color";
-import { wrapColor } from "../utils";
+import { Color, ColorSpaceDirectory } from "@color-buddy/palette";
+import { wrapColor } from "@color-buddy/palette";
 import type { CustomLint } from "../ColorLint";
 import { CreateCustomLint } from "../ColorLint";
 

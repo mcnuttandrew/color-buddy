@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { Color, utils } from "@color-buddy/palette-lint";
-  import type { Palette } from "@color-buddy/palette-lint";
+  import { Color, wrapColor } from "@color-buddy/palette";
+  import type { Palette } from "@color-buddy/palette";
 
   import colorStore from "../stores/color-store";
   import ColorChannelPicker from "../components/ColorChannelPicker.svelte";
@@ -28,7 +28,7 @@
             // @ts-ignore
             const val = e.target.value;
             const newColors = [...pal.colors];
-            newColors[idx] = utils.wrapColor(
+            newColors[idx] = wrapColor(
               Color.colorFromString(val, pal.colorSpace)
             );
             updatePal({ ...pal, colors: newColors });
@@ -48,7 +48,7 @@
           color={color.color}
           onColorChange={(newColor) => {
             const newColors = [...pal.colors];
-            newColors[idx] = utils.wrapColor(newColor);
+            newColors[idx] = wrapColor(newColor);
             updatePal({ ...pal, colors: newColors });
           }}
         />
@@ -119,7 +119,7 @@
         on:click={() => {
           const newColors = [
             ...pal.colors,
-            utils.wrapColor(Color.colorFromString("steelblue")),
+            wrapColor(Color.colorFromString("steelblue")),
           ];
           updatePal({ ...pal, colors: newColors });
         }}

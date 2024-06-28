@@ -1,11 +1,8 @@
 <script lang="ts">
   import lintStore, { newId } from "../stores/lint-store";
   import { PREBUILT_LINTS, CreateCustomLint } from "@color-buddy/palette-lint";
-  import type {
-    Palette,
-    LintResult,
-    CustomLint,
-  } from "@color-buddy/palette-lint";
+  import type { Palette } from "@color-buddy/palette";
+  import type { LintResult, CustomLint } from "@color-buddy/palette-lint";
 
   import colorStore from "../stores/color-store";
   import Tooltip from "../components/Tooltip.svelte";

@@ -1,8 +1,5 @@
-import {
-  JSONToPrettyString,
-  makePalFromString,
-  createPalWithTags,
-} from "../utils";
+import { JSONToPrettyString, createPalWithTags } from "../utils";
+import { makePalFromString } from "@color-buddy/palette";
 import type { CustomLint } from "../ColorLint";
 import { schema } from "../constants";
 

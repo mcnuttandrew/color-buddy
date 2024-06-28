@@ -1,9 +1,9 @@
-import { Color, ColorSpaceDirectory, utils } from "@color-buddy/palette-lint";
-import type {
-  Palette,
-  ColorWrap,
-  StringPalette,
-} from "@color-buddy/palette-lint";
+import {
+  Color,
+  ColorSpaceDirectory,
+  makePalFromString,
+} from "@color-buddy/palette";
+import type { Palette, ColorWrap } from "@color-buddy/palette";
 
 import { Formatter, FracturedJsonOptions, EolStyle } from "fracturedjsonjs";
 import fits from "../assets/outfits.json";
@@ -207,7 +207,7 @@ const outfitToPal = (x: any) => [x.fill1, x.fill2, x.fill3];
 const outfits = fits.map((x) => outfitToPal(x));
 
 export function newGenericPal(name: string): Palette {
-  const newPal = utils.makePalFromString(pick(outfits));
+  const newPal = makePalFromString(pick(outfits));
   newPal.name = name;
   return newPal;
 }

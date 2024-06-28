@@ -1,7 +1,7 @@
-import { JSONToPrettyString, makePalFromString } from "../utils";
+import { JSONToPrettyString } from "../utils";
+import { makePalFromString, clipToGamut } from "@color-buddy/palette";
 import type { CustomLint } from "../ColorLint";
 import type { LintFixer } from "../linter-tools/lint-fixer";
-import { clipToGamut } from "../utils";
 import { schema } from "../constants";
 
 const lint: CustomLint = {

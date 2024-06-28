@@ -1,10 +1,10 @@
 <script lang="ts">
-  import { utils } from "@color-buddy/palette-lint";
+  import { wrapColor } from "@color-buddy/palette";
 
   import colorStore from "../stores/color-store";
   import focusStore from "../stores/focus-store";
   import configStore from "../stores/config-store";
-  import { Color } from "@color-buddy/palette-lint";
+  import { Color, toPal } from "@color-buddy/palette";
   import { suggestContextualAdjustments } from "../lib/api-calls";
   import { buttonStyle } from "../lib/styles";
   import PalDiff from "../components/PalDiff.svelte";
@@ -25,7 +25,7 @@
       ? {
           ...currentPal,
           colors: selectedColors.map((x) =>
-            utils.wrapColor(Color.colorFromString(x, colorSpace))
+            wrapColor(Color.colorFromString(x, colorSpace))
           ),
         }
       : currentPal;
@@ -72,12 +72,12 @@
       );
       newColors = newColors.concat(
         unusedSuggestions.map((x) =>
-          utils.wrapColor(Color.colorFromString(x, colorSpace))
+          wrapColor(Color.colorFromString(x, colorSpace))
         )
       );
     } else {
       newColors = suggestedColors.map((x) =>
-        utils.wrapColor(Color.colorFromString(x, colorSpace))
+        wrapColor(Color.colorFromString(x, colorSpace))
       );
     }
     colorStore.setCurrentPalColors(newColors);
@@ -96,9 +96,9 @@
         <div>
           <PalDiff
             beforePal={selectedColors.length
-              ? utils.toPal(selectedColors, currentPal, colorSpace)
+              ? toPal(selectedColors, currentPal, colorSpace)
               : currentPal}
-            afterPal={utils.toPal(suggestedColors, currentPal, colorSpace)}
+            afterPal={toPal(suggestedColors, currentPal, colorSpace)}
           />
         </div>
         <div class="flex justify-between">

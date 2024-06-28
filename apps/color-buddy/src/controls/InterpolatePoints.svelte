@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { Color, utils } from "@color-buddy/palette-lint";
-  import type { Palette, ColorWrap } from "@color-buddy/palette-lint";
+  import { Color, wrapColor } from "@color-buddy/palette";
+  import type { Palette, ColorWrap } from "@color-buddy/palette";
   import colorStore from "../stores/color-store";
   import focusStore from "../stores/focus-store";
   import { buttonStyle } from "../lib/styles";
@@ -60,7 +60,7 @@
       const newPoints = createInterpolatedPoints(
         pointA.color,
         pointB.color
-      ).map((x) => utils.wrapColor(x));
+      ).map((x) => wrapColor(x));
       newColors.push(pointA, ...newPoints);
     }
     newColors.push(

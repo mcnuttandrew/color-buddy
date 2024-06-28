@@ -1,10 +1,13 @@
-import { JSONToPrettyString, makePalFromString, wrapColor } from "../utils";
-import type { CustomLint } from "../ColorLint";
-import namer from "color-namer";
-import { Color } from "../Color";
-import type { Palette } from "../types";
-import type { LintFixer } from "../linter-tools/lint-fixer";
+import { Color, makePalFromString, wrapColor } from "@color-buddy/palette";
+import type { Palette } from "@color-buddy/palette";
+
 import { colorCentersFromStoneHeer } from "@color-buddy/color-lists";
+
+import namer from "color-namer";
+
+import { JSONToPrettyString } from "../utils";
+import type { CustomLint } from "../ColorLint";
+import type { LintFixer } from "../linter-tools/lint-fixer";
 import { schema } from "../constants";
 
 const namerCustomList = Object.entries(colorCentersFromStoneHeer).map(

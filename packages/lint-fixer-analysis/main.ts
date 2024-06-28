@@ -70,7 +70,7 @@ const allSets = [
   // })),
 ].flatMap((x) => {
   return ["black", "white"].map((background) => {
-    const newPal = utils.makePalFromString(x.colors, background);
+    const newPal = makePalFromString(x.colors, background);
     newPal.name = x.name;
     newPal.type = x.type as any;
     return newPal;
@@ -140,7 +140,7 @@ async function main() {
               return;
             }
             const suggestion = suggestions[0];
-            const newPal = utils.makePalFromString(
+            const newPal = makePalFromString(
               suggestion.colors,
               suggestion.background
             );
@@ -155,7 +155,7 @@ async function main() {
                 return;
               }
               const suggestion = suggestions[0];
-              const newPal = utils.makePalFromString(
+              const newPal = makePalFromString(
                 suggestion.colors,
                 suggestion.background
               );

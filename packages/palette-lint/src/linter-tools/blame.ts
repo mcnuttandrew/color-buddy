@@ -1,6 +1,6 @@
 import { LLEval } from "../lint-language/lint-language";
 import type { LintProgram } from "../lint-language/lint-type";
-import type { Palette } from "../types";
+import type { Palette } from "@color-buddy/palette";
 
 export function permutativeBlame(
   root: LintProgram,

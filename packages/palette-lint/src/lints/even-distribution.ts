@@ -1,8 +1,5 @@
-import {
-  JSONToPrettyString,
-  makePalFromString,
-  distributePoints,
-} from "../utils";
+import { JSONToPrettyString } from "../utils";
+import { makePalFromString, distributePoints } from "@color-buddy/palette";
 import type { CustomLint } from "../ColorLint";
 import type { LintFixer } from "../linter-tools/lint-fixer";
 import { schema } from "../constants";

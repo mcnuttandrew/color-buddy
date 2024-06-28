@@ -10,26 +10,15 @@ Palette lint exports the following packages:
 export {
   // a collection of pre built lints, see https://color-buddy-docs.netlify.app/lang-examples.html for more details
   PREBUILT_LINTS,
-  // a wrapper class over the Color.js that provides a wide variety of color functions
-  Color,
   // The linter class that is used to lint a palette
   ColorLint,
-//   A wrapper for various configurations of color spaces
-  ColorSpaceDirectory,
   // a Function that creates a custom lint from
   CreateCustomLint,
-  clipToGamut,
   colorNameSimple,
-  distributePoints,
   generateMCFix,
   linter,
   simulateCVD,
   suggestLintFix,
-  utils: {
-    toPal,
-    wrapColor,
-    makePalFromString,
-  }
 };
 export type {
   Palette,

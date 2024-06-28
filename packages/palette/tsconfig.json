@@ -19,10 +19,5 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": [
-    "src",
-    "../palette/src/Color.ts",
-    "src/ColorLint.test.ts",
-    "../palette/src/types.ts"
-  ]
+  "include": ["src", "main.ts"]
 }

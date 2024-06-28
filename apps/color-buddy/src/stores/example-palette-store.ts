@@ -1,7 +1,8 @@
 import { writable } from "svelte/store";
 import * as idb from "idb-keyval";
-import { Color, utils } from "@color-buddy/palette-lint";
-import type { Palette, LintResult } from "@color-buddy/palette-lint";
+import { Color, makePalFromString } from "@color-buddy/palette";
+import type { LintResult } from "@color-buddy/palette-lint";
+import type { Palette } from "@color-buddy/palette";
 
 export interface PaletteWrap {
   palette: Palette;
@@ -47,7 +48,7 @@ export const makePal = (
   colorSpace: any,
   type: any = "categorical"
 ) => {
-  const pal = utils.makePalFromString(colors);
+  const pal = makePalFromString(colors);
   pal.colors = pal.colors.map((x) => {
     x.color = x.color.toColorSpace(colorSpace);
     return x;

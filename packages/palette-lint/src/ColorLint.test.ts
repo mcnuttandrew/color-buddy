@@ -1,11 +1,9 @@
 import { expect, test } from "vitest";
 
-import { Color } from "./Color";
-import type { Palette } from "./types";
+import { Color, makePalFromString } from "@color-buddy/palette";
 
 import { CreateCustomLint } from "./ColorLint";
 import { suggestLintFix } from "./linter-tools/lint-fixer";
-import { makePalFromString } from "./utils";
 
 import type { CustomLint } from "./ColorLint";
 

@@ -1,9 +1,8 @@
 {
   "scripts": {
     "docs:dev": "vitepress dev docs",
-    "docs:build": "npm run harvest-docs && vitepress build docs",
-    "docs:preview": "vitepress preview docs",
-    "harvest-docs": "sh scripts/harvest-docs.sh"
+    "docs:build": "vitepress build docs",
+    "docs:preview": "vitepress preview docs"
   },
   "name": "docs",
   "version": "1.0.0",

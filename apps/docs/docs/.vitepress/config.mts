@@ -18,7 +18,11 @@ export default defineConfig({
       },
       {
         text: "Packages",
-        items: [{ text: "Palette Lint", link: "/x/palette-lint" }],
+        items: [
+          { text: "Palette", link: "/x/palette" },
+          { text: "Palette Lint", link: "/x/palette-lint" },
+          { text: "Color Namer", link: "/x/color-namer" },
+        ],
       },
       {
         text: "Palette Lint",

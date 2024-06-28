@@ -23,8 +23,8 @@
   },
   "dependencies": {
     "@color-buddy/color-lists": "*",
+    "@color-buddy/color-namer": "*",
     "@color-buddy/palette": "*",
-    "color-namer": "^1.4.0",
     "colorjs.io": "^0.5.0",
     "fracturedjsonjs": "^4.0.1"
   }

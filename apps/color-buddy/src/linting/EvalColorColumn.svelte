@@ -1,5 +1,6 @@
 <script lang="ts">
-  import { simulateCVD, colorNameSimple } from "@color-buddy/palette-lint";
+  import { colorNameSimple } from "@color-buddy/color-namer";
+  import { simulateCVD } from "@color-buddy/palette-lint";
   import type { ColorWrap } from "@color-buddy/palette";
   import { Color } from "@color-buddy/palette";
 

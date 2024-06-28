@@ -1,0 +1,21 @@
+{
+  "name": "@color-buddy/color-namer",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "main": "main.ts",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "color-namer": "^1.4.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.2.2",
+    "vite": "^5.2.0",
+    "vitest": "^1.6.0"
+  }
+}

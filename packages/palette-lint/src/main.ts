@@ -1,5 +1,3 @@
-import { colorNameSimple } from "./lints/name-discrim";
-
 import { PREBUILT_LINTS, linter } from "./linter";
 
 import { CreateCustomLint, ColorLint } from "./ColorLint";
@@ -15,7 +13,6 @@ export {
   PREBUILT_LINTS,
   ColorLint,
   CreateCustomLint,
-  colorNameSimple,
   generateMCFix,
   linter,
   simulateCVD,

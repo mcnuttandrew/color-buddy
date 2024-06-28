@@ -1,7 +1,8 @@
-import cvdSim from "../cvd-sim";
 import type { Palette, ColorWrap } from "@color-buddy/palette";
+import { getName } from "@color-buddy/color-namer";
 import { Color, ColorSpaceDirectory, wrapColor } from "@color-buddy/palette";
-import { getName } from "../lints/name-discrim";
+
+import cvdSim from "../cvd-sim";
 import type { LintProgram } from "./lint-type";
 
 type RawValues =

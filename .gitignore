@@ -33,3 +33,4 @@ apps/color-buddy/public/data/*
 
 **/.env
 **/**/venv
+**/**/.vitepress/cache

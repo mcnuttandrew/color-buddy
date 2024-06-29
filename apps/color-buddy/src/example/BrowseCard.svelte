@@ -18,6 +18,7 @@
   export let previewIndex: number;
   export let titleClick: (() => void) | false;
   export let title: string;
+  export let markAsCurrent: boolean;
 
   $: minHeight = previewIndex === -1 ? 50 : 270;
   $: example = { ...$exampleStore.examples[previewIndex] } as any;
@@ -34,6 +35,9 @@
 >
   <div class="bg-stone-300 w-full flex justify-between p-1">
     <div class="flex">
+      {#if markAsCurrent}
+        <div class="mr-1 font-bold italic">Current:</div>
+      {/if}
       {#if onRename}
         <ContentEditable
           value={title}

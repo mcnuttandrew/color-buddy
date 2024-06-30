@@ -26,7 +26,7 @@
   import ComparePal from "./content-modules/ComparePal.svelte";
   import Manage from "./content-modules/Manage.svelte";
   import MainColumn from "./content-modules/MainColumn.svelte";
-  import NewBrowse from "./content-modules/NewBrowse.svelte";
+  import Browse from "./content-modules/Browse.svelte";
   import TourProvider from "./content-modules/TourProvider.svelte";
 
   const palettesTabs = ["manage", "browse"];
@@ -120,7 +120,7 @@
         {:else if $configStore.route === "manage"}
           <Manage />
         {:else if $configStore.route === "browse"}
-          <NewBrowse />
+          <Browse />
         {/if}
       </div>
     </div>

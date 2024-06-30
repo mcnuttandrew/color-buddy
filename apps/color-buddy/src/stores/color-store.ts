@@ -193,8 +193,8 @@ function createStore() {
           index === n.currentPal
             ? Math.min(index, palettes.length - 1)
             : index > n.currentPal
-            ? n.currentPal
-            : n.currentPal - 1;
+              ? n.currentPal
+              : n.currentPal - 1;
         return { ...n, currentPal, palettes };
       }),
     duplicatePal: (index: number) =>
@@ -232,6 +232,12 @@ function createStore() {
         currentPal: 0,
         palettes: [],
       })),
+    renamePalette: (index: number, name: string) =>
+      persistUpdate((n) => {
+        const palettes = [...n.palettes];
+        palettes[index] = { ...palettes[index], name };
+        return { ...n, palettes };
+      }),
     setPalettes: (palettes: Palette[]) =>
       persistUpdate(() => ({
         currentPal: 0,

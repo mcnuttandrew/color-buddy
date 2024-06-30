@@ -179,6 +179,7 @@
         allowResize={true}
         palette={currentPal}
         previewIndex={idx}
+        markAsCurrent={false}
         onRename={(name) => exampleStore.setExampleName(idx, name)}
         operations={makeOperations(idx, example.name)}
         titleClick={false}

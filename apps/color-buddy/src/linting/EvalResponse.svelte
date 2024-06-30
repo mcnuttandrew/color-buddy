@@ -108,7 +108,7 @@
       <button class={buttonStyle} on:click={() => proposeFix("ai")}>
         Try to fix (LLM)
       </button>
-      {#if lint}
+      {#if lint && lint.program.length}
         <button class={buttonStyle} on:click={() => proposeFix("monte")}>
           Try to fix (AI)
         </button>

@@ -194,6 +194,8 @@ test("ColorLnt - ColorTags (2) Blue should be high probability for the basic col
   autoTest(ColorTags[1]));
 
 test("ColorLint - Diverging Order", async () => {
+  autoTest(DivergingOrder);
+
   async function divTestHelper(
     pal: string[],
     adjustment: (pal: string[]) => string[],
@@ -205,10 +207,7 @@ test("ColorLint - Diverging Order", async () => {
       computeMessage: true,
     });
     expect(lintResult1.passes, `${name} initial pal order`).toBe(true);
-    expect(
-      lintResult1.message,
-      `${name} initial pal order msg`
-    ).toMatchSnapshot();
+    expect(lintResult1.message, `${name} initial pal order msg`).toBe("");
 
     const adjustedPal = adjustment(pal);
     const divPal2 = makePalFromString(adjustedPal);

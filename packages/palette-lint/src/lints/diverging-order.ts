@@ -1,5 +1,5 @@
 import type { ColorWrap } from "@color-buddy/palette";
-import { Color } from "@color-buddy/palette";
+import { Color, makePalFromString } from "@color-buddy/palette";
 
 import type { LintProgram } from "../ColorLint";
 import type { LintFixer } from "../linter-tools/lint-fixer";
@@ -32,12 +32,19 @@ const DivergingOrder: LintProgram = {
   },
   subscribedFix: "fixDivergingOrder",
   blameMode: "none",
-  failMessage: `This palette should have a middle color that is the lightest or darkest color, from which the other colors grow darker or lighter  respectively.`,
+  failMessage: `The colors in this palette should read as diverging. That is: there should be a middle color that is the lightest or darkest color, from which the other colors grow darker or lighter respectively.`,
   id: "diverging-built-in",
   level: "error",
   program: "",
-  expectedPassingTests: [],
-  expectedFailingTests: [],
+  expectedPassingTests: [
+    makePalFromString(["#0084ae", "#8db3c7", "#e5e3e0", "#eca288", "#e25c36"]),
+    makePalFromString(
+      ["#0084ae", "#8db3c7", "#e5e3e0", "#eca288", "#e25c36"].reverse()
+    ),
+  ],
+  expectedFailingTests: [
+    makePalFromString(["#0084ae", "#8db3c7", "#e5e3e0", "#e25c36", "#eca288"]),
+  ],
 };
 export default DivergingOrder;
 

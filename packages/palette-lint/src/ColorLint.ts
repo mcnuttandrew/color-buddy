@@ -83,11 +83,18 @@ export function RunLint(
   let blameData: blame = [];
   if (lint.customProgram) {
     passCheck = lint.customProgram(palette);
-  } else {
-    const executionResult = executeLint(lint, palette, options);
-    passCheck = executionResult.passCheck;
-    blameData = executionResult.blame;
+    return {
+      blameData,
+      message: !passCheck ? lint.failMessage : "",
+      naturalLanguageProgram: "CUSTOM",
+      passes: passCheck,
+      lintProgram: cloneLintProgram(lint),
+    };
   }
+
+  const executionResult = executeLint(lint, palette, options);
+  passCheck = executionResult.passCheck;
+  blameData = executionResult.blame;
 
   let natProg = "";
   let prog = false;

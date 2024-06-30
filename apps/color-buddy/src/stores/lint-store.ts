@@ -43,6 +43,7 @@ export const GLOBAL_OKAY_LIST = [
   "cvd-friendly-tritanopia-built-in",
   "dark-reds-browns-positive-built-in",
   // "discrim-power-built-in",
+  "diverging-order-built-in",
   // "even-colors-built-in",
   "extreme-colors-built-in",
   "fair-nominal-built-in",
@@ -101,11 +102,9 @@ function deserializePalette(pal: StringPalette): Palette {
 function serializeStore(store: StoreData) {
   return {
     ...store,
-    lints: store.lints
-      .filter((x) => {
-        return !x.customProgram;
-      })
-      .map((x) => ({
+    lints: store.lints.map((x) => {
+      delete x.customProgram;
+      return {
         ...x,
         expectedFailingTests: (x.expectedFailingTests || []).map(
           serializePalette
@@ -113,27 +112,24 @@ function serializeStore(store: StoreData) {
         expectedPassingTests: (x.expectedPassingTests || []).map(
           serializePalette
         ),
-      })),
+      };
+    }),
   };
 }
 function deserializeStore(store: any) {
   return {
     ...store,
-    lints: store.lints
-      .map((x: any) => ({
-        requiredTags: [],
-        taskTypes: [],
-        ...x,
-        expectedFailingTests: (x.expectedFailingTests || []).map(
-          deserializePalette
-        ),
-        expectedPassingTests: (x.expectedPassingTests || []).map(
-          deserializePalette
-        ),
-      }))
-      .filter((x: LintProgram) => {
-        return x.id;
-      }),
+    lints: store.lints.map((x: any) => ({
+      requiredTags: [],
+      taskTypes: [],
+      ...x,
+      expectedFailingTests: (x.expectedFailingTests || []).map(
+        deserializePalette
+      ),
+      expectedPassingTests: (x.expectedPassingTests || []).map(
+        deserializePalette
+      ),
+    })),
   };
 }
 
@@ -165,7 +161,6 @@ function createStore() {
       newStore.firstLoad = false;
     }
     set(newStore);
-    console.log(newStore);
     idb.set(storeName, serializeStore(newStore));
   });
   const persistUpdate = (updateFunc: (old: StoreData) => StoreData) =>

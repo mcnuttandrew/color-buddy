@@ -1444,6 +1444,18 @@ Palettes that will pass this test:
 
 **Natural Language**: CUSTOM JS
 
+Palettes that will fail this test:
+
+- #0084ae, #8db3c7, #e5e3e0, #e25c36, #eca288 with a #fff background
+
+
+
+Palettes that will pass this test:
+
+- #0084ae, #8db3c7, #e5e3e0, #eca288, #e25c36 with a #fff background
+
+- #e25c36, #eca288, #e5e3e0, #8db3c7, #0084ae with a #fff background
+
 
 **Program**:
 

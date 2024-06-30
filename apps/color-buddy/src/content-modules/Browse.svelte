@@ -1,4 +1,4 @@
-<script lang="ts">
+<!-- <script lang="ts">
   import examplePalStore from "../stores/example-palette-store";
   import lintStore from "../stores/lint-store";
   import configStore from "../stores/config-store";
@@ -114,7 +114,9 @@
               const thisLint = pal.lints.find(
                 (l) => l.lintProgram.name === lint.lintProgram.name
               );
-              return thisLint?.passes;
+              return (
+                thisLint && thisLint.kind === "success" && thisLint?.passes
+              );
             });
           }}
         >
@@ -127,7 +129,9 @@
               const thisLint = pal.lints.find(
                 (l) => l.lintProgram.name === lint.lintProgram.name
               );
-              return !thisLint?.passes;
+              return (
+                thisLint && thisLint.kind === "success" && !thisLint?.passes
+              );
             });
           }}
         >
@@ -147,12 +151,14 @@
               );
             } else {
               sortedBy = lint.lintProgram.name;
-              filteredPals = filteredPals.sort((a, b) =>
-                a.lints.find(
+              filteredPals = filteredPals.sort((a, b) => {
+                                a.lints.find(
                   (x) => x.lintProgram.name === lint.lintProgram.name
                 )?.passes
                   ? 1
                   : -1
+              }
+
               );
             }
           }}
@@ -260,7 +266,7 @@
                   class:border-2={sortedBy === lint.lintProgram.name ||
                     sortedBy === `${lint.lintProgram.name}-reverse`}
                 >
-                  {#if lint.passes}
+                  {#if lint.kind === "success" && lint.passes}
                     <div>{lintMarks.pass}</div>
                   {:else if lint.lintProgram.level === "warning"}
                     <div>{lintMarks.warn}</div>
@@ -278,4 +284,4 @@
       </div>
     {/each}
   </div>
-</div>
+</div> -->

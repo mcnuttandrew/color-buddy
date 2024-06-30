@@ -24,7 +24,8 @@
   $: colorsToIssues = colors.map((x) => {
     const hex = `${x.color.toHex()}`;
     return checks.filter(
-      (check) => !check.passes && check.message.includes(hex)
+      (check) =>
+        check.kind === "success" && !check.passes && check.message.includes(hex)
     );
   });
 
@@ -97,7 +98,7 @@
           {#each colorsToIssues[idx] as check}
             {#if !evalConfig[check.lintProgram.name]?.ignore}
               <EvalResponse
-                {check}
+                lintResult={check}
                 positionAlongRightEdge={false}
                 customWord={checkLevelToSymbol[check.lintProgram.level]}
               />

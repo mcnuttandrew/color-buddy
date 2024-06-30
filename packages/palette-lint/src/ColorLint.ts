@@ -21,13 +21,27 @@ export interface LintProgram {
   expectedFailingTests: Palette[];
 }
 
-export interface LintResult {
+interface SuccessLintResult {
+  kind: "success";
   blameData: Blame;
   message: string;
   naturalLanguageProgram: string;
   passes: boolean;
   lintProgram: LintProgram;
 }
+interface IgnoredLintResult {
+  kind: "ignored";
+  lintProgram: LintProgram;
+}
+interface InvalidLintResult {
+  kind: "invalid";
+  lintProgram: LintProgram;
+}
+
+export type LintResult =
+  | SuccessLintResult
+  | IgnoredLintResult
+  | InvalidLintResult;
 
 type Blame = number[] | number[][];
 
@@ -118,6 +132,7 @@ export function RunLint(
   if (lint.customProgram) {
     const customPass = lint.customProgram(palette);
     return {
+      kind: "success",
       blameData,
       message: !customPass ? lint.failMessage : "",
       naturalLanguageProgram: "CUSTOM",
@@ -139,6 +154,7 @@ export function RunLint(
   }
 
   return {
+    kind: "success",
     blameData,
     message,
     naturalLanguageProgram: natProg,

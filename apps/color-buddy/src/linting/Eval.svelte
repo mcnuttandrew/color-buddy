@@ -20,41 +20,35 @@
 
   $: currentPal = $colorStore.palettes[$colorStore.currentPal];
   $: evalConfig = currentPal.evalConfig;
-  $: checks = $lintStore.currentChecks;
-  $: lints = $lintStore.lints;
+  $: lintResults = $lintStore.currentChecks;
 
-  $: lintsAndResults = lints.map((lint) => {
-    const result = checks.find((x) => x.lintProgram.name === lint.name);
-    return { lint, result };
-  });
-
-  $: lintGroups = lintsAndResults.reduce(
-    (acc, lintAndResult) => {
-      if ($lintStore.globallyIgnoredLints.includes(lintAndResult.lint.id)) {
+  $: lintGroups = lintResults.reduce(
+    (acc, lintResult) => {
+      if ($lintStore.globallyIgnoredLints.includes(lintResult.lintProgram.id)) {
         return acc;
       }
-      const lint = lintAndResult.lint;
+      const lint = lintResult.lintProgram;
       if (!acc[lint.group]) {
         acc[lint.group] = [];
       }
       // extremely dumb hack to move WCAGs to the top
       if (lint.name.startsWith("WCAG")) {
-        acc[lint.group].push(lintAndResult);
+        acc[lint.group].push(lintResult);
       } else {
-        acc[lint.group].push(lintAndResult);
+        acc[lint.group].push(lintResult);
       }
       return acc;
     },
     { accessibility: [], usability: [], design: [] } as Record<
       string,
-      typeof lintsAndResults
+      LintResult[]
     >
   );
 
-  function setGroupTo(checks: typeof lintsAndResults, ignore: boolean) {
+  function setGroupTo(checks: LintResult[], ignore: boolean) {
     const newEvalConfig = { ...evalConfig };
     checks.forEach((check) => {
-      newEvalConfig[check.lint.name] = { ignore };
+      newEvalConfig[check.lintProgram.name] = { ignore };
     });
     colorStore.setCurrentPalEvalConfig(newEvalConfig);
   }
@@ -82,7 +76,7 @@
         loadLints()
           .then(() => lint(outPal, false))
           .then((res) => {
-            checks = res;
+            lintResults = res;
           });
       }
       if (x === "lint-customization") {
@@ -136,7 +130,7 @@
             >
               ignore all
             </button>
-            {#if lintGroup[1].some((x) => evalConfig[x.lint.name]?.ignore)}
+            {#if lintGroup[1].some((x) => evalConfig[x.lintProgram.name]?.ignore)}
               <button
                 class={`${buttonStyle} `}
                 on:click={() => setGroupTo(lintGroup[1], false)}
@@ -147,20 +141,16 @@
           </div>
           <div class="flex">
             {#if isCompact}
-              {#each lintGroup[1] as check}
-                {#if check.result && !check.result.passes}
-                  <LintDisplay
-                    lintResult={check.result}
-                    lintProgram={check.lint}
-                    justSummary={true}
-                  />
+              {#each lintGroup[1] as lintResult}
+                {#if lintResult.kind === "success" && !lintResult.passes}
+                  <LintDisplay {lintResult} justSummary={true} />
                 {/if}
               {/each}
             {/if}
           </div>
-          {#each lintGroup[1] as check}
-            {#if !isCompact || (isCompact && check.result && !check.result.passes)}
-              <LintDisplay lintResult={check.result} lintProgram={check.lint} />
+          {#each lintGroup[1] as lintResult}
+            {#if !isCompact || (isCompact && lintResult.kind === "success" && !lintResult.passes)}
+              <LintDisplay {lintResult} />
             {/if}
           {/each}
           {#if lintGroup[1].length === 0 && $lintStore.loadState === "loading"}

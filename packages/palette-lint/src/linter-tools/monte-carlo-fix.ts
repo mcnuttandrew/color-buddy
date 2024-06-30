@@ -6,6 +6,9 @@ import type { LintResult, LintProgram } from "../ColorLint";
 import { RunLint } from "../ColorLint";
 
 function getBlamedColors(palette: Palette, lintResult: LintResult): string[] {
+  if (lintResult.kind !== "success" || lintResult.passes) {
+    return [];
+  }
   if (lintResult.lintProgram.blameMode === "pair") {
     return (lintResult.blameData as number[][]).flatMap((x) =>
       x.map((x) => palette.colors[x].color.toString())
@@ -47,7 +50,7 @@ export const generateMCFix = (
       RunLint(lint, newPalette, { computeBlame: true, computeMessage: false })
     );
     // newLints.forEach((lint) => lint.run());
-    if (lintResults.every((lint) => lint.passes)) {
+    if (lintResults.every((lint) => lint.kind === "success" && lint.passes)) {
       passing = true;
       break;
     }

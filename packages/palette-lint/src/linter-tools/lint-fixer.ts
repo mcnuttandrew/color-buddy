@@ -28,6 +28,7 @@ export async function suggestLintFix(
   lint: LintResult,
   _engine?: string
 ): Promise<Palette[]> {
+  if (lint.kind !== "success") return [];
   const sub = lint.lintProgram.subscribedFix;
   if (sub && fixDirectory[sub]) {
     return fixDirectory[sub](palette, lint);

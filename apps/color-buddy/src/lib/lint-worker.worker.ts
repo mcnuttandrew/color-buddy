@@ -61,33 +61,8 @@ async function dispatch(cmd: WorkerCommand) {
         await new Promise((resolve) => setTimeout(resolve, 100));
       }
 
-      const result: (LintResult | SkipedLint)[] = linter(
-        pal,
-        lintStore,
-        // .map((x) => {
-        //   if (!computeMessage) {
-        //     x.blameMode = "none";
-        //   }
-        //   return x;
-        // }),
-        { computeMessage }
-      );
-      // .map((x) => {
-      //   return {
-      //     name: x.name,
-      //     id: x.id,
-      //     passes: x.passes,
-      //     message: x.message,
-      //     level: x.level,
-      //     group: x.group,
-      //     description: x.description,
-      //     isCustom: x.isCustom,
-      //     taskTypes: x.taskTypes as any,
-      //     subscribedFix: x.subscribedFix,
-      //     requiredTags: x.requiredTags,
-      //     naturalLanguageProgram: x.naturalLanguageProgram,
-      //   };
-      // });
+      const result: LintResult[] = linter(pal, lintStore, { computeMessage });
+
       simpleLintCache.set(cmd.content, result);
       return result;
     case "monte-carlo-fix":

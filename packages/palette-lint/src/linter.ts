@@ -52,43 +52,52 @@ const prebuiltIdToCustomFunc = PREBUILT_LINTS.reduce(
   {} as Record<string, LintProgram["customProgram"]>
 );
 
+function processLint(
+  palette: Palette,
+  lint: LintProgram,
+  options: Parameters<typeof RunLint>[2]
+): LintResult {
+  // local ignore
+  const ignoreList = palette.evalConfig;
+  const ignored = !(ignoreList[lint.name] && ignoreList[lint.name].ignore);
+  if (!ignored) {
+    return { kind: "ignored", lintProgram: lint };
+  }
+  // invalid
+  const globallyIgnoredLints = palette.evalConfig?.globallyIgnoredLints || [];
+  const globalIgnore = globallyIgnoredLints.includes(lint.id);
+  // some undefine-s creeping in?
+  const groupIsUndefined = !lint.group;
+  // task type
+  const wrongTaskType = !lint.taskTypes.includes(palette.type);
+  // tag type
+  const wrongTagType =
+    lint.requiredTags.length > 0 &&
+    !lint.requiredTags.some((a) => palette.tags.includes(a));
+  if (globalIgnore || groupIsUndefined || wrongTaskType || wrongTagType) {
+    return { kind: "invalid", lintProgram: lint };
+  }
+  // run the lint
+  if (prebuiltIdToCustomFunc[lint.id]) {
+    lint.customProgram = prebuiltIdToCustomFunc[lint.id];
+  }
+  let result: LintResult;
+  try {
+    result = RunLint(lint, palette, options);
+  } catch (e) {
+    console.error(e);
+    result = { kind: "invalid", lintProgram: lint };
+  }
+  if (result.kind === "success" && result?.lintProgram.customProgram) {
+    delete result.lintProgram.customProgram;
+  }
+  return result;
+}
+
 export default function linter(
   palette: Palette,
   lints: LintProgram[],
   options: Parameters<typeof RunLint>[2]
 ): LintResult[] {
-  const ignoreList = palette.evalConfig;
-  const globallyIgnoredLints = palette.evalConfig?.globallyIgnoredLints || [];
-  return (
-    lints
-      .filter((x) => !globallyIgnoredLints.includes(x.id))
-      // some undefine-s creeping in?
-      .filter((x) => !!x.group)
-      // task type
-      .filter((x) => x.taskTypes.includes(palette.type))
-      // tag type
-      .filter((x) => {
-        if (x.requiredTags.length === 0) return true;
-        return x.requiredTags.some((a) => palette.tags.includes(a));
-      })
-      // ignore list
-      .filter((x) => !(ignoreList[x.name] && ignoreList[x.name].ignore))
-      .map((x) => {
-        if (prebuiltIdToCustomFunc[x.id]) {
-          x.customProgram = prebuiltIdToCustomFunc[x.id];
-        }
-        try {
-          return RunLint(x, palette, options);
-        } catch (e) {
-          console.error(e);
-        }
-      })
-      .filter((x) => !!x)
-      .map((x) => {
-        if (x && x.lintProgram.customProgram) {
-          delete x.lintProgram.customProgram;
-        }
-        return x;
-      }) as LintResult[]
-  );
+  return lints.map((lint) => processLint(palette, lint, options));
 }

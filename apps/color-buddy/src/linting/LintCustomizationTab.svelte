@@ -29,14 +29,10 @@
 
   // run this lint
   let errors: any = null;
-  function runLint(
-    lint: LintProgram,
-    options: any,
-    pal: Palette
-  ): LintResult | undefined {
+  function runLint(lint: LintProgram, options: any, pal: Palette): LintResult {
     if (!lint) {
       lintStore.setFocusedLint(false);
-      return;
+      return { kind: "ignored", lintProgram: lint };
     }
     try {
       const result = linter(pal, [lint], options);
@@ -44,6 +40,7 @@
       return result[0];
     } catch (e) {
       errors = e;
+      return { kind: "ignored", lintProgram: lint };
     }
   }
   let debugCompare = false;
@@ -54,7 +51,7 @@
 
   $: currentTaskTypes = lint?.taskTypes || ([] as string[]);
 
-  $: blameData = lintRun?.blameData || [];
+  $: blameData = (lintRun.kind === "success" && lintRun.blameData) || [];
   $: pairData = blameData as number[][];
   const taskTypes = ["sequential", "diverging", "categorical"] as const;
 
@@ -87,14 +84,22 @@
     []
   ).map((pal) => {
     const result = runLint(lint, {}, pal);
-    return { result, pal, blame: result?.blameData };
+    return {
+      result,
+      pal,
+      blame: result.kind === "success" ? result?.blameData : [],
+    };
   }) as TestResult[];
   $: failingTestResults = (
     (showTestCases && lint?.expectedFailingTests) ||
     []
   ).map((pal) => {
     const result = runLint(lint, {}, pal);
-    return { result, pal, blame: result?.blameData };
+    return {
+      result,
+      pal,
+      blame: result.kind === "success" ? result?.blameData : [],
+    };
   }) as TestResult[];
   let requiredTagAdd = "";
 
@@ -347,12 +352,12 @@
         Current Palette:
         <PalPreview pal={currentPal} allowModification={false} />
       </div> -->
-        {#if lintRun?.passes}
+        {#if lintRun.kind === "success" && lintRun.passes}
           <div class="text-green-500">
             This lint passes for the current palette
           </div>
         {/if}
-        {#if !lintRun?.passes && !errors}
+        {#if lintRun.kind === "success" && !lintRun.passes && !errors}
           <div>
             <div class="flex">
               <div class="text-red-500 mr-2">
@@ -410,10 +415,12 @@
         <div class="text-red-500">{errors.message}</div>
       {/if}
 
-      <div>
-        <div class="font-bold">Lint Self Description (from the program):</div>
-        <div>{lintRun?.naturalLanguageProgram}</div>
-      </div>
+      {#if lintRun.kind === "success"}
+        <div>
+          <div class="font-bold">Lint Self Description (from the program):</div>
+          <div>{lintRun?.naturalLanguageProgram}</div>
+        </div>
+      {/if}
       <div class="flex justify-between">
         <div class="font-bold">Lint Program</div>
         <button
@@ -490,7 +497,7 @@
                         lintStore.setCurrentLintExpectedPassingTests(newTests);
                       }}
                     />
-                    {#if passing.result?.passes}
+                    {#if passing.result.kind === "success" && passing.result?.passes}
                       <div class="text-green-500">Correct</div>
                     {:else}
                       <div class="text-red-500">Incorrect</div>
@@ -528,10 +535,12 @@
                         lintStore.setCurrentLintExpectedFailingTests(newTests);
                       }}
                     />
-                    {#if !failing.result?.passes}
-                      <div class="text-green-500">Correct</div>
-                    {:else}
-                      <div class="text-red-500">Incorrect</div>
+                    {#if failing.result.kind === "success"}
+                      {#if !failing.result?.passes}
+                        <div class="text-green-500">Correct</div>
+                      {:else}
+                        <div class="text-red-500">Incorrect</div>
+                      {/if}
                     {/if}
                   </div>
                 {/each}

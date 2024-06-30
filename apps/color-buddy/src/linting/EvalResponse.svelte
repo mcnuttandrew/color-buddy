@@ -15,8 +15,7 @@
 
   import { buttonStyle } from "../lib/styles";
   let requestState: "idle" | "loading" | "loaded" | "failed" = "idle";
-  export let lintResult: LintResult | undefined;
-  export let lintProgram: LintResult["lintProgram"];
+  export let lintResult: LintResult;
   export let customWord: string = "";
   export let positionAlongRightEdge: boolean = true;
 
@@ -24,14 +23,12 @@
   $: engine = $configStore.engine;
   $: suggestions = [] as Palette[];
   $: colorSpace = palette.colorSpace;
+  $: lintProgram = lintResult.lintProgram;
 
   function proposeFix(fixType: "ai" | "monte" | "heuristic") {
     requestState = "loading";
     let hasRetried = false;
     const getFix = () => {
-      if (!lintResult) {
-        throw new Error("No lint result");
-      }
       let fix;
       if (fixType === "ai") {
         fix = suggestLintAIFix(palette, lintResult, engine);
@@ -79,10 +76,10 @@
   <div slot="content" let:onClick class="max-w-2xl eval-tooltip">
     <div class="font-bold">{lintProgram.name}</div>
     <div class="max-h-52 overflow-y-auto">
-      {#if !lintResult || lintResult.passes || ignored}
+      {#if lintResult.kind === "ignored" || (lintResult.kind === "success" && lintResult.passes)}
         <div class="text-sm">{lintProgram.description}</div>
       {:else}
-        <ExplanationViewer check={lintResult} />
+        <ExplanationViewer {lintResult} />
       {/if}
     </div>
 
@@ -104,7 +101,7 @@
       </button>
     {/if}
 
-    {#if lintResult && !lintResult.passes}
+    {#if lintResult.kind === "success" && !lintResult.passes}
       <!-- hiding the LLM based solution, bc it works poorly -->
       <button class={buttonStyle} on:click={() => proposeFix("ai")}>
         Try to fix (LLM)
@@ -204,7 +201,7 @@
   >
     {#if customWord}
       {customWord}
-    {:else if lintResult && lintResult.passes}info{:else}fixes{/if}
+    {:else if lintResult.kind === "success" && lintResult.passes}info{:else}fixes{/if}
   </button>
 </Tooltip>
 

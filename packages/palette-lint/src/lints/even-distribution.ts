@@ -1,10 +1,10 @@
 import { JSONToPrettyString } from "../utils";
 import { makePalFromString, distributePoints } from "@color-buddy/palette";
-import type { CustomLint } from "../ColorLint";
+import type { LintProgram } from "../ColorLint";
 import type { LintFixer } from "../linter-tools/lint-fixer";
 import { schema } from "../constants";
 
-const evenHue: CustomLint = {
+const evenHue: LintProgram = {
   name: "Even Distribution in Hue",
   program: JSONToPrettyString({
     // @ts-ignore
@@ -79,7 +79,7 @@ export const fixHueDistribution: LintFixer = async (palette) => {
   return [{ ...palette, colors: newColors }] as (typeof palette)[];
 };
 
-const evenLightness: CustomLint = {
+const evenLightness: LintProgram = {
   name: "Even Distribution in Lightness",
   program: JSONToPrettyString({
     // @ts-ignore

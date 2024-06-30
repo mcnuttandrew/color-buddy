@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { CustomLint } from "@color-buddy/palette-lint";
+  import type { LintProgram } from "@color-buddy/palette-lint";
   import { makePalFromString } from "@color-buddy/palette";
   import type { Palette } from "@color-buddy/palette";
 
@@ -8,8 +8,8 @@
   import {} from "../lib/utils";
 
   export let currentPal: Palette;
-  export let currentTests: CustomLint["expectedPassingTests"];
-  export let setNewTests: (tests: CustomLint["expectedPassingTests"]) => void;
+  export let currentTests: LintProgram["expectedPassingTests"];
+  export let setNewTests: (tests: LintProgram["expectedPassingTests"]) => void;
 </script>
 
 <Tooltip>

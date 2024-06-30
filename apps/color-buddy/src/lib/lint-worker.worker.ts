@@ -1,6 +1,6 @@
 import * as idb from "idb-keyval";
 import { linter, generateMCFix } from "@color-buddy/palette-lint";
-import type { CustomLint, LintResult } from "@color-buddy/palette-lint";
+import type { LintProgram, LintResult } from "@color-buddy/palette-lint";
 import type { Palette, StringPalette } from "@color-buddy/palette";
 import { Color } from "@color-buddy/palette";
 
@@ -33,7 +33,7 @@ const hydratePal = (pal: string): Palette => {
   };
 };
 
-let lintStore: CustomLint[] = [];
+let lintStore: LintProgram[] = [];
 let storeLoaded = false;
 const storeName = "color-pal-lints";
 let simpleLintCache = new Map<string, any>();
@@ -61,30 +61,8 @@ async function dispatch(cmd: WorkerCommand) {
         await new Promise((resolve) => setTimeout(resolve, 100));
       }
 
-      const result: LintResult[] = linter(
-        pal,
-        lintStore.map((x) => {
-          if (!computeMessage) {
-            x.blameMode = "none";
-          }
-          return x;
-        })
-      ).map((x) => {
-        return {
-          name: x.name,
-          id: x.id,
-          passes: x.passes,
-          message: x.message,
-          level: x.level,
-          group: x.group,
-          description: x.description,
-          isCustom: x.isCustom,
-          taskTypes: x.taskTypes as any,
-          subscribedFix: x.subscribedFix,
-          requiredTags: x.requiredTags,
-          naturalLanguageProgram: x.naturalLanguageProgram,
-        };
-      });
+      const result: LintResult[] = linter(pal, lintStore, { computeMessage });
+
       simpleLintCache.set(cmd.content, result);
       return result;
     case "monte-carlo-fix":

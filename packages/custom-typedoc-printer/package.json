@@ -5,7 +5,7 @@
   "type": "module",
   "main": "main.ts",
   "scripts": {
-    "update-pal-lint": "vite-node main.ts ../palette-line/",
+    "update-pal-lint": "vite-node main.ts ../palette-lint/",
     "update-pal": "vite-node main.ts ../palette/",
     "update-color-namer": "vite-node main.ts ../color-namer/",
     "update-all": "npm run update-pal && npm run update-pal-lint && npm run update-color-namer"

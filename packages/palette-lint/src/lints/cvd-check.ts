@@ -1,6 +1,6 @@
 import { JSONToPrettyString } from "../utils";
 import { makePalFromString } from "@color-buddy/palette";
-import type { CustomLint } from "../ColorLint";
+import type { LintProgram } from "../ColorLint";
 import { schema } from "../constants";
 
 // old algorithm - https://github.dev/gka/palettes
@@ -34,7 +34,7 @@ const tableau10 = [
   "#00becf",
 ];
 const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
-const lints: CustomLint[] = cvdTypes.map((type) => ({
+const lints: LintProgram[] = cvdTypes.map((type) => ({
   program: JSONToPrettyString({
     // @ts-ignore
     $schema: schema,

@@ -1,3 +1,4 @@
+
 <script lang="ts">
   import type { Palette } from "@color-buddy/palette";
 

@@ -20,18 +20,22 @@
 
   $: currentPal = $colorStore.palettes[$colorStore.currentPal];
   $: evalConfig = currentPal.evalConfig;
-  $: checks = $lintStore.currentChecks;
+  $: lintResults = $lintStore.currentChecks;
 
-  $: checkGroups = checks.reduce(
-    (acc, check) => {
-      if (!acc[check.group]) {
-        acc[check.group] = [];
+  $: lintGroups = lintResults.reduce(
+    (acc, lintResult) => {
+      if ($lintStore.globallyIgnoredLints.includes(lintResult.lintProgram.id)) {
+        return acc;
+      }
+      const lint = lintResult.lintProgram;
+      if (!acc[lint.group]) {
+        acc[lint.group] = [];
       }
       // extremely dumb hack to move WCAGs to the top
-      if (check.name.startsWith("WCAG")) {
-        acc[check.group].push(check);
+      if (lint.name.startsWith("WCAG")) {
+        acc[lint.group].push(lintResult);
       } else {
-        acc[check.group].push(check);
+        acc[lint.group].push(lintResult);
       }
       return acc;
     },
@@ -44,7 +48,7 @@
   function setGroupTo(checks: LintResult[], ignore: boolean) {
     const newEvalConfig = { ...evalConfig };
     checks.forEach((check) => {
-      newEvalConfig[check.name] = { ignore };
+      newEvalConfig[check.lintProgram.name] = { ignore };
     });
     colorStore.setCurrentPalEvalConfig(newEvalConfig);
   }
@@ -72,7 +76,7 @@
         loadLints()
           .then(() => lint(outPal, false))
           .then((res) => {
-            checks = res;
+            lintResults = res;
           });
       }
       if (x === "lint-customization") {
@@ -117,19 +121,19 @@
           palette matches a number of commonly held beliefs about best
           practices. They wont fit every situation.
         </div>
-        {#each Object.entries(checkGroups) as checkGroup}
+        {#each Object.entries(lintGroups) as lintGroup}
           <div class="flex mt-4">
-            <div class="font-bold">{titleCase(checkGroup[0])} Checks</div>
+            <div class="font-bold">{titleCase(lintGroup[0])} Checks</div>
             <button
               class={`${buttonStyle} `}
-              on:click={() => setGroupTo(checkGroup[1], true)}
+              on:click={() => setGroupTo(lintGroup[1], true)}
             >
               ignore all
             </button>
-            {#if checkGroup[1].some((x) => evalConfig[x.name]?.ignore)}
+            {#if lintGroup[1].some((x) => evalConfig[x.lintProgram.name]?.ignore)}
               <button
                 class={`${buttonStyle} `}
-                on:click={() => setGroupTo(checkGroup[1], false)}
+                on:click={() => setGroupTo(lintGroup[1], false)}
               >
                 re-enable all
               </button>
@@ -137,19 +141,19 @@
           </div>
           <div class="flex">
             {#if isCompact}
-              {#each checkGroup[1] as check}
-                {#if check.passes}
-                  <LintDisplay {check} justSummary={true} />
+              {#each lintGroup[1] as lintResult}
+                {#if lintResult.kind === "success" && !lintResult.passes}
+                  <LintDisplay {lintResult} justSummary={true} />
                 {/if}
               {/each}
             {/if}
           </div>
-          {#each checkGroup[1] as check}
-            {#if !isCompact || (isCompact && !check.passes)}
-              <LintDisplay {check} />
+          {#each lintGroup[1] as lintResult}
+            {#if !isCompact || (isCompact && lintResult.kind === "success" && !lintResult.passes)}
+              <LintDisplay {lintResult} />
             {/if}
           {/each}
-          {#if checkGroup[1].length === 0 && $lintStore.loadState === "loading"}
+          {#if lintGroup[1].length === 0 && $lintStore.loadState === "loading"}
             <div class="text-sm animate-pulse italic font-bold">Loading</div>
           {/if}
         {/each}

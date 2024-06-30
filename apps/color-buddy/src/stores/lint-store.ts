@@ -1,6 +1,6 @@
 import { writable } from "svelte/store";
 import * as idb from "idb-keyval";
-import type { LintResult, CustomLint } from "@color-buddy/palette-lint";
+import type { LintResult, LintProgram } from "@color-buddy/palette-lint";
 import { PREBUILT_LINTS } from "@color-buddy/palette-lint";
 import { Color, wrapColor } from "@color-buddy/palette";
 import type { Palette, StringPalette } from "@color-buddy/palette";
@@ -8,7 +8,7 @@ import { JSONStringify } from "../lib/utils";
 import { loadLints } from "../lib/api-calls";
 
 interface StoreData {
-  lints: CustomLint[];
+  lints: LintProgram[];
   focusedLint: string | false;
   currentChecks: LintResult[];
   globallyIgnoredLints: string[];
@@ -43,6 +43,7 @@ export const GLOBAL_OKAY_LIST = [
   "cvd-friendly-tritanopia-built-in",
   "dark-reds-browns-positive-built-in",
   // "discrim-power-built-in",
+  "diverging-order-built-in",
   // "even-colors-built-in",
   "extreme-colors-built-in",
   "fair-nominal-built-in",
@@ -65,10 +66,13 @@ export const GLOBAL_OKAY_LIST = [
 ];
 const GLOBAL_OKAY_LIST_SET = new Set(GLOBAL_OKAY_LIST);
 
-const builtInIndex = PREBUILT_LINTS.reduce((acc, x) => {
-  acc[x.id] = x;
-  return acc;
-}, {} as Record<string, CustomLint>);
+const builtInIndex = PREBUILT_LINTS.reduce(
+  (acc, x) => {
+    acc[x.id] = x;
+    return acc;
+  },
+  {} as Record<string, LintProgram>
+);
 
 function serializePalette(pal: Palette): StringPalette {
   return {
@@ -98,35 +102,34 @@ function deserializePalette(pal: StringPalette): Palette {
 function serializeStore(store: StoreData) {
   return {
     ...store,
-    lints: store.lints.map((x) => ({
-      ...x,
-      expectedFailingTests: (x.expectedFailingTests || []).map(
-        serializePalette
-      ),
-      expectedPassingTests: (x.expectedPassingTests || []).map(
-        serializePalette
-      ),
-    })),
+    lints: store.lints.map((x) => {
+      delete x.customProgram;
+      return {
+        ...x,
+        expectedFailingTests: (x.expectedFailingTests || []).map(
+          serializePalette
+        ),
+        expectedPassingTests: (x.expectedPassingTests || []).map(
+          serializePalette
+        ),
+      };
+    }),
   };
 }
 function deserializeStore(store: any) {
   return {
     ...store,
-    lints: store.lints
-      .map((x: any) => ({
-        requiredTags: [],
-        taskTypes: [],
-        ...x,
-        expectedFailingTests: (x.expectedFailingTests || []).map(
-          deserializePalette
-        ),
-        expectedPassingTests: (x.expectedPassingTests || []).map(
-          deserializePalette
-        ),
-      }))
-      .filter((x: CustomLint) => {
-        return x.id;
-      }),
+    lints: store.lints.map((x: any) => ({
+      requiredTags: [],
+      taskTypes: [],
+      ...x,
+      expectedFailingTests: (x.expectedFailingTests || []).map(
+        deserializePalette
+      ),
+      expectedPassingTests: (x.expectedPassingTests || []).map(
+        deserializePalette
+      ),
+    })),
   };
 }
 
@@ -140,8 +143,8 @@ function createStore() {
   idb.get(storeName).then((x) => {
     let storeBase = deserializeStore({ ...InitialStore, ...x });
     let lints = (storeBase.lints || []).map(
-      (x: CustomLint) => builtInIndex[x.id] || x
-    ) as CustomLint[];
+      (x: LintProgram) => builtInIndex[x.id] || x
+    ) as LintProgram[];
     const missingBuiltIns = PREBUILT_LINTS.filter(
       (x) => !lints.find((y) => y.id === x.id)
     ).map((x) => ({
@@ -153,7 +156,7 @@ function createStore() {
     const newStore = { ...storeBase, lints: [...lints, ...missingBuiltIns] };
     if (newStore.firstLoad) {
       newStore.globallyIgnoredLints = newStore.lints
-        .map((x: CustomLint) => x.id)
+        .map((x: LintProgram) => x.id)
         .filter((x: string) => !GLOBAL_OKAY_LIST_SET.has(x));
       newStore.firstLoad = false;
     }
@@ -169,7 +172,7 @@ function createStore() {
       return newVal;
     });
 
-  const lintUpdate = (updateFunc: (old: CustomLint) => CustomLint) =>
+  const lintUpdate = (updateFunc: (old: LintProgram) => LintProgram) =>
     persistUpdate((n) => {
       const focusedLintIndex = n.lints.findIndex((x) => x.id === n.focusedLint);
       const focusedLint = n.lints[focusedLintIndex];
@@ -192,19 +195,19 @@ function createStore() {
       lintUpdate((old) => ({ ...old, program })),
     setCurrentLintName: (name: string) =>
       lintUpdate((old) => ({ ...old, name })),
-    setCurrentLintTaskTypes: (taskTypes: CustomLint["taskTypes"]) =>
+    setCurrentLintTaskTypes: (taskTypes: LintProgram["taskTypes"]) =>
       lintUpdate((old) => ({ ...old, taskTypes })),
     setCurrentTags: (requiredTags: string[]) =>
       lintUpdate((old) => ({ ...old, requiredTags })),
     setCurrentLintLevel: (level: "error" | "warning") =>
       lintUpdate((old) => ({ ...old, level })),
-    setCurrentLintGroup: (group: CustomLint["group"]) =>
+    setCurrentLintGroup: (group: LintProgram["group"]) =>
       lintUpdate((old) => ({ ...old, group })),
     setCurrentLintDescription: (description: string) =>
       lintUpdate((old) => ({ ...old, description })),
     setCurrentLintFailMessage: (failMessage: string) =>
       lintUpdate((old) => ({ ...old, failMessage })),
-    setCurrentLintBlameMode: (blameMode: CustomLint["blameMode"]) =>
+    setCurrentLintBlameMode: (blameMode: LintProgram["blameMode"]) =>
       lintUpdate((old) => ({ ...old, blameMode })),
     setCurrentLintExpectedFailingTests: (expectedFailingTests: Palette[]) =>
       lintUpdate((old) => ({ ...old, expectedFailingTests })),
@@ -215,7 +218,7 @@ function createStore() {
         ...old,
         lints: old.lints.filter((x) => x.id !== id),
       })),
-    createNewLint: (newLintFrag: Partial<CustomLint>) =>
+    createNewLint: (newLintFrag: Partial<LintProgram>) =>
       persistUpdate((old) => {
         const newBuiltLint = newLint(newLintFrag);
 
@@ -253,7 +256,7 @@ export function newId() {
   return Math.random().toString();
 }
 
-function newLint(newLintFrag: Partial<CustomLint>): CustomLint {
+function newLint(newLintFrag: Partial<LintProgram>): LintProgram {
   return {
     blameMode: "none",
     description: "v confusing",

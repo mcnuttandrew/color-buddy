@@ -42,4 +42,4 @@ Use: should point to localhost:5147 if all is well
 
 ## POST REFACTOR TODOs
 
-- make the colorLint/customColorLint/lintResult stuff cleaner
+- remove ColorWrap

@@ -3,11 +3,11 @@ import type { Palette } from "@color-buddy/palette";
 import { getName, getNames } from "@color-buddy/color-namer";
 
 import { JSONToPrettyString } from "../utils";
-import type { CustomLint } from "../ColorLint";
+import type { LintProgram } from "../ColorLint";
 import type { LintFixer } from "../linter-tools/lint-fixer";
 import { schema } from "../constants";
 
-const lint: CustomLint = {
+const lint: LintProgram = {
   program: JSONToPrettyString({
     // @ts-ignore
     $schema: schema,
@@ -40,11 +40,14 @@ export const fixColorNameDiscriminability: LintFixer = async (
 ) => {
   const colors = palette.colors;
   const colorNames = colors.map((x) => getName(x.color));
-  const colorNameByIndex = colors.reduce((acc, color, index) => {
-    const name = getName(color.color);
-    acc[name] = (acc[name] || []).concat(index);
-    return acc;
-  }, {} as Record<string, number[]>);
+  const colorNameByIndex = colors.reduce(
+    (acc, color, index) => {
+      const name = getName(color.color);
+      acc[name] = (acc[name] || []).concat(index);
+      return acc;
+    },
+    {} as Record<string, number[]>
+  );
   const conflictedIndices = Object.values(colorNameByIndex)
     .filter((x) => x.length > 1)
     .flatMap((x) => x);

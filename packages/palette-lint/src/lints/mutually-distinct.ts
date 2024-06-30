@@ -1,9 +1,9 @@
 import { JSONToPrettyString } from "../utils";
 import { makePalFromString } from "@color-buddy/palette";
-import type { CustomLint } from "../ColorLint";
+import type { LintProgram } from "../ColorLint";
 import { schema } from "../constants";
 
-const lint: CustomLint = {
+const lint: LintProgram = {
   program: JSONToPrettyString({
     // @ts-ignore
     $schema: schema,

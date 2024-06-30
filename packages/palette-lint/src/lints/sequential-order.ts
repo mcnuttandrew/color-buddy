@@ -2,11 +2,11 @@ import { Color, makePalFromString } from "@color-buddy/palette";
 import type { Palette } from "@color-buddy/palette";
 
 import { JSONToPrettyString } from "../utils";
-import type { CustomLint } from "../ColorLint";
+import type { LintProgram } from "../ColorLint";
 import type { LintFixer } from "../linter-tools/lint-fixer";
 import { schema } from "../constants";
 
-const lint: CustomLint = {
+const lint: LintProgram = {
   name: "Sequential Palette Order",
   program: JSONToPrettyString({
     // @ts-ignore

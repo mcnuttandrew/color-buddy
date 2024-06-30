@@ -15,7 +15,8 @@
 
   import { buttonStyle } from "../lib/styles";
   let requestState: "idle" | "loading" | "loaded" | "failed" = "idle";
-  export let check: LintResult;
+  export let lintResult: LintResult | undefined;
+  export let lintProgram: LintResult["lintProgram"];
   export let customWord: string = "";
   export let positionAlongRightEdge: boolean = true;
 
@@ -23,19 +24,21 @@
   $: engine = $configStore.engine;
   $: suggestions = [] as Palette[];
   $: colorSpace = palette.colorSpace;
-  $: lint = $lintStore.lints.find((x) => x.id === check.lintProgram.id);
 
   function proposeFix(fixType: "ai" | "monte" | "heuristic") {
     requestState = "loading";
     let hasRetried = false;
     const getFix = () => {
+      if (!lintResult) {
+        throw new Error("No lint result");
+      }
       let fix;
       if (fixType === "ai") {
-        fix = suggestLintAIFix(palette, check, engine);
-      } else if (fixType === "monte" && lint) {
-        fix = suggestLintMonteFix(palette, check, engine);
+        fix = suggestLintAIFix(palette, lintResult, engine);
+      } else if (fixType === "monte" && lintProgram) {
+        fix = suggestLintMonteFix(palette, lintResult, engine);
       } else {
-        fix = suggestLintFix(palette, check, engine);
+        fix = suggestLintFix(palette, lintResult, engine);
       }
       return fix.then((x) => {
         suggestions = [...suggestions, ...x];
@@ -63,25 +66,23 @@
     "grayscale",
   ] as const;
   $: cbMatch = options.find((x) =>
-    check.lintProgram.name.toLowerCase().includes(x)
+    lintProgram.name.toLowerCase().includes(x)
   ) as (typeof options)[number];
   const allowedColorSpaces = ["lch", "lab", "hsl", "hsv"] as const;
   $: spaceMatch = allowedColorSpaces.find(
-    (x) =>
-      check.lintProgram.description.toLowerCase().includes(x) &&
-      x !== colorSpace
+    (x) => lintProgram.description.toLowerCase().includes(x) && x !== colorSpace
   ) as any;
-  $: ignored = !!evalConfig[check.lintProgram.name]?.ignore;
+  $: ignored = !!evalConfig[lintProgram.name]?.ignore;
 </script>
 
 <Tooltip {positionAlongRightEdge}>
   <div slot="content" let:onClick class="max-w-2xl eval-tooltip">
-    <div class="font-bold">{check.lintProgram.name}</div>
+    <div class="font-bold">{lintProgram.name}</div>
     <div class="max-h-52 overflow-y-auto">
-      {#if check.passes || ignored}
-        <div class="text-sm">{check.lintProgram.description}</div>
+      {#if !lintResult || lintResult.passes || ignored}
+        <div class="text-sm">{lintProgram.description}</div>
       {:else}
-        <ExplanationViewer {check} />
+        <ExplanationViewer check={lintResult} />
       {/if}
     </div>
 
@@ -103,17 +104,17 @@
       </button>
     {/if}
 
-    {#if !check.passes}
+    {#if lintResult && !lintResult.passes}
       <!-- hiding the LLM based solution, bc it works poorly -->
       <button class={buttonStyle} on:click={() => proposeFix("ai")}>
         Try to fix (LLM)
       </button>
-      {#if lint && lint.program.length}
+      {#if lintProgram && lintProgram.program.length}
         <button class={buttonStyle} on:click={() => proposeFix("monte")}>
           Try to fix (AI)
         </button>
       {/if}
-      {#if check.lintProgram.subscribedFix !== "none"}
+      {#if lintProgram.subscribedFix !== "none"}
         <button class={buttonStyle} on:click={() => proposeFix("heuristic")}>
           Try to fix (ColorBuddy)
         </button>
@@ -126,7 +127,7 @@
         on:click={() => {
           colorStore.setCurrentPalEvalConfig({
             ...evalConfig,
-            [check.lintProgram.name]: { ignore: true },
+            [lintProgram.name]: { ignore: true },
           });
         }}
       >
@@ -138,18 +139,18 @@
         on:click={() => {
           colorStore.setCurrentPalEvalConfig({
             ...evalConfig,
-            [check.lintProgram.name]: { ignore: false },
+            [lintProgram.name]: { ignore: false },
           });
         }}
       >
         Re-enable
       </button>
     {/if}
-    {#if !check.lintProgram.customProgram}
+    {#if !lintProgram.customProgram}
       <button
         class={buttonStyle}
         on:click={() => {
-          lintStore.setFocusedLint(check.lintProgram.id);
+          lintStore.setFocusedLint(lintProgram.id);
           configStore.setEvalDisplayMode("lint-customization");
         }}
       >
@@ -203,7 +204,7 @@
   >
     {#if customWord}
       {customWord}
-    {:else if check.passes}info{:else}fixes{/if}
+    {:else if lintResult && lintResult.passes}info{:else}fixes{/if}
   </button>
 </Tooltip>
 

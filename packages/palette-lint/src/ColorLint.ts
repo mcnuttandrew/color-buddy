@@ -50,17 +50,37 @@ function buildMessage(
   return replaceAll(lintProgram.failMessage, "{{blame}}", blame);
 }
 
+let parserCache: { [key: string]: any } = {};
+const memoParser = (str: string): any => {
+  if (parserCache[str]) return parserCache[str];
+  const parsed = Json.parse(str);
+  parserCache[str] = parsed;
+  return parsed;
+};
+
+let execCache: { [key: string]: any } = {};
 function executeLint(
   lintProgram: LintProgram,
   palette: Palette,
   options: RunLintOptions
 ): { passCheck: boolean; blame: Blame } {
-  const prog = Json.parse(lintProgram.program);
-  const { result } = LLEval(prog, palette, {
-    debugCompare: false,
-    // ...options,
+  const cacheKey = JSON.stringify({
+    lintProgram: lintProgram.program,
+    blameMode: lintProgram.blameMode,
+    palette: palette,
+    options,
   });
-  if (result) return { passCheck: true, blame: [] };
+  if (execCache[cacheKey]) {
+    return execCache[cacheKey];
+  }
+  const prog = memoParser(lintProgram.program);
+  const { result } = LLEval(prog, palette, { debugCompare: false });
+  // ...options,
+  if (result) {
+    const out = { passCheck: result, blame: [] };
+    execCache[cacheKey] = out;
+    return out;
+  }
   let blame: Blame = [];
   if (
     (options.computeBlame || options.computeMessage) &&
@@ -69,7 +89,19 @@ function executeLint(
     blame = permutativeBlame(prog, palette, lintProgram.blameMode);
   }
 
-  return { passCheck: result, blame };
+  const out = { passCheck: result, blame: deepCopy(blame) };
+  execCache[cacheKey] = out;
+  return out;
+}
+const deepCopy = (obj: any) => JSON.parse(JSON.stringify(obj));
+
+let nlProgramCache: Record<string, string> = {};
+function getNlProgram(progString: string): string {
+  if (nlProgramCache[progString]) return nlProgramCache[progString];
+  const prog = memoParser(progString);
+  const prettyPrinted = prettyPrintLL(prog);
+  nlProgramCache[progString] = prettyPrinted;
+  return prettyPrinted;
 }
 
 interface RunLintOptions {
@@ -95,11 +127,10 @@ export function RunLint(
   }
 
   const result = executeLint(lint, palette, options);
+  blameData = result.blame;
   let natProg = "";
-  let prog = false;
   try {
-    prog = Json.parse(lint.program);
-    natProg = prettyPrintLL(prog);
+    natProg = getNlProgram(lint.program);
   } catch (e) {}
 
   let message = "";

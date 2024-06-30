@@ -61,14 +61,15 @@ async function dispatch(cmd: WorkerCommand) {
         await new Promise((resolve) => setTimeout(resolve, 100));
       }
 
-      const result: LintResult[] = linter(
+      const result: (LintResult | SkipedLint)[] = linter(
         pal,
-        lintStore.map((x) => {
-          if (!computeMessage) {
-            x.blameMode = "none";
-          }
-          return x;
-        }),
+        lintStore,
+        // .map((x) => {
+        //   if (!computeMessage) {
+        //     x.blameMode = "none";
+        //   }
+        //   return x;
+        // }),
         { computeMessage }
       );
       // .map((x) => {

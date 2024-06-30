@@ -44,7 +44,7 @@ export const generateMCFix = (
     }
     // run lints on new palette
     const lintResults = lints.map((lint) =>
-      RunLint(lint, palette, { computeBlame: true, computeMessage: false })
+      RunLint(lint, newPalette, { computeBlame: true, computeMessage: false })
     );
     // newLints.forEach((lint) => lint.run());
     if (lintResults.every((lint) => lint.passes)) {

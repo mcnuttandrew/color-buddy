@@ -7,27 +7,26 @@
   import { buttonStyle } from "../lib/styles";
   import ExplanationViewer from "./ExplanationViewer.svelte";
   import EvalResponse from "./EvalResponse.svelte";
-  export let check: LintResult;
+  export let lintResult: LintResult | undefined;
+  export let lintProgram: LintResult["lintProgram"];
   export let justSummary: boolean = false;
 
   $: currentPal = $colorStore.palettes[$colorStore.currentPal];
   $: evalConfig = currentPal.evalConfig;
-  $: ignored = !!evalConfig[check.lintProgram.name]?.ignore;
+  $: ignored = !lintResult || !!evalConfig[lintProgram.name]?.ignore;
   $: isCompact = $configStore.evalDisplayMode === "compact";
 </script>
 
-{#if justSummary}
-  <EvalResponse {check} customWord={"✅"} />
-{:else if ignored}
+{#if !lintResult}
   <div class="text-xs flex">
-    Ignored "{check.lintProgram.name}"
-    <EvalResponse {check} customWord={"⚙️"} />
+    Ignored "{lintProgram.name}"
+    <EvalResponse {lintResult} {lintProgram} customWord={"⚙️"} />
     <button
       class={buttonStyle}
       on:click={() => {
         colorStore.setCurrentPalEvalConfig({
           ...evalConfig,
-          [check.lintProgram.name]: { ignore: false },
+          [lintProgram.name]: { ignore: false },
         });
       }}
     >
@@ -35,25 +34,32 @@
     </button>
   </div>
 {:else}
-  <div class="w-full rounded flex flex-col justify-between py-1">
-    <div class="flex items-center">
-      {#if check.passes}<div class="text-bf text-sm italic mr-2 text-green-500">
-          Pass
+  <!-- asd -->
+  {#if justSummary && lintResult}
+    <EvalResponse {lintResult} {lintProgram} customWord={"✅"} />
+  {:else}
+    <div class="w-full rounded flex flex-col justify-between py-1">
+      <div class="flex items-center">
+        {#if lintResult?.passes}<div
+            class="text-bf text-sm italic mr-2 text-green-500"
+          >
+            Pass
+          </div>
+        {/if}
+        {#if lintResult && !lintResult.passes && lintProgram.level === "error"}
+          <div class="text-bf text-sm italic mr-2 text-red-500">Fail</div>
+        {/if}
+        {#if lintResult && !lintResult.passes && lintProgram.level === "warning"}
+          <div class="text-bf text-sm italic mr-2 text-yellow-400">Warning</div>
+        {/if}
+        <div class:font-bold={lintResult && !lintResult.passes}>
+          {lintProgram.name}
         </div>
-      {/if}
-      {#if !check.passes && check.lintProgram.level === "error"}
-        <div class="text-bf text-sm italic mr-2 text-red-500">Fail</div>
-      {/if}
-      {#if !check.passes && check.lintProgram.level === "warning"}
-        <div class="text-bf text-sm italic mr-2 text-yellow-400">Warning</div>
-      {/if}
-      <div class:font-bold={!check.passes}>
-        {check.lintProgram.name}
+        <EvalResponse {lintResult} {lintProgram} />
       </div>
-      <EvalResponse {check} />
+      {#if lintResult && !lintResult.passes && !isCompact}
+        <ExplanationViewer check={lintResult} />
+      {/if}
     </div>
-    {#if !check.passes && !isCompact}
-      <ExplanationViewer {check} />
-    {/if}
-  </div>
+  {/if}
 {/if}

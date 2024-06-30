@@ -43,3 +43,4 @@ Use: should point to localhost:5147 if all is well
 ## POST REFACTOR TODOs
 
 - remove ColorWrap
+- lint ignore needs a explicit differentiation between ignored by pal, irrelevant, and ignored globally. the latter two are in effect the same right?

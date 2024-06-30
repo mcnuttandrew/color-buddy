@@ -21,30 +21,40 @@
   $: currentPal = $colorStore.palettes[$colorStore.currentPal];
   $: evalConfig = currentPal.evalConfig;
   $: checks = $lintStore.currentChecks;
+  $: lints = $lintStore.lints;
 
-  $: checkGroups = checks.reduce(
-    (acc, check) => {
-      if (!acc[check.lintProgram.group]) {
-        acc[check.lintProgram.group] = [];
+  $: lintsAndResults = lints.map((lint) => {
+    const result = checks.find((x) => x.lintProgram.name === lint.name);
+    return { lint, result };
+  });
+
+  $: lintGroups = lintsAndResults.reduce(
+    (acc, lintAndResult) => {
+      if ($lintStore.globallyIgnoredLints.includes(lintAndResult.lint.id)) {
+        return acc;
+      }
+      const lint = lintAndResult.lint;
+      if (!acc[lint.group]) {
+        acc[lint.group] = [];
       }
       // extremely dumb hack to move WCAGs to the top
-      if (check.lintProgram.name.startsWith("WCAG")) {
-        acc[check.lintProgram.group].push(check);
+      if (lint.name.startsWith("WCAG")) {
+        acc[lint.group].push(lintAndResult);
       } else {
-        acc[check.lintProgram.group].push(check);
+        acc[lint.group].push(lintAndResult);
       }
       return acc;
     },
     { accessibility: [], usability: [], design: [] } as Record<
       string,
-      LintResult[]
+      typeof lintsAndResults
     >
   );
 
-  function setGroupTo(checks: LintResult[], ignore: boolean) {
+  function setGroupTo(checks: typeof lintsAndResults, ignore: boolean) {
     const newEvalConfig = { ...evalConfig };
     checks.forEach((check) => {
-      newEvalConfig[check.lintProgram.name] = { ignore };
+      newEvalConfig[check.lint.name] = { ignore };
     });
     colorStore.setCurrentPalEvalConfig(newEvalConfig);
   }
@@ -117,19 +127,19 @@
           palette matches a number of commonly held beliefs about best
           practices. They wont fit every situation.
         </div>
-        {#each Object.entries(checkGroups) as checkGroup}
+        {#each Object.entries(lintGroups) as lintGroup}
           <div class="flex mt-4">
-            <div class="font-bold">{titleCase(checkGroup[0])} Checks</div>
+            <div class="font-bold">{titleCase(lintGroup[0])} Checks</div>
             <button
               class={`${buttonStyle} `}
-              on:click={() => setGroupTo(checkGroup[1], true)}
+              on:click={() => setGroupTo(lintGroup[1], true)}
             >
               ignore all
             </button>
-            {#if checkGroup[1].some((x) => evalConfig[x.lintProgram.name]?.ignore)}
+            {#if lintGroup[1].some((x) => evalConfig[x.lint.name]?.ignore)}
               <button
                 class={`${buttonStyle} `}
-                on:click={() => setGroupTo(checkGroup[1], false)}
+                on:click={() => setGroupTo(lintGroup[1], false)}
               >
                 re-enable all
               </button>
@@ -137,19 +147,23 @@
           </div>
           <div class="flex">
             {#if isCompact}
-              {#each checkGroup[1] as check}
-                {#if check.passes}
-                  <LintDisplay {check} justSummary={true} />
+              {#each lintGroup[1] as check}
+                {#if check.result && !check.result.passes}
+                  <LintDisplay
+                    lintResult={check.result}
+                    lintProgram={check.lint}
+                    justSummary={true}
+                  />
                 {/if}
               {/each}
             {/if}
           </div>
-          {#each checkGroup[1] as check}
-            {#if !isCompact || (isCompact && !check.passes)}
-              <LintDisplay {check} />
+          {#each lintGroup[1] as check}
+            {#if !isCompact || (isCompact && check.result && !check.result.passes)}
+              <LintDisplay lintResult={check.result} lintProgram={check.lint} />
             {/if}
           {/each}
-          {#if checkGroup[1].length === 0 && $lintStore.loadState === "loading"}
+          {#if lintGroup[1].length === 0 && $lintStore.loadState === "loading"}
             <div class="text-sm animate-pulse italic font-bold">Loading</div>
           {/if}
         {/each}

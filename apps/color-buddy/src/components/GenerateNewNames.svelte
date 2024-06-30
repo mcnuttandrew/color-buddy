@@ -6,7 +6,7 @@
   let state: "ready" | "loading" | "error" = "ready";
   $: paletteIndexesToRename = $colorStore.palettes
     .map((pal, idx) => (pal.name.toLowerCase() === "new palette" ? idx : false))
-    .filter((idx) => typeof idx === "number");
+    .filter((idx) => typeof idx === "number") as number[];
   $: palNames = new Set(
     $colorStore.palettes.map((pal) => pal.name.toLowerCase())
   );

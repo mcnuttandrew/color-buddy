@@ -16,6 +16,8 @@ function parsePalette(colors: string[], colorSpace: Palette["colorSpace"]) {
 }
 
 export const suggestLintAIFix: SuggestFix = async (palette, lint, engine) => {
+  if (lint.kind !== "success") return [];
+
   const colorSpace = palette.colorSpace;
   const msg = `${lint.message}\n\nFailed: ${lint.naturalLanguageProgram}`;
   return suggestFix(palette, msg, engine as any).then((x) => {
@@ -34,8 +36,9 @@ export const suggestLintAIFix: SuggestFix = async (palette, lint, engine) => {
 };
 
 export const suggestLintMonteFix: SuggestFix = async (palette, lint) => {
+  if (lint.kind !== "success") return [];
   const colorSpace = palette.colorSpace;
-  return suggestMonteFix(palette, [lint.id!]).then((newPal) => {
+  return suggestMonteFix(palette, [lint.lintProgram.id!]).then((newPal) => {
     if (newPal.length === 0) {
       throw new Error("No suggestions");
     }

@@ -1,13 +1,13 @@
 import { JSONToPrettyString } from "../utils";
 import { makePalFromString } from "@color-buddy/palette";
-import type { CustomLint } from "../ColorLint";
+import type { LintProgram } from "../ColorLint";
 import { schema } from "../constants";
 
-const lints: CustomLint[] = [];
+const lints: LintProgram[] = [];
 
 // Choose a background that's desaturated enough
 // https://blog.datawrapper.de/beautifulcolors/#12
-const bgDeSaturated: CustomLint = {
+const bgDeSaturated: LintProgram = {
   name: `Background desaturation sufficient`,
   program: JSONToPrettyString({
     // @ts-ignore
@@ -53,7 +53,7 @@ const bgDeSaturated: CustomLint = {
 };
 lints.push(bgDeSaturated);
 
-const avoidTetradic: CustomLint = {
+const avoidTetradic: LintProgram = {
   name: `Avoid Tetradic Palettes`,
   program: JSONToPrettyString({
     // @ts-ignore
@@ -106,7 +106,7 @@ lints.push(avoidTetradic);
 
 // When using green, make it a yellow or blue one
 // https://blog.datawrapper.de/beautifulcolors/#5
-const avoidGreen: CustomLint = {
+const avoidGreen: LintProgram = {
   name: `Prefer yellowish or blueish greens`,
   program: JSONToPrettyString({
     // @ts-ignore
@@ -138,7 +138,7 @@ lints.push(avoidGreen);
 
 // The opposite is true, too: Don’t make your colors too dark and saturated when you’re using a bright background. If in doubt, try it out. Make your colors lighter, pull some saturation out of them and see how it feels.
 // https://blog.datawrapper.de/beautifulcolors/#11
-const AvoidTooMuchContrastWithTheBackground: CustomLint = {
+const AvoidTooMuchContrastWithTheBackground: LintProgram = {
   name: `Avoid too much contrast with the background`,
   program: JSONToPrettyString({
     // @ts-ignore
@@ -188,7 +188,7 @@ lints.push(AvoidTooMuchContrastWithTheBackground);
 
 // use pairs of colors
 // this isnt a muth its just sort of implied
-const requireColorComplements: CustomLint = {
+const requireColorComplements: LintProgram = {
   name: `Require color complements`,
   program: JSONToPrettyString({
     // @ts-ignore

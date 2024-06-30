@@ -1,10 +1,10 @@
 import { JSONToPrettyString } from "../utils";
 import { makePalFromString, clipToGamut } from "@color-buddy/palette";
-import type { CustomLint } from "../ColorLint";
+import type { LintProgram } from "../ColorLint";
 import type { LintFixer } from "../linter-tools/lint-fixer";
 import { schema } from "../constants";
 
-const lint: CustomLint = {
+const lint: LintProgram = {
   name: "In Gamut",
   program: JSONToPrettyString({
     // @ts-ignore

@@ -4,10 +4,11 @@ import brewerColors from "./pals/small-brewer.json";
 import fs from "fs/promises";
 import {
   PREBUILT_LINTS,
-  CreateCustomLint,
+  linter,
   generateMCFix,
   suggestLintFix,
 } from "@color-buddy/palette-lint";
+import type { LintProgram } from "@color-buddy/palette-lint";
 import { Palette, makePalFromString } from "@color-buddy/palette";
 
 import prompter from "./prompter";
@@ -73,6 +74,11 @@ const allSets = [
     return newPal;
   });
 });
+
+function lintPasses(pal: Palette, lint: LintProgram): boolean {
+  const result = linter(pal, [lint], {})[0];
+  return result.kind === "success" && result.passes;
+}
 // .slice(0, 2);
 async function main() {
   // for each prebuilt lint, run it on each palette, record the result
@@ -93,21 +99,22 @@ async function main() {
   const results = [] as ResultType[];
   // for (const lint of PREBUILT_LINTS) {
   for (const lint of PREBUILT_LINTS) {
-    const builtLint = CreateCustomLint(lint);
     console.log(`Running ${lint.name}`);
     for (let idx = 0; idx < allSets.length; idx++) {
       console.log(`${idx} / ${allSets.length}`);
       const pal = allSets[idx];
-      const l = new builtLint(pal);
-      const result = l.run();
+      const result = linter(pal, [lint], { computeMessage: true })[0];
+      if (result.kind !== "success") {
+        continue;
+      }
 
       const measurement: ResultType = {
         lintName: lint.name,
         paletteName: pal.name,
         passing: result.passes,
-        description: result.description,
+        description: result.lintProgram.description,
         message: result.message,
-        blamedColors: result.checkData,
+        blamedColors: result.blameData,
         colors: pal.colors.map((x) => x.color.toString()),
         background: pal.background.toString(),
         heuristicFixPasses: "NA",
@@ -117,19 +124,19 @@ async function main() {
       };
       if (result.passes === false) {
         console.log("no pass");
-        const errMsg = result.buildMessage();
+        const errMsg = result.message;
         await Promise.all([
           suggestLintFix(pal, result).then((heuristicFix) => {
             measurement.heuristicFixPasses =
               heuristicFix.length > 0
-                ? new builtLint(heuristicFix[0]).run().passes
+                ? lintPasses(heuristicFix[0], lint)
                   ? "pass"
                   : "fail"
                 : "unavailable";
           }),
           Promise.resolve().then(() => {
             const mcFix = generateMCFix(pal, [lint]);
-            measurement.mcFixPasses = new builtLint(mcFix).run().passes;
+            measurement.mcFixPasses = lintPasses(mcFix, lint);
           }),
           getPromptedSuggestion(pal, "openai", errMsg).then((suggestions) => {
             if (suggestions.length === 0 || !Array.isArray(suggestions)) {
@@ -142,7 +149,7 @@ async function main() {
               suggestion.background
             );
             newPal.background = pal.background;
-            measurement.openAIFixPasses = new builtLint(newPal).run().passes;
+            measurement.openAIFixPasses = lintPasses(newPal, lint);
           }),
 
           getPromptedSuggestion(pal, "anthropic", errMsg).then(
@@ -156,9 +163,7 @@ async function main() {
                 suggestion.colors,
                 suggestion.background
               );
-              measurement.anthropicFixPasses = new builtLint(
-                newPal
-              ).run().passes;
+              measurement.anthropicFixPasses = lintPasses(newPal, lint);
             }
           ),
         ]);

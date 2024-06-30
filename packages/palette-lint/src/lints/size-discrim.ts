@@ -1,6 +1,6 @@
 import { JSONToPrettyString } from "../utils";
 import { makePalFromString } from "@color-buddy/palette";
-import type { CustomLint } from "../ColorLint";
+import type { LintProgram } from "../ColorLint";
 import { schema } from "../constants";
 
 // https://github.com/connorgr/d3-jnd/blob/master/src/jnd.js
@@ -84,7 +84,7 @@ const itemSizeDescriptions = {
   Wide: "large blocks of color such as backgrounds or countries on a map",
 } as const;
 const keys = ["Thin", "Medium", "Wide"] as const;
-const lints: CustomLint[] = keys.map((key) => {
+const lints: LintProgram[] = keys.map((key) => {
   const p = "default";
   const s = key as keyof typeof sMap;
   const jnd = jndLabInterval(p, s);

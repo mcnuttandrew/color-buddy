@@ -1,12 +1,12 @@
 import { JSONToPrettyString, createPalWithTags } from "../utils";
 import { makePalFromString } from "@color-buddy/palette";
-import type { CustomLint } from "../ColorLint";
+import type { LintProgram } from "../ColorLint";
 import { schema } from "../constants";
 
 // If Semantic Tag == Context then the color should be low contrast with the background (Whisper, Don't Scream work)
 
-const lints: CustomLint[] = [];
-const whisperScream: CustomLint = {
+const lints: LintProgram[] = [];
+const whisperScream: LintProgram = {
   name: "Axes should have low contrast with background",
   program: JSONToPrettyString({
     // @ts-ignore
@@ -43,7 +43,7 @@ lints.push(whisperScream);
 
 // If Semantic Tag == Blue, then the color should be high probability for the basic color term blue
 const colorNames = ["blue", "red", "orange"];
-const blueBasicColor: CustomLint = {
+const blueBasicColor: LintProgram = {
   name: "Blue should be high probability for the basic color term blue",
   program: JSONToPrettyString({
     // @ts-ignore

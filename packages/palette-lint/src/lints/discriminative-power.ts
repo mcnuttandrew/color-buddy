@@ -1,8 +1,8 @@
 import { JSONToPrettyString } from "../utils";
-import type { CustomLint } from "../ColorLint";
+import type { LintProgram } from "../ColorLint";
 import { schema } from "../constants";
 
-const lint: CustomLint = {
+const lint: LintProgram = {
   name: "Discriminative Power Sufficient",
   program: JSONToPrettyString({
     // @ts-ignore

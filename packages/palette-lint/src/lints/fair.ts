@@ -1,6 +1,6 @@
 import { JSONToPrettyString } from "../utils";
 import { makePalFromString } from "@color-buddy/palette";
-import type { CustomLint } from "../ColorLint";
+import type { LintProgram } from "../ColorLint";
 import { schema } from "../constants";
 
 // magic numbers supplied by the paper
@@ -21,7 +21,7 @@ const cRangePredicate = {
 };
 const failMsgBase = `This palette is unfair (meaning that some values may unduely stand out). Note that this check is naturally at odds with color vision deficiency friendly palettes.`;
 // json program version
-const FairNominal: CustomLint = {
+const FairNominal: LintProgram = {
   name: "Fair",
   program: JSONToPrettyString({
     // @ts-ignore
@@ -40,7 +40,7 @@ const FairNominal: CustomLint = {
   expectedPassingTests: [makePalFromString(["#000000"])],
   expectedFailingTests: [makePalFromString(["#debdb5", "#2a2a2a", "#76fc00"])],
 };
-const FairSequential: CustomLint = {
+const FairSequential: LintProgram = {
   ...FairNominal,
   taskTypes: ["sequential", "diverging"] as const,
   program: JSONToPrettyString({
@@ -56,4 +56,4 @@ const FairSequential: CustomLint = {
   expectedPassingTests: [makePalFromString(["#000000"])],
   expectedFailingTests: [makePalFromString(["#debdb5", "#2a2a2a", "#76fc00"])],
 };
-export default [FairNominal, FairSequential];
+export default [FairNominal, FairSequential] as LintProgram[];

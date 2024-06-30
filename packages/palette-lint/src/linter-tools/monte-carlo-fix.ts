@@ -2,12 +2,27 @@ import type { Palette } from "@color-buddy/palette";
 
 import { Color, ColorSpaceDirectory } from "@color-buddy/palette";
 import { wrapColor } from "@color-buddy/palette";
-import type { CustomLint } from "../ColorLint";
-import { CreateCustomLint } from "../ColorLint";
+import type { LintResult, LintProgram } from "../ColorLint";
+import { RunLint } from "../ColorLint";
+
+function getBlamedColors(palette: Palette, lintResult: LintResult): string[] {
+  if (lintResult.kind !== "success" || lintResult.passes) {
+    return [];
+  }
+  if (lintResult.lintProgram.blameMode === "pair") {
+    return (lintResult.blameData as number[][]).flatMap((x) =>
+      x.map((x) => palette.colors[x].color.toString())
+    );
+  } else {
+    return (lintResult.blameData as number[]).map((x) =>
+      palette.colors[x].color.toString()
+    );
+  }
+}
 
 export const generateMCFix = (
   palette: Palette,
-  lints: CustomLint[]
+  lints: LintProgram[]
 ): Palette => {
   // identify the step sizes for this color space
   const space = ColorSpaceDirectory[palette.colorSpace];
@@ -31,17 +46,16 @@ export const generateMCFix = (
       break;
     }
     // run lints on new palette
-    const newLints = lints.map(
-      (lint) => new (CreateCustomLint(lint))(newPalette)
+    const lintResults = lints.map((lint) =>
+      RunLint(lint, newPalette, { computeBlame: true, computeMessage: false })
     );
-    newLints.forEach((lint) => lint.run());
-    if (newLints.every((lint) => lint.passes)) {
+    if (lintResults.every((lint) => lint.kind === "success" && lint.passes)) {
       passing = true;
       break;
     }
     // generate blame for the new lints
-    const blamedWithDuplicates = newLints.flatMap((lint) =>
-      lint.getBlamedColors()
+    const blamedWithDuplicates = lintResults.flatMap((lint) =>
+      getBlamedColors(newPalette, lint)
     );
     const blamed = [...new Set(blamedWithDuplicates)];
     newPalette.colors = [...newPalette.colors].map((color) => {
@@ -63,46 +77,3 @@ export const generateMCFix = (
   }
   return newPalette;
 };
-
-//   // console.log("second stage");
-//   // let upper = newPalette;
-//   // let lower = palette;
-//   // let mid = interpolatePalettes(upper, lower);
-//   // let sufficient = false;
-//   // let minChecks = 5;
-//   // let maxChecks = 10;
-//   // let checks = 0;
-//   // while (!sufficient && checks < maxChecks) {
-//   //   checks++;
-//   //   const midLints = lints.map((lint) => new (CreateCustomLint(lint))(mid));
-//   //   midLints.forEach((lint) => lint.run());
-//   //   if (midLints.every((lint) => lint.passes)) {
-//   //     sufficient = checks > minChecks;
-//   //     break;
-//   //   }
-//   //   if (midLints.some((lint) => lint.passes)) {
-//   //     upper = mid;
-//   //   } else {
-//   //     lower = mid;
-//   //   }
-//   //   mid = interpolatePalettes(upper, lower);
-//   // }
-//   // console.log("finished");
-//   // return mid;
-// };
-
-// function interpolatePalettes(palA: Palette, palB: Palette) {
-//   const newColors = palA.colors.map((colorA, i) => {
-//     const colorB = palB.colors[i];
-//     const newChannels = colorA.color.toChannels().map((channelA, j) => {
-//       const channelB = colorB.color.toChannels()[j];
-//       return (channelA + channelB) / 2;
-//     }) as [number, number, number];
-//     const newColor = Color.colorFromChannels(newChannels, palA.colorSpace);
-//     return wrapColor(newColor);
-//   });
-//   return {
-//     ...palA,
-//     colors: newColors,
-//   };
-// }

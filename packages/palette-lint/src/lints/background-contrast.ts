@@ -1,12 +1,12 @@
 import { JSONToPrettyString, createPalWithTags } from "../utils";
 import { schema } from "../constants";
-import type { CustomLint } from "../ColorLint";
+import type { LintProgram } from "../ColorLint";
 import { Color, makePalFromString } from "@color-buddy/palette";
 import type { LintFixer } from "../linter-tools/lint-fixer";
 
-type LintProgram = Parameters<typeof JSONToPrettyString>[0];
-const buildProgram = (level: number, textOnly: boolean): LintProgram => {
-  const program: LintProgram = {
+type LLProgram = Parameters<typeof JSONToPrettyString>[0];
+const buildProgram = (level: number, textOnly: boolean): LLProgram => {
+  const program: LLProgram = {
     // @ts-ignore
     $schema: schema,
     all: {
@@ -31,7 +31,7 @@ const buildProgram = (level: number, textOnly: boolean): LintProgram => {
   return program;
 };
 
-const lintBase: CustomLint = {
+const lintBase: LintProgram = {
   program: JSONToPrettyString(false),
   requiredTags: [],
   name: "WCAG Contrast -- AA (text colors only)",
@@ -47,7 +47,7 @@ const lintBase: CustomLint = {
   expectedPassingTests: [],
 };
 
-const contrastGraphicalObjects: CustomLint = {
+const contrastGraphicalObjects: LintProgram = {
   ...lintBase,
   program: JSONToPrettyString(buildProgram(3, false)),
   name: "WCAG Contrast Graphical Objects",
@@ -57,7 +57,7 @@ const contrastGraphicalObjects: CustomLint = {
   failMessage: `These colors ({{blame}}) do not have a sufficient contrast do not have sufficient contrast with the background to be easily readable.`,
 };
 
-const contrastTextAA: CustomLint = {
+const contrastTextAA: LintProgram = {
   ...lintBase,
   program: JSONToPrettyString(buildProgram(4.5, true)),
   name: "WCAG Text Contrast: AA (text colors only)",
@@ -69,7 +69,7 @@ const contrastTextAA: CustomLint = {
     createPalWithTags(["#feed72", "#f8f4d2", "#af3b4b"], [[2, "text"]]),
   ],
 };
-const contrastTextAAA: CustomLint = {
+const contrastTextAAA: LintProgram = {
   ...lintBase,
   program: JSONToPrettyString(buildProgram(7, true)),
   name: "WCAG Text Contrast: AAA (text colors only)",

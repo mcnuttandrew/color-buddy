@@ -1,7 +1,7 @@
 import { generateMCFix } from "./monte-carlo-fix";
 import { expect, test } from "vitest";
 import { toPal } from "../test-utils";
-import { CreateCustomLint } from "../ColorLint";
+import { RunLint } from "../ColorLint";
 
 import CVDCheck from "../lints/cvd-check";
 
@@ -18,15 +18,13 @@ const colors = [
 test("generateMCFix", () => {
   const palette = toPal(colors);
   // should fail the CVD check
-  const firstLint = CreateCustomLint(CVDCheck[0]);
-  const firstLintRun = new firstLint(palette).run();
-  expect(firstLintRun.passes).toBe(false);
+  const lintResult1 = RunLint(CVDCheck[0], palette, {});
+  expect(lintResult1.passes).toBe(false);
 
   const newPalette = generateMCFix(palette, [CVDCheck[0]]);
   expect(newPalette).toBeDefined();
   expect(newPalette.colors.length).toBe(colors.length);
 
-  const newLint = CreateCustomLint(CVDCheck[0]);
-  const newRun = new newLint(newPalette).run();
-  expect(newRun.passes).toBe(true);
+  const lintResult2 = RunLint(CVDCheck[0], newPalette, {});
+  expect(lintResult2.passes).toBe(true);
 });

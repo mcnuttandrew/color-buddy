@@ -34,18 +34,13 @@ Example usage todo! For now see the test files for examples.
 
 This library contains the following functions:
 
-### CreateCustomLint
-**Function**: `CreateCustomLint(props: CustomLint) => typeof CustomLint`
-
-
-
 ### generateMCFix
-**Function**: `generateMCFix(palette: Palette, lints: CustomLint[]) => Palette`
+**Function**: `generateMCFix(palette: Palette, lints: LintProgram[]) => Palette`
 
 
 
 ### linter
-**Function**: `linter(palette: Palette, customLints: CustomLint[]) => ColorLint<any>[]`
+**Function**: `linter(palette: Palette, lints: LintProgram[], options: RunLintOptions) => LintResult[]`
 
 
 
@@ -58,42 +53,6 @@ This library contains the following functions:
 **Function**: `suggestLintFix(palette: Palette, lint: LintResult, _engine: string) => Promise<Palette[]>`
 
 
-
-
-
-This library contains the following classes:
-
-### ColorLint
-
-**Class**: `ColorLint`
-
-Constructor:
-**Constructor**: `constructor(ConstructorSignature new ColorLint<CheckData>: ColorLint<CheckData>)`
-
-Properties:
-**Property** blameMode: "none" | "single" | "pair" 
-**Property** checkData: CheckData 
-**Property** description: string 
-**Property** group: "design" | "accessibility" | "usability" | "custom" 
-**Property** id: undefined | string 
-**Property** isCustom: string | false 
-**Property** level: "error" | "warning" 
-**Property** message: string 
-**Property** name: string 
-**Property** naturalLanguageProgram: string 
-**Property** palette: Palette 
-**Property** passes: boolean 
-**Property** program: string 
-**Property** requiredTags: string[] 
-**Property** subscribedFix: string 
-**Property** taskTypes: PalType[] 
-
-Non-static:
-**Method** _runCheck: `_runCheck(_options: any) => Object` 
-**Method** buildMessage: `buildMessage() => string` 
-**Method** run: `run(options: any) => ColorLint<CheckData>` 
-
-Static:
 
 
 

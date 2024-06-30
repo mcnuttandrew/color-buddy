@@ -34,6 +34,7 @@ This page contains examples of the language used to define palettes and the expe
 - [Color Distinctness: Wide Size Objects](#color-distinctness--wide-size-objects)
 - [Avoid extreme colors](#avoid-extreme-colors)
 - [Colors distinguishable in order](#colors-distinguishable-in-order)
+- [Diverging Palettes order](#diverging-palettes-order)
 - [In Gamut](#in-gamut)
 - [Max Colors](#max-colors)
 - [Mutually Distinct](#mutually-distinct)
@@ -1431,6 +1432,25 @@ Palettes that will pass this test:
         }
     }
 }
+
+\`\`\`
+
+    
+
+
+
+### Diverging Palettes order
+**Tasks**: diverging
+
+
+**Description**: Diverging palettes should have a middle color that is the lightest or darkest color. This is because if they are not, then they will not be differentiable from each other in some contexts.
+
+**Natural Language**: CUSTOM JS
+
+
+**Program**:
+
+\`\`\`json
 
 \`\`\`
 

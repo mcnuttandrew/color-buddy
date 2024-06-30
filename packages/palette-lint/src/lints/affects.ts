@@ -1,12 +1,12 @@
 import { JSONToPrettyString } from "../utils";
-import type { CustomLint } from "../ColorLint";
+import type { LintProgram } from "../ColorLint";
 import { schema } from "../constants";
 
 // "Highly saturated light colors will not be appropriate for SERIOUS/TRUST/CALM": ALL (FILTER colors c, lab(c) > threshold) b, NOT hsl(b) > threshold
-const lints: CustomLint[] = [];
+const lints: LintProgram[] = [];
 const theseAffects = ["serious", "trustworthy", "calm"] as const;
 theseAffects.forEach((affect) => {
-  const lint: CustomLint = {
+  const lint: LintProgram = {
     name: `Saturated not appropriate for ${affect} affect`,
     program: JSONToPrettyString({
       // @ts-ignore
@@ -36,7 +36,7 @@ theseAffects.forEach((affect) => {
 
 // "light blues, beiges, and grays are appropriate for PLAYFUL"
 // reframed asn assertion: PLAYFUL should have at least one light blue, beige, or gray
-const lint1: CustomLint = {
+const lint1: LintProgram = {
   name: `Playful affects can have light blues, beiges, and grays`,
   program: JSONToPrettyString({
     // @ts-ignore
@@ -67,7 +67,7 @@ const lint1: CustomLint = {
 lints.push(lint1);
 
 // "dark reds and browns are not POSITIVE": ALL colors c, NOT (c similar to "DARK RED" OR c similar to "BROWN")
-const lint2: CustomLint = {
+const lint2: LintProgram = {
   name: `Dark reds and browns are not positive`,
   program: JSONToPrettyString({
     // @ts-ignore
@@ -99,7 +99,7 @@ const lint2: CustomLint = {
 lints.push(lint2);
 
 // "light colors, particularly greens, do not communicate NEGATIVE": ALL colors c, NOT (c similar to "GREEN" AND lab(l) > threshold) maybe more messaging that one?
-const lint3: CustomLint = {
+const lint3: LintProgram = {
   name: `Negative palettes should not have light colors, particularly greens`,
   program: JSONToPrettyString({
     // @ts-ignore
@@ -131,7 +131,7 @@ const lint3: CustomLint = {
 lints.push(lint3);
 
 // "trustworthy has two thematic strategies (blue-gray, green-gray) bridge by a common color (yellow)": AND (EXIST color a, a similar to yellow) .......
-// const lint4: CustomLint = {
+// const lint4: LintProgram = {
 //   name: `Trustworthy palettes usually blue-gray or green-gray with a yellow`,
 //   program: JSONToPrettyString({
 //     // @ts-ignore

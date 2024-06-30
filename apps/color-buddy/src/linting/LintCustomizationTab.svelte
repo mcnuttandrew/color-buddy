@@ -1,8 +1,8 @@
 <script lang="ts">
   import lintStore, { newId } from "../stores/lint-store";
-  import { PREBUILT_LINTS, CreateCustomLint } from "@color-buddy/palette-lint";
+  import { PREBUILT_LINTS, linter } from "@color-buddy/palette-lint";
   import type { Palette } from "@color-buddy/palette";
-  import type { LintResult, CustomLint } from "@color-buddy/palette-lint";
+  import type { LintResult, LintProgram } from "@color-buddy/palette-lint";
 
   import colorStore from "../stores/color-store";
   import Tooltip from "../components/Tooltip.svelte";
@@ -29,16 +29,19 @@
 
   // run this lint
   let errors: any = null;
-  function runLint(lint: CustomLint, options: any, pal: Palette) {
+  function runLint(
+    lint: LintProgram,
+    options: any,
+    pal: Palette
+  ): LintResult | undefined {
     if (!lint) {
       lintStore.setFocusedLint(false);
       return;
     }
     try {
-      const customLint = CreateCustomLint(lint);
-      const result = new customLint(pal).run(options);
+      const result = linter(pal, [lint], options);
       errors = null;
-      return result;
+      return result[0];
     } catch (e) {
       errors = e;
     }
@@ -51,8 +54,8 @@
 
   $: currentTaskTypes = lint?.taskTypes || ([] as string[]);
 
-  $: checkData = lintRun?.checkData || [];
-  $: pairData = checkData as number[][];
+  $: blameData = lintRun?.blameData || [];
+  $: pairData = blameData as number[][];
   const taskTypes = ["sequential", "diverging", "categorical"] as const;
 
   $: lints = $lintStore.lints;
@@ -84,14 +87,14 @@
     []
   ).map((pal) => {
     const result = runLint(lint, {}, pal);
-    return { result, pal, blame: result?.checkData };
+    return { result, pal, blame: result?.blameData };
   }) as TestResult[];
   $: failingTestResults = (
     (showTestCases && lint?.expectedFailingTests) ||
     []
   ).map((pal) => {
     const result = runLint(lint, {}, pal);
-    return { result, pal, blame: result?.checkData };
+    return { result, pal, blame: result?.blameData };
   }) as TestResult[];
   let requiredTagAdd = "";
 
@@ -388,7 +391,7 @@
               <PalPreview
                 pal={{
                   ...currentPal,
-                  colors: checkData
+                  colors: blameData
                     .flatMap((x) => x)
                     .map((x) => currentPal.colors[x]),
                 }}

@@ -23,7 +23,7 @@
   $: engine = $configStore.engine;
   $: suggestions = [] as Palette[];
   $: colorSpace = palette.colorSpace;
-  $: lint = $lintStore.lints.find((x) => x.id === check.id);
+  $: lint = $lintStore.lints.find((x) => x.id === check.lintProgram.id);
 
   function proposeFix(fixType: "ai" | "monte" | "heuristic") {
     requestState = "loading";
@@ -63,21 +63,23 @@
     "grayscale",
   ] as const;
   $: cbMatch = options.find((x) =>
-    check.name.toLowerCase().includes(x)
+    check.lintProgram.name.toLowerCase().includes(x)
   ) as (typeof options)[number];
   const allowedColorSpaces = ["lch", "lab", "hsl", "hsv"] as const;
   $: spaceMatch = allowedColorSpaces.find(
-    (x) => check.description.toLowerCase().includes(x) && x !== colorSpace
+    (x) =>
+      check.lintProgram.description.toLowerCase().includes(x) &&
+      x !== colorSpace
   ) as any;
-  $: ignored = !!evalConfig[check.name]?.ignore;
+  $: ignored = !!evalConfig[check.lintProgram.name]?.ignore;
 </script>
 
 <Tooltip {positionAlongRightEdge}>
   <div slot="content" let:onClick class="max-w-2xl eval-tooltip">
-    <div class="font-bold">{check.name}</div>
+    <div class="font-bold">{check.lintProgram.name}</div>
     <div class="max-h-52 overflow-y-auto">
       {#if check.passes || ignored}
-        <div class="text-sm">{check.description}</div>
+        <div class="text-sm">{check.lintProgram.description}</div>
       {:else}
         <ExplanationViewer {check} />
       {/if}
@@ -111,7 +113,7 @@
           Try to fix (AI)
         </button>
       {/if}
-      {#if check.subscribedFix !== "none"}
+      {#if check.lintProgram.subscribedFix !== "none"}
         <button class={buttonStyle} on:click={() => proposeFix("heuristic")}>
           Try to fix (ColorBuddy)
         </button>
@@ -124,7 +126,7 @@
         on:click={() => {
           colorStore.setCurrentPalEvalConfig({
             ...evalConfig,
-            [check.name]: { ignore: true },
+            [check.lintProgram.name]: { ignore: true },
           });
         }}
       >
@@ -136,18 +138,18 @@
         on:click={() => {
           colorStore.setCurrentPalEvalConfig({
             ...evalConfig,
-            [check.name]: { ignore: false },
+            [check.lintProgram.name]: { ignore: false },
           });
         }}
       >
         Re-enable
       </button>
     {/if}
-    {#if check.isCustom}
+    {#if !check.lintProgram.customProgram}
       <button
         class={buttonStyle}
         on:click={() => {
-          lintStore.setFocusedLint(check.isCustom);
+          lintStore.setFocusedLint(check.lintProgram.id);
           configStore.setEvalDisplayMode("lint-customization");
         }}
       >

@@ -3,10 +3,9 @@ import { expect, test } from "vitest";
 import { Color, makePalFromString } from "@color-buddy/palette";
 import { getName } from "@color-buddy/color-namer";
 
-import { CreateCustomLint } from "./ColorLint";
 import { suggestLintFix } from "./linter-tools/lint-fixer";
-
-import type { CustomLint } from "./ColorLint";
+import { RunLint } from "./ColorLint";
+import type { LintProgram } from "./ColorLint";
 
 // Lints
 import AvoidExtremes from "./lints/avoid-extremes";
@@ -31,16 +30,15 @@ import UglyColors from "./lints/ugly-colors";
 
 const unique = <T>(arr: T[]): T[] => [...new Set(arr)];
 
-function autoTest(lint: CustomLint) {
+function autoTest(lint: LintProgram) {
+  expect(lint.failMessage.length).toBeGreaterThan(0);
   lint.expectedPassingTests.forEach((pal) => {
-    const newLint = CreateCustomLint(lint);
-    const exampleLint = new newLint(pal).run();
+    const exampleLint = RunLint(lint, pal, { computeMessage: true });
     expect(exampleLint.passes).toBe(true);
     expect(exampleLint.message).toMatchSnapshot();
   });
   lint.expectedFailingTests.forEach((pal) => {
-    const newLint = CreateCustomLint(lint);
-    const exampleLint = new newLint(pal).run();
+    const exampleLint = RunLint(lint, pal, { computeMessage: true });
     expect(exampleLint.passes).toBe(false);
     expect(exampleLint.message).toMatchSnapshot();
   });
@@ -74,7 +72,6 @@ function addNumberSuffix(numb: number): string {
 
 test("ColorLint - ColorNameDiscriminability", async () => {
   autoTest(ColorNameDiscriminability);
-  const lint = CreateCustomLint(ColorNameDiscriminability);
 
   // tacit configuration: the first two in the set should have the same name
   const sets = [
@@ -84,12 +81,14 @@ test("ColorLint - ColorNameDiscriminability", async () => {
   for (let idx = 0; idx < sets.length; idx++) {
     const colors = sets[idx];
     const examplePal = makePalFromString(colors);
-    const exampleLint = new lint(examplePal).run();
-    expect(exampleLint.passes).toBe(false);
-    expect(exampleLint.message).toBe(
+    const lintResult = RunLint(ColorNameDiscriminability, examplePal, {
+      computeMessage: true,
+    });
+    expect(lintResult.passes).toBe(false);
+    expect(lintResult.message).toBe(
       `The following pairs of colors have the same name: ${colors[0]} and ${colors[1]}`
     );
-    const fix = await suggestLintFix(examplePal, exampleLint);
+    const fix = await suggestLintFix(examplePal, lintResult);
     const oldColorNames = unique<string>(
       examplePal.colors.map((x) => getName(x.color))
     );
@@ -111,12 +110,11 @@ test("ColorLint - SizeDiscrim (Wide)", () => autoTest(SizeDiscrims[2]));
 test("ColorLint - Gamut", async () => {
   autoTest(Gamut);
   const examplePal = makePalFromString(["lab(50.625% -91.737 -88.303)"]);
-  const newLint = CreateCustomLint(Gamut);
-  const exampleLint = new newLint(examplePal).run();
-  expect(exampleLint.passes).toBe(false);
-  expect(exampleLint.message).toMatchSnapshot();
+  const lintResult = RunLint(Gamut, examplePal, { computeMessage: true });
+  expect(lintResult.passes).toBe(false);
+  expect(lintResult.message).toMatchSnapshot();
 
-  const fix = await suggestLintFix(examplePal, exampleLint);
+  const fix = await suggestLintFix(examplePal, lintResult);
   expect(fix[0].colors.map((x) => x.color.toString())).toStrictEqual([
     "lab(48.319% -27.81 -14.373)",
   ]);
@@ -130,22 +128,25 @@ test("ColorLint - CVD: Grayscale", () => autoTest(CVDCheck[3]));
 const ughWhat = ["#00ffff", "#00faff", "#00e4ff", "#fdfdfc", "#00ffff"];
 test("ColorLint - Background Contrast", async () => {
   const examplePal = makePalFromString(ughWhat);
-  const BackgroundContrastLint = CreateCustomLint(BGContrast[0]);
-  const exampleLint = new BackgroundContrastLint(examplePal).run();
-  expect(exampleLint.passes).toBe(false);
-  expect(exampleLint.message).toBe(
+  const lintResult = RunLint(BGContrast[0], examplePal, {
+    computeMessage: true,
+  });
+  expect(lintResult.passes).toBe(false);
+  expect(lintResult.message).toBe(
     "These colors (#0ff, #00faff, #00e4ff, #fdfdfc, #0ff) do not have a sufficient contrast do not have sufficient contrast with the background to be easily readable."
   );
-  const fix = await suggestLintFix(examplePal, exampleLint).then((x) => x[0]);
+  const fix = await suggestLintFix(examplePal, lintResult).then((x) => x[0]);
   expect(fix.colors.map((x) => x.color.toHex())).toMatchSnapshot();
 
   examplePal.background = Color.colorFromHex("#00e4ff", "lab");
-  const exampleLint2 = new BackgroundContrastLint(examplePal).run();
-  expect(exampleLint2.passes).toBe(false);
-  expect(exampleLint2.message).toBe(
+  const lintResult2 = RunLint(BGContrast[0], examplePal, {
+    computeMessage: true,
+  });
+  expect(lintResult2.passes).toBe(false);
+  expect(lintResult2.message).toBe(
     "These colors (#0ff, #00faff, #00e4ff, #fdfdfc, #0ff) do not have a sufficient contrast do not have sufficient contrast with the background to be easily readable."
   );
-  const fix2 = await suggestLintFix(examplePal, exampleLint2).then((x) => x[0]);
+  const fix2 = await suggestLintFix(examplePal, lintResult2).then((x) => x[0]);
   expect(fix2.colors.map((x) => x.color.toHex())).toMatchSnapshot();
 });
 
@@ -158,13 +159,16 @@ test("Background Contrast - Fix", async () => {
     "#2e8b57",
   ]);
   examplePal.background = Color.colorFromHex("#00201d", "lab");
-  const BackgroundContrastLint = CreateCustomLint(BGContrast[0]);
-  const exampleLint = new BackgroundContrastLint(examplePal).run();
-  expect(exampleLint.passes).toBe(false);
-  const fix = await fixBackgroundDifferentiability(examplePal, exampleLint);
+  const lintResult = RunLint(BGContrast[0], examplePal, {
+    computeMessage: true,
+  });
+  expect(lintResult.passes).toBe(false);
+  const fix = await fixBackgroundDifferentiability(examplePal, lintResult);
   expect(fix.length).toBe(1);
 
-  expect(new BackgroundContrastLint(fix[0]).run().passes).toBe(true);
+  expect(RunLint(BGContrast[0], fix[0], { computeMessage: true }).passes).toBe(
+    true
+  );
 });
 
 test("ColorLint - Contrast (1) GraphicalObjs", () => autoTest(BGContrast[0]));
@@ -197,29 +201,33 @@ test("ColorLint - Diverging Order", async () => {
   ) {
     const divPal = makePalFromString(pal);
 
-    const exampleLint1 = new DivergingOrder(divPal).run();
-    expect(exampleLint1.passes, `${name} initial pal order`).toBe(true);
+    const lintResult1 = RunLint(DivergingOrder, divPal, {
+      computeMessage: true,
+    });
+    expect(lintResult1.passes, `${name} initial pal order`).toBe(true);
     expect(
-      exampleLint1.message,
+      lintResult1.message,
       `${name} initial pal order msg`
     ).toMatchSnapshot();
 
     const adjustedPal = adjustment(pal);
     const divPal2 = makePalFromString(adjustedPal);
 
-    const exampleLint2 = new DivergingOrder(divPal2).run();
-    expect(exampleLint2.passes, `${name} alteration correctly fails`).toBe(
+    const lintResult2 = RunLint(DivergingOrder, divPal2, {
+      computeMessage: true,
+    });
+    expect(lintResult2.passes, `${name} alteration correctly fails`).toBe(
       false
     );
     expect(
-      exampleLint2.message,
+      lintResult2.message,
       `${name} alteration correctly generates failure message`
     ).toMatchSnapshot();
 
-    const fixedExample2 = await fixDivergingOrder(divPal2, exampleLint2);
+    const fixedExample2 = await fixDivergingOrder(divPal2, lintResult2);
     expect(fixedExample2.length).toBeGreaterThan(0);
     expect(
-      new DivergingOrder(fixedExample2[0]).run().passes,
+      RunLint(DivergingOrder, fixedExample2[0], {}).passes,
       `${name} fix fixes alteration`
     ).toBe(true);
     expect(

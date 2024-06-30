@@ -41,7 +41,7 @@
   $: allEvaluatedLints = pals.reduce(
     (acc, pal) => {
       pal.lints.forEach((lint) => {
-        acc[lint.name] = lint;
+        acc[lint.lintProgram.name] = lint;
       });
       return acc;
     },
@@ -85,22 +85,22 @@
         <button
           class={buttonStyle}
           on:click={() => {
-            if (disAllowedLints.has(lint.name)) {
-              disAllowedLints.delete(lint.name);
+            if (disAllowedLints.has(lint.lintProgram.name)) {
+              disAllowedLints.delete(lint.lintProgram.name);
             } else {
-              disAllowedLints.add(lint.name);
+              disAllowedLints.add(lint.lintProgram.name);
             }
             disAllowedLints = disAllowedLints;
           }}
         >
-          {#if disAllowedLints.has(lint.name)}❌{:else}✅{/if}
+          {#if disAllowedLints.has(lint.lintProgram.name)}❌{:else}✅{/if}
         </button>
-        <div class="text-sm">{lint.name}</div>
-        {#if lint.isCustom}
+        <div class="text-sm">{lint.lintProgram.name}</div>
+        {#if !lint.lintProgram.customProgram}
           <button
             class={buttonStyle}
             on:click={() => {
-              lintStore.setFocusedLint(lint.isCustom);
+              lintStore.setFocusedLint(lint.lintProgram.id);
               configStore.setEvalDisplayMode("lint-customization");
             }}
           >
@@ -111,7 +111,9 @@
           class={buttonStyle}
           on:click={() => {
             filteredPals = filteredPals.filter((pal) => {
-              const thisLint = pal.lints.find((l) => l.name === lint.name);
+              const thisLint = pal.lints.find(
+                (l) => l.lintProgram.name === lint.lintProgram.name
+              );
               return thisLint?.passes;
             });
           }}
@@ -122,7 +124,9 @@
           class={buttonStyle}
           on:click={() => {
             filteredPals = filteredPals.filter((pal) => {
-              const thisLint = pal.lints.find((l) => l.name === lint.name);
+              const thisLint = pal.lints.find(
+                (l) => l.lintProgram.name === lint.lintProgram.name
+              );
               return !thisLint?.passes;
             });
           }}
@@ -132,15 +136,23 @@
         <button
           class={buttonStyle}
           on:click={() => {
-            if (sortedBy === lint.name) {
-              sortedBy = `${lint.name}-reverse`;
+            if (sortedBy === lint.lintProgram.name) {
+              sortedBy = `${lint.lintProgram.name}-reverse`;
               filteredPals = filteredPals.sort((a, b) =>
-                b.lints.find((x) => x.name === lint.name)?.passes ? 1 : -1
+                b.lints.find(
+                  (x) => x.lintProgram.name === lint.lintProgram.name
+                )?.passes
+                  ? 1
+                  : -1
               );
             } else {
-              sortedBy = lint.name;
+              sortedBy = lint.lintProgram.name;
               filteredPals = filteredPals.sort((a, b) =>
-                a.lints.find((x) => x.name === lint.name)?.passes ? 1 : -1
+                a.lints.find(
+                  (x) => x.lintProgram.name === lint.lintProgram.name
+                )?.passes
+                  ? 1
+                  : -1
               );
             }
           }}
@@ -235,22 +247,22 @@
         </div>
         <div class="flex">
           {#each pal.lints as lint}
-            {#if !disAllowedLints.has(lint.name)}
+            {#if !disAllowedLints.has(lint.lintProgram.name)}
               <Tooltip>
                 <div slot="content">
-                  <div class="font-bold">{lint.name}</div>
-                  <div>{lint.description}</div>
+                  <div class="font-bold">{lint.lintProgram.name}</div>
+                  <div>{lint.lintProgram.description}</div>
                 </div>
                 <button
                   slot="target"
                   let:toggle
                   on:click={toggle}
-                  class:border-2={sortedBy === lint.name ||
-                    sortedBy === `${lint.name}-reverse`}
+                  class:border-2={sortedBy === lint.lintProgram.name ||
+                    sortedBy === `${lint.lintProgram.name}-reverse`}
                 >
                   {#if lint.passes}
                     <div>{lintMarks.pass}</div>
-                  {:else if lint.level === "warning"}
+                  {:else if lint.lintProgram.level === "warning"}
                     <div>{lintMarks.warn}</div>
                   {:else}
                     <div>{lintMarks.fail}</div>

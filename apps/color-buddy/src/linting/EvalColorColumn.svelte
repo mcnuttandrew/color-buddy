@@ -95,11 +95,11 @@
         </span>
         <span class="flex flex-wrap flex-row-reverse">
           {#each colorsToIssues[idx] as check}
-            {#if !evalConfig[check.name]?.ignore}
+            {#if !evalConfig[check.lintProgram.name]?.ignore}
               <EvalResponse
                 {check}
                 positionAlongRightEdge={false}
-                customWord={checkLevelToSymbol[check.level]}
+                customWord={checkLevelToSymbol[check.lintProgram.level]}
               />
             {/if}
           {/each}

@@ -2,12 +2,24 @@ import type { Palette } from "@color-buddy/palette";
 
 import { Color, ColorSpaceDirectory } from "@color-buddy/palette";
 import { wrapColor } from "@color-buddy/palette";
-import type { CustomLint } from "../ColorLint";
-import { CreateCustomLint } from "../ColorLint";
+import type { LintResult, LintProgram } from "../ColorLint";
+import { RunLint } from "../ColorLint";
+
+function getBlamedColors(palette: Palette, lintResult: LintResult): string[] {
+  if (lintResult.lintProgram.blameMode === "pair") {
+    return (lintResult.blameData as number[][]).flatMap((x) =>
+      x.map((x) => palette.colors[x].color.toString())
+    );
+  } else {
+    return (lintResult.blameData as number[]).map((x) =>
+      palette.colors[x].color.toString()
+    );
+  }
+}
 
 export const generateMCFix = (
   palette: Palette,
-  lints: CustomLint[]
+  lints: LintProgram[]
 ): Palette => {
   // identify the step sizes for this color space
   const space = ColorSpaceDirectory[palette.colorSpace];
@@ -31,17 +43,17 @@ export const generateMCFix = (
       break;
     }
     // run lints on new palette
-    const newLints = lints.map(
-      (lint) => new (CreateCustomLint(lint))(newPalette)
+    const lintResults = lints.map((lint) =>
+      RunLint(lint, palette, { computeBlame: true, computeMessage: true })
     );
-    newLints.forEach((lint) => lint.run());
-    if (newLints.every((lint) => lint.passes)) {
+    // newLints.forEach((lint) => lint.run());
+    if (lintResults.every((lint) => lint.passes)) {
       passing = true;
       break;
     }
     // generate blame for the new lints
-    const blamedWithDuplicates = newLints.flatMap((lint) =>
-      lint.getBlamedColors()
+    const blamedWithDuplicates = lintResults.flatMap((lint) =>
+      getBlamedColors(newPalette, lint)
     );
     const blamed = [...new Set(blamedWithDuplicates)];
     newPalette.colors = [...newPalette.colors].map((color) => {
@@ -74,7 +86,7 @@ export const generateMCFix = (
 //   // let checks = 0;
 //   // while (!sufficient && checks < maxChecks) {
 //   //   checks++;
-//   //   const midLints = lints.map((lint) => new (CreateCustomLint(lint))(mid));
+//   //   const midLints = lints.map((lint) => RunLint(lint, mid, {})));
 //   //   midLints.forEach((lint) => lint.run());
 //   //   if (midLints.every((lint) => lint.passes)) {
 //   //     sufficient = checks > minChecks;

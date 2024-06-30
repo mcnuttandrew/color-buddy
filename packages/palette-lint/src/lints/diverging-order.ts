@@ -1,6 +1,7 @@
-import { ColorLint } from "../ColorLint";
-import type { PalType, ColorWrap } from "@color-buddy/palette";
+import type { ColorWrap } from "@color-buddy/palette";
 import { Color } from "@color-buddy/palette";
+
+import type { LintProgram } from "../ColorLint";
 import type { LintFixer } from "../linter-tools/lint-fixer";
 
 function isDiverging(colors: ColorWrap<Color>[]): boolean {
@@ -16,24 +17,29 @@ function isDiverging(colors: ColorWrap<Color>[]): boolean {
     }, [] as number[]);
   return summarizedDirections.length === 2;
 }
-export default class DivergingOrder extends ColorLint<boolean> {
-  name = "Diverging Palettes order";
-  taskTypes = ["diverging"] as PalType[];
-  group = "usability" as const;
-  requiredTags = [];
-  description: string = `Diverging palettes should have a middle color that is the lightest or darkest color. This is because if they are not, then they will not be differentiable from each other in some contexts.`;
-  _runCheck() {
-    if (this.palette.colors.length <= 2) {
-      return { passCheck: true, data: false };
-    }
 
-    return { passCheck: isDiverging(this.palette.colors), data: false };
-  }
-  buildMessage(): string {
-    return `This palette should have a middle color that is the lightest or darkest color, from which the other colors grow darker or lighter  respectively.`;
-  }
-  subscribedFix: string = "fixDivergingOrder";
-}
+const DivergingOrder: LintProgram = {
+  name: "Diverging Palettes order",
+  taskTypes: ["diverging"],
+  group: "usability",
+  requiredTags: [],
+  description: `Diverging palettes should have a middle color that is the lightest or darkest color. This is because if they are not, then they will not be differentiable from each other in some contexts.`,
+  customProgram: (palette) => {
+    if (palette.colors.length <= 2) {
+      return true;
+    }
+    return isDiverging(palette.colors);
+  },
+  subscribedFix: "fixDivergingOrder",
+  blameMode: "none",
+  failMessage: `This palette should have a middle color that is the lightest or darkest color, from which the other colors grow darker or lighter  respectively.`,
+  id: "diverging-built-in",
+  level: "error",
+  program: "",
+  expectedPassingTests: [],
+  expectedFailingTests: [],
+};
+export default DivergingOrder;
 
 // const sortByLum = (a: ColorWrap<Color>, b: ColorWrap<Color>) => {
 //   const aL = a.color.luminance();

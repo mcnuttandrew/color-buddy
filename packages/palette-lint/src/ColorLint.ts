@@ -4,64 +4,9 @@ import { LLEval, prettyPrintLL } from "./lint-language/lint-language";
 import { permutativeBlame } from "./linter-tools/blame";
 import * as Json from "jsonc-parser";
 
-export interface LintResult {
-  description: string;
-  group: string;
-  isCustom: false | string;
-  level: CustomLint["level"];
-  message: string;
-  name: string;
-  naturalLanguageProgram: string;
-  passes: boolean;
-  subscribedFix: string;
-  taskTypes: Palette["type"][];
-  requiredTags: string[];
-  id: string | undefined;
-}
-
-export class ColorLint<CheckData> {
-  name: string = "";
-  taskTypes: Palette["type"][] = [];
-  requiredTags: string[] = [];
-  passes: boolean;
-  checkData: CheckData;
-  palette: Palette;
-  message: string = "";
-  isCustom: false | string = false;
-  group: CustomLint["group"] = "design";
-  description: string = "";
-  blameMode: CustomLint["blameMode"] = "none";
-  naturalLanguageProgram: string = "";
-  level: CustomLint["level"] = "error";
-  subscribedFix: string = "none";
-  program: string = "";
-  id: string | undefined = undefined;
-
-  constructor(Palette: Palette) {
-    this.palette = Palette;
-    this.checkData = undefined as CheckData;
-    this.passes = false;
-  }
-
-  run(options: any = {}) {
-    const { passCheck, data } = this._runCheck(options);
-    this.passes = passCheck;
-    this.checkData = data as CheckData;
-    this.message = this.buildMessage();
-    return this;
-  }
-
-  _runCheck(_options: any): { passCheck: boolean; data: CheckData } {
-    return { passCheck: true, data: {} as CheckData };
-  }
-  // Fail Message
-  buildMessage(): string {
-    return "";
-  }
-}
-
-export interface CustomLint {
+export interface LintProgram {
   blameMode: "pair" | "single" | "none";
+  customProgram?: (palette: Palette) => boolean;
   description: string;
   failMessage: string;
   group: "design" | "accessibility" | "usability" | "custom";
@@ -76,68 +21,118 @@ export interface CustomLint {
   expectedFailingTests: Palette[];
 }
 
-export function CreateCustomLint(props: CustomLint) {
+export interface LintResult {
+  blameData: number[] | number[][];
+  message: string;
+  naturalLanguageProgram: string;
+  passes: boolean;
+  lintProgram: LintProgram;
+}
+
+type blame = number[] | number[][];
+
+function buildMessage(
+  lintProgram: LintProgram,
+  palette: Palette,
+  blameData: blame
+): string {
+  let blame = "";
+  if (lintProgram.blameMode === "pair") {
+    blame = (blameData as number[][])
+      .map((x) => x.map((x) => palette.colors[x].color.toHex()).join(" and "))
+      .join(", ");
+  } else {
+    blame = (blameData as number[])
+      .map((x) => palette.colors[x].color.toHex())
+      .join(", ");
+  }
+
+  return replaceAll(lintProgram.failMessage, "{{blame}}", blame);
+}
+
+function executeLint(
+  lintProgram: LintProgram,
+  palette: Palette,
+  options: RunLintOptions
+): { passCheck: boolean; blame: number[] | number[][] } {
+  const prog = Json.parse(lintProgram.program);
+  const { result } = LLEval(prog, palette, {
+    debugCompare: false,
+    // ...options,
+  });
+  if (result) return { passCheck: true, blame: [] };
+  let blame: number[] | number[][] = [];
+  if (options.computeBlame && lintProgram.blameMode !== "none") {
+    blame = permutativeBlame(prog, palette, lintProgram.blameMode);
+  }
+
+  return { passCheck: result, blame };
+}
+
+interface RunLintOptions {
+  computeBlame?: boolean;
+  computeMessage?: boolean;
+}
+
+export function RunLint(
+  lint: LintProgram,
+  palette: Palette,
+  options: RunLintOptions
+): LintResult {
+  let passCheck = false;
+  let blameData: blame = [];
+  if (lint.customProgram) {
+    passCheck = lint.customProgram(palette);
+  } else {
+    const executionResult = executeLint(lint, palette, options);
+    passCheck = executionResult.passCheck;
+    blameData = executionResult.blame;
+  }
+
   let natProg = "";
+  let prog = false;
   try {
-    natProg = prettyPrintLL(Json.parse(props.program));
+    prog = Json.parse(lint.program);
+    natProg = prettyPrintLL(prog);
   } catch (e) {}
-  return class CustomLint extends ColorLint<number[] | number[][]> {
-    blameMode = props.blameMode;
-    description = props.description;
-    group = props.group;
-    isCustom = props.id;
-    level = props.level;
-    name = props.name;
-    naturalLanguageProgram = natProg;
-    program = props.program;
-    requiredTags = props.requiredTags;
-    subscribedFix = props.subscribedFix || "none";
-    taskTypes = props.taskTypes;
-    id = props.id;
 
-    _runCheck(options: any) {
-      const prog = Json.parse(props.program);
-      const { blame, result } = LLEval(prog, this.palette, {
-        debugCompare: false,
-        ...options,
-      });
-      if (result) return { passCheck: true, data: blame };
-      let newBlame: number[] | number[][] = [];
-      if (this.blameMode !== "none") {
-        newBlame = permutativeBlame(prog, this.palette, this.blameMode);
-      }
-
-      return { passCheck: result, data: newBlame };
+  let message = "";
+  if (options.computeMessage) {
+    let localBlame = blameData;
+    if (!options.computeBlame && lint.blameMode !== "none") {
+      localBlame = permutativeBlame(prog, palette, lint.blameMode);
+      blameData = localBlame;
     }
+    message = buildMessage(lint, palette, blameData);
+  }
 
-    getBlamedColors(): string[] {
-      if (this.blameMode === "pair") {
-        return (this.checkData as number[][]).flatMap((x) =>
-          x.map((x) => this.palette.colors[x].color.toString())
-        );
-      } else {
-        return (this.checkData as number[]).map((x) =>
-          this.palette.colors[x].color.toString()
-        );
-      }
-    }
+  const result: LintResult = {
+    blameData,
+    message,
+    naturalLanguageProgram: natProg,
+    passes: passCheck,
+    lintProgram: cloneLintProgram(lint),
+  };
 
-    buildMessage() {
-      let blame = "";
-      if (this.blameMode === "pair") {
-        blame = (this.checkData as number[][])
-          .map((x) =>
-            x.map((x) => this.palette.colors[x].color.toHex()).join(" and ")
-          )
-          .join(", ");
-      } else {
-        blame = (this.checkData as number[])
-          .map((x) => this.palette.colors[x].color.toHex())
-          .join(", ");
-      }
+  return result;
+}
 
-      return replaceAll(props.failMessage, "{{blame}}", blame);
-    }
+function cloneLintProgram(lint: LintProgram): LintProgram {
+  return {
+    blameMode: lint.blameMode,
+    customProgram: lint.customProgram,
+    description: lint.description,
+    failMessage: lint.failMessage,
+    group: lint.group,
+    id: lint.id,
+    level: lint.level,
+    name: lint.name,
+    program: lint.program,
+    subscribedFix: lint.subscribedFix,
+    taskTypes: lint.taskTypes,
+    requiredTags: lint.requiredTags,
+    expectedPassingTests: lint.expectedPassingTests,
+    expectedFailingTests: lint.expectedFailingTests,
   };
 }
 

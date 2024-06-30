@@ -1,15 +1,15 @@
-import { PREBUILT_LINTS } from "./linter";
+import { PREBUILT_LINTS } from "./main";
 import { prettyPrintLL } from "./lint-language/lint-language";
 import { expect, test } from "vitest";
-import type { CustomLint } from "./ColorLint";
+import type { LintProgram } from "./ColorLint";
 import fs from "fs/promises";
 
 const DOC_LOCATION = "../../apps/docs/docs/lang-examples.md";
 
 const testCaseToText = (
   tests:
-    | CustomLint["expectedFailingTests"]
-    | CustomLint["expectedPassingTests"],
+    | LintProgram["expectedFailingTests"]
+    | LintProgram["expectedPassingTests"],
   type: "pass" | "fail"
 ) => {
   if (tests.length === 0) {
@@ -36,7 +36,10 @@ ${testMsgs}
 `;
 };
 
-function lintToText(lint: CustomLint) {
+function lintToText(lint: LintProgram) {
+  const nlProgram = lint.customProgram
+    ? "CUSTOM JS"
+    : prettyPrintLL(JSON.parse(lint.program));
   return `
 ### ${lint.name}
 **Tasks**: ${lint.taskTypes.join(", ")}
@@ -48,7 +51,7 @@ ${
 
 **Description**: ${lint.description}
 
-**Natural Language**: ${prettyPrintLL(JSON.parse(lint.program))}
+**Natural Language**: ${nlProgram}
 ${testCaseToText(lint.expectedFailingTests || [], "fail")}
 ${testCaseToText(lint.expectedPassingTests || [], "pass")}
 **Program**:

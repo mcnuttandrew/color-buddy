@@ -24,14 +24,14 @@
 
   $: checkGroups = checks.reduce(
     (acc, check) => {
-      if (!acc[check.group]) {
-        acc[check.group] = [];
+      if (!acc[check.lintProgram.group]) {
+        acc[check.lintProgram.group] = [];
       }
       // extremely dumb hack to move WCAGs to the top
-      if (check.name.startsWith("WCAG")) {
-        acc[check.group].push(check);
+      if (check.lintProgram.name.startsWith("WCAG")) {
+        acc[check.lintProgram.group].push(check);
       } else {
-        acc[check.group].push(check);
+        acc[check.lintProgram.group].push(check);
       }
       return acc;
     },
@@ -44,7 +44,7 @@
   function setGroupTo(checks: LintResult[], ignore: boolean) {
     const newEvalConfig = { ...evalConfig };
     checks.forEach((check) => {
-      newEvalConfig[check.name] = { ignore };
+      newEvalConfig[check.lintProgram.name] = { ignore };
     });
     colorStore.setCurrentPalEvalConfig(newEvalConfig);
   }
@@ -126,7 +126,7 @@
             >
               ignore all
             </button>
-            {#if checkGroup[1].some((x) => evalConfig[x.name]?.ignore)}
+            {#if checkGroup[1].some((x) => evalConfig[x.lintProgram.name]?.ignore)}
               <button
                 class={`${buttonStyle} `}
                 on:click={() => setGroupTo(checkGroup[1], false)}

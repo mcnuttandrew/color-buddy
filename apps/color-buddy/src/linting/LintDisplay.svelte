@@ -12,7 +12,7 @@
 
   $: currentPal = $colorStore.palettes[$colorStore.currentPal];
   $: evalConfig = currentPal.evalConfig;
-  $: ignored = !!evalConfig[check.name]?.ignore;
+  $: ignored = !!evalConfig[check.lintProgram.name]?.ignore;
   $: isCompact = $configStore.evalDisplayMode === "compact";
 </script>
 
@@ -20,14 +20,14 @@
   <EvalResponse {check} customWord={"✅"} />
 {:else if ignored}
   <div class="text-xs flex">
-    Ignored "{check.name}"
+    Ignored "{check.lintProgram.name}"
     <EvalResponse {check} customWord={"⚙️"} />
     <button
       class={buttonStyle}
       on:click={() => {
         colorStore.setCurrentPalEvalConfig({
           ...evalConfig,
-          [check.name]: { ignore: false },
+          [check.lintProgram.name]: { ignore: false },
         });
       }}
     >
@@ -41,14 +41,14 @@
           Pass
         </div>
       {/if}
-      {#if !check.passes && check.level === "error"}
+      {#if !check.passes && check.lintProgram.level === "error"}
         <div class="text-bf text-sm italic mr-2 text-red-500">Fail</div>
       {/if}
-      {#if !check.passes && check.level === "warning"}
+      {#if !check.passes && check.lintProgram.level === "warning"}
         <div class="text-bf text-sm italic mr-2 text-yellow-400">Warning</div>
       {/if}
       <div class:font-bold={!check.passes}>
-        {check.name}
+        {check.lintProgram.name}
       </div>
       <EvalResponse {check} />
     </div>

@@ -33,7 +33,6 @@
     </button>
   </div>
 {:else if lintResult.kind === "success"}
-  <!-- asd -->
   {#if justSummary && lintResult}
     <EvalResponse {lintResult} customWord={"✅"} />
   {:else}

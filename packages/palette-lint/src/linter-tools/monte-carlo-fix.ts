@@ -49,7 +49,6 @@ export const generateMCFix = (
     const lintResults = lints.map((lint) =>
       RunLint(lint, newPalette, { computeBlame: true, computeMessage: false })
     );
-    // newLints.forEach((lint) => lint.run());
     if (lintResults.every((lint) => lint.kind === "success" && lint.passes)) {
       passing = true;
       break;
@@ -78,46 +77,3 @@ export const generateMCFix = (
   }
   return newPalette;
 };
-
-//   // console.log("second stage");
-//   // let upper = newPalette;
-//   // let lower = palette;
-//   // let mid = interpolatePalettes(upper, lower);
-//   // let sufficient = false;
-//   // let minChecks = 5;
-//   // let maxChecks = 10;
-//   // let checks = 0;
-//   // while (!sufficient && checks < maxChecks) {
-//   //   checks++;
-//   //   const midLints = lints.map((lint) => RunLint(lint, mid, {})));
-//   //   midLints.forEach((lint) => lint.run());
-//   //   if (midLints.every((lint) => lint.passes)) {
-//   //     sufficient = checks > minChecks;
-//   //     break;
-//   //   }
-//   //   if (midLints.some((lint) => lint.passes)) {
-//   //     upper = mid;
-//   //   } else {
-//   //     lower = mid;
-//   //   }
-//   //   mid = interpolatePalettes(upper, lower);
-//   // }
-//   // console.log("finished");
-//   // return mid;
-// };
-
-// function interpolatePalettes(palA: Palette, palB: Palette) {
-//   const newColors = palA.colors.map((colorA, i) => {
-//     const colorB = palB.colors[i];
-//     const newChannels = colorA.color.toChannels().map((channelA, j) => {
-//       const channelB = colorB.color.toChannels()[j];
-//       return (channelA + channelB) / 2;
-//     }) as [number, number, number];
-//     const newColor = Color.colorFromChannels(newChannels, palA.colorSpace);
-//     return wrapColor(newColor);
-//   });
-//   return {
-//     ...palA,
-//     colors: newColors,
-//   };
-// }

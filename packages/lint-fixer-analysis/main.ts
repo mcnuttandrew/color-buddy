@@ -8,6 +8,7 @@ import {
   generateMCFix,
   suggestLintFix,
 } from "@color-buddy/palette-lint";
+import type { LintProgram } from "@color-buddy/palette-lint";
 import { Palette, makePalFromString } from "@color-buddy/palette";
 
 import prompter from "./prompter";
@@ -73,6 +74,11 @@ const allSets = [
     return newPal;
   });
 });
+
+function lintPasses(pal: Palette, lint: LintProgram): boolean {
+  const result = linter(pal, [lint], {})[0];
+  return result.kind === "success" && result.passes;
+}
 // .slice(0, 2);
 async function main() {
   // for each prebuilt lint, run it on each palette, record the result
@@ -97,9 +103,10 @@ async function main() {
     for (let idx = 0; idx < allSets.length; idx++) {
       console.log(`${idx} / ${allSets.length}`);
       const pal = allSets[idx];
-      // const l = new builtLint(pal);
-      // const result = l.run();
       const result = linter(pal, [lint], { computeMessage: true })[0];
+      if (result.kind !== "success") {
+        continue;
+      }
 
       const measurement: ResultType = {
         lintName: lint.name,
@@ -122,14 +129,14 @@ async function main() {
           suggestLintFix(pal, result).then((heuristicFix) => {
             measurement.heuristicFixPasses =
               heuristicFix.length > 0
-                ? linter(heuristicFix[0], [lint], {})[0].passes
+                ? lintPasses(heuristicFix[0], lint)
                   ? "pass"
                   : "fail"
                 : "unavailable";
           }),
           Promise.resolve().then(() => {
             const mcFix = generateMCFix(pal, [lint]);
-            measurement.mcFixPasses = linter(mcFix, [lint], {})[0].passes;
+            measurement.mcFixPasses = lintPasses(mcFix, lint);
           }),
           getPromptedSuggestion(pal, "openai", errMsg).then((suggestions) => {
             if (suggestions.length === 0 || !Array.isArray(suggestions)) {
@@ -142,7 +149,7 @@ async function main() {
               suggestion.background
             );
             newPal.background = pal.background;
-            measurement.openAIFixPasses = linter(newPal, [lint], {})[0].passes;
+            measurement.openAIFixPasses = lintPasses(newPal, lint);
           }),
 
           getPromptedSuggestion(pal, "anthropic", errMsg).then(
@@ -156,11 +163,7 @@ async function main() {
                 suggestion.colors,
                 suggestion.background
               );
-              measurement.anthropicFixPasses = linter(
-                newPal,
-                [lint],
-                {}
-              )[0].passes;
+              measurement.anthropicFixPasses = lintPasses(newPal, lint);
             }
           ),
         ]);

@@ -22,19 +22,19 @@ export interface LintProgram {
 }
 
 export interface LintResult {
-  blameData: number[] | number[][];
+  blameData: Blame;
   message: string;
   naturalLanguageProgram: string;
   passes: boolean;
   lintProgram: LintProgram;
 }
 
-type blame = number[] | number[][];
+type Blame = number[] | number[][];
 
 function buildMessage(
   lintProgram: LintProgram,
   palette: Palette,
-  blameData: blame
+  blameData: Blame
 ): string {
   let blame = "";
   if (lintProgram.blameMode === "pair") {
@@ -54,15 +54,18 @@ function executeLint(
   lintProgram: LintProgram,
   palette: Palette,
   options: RunLintOptions
-): { passCheck: boolean; blame: number[] | number[][] } {
+): { passCheck: boolean; blame: Blame } {
   const prog = Json.parse(lintProgram.program);
   const { result } = LLEval(prog, palette, {
     debugCompare: false,
     // ...options,
   });
   if (result) return { passCheck: true, blame: [] };
-  let blame: number[] | number[][] = [];
-  if (options.computeBlame && lintProgram.blameMode !== "none") {
+  let blame: Blame = [];
+  if (
+    (options.computeBlame || options.computeMessage) &&
+    lintProgram.blameMode !== "none"
+  ) {
     blame = permutativeBlame(prog, palette, lintProgram.blameMode);
   }
 
@@ -79,23 +82,19 @@ export function RunLint(
   palette: Palette,
   options: RunLintOptions
 ): LintResult {
-  let passCheck = false;
-  let blameData: blame = [];
+  let blameData: Blame = [];
   if (lint.customProgram) {
-    passCheck = lint.customProgram(palette);
+    const customPass = lint.customProgram(palette);
     return {
       blameData,
-      message: !passCheck ? lint.failMessage : "",
+      message: !customPass ? lint.failMessage : "",
       naturalLanguageProgram: "CUSTOM",
-      passes: passCheck,
+      passes: customPass,
       lintProgram: cloneLintProgram(lint),
     };
   }
 
-  const executionResult = executeLint(lint, palette, options);
-  passCheck = executionResult.passCheck;
-  blameData = executionResult.blame;
-
+  const result = executeLint(lint, palette, options);
   let natProg = "";
   let prog = false;
   try {
@@ -105,23 +104,16 @@ export function RunLint(
 
   let message = "";
   if (options.computeMessage) {
-    let localBlame = blameData;
-    if (!options.computeBlame && lint.blameMode !== "none") {
-      localBlame = permutativeBlame(prog, palette, lint.blameMode);
-      blameData = localBlame;
-    }
-    message = buildMessage(lint, palette, blameData);
+    message = buildMessage(lint, palette, result.blame);
   }
 
-  const result: LintResult = {
+  return {
     blameData,
     message,
     naturalLanguageProgram: natProg,
-    passes: passCheck,
+    passes: result.passCheck,
     lintProgram: cloneLintProgram(lint),
   };
-
-  return result;
 }
 
 function cloneLintProgram(lint: LintProgram): LintProgram {

@@ -24,7 +24,7 @@ newPal.colors.push(newColor);
 // EXAMPLE END
 
 test("Example Usage", () => {
-  expect(palette.colors.map((x) => x.spaceName).every((x) => x === "lch")).toBe(
+  expect(palette.colors.map((x) => x.spaceName).every((x) => x === "lab")).toBe(
     true
   );
   expect(newPal.colors.map((x) => x.spaceName).every((x) => x === "lch")).toBe(

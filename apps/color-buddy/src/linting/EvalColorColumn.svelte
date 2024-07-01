@@ -1,6 +1,6 @@
 <script lang="ts">
   import { colorNameSimple } from "@color-buddy/color-namer";
-  import { simulateCVD } from "@color-buddy/palette-lint";
+  import { cvdSim } from "@color-buddy/palette";
   import { Color } from "@color-buddy/palette";
 
   import colorStore from "../stores/color-store";
@@ -17,8 +17,7 @@
   $: colorNames = colorNameSimple(colors.map((x) => x));
   $: colors = $colorStore.palettes[$colorStore.currentPal].colors;
   $: selectedCVDType = $configStore.colorSim;
-  $: sim = (color: Color): string =>
-    simulateCVD(selectedCVDType, color).toHex();
+  $: sim = (color: Color): string => cvdSim(selectedCVDType, color).toHex();
 
   $: colorsToIssues = colors.map((x) => {
     const hex = `${x.toHex()}`;

@@ -6,7 +6,7 @@ import type { LintResult } from "@color-buddy/palette-lint";
 type SuggestFix = (
   pal: Palette,
   lint: LintResult,
-  engine: string
+  engine?: string
 ) => Promise<Palette[]>;
 
 function parsePalette(colors: string[], colorSpace: Palette["colorSpace"]) {

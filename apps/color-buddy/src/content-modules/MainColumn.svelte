@@ -14,7 +14,7 @@
   import ModifySelection from "../controls/ModifySelection.svelte";
   import PalPreview from "../components/PalPreview.svelte";
   import SetColorSpace from "../controls/SetColorSpace.svelte";
-  import { simulateCVD } from "@color-buddy/palette-lint";
+  import { cvdSim } from "@color-buddy/palette";
 
   import ContentEditable from "../components/ContentEditable.svelte";
 
@@ -79,7 +79,7 @@
     stopDragging={() => colorStore.resumePersistance()}
     annotationColors={selectedCVDType === "none"
       ? []
-      : currentPal.colors.map((x) => simulateCVD(selectedCVDType, x))}
+      : currentPal.colors.map((x) => cvdSim(selectedCVDType, x))}
   />
 
   <div class="flex flex-wrap" id="scatterplot-controls">

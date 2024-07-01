@@ -94,6 +94,9 @@ function processLint(
   return result;
 }
 
+/**
+ * The primary function for this package, it takes in a palette (defined by @color-buddy/palette) and an array of lint programs and returns a list of LintResults.
+ */
 export default function linter(
   palette: Palette,
   lints: LintProgram[],

@@ -38,6 +38,18 @@ interface InvalidLintResult {
   lintProgram: LintProgram;
 }
 
+/**
+ * The result of running a lint program on a palette. There are three possible outcomes:
+ * - Success: The lint passed or failed as expected {kind: "success"}. It has properties
+ * -- blameData: The colors that caused the lint to fail
+ * -- message: A message explaining why the lint failed
+ * -- naturalLanguageProgram: A human-readable version of the lint program
+ * -- passes: Whether the lint passed or failed
+ * - Ignored: The lint was ignored {kind: "ignored"}
+ * - Invalid: The lint was invalid {kind: "invalid"}
+ *
+ * All cases also have a lintProgram property that contains the lint program that was run.
+ */
 export type LintResult =
   | SuccessLintResult
   | IgnoredLintResult

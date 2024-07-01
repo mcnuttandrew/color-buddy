@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { simulateCVD } from "@color-buddy/palette-lint";
+  import { cvdSim } from "@color-buddy/palette";
   import { Color } from "@color-buddy/palette";
   import colorStore from "../stores/color-store";
   import focusStore from "../stores/focus-store";
@@ -19,7 +19,7 @@
       $configStore.colorSim !== "none" &&
       $configStore.useSimulatorOnExamples
     ) {
-      colors = colors.map((x) => simulateCVD($configStore.colorSim, x));
+      colors = colors.map((x) => cvdSim($configStore.colorSim, x));
     } else {
       colors = currentPal?.colors || [];
     }

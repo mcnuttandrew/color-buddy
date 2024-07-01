@@ -1,8 +1,7 @@
 import type { Palette } from "@color-buddy/palette";
 import { getName } from "@color-buddy/color-namer";
-import { Color, ColorSpaceDirectory } from "@color-buddy/palette";
+import { Color, ColorSpaceDirectory, cvdSim } from "@color-buddy/palette";
 
-import cvdSim from "../cvd-sim";
 import type { LintProgram } from "./lint-type";
 
 type RawValues = string | number | Color | string[] | number[] | Color[];

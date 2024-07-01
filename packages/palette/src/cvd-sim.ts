@@ -1,5 +1,5 @@
 import ColorIO from "colorjs.io";
-import { Color } from "../../palette/src/Color";
+import { Color } from "./Color";
 
 type Channels = [number, number, number];
 
@@ -112,6 +112,11 @@ function dl_simulate_cvd(
 }
 
 const simulationCache = new Map<string, Color>();
+/**
+ * Simulate the appearance of a color under a color vision deficiency.
+ * Code adapted from libDaltonLens https://daltonlens.org
+ * DLDeficiency = "normal" | "protanopia" | "protanomaly" | "deuteranopia" | "deuteranomaly" | "tritanopia" | "tritanomaly" | "achromatopsia" | "achromatomaly"
+ */
 export default function simulate_cvd(
   deficiency: DLDeficiency,
   color: Color

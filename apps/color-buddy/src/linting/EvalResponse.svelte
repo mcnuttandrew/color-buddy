@@ -33,9 +33,9 @@
       if (fixType === "ai") {
         fix = suggestLintAIFix(palette, lintResult, engine);
       } else if (fixType === "monte" && lintProgram) {
-        fix = suggestLintMonteFix(palette, lintResult, engine);
+        fix = suggestLintMonteFix(palette, lintResult);
       } else {
-        fix = suggestLintFix(palette, lintResult, engine);
+        fix = suggestLintFix(palette, lintResult);
       }
       return fix.then((x) => {
         suggestions = [...suggestions, ...x];

@@ -23,12 +23,21 @@ const fixDirectory: Record<string, LintFixer> = {
   fixSequentialOrder,
 };
 
+/**
+ * Suggest a heuristic fix for a failing lint result if there is one available. Fixes are available for the following lints:
+ * - background-contrast: fixBackgroundDifferentiability
+ * - name-discrim: fixColorNameDiscriminability
+ * - diverging-order: fixDivergingOrder
+ * - in-gamut: fixGamut
+ * - max-colors: fixMaxColors
+ * - sequential-order: fixSequentialOrder
+ * - even-distribution: fixHueDistribution, fixLightnessDistribution
+ */
 export async function suggestLintFix(
   palette: Palette,
-  lint: LintResult,
-  _engine?: string
+  lint: LintResult
 ): Promise<Palette[]> {
-  if (lint.kind !== "success") return [];
+  if (lint.kind !== "success" || lint.passes) return [];
   const sub = lint.lintProgram.subscribedFix;
   if (sub && fixDirectory[sub]) {
     return fixDirectory[sub](palette, lint);

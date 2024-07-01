@@ -19,10 +19,13 @@ function getBlamedColors(palette: Palette, lintResult: LintResult): string[] {
   }
 }
 
-export const generateMCFix = (
+/**
+ * Suggest a fix using a monte-carlo inspired optimization algorithm. This function will take a palette and a list of lints and attempt to fix the palette by taking random steps in the color space until all lints pass.
+ */
+export const suggestMCFix = async (
   palette: Palette,
   lints: LintProgram[]
-): Palette => {
+): Promise<Palette> => {
   // identify the step sizes for this color space
   const space = ColorSpaceDirectory[palette.colorSpace];
   const xStep = space.stepSize[1];

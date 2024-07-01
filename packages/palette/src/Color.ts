@@ -16,6 +16,7 @@ export class Color {
   static name: string = "";
   channels: Record<string, number> = {};
   spaceName: keyof typeof ColorSpaceDirectory = "rgb";
+  tags: string[] = [];
   static domains: Domain;
   static stepSize: Channels = [1, 1, 1];
   static channelNames: string[] = [];
@@ -506,7 +507,9 @@ function toColorSpace(
   const space = colorSpace === "rgb" ? "srgb" : colorSpace;
   const channels = color.toColorIO().to(space, { inGamut: true }).coords;
 
-  return new ColorSpaceDirectory[colorSpace]().fromChannels(channels);
+  const newColor = new ColorSpaceDirectory[colorSpace]().fromChannels(channels);
+  newColor.tags = color.tags;
+  return newColor;
 }
 
 export const ColorSpaceDirectory = {

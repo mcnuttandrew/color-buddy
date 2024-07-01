@@ -12,7 +12,8 @@
 
   function updateTags(updatedTags: string[]) {
     const updatedColors = [...currentPalette.colors];
-    updatedColors[focusedColorIdx] = { ...currentColor, tags: updatedTags };
+    updatedColors[focusedColorIdx] = currentColor;
+    updatedColors[focusedColorIdx].tags = updatedTags;
     colorStore.setCurrentPalColors(updatedColors);
   }
   let tagInput = "";

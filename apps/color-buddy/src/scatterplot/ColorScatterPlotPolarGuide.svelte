@@ -64,9 +64,9 @@
     coords[xIdx] = r;
     coords[yIdx] = angle;
     coords[zIdx] = focusedColors.length
-      ? colors[focusedColors[0]].color.toChannels()[zIdx]
+      ? colors[focusedColors[0]].toChannels()[zIdx]
       : colors.length
-        ? colors[0].color.toChannels()[zIdx]
+        ? colors[0].toChannels()[zIdx]
         : 0;
     return Color.colorFromChannels(coords, colorSpace as any).toDisplay();
   };

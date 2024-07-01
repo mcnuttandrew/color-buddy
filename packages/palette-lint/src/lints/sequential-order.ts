@@ -50,6 +50,6 @@ export default lint;
 const getLightness = (color: Color) => color.toColorIO().to("lab").coords[0];
 export const fixSequentialOrder: LintFixer = async (palette: Palette) => {
   const colors = [...palette.colors];
-  colors.sort((a, b) => getLightness(a.color) - getLightness(b.color));
+  colors.sort((a, b) => getLightness(a) - getLightness(b));
   return [{ ...palette, colors }];
 };

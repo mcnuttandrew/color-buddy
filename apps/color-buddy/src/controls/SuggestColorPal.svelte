@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Color, wrapColor } from "@color-buddy/palette";
+  import { Color } from "@color-buddy/palette";
   import type { Palette } from "@color-buddy/palette";
 
   import colorStore from "../stores/color-store";
@@ -20,7 +20,7 @@
   }): Palette {
     return {
       colors: suggestion.colors.map((x) =>
-        wrapColor(Color.colorFromString(x, colorSpace as any))
+        Color.colorFromString(x, colorSpace as any)
       ),
       background: Color.colorFromString(
         suggestion.background,

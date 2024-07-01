@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { makePalFromString, wrapColor } from "@color-buddy/palette";
+  import { makePalFromString } from "@color-buddy/palette";
   import type { Palette } from "@color-buddy/palette";
 
   import colorStore from "../stores/color-store";
@@ -13,9 +13,7 @@
   $: colorSpace = currentPal ? currentPal.colorSpace : "lab";
 
   function newPal(newPal: Palette) {
-    const colors = newPal.colors.map((x) =>
-      wrapColor(x.color.toColorSpace(colorSpace))
-    );
+    const colors = newPal.colors.map((x) => x.toColorSpace(colorSpace));
     const background = newPal.background.toColorSpace(colorSpace);
     const pal = {
       ...newPal,

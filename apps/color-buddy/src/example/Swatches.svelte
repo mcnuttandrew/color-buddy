@@ -1,7 +1,6 @@
 <script lang="ts">
   import { simulateCVD } from "@color-buddy/palette-lint";
   import { Color } from "@color-buddy/palette";
-  import type { ColorWrap } from "@color-buddy/palette";
   import colorStore from "../stores/color-store";
   import focusStore from "../stores/focus-store";
   import configStore from "../stores/config-store";
@@ -20,10 +19,7 @@
       $configStore.colorSim !== "none" &&
       $configStore.useSimulatorOnExamples
     ) {
-      colors = colors.map((x) => ({
-        ...x,
-        color: simulateCVD($configStore.colorSim, x.color),
-      }));
+      colors = colors.map((x) => simulateCVD($configStore.colorSim, x));
     } else {
       colors = currentPal?.colors || [];
     }
@@ -36,27 +32,27 @@
   let classes = [
     {
       className: `${common} big-swatch `,
-      styleMap: (color): string => `background-color: ${color.color.toHex()};`,
+      styleMap: (color): string => `background-color: ${color.toHex()};`,
       selectionClass: "rotate-12",
     },
     {
       className: `${common} small-swatch`,
-      styleMap: (color): string => `background-color: ${color.color.toHex()};`,
+      styleMap: (color): string => `background-color: ${color.toHex()};`,
       selectionClass: "rotate-12",
     },
     {
       className: `${common} small-swatch rounded-full`,
-      styleMap: (color): string => `border: 2px solid ${color.color.toHex()};`,
+      styleMap: (color): string => `border: 2px solid ${color.toHex()};`,
       selectionClass: "relative top-1 left-1",
     },
   ] as {
     className: string;
-    styleMap: (c: ColorWrap<Color>) => string;
+    styleMap: (c: Color) => string;
     selectionClass: string;
   }[];
 
   $: colorsInGroupsOf3 = colors.reduce(
-    (acc: number[][], x: ColorWrap<Color>, i: number) => {
+    (acc: number[][], x: Color, i: number) => {
       const idx = Math.floor(i / 3);
       if (!acc[idx]) {
         acc[idx] = [];
@@ -87,7 +83,7 @@
   <div class="flex flex-wrap justify-center">
     {#each colors as color, i}
       <button
-        style={`color: ${color.color.toHex()}; transform: rotate(${
+        style={`color: ${color.toHex()}; transform: rotate(${
           focusSet.has(i) ? 10 : 0
         }deg)`}
         class="mr-2 w-16"
@@ -98,7 +94,7 @@
             );
         }}
       >
-        {color.color.toHex()}
+        {color.toHex()}
       </button>
     {/each}
   </div>
@@ -136,7 +132,7 @@
     <div class="flex flex-col">
       {#each colors as color, i}
         <button
-          style={`background-color: ${color.color.toHex()};`}
+          style={`background-color: ${color.toHex()};`}
           class="wide-bar transition-all w-full"
           class:ml-5={focusSet.has(i)}
           class:mr-5={!focusSet.has(i)}

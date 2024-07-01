@@ -23,7 +23,7 @@
       {:else}
         <button
           on:click|stopPropagation={(e) => {
-            const hexes = colors.map((x) => x.color.toHex().toLowerCase());
+            const hexes = colors.map((x) => x.toHex().toLowerCase());
             const idx = hexes.findIndex(
               (x) => x === block.content.toLowerCase()
             );

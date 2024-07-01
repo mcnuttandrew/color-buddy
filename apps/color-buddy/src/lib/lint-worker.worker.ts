@@ -7,12 +7,13 @@ import { Color } from "@color-buddy/palette";
 import type { WorkerCommand } from "./worker-types";
 
 const cache: Record<string, Color> = {};
-const getColor = (hex: string, space: string): Color => {
+const getColor = (hex: string, space: string, tags: string[]): Color => {
   const key = `${hex}-${space}`;
   if (cache[key]) {
     return cache[key];
   }
   const result = Color.colorFromString(hex, space as any);
+  result.tags = tags;
   cache[key] = result;
   return result;
 };
@@ -20,11 +21,10 @@ const getColor = (hex: string, space: string): Color => {
 const hydratePal = (pal: string): Palette => {
   const parsed = JSON.parse(pal) as StringPalette;
   return {
-    background: getColor(parsed.background, parsed.colorSpace),
-    colors: parsed.colors.map((x) => ({
-      ...x,
-      color: getColor(x.color, parsed.colorSpace),
-    })),
+    background: getColor(parsed.background, parsed.colorSpace, []),
+    colors: parsed.colors.map((x) =>
+      getColor(x.color, parsed.colorSpace, x.tags)
+    ),
     type: parsed.type,
     colorSpace: parsed.colorSpace,
     name: parsed.name,
@@ -74,7 +74,7 @@ async function dispatch(cmd: WorkerCommand) {
         return [];
       }
       const fixedPalette = generateMCFix(newPal, lints);
-      return fixedPalette.colors.map((x) => x.color.toString());
+      return fixedPalette.colors.map((x) => x.toString());
     default:
       return "no-op";
   }

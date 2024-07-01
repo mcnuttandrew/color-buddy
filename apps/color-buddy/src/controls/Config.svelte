@@ -91,7 +91,7 @@
             return {
               background: background.toHex(),
               colorSpace,
-              colors: colors.map((c) => c.color.toHex()),
+              colors: colors.map((c) => c.toHex()),
               name,
               type,
             };

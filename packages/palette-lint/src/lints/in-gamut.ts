@@ -33,9 +33,10 @@ const lint: LintProgram = {
 export default lint;
 
 export const fixGamut: LintFixer = async (palette) => {
-  const colors = palette.colors.map((color) => ({
-    ...color,
-    color: color.color.fromChannels(clipToGamut(color.color)),
-  }));
+  const colors = palette.colors.map((color) => {
+    const newColor = color.fromChannels(clipToGamut(color));
+    newColor.tags = color.tags;
+    return newColor;
+  });
   return [{ ...palette, colors }];
 };

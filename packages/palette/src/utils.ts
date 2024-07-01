@@ -1,5 +1,5 @@
 import { Color, ColorSpaceDirectory } from "./Color";
-import type { Palette, StringPalette, ColorWrap } from "./types";
+import type { Palette, StringPalette } from "./types";
 
 const defaultHexPal: StringPalette = {
   name: "new palette",
@@ -20,7 +20,7 @@ export function makePalFromString(
 ): Palette {
   return {
     ...defaultHexPal,
-    colors: strings.map((str) => wrapColor(Color.colorFromString(str))),
+    colors: strings.map((str) => Color.colorFromString(str)),
     background: Color.colorFromString(bg, "lab"),
   };
 }
@@ -35,17 +35,12 @@ export const toPal = (
 ): Palette => {
   return {
     ...defaultHexPal,
-    colors: colors.map((x) => wrapColor(Color.colorFromString(x, colorSpace))),
+    colors: colors.map((x) => Color.colorFromString(x, colorSpace)),
     name: "mods",
     background: currentPal.background,
     type: currentPal.type,
   };
 };
-
-export const wrapColor = (x: Color): ColorWrap<Color> => ({
-  color: x,
-  tags: [],
-});
 
 const clamp = (x: number, min: number, max: number) =>
   Math.min(Math.max(x, min), max);
@@ -72,7 +67,7 @@ export function clipToGamut(color: Color): [number, number, number] {
 }
 
 /**
- * Distributes colors in a palette along a direction in color space. The direction can be horizontal, vertical, or in z space. 
+ * Distributes colors in a palette along a direction in color space. The direction can be horizontal, vertical, or in z space.
  */
 export function distributePoints(
   dir: {
@@ -80,9 +75,9 @@ export function distributePoints(
     name: string;
   },
   focusedColors: number[],
-  colors: ColorWrap<Color>[],
+  colors: Color[],
   colorSpace: keyof typeof ColorSpaceDirectory
-) {
+): Color[] {
   const space = ColorSpaceDirectory[colorSpace];
   const { x, y, z } = space.dimensionToChannel;
   const config = {
@@ -93,20 +88,20 @@ export function distributePoints(
   let sortedIndexes = focusedColors.sort((a, b) => {
     const modeToIdx = { horizontal: 1, vertical: 2, "in z space": 0 };
     const idx = modeToIdx[dir.direction] || 0;
-    const pointA = colors[a].color.toChannels()[idx];
-    const pointB = colors[b].color.toChannels()[idx];
+    const pointA = colors[a].toChannels()[idx];
+    const pointB = colors[b].toChannels()[idx];
     return pointA - pointB;
   });
   type Channels = [number, number, number];
-  const minPoint = colors[sortedIndexes[0]].color.toChannels() as Channels;
+  const minPoint = colors[sortedIndexes[0]].toChannels() as Channels;
   const maxPoint = colors[
     sortedIndexes[sortedIndexes.length - 1]
-  ].color.toChannels() as Channels;
+  ].toChannels() as Channels;
 
   const numPoints = sortedIndexes.length - 1;
   let newPoints = sortedIndexes.map((colorIdx, arrIdx) => {
     const t = arrIdx / numPoints;
-    const newPoint = colors.at(colorIdx)!.color.toChannels() as Channels;
+    const newPoint = colors.at(colorIdx)!.toChannels() as Channels;
     const xIdx = config.xChannelIndex;
     const yIdx = config.yChannelIndex;
     const zIdx = config.zChannelIndex;
@@ -125,10 +120,11 @@ export function distributePoints(
 
   const newColors = [...colors].map((color, idx) => {
     const point = pointsByIndex[idx];
-    return point
-      ? { ...color, color: Color.colorFromChannels(point, colorSpace as any) }
+    const newColor = point
+      ? Color.colorFromChannels(point, colorSpace as any)
       : color;
+    newColor.tags = color.tags;
+    return newColor;
   });
   return newColors;
-  // colorStore.setCurrentPalColors(newColors);
 }

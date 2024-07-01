@@ -130,6 +130,7 @@ export default function simulate_cvd(
   const newColorIO = new ColorIO(spaceName, newCoords).to(color.spaceName);
 
   const result = color.fromChannels(newColorIO.coords);
+  result.tags = color.tags;
   simulationCache.set(key, result);
   return result;
 }

@@ -1,7 +1,7 @@
 <script lang="ts">
   import colorStore from "../stores/color-store";
   import configStore from "../stores/config-store";
-  import { Color, wrapColor } from "@color-buddy/palette";
+  import { Color } from "@color-buddy/palette";
   import { suggestAdditionsToPalette } from "../lib/api-calls";
   import ColorButton from "../components/ColorButton.svelte";
   import AutocompleteOrSearch from "../components/AutocompleteOrSearch.svelte";
@@ -48,8 +48,9 @@
   <div class="flex w-full justify-between items-center">
     <AutocompleteOrSearch
       setValue={(x) => {
-        const newColor = wrapColor(
-          Color.colorFromString(colorCentersFromStoneHeer[x], colorSpace)
+        const newColor = Color.colorFromString(
+          colorCentersFromStoneHeer[x],
+          colorSpace
         );
         const newColors = [...colors, newColor];
         colorStore.setCurrentPalColors(newColors);
@@ -76,9 +77,7 @@
         <ColorButton
           {color}
           clickColor={() => {
-            const newColor = wrapColor(
-              Color.colorFromString(color, colorSpace)
-            );
+            const newColor = Color.colorFromString(color, colorSpace);
             const newColors = [...colors, newColor];
             colorStore.setCurrentPalColors(newColors);
             interpretations = interpretations.filter((x) => x !== color);

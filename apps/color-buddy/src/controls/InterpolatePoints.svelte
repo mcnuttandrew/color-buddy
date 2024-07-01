@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { Color, wrapColor } from "@color-buddy/palette";
-  import type { Palette, ColorWrap } from "@color-buddy/palette";
+  import { Color } from "@color-buddy/palette";
+  import type { Palette } from "@color-buddy/palette";
   import colorStore from "../stores/color-store";
   import focusStore from "../stores/focus-store";
   import { buttonStyle } from "../lib/styles";
@@ -41,11 +41,11 @@
 
     return points;
   }
-  function createInterpolation(): ColorWrap<Color>[] {
+  function createInterpolation(): Color[] {
     const newColors = [];
     const seenHexes = new Set<string>([]);
     const deDuppedFocusedColors = focusedColors
-      .map((x) => [x, colors[x].color.toHex()] as [number, string])
+      .map((x) => [x, colors[x].toHex()] as [number, string])
       .filter(([_idx, hexColor]) => {
         if (seenHexes.has(hexColor)) {
           return false;
@@ -57,10 +57,7 @@
     for (let idx = 0; idx < deDuppedFocusedColors.length - 1; idx++) {
       const pointA = colors[deDuppedFocusedColors[idx]];
       const pointB = colors[deDuppedFocusedColors[idx + 1]];
-      const newPoints = createInterpolatedPoints(
-        pointA.color,
-        pointB.color
-      ).map((x) => wrapColor(x));
+      const newPoints = createInterpolatedPoints(pointA, pointB);
       newColors.push(pointA, ...newPoints);
     }
     newColors.push(

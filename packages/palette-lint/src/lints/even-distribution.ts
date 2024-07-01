@@ -61,22 +61,16 @@ const evenHue: LintProgram = {
 };
 
 export const fixHueDistribution: LintFixer = async (palette) => {
-  const colors = palette.colors.map((x) => ({
-    ...x,
-    color: x.color.toColorSpace("lch"),
-  }));
+  const colors = palette.colors.map((x) => x.toColorSpace("lch"));
   const focusedColors = colors.map((_, idx) => idx);
   const newColors = distributePoints(
     { direction: "vertical", name: "whatever" },
     focusedColors,
     colors,
     "lch"
-  ).map((x) => ({
-    ...x,
-    color: x.color.toColorSpace(palette.colorSpace),
-  }));
+  ).map((x) => x.toColorSpace(palette.colorSpace));
 
-  return [{ ...palette, colors: newColors }] as (typeof palette)[];
+  return [{ ...palette, colors: newColors }];
 };
 
 const evenLightness: LintProgram = {
@@ -111,22 +105,16 @@ const evenLightness: LintProgram = {
 };
 
 export const fixLightnessDistribution: LintFixer = async (palette) => {
-  const colors = palette.colors.map((x) => ({
-    ...x,
-    color: x.color.toColorSpace("lch"),
-  }));
+  const colors = palette.colors.map((x) => x.toColorSpace("lch"));
   const focusedColors = colors.map((_, idx) => idx);
   const newColors = distributePoints(
     { direction: "in z space", name: "whatever" },
     focusedColors,
     colors,
     "lch"
-  ).map((x) => ({
-    ...x,
-    color: x.color.toColorSpace(palette.colorSpace),
-  }));
+  ).map((x) => x.toColorSpace(palette.colorSpace));
 
-  return [{ ...palette, colors: newColors }] as (typeof palette)[];
+  return [{ ...palette, colors: newColors }];
 };
 
 export default [evenHue, evenLightness];

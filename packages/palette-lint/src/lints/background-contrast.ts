@@ -97,34 +97,26 @@ export const fixBackgroundDifferentiability: LintFixer = async (palette) => {
   const bgCloserToWhite = backgroundL > 50;
   const clamp = (x: number) => Math.max(0, Math.min(100, x));
   // const newL = clamp(!bgCloserToWhite ? backgroundL * 1.5 : backgroundL * 0.5);
-  let colorsCloseToBackground = getColorsCloseToBackground(
-    colors.map((x) => x.color),
-    background
-  );
+  let colorsCloseToBackground = getColorsCloseToBackground(colors, background);
   let insufficientContrast = true;
   let newColors = colors;
   let ticker = 0;
   while (insufficientContrast && ticker < 100) {
     ticker++;
-    getColorsCloseToBackground(
-      newColors.map((x) => x.color),
-      background
-    );
+    colorsCloseToBackground = getColorsCloseToBackground(newColors, background);
     newColors = newColors.map((x, idx) => {
       if (!colorsCloseToBackground.includes(idx)) {
         return x;
       }
-      const [l, a, b] = x.color.toColorSpace("lab").toChannels();
+      const [l, a, b] = x.toColorSpace("lab").toChannels();
       const newL = clamp(bgCloserToWhite ? l - 1 : l + 1);
       const color = Color.colorFromChannels([newL, a, b], "lab").toColorSpace(
         colorSpace as any
       );
-      return { ...x, color };
+      color.tags = x.tags;
+      return color;
     });
-    colorsCloseToBackground = getColorsCloseToBackground(
-      newColors.map((x) => x.color),
-      background
-    );
+    colorsCloseToBackground = getColorsCloseToBackground(newColors, background);
     if (colorsCloseToBackground.length === 0) {
       insufficientContrast = false;
     }

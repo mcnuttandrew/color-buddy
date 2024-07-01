@@ -8,7 +8,7 @@ export type Engine = "openai" | "google" | "anthropic";
 type SimplePal = { background: string; colors: string[] };
 const palToString = (pal: Palette) => ({
   background: pal.background.toHex(),
-  colors: pal.colors.map((x) => x.color.toHex()),
+  colors: pal.colors.map((x) => x.toHex()),
 });
 
 const postCreds = {
@@ -186,7 +186,7 @@ function prepPalForWorker(pal: Palette) {
     background: pal.background.toString(),
     colors: pal.colors.map((x) => ({
       ...x,
-      color: x.color.toString(),
+      color: x.toString(),
     })),
   });
 }

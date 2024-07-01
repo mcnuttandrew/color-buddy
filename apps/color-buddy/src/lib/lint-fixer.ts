@@ -1,5 +1,5 @@
 import { suggestFix, suggestMonteFix } from "./api-calls";
-import { Color, wrapColor } from "@color-buddy/palette";
+import { Color } from "@color-buddy/palette";
 import type { Palette } from "@color-buddy/palette";
 import type { LintResult } from "@color-buddy/palette-lint";
 
@@ -11,7 +11,7 @@ type SuggestFix = (
 
 function parsePalette(colors: string[], colorSpace: Palette["colorSpace"]) {
   return colors.map((x) =>
-    wrapColor(Color.colorFromHex(x.replace("##", "#"), colorSpace))
+    Color.colorFromHex(x.replace("##", "#"), colorSpace)
   );
 }
 

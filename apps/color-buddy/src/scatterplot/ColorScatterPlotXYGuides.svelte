@@ -56,7 +56,7 @@
   const bgResolution = 15;
   const avgNums = (nums: number[]) =>
     nums.reduce((acc, x) => acc + x, 0) / nums.length;
-  $: fColors = focusedColors.map((x) => colors[x].color.toChannels());
+  $: fColors = focusedColors.map((x) => colors[x].toChannels());
   $: fillColor = (i: number, j: number) => {
     const coords = [0, 0, 0] as [number, number, number];
     coords[config.xChannelIndex] = xNonDimScale(i / bgResolution);

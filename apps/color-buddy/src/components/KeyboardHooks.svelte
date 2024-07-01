@@ -1,11 +1,10 @@
 <script lang="ts">
   import { Color } from "@color-buddy/palette";
-  import type { ColorWrap } from "@color-buddy/palette";
   import { colorPickerConfig } from "../lib/utils";
   import colorStore from "../stores/color-store";
   import focusStore from "../stores/focus-store";
   $: focusedSet = new Set($focusStore.focusedColors);
-  $: copiedData = [] as ColorWrap<Color>[];
+  $: copiedData = [] as Color[];
   $: currentPal = $colorStore.palettes[$colorStore.currentPal];
   $: colorSpace = currentPal ? currentPal.colorSpace : "lab";
   $: config = colorPickerConfig[colorSpace];
@@ -75,12 +74,12 @@
         if (!focusSet.has(idx)) {
           return color;
         }
-        const channels = color.color.toChannels();
+        const channels = color.toChannels();
         const xVal = channels[config.xChannelIndex];
         const yVal = channels[config.yChannelIndex];
         const zVal = channels[config.zChannelIndex];
 
-        let newColor = color.color;
+        let newColor = color;
         if (!optionKey && key === "arrowdown") {
           newColor = newColor.setChannel(
             config.yChannel,
@@ -111,7 +110,8 @@
             xVal + horizontalDir * step
           );
         }
-        return { ...color, color: newColor };
+        newColor.tags = color.tags;
+        return newColor;
       });
 
       colorStore.setCurrentPalColors(newColors);

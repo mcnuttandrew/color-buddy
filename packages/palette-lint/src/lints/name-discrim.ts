@@ -1,4 +1,4 @@
-import { Color, makePalFromString, wrapColor } from "@color-buddy/palette";
+import { Color, makePalFromString } from "@color-buddy/palette";
 import type { Palette } from "@color-buddy/palette";
 import { getName, getNames } from "@color-buddy/color-namer";
 
@@ -39,10 +39,10 @@ export const fixColorNameDiscriminability: LintFixer = async (
   palette: Palette
 ) => {
   const colors = palette.colors;
-  const colorNames = colors.map((x) => getName(x.color));
+  const colorNames = colors.map((x) => getName(x));
   const colorNameByIndex = colors.reduce(
     (acc, color, index) => {
-      const name = getName(color.color);
+      const name = getName(color);
       acc[name] = (acc[name] || []).concat(index);
       return acc;
     },
@@ -60,7 +60,7 @@ export const fixColorNameDiscriminability: LintFixer = async (
 
   const updatedColors = Object.fromEntries(
     conflictedIndices.map((idx) => {
-      const color = colors[idx].color;
+      const color = colors[idx];
       const hex = color.toHex().toUpperCase();
       const names = getNames(hex).heerStone;
       const possibleNames = names.filter(
@@ -72,7 +72,9 @@ export const fixColorNameDiscriminability: LintFixer = async (
       );
       const name = possibleNames[0];
       selectedNames.add(name.name);
-      return [idx, wrapColor(Color.colorFromHex(name.hex, color.spaceName))];
+      const newColor = Color.colorFromHex(name.hex, color.spaceName);
+      newColor.tags = color.tags;
+      return [idx, newColor];
     })
   );
 

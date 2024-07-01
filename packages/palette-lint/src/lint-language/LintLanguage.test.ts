@@ -9,10 +9,7 @@ const exampleColors = toPal(["#d4a8ff", "#7bb9ff", "#008694"]);
 
 test("LintLanguage basic eval - eval with no references ", () => {
   const prog1: LintProgram = {
-    "<": {
-      left: { count: exampleColors.colors.map((x) => x.color) },
-      right: 2,
-    },
+    "<": { left: { count: exampleColors.colors }, right: 2 },
   };
   expect(prettyPrintLL(prog1)).toBe("count([#d4a8ff, #7bb9ff, #008694]) < 2");
   expect(LLEval(prog1, exampleColors).result).toBe(false);
@@ -20,10 +17,7 @@ test("LintLanguage basic eval - eval with no references ", () => {
 
 test("LintLanguage basic eval - eval with no references 2 ", () => {
   const prog2 = {
-    "<": {
-      left: { count: exampleColors.colors.map((x) => x.color) },
-      right: 10,
-    },
+    "<": { left: { count: exampleColors.colors }, right: 10 },
   };
   const prog2Result = LLEval(prog2, exampleColors);
   expect(prog2Result.result).toBe(true);
@@ -324,7 +318,7 @@ test("LintLanguage Arithmetic Ops: =", () => {
 const opProg = (op: "+" | "-" | "/" | "*"): LintProgram =>
   ({
     "==": { left: { [op]: { left: 2, right: 10 } }, right: 2 },
-  } as LintProgram);
+  }) as LintProgram;
 test("LintLanguage Arithmetic Ops: + ", () => {
   expect(prettyPrintLL(opProg("+"))).toBe(`2 + 10 == 2`);
   expect(LLEval(opProg("+"), toPal([])).result).toBe(false);
@@ -348,7 +342,7 @@ test("LintLanguage Arithmetic Ops: *", () => {
 const aggProg = (op: string, right: number): LintProgram =>
   ({
     "==": { left: { [op]: [1, 2, 3, 4] }, right },
-  } as LintProgram);
+  }) as LintProgram;
 test("LintLanguage Agg Ops: sum", () => {
   expect(prettyPrintLL(aggProg("sum", 8))).toBe(`sum([1, 2, 3, 4]) == 8`);
   expect(LLEval(aggProg("sum", 8), toPal([])).result).toBe(false);

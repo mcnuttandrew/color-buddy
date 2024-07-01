@@ -1,17 +1,11 @@
-import type { Palette, ColorWrap } from "@color-buddy/palette";
+import type { Palette } from "@color-buddy/palette";
 import { getName } from "@color-buddy/color-namer";
-import { Color, ColorSpaceDirectory, wrapColor } from "@color-buddy/palette";
+import { Color, ColorSpaceDirectory } from "@color-buddy/palette";
 
 import cvdSim from "../cvd-sim";
 import type { LintProgram } from "./lint-type";
 
-type RawValues =
-  | string
-  | number
-  | ColorWrap<Color>
-  | string[]
-  | number[]
-  | ColorWrap<Color>[];
+type RawValues = string | number | Color | string[] | number[] | Color[];
 class Environment {
   constructor(
     private palette: Palette,
@@ -42,13 +36,13 @@ class Environment {
   get(name: string) {
     if (name === "colors") {
       const children = this.palette.colors
-        .map((x) => new LLColor(x, x.color.toHex()))
+        .map((x) => new LLColor(x, x.toHex()))
         .map((x) => new LLValue(x));
       return new LLValueArray(children);
     }
     if (name === "background") {
       return new LLColor(
-        wrapColor(this.palette.background),
+        this.palette.background,
         this.palette.background.toHex()
       );
     }
@@ -306,25 +300,25 @@ export class LLVariable extends LLNode {
 
 export class LLColor extends LLNode {
   constructor(
-    private value: ColorWrap<Color>,
+    private value: Color,
     private constructorString: string
   ) {
     super();
   }
-  evaluate(env: Environment): ReturnVal<ColorWrap<Color>> {
+  evaluate(env: Environment): ReturnVal<Color> {
     this.evalCheck(env);
 
     return { result: this.value, env };
   }
   static tryToConstruct(value: any, _options: OptionsConfig): false | LLColor {
     if (value instanceof Color) {
-      return new LLColor(wrapColor(value), value.toHex());
+      return new LLColor(value, value.toHex());
     }
     if (typeof value === "object" && value.color instanceof Color) {
       return new LLColor(value, value.color.toHex());
     }
     if (typeof value === "string" && Color.stringIsColor(value, "lab")) {
-      return new LLColor(wrapColor(Color.colorFromString(value, "lab")), value);
+      return new LLColor(Color.colorFromString(value, "lab"), value);
     }
     return false;
   }
@@ -408,7 +402,7 @@ export class LLNumberOp extends LLNode {
 
 const predicateTypes = ["==", "!=", ">", "<", "similar"] as const;
 
-type CompareType = number | boolean | string | ColorWrap<Color>;
+type CompareType = number | boolean | string | Color;
 function compareValues(
   leftVal: CompareType,
   rightVal: CompareType,
@@ -419,8 +413,8 @@ function compareValues(
   let left = leftVal;
   let right = rightVal;
   if (isColor && pred.type !== "similar") {
-    left = (leftVal as ColorWrap<Color>).color.toHex();
-    right = (rightVal as ColorWrap<Color>).color.toHex();
+    left = (leftVal as Color).toHex();
+    right = (rightVal as Color).toHex();
   }
   if (showValues) {
     console.log(pred.type, left, right);
@@ -430,16 +424,16 @@ function compareValues(
       let thresh = pred.threshold;
       if (!thresh) throw new Error("Similarity threshold not found");
       if (isColor) {
-        let localLeft = left as ColorWrap<Color>;
-        let localRight = right as ColorWrap<Color>;
-        const diff = localLeft.color.symmetricDeltaE(localRight.color, "2000");
+        let localLeft = left as Color;
+        let localRight = right as Color;
+        const diff = localLeft.symmetricDeltaE(localRight, "2000");
         if (showValues) {
           console.log(
             "diff",
             diff,
             thresh,
-            localLeft.color.toHex(),
-            localRight.color.toHex()
+            localLeft.toHex(),
+            localRight.toHex()
           );
         }
         return diff < thresh;
@@ -580,30 +574,28 @@ type Params = Record<string, string>;
 const VFTypes: {
   primaryKey: string;
   params: string[];
-  op: (val: ColorWrap<Color>, params: Params) => any;
+  op: (val: Color, params: Params) => any;
 }[] = [
   {
     primaryKey: "cvdSim",
     params: ["type"] as string[],
-    op: (val, params) => ({ ...val, color: cvdSim(params.type, val.color) }),
+    op: (val, params) => ({ ...val, color: cvdSim(params.type, val) }),
   },
   {
     primaryKey: "name",
     params: [] as string[],
-    op: (val, _params) => getName(val.color).toLowerCase(),
+    op: (val, _params) => getName(val).toLowerCase(),
   },
   {
     primaryKey: "toSpace",
     params: ["space", "channel"] as string[],
     op: (val, params) =>
-      Number(
-        val.color.toColorSpace(params.space as any).getChannel(params.channel)
-      ),
+      Number(val.toColorSpace(params.space as any).getChannel(params.channel)),
   },
   {
     primaryKey: "inGamut",
     params: [],
-    op: (val, _params) => val.color.inGamut(),
+    op: (val, _params) => val.inGamut(),
   },
   {
     primaryKey: "isTag",
@@ -621,10 +613,8 @@ Object.entries(ColorSpaceDirectory).map(([colorSpace, space]) => {
     VFTypes.push({
       primaryKey: `${colorSpace}.${channelKey.toLowerCase()}`,
       params: [] as string[],
-      op: (val: ColorWrap<Color>, _params: Params) =>
-        Number(
-          val.color.toColorSpace(colorSpace as any).getChannel(channelKey)
-        ),
+      op: (val: Color, _params: Params) =>
+        Number(val.toColorSpace(colorSpace as any).getChannel(channelKey)),
     });
   });
 });
@@ -706,26 +696,25 @@ const getParams = (op: any, node: any) =>
 const LLPairFunctionTypes: {
   primaryKey: string;
   params: string[];
-  op: (a: ColorWrap<Color>, b: ColorWrap<Color>, params: Params) => number;
+  op: (a: Color, b: Color, params: Params) => number;
 }[] = [
   {
     primaryKey: "dist",
     params: ["space"] as string[],
-    op: (valA, valB, params) =>
-      valA.color.distance(valB.color, params.space as any),
+    op: (valA, valB, params) => valA.distance(valB, params.space as any),
   },
   {
     primaryKey: "deltaE",
     params: ["algorithm"] as string[],
     op: (valA, valB, params) =>
-      valA.color.symmetricDeltaE(valB.color, params.algorithm as any),
+      valA.symmetricDeltaE(valB, params.algorithm as any),
   },
   {
     primaryKey: "contrast",
     params: ["algorithm"] as string[],
     op: (valA, valB, params) => {
-      const a = valA.color.toColorIO();
-      const b = valB.color.toColorIO();
+      const a = valA.toColorIO();
+      const b = valB.toColorIO();
       return Math.abs(a.contrast(b, params.algorithm as any));
     },
   },
@@ -745,10 +734,7 @@ export class LLPairFunction extends LLNode {
     // get the value of the input, such as by deref
     const leftEval = left.evaluate(env).result;
     const rightEval = right.evaluate(env).result;
-    if (
-      !(leftEval?.color instanceof Color) ||
-      !(rightEval?.color instanceof Color)
-    ) {
+    if (!(leftEval instanceof Color) || !(rightEval instanceof Color)) {
       throw new Error("Type error");
     }
     const op = LLPairFunctionTypes.find((x) => x.primaryKey === this.type);
@@ -1042,7 +1028,7 @@ export class LLMap extends LLNode {
             typeof x === "number" ||
             (typeof x === "object" && x?.type === "<number>")
         );
-        const allColors = children.every((x) => x?.color instanceof Color);
+        const allColors = children.every((x) => x instanceof Color);
         if (!allNumbers && !allColors) {
           const types = children.map((x) => x);
           console.log(children);

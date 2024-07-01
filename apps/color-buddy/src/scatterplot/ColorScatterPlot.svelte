@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { Color, wrapColor } from "@color-buddy/palette";
-  import type { Palette, ColorWrap } from "@color-buddy/palette";
+  import { Color } from "@color-buddy/palette";
+  import type { Palette } from "@color-buddy/palette";
 
   import { colorPickerConfig } from "../lib/utils";
   import {
@@ -28,7 +28,7 @@
   export let width = 256;
   export let height = 256;
   $: zWidth = 80;
-  export let onColorsChange: (color: ColorWrap<Color>[]) => void;
+  export let onColorsChange: (color: Color[]) => void;
   export let onFocusedColorsChange: (color: number[]) => void;
   export let startDragging: () => void;
   export let stopDragging: () => void;
@@ -46,15 +46,12 @@
     z: $configStore.zZoom,
   };
   $: pickedColors = focusedColors
-    .map((x) => colors[x].color)
+    .map((x) => colors[x])
     .filter((x) => x)
     .map((el) => [x(el), y(el), z(el)]);
   $: config = colorPickerConfig[colorSpace];
   $: bg = Pal.background;
-  $: colors = Pal.colors.map((x) => ({
-    ...x,
-    color: Color.toColorSpace(x.color, colorSpace),
-  }));
+  $: colors = Pal.colors.map((x) => Color.toColorSpace(x, colorSpace));
 
   $: domainXScale = scaleLinear().domain([0, 1]).range(config.xDomain);
   $: xScale = scaleLinear()
@@ -82,25 +79,25 @@
   // bound box for selected colors
   $: pos = makePosAndSizes(pickedColors);
 
-  let originalColors = [] as ColorWrap<Color>[];
+  let originalColors = [] as Color[];
   $: bgLum = bg.luminance();
   const findColorWithTag = (
-    colors: ColorWrap<Color>[],
+    colors: Color[],
     tag: string
-  ): ColorWrap<Color> | undefined => {
+  ): Color | undefined => {
     return colors.find((x) =>
       x.tags.some((y) => y.toLowerCase() === tag.toLowerCase())
     );
   };
   $: taggedAxisColor = findColorWithTag(colors, "axis");
   $: axisColor = taggedAxisColor
-    ? taggedAxisColor.color.toHex()
+    ? taggedAxisColor.toHex()
     : bgLum > 0.4
       ? "#00000022"
       : "#ffffff55";
   $: taggedTextColor = findColorWithTag(colors, "text");
   $: textColor = taggedTextColor
-    ? taggedTextColor.color.toHex()
+    ? taggedTextColor.toHex()
     : bgLum > 0.4
       ? "#00000066"
       : "#ffffffaa";
@@ -315,7 +312,7 @@
 
   function puttingEnd() {
     if (!puttingPreview) return;
-    onColorsChange([...colors, wrapColor(puttingPreview as Color)]);
+    onColorsChange([...colors, puttingPreview as Color]);
     setTimeout(() => {
       configStore.setScatterplotMode("moving");
     }, 10);
@@ -381,7 +378,7 @@
             {#each colors as color, i}
               {#if scatterPlotMode === "moving"}
                 <circle
-                  {...CircleProps(color.color, i)}
+                  {...CircleProps(color, i)}
                   stroke={interactionMode === "drag" &&
                   focusedColors.length === 1
                     ? "white"
@@ -400,15 +397,15 @@
               {/if}
               {#if scatterPlotMode !== "moving"}
                 <circle
-                  {...CircleProps(color.color, i)}
+                  {...CircleProps(color, i)}
                   on:mouseenter|preventDefault={() => hoverPoint(i)}
                 />
               {/if}
-              {#if !color.color.inGamut() && $configStore.showGamutMarkers}
+              {#if !color.inGamut() && $configStore.showGamutMarkers}
                 <GamutMarker
-                  xPos={x(color.color)}
-                  yPos={y(color.color)}
-                  lum={color.color.luminance()}
+                  xPos={x(color)}
+                  yPos={y(color)}
+                  lum={color.luminance()}
                   selected={focusSet.has(i)}
                 />
               {/if}
@@ -418,8 +415,8 @@
                 stroke-dasharray="5,5"
                 x1={x(annotationColor)}
                 y1={y(annotationColor)}
-                x2={x(colors[i].color)}
-                y2={y(colors[i].color)}
+                x2={x(colors[i])}
+                y2={y(colors[i])}
                 stroke={annotationColor.toDisplay()}
                 stroke-width="1"
               />
@@ -507,15 +504,10 @@
 
         {#if typeof hoveredPoint !== "boolean" && focusedColors.length < 2}
           <g transform={`translate(0, ${height - margin.bottom})`}>
-            <circle
-              fill={hoveredPoint.color.toDisplay()}
-              cx={6}
-              cy={-7.5}
-              r="6"
-            />
-            <text fill={textColor} x={15}>{hoveredPoint.color.toHex()}</text>
+            <circle fill={hoveredPoint.toDisplay()} cx={6} cy={-7.5} r="6" />
+            <text fill={textColor} x={15}>{hoveredPoint.toHex()}</text>
             <text fill={textColor} y="15">
-              {hoveredPoint.color.toPrettyString()}
+              {hoveredPoint.toPrettyString()}
             </text>
           </g>
         {/if}
@@ -544,7 +536,7 @@
             {#each colors as color, i}
               {#if scatterPlotMode === "moving"}
                 <rect
-                  {...RectProps(color.color, i)}
+                  {...RectProps(color, i)}
                   on:mousedown|preventDefault={pointMouseDown}
                   on:mouseup|preventDefault={pointMouseUp(i)}
                   on:mouseleave|preventDefault={switchToDragPoint(i)}
@@ -558,7 +550,7 @@
                 />
               {:else}
                 <rect
-                  {...RectProps(color.color, i)}
+                  {...RectProps(color, i)}
                   on:mouseenter|preventDefault={() => hoverPoint(i)}
                 />
               {/if}

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Color, wrapColor } from "@color-buddy/palette";
+  import { Color } from "@color-buddy/palette";
   import type { Palette } from "@color-buddy/palette";
 
   import colorStore from "../stores/color-store";
@@ -23,14 +23,12 @@
       <div slot="content" class="flex flex-col">
         <input
           class="mb-2"
-          value={color.color.toHex()}
+          value={color.toHex()}
           on:change={(e) => {
             // @ts-ignore
             const val = e.target.value;
             const newColors = [...pal.colors];
-            newColors[idx] = wrapColor(
-              Color.colorFromString(val, pal.colorSpace)
-            );
+            newColors[idx] = Color.colorFromString(val, pal.colorSpace);
             updatePal({ ...pal, colors: newColors });
           }}
         />
@@ -45,10 +43,13 @@
             });
           }}
           colorMode={pal.colorSpace}
-          color={color.color}
+          {color}
           onColorChange={(newColor) => {
             const newColors = [...pal.colors];
-            newColors[idx] = wrapColor(newColor);
+            const oldColor = newColors[idx];
+            const tags = [...oldColor.tags];
+            newColors[idx] = newColor;
+            newColors[idx].tags = tags;
             updatePal({ ...pal, colors: newColors });
           }}
         />
@@ -69,10 +70,9 @@
               <button
                 on:click={() => {
                   const newColors = [...pal.colors];
-                  newColors[idx] = {
-                    ...newColors[idx],
-                    tags: newColors[idx].tags.filter((_, i) => i !== jdx),
-                  };
+                  newColors[idx].tags = newColors[idx].tags.filter(
+                    (_, i) => i !== jdx
+                  );
                   updatePal({ ...pal, colors: newColors });
                 }}
               >
@@ -86,10 +86,10 @@
           on:keydown={(e) => {
             if (e.key === "Enter") {
               const newColors = [...pal.colors];
-              newColors[idx] = {
-                ...newColors[idx],
-                tags: [...newColors[idx].tags, e.currentTarget.value],
-              };
+              newColors[idx].tags = [
+                ...newColors[idx].tags,
+                e.currentTarget.value,
+              ];
               updatePal({ ...pal, colors: newColors });
               e.currentTarget.value = "";
             }
@@ -105,10 +105,9 @@
         class={"w-6 h-6 mx-2 rounded-full transition-all"}
         class:border-4={blamedSet.has(idx)}
         class:border-dashed={blamedSet.has(idx)}
-        class:border-black={blamedSet.has(idx) && color.color.luminance() > 0.5}
-        class:border-white={blamedSet.has(idx) &&
-          color.color.luminance() <= 0.5}
-        style="background-color: {color.color.toDisplay()}"
+        class:border-black={blamedSet.has(idx) && color.luminance() > 0.5}
+        class:border-white={blamedSet.has(idx) && color.luminance() <= 0.5}
+        style="background-color: {color.toDisplay()}"
       ></button>
     </Tooltip>
   {/each}
@@ -117,10 +116,7 @@
       <button
         class={buttonStyle}
         on:click={() => {
-          const newColors = [
-            ...pal.colors,
-            wrapColor(Color.colorFromString("steelblue")),
-          ];
+          const newColors = [...pal.colors, Color.colorFromString("steelblue")];
           updatePal({ ...pal, colors: newColors });
         }}
       >
@@ -157,7 +153,7 @@
         }}
       />
       <div>
-        Colors: [{pal.colors.map((x) => `"${x.color.toHex()}"`).join(", ")}]
+        Colors: [{pal.colors.map((x) => `"${x.toHex()}"`).join(", ")}]
       </div>
     </div>
     <button slot="target" let:toggle on:click={toggle}>⚙</button>

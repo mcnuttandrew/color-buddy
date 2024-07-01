@@ -1,0 +1,101 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Simple Usage 1`] = `"brightred"`;
+
+exports[`Simple Usage 2`] = `"brightgreen"`;
+
+exports[`Simple Usage 3`] = `"blue"`;
+
+exports[`Simple Usage 4`] = `"yellow"`;
+
+exports[`Simple Usage 5`] = `"cyan"`;
+
+exports[`Simple Usage 6`] = `"neonpurple"`;
+
+exports[`Simple Usage 7`] = `"white"`;
+
+exports[`Simple Usage 8`] = `"black"`;
+
+exports[`Simple Usage 9`] = `"white"`;
+
+exports[`Simple Usage 10`] = `"white"`;
+
+exports[`Simple Usage 11`] = `"white"`;
+
+exports[`Simple Usage 12`] = `"white"`;
+
+exports[`Simple Usage 13`] = `"white"`;
+
+exports[`Simple Usage 14`] = `"white"`;
+
+exports[`Simple Usage 15`] = `"offwhite"`;
+
+exports[`Simple Usage 16`] = `"offwhite"`;
+
+exports[`Simple Usage 17`] = `"white"`;
+
+exports[`Simple Usage 18`] = `"lightgrey"`;
+
+exports[`Simple Usage 19`] = `"lightgrey"`;
+
+exports[`Simple Usage 20`] = `"white"`;
+
+exports[`Simple Usage 21`] = `"white"`;
+
+exports[`Simple Usage 22`] = `"white"`;
+
+exports[`Simple Usage 23`] = `"white"`;
+
+exports[`Simple Usage 24`] = `"lightgrey"`;
+
+exports[`Simple Usage 25`] = `"white"`;
+
+exports[`Simple Usage 26`] = `"white"`;
+
+exports[`Simple Usage 27`] = `"white"`;
+
+exports[`Simple Usage 28`] = `"white"`;
+
+exports[`Simple Usage 29`] = `"white"`;
+
+exports[`Simple Usage 30`] = `"white"`;
+
+exports[`Simple Usage 31`] = `"white"`;
+
+exports[`Simple Usage 32`] = `"white"`;
+
+exports[`Simple Usage 33`] = `"white"`;
+
+exports[`Simple Usage 34`] = `"white"`;
+
+exports[`Simple Usage 35`] = `"white"`;
+
+exports[`Simple Usage 36`] = `"paleblue"`;
+
+exports[`Simple Usage 37`] = `"white"`;
+
+exports[`Simple Usage 38`] = `"white"`;
+
+exports[`Simple Usage 39`] = `"paleblue"`;
+
+exports[`Simple Usage 40`] = `"white"`;
+
+exports[`Simple Usage 41`] = `"white"`;
+
+exports[`Simple Usage 42`] = `"offwhite"`;
+
+exports[`Simple Usage 43`] = `"offwhite"`;
+
+exports[`Simple Usage 44`] = `"offwhite"`;
+
+exports[`Simple Usage 45`] = `"offwhite"`;
+
+exports[`Simple Usage 46`] = `"white"`;
+
+exports[`Simple Usage 47`] = `"white"`;
+
+exports[`Simple Usage 48`] = `"white"`;
+
+exports[`Simple Usage 49`] = `"white"`;
+
+exports[`Simple Usage 50`] = `"white"`;

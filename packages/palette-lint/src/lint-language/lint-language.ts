@@ -1,5 +1,5 @@
 import type { Palette } from "@color-buddy/palette";
-import { getName } from "@color-buddy/color-namer";
+import { nameColor } from "@color-buddy/color-namer";
 import { Color, ColorSpaceDirectory, cvdSim } from "@color-buddy/palette";
 
 import type { LintProgram } from "./lint-type";
@@ -582,7 +582,7 @@ const VFTypes: {
   {
     primaryKey: "name",
     params: [] as string[],
-    op: (val, _params) => getName(val).toLowerCase(),
+    op: (val, _params) => nameColor(val)[0].toLowerCase(),
   },
   {
     primaryKey: "toSpace",

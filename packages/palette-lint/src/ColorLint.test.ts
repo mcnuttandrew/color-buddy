@@ -1,7 +1,7 @@
 import { expect, test } from "vitest";
 
 import { Color, makePalFromString } from "@color-buddy/palette";
-import { getName } from "@color-buddy/color-namer";
+import { nameColor } from "@color-buddy/color-namer";
 
 import { suggestLintFix } from "./linter-tools/lint-fixer";
 import { RunLint } from "./ColorLint";
@@ -96,10 +96,12 @@ test("ColorLint - ColorNameDiscriminability", async () => {
     );
     const fix = await suggestLintFix(examplePal, lintResult);
     const oldColorNames = unique<string>(
-      examplePal.colors.map((x) => getName(x))
+      examplePal.colors.map((x) => nameColor(x)[0])
     );
     expect(oldColorNames.length).toBe(colors.length - 1);
-    const colorNames = unique<string>(fix[0].colors.map((x) => getName(x)));
+    const colorNames = unique<string>(
+      fix[0].colors.map((x) => nameColor(x)[0])
+    );
     expect(
       colorNames.length,
       `The ${addNumberSuffix(idx)} set of colors should be corrected properly`

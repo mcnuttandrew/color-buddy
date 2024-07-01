@@ -33,9 +33,9 @@ export const colorPickerConfig = Object.fromEntries(
       name,
       {
         advancedSpace: space.advancedSpace,
-        axisLabel: exampleColor.axisLabel,
+        axisLabel: space.axisLabel,
         description: space.description,
-        isPolar: exampleColor.isPolar,
+        isPolar: space.isPolar,
         title: space.name,
         xChannel: x,
         xChannelIndex: space.channelNames.indexOf(x),

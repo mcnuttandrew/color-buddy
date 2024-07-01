@@ -8,6 +8,8 @@ const stringChannelsCache = new Map<string, Channels>();
 const stringIsColorCache = new Map<string, boolean>();
 type DistAlgorithm = "76" | "CMC" | "2000" | "ITP" | "Jz" | "OK";
 
+const ColorIOCaches = new Map<string, ColorIO>();
+const InGamutCache = new Map<string, boolean>();
 /**
  * The base class for all color spaces
  *
@@ -27,10 +29,8 @@ export class Color {
     y: "",
     z: "",
   };
-  axisLabel: (num: number) => string = (x) => x.toFixed(1).toString();
-  isPolar = false;
-  cachedColorIO: ColorIO | null = null;
-  cachedInGamut: boolean | null = null;
+  static axisLabel: (num: number) => string = (x) => x.toFixed(1).toString();
+  static isPolar = false;
 
   toHex(): string {
     const str = this.toString();
@@ -49,7 +49,9 @@ export class Color {
     return `${this.spaceName}(${channelsString.join(", ")})`;
   }
   prettyChannels(): string[] {
-    return Object.values(this.channels).map((x) => this.axisLabel(x));
+    // get axisLabel for class instance
+    const label = (this.constructor as any).axisLabel;
+    return Object.values(this.channels).map((x) => label(x));
   }
   toPrettyString(): string {
     return `${this.spaceName}(${this.prettyChannels().join(", ")})`;
@@ -76,20 +78,22 @@ export class Color {
     // return this.toColorIO().display();
   }
   inGamut(): boolean {
-    if (this.cachedInGamut !== null) {
-      return this.cachedInGamut;
+    const key = this.toString();
+    if (InGamutCache.has(key)) {
+      return InGamutCache.get(key)!;
     }
     const result = this.toColorIO().inGamut("srgb");
-    this.cachedInGamut = result;
+    InGamutCache.set(key, result);
     return result;
   }
   toColorIO(): ColorIO {
-    if (this.cachedColorIO) {
-      return this.cachedColorIO;
+    const key = this.toString();
+    if (ColorIOCaches.has(key)) {
+      return ColorIOCaches.get(key)!;
     }
     try {
       const val = new ColorIO(this.toString());
-      this.cachedColorIO = val;
+      ColorIOCaches.set(key, val);
       return val;
     } catch (e) {
       console.log("error", e, this.toString());
@@ -237,7 +241,7 @@ class CIELAB extends Color {
   static description =
     "CIELAB is a perceptually uniform color space. Roughly, L is lightness, a is red-green, and b is blue-yellow. This is the default color space for Color Buddy.";
   static advancedSpace = false;
-  axisLabel = (num: number) => `${Math.round(num)}`;
+  static axisLabel = (num: number) => `${Math.round(num)}`;
 
   toString(): string {
     const [L, a, b] = this.stringChannels();
@@ -251,7 +255,7 @@ class CIELAB extends Color {
 class HSV extends Color {
   static name = "HSV";
   static channelNames = ["h", "s", "v"];
-  isPolar = true;
+  static isPolar = true;
   channels = { h: 0, s: 0, v: 0 };
   static domains = { h: [0, 360], s: [0, 100], v: [100, 0] } as Domain;
   spaceName = "hsv" as const;
@@ -279,7 +283,7 @@ class RGB extends Color {
   static dimensionToChannel = { x: "g", y: "b", z: "r" };
   static description =
     "RGB is an rectangular color space. R is red, G is green, and B is blue.";
-  axisLabel = (num: number) => `${Math.round(num)}`;
+  static axisLabel = (num: number) => `${Math.round(num)}`;
   toString(): string {
     const [r, g, b] = this.stringChannels();
     return `rgb(${r} ${g} ${b})`;
@@ -300,7 +304,7 @@ class SRGB extends Color {
   static dimensionToChannel = { x: "g", y: "b", z: "r" };
   static description =
     "sRGB is an rectangular color space. R is red, G is green, and B is blue.";
-  axisLabel = (num: number) => `${Math.round(num)}`;
+  static axisLabel = (num: number) => `${Math.round(num)}`;
   toString(): string {
     const [r, g, b] = this.stringChannels();
     return `rgb(${Number(r) * 255} ${Number(g) * 255} ${Number(b) * 255})`;
@@ -322,7 +326,7 @@ class HSL extends Color {
   static description =
     "HSL is a cylindrical color space. H is hue, S is saturation, and L is lightness.";
   static advancedSpace = false;
-  isPolar = true;
+  static isPolar = true;
 
   toString(): string {
     const [h, s, l] = this.stringChannels();
@@ -344,8 +348,8 @@ class LCH extends Color {
   static description =
     "LCH is a cylindrical color space. L is lightness, C is chroma, and H is hue.";
   static advancedSpace = false;
-  isPolar = true;
-  axisLabel = (num: number) => `${Math.round(num)}`;
+  static isPolar = true;
+  static axisLabel = (num: number) => `${Math.round(num)}`;
 }
 
 // OKLAB still cursed
@@ -382,7 +386,7 @@ class OKLCH extends Color {
   static dimensionToChannel = { x: "c", y: "h", z: "l" };
   static description =
     "OKLCH is a cylindrical color space. It is a refinement of LCH.";
-  isPolar = true;
+  static isPolar = true;
 }
 
 class JZAZBZ extends Color {
@@ -416,7 +420,7 @@ class HCT extends Color {
   static domains = { h: [360, 0], c: [0, 145], t: [100, 0] } as Domain;
   static stepSize: Channels = [1, 1, 1];
   static dimensionToChannel = { x: "c", y: "h", z: "t" };
-  isPolar = true;
+  static isPolar = true;
   static description =
     "HCT is Google's attempt to create a perceptually uniform color space. H is hue, C is chroma, and T is tone.";
 
@@ -441,7 +445,7 @@ class CAM16 extends Color {
   static dimensionToChannel = { x: "m", y: "h", z: "j" };
   static description =
     "CAM16 is a perceptually uniform color space. J is lightness, M is colorfulness, and H is hue.";
-  isPolar = true;
+  static isPolar = true;
 
   toString(): string {
     const [h, c, t] = Object.values(this.channels).map((x) =>

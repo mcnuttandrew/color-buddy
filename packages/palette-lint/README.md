@@ -9,27 +9,32 @@ Example usage todo! For now see the test files for examples.
 This library contains the following functions:
 
 ### generateMCFix
-
 **Function**: `generateMCFix(palette: Palette, lints: LintProgram[]) => Palette`
 
-### linter
 
+
+### linter
 **Function**: `linter(palette: Palette, lints: LintProgram[], options: RunLintOptions) => LintResult[]`
 
-### simulateCVD
 
+
+### simulateCVD
 **Function**: `simulateCVD(deficiency: string, color: Color) => Color`
 
-### suggestLintFix
 
+
+### suggestLintFix
 **Function**: `suggestLintFix(palette: Palette, lint: LintResult, _engine: string) => Promise<Palette[]>`
+
+
 
 This library contains the following types:
 
 ### LintResult
-
 **Type**: `LintResult: SuccessLintResult | IgnoredLintResult | InvalidLintResult`
 
-## Usage
 
+
+
+## Usage
 TODO

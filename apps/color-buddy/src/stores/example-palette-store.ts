@@ -49,10 +49,7 @@ export const makePal = (
   type: any = "categorical"
 ) => {
   const pal = makePalFromString(colors);
-  pal.colors = pal.colors.map((x) => {
-    x.color = x.color.toColorSpace(colorSpace);
-    return x;
-  });
+  pal.colors = pal.colors.map((x) => x.toColorSpace(colorSpace));
   return {
     ...pal,
     name,

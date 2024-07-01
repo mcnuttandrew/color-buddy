@@ -12,7 +12,7 @@ export {
   Color,
   ColorSpaceDirectory,
 };
-export type { Palette, StringPalette, ColorWrap, ColorSpace, PalType };
+export type { Palette, StringPalette, ColorSpace, PalType };
 ```
 
 ## Contents
@@ -20,66 +20,49 @@ export type { Palette, StringPalette, ColorWrap, ColorSpace, PalType };
 This library contains the following functions:
 
 ### clipToGamut
+
 **Function**: `clipToGamut(color: Color) => [number, number, number]`
 
 **Description**: Clips a color to the gamut of its color space. Return the clipped color as an array of channels in the originating color space.
 
-
-
 ### distributePoints
-**Function**: `distributePoints(dir: Object, focusedColors: number[], colors: ColorWrap<Color>[], colorSpace: "cam16-jmh" | "hct" | "hsl" | "hsv" | "jzazbz" | "lab" | "lch" | "oklch" | "rgb" | "srgb") => ColorWrap<Color>[]`
+
+**Function**: `distributePoints(dir: Object, focusedColors: number[], colors: Color[], colorSpace: "cam16-jmh" | "hct" | "hsl" | "hsv" | "jzazbz" | "lab" | "lch" | "oklch" | "rgb" | "srgb") => Color[]`
 
 **Description**: Distributes colors in a palette along a direction in color space. The direction can be horizontal, vertical, or in z space.
 
-
-
 ### makePalFromString
+
 **Function**: `makePalFromString(strings: string[], bg: string) => Palette`
 
 **Description**: Creates a palette from an array of strings. The background color can be specified as a string.
 
-
-
 ### toPal
+
 **Function**: `toPal(colors: string[], currentPal: Palette, colorSpace: any) => Palette`
-
-
-
-### wrapColor
-**Function**: `wrapColor(x: Color) => ColorWrap<Color>`
-
-
 
 This library contains the following types:
 
 ### ColorSpace
+
 **Type**: `ColorSpace: keyof typeof ColorSpaceDirectory`
 
-
-
-### ColorWrap
-**Type**: `ColorWrap: Object`
-
-
-
 ### PalType
+
 **Type**: `PalType: "sequential" | "diverging" | "categorical"`
 
-
-
 ### Palette
-**Type**: `Palette: Pal<Color>`
 
-
+**Type**: `Palette: Pal<Color, Color>`
 
 ### StringPalette
-**Type**: `StringPalette: Pal<string>`
 
-
+**Type**: `StringPalette: Pal<Object, string>`
 
 This library contains the following classes:
 
 ### Color
+
 The base class for all color spaces
 
 **Class**: `Color`
@@ -88,53 +71,54 @@ Constructor:
 **Constructor**: `constructor(ConstructorSignature new Color: Color)`
 
 Properties:
-**Property** axisLabel: Function 
-**Property** cachedColorIO: null | Color 
-**Property** cachedInGamut: null | boolean 
-**Property** channels: Record<string, number> 
-**Property** isPolar: boolean 
-**Property** spaceName: "cam16-jmh" | "hct" | "hsl" | "hsv" | "jzazbz" | "lab" | "lch" | "oklch" | "rgb" | "srgb" 
+**Property** axisLabel: Function
+**Property** cachedColorIO: null | Color
+**Property** cachedInGamut: null | boolean
+**Property** channels: Record<string, number>
+**Property** isPolar: boolean
+**Property** spaceName: "cam16-jmh" | "hct" | "hsl" | "hsv" | "jzazbz" | "lab" | "lch" | "oklch" | "rgb" | "srgb"
+**Property** tags: string[]
 
 Non-static:
-**Method** copy: `copy() => Color` 
-**Method** deltaE: `deltaE(color: Color, algorithm: DistAlgorithm) => number` 
-**Method** distance: `distance(color: Color, space: string) => number` 
-**Method** fromChannels: `fromChannels(channels: Channels) => Color` 
-**Method** fromString: `fromString(colorString: string, allowError: boolean) => Color` 
-**Method** getChannel: `getChannel(channel: string) => number` 
-**Method** inGamut: `inGamut() => boolean` 
-**Method** luminance: `luminance() => number` 
-**Method** prettyChannels: `prettyChannels() => string[]` 
-**Method** setChannel: `setChannel(channel: string, value: number) => Color` 
-**Method** stringChannels: `stringChannels() => string[]` 
-**Method** symmetricDeltaE: `symmetricDeltaE(color: Color, algorithm: DistAlgorithm) => number` 
-**Method** toChannels: `toChannels() => Channels` 
-**Method** toColorIO: `toColorIO() => Color` 
-**Method** toColorSpace: `toColorSpace(colorSpace: "cam16-jmh" | "hct" | "hsl" | "hsv" | "jzazbz" | "lab" | "lch" | "oklch" | "rgb" | "srgb") => Color` 
-**Method** toDisplay: `toDisplay() => string` 
-**Method** toHex: `toHex() => string` 
-**Method** toPrettyString: `toPrettyString() => string` 
-**Method** toString: `toString() => string` 
+**Method** copy: `copy() => Color`
+**Method** deltaE: `deltaE(color: Color, algorithm: DistAlgorithm) => number`
+**Method** distance: `distance(color: Color, space: string) => number`
+**Method** fromChannels: `fromChannels(channels: Channels) => Color`
+**Method** fromString: `fromString(colorString: string, allowError: boolean) => Color`
+**Method** getChannel: `getChannel(channel: string) => number`
+**Method** inGamut: `inGamut() => boolean`
+**Method** luminance: `luminance() => number`
+**Method** prettyChannels: `prettyChannels() => string[]`
+**Method** setChannel: `setChannel(channel: string, value: number) => Color`
+**Method** stringChannels: `stringChannels() => string[]`
+**Method** symmetricDeltaE: `symmetricDeltaE(color: Color, algorithm: DistAlgorithm) => number`
+**Method** toChannels: `toChannels() => Channels`
+**Method** toColorIO: `toColorIO() => Color`
+**Method** toColorSpace: `toColorSpace(colorSpace: "cam16-jmh" | "hct" | "hsl" | "hsv" | "jzazbz" | "lab" | "lch" | "oklch" | "rgb" | "srgb") => Color`
+**Method** toDisplay: `toDisplay() => string`
+**Method** toHex: `toHex() => string`
+**Method** toPrettyString: `toPrettyString() => string`
+**Method** toString: `toString() => string`
 
 Static:
-**Property** advancedSpace: boolean 
-**Property** channelNames: string[] 
-**Property** colorFromChannels: Function 
-**Property** colorFromHex: Function 
-**Property** colorFromString: Function 
-**Property** description: string 
-**Property** dimensionToChannel: Record<"x" | "y" | "z", string> 
-**Property** domains: Domain 
-**Property** name: string 
-**Property** stepSize: Channels 
-**Property** stringToChannels: Function 
-**Property** toColorSpace: Function 
-__Description__: Convert a color string to a color object
+**Property** advancedSpace: boolean
+**Property** channelNames: string[]
+**Property** colorFromChannels: Function
+**Property** colorFromHex: Function
+**Property** colorFromString: Function
+**Property** description: string
+**Property** dimensionToChannel: Record<"x" | "y" | "z", string>
+**Property** domains: Domain
+**Property** name: string
+**Property** stepSize: Channels
+**Property** stringToChannels: Function
+**Property** toColorSpace: Function
+**Description**: Convert a color string to a color object
 
-**Method** stringIsColor: `stringIsColor(str: string, spaceName: string) => boolean` 
+**Method** stringIsColor: `stringIsColor(str: string, spaceName: string) => boolean`
 
 **Description**: The base class for all color spaces
 
-
 ## Usage
+
 TODO

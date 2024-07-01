@@ -10,8 +10,8 @@
 
   function sortByChannel(colorSpace: string, channel: number) {
     const newSort = [...colors].sort((a, b) => {
-      const aVal = a.color.toColorIO().to(colorSpace).coords[channel];
-      const bVal = b.color.toColorIO().to(colorSpace).coords[channel];
+      const aVal = a.toColorIO().to(colorSpace).coords[channel];
+      const bVal = b.toColorIO().to(colorSpace).coords[channel];
       return aVal - bVal;
     });
     colorStore.setSort(newSort);

@@ -2,7 +2,7 @@ import { writable } from "svelte/store";
 import * as idb from "idb-keyval";
 import type { LintResult, LintProgram } from "@color-buddy/palette-lint";
 import { PREBUILT_LINTS } from "@color-buddy/palette-lint";
-import { Color, wrapColor } from "@color-buddy/palette";
+import { Color } from "@color-buddy/palette";
 import type { Palette, StringPalette } from "@color-buddy/palette";
 import { JSONStringify } from "../lib/utils";
 import { loadLints } from "../lib/api-calls";
@@ -79,8 +79,8 @@ function serializePalette(pal: Palette): StringPalette {
     ...pal,
     background: pal.background.toString(),
     colors: pal.colors.map((x) => ({
-      ...x,
-      color: x.color.toString(),
+      tags: x.tags,
+      color: x.toString(),
     })),
   };
 }
@@ -91,10 +91,13 @@ function deserializePalette(pal: StringPalette): Palette {
     background: Color.colorFromString(pal.background, pal.colorSpace),
     colors: pal.colors.map((x) => {
       if (typeof x === "string") {
-        return wrapColor(Color.colorFromString(x, pal.colorSpace));
+        const color = Color.colorFromString(x, pal.colorSpace);
+        color.tags = [];
+        return color;
       }
       const color = Color.colorFromString(x.color, pal.colorSpace);
-      return { ...x, color };
+      color.tags = x.tags;
+      return color;
     }),
   };
 }

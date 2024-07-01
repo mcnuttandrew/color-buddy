@@ -20,7 +20,7 @@ const testCaseToText = (
       (x) =>
         `- ${x.colors
           .map((y) => {
-            const hex = y.color.toHex();
+            const hex = y.toHex();
             const tags = y.tags.length ? ` (${y.tags.join(", ")})` : "";
             return `${hex}${tags}`;
           })

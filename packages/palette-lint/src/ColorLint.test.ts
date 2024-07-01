@@ -34,11 +34,15 @@ function autoTest(lint: LintProgram) {
   expect(lint.failMessage.length).toBeGreaterThan(0);
   lint.expectedPassingTests.forEach((pal) => {
     const exampleLint = RunLint(lint, pal, { computeMessage: true });
+    expect(exampleLint.kind).toBe("success");
+    if (exampleLint.kind !== "success") return;
     expect(exampleLint.passes).toBe(true);
     expect(exampleLint.message).toMatchSnapshot();
   });
   lint.expectedFailingTests.forEach((pal) => {
     const exampleLint = RunLint(lint, pal, { computeMessage: true });
+    expect(exampleLint.kind).toBe("success");
+    if (exampleLint.kind !== "success") return;
     expect(exampleLint.passes).toBe(false);
     expect(exampleLint.message).toMatchSnapshot();
   });
@@ -84,18 +88,18 @@ test("ColorLint - ColorNameDiscriminability", async () => {
     const lintResult = RunLint(ColorNameDiscriminability, examplePal, {
       computeMessage: true,
     });
+    expect(lintResult.kind).toBe("success");
+    if (lintResult.kind !== "success") return;
     expect(lintResult.passes).toBe(false);
     expect(lintResult.message).toBe(
       `The following pairs of colors have the same name: ${colors[0]} and ${colors[1]}`
     );
     const fix = await suggestLintFix(examplePal, lintResult);
     const oldColorNames = unique<string>(
-      examplePal.colors.map((x) => getName(x.color))
+      examplePal.colors.map((x) => getName(x))
     );
     expect(oldColorNames.length).toBe(colors.length - 1);
-    const colorNames = unique<string>(
-      fix[0].colors.map((x) => getName(x.color))
-    );
+    const colorNames = unique<string>(fix[0].colors.map((x) => getName(x)));
     expect(
       colorNames.length,
       `The ${addNumberSuffix(idx)} set of colors should be corrected properly`
@@ -111,11 +115,13 @@ test("ColorLint - Gamut", async () => {
   autoTest(Gamut);
   const examplePal = makePalFromString(["lab(50.625% -91.737 -88.303)"]);
   const lintResult = RunLint(Gamut, examplePal, { computeMessage: true });
+  expect(lintResult.kind).toBe("success");
+  if (lintResult.kind !== "success") return;
   expect(lintResult.passes).toBe(false);
   expect(lintResult.message).toMatchSnapshot();
 
   const fix = await suggestLintFix(examplePal, lintResult);
-  expect(fix[0].colors.map((x) => x.color.toString())).toStrictEqual([
+  expect(fix[0].colors.map((x) => x.toString())).toStrictEqual([
     "lab(48.319% -27.81 -14.373)",
   ]);
 });
@@ -131,23 +137,27 @@ test("ColorLint - Background Contrast", async () => {
   const lintResult = RunLint(BGContrast[0], examplePal, {
     computeMessage: true,
   });
+  expect(lintResult.kind).toBe("success");
+  if (lintResult.kind !== "success") return;
   expect(lintResult.passes).toBe(false);
   expect(lintResult.message).toBe(
     "These colors (#0ff, #00faff, #00e4ff, #fdfdfc, #0ff) do not have a sufficient contrast do not have sufficient contrast with the background to be easily readable."
   );
   const fix = await suggestLintFix(examplePal, lintResult).then((x) => x[0]);
-  expect(fix.colors.map((x) => x.color.toHex())).toMatchSnapshot();
+  expect(fix.colors.map((x) => x.toHex())).toMatchSnapshot();
 
   examplePal.background = Color.colorFromHex("#00e4ff", "lab");
   const lintResult2 = RunLint(BGContrast[0], examplePal, {
     computeMessage: true,
   });
+  expect(lintResult2.kind).toBe("success");
+  if (lintResult2.kind !== "success") return;
   expect(lintResult2.passes).toBe(false);
   expect(lintResult2.message).toBe(
     "These colors (#0ff, #00faff, #00e4ff, #fdfdfc, #0ff) do not have a sufficient contrast do not have sufficient contrast with the background to be easily readable."
   );
   const fix2 = await suggestLintFix(examplePal, lintResult2).then((x) => x[0]);
-  expect(fix2.colors.map((x) => x.color.toHex())).toMatchSnapshot();
+  expect(fix2.colors.map((x) => x.toHex())).toMatchSnapshot();
 });
 
 test("Background Contrast - Fix", async () => {
@@ -162,13 +172,16 @@ test("Background Contrast - Fix", async () => {
   const lintResult = RunLint(BGContrast[0], examplePal, {
     computeMessage: true,
   });
+  expect(lintResult.kind).toBe("success");
+  if (lintResult.kind !== "success") return;
   expect(lintResult.passes).toBe(false);
   const fix = await fixBackgroundDifferentiability(examplePal, lintResult);
   expect(fix.length).toBe(1);
 
-  expect(RunLint(BGContrast[0], fix[0], { computeMessage: true }).passes).toBe(
-    true
-  );
+  const result = RunLint(BGContrast[0], fix[0], { computeMessage: true });
+  expect(result.kind).toBe("success");
+  if (result.kind !== "success") return;
+  expect(result.passes).toBe(true);
 });
 
 test("ColorLint - Contrast (1) GraphicalObjs", () => autoTest(BGContrast[0]));
@@ -206,8 +219,15 @@ test("ColorLint - Diverging Order", async () => {
     const lintResult1 = RunLint(DivergingOrder, divPal, {
       computeMessage: true,
     });
-    expect(lintResult1.passes, `${name} initial pal order`).toBe(true);
-    expect(lintResult1.message, `${name} initial pal order msg`).toBe("");
+    expect(lintResult1.kind).toBe("success");
+    expect(
+      lintResult1.kind === "success" && lintResult1.passes,
+      `${name} initial pal order`
+    ).toBe(true);
+    expect(
+      lintResult1.kind === "success" && lintResult1.message,
+      `${name} initial pal order msg`
+    ).toBe("");
 
     const adjustedPal = adjustment(pal);
     const divPal2 = makePalFromString(adjustedPal);
@@ -215,24 +235,27 @@ test("ColorLint - Diverging Order", async () => {
     const lintResult2 = RunLint(DivergingOrder, divPal2, {
       computeMessage: true,
     });
-    expect(lintResult2.passes, `${name} alteration correctly fails`).toBe(
-      false
-    );
+    expect(lintResult2.kind).toBe("success");
     expect(
-      lintResult2.message,
+      lintResult2.kind === "success" && lintResult2.passes,
+      `${name} alteration correctly fails`
+    ).toBe(false);
+    expect(
+      lintResult2.kind === "success" && lintResult2.message,
       `${name} alteration correctly generates failure message`
     ).toMatchSnapshot();
 
     const fixedExample2 = await fixDivergingOrder(divPal2, lintResult2);
     expect(fixedExample2.length).toBeGreaterThan(0);
+    const result = RunLint(DivergingOrder, fixedExample2[0], {});
     expect(
-      RunLint(DivergingOrder, fixedExample2[0], {}).passes,
+      result.kind === "success" && result.passes,
       `${name} fix fixes alteration`
     ).toBe(true);
     expect(
-      fixedExample2[0].colors.map((x) => x.color.toHex()),
+      fixedExample2[0].colors.map((x) => x.toHex()),
       `${name} fix restores original order`
-    ).toEqual(divPal.colors.map((x) => x.color.toHex()));
+    ).toEqual(divPal.colors.map((x) => x.toHex()));
   }
 
   await divTestHelper(

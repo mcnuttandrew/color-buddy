@@ -1,15 +1,12 @@
-import type { ColorWrap } from "@color-buddy/palette";
 import { Color, makePalFromString } from "@color-buddy/palette";
 
 import type { LintProgram } from "../ColorLint";
 import type { LintFixer } from "../linter-tools/lint-fixer";
 
-function isDiverging(colors: ColorWrap<Color>[]): boolean {
+function isDiverging(colors: Color[]): boolean {
   const summarizedDirections = colors
     .slice(0, -1)
-    .map((x, i) =>
-      x.color.luminance() > colors[i + 1].color.luminance() ? 1 : -1
-    )
+    .map((x, i) => (x.luminance() > colors[i + 1].luminance() ? 1 : -1))
     .reduce((acc, x) => {
       if (acc.length === 0) return [x];
       if (acc[acc.length - 1] === x) return acc;
@@ -48,7 +45,7 @@ const DivergingOrder: LintProgram = {
 };
 export default DivergingOrder;
 
-// const sortByLum = (a: ColorWrap<Color>, b: ColorWrap<Color>) => {
+// const sortByLum = (a: Color, b: Color) => {
 //   const aL = a.color.luminance();
 //   const bL = b.color.luminance();
 //   if (aL === bL) return 0;

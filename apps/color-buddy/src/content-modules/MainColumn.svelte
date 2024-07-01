@@ -79,7 +79,7 @@
     stopDragging={() => colorStore.resumePersistance()}
     annotationColors={selectedCVDType === "none"
       ? []
-      : currentPal.colors.map((x) => simulateCVD(selectedCVDType, x.color))}
+      : currentPal.colors.map((x) => simulateCVD(selectedCVDType, x))}
   />
 
   <div class="flex flex-wrap" id="scatterplot-controls">

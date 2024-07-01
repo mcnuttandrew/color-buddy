@@ -16,11 +16,10 @@
   function actionOnColor(focusedColors: number[], action: ColorEffect) {
     const newColors = [...colors];
     focusedColors.forEach((idx) => {
-      const channels = action(colors[idx].color);
-      newColors[idx] = {
-        ...colors[idx],
-        color: Color.colorFromChannels(channels, colorSpace),
-      };
+      const channels = action(colors[idx]);
+      const newColor = Color.colorFromChannels(channels, colorSpace);
+      newColor.tags = colors[idx].tags;
+      newColors[idx] = newColor;
     });
     colorStore.setCurrentPalColors(newColors);
   }

@@ -31,14 +31,14 @@
           class={"w-6 h-6 mx-2 rounded-full dot"}
           class:w-8={highlightSelected && focusSet.has(idx)}
           class:h-8={highlightSelected && focusSet.has(idx)}
-          style="background-color: {color.color.toDisplay()}"
+          style="background-color: {color.toDisplay()}"
         ></button>
       {:else}
         <div
           class={"w-6 h-6 mx-1 rounded-full dot"}
           class:w-8={highlightSelected && focusSet.has(idx)}
           class:h-8={highlightSelected && focusSet.has(idx)}
-          style="background-color: {color.color.toDisplay()}"
+          style="background-color: {color.toDisplay()}"
         ></div>
       {/if}
       {#if showTags}

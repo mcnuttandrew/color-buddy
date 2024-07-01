@@ -40,6 +40,7 @@ Run: `yarn docs:dev`
 
 Use: should point to localhost:5147 if all is well
 
-## POST REFACTOR TODOs
+TODO
 
-- remove ColorWrap
+- remove extra properties from the color object
+- is the debugger on the customization pane working?

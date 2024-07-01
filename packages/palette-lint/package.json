@@ -7,9 +7,9 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
-    "preview": "vite preview",
     "test": "vitest run",
     "test:watch": "vitest",
+    "types": "tsc --noEmit --watch",
     "test:coverage": "vitest run --coverage",
     "gen-schema": "npx ts-json-schema-generator --path src/lint-language/lint-type.ts --type LintProgram > ./lint-schema.json --minify && vite-node scripts/pretty-schema.ts && mv lint-schema.json ../../apps/docs/docs/public/lint-schema.json"
   },

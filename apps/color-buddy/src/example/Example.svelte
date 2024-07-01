@@ -56,10 +56,7 @@
       $configStore.colorSim !== "none" &&
       $configStore.useSimulatorOnExamples
     ) {
-      colors = colors.map((x) => ({
-        ...x,
-        color: simulateCVD($configStore.colorSim, x.color),
-      }));
+      colors = colors.map((x) => simulateCVD($configStore.colorSim, x));
     } else {
       colors = currentPal.colors;
     }
@@ -72,9 +69,7 @@
     const color = Color.colorFromString(computedFill, "lab")
       .toHex()
       .toLowerCase();
-    const colorIdx = colors.findIndex(
-      (x) => x.color.toHex().toLowerCase() === color
-    );
+    const colorIdx = colors.findIndex((x) => x.toHex().toLowerCase() === color);
     if (colorIdx > -1) {
       focusedColor = colorIdx;
       focusStore.setColors([colorIdx]);
@@ -105,7 +100,7 @@
     });
   }
   let container: HTMLDivElement;
-  $: mappedColors = colors.map((x) => x.color.toHex());
+  $: mappedColors = colors.map((x) => x.toHex());
 </script>
 
 <div class="relative">

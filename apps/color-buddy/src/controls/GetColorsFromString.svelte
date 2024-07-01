@@ -1,12 +1,11 @@
 <script lang="ts">
-  import { Color, wrapColor } from "@color-buddy/palette";
-  import type { ColorWrap } from "@color-buddy/palette";
+  import { Color } from "@color-buddy/palette";
   import configStore from "../stores/config-store";
   import { processBodyTextToColors } from "../lib/utils";
 
   let state: "idle" | "error" = "idle";
-  export let onChange: (colors: ColorWrap<Color>[]) => void;
-  export let colors: ColorWrap<Color>[];
+  export let onChange: (colors: Color[]) => void;
+  export let colors: Color[];
   export let colorSpace: string;
   let errorMsg = "";
 
@@ -15,9 +14,11 @@
       const newColors = processBodyTextToColors(body, colorSpace).map(
         (x, idx) => {
           if (colors[idx]) {
-            return { ...colors[idx], color: x };
+            const newColor = colors[idx];
+            newColor.tags = x.tags;
+            return newColor;
           } else {
-            return wrapColor(x);
+            return x;
           }
         }
       );
@@ -55,7 +56,7 @@
     id="current-colors"
     class="w-full p-2 rounded border-2 text-sm"
     value={colors
-      .map((color) => color.color.toHex())
+      .map((color) => color.toHex())
       .map((x) => (includeQuotes ? `"${x}"` : x))
       .join(", ")}
     on:keydown={(e) => {

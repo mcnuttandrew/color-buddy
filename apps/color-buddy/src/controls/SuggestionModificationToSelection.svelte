@@ -1,6 +1,4 @@
 <script lang="ts">
-  import { wrapColor } from "@color-buddy/palette";
-
   import colorStore from "../stores/color-store";
   import focusStore from "../stores/focus-store";
   import configStore from "../stores/config-store";
@@ -14,7 +12,7 @@
   $: colorSpace = currentPal ? currentPal.colorSpace : "lab";
   $: colors = currentPal.colors;
   $: selectedColors = $focusStore.focusedColors
-    .map((x) => colors[x]?.color.toHex())
+    .map((x) => colors[x]?.toHex())
     .filter((x) => x !== undefined) as string[];
   let suggestedColorSets: string[][] = [];
   let palPrompt: string = "";
@@ -25,7 +23,7 @@
       ? {
           ...currentPal,
           colors: selectedColors.map((x) =>
-            wrapColor(Color.colorFromString(x, colorSpace))
+            Color.colorFromString(x, colorSpace)
           ),
         }
       : currentPal;
@@ -59,25 +57,25 @@
     if (selectedColors.length) {
       let usedSuggestions = new Set<number>([]);
       newColors = colors.map((x, jdx) => {
-        const idx = selectedColors.indexOf(x.color.toHex());
+        const idx = selectedColors.indexOf(x.toHex());
         if (idx === -1) return x;
         usedSuggestions.add(idx);
-        return {
-          ...x,
-          color: Color.colorFromString(suggestedColors[idx], colorSpace),
-        };
+        const newColor = Color.colorFromString(
+          suggestedColors[idx],
+          colorSpace
+        );
+        newColor.tags = x.tags;
+        return newColor;
       });
       const unusedSuggestions = suggestedColors.filter(
         (_, idx) => !usedSuggestions.has(idx)
       );
       newColors = newColors.concat(
-        unusedSuggestions.map((x) =>
-          wrapColor(Color.colorFromString(x, colorSpace))
-        )
+        unusedSuggestions.map((x) => Color.colorFromString(x, colorSpace))
       );
     } else {
       newColors = suggestedColors.map((x) =>
-        wrapColor(Color.colorFromString(x, colorSpace))
+        Color.colorFromString(x, colorSpace)
       );
     }
     colorStore.setCurrentPalColors(newColors);

@@ -3,7 +3,7 @@ import {
   ColorSpaceDirectory,
   makePalFromString,
 } from "@color-buddy/palette";
-import type { Palette, ColorWrap } from "@color-buddy/palette";
+import type { Palette } from "@color-buddy/palette";
 
 import { Formatter, FracturedJsonOptions, EolStyle } from "fracturedjsonjs";
 import fits from "../assets/outfits.json";
@@ -77,10 +77,10 @@ export function avgColors(
   return Color.colorFromChannels(avgColor, colorSpace as any);
 }
 
-export function deDup(arr: ColorWrap<Color>[]): ColorWrap<Color>[] {
+export function deDup(arr: Color[]): Color[] {
   const seen = new Set();
   return arr.filter((item) => {
-    const k = item.color.toHex();
+    const k = item.toHex();
     return seen.has(k) ? false : seen.add(k);
   });
 }
@@ -228,7 +228,7 @@ type selectColorsFromDrag = (
   dragBox: { x: number; y: number },
   dragging: { x: number; y: number },
   parentPos: { x: number; y: number },
-  colors: ColorWrap<Color>[],
+  colors: Color[],
   config: {
     isPolar: boolean;
     plotHeight: number;
@@ -253,7 +253,7 @@ export const selectColorsFromDragZ: selectColorsFromDrag = (
   const magicOffset = 15;
   const newFocusedColors = colors
     .map((color, idx) =>
-      between(config.z(color.color) + magicOffset, yMin, yMax) ? idx : -1
+      between(config.z(color) + magicOffset, yMin, yMax) ? idx : -1
     )
     .filter((x) => x !== -1);
   return [...newFocusedColors];
@@ -271,7 +271,7 @@ export const selectColorsFromDrag: selectColorsFromDrag = (
   // check if selected in screen space
   const newFocusedColors = colors
     .map((color, idx) => {
-      let [xVal, yVal] = [config.x(color.color), config.y(color.color)];
+      let [xVal, yVal] = [config.x(color), config.y(color)];
       if (config.isPolar) {
         xVal += config.plotWidth / 2;
         yVal += config.plotHeight / 2;
@@ -337,13 +337,13 @@ export function makeScales(
 
 type dragEventToColor = (
   e: any,
-  originalColor: ColorWrap<Color>,
+  originalColor: Color,
   originalPos: { x: number; y: number },
   config: (typeof colorPickerConfig)[string],
   scales: ReturnType<typeof makeScales>,
   colorSpace: any,
   dragDelta: { x: number; y: number }
-) => ColorWrap<Color>;
+) => Color;
 export const dragEventToColorZ: dragEventToColor = (
   e,
   originalColor,
@@ -355,16 +355,15 @@ export const dragEventToColorZ: dragEventToColor = (
 ) => {
   const { zInv, z } = scales;
   const screenPosDelta = toXY(e).y - originalPos.y + dragDelta.y;
-  const coords = originalColor.color.toChannels();
+  const coords = originalColor.toChannels();
   const zClamp = (v: number) => clampToRange(v, config.zDomain);
   coords[config.zChannelIndex] = zClamp(
-    zInv(z(originalColor.color) + screenPosDelta)
+    zInv(z(originalColor) + screenPosDelta)
   );
 
-  return {
-    ...originalColor,
-    color: Color.colorFromChannels(coords, colorSpace),
-  };
+  const newColor = Color.colorFromChannels(coords, colorSpace);
+  newColor.tags = originalColor.tags;
+  return newColor;
 };
 
 export const dragEventToColorXY: dragEventToColor = (
@@ -387,21 +386,20 @@ export const dragEventToColorXY: dragEventToColor = (
   const yClamp = (v: number) => clampToRange(v, config.yDomain);
   // screen coordinates
   const newPos = [
-    x(originalColor.color) + screenPosDelta.x,
-    y(originalColor.color) + screenPosDelta.y,
+    x(originalColor) + screenPosDelta.x,
+    y(originalColor) + screenPosDelta.y,
   ];
   // color space coordinates
   const newVal = [
     xClamp(xInv(newPos[0], newPos[1])),
     yClamp(yInv(newPos[0], newPos[1])),
   ];
-  const coords = originalColor.color.toChannels();
+  const coords = originalColor.toChannels();
   coords[config.xChannelIndex] = newVal[0];
   coords[config.yChannelIndex] = newVal[1];
-  return {
-    ...originalColor,
-    color: Color.colorFromChannels(coords, colorSpace),
-  };
+  const newColor = Color.colorFromChannels(coords, colorSpace);
+  newColor.tags = originalColor.tags;
+  return newColor;
 };
 
 export const screenSpaceAvg = (colors: { x: number; y: number }[]) => {

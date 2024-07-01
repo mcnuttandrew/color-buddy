@@ -30,22 +30,22 @@
     <div class="w-full border-t-2 border-black my-2"></div>
     <input
       class="w-full"
-      value={colors[focusedColors[0]].color.toHex()}
+      value={colors[focusedColors[0]].toHex()}
       on:change={(e) => {
         const updatedColors = [...colors];
         const newColor = Color.colorFromString(
           e.currentTarget.value,
           colorSpace
         );
-        updatedColors[focusedColors[0]] = {
-          ...updatedColors[focusedColors[0]],
-          color: newColor,
-        };
+        const tags = [...updatedColors[focusedColors[0]].tags];
+        updatedColors[focusedColors[0]] = newColor;
+        updatedColors[focusedColors[0]].tags = tags;
+
         colorStore.setCurrentPalColors(updatedColors);
       }}
     />
     <ColorChannelPicker
-      color={colors[focusedColors[0]].color.toColorSpace(colorSpace)}
+      color={colors[focusedColors[0]].toColorSpace(colorSpace)}
       colorMode={$configStore.channelPickerSpace}
       onSpaceChange={(space) => {
         // @ts-ignore
@@ -53,10 +53,10 @@
       }}
       onColorChange={(color) => {
         const updatedColors = [...colors];
-        updatedColors[focusedColors[0]] = {
-          ...updatedColors[focusedColors[0]],
-          color: color.toColorSpace(colorSpace),
-        };
+        const tags = [...updatedColors[focusedColors[0]].tags];
+        updatedColors[focusedColors[0]] = color.toColorSpace(colorSpace);
+        updatedColors[focusedColors[0]].tags = tags;
+
         colorStore.setCurrentPalColors(updatedColors);
       }}
     />

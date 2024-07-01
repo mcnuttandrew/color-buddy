@@ -117,7 +117,7 @@
         startDragging={() => {}}
         stopDragging={() => {}}
         annotationColors={(showDiff
-          ? currentPal.colors.map((x) => x.color.toColorSpace(colorSpace))
+          ? currentPal.colors.map((x) => x.toColorSpace(colorSpace))
           : []
         ).slice(
           0,

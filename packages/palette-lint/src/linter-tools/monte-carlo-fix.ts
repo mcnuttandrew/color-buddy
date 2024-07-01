@@ -1,7 +1,6 @@
 import type { Palette } from "@color-buddy/palette";
 
 import { Color, ColorSpaceDirectory } from "@color-buddy/palette";
-import { wrapColor } from "@color-buddy/palette";
 import type { LintResult, LintProgram } from "../ColorLint";
 import { RunLint } from "../ColorLint";
 
@@ -11,11 +10,11 @@ function getBlamedColors(palette: Palette, lintResult: LintResult): string[] {
   }
   if (lintResult.lintProgram.blameMode === "pair") {
     return (lintResult.blameData as number[][]).flatMap((x) =>
-      x.map((x) => palette.colors[x].color.toString())
+      x.map((x) => palette.colors[x].toString())
     );
   } else {
     return (lintResult.blameData as number[]).map((x) =>
-      palette.colors[x].color.toString()
+      palette.colors[x].toString()
     );
   }
 }
@@ -60,18 +59,18 @@ export const generateMCFix = (
     const blamed = [...new Set(blamedWithDuplicates)];
     newPalette.colors = [...newPalette.colors].map((color) => {
       // do nothing if the color is not blamed
-      if (!blamed.includes(color.color.toString())) {
+      if (!blamed.includes(color.toString())) {
         return color;
       }
       // take random steps for each of the blamed colors
-      const channels = color.color.toChannels();
+      const channels = color.toChannels();
       const newChannels = [...channels] as [number, number, number];
       newChannels[config.xChannelIndex] += 3 * (Math.random() - 0.5) * xStep;
       newChannels[config.yChannelIndex] += 3 * (Math.random() - 0.5) * yStep;
       newChannels[config.zChannelIndex] += 3 * (Math.random() - 0.5) * zStep;
       const newColor = Color.colorFromChannels(newChannels, palette.colorSpace);
-
-      return wrapColor(newColor);
+      newColor.tags = color.tags;
+      return newColor;
     });
     newPalette = { ...newPalette };
   }

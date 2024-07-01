@@ -307,15 +307,14 @@ export class LLColor extends LLNode {
   }
   evaluate(env: Environment): ReturnVal<Color> {
     this.evalCheck(env);
-
     return { result: this.value, env };
   }
   static tryToConstruct(value: any, _options: OptionsConfig): false | LLColor {
     if (value instanceof Color) {
       return new LLColor(value, value.toHex());
     }
-    if (typeof value === "object" && value.color instanceof Color) {
-      return new LLColor(value, value.color.toHex());
+    if (typeof value === "object" && value instanceof Color) {
+      return new LLColor(value, value.toHex());
     }
     if (typeof value === "string" && Color.stringIsColor(value, "lab")) {
       return new LLColor(Color.colorFromString(value, "lab"), value);
@@ -455,8 +454,8 @@ function compareValues(
       return left < right;
   }
 }
-const getType = (x: any) => {
-  if (x?.color instanceof Color) return "Color";
+const getType = (x: any): string => {
+  if (x instanceof Color) return "Color";
   return typeof x === "object"
     ? Array.isArray(x)
       ? "Array"
@@ -574,12 +573,12 @@ type Params = Record<string, string>;
 const VFTypes: {
   primaryKey: string;
   params: string[];
-  op: (val: Color, params: Params) => any;
+  op: (val: Color, params: Params) => string | Color | boolean | number;
 }[] = [
   {
     primaryKey: "cvdSim",
     params: ["type"] as string[],
-    op: (val, params) => ({ ...val, color: cvdSim(params.type, val) }),
+    op: (val, params) => cvdSim(params.type, val),
   },
   {
     primaryKey: "name",
@@ -632,7 +631,7 @@ export class LLValueFunction extends LLNode {
     const { input, params } = this;
     // get the value of the input, such as by deref
     const inputEval = input.evaluate(env).result;
-    if (!(typeof inputEval === "object" && inputEval.color instanceof Color)) {
+    if (!(typeof inputEval === "object" && inputEval instanceof Color)) {
       throw new Error(
         `Type error, was expecting a color, but got ${inputEval} in function ${this.type}`
       );
@@ -692,7 +691,6 @@ const getOp =
     });
 const getParams = (op: any, node: any) =>
   op.params.reduce((acc: any, key: any) => ({ ...acc, [key]: node[key] }), {});
-
 const LLPairFunctionTypes: {
   primaryKey: string;
   params: string[];
@@ -1110,7 +1108,6 @@ export function LLEval(
   options: Partial<typeof DEFAULT_OPTIONS> = {}
 ) {
   const opts = { ...DEFAULT_OPTIONS, ...options };
-
   const inputEnv = new Environment(palette, {}, opts, {});
   const ast = parseToAST({ id: [root] }, opts);
 

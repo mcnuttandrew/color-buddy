@@ -88,8 +88,7 @@ function executeLint(
     return execCache[cacheKey];
   }
   const prog = memoParser(lintProgram.program);
-  const { result } = LLEval(prog, palette, { debugCompare: false });
-  // ...options,
+  const { result } = LLEval(prog, palette, { debugCompare: false, ...options });
   if (result) {
     const out = { passCheck: result, blame: [] };
     execCache[cacheKey] = out;
@@ -121,6 +120,7 @@ function getNlProgram(progString: string): string {
 interface RunLintOptions {
   computeBlame?: boolean;
   computeMessage?: boolean;
+  debugCompare?: boolean;
 }
 
 export function RunLint(

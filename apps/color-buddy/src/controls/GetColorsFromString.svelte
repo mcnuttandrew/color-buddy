@@ -14,14 +14,12 @@
       const newColors = processBodyTextToColors(body, colorSpace).map(
         (x, idx) => {
           if (colors[idx]) {
-            const newColor = colors[idx];
-            newColor.tags = x.tags;
-            return newColor;
-          } else {
-            return x;
+            x.tags = colors[idx].tags;
           }
+          return x;
         }
       );
+
       onChange(newColors);
       state = "idle";
     } catch (e) {
@@ -62,6 +60,7 @@
     on:keydown={(e) => {
       if (e.key === "Enter") {
         e.preventDefault();
+        console.log(e.currentTarget.value);
         processBodyInput(e.currentTarget.value);
         e.currentTarget.blur();
       }

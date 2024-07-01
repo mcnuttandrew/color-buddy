@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { colorNameSimple } from "@color-buddy/color-namer";
+  import { nameColor } from "@color-buddy/color-namer";
   import { cvdSim } from "@color-buddy/palette";
   import { Color } from "@color-buddy/palette";
 
@@ -14,7 +14,7 @@
 
   $: checks = $lintStore.currentChecks;
 
-  $: colorNames = colorNameSimple(colors.map((x) => x));
+  $: colorNames = colors.map((x) => nameColor(x)[0]);
   $: colors = $colorStore.palettes[$colorStore.currentPal].colors;
   $: selectedCVDType = $configStore.colorSim;
   $: sim = (color: Color): string => cvdSim(selectedCVDType, color).toHex();
@@ -89,7 +89,7 @@
         <span class="flex flex-col items-start">
           <span>{color.toHex()}</span>
           {#if colorNames[idx]}<span class="text-right text-xs">
-              {colorNames[idx]?.word}
+              {colorNames[idx]}
             </span>{/if}
         </span>
         <span class="flex flex-wrap flex-row-reverse">

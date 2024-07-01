@@ -79,7 +79,7 @@ test("ColorLint - ColorNameDiscriminability", async () => {
 
   // tacit configuration: the first two in the set should have the same name
   const sets = [
-    ["#5260d1", "#684ac0"],
+    ["#5866d3", "#19437d"],
     ["#001615", "#001a1a", "#002633"],
   ];
   for (let idx = 0; idx < sets.length; idx++) {

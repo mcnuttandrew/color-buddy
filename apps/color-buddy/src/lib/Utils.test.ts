@@ -92,3 +92,15 @@ test("processBodyTextToColors: zoom in", async () => {
     });
   });
 });
+
+test("processBodyTextToColors: another one", async () => {
+  const colors = `"#5260d1", "#684ac0"`;
+  spaces.forEach((space) => {
+    expect(
+      processBodyTextToColors(colors, space).map((x) =>
+        x.toHex().toUpperCase()
+      ),
+      `Single color (${colors}) in ${space} space should match`
+    ).toEqual(["#5260D1", "#684AC0"]);
+  });
+});

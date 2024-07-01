@@ -31,7 +31,7 @@ const lint: LintProgram = {
   expectedPassingTests: [
     makePalFromString(["#000", "#fff", "#f00", "#0f0", "#00f"]),
   ],
-  expectedFailingTests: [makePalFromString(["#5260d1", "#684ac0"])],
+  expectedFailingTests: [makePalFromString(["#5866d3", "#19437d"])],
 };
 export default lint;
 

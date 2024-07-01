@@ -1,6 +1,19 @@
 # "Color Buddy" an interactive color palette development tool
 
-This is the code repo for Color Buddy. You can see docs for the language in the public/lang-docs.md file.
+This is the code repo for Color Buddy. If you are looking for the app itself, you can find it [here](https://color-buddy.netlify.app/) or if you want the docs you can find them [here](https://color-buddy-docs.netlify.app/docs/).
+
+This repo is comprised of a monorepo that contains the following packages:
+
+- `@color-buddy/color-namer`: A library for naming colors
+- `@color-buddy/palette`: A library for creating and manipulating color palettes
+- `@color-buddy/palette-lint`: A library for linting color palettes
+
+In addition to the packages, there are two apps:
+
+- `apps/color-buddy`: The Color Buddy app
+- `apps/docs`: The Color Buddy documentation site
+
+Finally, there are some shared utilities in the `utils` directory and experiments, see packages directory for more details.
 
 ## SETUP (for Color Buddy App)
 

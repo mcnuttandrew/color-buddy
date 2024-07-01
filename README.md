@@ -22,7 +22,6 @@ First time you start it up there's a couple things you need to do.
 
 ```sh
 OPENAI_API_KEY = "YOUR KEY HERE"
-GEMINI_KEY = "YOUR KEY HERE"
 ANTHROPIC_KEY = "YOUR KEY HERE"
 ```
 
@@ -39,8 +38,3 @@ Navigate to the docs: `cd apps/docs`
 Run: `yarn docs:dev`
 
 Use: should point to localhost:5147 if all is well
-
-TODO
-
-- remove extra properties from the color object
-- is the debugger on the customization pane working?

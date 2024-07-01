@@ -29,7 +29,11 @@
 
   // run this lint
   let errors: any = null;
-  function runLint(lint: LintProgram, options: any, pal: Palette): LintResult {
+  function runLint(
+    lint: LintProgram,
+    options: Parameters<typeof linter>[2],
+    pal: Palette
+  ): LintResult {
     if (!lint) {
       lintStore.setFocusedLint(false);
       return { kind: "ignored", lintProgram: lint };

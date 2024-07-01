@@ -15,7 +15,7 @@ const colors = [
   "#238b10",
   "#666",
 ];
-test.only("generateMCFix", () => {
+test("generateMCFix", () => {
   const palette = toPal(colors);
   // should fail the CVD check
   const lintResult1 = RunLint(CVDCheck[0], palette, {});

@@ -1,6 +1,6 @@
-import { Color, makePalFromString } from "@color-buddy/palette";
+import { makePalFromString } from "@color-buddy/palette";
 import type { Palette } from "@color-buddy/palette";
-import { getName, getNames } from "@color-buddy/color-namer";
+import { nameColor, nameToColor } from "@color-buddy/color-namer";
 
 import { JSONToPrettyString } from "../utils";
 import type { LintProgram } from "../ColorLint";
@@ -31,7 +31,7 @@ const lint: LintProgram = {
   expectedPassingTests: [
     makePalFromString(["#000", "#fff", "#f00", "#0f0", "#00f"]),
   ],
-  expectedFailingTests: [makePalFromString(["#5260d1", "#684ac0"])],
+  expectedFailingTests: [makePalFromString(["#5866d3", "#19437d"])],
 };
 export default lint;
 
@@ -39,10 +39,10 @@ export const fixColorNameDiscriminability: LintFixer = async (
   palette: Palette
 ) => {
   const colors = palette.colors;
-  const colorNames = colors.map((x) => getName(x));
+  const colorNames = colors.map((x) => nameColor(x)[0]);
   const colorNameByIndex = colors.reduce(
     (acc, color, index) => {
-      const name = getName(color);
+      const name = nameColor(color)[0];
       acc[name] = (acc[name] || []).concat(index);
       return acc;
     },
@@ -61,18 +61,19 @@ export const fixColorNameDiscriminability: LintFixer = async (
   const updatedColors = Object.fromEntries(
     conflictedIndices.map((idx) => {
       const color = colors[idx];
-      const hex = color.toHex().toUpperCase();
-      const names = getNames(hex).heerStone;
+      const names = nameColor(color, { numResults: colors.length });
       const possibleNames = names.filter(
         (x) =>
           // don't try to take from the names that aren't conflicted
-          !nonConflictedNames.has(x.name) &&
+          !nonConflictedNames.has(x) &&
           // don't try to take from the names that have already been selected
-          !selectedNames.has(x.name)
+          !selectedNames.has(x)
       );
       const name = possibleNames[0];
-      selectedNames.add(name.name);
-      const newColor = Color.colorFromHex(name.hex, color.spaceName);
+      selectedNames.add(name);
+      const newColor = (nameToColor(name) || color).toColorSpace(
+        color.spaceName
+      );
       newColor.tags = color.tags;
       return [idx, newColor];
     })

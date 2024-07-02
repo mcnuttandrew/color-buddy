@@ -5,7 +5,7 @@ import fs from "fs/promises";
 import {
   PREBUILT_LINTS,
   linter,
-  generateMCFix,
+  suggestMCFix,
   suggestLintFix,
 } from "@color-buddy/palette-lint";
 import type { LintProgram } from "@color-buddy/palette-lint";
@@ -115,7 +115,7 @@ async function main() {
         description: result.lintProgram.description,
         message: result.message,
         blamedColors: result.blameData,
-        colors: pal.colors.map((x) => x.color.toString()),
+        colors: pal.colors.map((x) => x.toString()),
         background: pal.background.toString(),
         heuristicFixPasses: "NA",
         mcFixPasses: "NA",
@@ -135,7 +135,7 @@ async function main() {
                 : "unavailable";
           }),
           Promise.resolve().then(() => {
-            const mcFix = generateMCFix(pal, [lint]);
+            const mcFix = suggestMCFix(pal, [lint]);
             measurement.mcFixPasses = lintPasses(mcFix, lint);
           }),
           getPromptedSuggestion(pal, "openai", errMsg).then((suggestions) => {

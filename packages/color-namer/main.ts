@@ -1,47 +1,58 @@
 import { Color } from "@color-buddy/palette";
-import namer from "color-namer";
 
 import { colorCentersFromStoneHeer } from "@color-buddy/color-lists";
 
-const namerCustomList = Object.entries(colorCentersFromStoneHeer).map(
-  ([name, hex]) => ({ name, hex })
+type ColorName = { color: Color; name: string };
+function closestColors(color: Color, colors: ColorName[]): ColorName[] {
+  return colors
+    .map((x) => ({ ...x, dist: color.symmetricDeltaE(x.color) }))
+    .sort((a, b) => a.dist - b.dist);
+}
+
+const heerStoneColors = Object.entries(colorCentersFromStoneHeer).map(
+  ([name, hex]) => ({ color: Color.colorFromString(hex), name })
 );
-(namer as any).lists.heerStone = namerCustomList;
 
-export const getNames = (hex: string): { heerStone: namer.Color[] } =>
-  (namer as any)(hex, {
-    pick: ["heerStone"],
-  });
+const nameCache = new Map<string, string[]>();
 
-function findSmallest<A>(arr: A[], accessor: (x: A) => number): A {
-  let smallest = arr[0];
-  for (let i = 1; i < arr.length; i++) {
-    if (accessor(arr[i]) < accessor(smallest)) smallest = arr[i];
-  }
-  return smallest;
-}
-
-//
 /**
- * Simpler version of the color name stuff
+ * Name a color. This function will return the name of the color that is closest to the input color.
+ * color The color to name
+ * props.numResults The number of results to return. This can be useful if there are multiple colors being named and you need to differentiate them, lowest index is closer. Default is 1.
+ * props.colors A list of colors to choose from. Default is the Heer Stone color list.
+ * props.colorListName The name of the color list to use. Used for caching. You only need to use this if you are changing color centers a lot. Default is "heerStone".
  */
-export function colorNameSimple(colors: Color[]): { word: string; hex: string }[]{
-  return colors.map((x) => ({ word: getName(x), hex: x.toHex() }));
+export function nameColor(
+  color: Color,
+  props?: {
+    numResults?: number;
+    colors?: ColorName[];
+    colorListName?: string;
+  }
+): string[] {
+  const numResults = props?.numResults ?? 1;
+  const colors = props?.colors ?? heerStoneColors;
+  const listName = props?.colorListName ?? "heerStone";
+  const str = `${color.toString().toUpperCase()}-${numResults}-${listName}`;
+  if (nameCache.has(str)) {
+    return nameCache.get(str)!;
+  }
+  const result = closestColors(color, colors)
+    .slice(0, numResults)
+    .map((x) => x.name);
+  nameCache.set(str, result);
+  return result;
 }
 
-const nameCache = new Map<string, string>();
-export const getName = (color: Color): string => {
-  const hex = color.toHex().toUpperCase();
-  if (nameCache.has(hex)) {
-    return nameCache.get(hex)!;
-  }
-  // const name = namer(hex, { pick: ["html"] });
-  const name = getNames(hex);
-  const guess = findSmallest<any>(
-    Object.values(name).map((x: any) => x[0]),
-    (x) => x.distance
-  );
-  const result = guess.name.toLowerCase();
-  nameCache.set(hex, result);
-  return result;
-};
+/**
+ * Get the color of a name.
+ * @param name The name of the color
+ * @param colors The list of colors to choose from. Default is the Heer Stone color list.
+ */
+export function nameToColor(
+  name: string,
+  colors: ColorName[] = heerStoneColors
+): Color | undefined {
+  const color = colors.find((x) => x.name === name);
+  return color?.color;
+}

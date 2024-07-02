@@ -46,7 +46,7 @@ exports[`ColorLint - CatOrderSimilarity 2`] = `"Some sequences of colors are too
 
 exports[`ColorLint - ColorNameDiscriminability 1`] = `"The following pairs of colors have the same name: "`;
 
-exports[`ColorLint - ColorNameDiscriminability 2`] = `"The following pairs of colors have the same name: #5260d1 and #684ac0"`;
+exports[`ColorLint - ColorNameDiscriminability 2`] = `"The following pairs of colors have the same name: #5866d3 and #19437d"`;
 
 exports[`ColorLint - Contrast (1) GraphicalObjs 1`] = `"These colors () do not have a sufficient contrast do not have sufficient contrast with the background to be easily readable."`;
 

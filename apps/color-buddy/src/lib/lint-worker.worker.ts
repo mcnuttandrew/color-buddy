@@ -1,5 +1,5 @@
 import * as idb from "idb-keyval";
-import { linter, generateMCFix } from "@color-buddy/palette-lint";
+import { linter, suggestMCFix } from "@color-buddy/palette-lint";
 import type { LintProgram, LintResult } from "@color-buddy/palette-lint";
 import type { Palette, StringPalette } from "@color-buddy/palette";
 import { Color } from "@color-buddy/palette";
@@ -73,7 +73,7 @@ async function dispatch(cmd: WorkerCommand) {
       if (lints.length === 0) {
         return [];
       }
-      const fixedPalette = generateMCFix(newPal, lints);
+      const fixedPalette = await suggestMCFix(newPal, lints);
       return fixedPalette.colors.map((x) => x.toString());
     default:
       return "no-op";

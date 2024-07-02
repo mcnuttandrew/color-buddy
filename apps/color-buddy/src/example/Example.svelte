@@ -1,8 +1,8 @@
 <script lang="ts">
   import { tick } from "svelte";
 
-  import { Color } from "@color-buddy/palette";
-  import { simulateCVD } from "@color-buddy/palette-lint";
+  import { Color, cvdSim } from "@color-buddy/palette";
+  import {} from "@color-buddy/palette";
   import type { Palette } from "@color-buddy/palette";
 
   import configStore from "../stores/config-store";
@@ -56,7 +56,7 @@
       $configStore.colorSim !== "none" &&
       $configStore.useSimulatorOnExamples
     ) {
-      colors = colors.map((x) => simulateCVD($configStore.colorSim, x));
+      colors = colors.map((x) => cvdSim($configStore.colorSim, x));
     } else {
       colors = currentPal.colors;
     }

@@ -13,6 +13,7 @@ const defaultHexPal: StringPalette = {
 
 /**
  * Creates a palette from an array of strings. The background color can be specified as a string.
+ * Generates palette in CIE LAB space
  */
 export function makePalFromString(
   strings: string[],

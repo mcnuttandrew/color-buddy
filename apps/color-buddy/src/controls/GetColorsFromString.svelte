@@ -14,14 +14,12 @@
       const newColors = processBodyTextToColors(body, colorSpace).map(
         (x, idx) => {
           if (colors[idx]) {
-            const newColor = colors[idx];
-            newColor.tags = x.tags;
-            return newColor;
-          } else {
-            return x;
+            x.tags = colors[idx].tags;
           }
+          return x;
         }
       );
+
       onChange(newColors);
       state = "idle";
     } catch (e) {

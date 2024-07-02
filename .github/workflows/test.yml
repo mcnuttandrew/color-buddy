@@ -31,6 +31,11 @@ jobs:
           cd packages/palette-lint
           yarn test
 
+      - name: Test Color Namer
+        run: |
+          cd packages/color-namer
+          yarn test
+
       - name: Test Palette
         run: |
           cd packages/palette

@@ -2,19 +2,6 @@
 
 This package is a collection of tools for working with color palettes. It is built on top of the [Color](https://colorjs.io) library. Palette lint's usage is centered around Color library, that, in turn wraps the extremely powerful [colorjs.io](https://colorjs.io/).
 
-```ts
-export {
-  toPal,
-  wrapColor,
-  makePalFromString,
-  distributePoints,
-  clipToGamut,
-  Color,
-  ColorSpaceDirectory,
-};
-export type { Palette, StringPalette, ColorSpace, PalType };
-```
-
 ## Contents
 
 This library contains the following functions:
@@ -23,6 +10,15 @@ This library contains the following functions:
 **Function**: `clipToGamut(color: Color) => [number, number, number]`
 
 **Description**: Clips a color to the gamut of its color space. Return the clipped color as an array of channels in the originating color space.
+
+
+
+### cvdSim
+**Function**: `cvdSim(deficiency: string, color: Color) => Color`
+
+**Description**: Simulate the appearance of a color under a color vision deficiency.
+Code adapted from libDaltonLens https://daltonlens.org
+DLDeficiency = "normal" | "protanopia" | "protanomaly" | "deuteranopia" | "deuteranomaly" | "tritanopia" | "tritanomaly" | "achromatopsia" | "achromatomaly"
 
 
 
@@ -37,11 +33,14 @@ This library contains the following functions:
 **Function**: `makePalFromString(strings: string[], bg: string) => Palette`
 
 **Description**: Creates a palette from an array of strings. The background color can be specified as a string.
+Generates palette in CIE LAB space
 
 
 
 ### toPal
 **Function**: `toPal(colors: string[], currentPal: Palette, colorSpace: any) => Palette`
+
+**Description**: Converts an array of hex strings to a palette.
 
 
 
@@ -49,6 +48,8 @@ This library contains the following types:
 
 ### ColorSpace
 **Type**: `ColorSpace: keyof typeof ColorSpaceDirectory`
+
+**Description**: A collection of color space that are usable with this color library.
 
 
 
@@ -60,10 +61,14 @@ This library contains the following types:
 ### Palette
 **Type**: `Palette: Pal<Color, Color>`
 
+**Description**: A palette where the colors are represented as Color objects. Good for programmatic use.
+
 
 
 ### StringPalette
 **Type**: `StringPalette: Pal<Object, string>`
+
+**Description**: A palette where the colors are represented as strings. Good for serialization or storage. Expects color to be represented as {color: string, tags: string[]} objects.
 
 
 
@@ -73,6 +78,8 @@ This library contains the following classes:
 The base class for all color spaces
 
 **Class**: `Color`
+
+**Description**: The base class for all color spaces
 
 Constructor:
 **Constructor**: `constructor(ConstructorSignature new Color: Color)`
@@ -122,8 +129,33 @@ __Description__: Convert a color string to a color object
 
 **Method** stringIsColor: `stringIsColor(str: string, spaceName: string) => boolean` 
 
-**Description**: The base class for all color spaces
-
 
 ## Usage
-TODO
+
+
+Example usage of the library:
+
+```ts
+
+import { makePalFromString, Color } from "@color-buddy/palette";
+
+const stringColors = [
+  "lab(50% 0 0)",
+  "lab(100.00000139649632% -0.000007807961277528364 0.000006766250648659877)",
+  "oklab(1.000000009791752,-3.3637913787742946e-8,6.836016341882356e-8)",
+  "rgb(86,17,229)",
+  "red",
+];
+const background = "black";
+
+const palette = makePalFromString(stringColors, background);
+// convert to LCH space
+const newPal = {
+  ...palette,
+  colors: palette.colors.map((color) => color.toColorSpace("lch")),
+};
+
+const newColor = Color.colorFromString("#ff0000").toColorSpace("lch");
+newPal.colors.push(newColor);
+
+```

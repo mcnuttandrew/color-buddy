@@ -6,6 +6,7 @@ import {
 } from "./src/utils";
 import type { Palette, StringPalette, ColorSpace, PalType } from "./src/types";
 import { Color, ColorSpaceDirectory } from "./src/Color";
+import cvdSim from "./src/cvd-sim";
 export {
   toPal,
   makePalFromString,
@@ -13,6 +14,7 @@ export {
   ColorSpaceDirectory,
   distributePoints,
   clipToGamut,
+  cvdSim,
 };
 
 export type { Palette, StringPalette, ColorSpace, PalType };

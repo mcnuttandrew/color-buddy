@@ -66,4 +66,6 @@
       {/if}
     </div>
   {/if}
+{:else if lintResult.kind === "invalid"}
+  <!-- do nothing -->
 {/if}

@@ -57,12 +57,6 @@ function processLint(
   lint: LintProgram,
   options: Parameters<typeof RunLint>[2]
 ): LintResult {
-  // local ignore
-  const ignoreList = palette.evalConfig;
-  const ignored = !(ignoreList[lint.name] && ignoreList[lint.name].ignore);
-  if (!ignored) {
-    return { kind: "ignored", lintProgram: lint };
-  }
   // invalid
   const globallyIgnoredLints = palette.evalConfig?.globallyIgnoredLints || [];
   const globalIgnore = globallyIgnoredLints.includes(lint.id);
@@ -77,6 +71,13 @@ function processLint(
   if (globalIgnore || groupIsUndefined || wrongTaskType || wrongTagType) {
     return { kind: "invalid", lintProgram: lint };
   }
+  // local ignore
+  const ignoreList = palette.evalConfig;
+  const ignored = !(ignoreList[lint.name] && ignoreList[lint.name].ignore);
+  if (!ignored) {
+    return { kind: "ignored", lintProgram: lint };
+  }
+
   // run the lint
   if (prebuiltIdToCustomFunc[lint.id]) {
     lint.customProgram = prebuiltIdToCustomFunc[lint.id];

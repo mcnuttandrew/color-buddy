@@ -87,8 +87,6 @@
         // @ts-ignore
         let newVal = typeof val === "object" ? val.valueOf() : val;
         if (colorMode === "rgb") newVal *= 255;
-        // if (colorMode === "hct") newVal *= 100;
-        console.log("asd", colorMode);
         colorConfigs[colorMode][idx].value = newVal;
       });
 

@@ -60,7 +60,6 @@
     on:keydown={(e) => {
       if (e.key === "Enter") {
         e.preventDefault();
-        console.log(e.currentTarget.value);
         processBodyInput(e.currentTarget.value);
         e.currentTarget.blur();
       }

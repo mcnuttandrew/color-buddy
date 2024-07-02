@@ -80,65 +80,42 @@
   }
   $: color &&
     colorMode &&
+    colorConfigs[colorMode] &&
     toColorIO()
       .to(colorModeMap[colorMode] || colorMode)
       .coords.forEach((val, idx) => {
         // @ts-ignore
         let newVal = typeof val === "object" ? val.valueOf() : val;
         if (colorMode === "rgb") newVal *= 255;
-        // if (colorMode === "hct") newVal *= 100;
         colorConfigs[colorMode][idx].value = newVal;
       });
 
-  // largely copped from https://colorjs.io/apps/picker/lab, https://github.dev/color-js/color.js
+  // adapted from https://colorjs.io/apps/picker/lab, https://github.dev/color-js/color.js
   function buildSliderSteps() {
     const coord_meta = colorConfigs[colorMode];
 
     let spaceId = colorModeMap[colorMode] || colorMode;
     const coords = new ColorIO(color.toHex()).to(spaceId).coords;
-    // if (colorMode === "rgb") {
-    //   coords[0] *= 255;
-    //   coords[1] *= 255;
-    //   coords[2] *= 255;
-    // }
-    const alpha = 1;
-
     let ret = [];
 
     for (let i = 0; i < coord_meta.length; i++) {
-      let { name, min, max } = coord_meta[i];
-
-      let start = coords.slice() as [number, number, number];
-      start[i] = min;
-      let color1 = new ColorIO(spaceId, start, alpha);
-
-      let end = coords.slice() as [number, number, number];
-      end[i] = max;
-      let color2 = new ColorIO(spaceId, end, alpha);
-
-      let interpolationOptions = { space: spaceId, steps: 10 };
-
-      if (name[0].toLowerCase() === "h") {
-        // @ts-ignore
-        interpolationOptions.hue = "raw";
+      let { min, max } = coord_meta[i];
+      let steps = [] as string[];
+      const NUM_STEP = 10;
+      for (let jdx = 0; jdx <= NUM_STEP; jdx++) {
+        const newChannels = [...coords] as [number, number, number];
+        newChannels[i] = min + (max - min) * (jdx / NUM_STEP);
+        if (colorMode === "rgb") {
+          newChannels[i] /= 255;
+        }
+        const newColor = Color.colorFromChannels(newChannels, spaceId);
+        steps.push(newColor.toDisplay());
       }
-
-      let steps = ColorIO.steps(color1, color2, interpolationOptions);
-      // @ts-ignore
-      ret.push(steps.map((c) => c.display()).join(", "));
+      ret.push(steps.join(", "));
     }
-
-    // Push alpha too
-    let color1 = new ColorIO(spaceId, coords, 0);
-    let color2 = new ColorIO(spaceId, coords, 1);
-    let steps = ColorIO.steps(color1, color2, { steps: 10 })
-      // @ts-ignore
-      .map((c) => c.display())
-      .join(", ");
-    ret.push(steps);
     return ret;
   }
-  $: sliderSteps = color && colorMode && (buildSliderSteps() as any);
+  $: sliderSteps = color && colorMode && buildSliderSteps();
 
   function colorUpdate(e: any, idx: number) {
     let values = [...colorConfigs[colorMode].map((x) => x.value)] as number[];

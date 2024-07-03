@@ -34,7 +34,7 @@ LintLanguage {
     | number
     | Variable
   
-  Variable = IndexShortHand | ident | Array
+  Variable =  Array | IndexShortHand | ident
   IndexShortHand = "index(" ident ")"
     
   BoolOp = BoolOpBinary | BoolOpFunc
@@ -77,7 +77,7 @@ LintLanguage {
 
   
   ident  (an identifier)
-    =  (alnum | "_")*
+    =  (alnum | "_")+
 
   number  (a number)
     = digit* "." digit+  -- fract
@@ -101,37 +101,36 @@ test("parse", () => {
     }
 
     const nlEx = prettyPrintLL(JSON.parse(ex.program));
-    const match = gram.match(nlEx);
+    const match = gram.match(nlEx, "Program");
     expect(match.succeeded(), `"${nlEx}" should parse`).toBeTruthy();
     const ast = toAST(match, {
-      QuantExp: {
-        type: "QuantExp",
-        varb: 1,
-        in: 3,
-        where: 5,
-        predicate: 7,
-      },
-
-      BinOps: {
-        type: "BinOps",
-        value: 0,
-      },
-      BoolOpBinary: {
-        type: "BoolOpBinary",
-        left: 0,
-        op: 1,
-        right: 2,
-      },
-      ArrayOpType: {
-        type: "ArrayOpType",
-        value: 0,
-      },
-      Lambda: {
-        type: "Lambda",
-        name: 0,
-        value: 2,
-      },
+      //   QuantExp: {
+      //     type: "QuantExp",
+      //     varb: 1,
+      //     in: 3,
+      //     where: 5,
+      //     predicate: 7,
+      //   },
+      //   BinOps: {
+      //     type: "BinOps",
+      //     value: 0,
+      //   },
+      //   BoolOpBinary: {
+      //     type: "BoolOpBinary",
+      //     left: 0,
+      //     op: 1,
+      //     right: 2,
+      //   },
+      //   ArrayOpType: {
+      //     type: "ArrayOpType",
+      //     value: 0,
+      //   },
+      //   Lambda: {
+      //     type: "Lambda",
+      //     name: 0,
+      //     value: 2,
+      //   },
     });
-    console.log(ast);
+    console.log(JSON.stringify(ast, null, 2), nlEx);
   });
 });

@@ -14,6 +14,7 @@
     "gen-schema": "npx ts-json-schema-generator --path src/lint-language/lint-type.ts --type LintProgram > ./lint-schema.json --minify && vite-node scripts/pretty-schema.ts && mv lint-schema.json ../../apps/docs/docs/public/lint-schema.json"
   },
   "devDependencies": {
+    "@ohm-js/cli": "^2.0.0",
     "@types/color-namer": "^1.3.3",
     "rollup": "^4.18.0",
     "ts-json-schema-generator": "^1.5.0",
@@ -25,6 +26,7 @@
     "@color-buddy/color-lists": "*",
     "@color-buddy/color-namer": "*",
     "@color-buddy/palette": "*",
-    "fracturedjsonjs": "^4.0.1"
+    "fracturedjsonjs": "^4.0.1",
+    "ohm-js": "^17.1.0"
   }
 }

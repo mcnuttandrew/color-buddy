@@ -160,7 +160,7 @@ test("LintLanguage permutativeBlame - Tableau 10", () => {
 });
 
 const expectedOutCVD = (type: string) =>
-  `ALL a IN colors SUCH THAT ALL b IN colors WHERE index(a) != index(b) SUCH THAT NOT similar(cvdSim(a, ${type}), cvdSim(b, ${type})) < 9`;
+  `ALL a IN colors SUCH THAT ALL b IN colors WHERE index(a) != index(b) SUCH THAT NOT similar(cvdSim(a, ${type}), cvdSim(b, ${type}), 9)`;
 const allCVDProg = (type: string) => ({
   all: {
     in: "colors",
@@ -279,7 +279,7 @@ test("LintLanguage Quantifiers All - DENSE", () => {
     },
   };
   expect(prettyPrintLL(cvdExists)).toBe(
-    "ALL a, b IN colors SUCH THAT NOT similar(cvdSim(a, deuteranopia), cvdSim(b, deuteranopia)) < 9"
+    "ALL a, b IN colors SUCH THAT NOT similar(cvdSim(a, deuteranopia), cvdSim(b, deuteranopia), 9)"
   );
   expect(LLEval(cvdExists, exampleColors).result).toBe(false);
 });
@@ -431,7 +431,7 @@ test("LintLanguage to color rotate", () => {
     },
   };
   expect(prettyPrintLL(realisticProgram)).toBe(
-    "EXIST a IN colors SUCH THAT EXIST b IN colors SUCH THAT similar(hsl.h(a), hsl.h(b) + 180) < 5"
+    "EXIST a IN colors SUCH THAT EXIST b IN colors SUCH THAT similar(hsl.h(a), hsl.h(b) + 180, 5)"
   );
   expect(LLEval(realisticProgram, exampleColors).result).toBe(false);
 });
@@ -751,7 +751,7 @@ test("LintLanguage Background differentiability", () => {
   };
   const astString = prettyPrintLL(program);
   expect(astString).toBe(
-    "ALL a IN colors SUCH THAT NOT similar(a, background) < 15"
+    "ALL a IN colors SUCH THAT NOT similar(a, background, 15)"
   );
   const result = LLEval(program, toPal(["#fff", "#eee", "#000", "#ddd"]));
   expect(result.result).toBe(false);
@@ -771,7 +771,7 @@ test("LintLanguage Sequential Similarity", () => {
   };
   const astString = prettyPrintLL(program);
   expect(astString).toBe(
-    "ALL a, b IN colors WHERE index(a) != index(b) SUCH THAT NOT similar(a, b) < 10"
+    "ALL a, b IN colors WHERE index(a) != index(b) SUCH THAT NOT similar(a, b, 10)"
   );
   const result = LLEval(program, toPal(["#fff", "#eee", "#000", "#ddd"]));
   expect(result.result).toBe(false);

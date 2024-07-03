@@ -276,7 +276,7 @@ Palettes that will pass this test:
 
 **Description**: Palettes that seek to be playful should have at least one light blue, beige, or gray.  See "Affective color in visualization" for more.
 
-**Natural Language**: EXIST c IN colors SUCH THAT (similar(c, lightblue) < 20 OR similar(c, beige) < 20 OR similar(c, gray) < 20)
+**Natural Language**: EXIST c IN colors SUCH THAT (similar(c, lightblue, 20) OR similar(c, beige, 20) OR similar(c, gray, 20))
 
 
 **Program**:
@@ -309,7 +309,7 @@ Palettes that will pass this test:
 
 **Description**: Palettes that seek to be positive should not have dark reds or browns.  See "Affective color in visualization" for more.
 
-**Natural Language**: ALL c IN colors SUCH THAT NOT (similar(c, darkred) < 20 OR similar(c, brown) < 20)
+**Natural Language**: ALL c IN colors SUCH THAT NOT (similar(c, darkred, 20) OR similar(c, brown, 20))
 
 
 **Program**:
@@ -343,7 +343,7 @@ Palettes that will pass this test:
 
 **Description**: Palettes that seek to be negative should not have light colors, particularly greens.  See "Affective color in visualization" for more.
 
-**Natural Language**: ALL c IN colors SUCH THAT NOT (similar(c, green) < 20 OR lab.l(c) > 70)
+**Natural Language**: ALL c IN colors SUCH THAT NOT (similar(c, green, 20) OR lab.l(c) > 70)
 
 
 **Program**:
@@ -379,7 +379,7 @@ Palettes that will pass this test:
 
 **Description**: All colors in a palette should be differentiable by people with deuteranopia (effects 0.56% of population). This is because if they are not, then they will not be differentiable from each other in some contexts.
 
-**Natural Language**: ALL a, b IN colors WHERE index(a) != index(b) SUCH THAT NOT similar(cvdSim(a, deuteranopia), cvdSim(b, deuteranopia)) < 9
+**Natural Language**: ALL a, b IN colors WHERE index(a) != index(b) SUCH THAT NOT similar(cvdSim(a, deuteranopia), cvdSim(b, deuteranopia), 9)
 
 Palettes that will fail this test:
 
@@ -425,7 +425,7 @@ Palettes that will pass this test:
 
 **Description**: All colors in a palette should be differentiable by people with protanopia (effects 0.59% of population). This is because if they are not, then they will not be differentiable from each other in some contexts.
 
-**Natural Language**: ALL a, b IN colors WHERE index(a) != index(b) SUCH THAT NOT similar(cvdSim(a, protanopia), cvdSim(b, protanopia)) < 9
+**Natural Language**: ALL a, b IN colors WHERE index(a) != index(b) SUCH THAT NOT similar(cvdSim(a, protanopia), cvdSim(b, protanopia), 9)
 
 Palettes that will fail this test:
 
@@ -471,7 +471,7 @@ Palettes that will pass this test:
 
 **Description**: All colors in a palette should be differentiable by people with tritanopia . This is because if they are not, then they will not be differentiable from each other in some contexts.
 
-**Natural Language**: ALL a, b IN colors WHERE index(a) != index(b) SUCH THAT NOT similar(cvdSim(a, tritanopia), cvdSim(b, tritanopia)) < 9
+**Natural Language**: ALL a, b IN colors WHERE index(a) != index(b) SUCH THAT NOT similar(cvdSim(a, tritanopia), cvdSim(b, tritanopia), 9)
 
 Palettes that will fail this test:
 
@@ -517,7 +517,7 @@ Palettes that will pass this test:
 
 **Description**: All colors in a palette should be differentiable by people with grayscale . This is because if they are not, then they will not be differentiable from each other in some contexts.
 
-**Natural Language**: ALL a, b IN colors WHERE index(a) != index(b) SUCH THAT NOT similar(cvdSim(a, grayscale), cvdSim(b, grayscale)) < 9
+**Natural Language**: ALL a, b IN colors WHERE index(a) != index(b) SUCH THAT NOT similar(cvdSim(a, grayscale), cvdSim(b, grayscale), 9)
 
 Palettes that will fail this test:
 
@@ -915,7 +915,7 @@ Palettes that will pass this test:
 
 **Description**: Tetradic palettes are hard to work with and are not recommended.
 
-**Natural Language**: NOT EXIST a IN colors SUCH THAT (EXIST b IN colors SUCH THAT similar(hsl.h(a), hsl.h(b) + 90 % 360) < 5 AND EXIST b IN colors SUCH THAT similar(hsl.h(a), hsl.h(b) + 180 % 360) < 5 AND EXIST b IN colors SUCH THAT similar(hsl.h(a), hsl.h(b) + 270 % 360) < 5)
+**Natural Language**: NOT EXIST a IN colors SUCH THAT (EXIST b IN colors SUCH THAT similar(hsl.h(a), hsl.h(b) + 90 % 360, 5) AND EXIST b IN colors SUCH THAT similar(hsl.h(a), hsl.h(b) + 180 % 360, 5) AND EXIST b IN colors SUCH THAT similar(hsl.h(a), hsl.h(b) + 270 % 360, 5))
 
 Palettes that will fail this test:
 
@@ -1119,7 +1119,7 @@ Palettes that will pass this test:
 
 **Description**: Use color complements whenever possible
 
-**Natural Language**: EXIST a, b IN colors SUCH THAT similar(hsl.h(a), hsl.h(b) + 180) < 5
+**Natural Language**: EXIST a, b IN colors SUCH THAT similar(hsl.h(a), hsl.h(b) + 180, 5)
 
 
 **Program**:
@@ -1154,7 +1154,7 @@ Palettes that will pass this test:
 
 **Description**: Pairs of colors in a palette should be differentiable from each other in Thin marks. 
 
-**Natural Language**: ALL x, y IN colors WHERE index(x) != index(y) SUCH THAT (|lab.l(x) - lab.l(y)| > 12.58 OR |lab.a(x) - lab.a(y)| > 20.740000000000002 OR |lab.b(x) - lab.b(y)| > 34.05)
+**Natural Language**: ALL x, y IN colors WHERE index(x) != index(y) SUCH THAT (absDiff(lab.l(x), lab.l(y)) > 12.58 OR absDiff(lab.a(x), lab.a(y)) > 20.740000000000002 OR absDiff(lab.b(x), lab.b(y)) > 34.05)
 
 Palettes that will fail this test:
 
@@ -1219,7 +1219,7 @@ Palettes that will pass this test:
 
 **Description**: Pairs of colors in a palette should be differentiable from each other in Medium marks. 
 
-**Natural Language**: ALL x, y IN colors WHERE index(x) != index(y) SUCH THAT (|lab.l(x) - lab.l(y)| > 6.58 OR |lab.a(x) - lab.a(y)| > 8.42 OR |lab.b(x) - lab.b(y)| > 11.09)
+**Natural Language**: ALL x, y IN colors WHERE index(x) != index(y) SUCH THAT (absDiff(lab.l(x), lab.l(y)) > 6.58 OR absDiff(lab.a(x), lab.a(y)) > 8.42 OR absDiff(lab.b(x), lab.b(y)) > 11.09)
 
 Palettes that will fail this test:
 
@@ -1284,7 +1284,7 @@ Palettes that will pass this test:
 
 **Description**: Pairs of colors in a palette should be differentiable from each other in Wide marks. 
 
-**Natural Language**: ALL x, y IN colors WHERE index(x) != index(y) SUCH THAT (|lab.l(x) - lab.l(y)| > 5.83 OR |lab.a(x) - lab.a(y)| > 6.88 OR |lab.b(x) - lab.b(y)| > 8.219999999999999)
+**Natural Language**: ALL x, y IN colors WHERE index(x) != index(y) SUCH THAT (absDiff(lab.l(x), lab.l(y)) > 5.83 OR absDiff(lab.a(x), lab.a(y)) > 6.88 OR absDiff(lab.b(x), lab.b(y)) > 8.219999999999999)
 
 Palettes that will fail this test:
 

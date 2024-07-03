@@ -391,8 +391,8 @@ export class LLNumberOp extends LLNode {
     const left = this.left.toString();
     const right = this.right.toString();
     if (this.type === "absDiff") {
-      // return `absDiff(${left}, ${right})`;
-      return `|${left} - ${right}|`;
+      return `absDiff(${left}, ${right})`;
+      // return `|${left} - ${right}|`;
     }
     return `${left} ${this.type} ${right}`;
   }
@@ -525,7 +525,7 @@ export class LLPredicate extends LLNode {
     const left = this.left.toString();
     const right = this.right.toString();
     if (this.type === "similar") {
-      return `similar(${left}, ${right}) < ${this.threshold}`;
+      return `similar(${left}, ${right}, ${this.threshold})`;
     }
     return `${left} ${type} ${right}`;
   }

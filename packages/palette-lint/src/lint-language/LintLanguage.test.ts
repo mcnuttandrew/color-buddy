@@ -1,6 +1,7 @@
 import { expect, test } from "vitest";
 import { LLEval, prettyPrintLL } from "./lint-language";
 import { permutativeBlame } from "../linter-tools/blame";
+import compileToLL from "./parser";
 
 import type { LintProgram } from "./lint-type";
 import { toPal, toColors } from "../test-utils";
@@ -22,18 +23,24 @@ test("LintLanguage basic eval - eval with no references 2 ", () => {
   const prog2Result = LLEval(prog2, exampleColors);
   expect(prog2Result.result).toBe(true);
   expect(prog2Result.blame).toStrictEqual([]);
-  expect(prettyPrintLL(prog2)).toBe("count([#d4a8ff, #7bb9ff, #008694]) < 10");
+  const nlProg2 = prettyPrintLL(prog2);
+  expect(nlProg2).toBe("count([#d4a8ff, #7bb9ff, #008694]) < 10");
+  // expect(compileToLL(nlProg2)).toStrictEqual(prog2);
 
   // eval with main reference
   const prog3 = { "<": { left: { count: "colors" }, right: 2 } };
   const prog3Eval = LLEval(prog3, exampleColors);
   expect(prog3Eval.result).toBe(false);
   expect(prog3Eval.blame).toStrictEqual([]);
-  expect(prettyPrintLL(prog3)).toBe("count(colors) < 2");
+  const nlProg3 = prettyPrintLL(prog3);
+  expect(nlProg3).toBe("count(colors) < 2");
+  // expect(compileToLL(nlProg3)).toStrictEqual(nlProg3);
 
   const prog4 = { "<": { left: { count: "colors" }, right: 10 } };
   expect(LLEval(prog4, exampleColors).result).toBe(true);
-  expect(prettyPrintLL(prog4)).toBe("count(colors) < 10");
+  const nlProg4 = prettyPrintLL(prog4);
+  expect(nlProg4).toBe("count(colors) < 10");
+  // expect(compileToLL(nlProg4)).toStrictEqual(nlProg4);
 });
 
 test("LintLanguage basic eval - eval with main reference 1", () => {

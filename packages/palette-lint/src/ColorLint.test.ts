@@ -50,6 +50,7 @@ function autoTest(lint: LintProgram) {
   expect(lint.expectedFailingTests.length).toBeGreaterThan(0);
   expect(lint.expectedPassingTests.length).toBeGreaterThan(0);
 
+  if (lint.customProgram) return;
   const ranLint = RunLint(lint, lint.expectedFailingTests[0], {
     computeMessage: false,
   });

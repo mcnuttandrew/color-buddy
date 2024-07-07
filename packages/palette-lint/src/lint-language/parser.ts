@@ -85,21 +85,25 @@ LintLanguage {
 
 const semantics = gram.createSemantics();
 
+function sayName(_name: string) {
+  //   console.log(name);
+}
+
 const actionDict: Parameters<(typeof semantics)["addOperation"]>[1] = {
   Program(exp) {
-    console.log("Program");
+    sayName("Program");
     return exp.buildAst();
   },
   Exp(exp) {
-    console.log("Exp");
+    sayName("Exp");
     return exp.buildAst();
   },
   Exp_not(_not, exp) {
-    console.log("Exp_not");
+    sayName("Exp_not");
     return { not: exp.buildAst() };
   },
   CompareOp(left, op, right) {
-    console.log("CompareOp????", this.sourceString);
+    sayName("CompareOp");
     const leftChild = left.buildAst();
     const rightChild = right.buildAst();
     const name = op.sourceString.toLowerCase();
@@ -116,7 +120,7 @@ const actionDict: Parameters<(typeof semantics)["addOperation"]>[1] = {
     return { [name]: children };
   },
   QuantExp(quantType, vars, _, inVal, where, predicate) {
-    console.log("QuantExp");
+    sayName("QuantExp");
     let varb = vars.buildAst();
     const varbKey = varb.length === 1 ? "varb" : "varbs";
     if (varbKey === "varb") {
@@ -148,15 +152,15 @@ const actionDict: Parameters<(typeof semantics)["addOperation"]>[1] = {
     );
   },
   QuantWhere(_where, exp) {
-    console.log("QuantWhere");
+    sayName("QuantWhere");
     return exp.buildAst();
   },
   bool(a) {
-    console.log("bool");
+    sayName("bool");
     return a.sourceString === "true";
   },
   BoolOpBinary(left, op, right) {
-    console.log("BoolOpBinary");
+    sayName("BoolOpBinary");
     return {
       //   type: "BoolOpBinary",
       [op.sourceString]: {
@@ -166,7 +170,7 @@ const actionDict: Parameters<(typeof semantics)["addOperation"]>[1] = {
     };
   },
   BoolOpFunc(name, _lParen, term1, _comma, term2, _comma2, term3, _rParen) {
-    console.log("BoolOpFunc", this.sourceString);
+    sayName("BoolOpFunc", this.sourceString);
     if (name.sourceString === "similar") {
       return {
         similar: {
@@ -182,29 +186,29 @@ const actionDict: Parameters<(typeof semantics)["addOperation"]>[1] = {
     };
   },
   ToSpaceShortHand(a, b, c, _dot, channel, _lParen, value, _r) {
-    console.log("ToSpaceShortHand");
+    sayName("ToSpaceShortHand");
     const spaceName = [a, b, c].map((x) => x.sourceString).join("");
     return { [`${spaceName}.${channel.sourceString}`]: value.buildAst() };
   },
 
   IndexShortHand(start, name, end) {
-    console.log("IndexShortHand");
+    sayName("IndexShortHand");
     return [start, name, end].map((x) => x.sourceString).join("");
   },
   Array(_a, b, _c) {
-    console.log("Array", b.sourceString, b.numChildren);
+    sayName("Array", b.sourceString, b.numChildren);
     return b.buildAst();
   },
   ArrayOp(a) {
-    console.log("ArrayOp");
+    sayName("ArrayOp");
     return a.buildAst();
   },
   ArraySimpleOp(ArrayOpType, _x, Value, _y) {
-    console.log("ArraySimpleOp");
+    sayName("ArraySimpleOp");
     return { [ArrayOpType.sourceString]: Value.buildAst() };
   },
   ArrayHoF(name, _lParen, term1, _comma, lambda, _rParen) {
-    console.log("ArrayHoF");
+    sayName("ArrayHoF");
     const lambdaAST = lambda.buildAst();
     return {
       [name.sourceString]: term1.buildAst(),
@@ -220,7 +224,7 @@ const actionDict: Parameters<(typeof semantics)["addOperation"]>[1] = {
     };
   },
   Value(a) {
-    console.log("Value", a.ctorName);
+    sayName("Value", a.ctorName);
     if (a.ctorName === "color") return a.sourceString;
     if (a.ctorName === "number") return Number(a.sourceString);
     if (a.ctorName === "Array") return a.buildAst();
@@ -231,13 +235,13 @@ const actionDict: Parameters<(typeof semantics)["addOperation"]>[1] = {
     return `#${val}`;
   },
   ValOp_absDiff(_name, _lParen, leftTerm, _comma, rightTerm, _rParen) {
-    console.log("ValOp_absDiff");
+    sayName("ValOp_absDiff");
     return {
       absDiff: { left: leftTerm.buildAst(), right: rightTerm.buildAst() },
     };
   },
   ValOp_normal(left, op, right) {
-    console.log("ValOp_normal");
+    sayName("ValOp_normal");
     return {
       [op.sourceString]: {
         left: left.buildAst(),
@@ -256,7 +260,7 @@ const actionDict: Parameters<(typeof semantics)["addOperation"]>[1] = {
     return exp.buildAst();
   },
   ident(a) {
-    console.log("iden", a.sourceString);
+    sayName("iden", a.sourceString);
     const str = a.sourceString;
     if (str.toLowerCase() === "true" || str.toLowerCase() === "false") {
       return str.toLowerCase() === "true";
@@ -264,23 +268,22 @@ const actionDict: Parameters<(typeof semantics)["addOperation"]>[1] = {
     return str;
   },
   _terminal() {
-    console.log("term");
     return null;
   },
   _iter(...children) {
-    console.log("iter");
+    sayName("iter");
     return children.map((x) => x.buildAst());
   },
   NonemptyListOf(head, _, tail) {
-    console.log("NonemptyListOf");
+    sayName("NonemptyListOf");
     return [head.buildAst(), ...tail.children.flatMap((c) => c.buildAst())];
   },
   letter(x) {
-    console.log("letter");
+    sayName("letter");
     return x.sourceString;
   },
   Func1(name, _lParen, term1, _comma, term2, _rParen) {
-    console.log("func 1");
+    sayName("func 1");
     const funcPrep = funcTable[name.sourceString];
     if (!funcPrep) {
       throw new Error(`unknown function ${name.sourceString}`);
@@ -289,7 +292,7 @@ const actionDict: Parameters<(typeof semantics)["addOperation"]>[1] = {
   },
   Func2(name, _lParen, b, _comma, d, _e, f, _rParen) {
     const funcPrep = funcTable[name.sourceString];
-    console.log("func 2");
+    sayName("func 2");
     if (!funcPrep) {
       throw new Error(`unknown function ${name.sourceString}`);
     }

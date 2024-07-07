@@ -3,7 +3,7 @@ import { prettyPrintLL } from "./lint-language";
 import compileToLL from "./parser";
 import { PREBUILT_LINTS } from "../main";
 
-test.only("parse", () => {
+test("parse", () => {
   [
     ...PREBUILT_LINTS,
     // ...PREBUILT_LINTS.slice(25, 28),

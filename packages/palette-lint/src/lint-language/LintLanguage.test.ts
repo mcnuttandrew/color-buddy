@@ -1,7 +1,7 @@
 import { expect, test } from "vitest";
 import { LLEval, prettyPrintLL } from "./lint-language";
 import { permutativeBlame } from "../linter-tools/blame";
-import compileToLL from "./parser";
+// import compileToLL from "./parser";
 
 import type { LintProgram } from "./lint-type";
 import { toPal, toColors } from "../test-utils";

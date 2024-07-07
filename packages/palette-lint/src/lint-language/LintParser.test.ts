@@ -2,6 +2,7 @@ import { expect, test } from "vitest";
 import { prettyPrintLL } from "./lint-language";
 import compileToLL from "./parser";
 import { PREBUILT_LINTS } from "../main";
+import { schema } from "../constants";
 
 test("parse", () => {
   [
@@ -29,6 +30,7 @@ test("parse2", () => {
     "ALL a IN ([#000000, #ffffff]) SUCH THAT ALL b IN colors SUCH THAT a != b"
   );
   expect(compiledProgram).toStrictEqual({
+    $schema: schema,
     all: {
       in: ["#000000", "#ffffff"],
       varb: "a",

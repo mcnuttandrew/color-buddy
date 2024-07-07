@@ -1,4 +1,5 @@
 import * as ohm from "ohm-js";
+import { schema } from "../constants";
 const gram = ohm.grammar(String.raw`
 LintLanguage {
   Program = Exp
@@ -14,16 +15,13 @@ LintLanguage {
   CompareOp = paren<Exp> CompareOpType paren<Exp>
   CompareOpType = "AND" | "OR"
   
-  // missing where stuff  
   QuantExp = ("ALL" | "EXIST") paren<ListOf<Variable, ",">> "IN" paren<Value> "SUCH THAT" paren<Exp> 
   QuantExpWithWhere = ("ALL" | "EXIST") paren<ListOf<Variable, ",">> "IN" paren<Value> QuantWhere "SUCH THAT" paren<Exp> 
   QuantWhere = "WHERE" paren<Exp>
-  Value 
-  	= 
-    | Array
+  Value  = 
+    | ArrayOp
     | ValOp
     | ColorOp
-    | ArrayOp
     | color
     | number
     | Variable
@@ -32,24 +30,22 @@ LintLanguage {
   IndexShortHand = "index(" ident ")"
     
   BoolOp = BoolOpBinary | BoolOpFunc
-  BoolOpBinary = Value BinOps Value
+  BoolOpBinary = paren<Value> BinOps paren<Value>
   BinOps = "<" | ">" | "==" | "!="
   BoolOpFunc = BoolOpFuncOps "(" Value "," Value ("," Value)? ")"
   BoolOpFuncOps = "similar" | "isTag" 
    
   ValOp = 
    | "absDiff" "(" Value "," Value ")" -- absDiff
-   | Value ValsOps Value -- normal
-
-  ValsOps = "%" | "*" | "+" | "-" 
+   | paren<Value> ValsOps paren<Value> -- normal
+  ValsOps = "%" | "*" | "+" | "-"
    
   ArrayOp = ArraySimpleOp | ArrayHoF
   ArraySimpleOp = ArrayOpType "(" Value ")" 
   ArrayOpType = "count" | "sum" | "min" | "max" | "std" | "mean" | "first" | "last" | "extent" | "speed" | "reverse"
+ 
   ArrayHoF = ArrayHofType "(" Value "," Lambda ")" 
   ArrayHofType = "sort" | "filter" | "map"
- 
-  
   Lambda = ident "=>" Value
  
   ColorOp = 
@@ -58,7 +54,7 @@ LintLanguage {
     | ColorOpTwo
   ColorOpOneFuncs = Func1<ColorOpOneFuncsOps>
   ColorOpOneFuncsOps = 
-  	"cvdSim" | "name" | "inGamut" | ToSpaceShortHand
+  	ToSpaceShortHand | "cvdSim" | "name" | "inGamut"
   ColorOpTwo = Func2<ColorOpTwoOps>
   ColorOpTwoOps = "dist" | "deltaE" | "contrast"
     
@@ -76,14 +72,15 @@ LintLanguage {
     = digit* "." digit+  -- fract
     | digit+             -- whole
     
-  bool = "true" | "false"
+  bool = "true" | "false" | "TRUE" | "FALSE"
     
   color = "#"alnum alnum alnum alnum alnum alnum
     
   Array = "[" ListOf<Value, ","> "]"
-  lParen = ("(")?
-  rParen = (")")?
-  paren<x> = lParen x rParen
+  paren<x> = 
+   | x -- parenFree
+   | "(" x ")" -- withParen
+
  }`);
 
 const semantics = gram.createSemantics();
@@ -119,20 +116,17 @@ const actionDict: Parameters<(typeof semantics)["addOperation"]>[1] = {
     return { [name]: children };
   },
   QuantExp(quantType, vars, _, inVal, where, predicate) {
-    console.log(" QuantExp");
+    console.log("QuantExp");
     let varb = vars.buildAst();
-    const varbKey = vars.children.length === 3 ? "varb" : "varbs";
-    console.log("lmmlmlm", vars.sourceString, vars.numChildren);
+    const varbKey = varb.length === 1 ? "varb" : "varbs";
     if (varbKey === "varb") {
       varb = varb[0];
     }
     const inKey = inVal.buildAst();
-    console.log("inKey", inKey);
     const name = quantType.sourceString.toLowerCase();
     const out = {
-      //   type: "QuantExp",
       [name]: {
-        [varbKey]: varb,
+        [varbKey]: varb.length > 1 ? varb : varb[0],
         in: inKey,
         predicate: predicate.buildAst(),
       },
@@ -156,6 +150,10 @@ const actionDict: Parameters<(typeof semantics)["addOperation"]>[1] = {
   QuantWhere(_where, exp) {
     console.log("QuantWhere");
     return exp.buildAst();
+  },
+  bool(a) {
+    console.log("bool");
+    return a.sourceString === "true";
   },
   BoolOpBinary(left, op, right) {
     console.log("BoolOpBinary");
@@ -232,12 +230,10 @@ const actionDict: Parameters<(typeof semantics)["addOperation"]>[1] = {
     const val = [ra, rb, ga, gb, ba, bb].map((x) => x.sourceString).join("");
     return `#${val}`;
   },
-  ValOp_absDiff(_a, _b, c, _d, _e, f) {
-    throw new Error("absDiff not implemented");
+  ValOp_absDiff(_name, _lParen, leftTerm, _comma, rightTerm, _rParen) {
+    console.log("ValOp_absDiff");
     return {
-      //   type: "ValOp_absDiff",
-      a: c.buildAst(),
-      b: f.buildAst(),
+      absDiff: { left: leftTerm.buildAst(), right: rightTerm.buildAst() },
     };
   },
   ValOp_normal(left, op, right) {
@@ -253,12 +249,19 @@ const actionDict: Parameters<(typeof semantics)["addOperation"]>[1] = {
   number(digits) {
     return parseInt(digits.sourceString);
   },
-  paren(_l, exp, _r) {
+  paren(exp) {
+    return exp.buildAst();
+  },
+  paren_withParen(_l, exp, _r) {
     return exp.buildAst();
   },
   ident(a) {
     console.log("iden", a.sourceString);
-    return a.sourceString;
+    const str = a.sourceString;
+    if (str.toLowerCase() === "true" || str.toLowerCase() === "false") {
+      return str.toLowerCase() === "true";
+    }
+    return str;
   },
   _terminal() {
     console.log("term");
@@ -302,12 +305,25 @@ const funcTable: Record<string, any> = {
   }),
   cvdSim: (val: string, type: string) => ({ cvdSim: val, type }),
   name: (val: string) => ({ name: val }),
+  inGamut: (val: string) => ({ inGamut: val }),
+  deltaE: (left: string, right: string, algorithm: string) => ({
+    deltaE: { left, right },
+    algorithm: `${algorithm}`,
+  }),
+  dist: (left: string, right: string, space: string) => ({
+    dist: { left, right },
+    space: `${space}`,
+  }),
 };
 
 export default function compileToLL(input: string) {
   const match = gram.match(input, "Program");
   if (!match.succeeded()) {
-    throw new Error("failed to parse");
+    throw new Error(`Parser: failed to parse "${input}"`);
   }
-  return semantics(match).buildAst();
+  const builtAst = semantics(match).buildAst();
+  if (typeof builtAst === "object") {
+    builtAst.$schema = schema;
+  }
+  return builtAst;
 }

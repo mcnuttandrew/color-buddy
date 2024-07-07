@@ -6,6 +6,7 @@ import { nameColor } from "@color-buddy/color-namer";
 import { suggestLintFix } from "./linter-tools/lint-fixer";
 import { RunLint } from "./ColorLint";
 import type { LintProgram } from "./ColorLint";
+import compileToLL from "./lint-language/parser";
 
 // Lints
 import AvoidExtremes from "./lints/avoid-extremes";
@@ -48,6 +49,14 @@ function autoTest(lint: LintProgram) {
   });
   expect(lint.expectedFailingTests.length).toBeGreaterThan(0);
   expect(lint.expectedPassingTests.length).toBeGreaterThan(0);
+
+  const ranLint = RunLint(lint, lint.expectedFailingTests[0], {
+    computeMessage: false,
+  });
+  const nlProgram =
+    (ranLint.kind === "success" && ranLint.naturalLanguageProgram) || "";
+  const compiledProgram = compileToLL(nlProgram);
+  expect(compiledProgram).toStrictEqual(JSON.parse(lint.program));
 }
 
 test("ColorLint - AvoidExtremes", () => autoTest(AvoidExtremes));

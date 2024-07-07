@@ -66,7 +66,7 @@ test("LintLanguage conjunctions", () => {
   };
   expect(LLEval(prog1, exampleColors).result).toBe(true);
   expect(prettyPrintLL(prog1)).toBe(
-    "(count(colors) < 10 AND count(colors) > 2)"
+    "((count(colors) < 10) AND (count(colors) > 2))"
   );
 
   const prog2 = {
@@ -77,7 +77,7 @@ test("LintLanguage conjunctions", () => {
   };
   expect(LLEval(prog2, exampleColors).result).toBe(false);
   expect(prettyPrintLL(prog2)).toBe(
-    "(count(colors) < 2 OR count(colors) > 10)"
+    "((count(colors) < 2) OR (count(colors) > 10))"
   );
 });
 
@@ -660,7 +660,7 @@ test("LintLanguage Sequential Colors", () => {
   const inOrder = toPal(["#d4a8ff", "#7bb9ff", "#008694"]);
   expect(LLEval(program, inOrder).result).toBe(true);
   expect(prettyPrintLL(program)).toBe(
-    "(ALL a, b IN colors WHERE index(a) - 1 == index(b) SUCH THAT lab.l(a) > lab.l(b) OR ALL a, b IN colors WHERE index(a) - 1 == index(b) SUCH THAT lab.l(a) < lab.l(b))"
+    "((ALL a, b IN colors WHERE index(a) - 1 == index(b) SUCH THAT lab.l(a) > lab.l(b)) OR (ALL a, b IN colors WHERE index(a) - 1 == index(b) SUCH THAT lab.l(a) < lab.l(b)))"
   );
 });
 

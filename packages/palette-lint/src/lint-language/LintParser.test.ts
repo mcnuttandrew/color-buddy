@@ -5,21 +5,21 @@ import { PREBUILT_LINTS } from "../main";
 
 test.only("parse", () => {
   [
-    ...PREBUILT_LINTS.slice(0, 9),
-    ...PREBUILT_LINTS.slice(13, 15),
-    ...PREBUILT_LINTS.slice(18, 25),
-    // PREBUILT_LINTS.at(-1)
+    ...PREBUILT_LINTS,
+    // ...PREBUILT_LINTS.slice(25, 28),
+    // ...PREBUILT_LINTS.slice(18, 25),
+    // PREBUILT_LINTS.at(30),
   ].forEach((ex) => {
     if (!ex || ex.customProgram) {
       return;
     }
     const prog = JSON.parse(ex.program);
-    delete prog.$schema;
+    // delete prog.$schema;
     const nlEx = prettyPrintLL(prog);
     const compiledProgram = compileToLL(nlEx);
     expect(
       compiledProgram,
-      `Program for ${ex.name} should compile back to the original program`
+      `Program for ${ex.name} should compile back to the original program. \n\n(from "${nlEx}")\n\n`
     ).toStrictEqual(prog);
   });
 });

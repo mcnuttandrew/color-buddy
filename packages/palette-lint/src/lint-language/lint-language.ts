@@ -237,7 +237,7 @@ export class LLConjunction extends LLNode {
     if (this.type === "none") return "";
     if (this.type === "not") return `NOT ${this.children[0].toString()}`;
     return `(${this.children
-      .map((x) => x.toString())
+      .map((x) => `(${x.toString()})`)
       .join(` ${this.type.toUpperCase()} `)})`;
   }
 }
@@ -388,8 +388,14 @@ export class LLNumberOp extends LLNode {
     return new LLNumberOp(opType, leftType, rightType);
   }
   toString(): string {
-    const left = this.left.toString();
-    const right = this.right.toString();
+    let left = this.left.toString();
+    let right = this.right.toString();
+    if (this.left instanceof LLNumberOp) {
+      left = `(${left})`;
+    }
+    if (this.right instanceof LLNumberOp) {
+      right = `(${right})`;
+    }
     if (this.type === "absDiff") {
       return `absDiff(${left}, ${right})`;
       // return `|${left} - ${right}|`;

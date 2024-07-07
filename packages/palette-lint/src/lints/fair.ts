@@ -46,7 +46,7 @@ const FairSequential: LintProgram = {
   program: JSONToPrettyString({
     // @ts-ignore
     $schema: schema,
-    and: [lRangePredicate],
+    ...lRangePredicate,
   }),
   failMessage: `${failMsgBase} Maximum chroma range: ${lRangeUnfair}.`,
   id: "fair-sequential-built-in",

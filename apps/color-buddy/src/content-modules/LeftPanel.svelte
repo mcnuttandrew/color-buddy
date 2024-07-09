@@ -24,8 +24,9 @@
 
 <!-- left panel -->
 <div class="bg-stone-200 w-80 container flex flex-col h-full flex-none">
-  <div class="text-4xl font-bold bg-stone-800 text-white px-2 py-1">
-    Color Buddy 𑁍
+  <div class="text-4xl font-bold bg-stone-800 text-white px-2 py-1 flex">
+    <img src="logo.png" alt="logo" class="h-10 mr-2" />
+    <div class="">Color Buddy</div>
   </div>
   <section class="flex flex-col flex-none" id="top-controls">
     <div class="flex w-full justify-between items-start">

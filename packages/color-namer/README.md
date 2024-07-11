@@ -15,32 +15,39 @@ npm install @color-buddy/color-namer
 This library contains the following functions:
 
 ### nameColor
-
 **Function**: `nameColor(color: Color, props: Object) => string[]`
 
 **Description**: Name a color. This function will return the name of the color that is closest to the input color.
 color The color to name
-props.numResults The number of results to return. Default is 1.
+props.numResults The number of results to return. This can be useful if there are multiple colors being named and you need to differentiate them, lowest index is closer. Default is 1.
 props.colors A list of colors to choose from. Default is the Heer Stone color list.
-props.colorListName The name of the color list to use. Default is "heerStone".
+props.colorListName The name of the color list to use. Used for caching. You only need to use this if you are changing color centers a lot. Default is "heerStone".
+
+
 
 ### nameToColor
-
 **Function**: `nameToColor(name: string, colors: ColorName[]) => Color | undefined`
 
 **Description**: Get the color of a name.
 
+
+
+
+
 ## Usage
+
 
 Example usage of the library:
 
 ```ts
+
 import { nameColor } from "@color-buddy/color-namer";
 import { Color } from "@color-buddy/palette";
 
 // basic usage
 const red = Color.colorFromString("#FF0000");
-const name = nameColor(red, { numResults: 3 }); // brightred
+const name = nameColor(red, { numResults: 3 });
+const expectedResult = ["brightred", "redorange", "orangered"];
 
 // provide a custom list of colors
 const colors = [
@@ -67,5 +74,7 @@ const colors = [
   { name: "yellow", hex: "#FFFF00" },
 ].map(({ name, hex }) => ({ name, color: Color.colorFromString(hex) }));
 
-const name2 = nameColor(red, { colors }); // red
+const name2 = nameColor(red, { colors });
+const expectedResult2 = ["red"];
+
 ```

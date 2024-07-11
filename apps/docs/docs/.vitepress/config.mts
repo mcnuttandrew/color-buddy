@@ -6,6 +6,7 @@ export default defineConfig({
   description: "Documentation for Color Buddy and Palette Lint ",
   themeConfig: {
     // https://vitepress.dev/reference/default-theme-config
+    logo: "/logo.png",
     nav: [
       { text: "Home", link: "/" },
       { text: "Live", link: "https://radiant-speculoos-7f8b2f.netlify.app/" },

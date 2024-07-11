@@ -85,7 +85,7 @@ LintLanguage {
 
 const semantics = gram.createSemantics();
 
-function sayName(_name: string) {
+function sayName(..._name: any[]) {
   //   console.log(name);
 }
 

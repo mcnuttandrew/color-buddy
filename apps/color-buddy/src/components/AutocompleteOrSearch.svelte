@@ -5,7 +5,7 @@
   export let runSearch: (x: string) => void;
   export let setValue: (x: string) => void;
   export let optionsAreColors: boolean = false;
-  import { colorCentersFromStoneHeer } from "@color-buddy/color-lists";
+  import { colorCentersFromStoneHeer } from "color-buddy-color-lists";
   let value = "";
   let selectedIndex: number = -1;
 

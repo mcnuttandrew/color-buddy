@@ -1,9 +1,9 @@
 import { writable } from "svelte/store";
 import * as idb from "idb-keyval";
-import type { LintResult, LintProgram } from "@color-buddy/palette-lint";
-import { PREBUILT_LINTS } from "@color-buddy/palette-lint";
-import { Color } from "@color-buddy/palette";
-import type { Palette, StringPalette } from "@color-buddy/palette";
+import type { LintResult, LintProgram } from "color-buddy-palette-lint";
+import { PREBUILT_LINTS } from "color-buddy-palette-lint";
+import { Color } from "color-buddy-palette";
+import type { Palette, StringPalette } from "color-buddy-palette";
 import { JSONStringify } from "../lib/utils";
 import { loadLints } from "../lib/api-calls";
 

@@ -1,6 +1,5 @@
 {
-  "name": "@color-buddy/color-lists",
-  "private": true,
+  "name": "color-buddy-color-lists",
   "version": "0.0.0",
   "type": "module",
   "main": "main.ts",
@@ -12,5 +11,6 @@
   "devDependencies": {
     "typescript": "^5.5.3",
     "vite": "^5.2.0"
-  }
+  },
+  "license": "BSD-3-Clause"
 }

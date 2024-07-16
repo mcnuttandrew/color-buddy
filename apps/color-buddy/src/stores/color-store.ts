@@ -1,6 +1,6 @@
 import { writable } from "svelte/store";
-import { Color } from "@color-buddy/palette";
-import type { Palette, StringPalette, ColorSpace } from "@color-buddy/palette";
+import { Color } from "color-buddy-palette";
+import type { Palette, StringPalette, ColorSpace } from "color-buddy-palette";
 
 import { deDup, newGenericPal } from "../lib/utils";
 

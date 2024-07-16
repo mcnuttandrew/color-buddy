@@ -1,14 +1,15 @@
 {
   "name": "color-buddy",
   "version": "1.0.0",
+  "author": "Andrew McNutt (https://www.mcnutt.in/)",
+  "repository": "mcnuttandrew/color-buddy",
   "description": "",
+  "private": true,
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "update-docs": "cd packages/custom-typedoc-printer && npm run update-all"
   },
-  "private": true,
-  "author": "",
-  "license": "ISC",
+  "license": "BSD-3-Clause",
   "workspaces": [
     "packages/*",
     "apps/*"

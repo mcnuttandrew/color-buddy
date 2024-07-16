@@ -1,6 +1,6 @@
-import { makePalFromString } from "@color-buddy/palette";
-import type { Palette } from "@color-buddy/palette";
-import { nameColor, nameToColor } from "@color-buddy/color-namer";
+import { makePalFromString } from "color-buddy-palette";
+import type { Palette } from "color-buddy-palette";
+import { nameColor, nameToColor } from "color-buddy-color-namer";
 
 import { JSONToPrettyString } from "../utils";
 import type { LintProgram } from "../ColorLint";

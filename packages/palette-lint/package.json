@@ -1,6 +1,5 @@
 {
-  "name": "@color-buddy/palette-lint",
-  "private": true,
+  "name": "color-buddy-palette-lint",
   "version": "0.0.0",
   "type": "module",
   "main": "src/main.ts",
@@ -23,10 +22,11 @@
     "vitest": "^1.6.0"
   },
   "dependencies": {
-    "@color-buddy/color-lists": "*",
-    "@color-buddy/color-namer": "*",
-    "@color-buddy/palette": "*",
+    "color-buddy-color-lists": "*",
+    "color-buddy-color-namer": "*",
+    "color-buddy-palette": "*",
     "fracturedjsonjs": "^4.0.1",
     "ohm-js": "^17.1.0"
-  }
+  },
+  "license": "BSD-3-Clause"
 }

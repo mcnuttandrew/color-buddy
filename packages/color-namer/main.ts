@@ -1,6 +1,6 @@
-import { Color } from "@color-buddy/palette";
+import { Color } from "color-buddy-palette";
 
-import { colorCentersFromStoneHeer } from "@color-buddy/color-lists";
+import { colorCentersFromStoneHeer } from "color-buddy-color-lists";
 
 type ColorName = { color: Color; name: string };
 function closestColors(color: Color, colors: ColorName[]): ColorName[] {

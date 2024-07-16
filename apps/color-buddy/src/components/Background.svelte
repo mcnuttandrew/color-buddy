@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Color } from "@color-buddy/palette";
+  import { Color } from "color-buddy-palette";
   import ColorChannelPicker from "./ColorChannelPicker.svelte";
   import Tooltip from "./Tooltip.svelte";
   import { buttonStyle } from "../lib/styles";

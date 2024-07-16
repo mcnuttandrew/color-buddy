@@ -1,7 +1,7 @@
 import { test, expect } from "vitest";
 // EXAMPLE START
-import { nameColor } from "@color-buddy/color-namer";
-import { Color } from "@color-buddy/palette";
+import { nameColor } from "color-buddy-color-namer";
+import { Color } from "color-buddy-palette";
 
 // basic usage
 const red = Color.colorFromString("#FF0000");

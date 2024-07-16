@@ -2,7 +2,7 @@
   import colorStore from "../stores/color-store";
   import focusStore from "../stores/focus-store";
   import configStore from "../stores/config-store";
-  import { Color, toPal } from "@color-buddy/palette";
+  import { Color, toPal } from "color-buddy-palette";
   import { suggestContextualAdjustments } from "../lib/api-calls";
   import { buttonStyle } from "../lib/styles";
   import PalDiff from "../components/PalDiff.svelte";

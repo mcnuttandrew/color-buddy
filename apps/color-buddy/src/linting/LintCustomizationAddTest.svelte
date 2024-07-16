@@ -1,7 +1,7 @@
 <script lang="ts">
-  import type { LintProgram } from "@color-buddy/palette-lint";
-  import { makePalFromString } from "@color-buddy/palette";
-  import type { Palette } from "@color-buddy/palette";
+  import type { LintProgram } from "color-buddy-palette-lint";
+  import { makePalFromString } from "color-buddy-palette";
+  import type { Palette } from "color-buddy-palette";
 
   import Tooltip from "../components/Tooltip.svelte";
   import { buttonStyle } from "../lib/styles";

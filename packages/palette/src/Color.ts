@@ -1,5 +1,5 @@
 import ColorIO from "colorjs.io";
-import { colorCentersFromStoneHeer } from "@color-buddy/color-lists";
+import { colorCentersFromStoneHeer } from "color-buddy-color-lists";
 
 type Domain = Record<string, [number, number]>;
 type Channels = [number, number, number];

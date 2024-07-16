@@ -1,4 +1,4 @@
-import { Color, makePalFromString } from "@color-buddy/palette";
+import { Color, makePalFromString } from "color-buddy-palette";
 
 import type { LintProgram } from "../ColorLint";
 import type { LintFixer } from "../linter-tools/lint-fixer";

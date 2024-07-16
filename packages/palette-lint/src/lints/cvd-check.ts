@@ -1,5 +1,5 @@
 import { JSONToPrettyString } from "../utils";
-import { makePalFromString } from "@color-buddy/palette";
+import { makePalFromString } from "color-buddy-palette";
 import type { LintProgram } from "../ColorLint";
 import { schema } from "../constants";
 

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { LintResult } from "@color-buddy/palette-lint";
+  import type { LintResult } from "color-buddy-palette-lint";
 
   import colorStore from "../stores/color-store";
   import configStore from "../stores/config-store";

@@ -1,6 +1,6 @@
-import type { Palette } from "@color-buddy/palette";
-import { nameColor } from "@color-buddy/color-namer";
-import { Color, ColorSpaceDirectory, cvdSim } from "@color-buddy/palette";
+import type { Palette } from "color-buddy-palette";
+import { nameColor } from "color-buddy-color-namer";
+import { Color, ColorSpaceDirectory, cvdSim } from "color-buddy-palette";
 
 import type { LintProgram } from "./lint-type";
 

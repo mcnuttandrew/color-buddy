@@ -1,4 +1,4 @@
-import { makePalFromString } from "@color-buddy/palette";
+import { makePalFromString } from "color-buddy-palette";
 import { Formatter, FracturedJsonOptions, EolStyle } from "fracturedjsonjs";
 import type { LintProgram } from "./lint-language/lint-type";
 

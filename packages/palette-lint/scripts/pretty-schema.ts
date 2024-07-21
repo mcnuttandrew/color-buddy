@@ -14,9 +14,9 @@ export function JSONStringify(obj: string) {
 }
 
 async function main() {
-  const schema = await fs.readFile("./lint-schema.json", "utf-8");
+  const schema = await fs.readFile("./lint-schema.v0.json", "utf-8");
   const prettySchema = JSONStringify(schema);
-  await fs.writeFile("./lint-schema.json", prettySchema);
+  await fs.writeFile("./lint-schema.v0.json", prettySchema);
 }
 
 main();

@@ -81,7 +81,7 @@ import { LintProgram, linter } from "color-buddy-palette-lint";
 const exampleLint: LintProgram = {
   name: "Max Colors",
   program: `{
-        "$schema": "https://color-buddy-docs.netlify.app/lint-schema.json",
+        "$schema": "https://color-buddy-docs.netlify.app/lint-schema.v0.json",
         "<": { "left": { "count": "colors" }, "right": 11 },
       }`,
   taskTypes: ["sequential", "diverging", "categorical"] as const,

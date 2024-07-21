@@ -145,9 +145,11 @@ function createStore() {
   const { subscribe, set, update } = writable<StoreData>(storeData);
   idb.get(storeName).then((x) => {
     let storeBase = deserializeStore({ ...InitialStore, ...x });
-    let lints = (storeBase.lints || []).map(
-      (x: LintProgram) => builtInIndex[x.id] || x
-    ) as LintProgram[];
+    let lints = (storeBase.lints || []) as LintProgram[];
+    // force-ably set lints to defaults
+    // .map(
+    //   (x: LintProgram) => builtInIndex[x.id] || x
+    // ) as LintProgram[];
     const missingBuiltIns = PREBUILT_LINTS.filter(
       (x) => !lints.find((y) => y.id === x.id)
     ).map((x) => ({
@@ -155,7 +157,6 @@ function createStore() {
       expectedFailingTests: [],
       expectedPassingTests: [],
     }));
-    // TODO reverse these
     const newStore = { ...storeBase, lints: [...lints, ...missingBuiltIns] };
     if (newStore.firstLoad) {
       newStore.globallyIgnoredLints = newStore.lints

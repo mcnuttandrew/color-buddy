@@ -10,6 +10,6 @@
   status = 200
 
 [[headers]]
-  for = "/*"
+  for = "https://color-buddy-docs.netlify.app/*.json"
     [headers.values]
     Access-Control-Allow-Origin = "*"

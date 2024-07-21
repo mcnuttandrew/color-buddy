@@ -1,11 +1,12 @@
 {
   "name": "color-buddy-palette",
-  "version": "0.0.4",
+  "version": "0.0.6",
   "type": "module",
   "main": "./dist/palette.js",
   "scripts": {
     "dev": "vite",
-    "build": "tsc && npm run swap && vite build && npm run swap",
+    "build": "tsc && vite build",
+    "make-build": "npm run swap && npm run build && npm publish && npm run swap",
     "test": "NODE_ENV=development vitest run",
     "test:watch": "NODE_ENV=development vitest",
     "swap": "jq '.exports |= {default: .[\"lib-build\"], \"lib-build\": .default}' package.json > temp.json && mv temp.json package.json"

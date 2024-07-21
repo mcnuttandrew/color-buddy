@@ -1,12 +1,12 @@
 {
   "name": "color-buddy-color-lists",
-  "version": "0.0.2",
+  "version": "0.0.5",
   "type": "module",
   "main": "dist/color-lists.js",
   "scripts": {
     "dev": "vite",
-    "build": "tsc && npm run swap && vite build && npm run swap",
-    "preview": "vite preview",
+    "build": "tsc && vite build",
+    "make-build": "npm run swap && npm run build && npm publish && npm run swap",
     "swap": "jq '.exports |= {default: .[\"lib-build\"], \"lib-build\": .default}' package.json > temp.json && mv temp.json package.json"
   },
   "devDependencies": {

@@ -51,3 +51,7 @@ Navigate to the docs: `cd apps/docs`
 Run: `yarn docs:dev`
 
 Use: should point to localhost:5147 if all is well
+
+## Releasing
+
+Navigate to the package you want to release. Version it as appropriate (e.g. npm version patch). Run `npm run make-build` (the npm part is important).

@@ -1,11 +1,12 @@
 {
   "name": "color-buddy-palette-lint",
-  "version": "0.0.1",
+  "version": "0.0.5",
   "type": "module",
   "main": "./dist/palette.js",
   "scripts": {
     "dev": "vite",
-    "build": "tsc && npm run swap && vite build && npm run swap",
+    "build": "tsc && vite build",
+    "make-build": "npm run swap && npm run build && npm publish && npm run swap",
     "test": "vitest run",
     "test:watch": "vitest",
     "types": "tsc --noEmit --watch",

@@ -3129,11 +3129,11 @@ code-red@^1.0.3:
     periscopic "^3.1.0"
 
 color-buddy-color-lists@*, "color-buddy-color-lists@file:/Users/andrewmcnutt/code/color-buddy/packages/color-lists":
-  version "0.0.2"
+  version "0.0.5"
   resolved "file:packages/color-lists"
 
 color-buddy-color-namer@*, "color-buddy-color-namer@file:/Users/andrewmcnutt/code/color-buddy/packages/color-namer":
-  version "0.0.7"
+  version "0.0.10"
   resolved "file:packages/color-namer"
   dependencies:
     color-buddy-palette "*"
@@ -3146,7 +3146,7 @@ color-buddy-color-namer@*, "color-buddy-color-namer@file:/Users/andrewmcnutt/cod
     vite-node "^1.6.0"
 
 color-buddy-palette-lint@*, "color-buddy-palette-lint@file:/Users/andrewmcnutt/code/color-buddy/packages/palette-lint":
-  version "0.0.1"
+  version "0.0.5"
   resolved "file:packages/palette-lint"
   dependencies:
     color-buddy-color-lists "*"
@@ -3156,7 +3156,7 @@ color-buddy-palette-lint@*, "color-buddy-palette-lint@file:/Users/andrewmcnutt/c
     ohm-js "^17.1.0"
 
 color-buddy-palette@*, "color-buddy-palette@file:/Users/andrewmcnutt/code/color-buddy/packages/palette":
-  version "0.0.4"
+  version "0.0.6"
   resolved "file:packages/palette"
   dependencies:
     color-buddy-color-lists "*"

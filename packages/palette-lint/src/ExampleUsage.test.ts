@@ -1,8 +1,9 @@
 import { expect, test } from "vitest";
 
+// @ts-ignore
 // EXAMPLE START
-import { makePalFromString } from "color-buddy-palette";
 import { LintProgram, linter } from "color-buddy-palette-lint";
+import { makePalFromString } from "color-buddy-palette";
 const exampleLint: LintProgram = {
   name: "Max Colors",
   program: `{

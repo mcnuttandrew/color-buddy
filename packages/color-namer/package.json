@@ -1,14 +1,15 @@
 {
   "name": "color-buddy-color-namer",
-  "version": "0.0.7",
+  "version": "0.0.10",
   "type": "module",
   "main": "dist/color-namer.js",
   "scripts": {
-    "build": "tsc && npm run swap && vite build && npm run swap",
+    "build": "tsc && vite build",
+    "make-build": "npm run swap && npm run build && npm publish && npm run swap",
     "test": "NODE_ENV=development vitest run",
     "test:prod": "vitest run",
     "test:watch": "vitest",
-    "swap-exports": "jq '.exports |= {default: .[\"lib-build\"], \"lib-build\": .default}' package.json > temp.json && mv temp.json package.json"
+    "swap": "jq '.exports |= {default: .[\"lib-build\"], \"lib-build\": .default}' package.json > temp.json && mv temp.json package.json"
   },
   "dependencies": {
     "color-buddy-palette": "*"
@@ -25,16 +26,14 @@
     "dist"
   ],
   "exports": {
-    ".": {
-      "default": {
-        "import": "./main.ts",
-        "require": "./main.js"
-      },
-      "lib-build": {
-        "types": "./dist/main.d.ts",
-        "import": "./dist/color-namer.js",
-        "require": "./dist/color-namer.umd.js"
-      }
+    "default": {
+      "import": "./main.ts",
+      "require": "./main.js"
+    },
+    "lib-build": {
+      "types": "./dist/main.d.ts",
+      "import": "./dist/color-namer.js",
+      "require": "./dist/color-namer.umd.js"
     }
   }
 }

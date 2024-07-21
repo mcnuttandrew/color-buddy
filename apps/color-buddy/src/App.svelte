@@ -19,6 +19,7 @@
 
   import Nav from "./components/Nav.svelte";
 
+  import About from "./components/About.svelte";
   import LeftPanel from "./content-modules/LeftPanel.svelte";
   import Examples from "./example/Examples.svelte";
   import Eval from "./linting/Eval.svelte";
@@ -73,7 +74,7 @@
 <main class="flex h-full">
   <LeftPanel />
   <div class="h-full flex flex-col grow main-content">
-    <div class="bg-stone-800">
+    <div class="bg-stone-800 flex justify-between items-center">
       <div class="flex">
         {#each [{ tabs: palettesTabs, name: "Palettes" }, { tabs: currentPalTabs, name: "Current Palette" }] as { tabs, name }}
           <div class="flex flex-col relative">
@@ -92,6 +93,7 @@
           </div>
         {/each}
       </div>
+      <About />
     </div>
     <div class="flex w-full grow overflow-y-auto overflow-x-hidden">
       <div class="flex flex-col">

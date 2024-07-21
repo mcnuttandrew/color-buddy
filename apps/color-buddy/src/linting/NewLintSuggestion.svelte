@@ -24,7 +24,7 @@
           delete prog.comments;
         }
         if (typeof prog === "object") {
-          prog.$schema = `https://color-buddy-docs.netlify.app/lint-schema.json`;
+          prog.$schema = `https://color-buddy-docs.netlify.app/lint-schema.v0.json`;
         }
         const program = JSONStringify(JSON.stringify(prog));
         let description = explanation || lintPrompt;

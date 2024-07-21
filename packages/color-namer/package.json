@@ -1,8 +1,8 @@
 {
   "name": "color-buddy-color-namer",
-  "version": "0.0.3",
+  "version": "0.0.6",
   "type": "module",
-  "main": "main.ts",
+  "main": "dist/color-namer.js",
   "scripts": {
     "build": "tsc && vite build",
     "test": "NODE_ENV=development vitest run",

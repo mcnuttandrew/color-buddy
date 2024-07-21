@@ -2,7 +2,7 @@
   "name": "color-buddy-palette-lint",
   "version": "0.0.1",
   "type": "module",
-  "main": "src/main.ts",
+  "main": "./dist/palette.js",
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",

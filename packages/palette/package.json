@@ -1,8 +1,8 @@
 {
   "name": "color-buddy-palette",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "type": "module",
-  "main": "main.ts",
+  "main": "./dist/palette.js",
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",

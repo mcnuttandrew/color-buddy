@@ -14,7 +14,7 @@ export default defineConfig({
     },
     sourcemap: true,
     rollupOptions: {
-      external: ["colorjs.io"],
+      external: ["colorjs.io", "color-buddy-palette"],
     },
   },
   plugins: [dts()],

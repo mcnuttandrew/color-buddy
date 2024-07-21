@@ -2,7 +2,7 @@
   "name": "color-buddy-color-lists",
   "version": "0.0.2",
   "type": "module",
-  "main": "main.ts",
+  "main": "dist/color-lists.js",
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",

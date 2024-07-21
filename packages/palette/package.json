@@ -5,9 +5,10 @@
   "main": "./dist/palette.js",
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build",
+    "build": "tsc && npm run swap && vite build && npm run swap",
     "test": "NODE_ENV=development vitest run",
-    "test:watch": "NODE_ENV=development vitest"
+    "test:watch": "NODE_ENV=development vitest",
+    "swap": "jq '.exports |= {default: .[\"lib-build\"], \"lib-build\": .default}' package.json > temp.json && mv temp.json package.json"
   },
   "dependencies": {
     "color-buddy-color-lists": "*"
@@ -24,11 +25,11 @@
     "dist"
   ],
   "exports": {
-    "development": {
+    "default": {
       "import": "./main.ts",
       "require": "./main.ts"
     },
-    "default": {
+    "lib-build": {
       "types": "./dist/main.d.ts",
       "import": "./dist/palette.js",
       "require": "./dist/palette.umd.js"

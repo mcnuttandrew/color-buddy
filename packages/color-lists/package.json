@@ -5,8 +5,9 @@
   "main": "dist/color-lists.js",
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build",
-    "preview": "vite preview"
+    "build": "tsc && npm run swap && vite build && npm run swap",
+    "preview": "vite preview",
+    "swap": "jq '.exports |= {default: .[\"lib-build\"], \"lib-build\": .default}' package.json > temp.json && mv temp.json package.json"
   },
   "devDependencies": {
     "typescript": "^5.5.3",
@@ -19,11 +20,11 @@
     "dist"
   ],
   "exports": {
-    "development": {
+    "default": {
       "import": "./main.ts",
       "require": "./main.js"
     },
-    "default": {
+    "lib-build": {
       "types": "./dist/main.d.ts",
       "import": "./dist/color-lists.js",
       "require": "./dist/color-lists.umd.js"

@@ -5,12 +5,13 @@
   "main": "./dist/palette.js",
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build",
+    "build": "tsc && npm run swap && vite build && npm run swap",
     "test": "vitest run",
     "test:watch": "vitest",
     "types": "tsc --noEmit --watch",
     "test:coverage": "vitest run --coverage",
-    "gen-schema": "npx ts-json-schema-generator --path src/lint-language/lint-type.ts --type LintProgram > ./lint-schema.json --minify && vite-node scripts/pretty-schema.ts && mv lint-schema.json ../../apps/docs/docs/public/lint-schema.json"
+    "gen-schema": "npx ts-json-schema-generator --path src/lint-language/lint-type.ts --type LintProgram > ./lint-schema.json --minify && vite-node scripts/pretty-schema.ts && mv lint-schema.json ../../apps/docs/docs/public/lint-schema.json",
+    "swap": "jq '.exports |= {default: .[\"lib-build\"], \"lib-build\": .default}' package.json > temp.json && mv temp.json package.json"
   },
   "devDependencies": {
     "@ohm-js/cli": "^2.0.0",
@@ -34,7 +35,11 @@
     "dist"
   ],
   "exports": {
-    ".": {
+    "default": {
+      "import": "./src/main.ts",
+      "require": "./src/main.ts"
+    },
+    "lib-build": {
       "import": "./dist/color-buddy-palette-lint.js",
       "require": "./dist/color-buddy-palette-lint.umd.js",
       "types": "./dist/src/main.d.ts"

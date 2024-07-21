@@ -37,7 +37,6 @@ export class Color {
     if (hexCache.has(str)) {
       return hexCache.get(str) as string;
     }
-
     const newHex = this.toColorIO().to("srgb").toString({ format: "hex" });
     hexCache.set(str, newHex);
     return newHex;

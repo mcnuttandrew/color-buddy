@@ -1,4 +1,4 @@
-import type { Palette } from "../../palette/src/types";
+import type { Palette } from "color-buddy-palette";
 
 import { LLEval, prettyPrintLL } from "./lint-language/lint-language";
 import { permutativeBlame } from "./linter-tools/blame";

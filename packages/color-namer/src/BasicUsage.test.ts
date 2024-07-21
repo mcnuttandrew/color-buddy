@@ -1,5 +1,5 @@
 import { test, expect } from "vitest";
-import { nameColor } from "color-buddy-color-namer";
+import { nameColor } from "../main";
 import { Color } from "color-buddy-palette";
 
 test("Simple Usage", () => {

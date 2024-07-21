@@ -1,6 +1,6 @@
 {
   "name": "color-buddy-palette-lint",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "type": "module",
   "main": "src/main.ts",
   "scripts": {
@@ -18,6 +18,7 @@
     "rollup": "^4.18.0",
     "ts-json-schema-generator": "^1.5.0",
     "typescript": "^5.5.3",
+    "vite-plugin-dts": "^0.9.9",
     "vite": "^5.2.0",
     "vitest": "^1.6.0"
   },
@@ -28,5 +29,15 @@
     "fracturedjsonjs": "^4.0.1",
     "ohm-js": "^17.1.0"
   },
-  "license": "BSD-3-Clause"
+  "license": "BSD-3-Clause",
+  "files": [
+    "dist"
+  ],
+  "exports": {
+    ".": {
+      "import": "./dist/color-buddy-palette-lint.js",
+      "require": "./dist/color-buddy-palette-lint.umd.js",
+      "types": "./dist/src/main.d.ts"
+    }
+  }
 }

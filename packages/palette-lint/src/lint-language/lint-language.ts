@@ -606,14 +606,14 @@ const VFTypes: {
     params: ["value"],
     op: (val, params) => {
       const tag = params.value.toLowerCase();
-      return val.tags.some((x) => x.toLowerCase() === tag);
+      return (val.tags as string[]).some((x) => x.toLowerCase() === tag);
     },
   },
 ];
 
 Object.entries(ColorSpaceDirectory).map(([colorSpace, space]) => {
   (["x", "y", "z"] as const).forEach((channel) => {
-    const channelKey = space.dimensionToChannel[channel];
+    const channelKey = (space as typeof Color).dimensionToChannel[channel];
     VFTypes.push({
       primaryKey: `${colorSpace}.${channelKey.toLowerCase()}`,
       params: [] as string[],

@@ -8,9 +8,9 @@ export default defineConfig({
     lib: {
       // Could also be a dictionary or array of multiple entry points
       entry: resolve(__dirname, "./main.ts"),
-      name: "color-buddy-palette",
+      name: "color-buddy-color-lists",
       // the proper extensions will be added
-      fileName: "palette",
+      fileName: "color-lists",
     },
     rollupOptions: {
       // make sure to externalize deps that shouldn't be bundled

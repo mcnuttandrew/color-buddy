@@ -1,12 +1,12 @@
 {
   "name": "color-buddy-color-namer",
-  "version": "0.0.0",
+  "version": "0.0.3",
   "type": "module",
   "main": "main.ts",
   "scripts": {
-    "dev": "vite",
     "build": "tsc && vite build",
-    "test": "vitest run",
+    "test": "NODE_ENV=development vitest run",
+    "test:prod": "vitest run",
     "test:watch": "vitest"
   },
   "dependencies": {
@@ -14,8 +14,26 @@
   },
   "devDependencies": {
     "typescript": "^5.5.3",
+    "vite-plugin-dts": "^0.9.9",
     "vite": "^5.2.0",
     "vitest": "^1.6.0"
   },
-  "license": "BSD-3-Clause"
+  "license": "BSD-3-Clause",
+  "homepage": "https://github.com/mcnuttandrew/color-buddy",
+  "files": [
+    "dist"
+  ],
+  "exports": {
+    ".": {
+      "x": {
+        "import": "./main.ts",
+        "require": "./main.js"
+      },
+      "default": {
+        "types": "./dist/main.d.ts",
+        "import": "./dist/color-namer.js",
+        "require": "./dist/color-namer.umd.js"
+      }
+    }
+  }
 }

@@ -1,5 +1,5 @@
 import { RunLint } from "./ColorLint";
-import type { Palette } from "../../palette/src/types";
+import type { Palette } from "color-buddy-palette";
 import type { LintProgram, LintResult } from "./ColorLint";
 
 // lints

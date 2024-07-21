@@ -40,14 +40,11 @@ export const fixColorNameDiscriminability: LintFixer = async (
 ) => {
   const colors = palette.colors;
   const colorNames = colors.map((x) => nameColor(x)[0]);
-  const colorNameByIndex = colors.reduce(
-    (acc, color, index) => {
-      const name = nameColor(color)[0];
-      acc[name] = (acc[name] || []).concat(index);
-      return acc;
-    },
-    {} as Record<string, number[]>
-  );
+  const colorNameByIndex = colors.reduce((acc, color, index) => {
+    const name = nameColor(color)[0];
+    acc[name] = (acc[name] || []).concat(index);
+    return acc;
+  }, {}) as Record<string, number[]>;
   const conflictedIndices = Object.values(colorNameByIndex)
     .filter((x) => x.length > 1)
     .flatMap((x) => x);

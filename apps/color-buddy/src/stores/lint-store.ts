@@ -157,7 +157,6 @@ function createStore() {
       expectedFailingTests: [],
       expectedPassingTests: [],
     }));
-    console.log(missingBuiltIns);
     const newStore = { ...storeBase, lints: [...lints, ...missingBuiltIns] };
     if (newStore.firstLoad) {
       newStore.globallyIgnoredLints = newStore.lints
@@ -170,7 +169,6 @@ function createStore() {
   });
   const persistUpdate = (updateFunc: (old: StoreData) => StoreData) =>
     update((oldStore) => {
-      console.log("update");
       const newVal: StoreData = updateFunc(oldStore);
       idb.set(storeName, serializeStore(newVal)).then(() => {
         loadLints();

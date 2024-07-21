@@ -1,6 +1,5 @@
-
 <script lang="ts">
-  import type { Palette } from "@color-buddy/palette";
+  import type { Palette } from "color-buddy-palette";
 
   import examplePalStore from "../stores/example-palette-store";
   import exampleStore from "../stores/example-store";

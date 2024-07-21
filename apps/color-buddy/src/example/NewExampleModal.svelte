@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Color, makePalFromString } from "@color-buddy/palette";
+  import { Color, makePalFromString } from "color-buddy-palette";
   import exampleStore, {
     DEMOS,
     detectColorsInSvgString,

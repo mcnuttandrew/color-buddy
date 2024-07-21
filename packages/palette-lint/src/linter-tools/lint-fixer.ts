@@ -1,4 +1,4 @@
-import type { Palette } from "@color-buddy/palette";
+import type { Palette } from "color-buddy-palette";
 import type { LintResult } from "../ColorLint";
 
 export type LintFixer = (pal: Palette, lint: LintResult) => Promise<Palette[]>;

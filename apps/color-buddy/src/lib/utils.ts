@@ -2,8 +2,8 @@ import {
   Color,
   ColorSpaceDirectory,
   makePalFromString,
-} from "@color-buddy/palette";
-import type { Palette } from "@color-buddy/palette";
+} from "color-buddy-palette";
+import type { Palette } from "color-buddy-palette";
 
 import { Formatter, FracturedJsonOptions, EolStyle } from "fracturedjsonjs";
 import fits from "../assets/outfits.json";

@@ -1,6 +1,6 @@
 <script lang="ts">
   import focusStore from "../stores/focus-store";
-  import type { Palette } from "@color-buddy/palette";
+  import type { Palette } from "color-buddy-palette";
   export let pal: Palette;
   export let allowModification: boolean = false;
   export let highlightSelected: boolean = false;

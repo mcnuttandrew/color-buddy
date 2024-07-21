@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { cvdSim } from "@color-buddy/palette";
-  import { Color } from "@color-buddy/palette";
+  import { cvdSim } from "color-buddy-palette";
+  import { Color } from "color-buddy-palette";
   import colorStore from "../stores/color-store";
   import focusStore from "../stores/focus-store";
   import configStore from "../stores/config-store";

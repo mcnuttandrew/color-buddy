@@ -1,6 +1,6 @@
 import { expect, test } from "vitest";
 // EXAMPLE START
-import { makePalFromString, Color } from "@color-buddy/palette";
+import { makePalFromString, Color } from "color-buddy-palette";
 
 const stringColors = [
   "lab(50% 0 0)",

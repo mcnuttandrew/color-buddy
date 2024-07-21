@@ -1,5 +1,5 @@
 import { JSONToPrettyString } from "../utils";
-import { makePalFromString, distributePoints } from "@color-buddy/palette";
+import { makePalFromString, distributePoints } from "color-buddy-palette";
 import type { LintProgram } from "../ColorLint";
 import type { LintFixer } from "../linter-tools/lint-fixer";
 import { schema } from "../constants";

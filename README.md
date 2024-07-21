@@ -4,9 +4,9 @@ This is the code repo for Color Buddy. If you are looking for the app itself, yo
 
 This repo is comprised of a monorepo that contains the following packages:
 
-- `@color-buddy/color-namer`: A library for naming colors
-- `@color-buddy/palette`: A library for creating and manipulating color palettes
-- `@color-buddy/palette-lint`: A library for linting color palettes
+- `color-buddy-color-namer`: A library for naming colors
+- `color-buddy-palette`: A library for creating and manipulating color palettes
+- `color-buddy-palette-lint`: A library for linting color palettes
 
 In addition to the packages, there are two apps:
 
@@ -51,3 +51,7 @@ Navigate to the docs: `cd apps/docs`
 Run: `yarn docs:dev`
 
 Use: should point to localhost:5147 if all is well
+
+## Releasing
+
+Navigate to the package you want to release. Version it as appropriate (e.g. npm version patch). Run `npm run make-build` (the npm part is important).

@@ -1,11 +1,11 @@
 <script lang="ts">
   import colorStore from "../stores/color-store";
   import configStore from "../stores/config-store";
-  import { Color } from "@color-buddy/palette";
+  import { Color } from "color-buddy-palette";
   import { suggestAdditionsToPalette } from "../lib/api-calls";
   import ColorButton from "../components/ColorButton.svelte";
   import AutocompleteOrSearch from "../components/AutocompleteOrSearch.svelte";
-  import { colorCentersFromStoneHeer } from "@color-buddy/color-lists";
+  import { colorCentersFromStoneHeer } from "color-buddy-color-lists";
 
   $: currentPal = $colorStore.palettes[$colorStore.currentPal];
   $: colors = currentPal.colors;

@@ -1,13 +1,13 @@
-# @color-buddy/color-namer
+# color-buddy-color-namer
 
 This package provides a way to name colors. Give us a color (and optionally a list of colors to choose from) and we will give you a name for it. Simple as that.
 
-It uses the color centers from Heer-Stone and the color names from the XKCD color survey. It relies on the @color-buddy/palette for colors. Strongly inspired by [color-namer](https://github.com/colorjs/color-namer). Names are identified via symmetric delta E 2000 distance.
+It uses the color centers from Heer-Stone and the color names from the XKCD color survey. It relies on the color-buddy-palette for colors. Strongly inspired by [color-namer](https://github.com/colorjs/color-namer). Names are identified via symmetric delta E 2000 distance.
 
 ## Installation
 
 ```bash
-npm install @color-buddy/color-namer
+npm install color-buddy-color-namer
 ```
 
 ## Contents
@@ -15,6 +15,7 @@ npm install @color-buddy/color-namer
 This library contains the following functions:
 
 ### nameColor
+
 **Function**: `nameColor(color: Color, props: Object) => string[]`
 
 **Description**: Name a color. This function will return the name of the color that is closest to the input color.
@@ -23,26 +24,19 @@ props.numResults The number of results to return. This can be useful if there ar
 props.colors A list of colors to choose from. Default is the Heer Stone color list.
 props.colorListName The name of the color list to use. Used for caching. You only need to use this if you are changing color centers a lot. Default is "heerStone".
 
-
-
 ### nameToColor
+
 **Function**: `nameToColor(name: string, colors: ColorName[]) => Color | undefined`
 
 **Description**: Get the color of a name.
 
-
-
-
-
 ## Usage
-
 
 Example usage of the library:
 
 ```ts
-
-import { nameColor } from "@color-buddy/color-namer";
-import { Color } from "@color-buddy/palette";
+import { nameColor } from "color-buddy-color-namer";
+import { Color } from "color-buddy-palette";
 
 // basic usage
 const red = Color.colorFromString("#FF0000");
@@ -76,5 +70,4 @@ const colors = [
 
 const name2 = nameColor(red, { colors });
 const expectedResult2 = ["red"];
-
 ```

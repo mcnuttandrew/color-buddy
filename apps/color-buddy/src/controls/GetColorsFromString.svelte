@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Color } from "@color-buddy/palette";
+  import { Color } from "color-buddy-palette";
   import configStore from "../stores/config-store";
   import { processBodyTextToColors } from "../lib/utils";
 

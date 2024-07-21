@@ -1,6 +1,6 @@
-import type { Palette } from "@color-buddy/palette";
+import type { Palette } from "color-buddy-palette";
 
-import { Color, ColorSpaceDirectory } from "@color-buddy/palette";
+import { Color, ColorSpaceDirectory } from "color-buddy-palette";
 import type { LintResult, LintProgram } from "../ColorLint";
 import { RunLint } from "../ColorLint";
 

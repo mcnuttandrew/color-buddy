@@ -1,8 +1,8 @@
 import { writable } from "svelte/store";
 import * as idb from "idb-keyval";
-import { Color, makePalFromString } from "@color-buddy/palette";
-import type { LintResult } from "@color-buddy/palette-lint";
-import type { Palette } from "@color-buddy/palette";
+import { Color, makePalFromString } from "color-buddy-palette";
+import type { LintResult } from "color-buddy-palette-lint";
+import type { Palette } from "color-buddy-palette";
 
 export interface PaletteWrap {
   palette: Palette;

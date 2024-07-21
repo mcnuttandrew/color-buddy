@@ -1,5 +1,5 @@
 import { expect, test } from "vitest";
-import { Color, ColorSpaceDirectory } from "../../palette/src/Color";
+import { Color, ColorSpaceDirectory } from "color-buddy-palette";
 
 test("Color string extractor works", () => {
   expect(Color.stringToChannels("lab", "lab(50% 0 0)")).toStrictEqual([

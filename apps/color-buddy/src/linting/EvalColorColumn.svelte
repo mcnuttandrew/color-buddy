@@ -1,7 +1,7 @@
 <script lang="ts">
-  import { nameColor } from "@color-buddy/color-namer";
-  import { cvdSim } from "@color-buddy/palette";
-  import { Color } from "@color-buddy/palette";
+  import { nameColor } from "color-buddy-color-namer";
+  import { cvdSim } from "color-buddy-palette";
+  import { Color } from "color-buddy-palette";
 
   import colorStore from "../stores/color-store";
   import focusStore from "../stores/focus-store";

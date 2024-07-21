@@ -1,5 +1,5 @@
-import { Color, makePalFromString } from "@color-buddy/palette";
-import type { Palette } from "@color-buddy/palette";
+import { Color, makePalFromString } from "color-buddy-palette";
+import type { Palette } from "color-buddy-palette";
 
 import { JSONToPrettyString } from "../utils";
 import type { LintProgram } from "../ColorLint";

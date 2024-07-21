@@ -1,7 +1,7 @@
 import { JSONToPrettyString, createPalWithTags } from "../utils";
 import { schema } from "../constants";
 import type { LintProgram } from "../ColorLint";
-import { Color, makePalFromString } from "@color-buddy/palette";
+import { Color, makePalFromString } from "color-buddy-palette";
 import type { LintFixer } from "../linter-tools/lint-fixer";
 
 type LLProgram = Parameters<typeof JSONToPrettyString>[0];

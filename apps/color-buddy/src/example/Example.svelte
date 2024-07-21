@@ -1,9 +1,9 @@
 <script lang="ts">
   import { tick } from "svelte";
 
-  import { Color, cvdSim } from "@color-buddy/palette";
-  import {} from "@color-buddy/palette";
-  import type { Palette } from "@color-buddy/palette";
+  import { Color, cvdSim } from "color-buddy-palette";
+  import {} from "color-buddy-palette";
+  import type { Palette } from "color-buddy-palette";
 
   import configStore from "../stores/config-store";
   import focusStore from "../stores/focus-store";

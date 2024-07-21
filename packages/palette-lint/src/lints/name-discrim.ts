@@ -1,6 +1,6 @@
-import { makePalFromString } from "@color-buddy/palette";
-import type { Palette } from "@color-buddy/palette";
-import { nameColor, nameToColor } from "@color-buddy/color-namer";
+import { makePalFromString } from "color-buddy-palette";
+import type { Palette } from "color-buddy-palette";
+import { nameColor, nameToColor } from "color-buddy-color-namer";
 
 import { JSONToPrettyString } from "../utils";
 import type { LintProgram } from "../ColorLint";
@@ -47,7 +47,7 @@ export const fixColorNameDiscriminability: LintFixer = async (
       return acc;
     },
     {} as Record<string, number[]>
-  );
+  ) as Record<string, number[]>;
   const conflictedIndices = Object.values(colorNameByIndex)
     .filter((x) => x.length > 1)
     .flatMap((x) => x);

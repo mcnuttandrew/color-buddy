@@ -1,7 +1,7 @@
 import { expect, test } from "vitest";
 
-import { Color, makePalFromString } from "@color-buddy/palette";
-import { nameColor } from "@color-buddy/color-namer";
+import { Color, makePalFromString } from "color-buddy-palette";
+import { nameColor } from "color-buddy-color-namer";
 
 import { suggestLintFix } from "./linter-tools/lint-fixer";
 import { RunLint } from "./ColorLint";

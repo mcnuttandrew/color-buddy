@@ -219,6 +219,6 @@ export type LintValue =
 // raw values
 export type LintBoolean = boolean;
 export type LintVariable = string;
-import { Color } from "@color-buddy/palette";
+import { Color } from "color-buddy-palette";
 export type LintColor = string | Color | LintVariable;
 // export type LintColor = string | LintVariable;

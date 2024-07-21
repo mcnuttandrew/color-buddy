@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { Color } from "@color-buddy/palette";
-  import type { Palette } from "@color-buddy/palette";
+  import { Color } from "color-buddy-palette";
+  import type { Palette } from "color-buddy-palette";
 
   import { colorPickerConfig } from "../lib/utils";
   import {

@@ -1,21 +1,39 @@
 {
-  "name": "@color-buddy/palette",
-  "private": true,
-  "version": "0.0.0",
+  "name": "color-buddy-palette",
+  "version": "0.0.6",
   "type": "module",
-  "main": "main.ts",
+  "main": "./dist/palette.js",
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
-    "test": "vitest run",
-    "test:watch": "vitest"
+    "make-build": "npm run swap && npm run build && npm publish && npm run swap",
+    "test": "NODE_ENV=development vitest run",
+    "test:watch": "NODE_ENV=development vitest",
+    "swap": "jq '.exports |= {default: .[\"lib-build\"], \"lib-build\": .default}' package.json > temp.json && mv temp.json package.json"
   },
   "dependencies": {
-    "colorjs.io": "^0.5.2"
+    "color-buddy-color-lists": "*"
   },
   "devDependencies": {
     "typescript": "^5.5.3",
     "vite": "^5.2.0",
+    "vite-plugin-dts": "^4.0.0-beta.1",
     "vitest": "^1.6.0"
+  },
+  "license": "BSD-3-Clause",
+  "homepage": "https://github.com/mcnuttandrew/color-buddy",
+  "files": [
+    "dist"
+  ],
+  "exports": {
+    "default": {
+      "import": "./main.ts",
+      "require": "./main.ts"
+    },
+    "lib-build": {
+      "types": "./dist/main.d.ts",
+      "import": "./dist/palette.js",
+      "require": "./dist/palette.umd.js"
+    }
   }
 }

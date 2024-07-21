@@ -7,9 +7,9 @@ import {
   linter,
   suggestMCFix,
   suggestLintFix,
-} from "@color-buddy/palette-lint";
-import type { LintProgram } from "@color-buddy/palette-lint";
-import { Palette, makePalFromString } from "@color-buddy/palette";
+} from "color-buddy-palette-lint";
+import type { LintProgram } from "color-buddy-palette-lint";
+import { Palette, makePalFromString } from "color-buddy-palette";
 
 import prompter from "./prompter";
 

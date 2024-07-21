@@ -1,17 +1,18 @@
 {
-  "name": "@color-buddy/palette-lint",
-  "private": true,
-  "version": "0.0.0",
+  "name": "color-buddy-palette-lint",
+  "version": "0.0.5",
   "type": "module",
-  "main": "src/main.ts",
+  "main": "./dist/palette.js",
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
+    "make-build": "npm run swap && npm run build && npm publish && npm run swap",
     "test": "vitest run",
     "test:watch": "vitest",
     "types": "tsc --noEmit --watch",
     "test:coverage": "vitest run --coverage",
-    "gen-schema": "npx ts-json-schema-generator --path src/lint-language/lint-type.ts --type LintProgram > ./lint-schema.json --minify && vite-node scripts/pretty-schema.ts && mv lint-schema.json ../../apps/docs/docs/public/lint-schema.json"
+    "gen-schema": "npx ts-json-schema-generator --path src/lint-language/lint-type.ts --type LintProgram > ./lint-schema.json --minify && vite-node scripts/pretty-schema.ts && mv lint-schema.json ../../apps/docs/docs/public/lint-schema.json",
+    "swap": "jq '.exports |= {default: .[\"lib-build\"], \"lib-build\": .default}' package.json > temp.json && mv temp.json package.json"
   },
   "devDependencies": {
     "@ohm-js/cli": "^2.0.0",
@@ -19,14 +20,30 @@
     "rollup": "^4.18.0",
     "ts-json-schema-generator": "^1.5.0",
     "typescript": "^5.5.3",
+    "vite-plugin-dts": "^4.0.0-beta.1",
     "vite": "^5.2.0",
     "vitest": "^1.6.0"
   },
   "dependencies": {
-    "@color-buddy/color-lists": "*",
-    "@color-buddy/color-namer": "*",
-    "@color-buddy/palette": "*",
+    "color-buddy-color-lists": "*",
+    "color-buddy-color-namer": "*",
+    "color-buddy-palette": "*",
     "fracturedjsonjs": "^4.0.1",
     "ohm-js": "^17.1.0"
+  },
+  "license": "BSD-3-Clause",
+  "files": [
+    "dist"
+  ],
+  "exports": {
+    "default": {
+      "import": "./src/main.ts",
+      "require": "./src/main.ts"
+    },
+    "lib-build": {
+      "import": "./dist/color-buddy-palette-lint.js",
+      "require": "./dist/color-buddy-palette-lint.umd.js",
+      "types": "./dist/src/main.d.ts"
+    }
   }
 }

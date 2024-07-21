@@ -1,7 +1,7 @@
 import { test, expect } from "vitest";
 // @ts-ignore
 // EXAMPLE START
-import { nameColor } from "./dist/color-namer";
+import { nameColor } from "color-buddy-color-namer";
 import { Color } from "color-buddy-palette";
 
 // basic usage

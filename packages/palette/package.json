@@ -10,13 +10,12 @@
     "test:watch": "NODE_ENV=development vitest"
   },
   "dependencies": {
-    "colorjs.io": "^0.5.2",
     "color-buddy-color-lists": "*"
   },
   "devDependencies": {
     "typescript": "^5.5.3",
     "vite": "^5.2.0",
-    "vite-plugin-dts": "^0.9.9",
+    "vite-plugin-dts": "^4.0.0-beta.1",
     "vitest": "^1.6.0"
   },
   "license": "BSD-3-Clause",

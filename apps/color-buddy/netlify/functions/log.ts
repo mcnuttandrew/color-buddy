@@ -8,7 +8,6 @@ export function errorResponse(callback, err) {
     body: JSON.stringify({ error: err }),
   });
 }
-console.log("asd", process.env.DB_URL);
 const DB_URL = process.env.DB_URL || "mongodb://localhost:27017";
 const DB_NAME = "color-buddy-analytics";
 

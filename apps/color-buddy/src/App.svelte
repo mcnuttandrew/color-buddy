@@ -1,8 +1,16 @@
 <script lang="ts">
+  import { onMount } from "svelte";
+
   import colorStore from "./stores/color-store";
   import focusStore from "./stores/focus-store";
   import configStore from "./stores/config-store";
   import lintStore from "./stores/lint-store";
+
+  import { logEvent } from "./lib/api-calls";
+
+  onMount(() => {
+    logEvent("start-up", {}, $configStore.userName);
+  });
 
   // make sure no focused colors are out of bounds
   $: focusedColors = $focusStore.focusedColors;

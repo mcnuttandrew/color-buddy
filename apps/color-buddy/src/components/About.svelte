@@ -35,7 +35,8 @@
         GitHub.
       </a>
       If you have any feedback or questions, please feel free to reach out via the
-      github issues page or via email.
+      github issues page or via email. A small amount of non-identifiable usage data
+      is collected to help improve the application.
     </div>
   </Tooltip>
 </div>

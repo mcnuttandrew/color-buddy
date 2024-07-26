@@ -218,3 +218,14 @@ export function suggestMonteFix(pal: Palette, lintIds: string[]) {
     return x as unknown as any[];
   });
 }
+
+export function logEvent(event: string, data: any, userName: string) {
+  const location = window.location.href;
+  if (location.includes("localhost")) {
+    return;
+  }
+  fetch(`/.netlify/functions/log`, {
+    ...postCreds,
+    body: JSON.stringify({ event, data, userName, location }),
+  });
+}

@@ -24,10 +24,14 @@ interface StoreData {
   tooltipXY?: [string, string];
   tour: boolean;
   useSimulatorOnExamples: boolean;
+  userName: string;
   xZoom: [number, number];
   yZoom: [number, number];
   zZoom: [number, number];
 }
+
+const randomUserName = () =>
+  "User" + Math.floor(Math.random() * 1000000).toString();
 
 const InitialStore: StoreData = {
   colorSim: "none",
@@ -52,6 +56,7 @@ const InitialStore: StoreData = {
   tooltipXY: undefined,
   tour: false,
   useSimulatorOnExamples: false,
+  userName: randomUserName(),
   xZoom: [0, 1],
   yZoom: [0, 1],
   zZoom: [0, 1],

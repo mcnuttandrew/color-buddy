@@ -4,6 +4,8 @@
   import { suggestLintFix } from "color-buddy-palette-lint";
   import { suggestLintAIFix, suggestLintMonteFix } from "../lib/lint-fixer";
 
+  import { logEvent } from "../lib/api-calls";
+
   import colorStore from "../stores/color-store";
   import focusStore from "../stores/focus-store";
   import lintStore from "../stores/lint-store";
@@ -28,6 +30,17 @@
   function proposeFix(fixType: "ai" | "monte" | "heuristic") {
     requestState = "loading";
     let hasRetried = false;
+    logEvent(
+      "lint-fix",
+      {
+        fixType,
+        errorName: lintProgram.name,
+        lintProgram: lintProgram.program,
+        palette: palette.colors.map((x) => x.toDisplay()),
+        background: palette.background.toDisplay(),
+      },
+      $configStore.userName
+    );
     const getFix = () => {
       let fix;
       if (fixType === "ai") {

@@ -9,7 +9,7 @@ export default defineConfig({
     logo: "/logo.png",
     nav: [
       { text: "Home", link: "/" },
-      { text: "Live", link: "https://radiant-speculoos-7f8b2f.netlify.app/" },
+      { text: "Live", link: "https://color-buddy.netlify.app/" },
     ],
 
     sidebar: [

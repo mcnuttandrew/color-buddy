@@ -30,17 +30,6 @@
   function proposeFix(fixType: "ai" | "monte" | "heuristic") {
     requestState = "loading";
     let hasRetried = false;
-    logEvent(
-      "lint-fix",
-      {
-        fixType,
-        errorName: lintProgram.name,
-        lintProgram: lintProgram.program,
-        palette: palette.colors.map((x) => x.toDisplay()),
-        background: palette.background.toDisplay(),
-      },
-      $configStore.userName
-    );
     const getFix = () => {
       let fix;
       if (fixType === "ai") {
@@ -53,6 +42,18 @@
       return fix.then((x) => {
         suggestions = [...suggestions, ...x];
         requestState = "loaded";
+        logEvent(
+          "lint-fix",
+          {
+            fixType,
+            errorName: lintProgram.name,
+            lintProgram: lintProgram.program,
+            palette: palette.colors.map((x) => x.toDisplay()),
+            background: palette.background.toDisplay(),
+            fix: x.map((y) => y.colors.map((z) => z.toDisplay())),
+          },
+          $configStore.userName
+        );
       });
     };
 
@@ -124,7 +125,7 @@
           Try to fix (AI)
         </button>
       {/if}
-      {#if lintProgram.subscribedFix !== "none"}
+      {#if lintProgram.subscribedFix && lintProgram.subscribedFix !== "none"}
         <button class={buttonStyle} on:click={() => proposeFix("heuristic")}>
           Try to fix (ColorBuddy)
         </button>

@@ -1089,5 +1089,54 @@
       "#276b95",
       "#255988"
     ]
+  },
+
+  {
+    "name": "observable10",
+    "type": "categorical",
+    "colors": [
+      "#4269d0",
+      "#efb118",
+      "#ff725c",
+      "#6cc5b0",
+      "#3ca951",
+      "#ff8ab7",
+      "#a463f2",
+      "#97bbf5",
+      "#9c6b4e",
+      "#9498a0"
+    ]
+  },
+
+  {
+    "name": "chicago-transit-authority",
+    "type": "categorical",
+    "colors": [
+      "c60c30",
+      "00a1de",
+      "62361b",
+      "009b3a",
+      "f9461c",
+      "522398",
+      "e27ea6",
+      "f9e300",
+      "565a5c"
+    ]
+  },
+  {
+    "name": "utah-colors",
+    "type": "categorical",
+    "colors": [
+      "#BE0000",
+      "#000000",
+      "#FFFFFF",
+      "#708E99",
+      "#FFB81D",
+      "#890000",
+      "#6CC24A",
+      "#3ABFC0",
+      "#E2E6E6",
+      "#707271"
+    ]
   }
 ]

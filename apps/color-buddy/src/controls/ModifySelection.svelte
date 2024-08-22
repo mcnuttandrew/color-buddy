@@ -38,7 +38,7 @@
       ...currentPal.colors.filter((_, idx) => focusedSet.has(idx)),
     ])}
 >
-  Duplicate
+  Clone
 </button>
 
 <style>

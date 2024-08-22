@@ -82,7 +82,11 @@
       : currentPal.colors.map((x) => cvdSim(selectedCVDType, x))}
   />
 
-  <div class="flex flex-wrap" id="scatterplot-controls">
+  <div
+    class="flex flex-wrap"
+    id="scatterplot-controls"
+    style={`max-width: ${scatterSize + 110}px;`}
+  >
     <button
       class={`${buttonStyle} pl-0`}
       on:click={() => configStore.setScatterplotMode("putting")}

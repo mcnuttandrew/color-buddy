@@ -6,11 +6,16 @@
   $: colors = $colorStore.palettes[$colorStore.currentPal].colors;
   $: focused = $focusStore.focusedColors;
   $: buttonsActive = focused.length > 0;
+  $: style = buttonStyle
+    .split(" ")
+    .filter((x) => !x.startsWith("opacity-50"))
+    .join(" ");
 </script>
 
 <button
-  class="{buttonStyle} mr-2"
+  class="{style} mr-2"
   class:opacity-30={!buttonsActive}
+  class:opacity-50={buttonsActive}
   class:cursor-not-allowed={!buttonsActive}
   on:click|stopPropagation|preventDefault={() => {
     // move every element to the left
@@ -32,8 +37,9 @@
   Move left
 </button>
 <button
-  class="{buttonStyle} mr-2"
+  class="{style} mr-2"
   class:opacity-30={!buttonsActive}
+  class:opacity-50={buttonsActive}
   class:cursor-not-allowed={!buttonsActive}
   on:click|stopPropagation|preventDefault={() => {
     // move every element to the right

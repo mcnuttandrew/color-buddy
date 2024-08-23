@@ -75,6 +75,9 @@
     };
     input.click();
   }
+  const showTypes = ["show on drag", "always show", "never show"] as Parameters<
+    typeof configStore.setShowColorBackground
+  >[0][];
 </script>
 
 <Tooltip>
@@ -139,13 +142,12 @@
         </button>
       {/each}
     </div>
-    <div>Background on drag</div>
-    {#each ["show", "hide"] as show}
+    <div>Color Space in Background</div>
+    {#each showTypes as show}
       <button
         class={buttonStyle}
-        class:font-bold={(show === "show" && showBg) ||
-          (show == "hide" && !showBg)}
-        on:click={() => configStore.setShowColorBackground(show === "show")}
+        class:font-bold={show === showBg}
+        on:click={() => configStore.setShowColorBackground(show)}
       >
         {show}
       </button>

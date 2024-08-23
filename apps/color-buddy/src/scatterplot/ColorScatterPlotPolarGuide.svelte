@@ -63,27 +63,31 @@
     const r = rNonDimScale(i / rBgResolution);
     coords[xIdx] = r;
     coords[yIdx] = angle;
+    const midPoint = (config.zDomain[0] + config.zDomain[1]) / 2;
     coords[zIdx] = focusedColors.length
       ? colors[focusedColors[0]].toChannels()[zIdx]
-      : colors.length
-        ? colors[0].toChannels()[zIdx]
-        : 0;
+      : midPoint;
     return Color.colorFromChannels(coords, colorSpace as any).toDisplay();
   };
   $: arcScale = arc();
   $: angleScale = scaleLinear()
     .domain([angleBgResolution, 0])
     .range([0, Math.PI * 2]);
+  $: shouldShowColorBackground =
+    $configStore.showColorBackground === "always show" ||
+    (dragging && $configStore.showColorBackground === "show on drag");
 </script>
 
-{#if $configStore.showColorBackground}
+{#if shouldShowColorBackground}
   <g transform="translate({plotWidth / 2}, {plotHeight / 2})">
     {#each [...new Array(rBgResolution)] as _, i}
       {#each [...new Array(angleBgResolution)] as _, j}
         <path
           fill={fillColor(i, j)}
           stroke={"white"}
-          opacity={dragging && focusedColors.length === 1 ? 1 : 0}
+          opacity={shouldShowColorBackground && focusedColors.length <= 1
+            ? 1
+            : 0}
           class="transition-opacity duration-500 ease-in-out"
           d={arcScale({
             startAngle: angleScale(j) + Math.PI / 2,

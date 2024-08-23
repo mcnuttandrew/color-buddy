@@ -56,19 +56,25 @@
   const bgResolution = 15;
   const avgNums = (nums: number[]) =>
     nums.reduce((acc, x) => acc + x, 0) / nums.length;
-  $: fColors = focusedColors.map((x) => colors[x].toChannels());
+  $: fColors = focusedColors.map((x) =>
+    colors[x].toColorSpace(colorSpace as any).toChannels()
+  );
   $: fillColor = (i: number, j: number) => {
     const coords = [0, 0, 0] as [number, number, number];
     coords[config.xChannelIndex] = xNonDimScale(i / bgResolution);
     coords[config.yChannelIndex] = yNonDimScale(j / bgResolution);
     const avgZChannel = avgNums(fColors.map((x) => x[config.zChannelIndex]));
-    coords[config.zChannelIndex] = avgZChannel;
+    const midPoint = (config.zDomain[0] + config.zDomain[1]) / 2;
+    coords[config.zChannelIndex] = fColors.length ? avgZChannel : midPoint;
     return Color.colorFromChannels(coords, colorSpace as any).toDisplay();
   };
+  $: shouldShowColorBackground =
+    $configStore.showColorBackground === "always show" ||
+    (dragging && $configStore.showColorBackground === "show on drag");
 </script>
 
 <!-- colorful background select -->
-{#if $configStore.showColorBackground}
+{#if shouldShowColorBackground}
   {#each [...new Array(bgResolution)] as _, i}
     {#each [...new Array(bgResolution)] as _, j}
       <rect
@@ -76,7 +82,7 @@
         y={yScale(yNonDimScale(j / bgResolution))}
         width={plotWidth / bgResolution}
         height={plotHeight / bgResolution}
-        opacity={dragging && focusedColors.length === 1 ? 1 : 0}
+        opacity={shouldShowColorBackground && focusedColors.length <= 1 ? 1 : 0}
         class="transition-opacity duration-500 ease-in-out"
         fill={fillColor(i, j)}
       />

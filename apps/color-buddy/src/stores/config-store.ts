@@ -19,7 +19,7 @@ interface StoreData {
   manageBrowsePreviewIdx: number;
   route: "examples" | "compare" | "eval" | "browse" | "manage";
   scatterplotMode: "moving" | "putting";
-  showColorBackground: boolean;
+  showColorBackground: "always show" | "show on drag" | "never show";
   showGamutMarkers: boolean;
   tooltipXY?: [string, string];
   tour: boolean;
@@ -51,7 +51,7 @@ const InitialStore: StoreData = {
   manageBrowsePreviewIdx: -1,
   route: "examples",
   scatterplotMode: "moving",
-  showColorBackground: true,
+  showColorBackground: "show on drag",
   showGamutMarkers: true,
   tooltipXY: undefined,
   tour: false,
@@ -68,6 +68,12 @@ const addDefaults = (store: StoreData): StoreData => {
     ...InitialStore,
     ...store,
   };
+  if (typeof newStore.showColorBackground === "boolean") {
+    newStore.showColorBackground = newStore.showColorBackground
+      ? "show on drag"
+      : "never show";
+  }
+
   // delete any keys that are not in the initial store
   for (const key in newStore) {
     if (!(key in InitialStore)) {

@@ -379,10 +379,7 @@
               {#if scatterPlotMode === "moving"}
                 <circle
                   {...CircleProps(color, i)}
-                  stroke={interactionMode === "drag" &&
-                  focusedColors.length === 1
-                    ? "white"
-                    : "none"}
+                  stroke={focusedColors.length === 1 ? "white" : "none"}
                   on:touchstart|preventDefault={(e) => {
                     onFocusedColorsChange([i]);
                     dragStart(e);
@@ -398,6 +395,7 @@
               {#if scatterPlotMode !== "moving"}
                 <circle
                   {...CircleProps(color, i)}
+                  stroke={focusedColors.length === 1 ? "white" : "none"}
                   on:mouseenter|preventDefault={() => hoverPoint(i)}
                 />
               {/if}

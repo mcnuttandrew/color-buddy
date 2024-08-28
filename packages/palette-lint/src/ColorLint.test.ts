@@ -294,8 +294,7 @@ test("ColorLint - Diverging Order", async () => {
   // );
 });
 
-test.only("ColorLint Ad hoc test", async () => {
-  console.log("here");
+test("ColorLint Ad hoc test", async () => {
   const adHocLint: LintProgram = {
     name: "Sequential Palette Order",
     program:

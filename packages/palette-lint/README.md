@@ -4,6 +4,14 @@ Have you ever looked closely at a color palette and wondered if it was a good pa
 
 It is design solely for use with the color-buddy-palette package and programmatically. There is not a CLI interface, but it can be used through the color-buddy GUI.
 
+## Installation
+
+You can install it with
+
+```bash
+npm install color-buddy-palette-lint
+```
+
 ## Contents
 
 This library contains the following functions:

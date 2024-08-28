@@ -2,6 +2,14 @@
 
 This package is a collection of tools for working with color palettes. It is built on top of the [Color](https://colorjs.io) library. Palette lint's usage is centered around Color library, that, in turn wraps the extremely powerful [colorjs.io](https://colorjs.io/).
 
+## Installation
+
+You can install it with
+
+```bash
+npm install color-buddy-palette
+```
+
 ## Contents
 
 This library contains the following functions:

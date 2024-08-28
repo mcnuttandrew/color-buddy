@@ -6,6 +6,8 @@ It uses the color centers from Heer-Stone and the color names from the XKCD colo
 
 ## Installation
 
+You can install it with
+
 ```bash
 npm install color-buddy-color-namer
 ```

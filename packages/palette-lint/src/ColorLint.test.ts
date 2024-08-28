@@ -1,10 +1,12 @@
 import { expect, test } from "vitest";
 
 import { Color, makePalFromString } from "color-buddy-palette";
+import type { Palette } from "color-buddy-palette";
 import { nameColor } from "color-buddy-color-namer";
 
 import { suggestLintFix } from "./linter-tools/lint-fixer";
 import { RunLint } from "./ColorLint";
+import { linter } from "./main";
 import type { LintProgram } from "./ColorLint";
 import compileToLL from "./lint-language/parser";
 

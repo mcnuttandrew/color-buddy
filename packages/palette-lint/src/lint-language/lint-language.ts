@@ -4,6 +4,12 @@ import { Color, ColorSpaceDirectory, cvdSim } from "color-buddy-palette";
 
 import type { LintProgram } from "./lint-type";
 
+// don't use instanceof
+// truly cursed bug: instance of doesn't work across transpilation for some reason
+function isColor(x: any): x is Color {
+  return x && typeof x === "object" && "toColorIO" in x;
+}
+
 type RawValues = string | number | Color | string[] | number[] | Color[];
 class Environment {
   constructor(
@@ -53,7 +59,7 @@ class Environment {
     ]
       .map((x) => `"${x}"`)
       .join(", ");
-    if (!val)
+    if (!(name in this.variables))
       throw new Error(
         `Variable "${name}" not found. Defined variables are ${definedVariables}`
       );
@@ -309,10 +315,10 @@ export class LLColor extends LLNode {
     return { result: this.value, env };
   }
   static tryToConstruct(value: any, _options: OptionsConfig): false | LLColor {
-    if (value instanceof Color) {
+    if (isColor(value)) {
       return new LLColor(value, value.toHex());
     }
-    if (typeof value === "object" && value instanceof Color) {
+    if (typeof value === "object" && isColor(value)) {
       return new LLColor(value, value.toHex());
     }
     if (typeof value === "string" && Color.stringIsColor(value, "lab")) {
@@ -460,7 +466,7 @@ function compareValues(
   }
 }
 const getType = (x: any): string => {
-  if (x instanceof Color) return "Color";
+  if (isColor(x)) return "Color";
   return typeof x === "object"
     ? Array.isArray(x)
       ? "Array"
@@ -636,7 +642,7 @@ export class LLValueFunction extends LLNode {
     const { input, params } = this;
     // get the value of the input, such as by deref
     const inputEval = input.evaluate(env).result;
-    if (!(typeof inputEval === "object" && inputEval instanceof Color)) {
+    if (!(typeof inputEval === "object" && isColor(inputEval))) {
       throw new Error(
         `Type error, was expecting a color, but got ${inputEval} in function ${this.type}`
       );
@@ -737,7 +743,7 @@ export class LLPairFunction extends LLNode {
     // get the value of the input, such as by deref
     const leftEval = left.evaluate(env).result;
     const rightEval = right.evaluate(env).result;
-    if (!(leftEval instanceof Color) || !(rightEval instanceof Color)) {
+    if (!isColor(leftEval) || !isColor(rightEval)) {
       throw new Error("Type error");
     }
     const op = LLPairFunctionTypes.find((x) => x.primaryKey === this.type);
@@ -1031,7 +1037,7 @@ export class LLMap extends LLNode {
             typeof x === "number" ||
             (typeof x === "object" && x?.type === "<number>")
         );
-        const allColors = children.every((x) => x instanceof Color);
+        const allColors = children.every((x) => isColor(x));
         if (!allNumbers && !allColors) {
           const types = children.map((x) => x);
           console.log(children);

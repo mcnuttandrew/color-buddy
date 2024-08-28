@@ -294,11 +294,23 @@ test("ColorLint - Diverging Order", async () => {
   // );
 });
 
-test("ColorLint Ad hoc test", async () => {
+test.only("ColorLint Ad hoc test", async () => {
   const adHocLint: LintProgram = {
     name: "Sequential Palette Order",
-    program:
-      '{"or":[{"==":{"left":{"sort":"colors","varb":"x","func":{"lch.l":"x"}},"right":{"map":"colors","varb":"x","func":{"lch.l":"x"}}}},{"==":{"left":{"sort":"colors","varb":"x","func":{"lch.l":"x"}},"right":{"reverse":{"map":"colors","varb":"x","func":{"lch.l":"x"}}}}}]}',
+    // program:
+    //   '{"or":[{"==":{"left":{"sort":"colors","varb":"x","func":{"lch.l":"x"}},"right":{"map":"colors","varb":"x","func":{"lch.l":"x"}}}},{"==":{"left":{"sort":"colors","varb":"x","func":{"lch.l":"x"}},"right":{"reverse":{"map":"colors","varb":"x","func":{"lch.l":"x"}}}}}]}',
+    // program: `        {
+    //       "==": {
+    //         "left": { "sort": "colors", "varb": "x", "func": { "lch.l": "x" } },
+    //         "right": { "map": "colors", "varb": "x", "func": { "lch.l": "x" } }
+    //       }
+    //     }`,
+    program: JSON.stringify({
+      "==": {
+        left: { sort: "colors", varb: "x", func: { "lch.l": "x" } },
+        right: { map: "colors", varb: "x", func: { "lch.l": "x" } },
+      },
+    }),
     taskTypes: ["sequential"],
     level: "error",
     group: "usability",
@@ -313,19 +325,23 @@ test("ColorLint Ad hoc test", async () => {
     expectedPassingTests: [],
     expectedFailingTests: [],
   };
-  const colors = makePalFromString([
-    "#D3E3CAFF",
-    "#BED6B3FF",
-    "#92A587FF",
-    "#4A5438FF",
-    "#2F3525FF",
-  ]);
+
   const palInput: Palette = {
-    ...colors,
-    name: "calecopal/chaparral3",
+    name: "beyonce/X85",
+    colors: makePalFromString([
+      "#d3e3ca",
+      "#bed6b3",
+      "#92a587",
+      "#4a5438",
+      "#2f3525",
+    ]).colors,
+    background: makePalFromString(["#fff"]).colors[0],
     type: "sequential",
+    evalConfig: {},
+    colorSpace: "lab",
+    tags: [],
   };
   const lintResult = linter(palInput, [adHocLint], {})[0];
   expect(lintResult.kind).toBe("success");
-  expect(lintResult.kind === "success" && lintResult.passes).toBe(true);
+  expect(lintResult.kind === "success" && lintResult.passes).toBe(false);
 });

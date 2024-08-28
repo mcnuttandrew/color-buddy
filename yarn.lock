@@ -3170,7 +3170,7 @@ color-buddy-color-namer@*, "color-buddy-color-namer@file:/Users/andrewmcnutt/cod
     vite-node "^1.6.0"
 
 color-buddy-palette-lint@*, "color-buddy-palette-lint@file:/Users/andrewmcnutt/code/color-buddy/packages/palette-lint":
-  version "0.0.6"
+  version "0.0.7"
   resolved "file:packages/palette-lint"
   dependencies:
     color-buddy-color-lists "*"

@@ -53,7 +53,7 @@ class Environment {
     ]
       .map((x) => `"${x}"`)
       .join(", ");
-    if (!val)
+    if (!(name in this.variables))
       throw new Error(
         `Variable "${name}" not found. Defined variables are ${definedVariables}`
       );

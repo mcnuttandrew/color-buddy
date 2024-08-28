@@ -1,10 +1,12 @@
 import { expect, test } from "vitest";
 
 import { Color, makePalFromString } from "color-buddy-palette";
+import type { Palette } from "color-buddy-palette";
 import { nameColor } from "color-buddy-color-namer";
 
 import { suggestLintFix } from "./linter-tools/lint-fixer";
 import { RunLint } from "./ColorLint";
+import { linter } from "./main";
 import type { LintProgram } from "./ColorLint";
 import compileToLL from "./lint-language/parser";
 
@@ -290,4 +292,41 @@ test("ColorLint - Diverging Order", async () => {
   //   },
   //   "Diverging Order (2)"
   // );
+});
+
+test.only("ColorLint Ad hoc test", async () => {
+  console.log("here");
+  const adHocLint: LintProgram = {
+    name: "Sequential Palette Order",
+    program:
+      '{"or":[{"==":{"left":{"sort":"colors","varb":"x","func":{"lch.l":"x"}},"right":{"map":"colors","varb":"x","func":{"lch.l":"x"}}}},{"==":{"left":{"sort":"colors","varb":"x","func":{"lch.l":"x"}},"right":{"reverse":{"map":"colors","varb":"x","func":{"lch.l":"x"}}}}}]}',
+    taskTypes: ["sequential"],
+    level: "error",
+    group: "usability",
+    requiredTags: [],
+    description:
+      "Sequential palettes should be ordered by lightness. This is a defining property of a sequential palette and ensures that values are understood as having an increase (or decreasing) value.",
+    failMessage:
+      "This palette should be ordered by lightness if being used as a sequential palette. {{blame}} may be to blame.",
+    id: "sequential-order-built-in",
+    blameMode: "single",
+    subscribedFix: "fixSequentialOrder",
+    expectedPassingTests: [],
+    expectedFailingTests: [],
+  };
+  const colors = makePalFromString([
+    "#D3E3CAFF",
+    "#BED6B3FF",
+    "#92A587FF",
+    "#4A5438FF",
+    "#2F3525FF",
+  ]);
+  const palInput: Palette = {
+    ...colors,
+    name: "calecopal/chaparral3",
+    type: "sequential",
+  };
+  const lintResult = linter(palInput, [adHocLint], {})[0];
+  expect(lintResult.kind).toBe("success");
+  expect(lintResult.kind === "success" && lintResult.passes).toBe(true);
 });

@@ -1,6 +1,6 @@
 # "Color Buddy" an interactive color palette development tool
 
-This is the code repo for Color Buddy. If you are looking for the app itself, you can find it [here](https://color-buddy.netlify.app/) or if you want the docs you can find them [here](https://color-buddy-docs.netlify.app/docs/).
+This is the code repo for Color Buddy. If you are looking for the app itself, you can find it [here](https://color-buddy.netlify.app/) or if you want the docs you can find them [here](https://color-buddy-docs.netlify.app/).
 
 This repo is comprised of a monorepo that contains the following packages:
 

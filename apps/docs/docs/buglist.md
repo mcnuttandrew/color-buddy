@@ -3,11 +3,11 @@
 ## Browse/Manage
 
 - [x] After clicking on a palette, the palette updates and the tab switches to samples. Leave the tab on the view of the palettes
-- [ ] In the manage pane, make the windows tight on the palettes, as in Browse
+- [x] In the manage pane, make the windows tight on the palettes, as in Browse
 
 ## Editing and color spaces
 
-- [ ] when you change the color space, dismiss the menu once you select one.
+- [x] when you change the color space, dismiss the menu once you select one.
 - [ ] Selecting a new palette changes the color space back to LAB. It shouldn't
 - [ ] The color space specific metrics in the lower left corner aren't tracking selection. Only the hex updates.
 - [ ] Update the color space descriptions (details TBD from Maureen)

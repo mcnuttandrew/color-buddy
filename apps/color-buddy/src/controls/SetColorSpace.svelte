@@ -19,7 +19,7 @@
 </script>
 
 <Tooltip>
-  <div slot="content" class="flex flex-col max-w-md">
+  <div slot="content" class="flex flex-col max-w-md" let:onClick>
     <div class="font-bold">Set Color Space</div>
     <div class="text-sm">
       Select the color space to use for the color picker.
@@ -29,7 +29,10 @@
         <button
           class={`${buttonStyle} justify-self-start`}
           class:font-bold={space === colorSpace}
-          on:click={() => onChange(space)}
+          on:click={() => {
+            onChange(space);
+            onClick();
+          }}
         >
           {space.toUpperCase()}
         </button>
@@ -49,7 +52,10 @@
         <button
           class={`${buttonStyle} justify-self-start`}
           class:font-bold={space === colorSpace}
-          on:click={() => onChange(space)}
+          on:click={() => {
+            onChange(space);
+            onClick();
+          }}
         >
           {space.toUpperCase()}
         </button>

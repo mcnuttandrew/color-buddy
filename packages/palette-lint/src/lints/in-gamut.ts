@@ -17,7 +17,7 @@ const lint: LintProgram = {
   }),
   taskTypes: ["sequential", "diverging", "categorical"] as const,
   level: "warning",
-  group: "design",
+  group: "usability",
   description:
     "Checks if the colors are in the sRGB gamut. This is important to ensure that the colors are visible and can be displayed on most devices.",
   failMessage: `A color or colors is not in the sRGB gamut ({{blame}}). Please adjust the color so that it can be displayed on most devices.`,

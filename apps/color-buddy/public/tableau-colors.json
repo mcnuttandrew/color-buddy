@@ -1,5 +1,20 @@
 [
   {
+    "name": "Color Test",
+    "type": "categorical",
+    "colors": [
+      "#f00",
+      "#ff0",
+      "#0f0",
+      "#0ff",
+      "#00f",
+      "#f0f",
+      "#fff",
+      "#888",
+      "#000"
+    ]
+  },
+  {
     "name": "FL10.0",
     "type": "categorical",
     "colors": [

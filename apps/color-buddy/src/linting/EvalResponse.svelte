@@ -23,11 +23,11 @@
 
   $: palette = $colorStore.palettes[$colorStore.currentPal];
   $: engine = $configStore.engine;
-  $: suggestions = [] as Palette[];
+  $: suggestions = [] as { pal: Palette; label: string }[];
   $: colorSpace = palette.colorSpace;
   $: lintProgram = lintResult.lintProgram;
 
-  function proposeFix(fixType: "ai" | "monte" | "heuristic") {
+  function proposeFix(fixType: "ai" | "monte" | "heuristic", label: string) {
     requestState = "loading";
     let hasRetried = false;
     const getFix = () => {
@@ -40,7 +40,7 @@
         fix = suggestLintFix(palette, lintResult);
       }
       return fix.then((x) => {
-        suggestions = [...suggestions, ...x];
+        suggestions = [...suggestions, ...x.map((pal) => ({ pal, label }))];
         requestState = "loaded";
         logEvent(
           "lint-fix",
@@ -117,16 +117,19 @@
 
     {#if lintResult.kind === "success" && !lintResult.passes}
       <!-- hiding the LLM based solution, bc it works poorly -->
-      <button class={buttonStyle} on:click={() => proposeFix("ai")}>
+      <button class={buttonStyle} on:click={() => proposeFix("ai", "LLM")}>
         Try to fix (LLM)
       </button>
       {#if lintProgram && lintProgram.program.length}
-        <button class={buttonStyle} on:click={() => proposeFix("monte")}>
+        <button class={buttonStyle} on:click={() => proposeFix("monte", "AI")}>
           Try to fix (AI)
         </button>
       {/if}
       {#if lintProgram.subscribedFix && lintProgram.subscribedFix !== "none"}
-        <button class={buttonStyle} on:click={() => proposeFix("heuristic")}>
+        <button
+          class={buttonStyle}
+          on:click={() => proposeFix("heuristic", "ColorBuddy")}
+        >
           Try to fix (ColorBuddy)
         </button>
       {/if}
@@ -174,38 +177,43 @@
     {:else if requestState === "failed"}
       <div>Failed to generate suggestions</div>
     {/if}
-    {#each suggestions as suggestion}
-      <div class="flex">
-        <PalDiff beforePal={currentPal} afterPal={suggestion} />
-        <div class="flex flex-col justify-between">
-          <button
-            class={buttonStyle}
-            on:click={() => {
-              if (suggestion) {
-                colorStore.setCurrentPal(suggestion);
-                focusStore.clearColors();
-                requestState = "idle";
-                suggestions = [];
-                onClick();
-              }
-            }}
-          >
-            Use
-          </button>
-          <button
-            class={buttonStyle}
-            on:click={() => {
-              suggestions = suggestions.filter((x) => x !== suggestion);
-              if (suggestions.length === 0) {
-                requestState = "idle";
-              }
-            }}
-          >
-            Reject
-          </button>
+    <div class="max-h-40 overflow-auto">
+      {#each suggestions as suggestion, idx}
+        <div class="flex relative mb-4">
+          <PalDiff beforePal={currentPal} afterPal={suggestion.pal} />
+          <div class="flex flex-col justify-between items-baseline">
+            <div class="font-bold pl-2 mb-0">
+              {suggestion.label} fix
+            </div>
+            <button
+              class={buttonStyle}
+              on:click={() => {
+                if (suggestion) {
+                  colorStore.setCurrentPal(suggestion.pal);
+                  focusStore.clearColors();
+                  requestState = "idle";
+                  suggestions = [];
+                  onClick();
+                }
+              }}
+            >
+              Use
+            </button>
+            <button
+              class={buttonStyle}
+              on:click={() => {
+                suggestions = suggestions.filter((_, jdx) => jdx !== idx);
+                if (suggestions.length === 0) {
+                  requestState = "idle";
+                }
+              }}
+            >
+              Reject
+            </button>
+          </div>
         </div>
-      </div>
-    {/each}
+      {/each}
+    </div>
   </div>
   <button
     slot="target"

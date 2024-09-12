@@ -2,7 +2,7 @@ import { writable } from "svelte/store";
 import { Color } from "color-buddy-palette";
 import type { Palette, StringPalette, ColorSpace } from "color-buddy-palette";
 
-import { deDup, newGenericPal } from "../lib/utils";
+import { deDup, newGenericPal, convertPalToSpace } from "../lib/utils";
 
 interface StoreData {
   palettes: Palette[];
@@ -213,12 +213,7 @@ function createStore() {
     reset: () => set({ ...convertStoreHexToColor(InitialStore) }),
 
     setColorSpace: (colorSpace: ColorSpace) =>
-      palUp((n) => ({
-        ...n,
-        colorSpace,
-        background: Color.toColorSpace(n.background, colorSpace),
-        colors: n.colors.map((x) => Color.toColorSpace(x, colorSpace)),
-      })),
+      palUp((n) => convertPalToSpace(n, colorSpace)),
     clearPalettes: () =>
       persistUpdate(() => ({
         currentPal: 0,

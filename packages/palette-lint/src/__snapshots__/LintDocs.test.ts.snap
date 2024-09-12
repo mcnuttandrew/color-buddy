@@ -8,6 +8,7 @@ This page contains examples of the language used to define palettes and the expe
 - [WCAG Contrast Graphical Objects](#wcag-contrast-graphical-objects)
 - [WCAG Text Contrast: AA (text colors only)](#wcag-text-contrast--aa--text-colors-only-)
 - [WCAG Text Contrast: AAA (text colors only)](#wcag-text-contrast--aaa--text-colors-only-)
+- [WCAG Text Contrast: AA (all colors)](#wcag-text-contrast--aa--all-colors-)
 - [Saturated not appropriate for serious affect](#saturated-not-appropriate-for-serious-affect)
 - [Saturated not appropriate for trustworthy affect](#saturated-not-appropriate-for-trustworthy-affect)
 - [Saturated not appropriate for calm affect](#saturated-not-appropriate-for-calm-affect)
@@ -160,6 +161,48 @@ Palettes that will pass this test:
             ">": {
                 "left": { "contrast": {"left": "a", "right": "background"}, "algorithm": "WCAG21" }, 
                 "right": 7
+            }
+        }
+    }
+}
+
+\`\`\`
+
+    
+
+
+
+### WCAG Text Contrast: AA (all colors)
+**Tasks**: sequential, diverging, categorical
+
+
+**Description**: All colors in a palette should have a sufficient contrast ratio with the background color. This is because if they are not, then they will not be differentiable from each other in some contexts. Valid algorithms are "APCA", "WCAG21", "Michelson", "Weber", "Lstar", "DeltaPhi". If this lint is not failing and you believe it should be, ensure that a color has been selected as having the "text" tag.
+
+**Natural Language**: ALL a IN colors SUCH THAT contrast(a, background, WCAG21) > 4.5
+
+Palettes that will fail this test:
+
+- #feed72, #f8f4d2, #eb717b (text) with a #fff background
+
+
+
+Palettes that will pass this test:
+
+- #feed72, #f8f4d2, #af3b4b (text) with a #fff background
+
+
+**Program**:
+
+\`\`\`json
+{
+    "$schema": "https://color-buddy-docs.netlify.app/lint-schema.v0.json", 
+    "all": {
+        "in": "colors", 
+        "varb": "a", 
+        "predicate": {
+            ">": {
+                "left": { "contrast": {"left": "a", "right": "background"}, "algorithm": "WCAG21" }, 
+                "right": 4.5
             }
         }
     }

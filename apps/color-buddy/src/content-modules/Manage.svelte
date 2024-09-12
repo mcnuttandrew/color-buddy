@@ -27,7 +27,6 @@
         name: "Use",
         action: () => {
           colorStore.startUsingPal(paletteIdx);
-          configStore.setRoute("examples");
         },
       },
       {
@@ -122,7 +121,6 @@
       palette={pal}
       titleClick={() => {
         colorStore.startUsingPal(paletteIdx);
-        configStore.setRoute("examples");
       }}
       title={pal.name}
       previewIndex={$configStore.manageBrowsePreviewIdx}

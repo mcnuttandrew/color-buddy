@@ -11,7 +11,11 @@
   import PreviewSelector from "../example/PreviewSelector.svelte";
   import NewExampleModal from "../example/NewExampleModal.svelte";
 
+  import { convertPalToSpace } from "../lib/utils";
+
   $: familiarPals = $examplePalStore.palettes.map((x) => x.palette);
+  $: currentPal = $colorStore.palettes[$colorStore.currentPal];
+  $: colorSpace = currentPal.colorSpace;
 
   let searchString = "";
   $: filteredPals = familiarPals
@@ -24,9 +28,8 @@
   ] as any;
 
   function usePal(palette: Palette) {
-    colorStore.createNewPal(palette);
+    colorStore.createNewPal(convertPalToSpace(palette, colorSpace));
     focusStore.clearColors();
-    // configStore.setRoute("examples");
   }
 </script>
 

@@ -504,3 +504,13 @@ export function processBodyTextToColors(body: string, colorSpace: string) {
     .filter((x) => x.length > 0)
     .map((x) => Color.colorFromString(x, colorSpace as any, true));
 }
+
+export let convertPalToSpace = (
+  pal: Palette,
+  colorSpace: ColorSpace
+): Palette => ({
+  ...pal,
+  colorSpace,
+  background: Color.toColorSpace(pal.background, colorSpace),
+  colors: pal.colors.map((x) => Color.toColorSpace(x, colorSpace)),
+});

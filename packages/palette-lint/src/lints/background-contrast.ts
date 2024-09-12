@@ -69,6 +69,18 @@ const contrastTextAA: LintProgram = {
     createPalWithTags(["#feed72", "#f8f4d2", "#af3b4b"], [[2, "text"]]),
   ],
 };
+const contrastTextAAAll: LintProgram = {
+  ...lintBase,
+  program: JSONToPrettyString(buildProgram(4.5, false)),
+  name: "WCAG Text Contrast: AA (all colors)",
+  id: "contrast-aa-built-in",
+  expectedFailingTests: [
+    createPalWithTags(["#feed72", "#f8f4d2", "#eb717b"], [[2, "text"]]),
+  ],
+  expectedPassingTests: [
+    createPalWithTags(["#feed72", "#f8f4d2", "#af3b4b"], [[2, "text"]]),
+  ],
+};
 const contrastTextAAA: LintProgram = {
   ...lintBase,
   program: JSONToPrettyString(buildProgram(7, true)),
@@ -82,7 +94,12 @@ const contrastTextAAA: LintProgram = {
   ],
 };
 
-export default [contrastGraphicalObjects, contrastTextAA, contrastTextAAA];
+export default [
+  contrastGraphicalObjects,
+  contrastTextAA,
+  contrastTextAAA,
+  contrastTextAAAll,
+];
 
 const getColorsCloseToBackground = (colors: Color[], background: Color) => {
   return colors.reduce((acc, x, idx) => {

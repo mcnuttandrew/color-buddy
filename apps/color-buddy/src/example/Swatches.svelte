@@ -7,12 +7,15 @@
 
   import { dealWithFocusEvent } from "../lib/utils";
 
-  export let paletteIdx: number;
+  export let paletteIdx: number | "tempPal";
   export let allowInteraction: boolean = true;
   export let hideHeader: boolean = false;
   export let maxWidth: number | undefined = undefined;
 
-  $: currentPal = $colorStore.palettes[paletteIdx];
+  $: currentPal =
+    paletteIdx === "tempPal"
+      ? $configStore.tempPal!
+      : $colorStore.palettes[paletteIdx];
   $: colors = currentPal?.colors || [];
   $: {
     if (

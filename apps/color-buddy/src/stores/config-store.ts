@@ -1,4 +1,5 @@
 import { writable } from "svelte/store";
+import type { Palette } from "color-buddy-palette";
 import type { Engine } from "../lib/api-calls";
 
 interface StoreData {
@@ -7,7 +8,7 @@ interface StoreData {
   colorSim: "deuteranopia" | "protanopia" | "tritanopia" | "none" | "grayscale";
   compareBackground: string | undefined;
   compareBackgroundSpace: "lab" | "lch" | "hsl" | "hsv" | "rgb";
-  comparePal: number | undefined;
+  comparePal: number | undefined | "tempPal";
   compareSelectedExample: number;
   engine: Engine;
   evalDeltaDisplay: "none" | "76" | "CMC" | "2000" | "ITP" | "Jz" | "OK";
@@ -21,6 +22,7 @@ interface StoreData {
   scatterplotMode: "moving" | "putting";
   showColorBackground: "always show" | "show on drag" | "never show";
   showGamutMarkers: boolean;
+  tempPal: Palette | undefined;
   tooltipXY?: [string, string];
   tour: boolean;
   useSimulatorOnExamples: boolean;
@@ -53,6 +55,7 @@ const InitialStore: StoreData = {
   scatterplotMode: "moving",
   showColorBackground: "show on drag",
   showGamutMarkers: true,
+  tempPal: undefined,
   tooltipXY: undefined,
   tour: false,
   useSimulatorOnExamples: false,
@@ -102,8 +105,17 @@ function createStore() {
     subscribe,
     setRoute: (route: StoreData["route"]) =>
       persist((old) => ({ ...old, route })),
-    setComparePal: (comparePal: StoreData["comparePal"]) =>
-      persist((old) => ({ ...old, comparePal })),
+    setComparePal: (comparePal: number | undefined | Palette) => {
+      if (typeof comparePal === "number") {
+        return persist((old) => ({ ...old, comparePal, tempPal: undefined }));
+      } else {
+        return persist((old) => ({
+          ...old,
+          tempPal: comparePal,
+          comparePal: "tempPal",
+        }));
+      }
+    },
     reset: () => set({ ...InitialStore }),
     setEvalDisplayMode: (evalDisplayMode: StoreData["evalDisplayMode"]) =>
       persist((old) => ({ ...old, evalDisplayMode })),

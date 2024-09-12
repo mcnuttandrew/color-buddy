@@ -8,19 +8,22 @@
 ## Editing and color spaces
 
 - [x] when you change the color space, dismiss the menu once you select one.
-- [ ] Selecting a new palette changes the color space back to LAB. It shouldn't
-- [ ] The color space specific metrics in the lower left corner aren't tracking selection. Only the hex updates.
+- [x] Selecting a new palette changes the color space back to LAB. It shouldn't
+- [ ] The color space specific metrics in the lower left corner aren't tracking selection. Only the hex updates. AM: can't reproduce
 - [ ] Update the color space descriptions (details TBD from Maureen)
-- [ ] JZ values are all in the range 0-0.1, think you need to scale by 10. Comparing JAJBJZ to LAB, I think there's also a scaling problem in the A and B values as well.
-- [ ] No color space background for JAJBJZ. That's two issues in JAJBJZ. Do we really want to include it?
-- [ ] I'd remove the SRGB editing space. Even if it's working correctly (which I think it isn't), it's going to be very confusing.
-- [ ] Possible additional color spaces
-  - [ ] XYZ If you do this one, put Y on the single axis. Could be useful for evaluating the simulations.
-  - [ ] xyY While not supported natively in the Color package, the conversion between this and XYZ is trivial: x = X/(X+Y+Z), y = Y/(X+Y+Z); Plot xy on the plane, Y on the lightness scale. This will show the colors on the CIE Chromaticity diagram.
-- [ ] (#f00, #ff0, #0f0, #0ff, #00f, #f0f, #fff, #888, #000) is a useful palette for evaluting colorspaces
-  - [ ] HSL, #fff should be in the middle
-  - [ ] #0ff is displayed in LAB as out of gamut. It shouldn't be. Clip to gamut doesn't fix it, similar for LCH. Except sometimes it's fine (argh)
-  - [ ] when a color (nearly) matches the background, it would be nice to outline it so it doesn't vanish. Use a slightly darker/lighter version of the color, depending on whether it's a light or dark background. Most obvious in this palette for black and white.
+- [ ] JZ values are all in the range 0-0.1, think you need to scale by 10. Comparing JAJBJZ to LAB, I think there's also a scaling problem in the A and B values as well. AM: nope that's how this space is
+- [ ] No color space background for JAJBJZ. That's two issues in JAJBJZ. Do we really want to include it?. AM: can't reproduce.
+- [x] I'd remove the SRGB editing space. Even if it's working correctly (which I think it isn't), it's going to be very confusing.
+
+- [x] (#f00, #ff0, #0f0, #0ff, #00f, #f0f, #fff, #888, #000) is a useful palette for evaluating colorspaces. AM: added as "Color Test"
+- [ ] HSL, #fff should be in the middle
+- [ ] #0ff is displayed in LAB as out of gamut. It shouldn't be. Clip to gamut doesn't fix it, similar for LCH. Except sometimes it's fine (argh)
+- [ ] when a color (nearly) matches the background, it would be nice to outline it so it doesn't vanish. Use a slightly darker/lighter version of the color, depending on whether it's a light or dark background. Most obvious in this palette for black and white.
+
+# Possible additional color spaces
+
+- [ ] XYZ If you do this one, put Y on the single axis. Could be useful for evaluating the simulations.
+- [ ] xyY While not supported natively in the Color package, the conversion between this and XYZ is trivial: x = X/(X+Y+Z), y = Y/(X+Y+Z); Plot xy on the plane, Y on the lightness scale. This will show the colors on the CIE Chromaticity diagram.
 
 ## Comparison
 

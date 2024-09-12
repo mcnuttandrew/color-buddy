@@ -13,9 +13,9 @@
       return a.localeCompare(b);
     });
 
-  $: advancedSpaceOptions = Object.keys(colorPickerConfig).filter(
-    (x) => !notAllowed.has(x) && colorPickerConfig[x].advancedSpace
-  );
+  $: advancedSpaceOptions = Object.keys(colorPickerConfig)
+    .filter((x) => !notAllowed.has(x) && colorPickerConfig[x].advancedSpace)
+    .filter((x) => x.toLowerCase() !== "srgb");
 </script>
 
 <Tooltip>

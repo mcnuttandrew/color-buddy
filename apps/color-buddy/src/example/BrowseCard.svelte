@@ -30,7 +30,7 @@
 </script>
 
 <div
-  class="flex flex-col border-2 rounded w-min min-w-fit mr-4 mb-2 browse-card"
+  class="flex flex-col border-2 rounded w-min min-w-fit mr-4 mb-2 browse-card shrink self-start"
   style={`background: ${palette.background.toHex()}; min-height: ${minHeight}px;`}
 >
   <div class="bg-stone-300 w-full flex justify-between p-1">
@@ -68,7 +68,7 @@
       </div>
     </Tooltip>
   </div>
-  <div class="h-full flex justify-center items-center p-4">
+  <div class="flex shrink justify-center items-center p-4">
     {#if previewIndex === -1}
       <PalPreview pal={palette} allowModification={false} />
     {:else if !example}

@@ -106,7 +106,9 @@
   </div>
 </div>
 
-<div class="flex flex-wrap bg-stone-100 h-full overflow-auto p-4">
+<div
+  class="flex flex-wrap bg-stone-100 h-full overflow-auto p-4 content-baseline"
+>
   {#each $colorStore.palettes as pal, paletteIdx}
     <BrowseCard
       markAsCurrent={$colorStore.currentPal === paletteIdx}

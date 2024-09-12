@@ -26,7 +26,7 @@
   function usePal(palette: Palette) {
     colorStore.createNewPal(palette);
     focusStore.clearColors();
-    configStore.setRoute("examples");
+    // configStore.setRoute("examples");
   }
 </script>
 
@@ -46,7 +46,7 @@
     These are pre-created palettes that you can use as a starting point.
   </div>
 </div>
-<div class="overflow-y-scroll h-full p-2 bg-stone-100">
+<div class="overflow-y-scroll h-full p-2 bg-stone-100 content-baseline">
   <div class="flex flex-wrap">
     {#each filteredPals as palette}
       <BrowseCard

@@ -3,6 +3,7 @@
   import colorStore from "../stores/color-store";
   import configStore from "../stores/config-store";
   import focusStore from "../stores/focus-store";
+  import examplePalStore from "../stores/example-palette-store";
 
   import Background from "../components/Background.svelte";
   import ColorScatterPlot from "../scatterplot/ColorScatterPlot.svelte";
@@ -22,9 +23,11 @@
   $: compareIdx = $configStore.comparePal;
   $: focused = $focusStore.focusedColors;
   $: ComparisonPal =
-    typeof compareIdx === "number"
-      ? $colorStore.palettes[compareIdx]
-      : undefined;
+    compareIdx === "tempPal"
+      ? $configStore.tempPal
+      : typeof compareIdx === "number"
+        ? $colorStore.palettes[compareIdx]
+        : undefined;
 
   $: bg =
     $configStore.compareBackground ||
@@ -34,6 +37,13 @@
   let showDiff = false;
 
   let colorSpace = ComparisonPal?.colorSpace || "lab";
+  let searchInput = "";
+  $: familiarPals = $examplePalStore.palettes
+    .map((x) => x.palette)
+    .filter((x) => {
+      if (searchInput === "") return true;
+      return x.name.toLowerCase().includes(searchInput.toLowerCase());
+    });
 </script>
 
 <div class="w-full border-l-8 border-stone-200 h-full">
@@ -58,7 +68,7 @@
           Change Compared Palette
         </button>
         <div class="flex flex-col w-80" slot="content">
-          <div>Saved Palettes:</div>
+          <div class="font-bold">Saved Palettes:</div>
           <div class="flex flex-wrap">
             {#each $colorStore.palettes as pal, idx (idx)}
               <MiniPalPreview
@@ -68,12 +78,40 @@
               />
             {/each}
           </div>
+          <div class="font-bold">Pre-built Palettes:</div>
+          <div class="flex flex-wrap">
+            <div>
+              <label>
+                Search
+
+                <input type="text" bind:value={searchInput} />
+              </label>
+            </div>
+            {#each familiarPals.slice(0, 15) as pal, idx (idx)}
+              <MiniPalPreview
+                {pal}
+                className={compareIdx === idx ? "border-2 border-black" : ""}
+                onClick={() => configStore.setComparePal(pal)}
+              />
+            {/each}
+          </div>
         </div>
       </Tooltip>
       <div>
         <button class={buttonStyle} on:click={() => (showDiff = !showDiff)}>
           {#if showDiff}Hide{:else}Show{/if} diff
         </button>
+        {#if compareIdx === "tempPal" && ComparisonPal}
+          <button
+            class={buttonStyle}
+            on:click={() => {
+              configStore.setComparePal(currentPalIdx);
+              colorStore.createNewPal(ComparisonPal);
+            }}
+          >
+            Modify this palette
+          </button>
+        {/if}
       </div>
     </div>
   </div>

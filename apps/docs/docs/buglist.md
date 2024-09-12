@@ -27,8 +27,8 @@
 
 ## Comparison
 
-- [ ] The dotted line connections are useful if the colors are in the same order and have only changed slightly, but confusing if the palette order has changed (for example, Tableau 10 Classic and Tableau 10). Since small changes are easy to see with just the rings vs disks, I'd leave the lines out for now.
-- [ ] To get a palette to compare, it has to be in the Manage set. From the Change Compared Palette dropdown, I'd add a "browse for more palettes" affordance that switched you to the Browse pane.
+- [x] The dotted line connections are useful if the colors are in the same order and have only changed slightly, but confusing if the palette order has changed (for example, Tableau 10 Classic and Tableau 10). Since small changes are easy to see with just the rings vs disks, I'd leave the lines out for now.
+- [x] To get a palette to compare, it has to be in the Manage set. From the Change Compared Palette dropdown, I'd add a "browse for more palettes" affordance that switched you to the Browse pane.
 
 ## Eval
 

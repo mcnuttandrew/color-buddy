@@ -409,7 +409,7 @@
               {/if}
             {/each}
             {#each annotationColors as annotationColor, i}
-              <line
+              <!-- <line
                 stroke-dasharray="5,5"
                 x1={x(annotationColor)}
                 y1={y(annotationColor)}
@@ -417,7 +417,7 @@
                 y2={y(colors[i])}
                 stroke={annotationColor.toDisplay()}
                 stroke-width="1"
-              />
+              /> -->
               <circle
                 {...CircleProps(annotationColor, i)}
                 class="cursor-pointer"

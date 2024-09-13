@@ -8,6 +8,17 @@
   import { loadLints } from "../lib/api-calls";
   let lintPrompt: string = "";
   let requestState: "idle" | "loading" | "loaded" | "failed" = "idle";
+
+  function getNewName(): string {
+    const lintNames = new Set($lintStore.lints.map((x) => x.name));
+    let name = "New Lint";
+    let i = 2;
+    while (lintNames.has(name)) {
+      name = `New Lint ${i}`;
+      i++;
+    }
+    return name;
+  }
   function makeRequest() {
     requestState = "loading";
 
@@ -29,7 +40,7 @@
         const program = JSONStringify(JSON.stringify(prog));
         let description = explanation || lintPrompt;
         let failMessage = lintPrompt;
-        let name = "New Lint";
+        let name = lintPrompt;
 
         lintStore.createNewLint({
           name,
@@ -40,6 +51,7 @@
         setTimeout(() => {
           loadLints();
           lintPrompt = "";
+          configStore.setEvalDisplayMode("lint-customization");
         }, 100);
 
         requestState = "loaded";
@@ -78,8 +90,9 @@
         <button
           class={buttonStyle}
           on:click|stopPropagation|preventDefault={() => {
+            let name = getNewName();
             lintStore.createNewLint({
-              name: "New Lint",
+              name,
               description: "",
               failMessage: "",
               program: "true",
@@ -100,6 +113,6 @@
       toggle();
     }}
   >
-    New Lint
+    Create New Lint
   </button>
 </Tooltip>

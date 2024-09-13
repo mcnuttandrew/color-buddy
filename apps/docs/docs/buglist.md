@@ -36,9 +36,9 @@
 - [x] These palettes are labeled Use and Reject. I think it would be useful if they included what algorithm was used. For example, Use(ColorBuddy), Reject(LLM)
 - [x] In Gamut should be a Usability Check, not a Design Check.
 - [x] Settings raises a long list of lints, which really needs a scroll bar or some other way of managing the list on a smaller screen. Also, it would be more conventional to make this a list of Selected lints rather than a List of Ignored lints.
-- [ ] the New lint text box doesn't seem to do anything. I tried several types of requests, got nothing back.
+- [x] the New lint text box doesn't seem to do anything. I tried several types of requests, got nothing back.
 - [ ] Being able to copy and modify an existing lint seems very powerful, but I see no way to do that. AM: click lint info / click customize / click clone
-- [ ] I would like a way to test all colors for text legibility, no matter what their tags are. Maybe this is just a new lint?
+- [x] I would like a way to test all colors for text legibility, no matter what their tags are. Maybe this is just a new lint?
 - [ ] I would like to improve the appearance of the red X's on the colors. Ideally, we'd have some tasteful icons, one per major category (Usability, Accessibility, Design, Custom) that were legible on all colors.
 - [ ] I'd like to see more metrics in the lint descriptions and errors. For example, what contrast do we need for text legibility, and what is the contrast for those colors that failed?
 

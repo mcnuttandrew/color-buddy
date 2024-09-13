@@ -196,7 +196,13 @@
         >
           Clone this lint
         </button>
-        <a class={buttonStyle} target="_blank" href="./lang-docs.md">Docs</a>
+        <a
+          class={buttonStyle}
+          target="_blank"
+          href="https://color-buddy-docs.netlify.app/lang-docs.html"
+        >
+          Docs
+        </a>
       </div>
     </div>
 

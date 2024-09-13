@@ -81,7 +81,7 @@ export class Color {
     if (InGamutCache.has(key)) {
       return InGamutCache.get(key)!;
     }
-    const result = this.toColorIO().inGamut("srgb");
+    const result = this.toColorIO().to("p3", { inGamut: false }).inGamut();
     InGamutCache.set(key, result);
     return result;
   }

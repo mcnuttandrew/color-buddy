@@ -76,3 +76,26 @@ test("All color spaces do round trip to each other correctly", () => {
     );
   });
 });
+
+test("In gamut tests", () => {
+  const colors = [
+    "#f00",
+    "#ff0",
+    "#0f0",
+    "#0ff",
+    "#00f",
+    "#f0f",
+    "#fff",
+    "#888",
+    "#000",
+  ];
+  const spaces = ["lab"];
+  colors.forEach((color) => {
+    spaces.forEach((space) => {
+      const colorObj = Color.colorFromHex(color, space as any);
+      expect(colorObj.inGamut(), `${color} from ${space} to be in gamut`).toBe(
+        true
+      );
+    });
+  });
+});

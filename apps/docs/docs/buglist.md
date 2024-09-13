@@ -35,7 +35,7 @@
 - [ ] When you ask for a fix and it displays the before and after palette, the vertical lines seem to connect the colors that didn't change. I would expect to have them on the colors that did change. Ideally, they'd be arrows pointing from/to.
 - [x] These palettes are labeled Use and Reject. I think it would be useful if they included what algorithm was used. For example, Use(ColorBuddy), Reject(LLM)
 - [x] In Gamut should be a Usability Check, not a Design Check.
-- [ ] Settings raises a long list of lints, which really needs a scroll bar or some other way of managing the list on a smaller screen. Also, it would be more conventional to make this a list of Selected lints rather than a List of Ignored lints.
+- [x] Settings raises a long list of lints, which really needs a scroll bar or some other way of managing the list on a smaller screen. Also, it would be more conventional to make this a list of Selected lints rather than a List of Ignored lints.
 - [ ] the New lint text box doesn't seem to do anything. I tried several types of requests, got nothing back.
 - [ ] Being able to copy and modify an existing lint seems very powerful, but I see no way to do that. AM: click lint info / click customize / click clone
 - [ ] I would like a way to test all colors for text legibility, no matter what their tags are. Maybe this is just a new lint?

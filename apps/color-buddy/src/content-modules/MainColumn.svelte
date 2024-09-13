@@ -76,6 +76,7 @@
     onColorsChange={(x) => colorStore.setCurrentPalColors(x)}
     onFocusedColorsChange={(x) => focusStore.setColors(x)}
     startDragging={() => colorStore.pausePersistance()}
+    showLines={true}
     stopDragging={() => colorStore.resumePersistance()}
     annotationColors={selectedCVDType === "none"
       ? []

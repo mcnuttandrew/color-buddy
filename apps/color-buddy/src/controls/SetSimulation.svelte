@@ -11,27 +11,34 @@
   ] as const;
 </script>
 
-{#if $configStore.colorSim !== "none"}
-  <button class={buttonStyle} on:click={() => configStore.setColorSim("none")}>
-    Deactivate Sim
-  </button>
-{/if}
-<Tooltip>
-  <div slot="content">
-    {#each options as value}
-      <label>
-        <input
-          type="radio"
-          checked={$configStore.colorSim === value}
-          on:change={() => configStore.setColorSim(value)}
+<div class="w-full flex justify-between">
+  <Tooltip>
+    <div slot="content">
+      {#each options as value}
+        <label>
+          <input
+            type="radio"
+            checked={$configStore.colorSim === value}
+            on:change={() => configStore.setColorSim(value)}
+            {value}
+          />
           {value}
-        />
-        {value}
-      </label>
-    {/each}
-  </div>
+        </label>
+      {/each}
+    </div>
 
-  <button slot="target" let:toggle on:click={toggle} class={buttonStyle}>
-    Simulation: {$configStore.colorSim}
-  </button>
-</Tooltip>
+    <button slot="target" let:toggle on:click={toggle} class={buttonStyle}>
+      Simulation: {$configStore.colorSim}
+    </button>
+  </Tooltip>
+  {#if $configStore.colorSim !== "none"}
+    <div>
+      <button
+        class={buttonStyle}
+        on:click={() => configStore.setColorSim("none")}
+      >
+        Deactivate Sim
+      </button>
+    </div>
+  {/if}
+</div>

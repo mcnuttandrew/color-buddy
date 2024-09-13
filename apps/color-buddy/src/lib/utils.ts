@@ -408,11 +408,6 @@ export const screenSpaceAvg = (colors: { x: number; y: number }[]) => {
   return { x: xAvg, y: yAvg };
 };
 
-export const checkLevelToSymbol = {
-  error: "❌",
-  warning: "⚠️",
-} as any;
-
 export const titleCase = (str: string) =>
   str
     .split(" ")

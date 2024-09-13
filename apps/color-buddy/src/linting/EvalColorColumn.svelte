@@ -9,7 +9,7 @@
   import lintStore from "../stores/lint-store";
 
   import EvalResponse from "./EvalResponse.svelte";
-  import { checkLevelToSymbol, dealWithFocusEvent } from "../lib/utils";
+  import { dealWithFocusEvent } from "../lib/utils";
   import { buttonStyle } from "../lib/styles";
 
   $: checks = $lintStore.currentChecks;
@@ -42,6 +42,17 @@
     $configStore.evalDeltaDisplay === "none"
       ? []
       : computeDeltas(colors, $configStore.evalDeltaDisplay);
+
+  const checkLevelToSymbol = {
+    error: "❌",
+    warning: "⚠️",
+  } as any;
+  const typeToSymbol = {
+    design: "🎨",
+    accessibility: "♿",
+    usability: "🔎",
+    custom: "⚙️",
+  } as any;
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
@@ -92,17 +103,22 @@
               {colorNames[idx]}
             </span>{/if}
         </span>
-        <span class="flex flex-wrap flex-row-reverse">
-          {#each colorsToIssues[idx] as check}
-            {#if !evalConfig[check.lintProgram.name]?.ignore}
-              <EvalResponse
-                lintResult={check}
-                positionAlongRightEdge={false}
-                customWord={checkLevelToSymbol[check.lintProgram.level]}
-              />
-            {/if}
-          {/each}
-        </span>
+        <div>
+          {#if colorsToIssues[idx].length}
+            <span>Issues</span>
+          {/if}
+          <span class="flex flex-wrap flex-row-reverse">
+            {#each colorsToIssues[idx] as check}
+              {#if !evalConfig[check.lintProgram.name]?.ignore}
+                <EvalResponse
+                  lintResult={check}
+                  positionAlongRightEdge={false}
+                  customWord={typeToSymbol[check.lintProgram.group]}
+                />
+              {/if}
+            {/each}
+          </span>
+        </div>
       </div>
     </button>
 

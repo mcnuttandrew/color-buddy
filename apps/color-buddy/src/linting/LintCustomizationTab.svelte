@@ -165,6 +165,7 @@
               on:click={() => {
                 lintStore.deleteLint(lint.id);
                 lintStore.setFocusedLint(false);
+                showDeleteDoubleCheck = false;
               }}
               class={buttonStyle}
             >

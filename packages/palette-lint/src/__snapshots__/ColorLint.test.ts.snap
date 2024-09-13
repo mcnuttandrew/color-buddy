@@ -34,7 +34,7 @@ exports[`ColorLint - CVD: Grayscale 2`] = `"This palette may not work in black a
 
 exports[`ColorLint - CVD: Protanopia 1`] = `"This palette is not friendly for people with protanopia color vision deficiency. The following pairs are undifferentiable: ()"`;
 
-exports[`ColorLint - CVD: Protanopia 2`] = `"This palette is not friendly for people with protanopia color vision deficiency. The following pairs are undifferentiable: (#0078b4 and #8c69bc, #ff7e0e and #3d9f2f, #da2827 and #8e564b)"`;
+exports[`ColorLint - CVD: Protanopia 2`] = `"This palette is not friendly for people with protanopia color vision deficiency. The following pairs are undifferentiable: (#0078b4 and #8c69bc, #ff7e0e and #3d9f2f, #ff7e0e and #c4bc27)"`;
 
 exports[`ColorLint - CVD: Tritanopia 1`] = `"This palette is not friendly for people with tritanopia color vision deficiency. The following pairs are undifferentiable: ()"`;
 

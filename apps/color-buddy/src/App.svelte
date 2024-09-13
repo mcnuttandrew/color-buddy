@@ -68,7 +68,7 @@
     }
   });
   // this weird foot work is to circumvent the svelte reactivity which is weird aggressive in this one specific case
-  $: globalString = $lintStore.globallyIgnoredLints.join(bindStr);
+  $: globalString = $colorStore.globallyIgnoredLints.join(bindStr);
   $: globalString, updateSearchDebounced([currentPal, globalString]);
 
   let innerWidth = window.innerWidth;

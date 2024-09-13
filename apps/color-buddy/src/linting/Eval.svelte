@@ -24,7 +24,9 @@
 
   $: lintGroups = lintResults.reduce(
     (acc, lintResult) => {
-      if ($lintStore.globallyIgnoredLints.includes(lintResult.lintProgram.id)) {
+      if (
+        $colorStore.globallyIgnoredLints.includes(lintResult.lintProgram.id)
+      ) {
         return acc;
       }
       const lint = lintResult.lintProgram;
@@ -70,7 +72,7 @@
           ...currentPal,
           evalConfig: {
             ...currentPal.evalConfig,
-            globallyIgnoredLints: $lintStore.globallyIgnoredLints,
+            globallyIgnoredLints: $colorStore.globallyIgnoredLints,
           },
         };
         loadLints()

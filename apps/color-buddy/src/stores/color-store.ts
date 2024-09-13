@@ -4,14 +4,19 @@ import type { Palette, StringPalette, ColorSpace } from "color-buddy-palette";
 
 import { deDup, newGenericPal, convertPalToSpace } from "../lib/utils";
 
+import { DEFAULT_LINT_LIST } from "../lib/pre-built-lint-configs";
+const DEFAULT_LINT_SET = new Set(DEFAULT_LINT_LIST);
+
 interface StoreData {
   palettes: Palette[];
   currentPal: number;
+  globallyIgnoredLints: string[];
 }
 
 interface StorageData {
   palettes: StringPalette[];
   currentPal: number;
+  globallyIgnoredLints: string[];
 }
 
 function stringPalToColorPal(pal: StringPalette): Palette {
@@ -52,12 +57,14 @@ const InitialStore: StorageData = {
     makeExample("Example 3"),
   ],
   currentPal: 0,
+  globallyIgnoredLints: [...DEFAULT_LINT_SET],
 };
 
 function convertStoreHexToColor(store: StorageData): StoreData {
   return {
     palettes: store.palettes.map(stringPalToColorPal),
     currentPal: store.currentPal,
+    globallyIgnoredLints: store.globallyIgnoredLints,
   };
 }
 
@@ -69,6 +76,7 @@ function convertStoreColorToHex(store: StoreData): StorageData {
       colors: x.colors.map((y) => ({ color: y.toString(), tags: y.tags })),
     })),
     currentPal: store.currentPal,
+    globallyIgnoredLints: store.globallyIgnoredLints,
   };
 }
 
@@ -179,6 +187,7 @@ function createStore() {
     },
     createNewPal: (newPal: Palette) =>
       persistUpdate((n) => ({
+        ...n,
         currentPal: 0,
         palettes: [newPal, ...n.palettes],
       })),
@@ -215,10 +224,7 @@ function createStore() {
     setColorSpace: (colorSpace: ColorSpace) =>
       palUp((n) => convertPalToSpace(n, colorSpace)),
     clearPalettes: () =>
-      persistUpdate(() => ({
-        currentPal: 0,
-        palettes: [],
-      })),
+      persistUpdate((n) => ({ ...n, currentPal: 0, palettes: [] })),
     renamePalette: (index: number, name: string) =>
       persistUpdate((n) => {
         const palettes = [...n.palettes];
@@ -226,10 +232,9 @@ function createStore() {
         return { ...n, palettes };
       }),
     setPalettes: (palettes: Palette[]) =>
-      persistUpdate(() => ({
-        currentPal: 0,
-        palettes: palettes,
-      })),
+      persistUpdate((n) => ({ ...n, currentPal: 0, palettes: palettes })),
+    setGloballyIgnoredLints: (lints: string[]) =>
+      persistUpdate((old) => ({ ...old, globallyIgnoredLints: [...lints] })),
   };
 }
 const hardCopy = (x: any) => JSON.parse(JSON.stringify(x));

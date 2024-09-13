@@ -4,3 +4,11 @@ import { suggestMCFix } from "./linter-tools/monte-carlo-fix";
 import { suggestLintFix } from "./linter-tools/lint-fixer";
 export { PREBUILT_LINTS, suggestMCFix, linter, suggestLintFix };
 export type { LintResult, LintProgram };
+
+console.log(
+  JSON.stringify(
+    PREBUILT_LINTS.map((x) => x.id),
+    null,
+    2
+  )
+);

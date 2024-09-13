@@ -77,7 +77,7 @@ test("All color spaces do round trip to each other correctly", () => {
   });
 });
 
-test.only("In gamut tests", () => {
+test("In gamut tests", () => {
   const colors = [
     "#f00",
     "#ff0",

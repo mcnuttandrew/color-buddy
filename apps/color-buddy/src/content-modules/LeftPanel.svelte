@@ -6,6 +6,7 @@
   import NewPal from "../controls/NewPal.svelte";
   import EvalColorColumn from "../linting/EvalColorColumn.svelte";
   import SetSimulation from "../controls/SetSimulation.svelte";
+  import VersionPalette from "../controls/VersionPalette.svelte";
   import Zoom from "../controls/Zoom.svelte";
 
   import Config from "../controls/Config.svelte";
@@ -30,10 +31,11 @@
   </div>
   <section class="flex flex-col flex-none" id="top-controls">
     <div class="flex w-full justify-between items-start">
-      <div class="flex ml-1">
+      <div class="flex ml-2">
         <NewPal />
       </div>
-      <div class="flex">
+      <VersionPalette />
+      <div class="flex mr-2">
         <button
           class={`${denseButtonStyle} p-0 mt-0.5`}
           on:click={() => colorStore.undo()}
@@ -48,16 +50,16 @@
           Redo
         </button>
       </div>
-      <Config />
     </div>
     <div class="flex w-full justify-between items-start flex-wrap">
-      <SetSimulation />
       <Zoom />
       <div>
         <button class={buttonStyle} on:click={() => configStore.setTour(true)}>
           Tour
         </button>
       </div>
+      <Config />
+      <SetSimulation />
     </div>
     <div class="flex justify-center z-50"></div>
   </section>

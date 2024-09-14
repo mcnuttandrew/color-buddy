@@ -31,6 +31,7 @@
       evalConfig: {},
       colorSpace: colorSpace as any,
       tags: [],
+      folder: "",
     };
   }
 

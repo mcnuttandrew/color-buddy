@@ -10,6 +10,8 @@
   import NewExampleModal from "../example/NewExampleModal.svelte";
   import GenerateNewNames from "../components/GenerateNewNames.svelte";
   import { suggestNameForPalette } from "../lib/api-calls";
+  import { buttonStyle } from "../lib/styles";
+  import FolderConfig from "../controls/FolderConfig.svelte";
 
   $: example = $exampleStore.examples[
     $configStore.manageBrowsePreviewIdx
@@ -87,8 +89,42 @@
           }
         },
       },
+      {
+        name: "Create a new folder with this",
+        action: () => {
+          const newPals = [...$colorStore.palettes];
+          // todo make the folder name be unique
+          let folderName = "new folder";
+          let i = 1;
+          while ($colorStore.palettes.some((x) => x.folder === folderName)) {
+            folderName = `new folder ${i}`;
+            i++;
+          }
+
+          newPals[paletteIdx] = { ...pal, folder: folderName };
+          colorStore.setPalettes(newPals);
+          selectedFolder = folderName;
+        },
+      },
+      ...folders
+        .filter((x) => pal.folder !== x)
+        .map((x) => {
+          return {
+            name: `Move to ${x || "root"}`,
+            action: () => {
+              const newPals = [...$colorStore.palettes];
+              newPals[paletteIdx] = { ...pal, folder: x };
+              colorStore.setPalettes(newPals);
+            },
+          };
+        }),
     ].filter((x) => x) as any[] as { name: string; action: () => void }[];
   }
+
+  $: folders = Array.from(
+    new Set($colorStore.palettes.map((pal) => pal.folder.toLowerCase()))
+  );
+  let selectedFolder = "";
 </script>
 
 <div class="bg-stone-300 py-2 px-6 flex-col">
@@ -105,26 +141,55 @@
   </div>
 </div>
 
+<div class="bg-stone-200 px-4 py-1 flex">
+  <div class="text-sm">Folders</div>
+  {#each folders as folder}
+    <button
+      class={buttonStyle
+        .split(" ")
+        .filter((x) => x !== "font-bold")
+        .join(" ")}
+      on:click={() => (selectedFolder = folder)}
+      class:font-bold={selectedFolder === folder}
+      class:underline={selectedFolder === folder}
+    >
+      {`${folder}/`}
+    </button>
+  {/each}
+</div>
+{#if selectedFolder !== ""}
+  <div class="bg-stone-200 px-2">
+    <FolderConfig
+      folder={selectedFolder}
+      setFolder={(newFolder) => {
+        selectedFolder = newFolder || "";
+      }}
+    />
+  </div>
+{/if}
+
 <div
   class="flex flex-wrap bg-stone-100 h-full overflow-auto p-4 content-baseline"
 >
   {#each $colorStore.palettes as pal, paletteIdx}
-    <BrowseCard
-      markAsCurrent={$colorStore.currentPal === paletteIdx}
-      onRename={(name) => {
-        const newPals = [...$colorStore.palettes];
-        newPals[paletteIdx] = { ...pal, name };
-        colorStore.setPalettes(newPals);
-      }}
-      allowInteraction={false}
-      allowResize={false}
-      palette={pal}
-      titleClick={() => {
-        colorStore.startUsingPal(paletteIdx);
-      }}
-      title={pal.name}
-      previewIndex={$configStore.manageBrowsePreviewIdx}
-      operations={makeOperations(paletteIdx, pal)}
-    />
+    {#if pal.folder.toLowerCase() === selectedFolder.toLowerCase()}
+      <BrowseCard
+        markAsCurrent={$colorStore.currentPal === paletteIdx}
+        onRename={(name) => {
+          const newPals = [...$colorStore.palettes];
+          newPals[paletteIdx] = { ...pal, name };
+          colorStore.setPalettes(newPals);
+        }}
+        allowInteraction={false}
+        allowResize={false}
+        palette={pal}
+        titleClick={() => {
+          colorStore.startUsingPal(paletteIdx);
+        }}
+        title={pal.name}
+        previewIndex={$configStore.manageBrowsePreviewIdx}
+        operations={makeOperations(paletteIdx, pal)}
+      />
+    {/if}
   {/each}
 </div>

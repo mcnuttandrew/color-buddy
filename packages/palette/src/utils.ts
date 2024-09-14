@@ -9,6 +9,7 @@ const defaultHexPal: StringPalette = {
   evalConfig: {},
   colorSpace: "lab",
   tags: [],
+  folder: "",
 };
 
 /**

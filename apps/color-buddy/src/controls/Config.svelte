@@ -66,6 +66,7 @@
                 name,
                 type,
                 tags: [],
+                folder: "",
               };
             });
           colorStore.setPalettes(pals);

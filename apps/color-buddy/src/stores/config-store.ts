@@ -18,7 +18,7 @@ interface StoreData {
   leftRoute: "controls" | "colors";
   mainColumnSelectedExample: number;
   manageBrowsePreviewIdx: number;
-  route: "examples" | "compare" | "eval" | "browse" | "manage";
+  route: "examples" | "compare" | "eval" | "manage";
   scatterplotMode: "moving" | "putting";
   showColorBackground: "always show" | "show on drag" | "never show";
   showGamutMarkers: boolean;

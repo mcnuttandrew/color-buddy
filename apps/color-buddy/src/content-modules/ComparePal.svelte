@@ -37,17 +37,23 @@
   let showDiff = false;
 
   let colorSpace = ComparisonPal?.colorSpace || "lab";
-  let searchInput = "";
+  let selectedFolder: { isPreMade: boolean; name: string } = {
+    isPreMade: false,
+    name: "",
+  };
   $: familiarPals = $examplePalStore.palettes
     .map((x) => x.palette)
-    .filter((x) => {
-      if (searchInput === "") return true;
-      return x.name.toLowerCase().includes(searchInput.toLowerCase());
-    });
+    .filter((x) => selectedFolder.isPreMade && x.type === selectedFolder.name);
+  let folders = Array.from(
+    new Set($colorStore.palettes.map((x) => x.folder))
+  ).sort((a, b) => a.length - b.length);
+
+  $: selectedPals = selectedFolder.isPreMade
+    ? familiarPals
+    : $colorStore.palettes.filter((x) => x.folder === selectedFolder.name);
 </script>
 
 <div class="w-full border-l-8 border-stone-200 h-full">
-  <!-- <div class="flex flex-col w-full"> -->
   <!-- header -->
   <div class="w-full bg-stone-200 px-6 flex flex-col">
     <div class="font-bold italic">
@@ -68,30 +74,46 @@
           Change Compared Palette
         </button>
         <div class="flex flex-col w-80" slot="content">
-          <div class="font-bold">Saved Palettes:</div>
-          <div class="flex flex-wrap">
-            {#each $colorStore.palettes as pal, idx (idx)}
-              <MiniPalPreview
-                {pal}
-                className={compareIdx === idx ? "border-2 border-black" : ""}
-                onClick={() => configStore.setComparePal(idx)}
-              />
+          <div class="text-sm">Premade:</div>
+          <div class="flex">
+            {#each ["sequential", "categorical", "diverging"] as folder}
+              <button
+                class={buttonStyle}
+                on:click={() => {
+                  selectedFolder = { isPreMade: true, name: folder };
+                }}
+                class:underline={selectedFolder?.isPreMade &&
+                  selectedFolder?.name === folder}
+              >
+                {folder}/
+              </button>
             {/each}
           </div>
-          <div class="font-bold">Pre-built Palettes:</div>
+          <div class="text-sm">Your folders:</div>
           <div class="flex flex-wrap">
-            <div>
-              <label>
-                Search
+            {#each folders as folder}
+              <button
+                class={buttonStyle}
+                on:click={() => {
+                  selectedFolder = { isPreMade: false, name: folder };
+                }}
+                class:underline={selectedFolder?.isPreMade === false &&
+                  selectedFolder?.name === folder}
+              >
+                {folder}/
+              </button>
+            {/each}
+          </div>
 
-                <input type="text" bind:value={searchInput} />
-              </label>
-            </div>
-            {#each familiarPals.slice(0, 15) as pal, idx (idx)}
+          <div class="flex flex-wrap mt-4">
+            {#each selectedPals as pal, idx (idx)}
               <MiniPalPreview
                 {pal}
                 className={compareIdx === idx ? "border-2 border-black" : ""}
-                onClick={() => configStore.setComparePal(pal)}
+                onClick={() =>
+                  configStore.setComparePal(
+                    selectedFolder.isPreMade ? pal : idx
+                  )}
               />
             {/each}
           </div>

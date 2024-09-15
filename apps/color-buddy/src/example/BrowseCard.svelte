@@ -13,11 +13,10 @@
   export let allowResize: boolean;
   export let allowInteraction: boolean;
   export let onRename: false | ((name: string) => void) = false;
-  export let operations: {
-    name: string;
-    action: () => void;
-    closeOnClick: boolean;
-  }[];
+  export let operations: (
+    | { name: string; action: () => void; closeOnClick: boolean }
+    | "break"
+  )[];
   export let palette: Palette;
   export let previewIndex: number;
   export let titleClick: (() => void) | false;
@@ -66,18 +65,20 @@
         ⚙
       </button>
       <div slot="content" class="flex flex-col items-start" let:onClick>
-        {#each operations as { name, action, closeOnClick }}
-          <button
-            class={buttonStyle}
-            on:click={() => {
-              action();
-              if (closeOnClick) {
-                onClick();
-              }
-            }}
-          >
-            {name}
-          </button>
+        {#each operations as op}
+          {#if op === "break"}
+            <div class="border-b border-stone-300 w-full my-1"></div>
+          {:else}
+            <button
+              class={buttonStyle}
+              on:click={() => {
+                op.action();
+                if (op.closeOnClick) onClick();
+              }}
+            >
+              {op.name}
+            </button>
+          {/if}
         {/each}
       </div>
     </Tooltip>

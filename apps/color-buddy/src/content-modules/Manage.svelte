@@ -109,6 +109,7 @@
         },
         closeOnClick: false,
       },
+      "break",
       {
         name: "Create a new folder with this",
         action: () => {
@@ -166,12 +167,13 @@
     <GenerateNewNames />
   </div>
   <div class="text-xs">
-    These are the palettes you've created. Click on one to make it active
+    These are the palettes that you have made or that have been provided for
+    you. Click on one to make it active.
   </div>
 </div>
 
 <div class="bg-stone-200 px-6 py-1 flex">
-  <div class="text-sm">Pre Made Folders:</div>
+  <div class="text-sm">Premade Folders:</div>
   {#each ["sequential", "categorical", "diverging"] as folder}
     <button
       class={buttonStyle

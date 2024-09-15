@@ -3,6 +3,8 @@
 
   import colorStore from "../stores/color-store";
   import exampleStore from "../stores/example-store";
+  import examplePalStore from "../stores/example-palette-store";
+  import focusStore from "../stores/focus-store";
   import configStore from "../stores/config-store";
   import BrowseCard from "../example/BrowseCard.svelte";
   import PreviewSelector from "../example/PreviewSelector.svelte";
@@ -12,6 +14,7 @@
   import { suggestNameForPalette } from "../lib/api-calls";
   import { buttonStyle } from "../lib/styles";
   import FolderConfig from "../controls/FolderConfig.svelte";
+  import { convertPalToSpace } from "../lib/utils";
 
   $: example = $exampleStore.examples[
     $configStore.manageBrowsePreviewIdx
@@ -19,6 +22,16 @@
   $: palNames = new Set(
     $colorStore.palettes.map((pal) => pal.name.toLowerCase())
   );
+
+  $: familiarPals = $examplePalStore.palettes.map((x) => x.palette);
+  $: currentPal = $colorStore.palettes[$colorStore.currentPal];
+  $: colorSpace = currentPal.colorSpace;
+
+  function usePal(palette: Palette) {
+    colorStore.createNewPal(convertPalToSpace(palette, colorSpace));
+    focusStore.clearColors();
+    selectedFolder = { isPreMade: false, name: "" };
+  }
 
   function makeOperations(
     paletteIdx: number,
@@ -110,7 +123,7 @@
 
           newPals[paletteIdx] = { ...pal, folder: folderName };
           colorStore.setPalettes(newPals);
-          selectedFolder = folderName;
+          selectedFolder = { isPreMade: false, name: folderName };
         },
         closeOnClick: true,
       },
@@ -137,7 +150,10 @@
   $: folders = Array.from(
     new Set($colorStore.palettes.map((pal) => pal.folder.toLowerCase()))
   ).sort((a, b) => a.length - b.length);
-  let selectedFolder = "";
+  let selectedFolder: { isPreMade: boolean; name: string } = {
+    isPreMade: false,
+    name: "",
+  };
 </script>
 
 <div class="bg-stone-300 py-2 px-6 flex-col">
@@ -155,27 +171,46 @@
 </div>
 
 <div class="bg-stone-200 px-6 py-1 flex">
-  <div class="text-sm">Folders:</div>
+  <div class="text-sm">Pre Made Folders:</div>
+  {#each ["sequential", "categorical", "diverging"] as folder}
+    <button
+      class={buttonStyle
+        .split(" ")
+        .filter((x) => x !== "font-bold")
+        .join(" ")}
+      on:click={() => (selectedFolder = { isPreMade: true, name: folder })}
+      class:underline={selectedFolder?.isPreMade &&
+        selectedFolder?.name === folder}
+    >
+      {folder}
+    </button>
+  {/each}
+</div>
+<div class="bg-stone-200 px-6 py-1 flex">
+  <div class="text-sm">My Folders:</div>
   {#each folders as folder}
     <button
       class={buttonStyle
         .split(" ")
         .filter((x) => x !== "font-bold")
         .join(" ")}
-      on:click={() => (selectedFolder = folder)}
-      class:font-bold={selectedFolder === folder}
-      class:underline={selectedFolder === folder}
+      on:click={() => (selectedFolder = { isPreMade: false, name: folder })}
+      class:underline={selectedFolder?.name === folder}
     >
       {folder.length ? `${folder}/` : "root/"}
     </button>
   {/each}
 </div>
-{#if selectedFolder !== ""}
+{#if selectedFolder?.isPreMade === false && selectedFolder?.name !== ""}
   <div class="bg-stone-200 px-4">
     <FolderConfig
-      folder={selectedFolder}
+      folder={selectedFolder.name}
       setFolder={(newFolder) => {
-        selectedFolder = newFolder || "";
+        if (newFolder) {
+          selectedFolder = { isPreMade: false, name: newFolder };
+        } else {
+          selectedFolder = { isPreMade: false, name: "" };
+        }
       }}
     />
   </div>
@@ -184,25 +219,48 @@
 <div
   class="flex flex-wrap bg-stone-100 h-full overflow-auto p-4 content-baseline"
 >
-  {#each $colorStore.palettes as pal, paletteIdx}
-    {#if pal.folder.toLowerCase() === selectedFolder.toLowerCase()}
-      <BrowseCard
-        markAsCurrent={$colorStore.currentPal === paletteIdx}
-        onRename={(name) => {
-          const newPals = [...$colorStore.palettes];
-          newPals[paletteIdx] = { ...pal, name };
-          colorStore.setPalettes(newPals);
-        }}
-        allowInteraction={false}
-        allowResize={false}
-        palette={pal}
-        titleClick={() => {
-          colorStore.startUsingPal(paletteIdx);
-        }}
-        title={pal.name}
-        previewIndex={$configStore.manageBrowsePreviewIdx}
-        operations={makeOperations(paletteIdx, pal)}
-      />
-    {/if}
-  {/each}
+  {#if selectedFolder.isPreMade}
+    {#each familiarPals as palette}
+      {#if palette.type === selectedFolder.name}
+        <BrowseCard
+          {palette}
+          markAsCurrent={false}
+          allowInteraction={false}
+          allowResize={false}
+          previewIndex={$configStore.manageBrowsePreviewIdx}
+          titleClick={() => usePal(palette)}
+          title={palette.name}
+          operations={[
+            {
+              name: "Use the palette",
+              action: () => usePal(palette),
+              closeOnClick: true,
+            },
+          ]}
+        />
+      {/if}
+    {/each}
+  {:else}
+    {#each $colorStore.palettes as pal, paletteIdx}
+      {#if pal.folder.toLowerCase() === selectedFolder?.name.toLowerCase()}
+        <BrowseCard
+          markAsCurrent={$colorStore.currentPal === paletteIdx}
+          onRename={(name) => {
+            const newPals = [...$colorStore.palettes];
+            newPals[paletteIdx] = { ...pal, name };
+            colorStore.setPalettes(newPals);
+          }}
+          allowInteraction={false}
+          allowResize={false}
+          palette={pal}
+          titleClick={() => {
+            colorStore.startUsingPal(paletteIdx);
+          }}
+          title={pal.name}
+          previewIndex={$configStore.manageBrowsePreviewIdx}
+          operations={makeOperations(paletteIdx, pal)}
+        />
+      {/if}
+    {/each}
+  {/if}
 </div>

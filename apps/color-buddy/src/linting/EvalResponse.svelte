@@ -84,8 +84,9 @@
     (x) => lintProgram.description.toLowerCase().includes(x) && x !== colorSpace
   ) as any;
   $: ignored = !!evalConfig[lintProgram.name]?.ignore;
-  $: blameData = lintResult.kind === "success" ? lintResult.blameData : [];
-  $: blamedIndices = blameData.flat();
+  $: blameData = (
+    lintResult.kind === "success" ? lintResult.blameData : []
+  ).flat();
 </script>
 
 <Tooltip {positionAlongRightEdge}>
@@ -162,7 +163,6 @@
         Re-enable
       </button>
     {/if}
-
     {#if !lintProgram.customProgram}
       <button
         class={buttonStyle}
@@ -175,7 +175,7 @@
       </button>
     {/if}
 
-    {#each blamedIndices as index}
+    {#each blameData as index}
       <button
         class={buttonStyle
           .split(" ")

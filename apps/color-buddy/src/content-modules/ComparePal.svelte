@@ -163,6 +163,8 @@
           colorSpace={$configStore.compareBackgroundSpace}
         />
       </div>
+      <div>&nbsp;</div>
+
       <ColorScatterPlot
         scatterPlotMode="looking"
         Pal={{
@@ -194,7 +196,10 @@
     {/if}
     <div>&nbsp;</div>
     {#if ComparisonPal !== undefined}
-      <div class="flex flex-col pl-2">
+      <div
+        class="flex flex-col pl-2"
+        style={`max-width: ${scatterSize + 110}px;`}
+      >
         <PalPreview
           highlightSelected={false}
           pal={{

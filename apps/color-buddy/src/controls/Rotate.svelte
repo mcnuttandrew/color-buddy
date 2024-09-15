@@ -100,9 +100,7 @@
 </script>
 
 <div class="w-full border-t-2 border-black my-2"></div>
-<div class="flex justify-between w-full">
-  <div class="font-bold">Rotate</div>
-</div>
+<div class="text-sm italic">Rotate</div>
 <div class="flex flex-col">
   <div class="w-full flex justify-between">
     <input min={0} max={360} step={1} type="range" bind:value={angle} />

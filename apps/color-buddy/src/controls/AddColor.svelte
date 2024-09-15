@@ -42,9 +42,9 @@
 </script>
 
 <div class="flex w-full justify-between">
-  <div class="font-bold">Add Color</div>
+  <div class="italic text-sm">Add Color</div>
 </div>
-<section>
+<section class="mb-4">
   <div class="flex w-full justify-between items-center">
     <AutocompleteOrSearch
       setValue={(x) => {

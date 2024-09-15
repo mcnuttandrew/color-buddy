@@ -11,6 +11,8 @@
   import PreviewSelector from "../example/PreviewSelector.svelte";
   import NewExampleModal from "../example/NewExampleModal.svelte";
 
+  import { buttonStyle } from "../lib/styles";
+
   import { convertPalToSpace } from "../lib/utils";
 
   $: familiarPals = $examplePalStore.palettes.map((x) => x.palette);
@@ -31,6 +33,7 @@
     colorStore.createNewPal(convertPalToSpace(palette, colorSpace));
     focusStore.clearColors();
   }
+  let palFilter = "all";
 </script>
 
 <div class="bg-stone-300 py-2 px-6">
@@ -49,21 +52,41 @@
     These are pre-created palettes that you can use as a starting point.
   </div>
 </div>
+<div class="py-2 px-6 bg-stone-200 flex">
+  <div class="text-sm">Palette Type:</div>
+  {#each ["sequential", "categorical", "diverging", "all"] as type}
+    <button
+      class={buttonStyle}
+      class:underline={type === palFilter}
+      on:click={() => {
+        palFilter = type;
+      }}
+    >
+      {type}
+    </button>
+  {/each}
+</div>
 <div class="overflow-y-scroll h-full p-2 bg-stone-100 content-baseline">
   <div class="flex flex-wrap">
     {#each filteredPals as palette}
-      <BrowseCard
-        {palette}
-        markAsCurrent={false}
-        allowInteraction={false}
-        allowResize={false}
-        previewIndex={$configStore.manageBrowsePreviewIdx}
-        titleClick={() => usePal(palette)}
-        title={palette.name}
-        operations={[
-          { name: "Use the palette", action: () => usePal(palette) },
-        ]}
-      />
+      {#if palFilter === "all" || palette.type === palFilter}
+        <BrowseCard
+          {palette}
+          markAsCurrent={false}
+          allowInteraction={false}
+          allowResize={false}
+          previewIndex={$configStore.manageBrowsePreviewIdx}
+          titleClick={() => usePal(palette)}
+          title={palette.name}
+          operations={[
+            {
+              name: "Use the palette",
+              action: () => usePal(palette),
+              closeOnClick: true,
+            },
+          ]}
+        />
+      {/if}
     {/each}
   </div>
 </div>

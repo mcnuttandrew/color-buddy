@@ -5,6 +5,19 @@
   export let setFolder: (folder?: string) => void;
   export let folder: string;
   let renaming = false;
+  function doRename(newFolder: string) {
+    if (!newFolder) {
+      return;
+    }
+
+    const pals = [...$colorStore.palettes].map((pal) => {
+      const hit = pal.folder.toLowerCase() === folder.toLowerCase();
+      return hit ? { ...pal, folder: newFolder } : pal;
+    });
+    colorStore.setPalettes(pals);
+    setFolder(newFolder);
+    renaming = false;
+  }
 </script>
 
 <Tooltip>
@@ -33,20 +46,12 @@
       <input
         type="text"
         value={folder}
-        on:blur={(e) => {
-          const newFolder = e.currentTarget?.value;
-          if (!newFolder) {
-            return;
+        on:keydown={(e) => {
+          if (e.key === "Enter") {
+            doRename(e.currentTarget.value);
           }
-
-          const pals = [...$colorStore.palettes].map((pal) => {
-            const hit = pal.folder.toLowerCase() === folder.toLowerCase();
-            return hit ? { ...pal, folder: newFolder } : pal;
-          });
-          colorStore.setPalettes(pals);
-          setFolder(newFolder);
-          renaming = false;
         }}
+        on:blur={(e) => doRename(e.currentTarget.value)}
       />
       <button>Save</button>
     {/if}

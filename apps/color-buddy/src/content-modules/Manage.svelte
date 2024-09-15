@@ -23,13 +23,14 @@
   function makeOperations(
     paletteIdx: number,
     pal: Palette
-  ): { name: string; action: () => void }[] {
+  ): { name: string; action: () => void; closeOnClick: boolean }[] {
     return [
       {
         name: "Use",
         action: () => {
           colorStore.startUsingPal(paletteIdx);
         },
+        closeOnClick: true,
       },
       {
         name: "Compare with current",
@@ -37,16 +38,19 @@
           configStore.setComparePal(paletteIdx);
           configStore.setRoute("compare");
         },
+        closeOnClick: true,
       },
       {
         name: "Duplicate",
         action: () => colorStore.duplicatePal(paletteIdx),
+        closeOnClick: true,
       },
       {
         name: "Delete",
         action: () => {
           colorStore.removePal(paletteIdx);
         },
+        closeOnClick: true,
       },
       paletteIdx !== 0 && {
         name: "Move up",
@@ -59,6 +63,7 @@
           newPals[newIdx] = pals[paletteIdx];
           colorStore.setPalettes(newPals);
         },
+        closeOnClick: false,
       },
       paletteIdx !== $colorStore.palettes.length - 1 && {
         name: "Move down",
@@ -71,6 +76,7 @@
           newPals[newIdx] = pals[paletteIdx];
           colorStore.setPalettes(newPals);
         },
+        closeOnClick: false,
       },
       {
         name: "Generate New Name",
@@ -88,6 +94,7 @@
             console.error(e);
           }
         },
+        closeOnClick: false,
       },
       {
         name: "Create a new folder with this",
@@ -105,6 +112,7 @@
           colorStore.setPalettes(newPals);
           selectedFolder = folderName;
         },
+        closeOnClick: true,
       },
       ...folders
         .filter((x) => pal.folder !== x)
@@ -116,14 +124,19 @@
               newPals[paletteIdx] = { ...pal, folder: x };
               colorStore.setPalettes(newPals);
             },
+            closeOnClick: true,
           };
         }),
-    ].filter((x) => x) as any[] as { name: string; action: () => void }[];
+    ].filter((x) => x) as any[] as {
+      name: string;
+      action: () => void;
+      closeOnClick: boolean;
+    }[];
   }
 
   $: folders = Array.from(
     new Set($colorStore.palettes.map((pal) => pal.folder.toLowerCase()))
-  );
+  ).sort((a, b) => a.length - b.length);
   let selectedFolder = "";
 </script>
 
@@ -141,8 +154,8 @@
   </div>
 </div>
 
-<div class="bg-stone-200 px-4 py-1 flex">
-  <div class="text-sm">Folders</div>
+<div class="bg-stone-200 px-6 py-1 flex">
+  <div class="text-sm">Folders:</div>
   {#each folders as folder}
     <button
       class={buttonStyle
@@ -153,12 +166,12 @@
       class:font-bold={selectedFolder === folder}
       class:underline={selectedFolder === folder}
     >
-      {`${folder}/`}
+      {folder.length ? `${folder}/` : "root/"}
     </button>
   {/each}
 </div>
 {#if selectedFolder !== ""}
-  <div class="bg-stone-200 px-2">
+  <div class="bg-stone-200 px-4">
     <FolderConfig
       folder={selectedFolder}
       setFolder={(newFolder) => {

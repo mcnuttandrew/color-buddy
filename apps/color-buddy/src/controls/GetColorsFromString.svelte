@@ -32,10 +32,9 @@
   $: includeQuotes = $configStore.includeQuotes;
 </script>
 
-<div class="w-full border-t-2 border-black my-2"></div>
 <div class="mt-2">
   <div class="flex justify-between w-full text-sm">
-    <label for="current-colors">Current Colors</label>
+    <label for="current-colors" class="italic">Current Colors</label>
     <div class="flex items-center">
       <label for="include-quotes" class="mr-2">Include quotes</label>
       <input

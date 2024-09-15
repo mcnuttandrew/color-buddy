@@ -72,7 +72,9 @@
 
 {#if focusedColors.length >= 1}
   <div class="w-full border-t-2 border-black my-2"></div>
-  <div class="font-bold">Adjust selected colors</div>
+  <div class="text-sm italic">
+    Adjust selected color{focusedColors.length > 1 ? "s" : ""}
+  </div>
   <div>
     {#each actions as action}
       <button

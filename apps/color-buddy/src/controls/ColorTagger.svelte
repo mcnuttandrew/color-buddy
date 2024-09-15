@@ -23,7 +23,7 @@
   );
 </script>
 
-<div class="font-bold">Tags</div>
+<div class="text-sm italic">Tags</div>
 
 <div class="flex">
   {#each currentColor.tags as tag}

@@ -66,6 +66,15 @@
       colorSpace={$configStore.channelPickerSpaceBackground}
     />
   </div>
+  <div>
+    <button
+      class={`${buttonStyle} pl-0`}
+      on:click={() => configStore.setScatterplotMode("putting")}
+    >
+      Add color {#if $configStore.scatterplotMode === "putting"}(move mouse on
+        chart){/if}
+    </button>
+  </div>
   <ColorScatterPlot
     scatterPlotMode={$configStore.scatterplotMode}
     colorSpace={currentPal.colorSpace}
@@ -88,19 +97,17 @@
     id="scatterplot-controls"
     style={`max-width: ${scatterSize + 110}px;`}
   >
-    <button
-      class={`${buttonStyle} pl-0`}
-      on:click={() => configStore.setScatterplotMode("putting")}
-    >
-      Add color {#if $configStore.scatterplotMode === "putting"}(move mouse on
-        chart){/if}
-    </button>
-    <AdjustOrder />
-
     <ModifySelection />
+  </div>
+  <div
+    class="flex flex-wrap"
+    id="scatterplot-controls"
+    style={`max-width: ${scatterSize + 110}px;`}
+  >
+    <AdjustOrder />
     <Sort />
   </div>
-  <div class="flex flex-col pl-2">
+  <div class="flex flex-col pl-2" style={`max-width: ${scatterSize + 110}px;`}>
     <!-- overview / preview -->
     <PalPreview
       allowModification={true}

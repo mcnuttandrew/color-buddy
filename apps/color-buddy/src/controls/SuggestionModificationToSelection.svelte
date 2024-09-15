@@ -85,9 +85,11 @@
 </script>
 
 <div>
-  <div class="flex flex-col w-72">
+  <div class="flex flex-col w-full">
     <label for="pal-prompt" class="italic text-sm">
-      <div>Change these points with AI</div>
+      <div>
+        Change {selectedColors.length ? "selected" : "all"} points with AI
+      </div>
     </label>
     {#if requestState === "loaded"}
       {#each suggestedColorSets as suggestedColors, idx}
@@ -119,7 +121,10 @@
         </div>
       {/each}
     {:else}
-      <form on:submit|preventDefault={makeRequest} class="flex flex-col pr-2">
+      <form
+        on:submit|preventDefault={makeRequest}
+        class="flex flex-col pr-2 w-full"
+      >
         <textarea
           bind:value={palPrompt}
           on:keypress={(e) => {
@@ -130,8 +135,8 @@
             }
           }}
           id="pal-prompt"
-          class="indent-2 text-sm leading-6 border-2"
-          placeholder="e.g. 'Make them groovier'"
+          class="indent-2 text-sm leading-6 border-2 w-full"
+          placeholder="e.g. 'Make them groovier' or 'Add two more colors'"
         />
         <button
           class={buttonStyle}
@@ -140,12 +145,6 @@
           {requestState === "loading" ? "loading..." : "Submit"}
         </button>
       </form>
-      {#if !selectedColors.length}
-        <span class="italic text-sm">
-          (Current scope is all colors, you can select a group of colors to
-          limit the scope)
-        </span>
-      {/if}
     {/if}
     {#if requestState === "failed"}
       <div class="text-red-500">No suggestions found, please try again</div>

@@ -31,6 +31,12 @@
 </button>
 <button
   class={buttonStyle}
+  on:click={() => focusStore.setColors(currentPal.colors.map((_, idx) => idx))}
+>
+  Select All
+</button>
+<button
+  class={buttonStyle}
   class:button-deactivated={!buttonsActive}
   on:click={() =>
     colorStore.setCurrentPalColors([

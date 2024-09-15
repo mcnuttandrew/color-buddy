@@ -82,7 +82,10 @@
   <LeftPanel />
   <div class="h-full flex flex-col grow main-content">
     <div class="bg-stone-800 flex justify-between items-center">
-      <div class="flex">
+      <div
+        class="flex"
+        style={`margin-left: ${scatterSize + zWidth + padding}px`}
+      >
         {#each [{ tabs: palettesTabs, name: "Palettes" }, { tabs: currentPalTabs, name: "Current Palette" }] as { tabs, name }}
           <div class="flex flex-col relative">
             <div class="uppercase text-xs text-white absolute italic left-2">

@@ -23,9 +23,15 @@
 </script>
 
 <div class="px-2">
+  <GetColorsFromString
+    onChange={(colors) => colorStore.setCurrentPalColors(colors)}
+    colorSpace={currentPal.colorSpace}
+    colors={currentPal.colors}
+  />
+  <div class="w-full border-t-2 border-black my-2"></div>
+
   <AddColor />
-  <SuggestionModificationToSelection />
-  <AdjustColor />
+
   {#if focusedColors.length === 1}
     <div class="w-full border-t-2 border-black my-2"></div>
     <input
@@ -60,8 +66,10 @@
         colorStore.setCurrentPalColors(updatedColors);
       }}
     />
+    <div class="w-full border-t-2 border-black my-2"></div>
     <ColorTagger />
   {/if}
+  <AdjustColor />
 
   <DistributePoints />
   <AlignSelection />
@@ -70,9 +78,7 @@
   {/if}
 
   <InterpolatePoints />
-  <GetColorsFromString
-    onChange={(colors) => colorStore.setCurrentPalColors(colors)}
-    colorSpace={currentPal.colorSpace}
-    colors={currentPal.colors}
-  />
+  <div class="w-full border-t-2 border-black my-2"></div>
+
+  <SuggestionModificationToSelection />
 </div>

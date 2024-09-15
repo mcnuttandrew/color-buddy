@@ -34,6 +34,7 @@
   export let stopDragging: () => void;
   export let colorSpace: any;
   export let annotationColors: Color[] = [];
+  export let showLines = false;
 
   $: focusSet = new Set(focusedColors);
 
@@ -409,15 +410,17 @@
               {/if}
             {/each}
             {#each annotationColors as annotationColor, i}
-              <!-- <line
-                stroke-dasharray="5,5"
-                x1={x(annotationColor)}
-                y1={y(annotationColor)}
-                x2={x(colors[i])}
-                y2={y(colors[i])}
-                stroke={annotationColor.toDisplay()}
-                stroke-width="1"
-              /> -->
+              {#if showLines}
+                <line
+                  stroke-dasharray="5,5"
+                  x1={x(annotationColor)}
+                  y1={y(annotationColor)}
+                  x2={x(colors[i])}
+                  y2={y(colors[i])}
+                  stroke={annotationColor.toDisplay()}
+                  stroke-width="1"
+                />
+              {/if}
               <circle
                 {...CircleProps(annotationColor, i)}
                 class="cursor-pointer"

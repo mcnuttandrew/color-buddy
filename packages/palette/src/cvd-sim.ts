@@ -1,5 +1,6 @@
 import ColorIO from "colorjs.io";
 import { Color } from "./Color";
+import { simulate } from "@bjornlu/colorblind";
 
 type Channels = [number, number, number];
 
@@ -93,22 +94,31 @@ function monochrome_with_severity(srgb: Channels, severity: number): Channels {
   return lerp(srgb, [z, z, z], severity);
 }
 
-function blackAndWhite(color: Channels): Channels {
-  const [r, g, b] = color;
-  // https://stackoverflow.com/questions/687261/converting-rgb-to-grayscale-intensity
-  const y = 0.2126 * r + 0.7152 * g + 0.0722 * b;
+// function blackAndWhite(color: Channels): Channels {
+//   const [r, g, b] = color;
+//   // https://stackoverflow.com/questions/687261/converting-rgb-to-grayscale-intensity
+//   const y = 0.2126 * r + 0.7152 * g + 0.0722 * b;
 
-  return [y, y, y];
-}
+//   return [y, y, y];
+// }
 
 function dl_simulate_cvd(
   deficiency: DLDeficiency | "grayscale",
   color: Channels
 ): Channels {
-  if (deficiency == "grayscale") {
-    return blackAndWhite(color);
+  let type = deficiency;
+  if (type == "grayscale") {
+    type = "achromatopsia";
   }
-  return brettelFunctions[deficiency](color);
+  const result = simulate(
+    { r: color[0] * 255, g: color[1] * 255, b: color[2] * 255 },
+    type as any
+  );
+  return [result.r, result.g, result.b].map((x) => x / 255) as Channels;
+  // if (deficiency == "grayscale") {
+  //   return blackAndWhite(color);
+  // }
+  // return brettelFunctions[deficiency](color);
 }
 
 const simulationCache = new Map<string, Color>();
@@ -128,7 +138,9 @@ export default function simulate_cvd(
   const colorIOcolor = color.toColorIO();
   const isachroma =
     deficiency == "achromatopsia" || deficiency == "achromatomaly";
-  const spaceName = isachroma ? "srgb" : "srgb-linear";
+  // const spaceName = isachroma ? "srgb" : "srgb-linear";
+  // const spaceName = isachroma ? "srgb" : "srgb-linear";
+  const spaceName = "srgb-linear";
   const transformedColor = colorIOcolor.to(spaceName);
   const coords = transformedColor.coords;
   const newCoords = dl_simulate_cvd(deficiency, coords);

@@ -12,6 +12,7 @@
     "swap": "jq '.exports |= {default: .[\"lib-build\"], \"lib-build\": .default}' package.json > temp.json && mv temp.json package.json"
   },
   "dependencies": {
+    "@bjornlu/colorblind": "^1.0.3",
     "color-buddy-color-lists": "*"
   },
   "devDependencies": {

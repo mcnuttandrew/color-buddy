@@ -2,7 +2,13 @@ import { writable } from "svelte/store";
 import { Color } from "color-buddy-palette";
 import type { Palette, StringPalette, ColorSpace } from "color-buddy-palette";
 
-import { deDup, newGenericPal, convertPalToSpace } from "../lib/utils";
+import {
+  deDup,
+  newGenericPal,
+  convertPalToSpace,
+  colorPalToStringPal,
+  stringPalToColorPal,
+} from "../lib/utils";
 
 import { DEFAULT_LINT_LIST } from "../lib/pre-built-lint-configs";
 const DEFAULT_LINT_SET = new Set(DEFAULT_LINT_LIST);
@@ -19,35 +25,6 @@ interface StorageData {
   globallyIgnoredLints: string[];
 }
 
-function stringPalToColorPal(pal: StringPalette): Palette {
-  const result = {
-    ...pal,
-    background: Color.colorFromString(pal.background, pal.colorSpace),
-    colors: pal.colors.map((x) => {
-      // catch old versions
-      if (typeof x === "string") {
-        const color = Color.colorFromString(x, pal.colorSpace);
-        color.tags = [];
-        return color;
-      }
-      const color = Color.colorFromString(x.color, pal.colorSpace);
-      color.tags = x.tags;
-      return color;
-    }),
-  };
-
-  return result;
-}
-
-function colorPalToStringPal(pal: Palette): StringPalette {
-  return {
-    ...pal,
-    background: pal.background.toString(),
-    colors: pal.colors.map((x) => {
-      return { color: x.toString(), tags: x.tags };
-    }),
-  };
-}
 const makeExample = (name: string) => colorPalToStringPal(newGenericPal(name));
 
 const InitialStore: StorageData = {

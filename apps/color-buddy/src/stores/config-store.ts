@@ -1,6 +1,7 @@
 import { writable } from "svelte/store";
 import type { Palette } from "color-buddy-palette";
 import type { Engine } from "../lib/api-calls";
+import { colorPalToStringPal, stringPalToColorPal } from "../lib/utils";
 
 interface StoreData {
   channelPickerSpace: "lab" | "lch" | "hsl" | "hsv" | "rgb";
@@ -89,17 +90,35 @@ const addDefaults = (store: StoreData): StoreData => {
   return newStore;
 };
 
-function createStore() {
-  const storeData: StoreData = addDefaults(
-    JSON.parse(localStorage.getItem(storeName) || JSON.stringify(InitialStore))
-  );
+function hydrateStore(): StoreData {
+  let str = localStorage.getItem(storeName) || JSON.stringify(InitialStore);
+  if (str === "undefined") {
+    str = JSON.stringify(InitialStore);
+  }
+  console.log(str, localStorage.getItem(storeName));
+  const store = addDefaults(JSON.parse(str));
+  if (store.tempPal) {
+    store.tempPal = stringPalToColorPal(store.tempPal as any);
+  }
+  return store;
+}
+function serializeStore(store: StoreData) {
+  const copy = { ...store } as any;
+  if (copy.tempPal) {
+    copy.tempPal = colorPalToStringPal(copy.tempPal);
+  }
+  localStorage.setItem(storeName, JSON.stringify(copy));
+}
 
-  localStorage.setItem(storeName, JSON.stringify(storeData));
+function createStore() {
+  const storeData: StoreData = hydrateStore();
+
+  serializeStore(storeData);
   const { subscribe, set, update } = writable<StoreData>(storeData);
   const persist = (updateFunc: (old: StoreData) => StoreData) =>
     update((oldStore) => {
       const newVal: StoreData = updateFunc(oldStore);
-      localStorage.setItem(storeName, JSON.stringify(newVal));
+      serializeStore(newVal);
       return newVal;
     });
 

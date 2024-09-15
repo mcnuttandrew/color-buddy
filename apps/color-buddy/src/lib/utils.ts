@@ -3,7 +3,7 @@ import {
   ColorSpaceDirectory,
   makePalFromString,
 } from "color-buddy-palette";
-import type { Palette } from "color-buddy-palette";
+import type { Palette, StringPalette } from "color-buddy-palette";
 
 import { Formatter, FracturedJsonOptions, EolStyle } from "fracturedjsonjs";
 import fits from "../assets/outfits.json";
@@ -509,3 +509,33 @@ export let convertPalToSpace = (
   background: Color.toColorSpace(pal.background, colorSpace),
   colors: pal.colors.map((x) => Color.toColorSpace(x, colorSpace)),
 });
+
+export function stringPalToColorPal(pal: StringPalette): Palette {
+  const result = {
+    ...pal,
+    background: Color.colorFromString(pal.background, pal.colorSpace),
+    colors: pal.colors.map((x) => {
+      // catch old versions
+      if (typeof x === "string") {
+        const color = Color.colorFromString(x, pal.colorSpace);
+        color.tags = [];
+        return color;
+      }
+      const color = Color.colorFromString(x.color, pal.colorSpace);
+      color.tags = x.tags;
+      return color;
+    }),
+  };
+
+  return result;
+}
+
+export function colorPalToStringPal(pal: Palette): StringPalette {
+  return {
+    ...pal,
+    background: pal.background.toString(),
+    colors: pal.colors.map((x) => {
+      return { color: x.toString(), tags: x.tags };
+    }),
+  };
+}

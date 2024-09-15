@@ -97,7 +97,11 @@
       //   action: () => exampleStore.setExampleSize(idx, 50),
       //   condition: size !== 50,
       // },
-    ].filter((x) => x) as any[] as { name: string; action: () => void }[];
+    ].filter((x) => x) as any[] as {
+      name: string;
+      action: () => void;
+      closeOnClick: boolean;
+    }[];
   }
 </script>
 

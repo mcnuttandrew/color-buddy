@@ -3,6 +3,8 @@
 
   import colorStore from "../stores/color-store";
   import exampleStore from "../stores/example-store";
+  import examplePalStore from "../stores/example-palette-store";
+  import focusStore from "../stores/focus-store";
   import configStore from "../stores/config-store";
   import BrowseCard from "../example/BrowseCard.svelte";
   import PreviewSelector from "../example/PreviewSelector.svelte";
@@ -10,6 +12,9 @@
   import NewExampleModal from "../example/NewExampleModal.svelte";
   import GenerateNewNames from "../components/GenerateNewNames.svelte";
   import { suggestNameForPalette } from "../lib/api-calls";
+  import { buttonStyle } from "../lib/styles";
+  import FolderConfig from "../controls/FolderConfig.svelte";
+  import { convertPalToSpace } from "../lib/utils";
 
   $: example = $exampleStore.examples[
     $configStore.manageBrowsePreviewIdx
@@ -18,16 +23,28 @@
     $colorStore.palettes.map((pal) => pal.name.toLowerCase())
   );
 
+  $: familiarPals = $examplePalStore.palettes.map((x) => x.palette);
+  $: currentPal = $colorStore.palettes[$colorStore.currentPal];
+  $: colorSpace = currentPal.colorSpace;
+  $: selectedFolder = $configStore.selectedFolder;
+
+  function usePal(palette: Palette) {
+    colorStore.createNewPal(convertPalToSpace(palette, colorSpace));
+    focusStore.clearColors();
+    configStore.setSelectedFolder({ isPreMade: false, name: "" });
+  }
+
   function makeOperations(
     paletteIdx: number,
     pal: Palette
-  ): { name: string; action: () => void }[] {
+  ): { name: string; action: () => void; closeOnClick: boolean }[] {
     return [
       {
         name: "Use",
         action: () => {
           colorStore.startUsingPal(paletteIdx);
         },
+        closeOnClick: true,
       },
       {
         name: "Compare with current",
@@ -35,16 +52,19 @@
           configStore.setComparePal(paletteIdx);
           configStore.setRoute("compare");
         },
+        closeOnClick: true,
       },
       {
         name: "Duplicate",
         action: () => colorStore.duplicatePal(paletteIdx),
+        closeOnClick: true,
       },
       {
         name: "Delete",
         action: () => {
           colorStore.removePal(paletteIdx);
         },
+        closeOnClick: true,
       },
       paletteIdx !== 0 && {
         name: "Move up",
@@ -57,6 +77,7 @@
           newPals[newIdx] = pals[paletteIdx];
           colorStore.setPalettes(newPals);
         },
+        closeOnClick: false,
       },
       paletteIdx !== $colorStore.palettes.length - 1 && {
         name: "Move down",
@@ -69,6 +90,7 @@
           newPals[newIdx] = pals[paletteIdx];
           colorStore.setPalettes(newPals);
         },
+        closeOnClick: false,
       },
       {
         name: "Generate New Name",
@@ -86,9 +108,50 @@
             console.error(e);
           }
         },
+        closeOnClick: false,
       },
-    ].filter((x) => x) as any[] as { name: string; action: () => void }[];
+      "break",
+      {
+        name: "Create a new folder with this",
+        action: () => {
+          const newPals = [...$colorStore.palettes];
+          // todo make the folder name be unique
+          let folderName = "new folder";
+          let i = 1;
+          while ($colorStore.palettes.some((x) => x.folder === folderName)) {
+            folderName = `new folder ${i}`;
+            i++;
+          }
+
+          newPals[paletteIdx] = { ...pal, folder: folderName };
+          colorStore.setPalettes(newPals);
+          selectedFolder = { isPreMade: false, name: folderName };
+        },
+        closeOnClick: true,
+      },
+      ...folders
+        .filter((x) => pal.folder !== x)
+        .map((x) => {
+          return {
+            name: `Move to ${x || "root"}`,
+            action: () => {
+              const newPals = [...$colorStore.palettes];
+              newPals[paletteIdx] = { ...pal, folder: x };
+              colorStore.setPalettes(newPals);
+            },
+            closeOnClick: true,
+          };
+        }),
+    ].filter((x) => x) as any[] as {
+      name: string;
+      action: () => void;
+      closeOnClick: boolean;
+    }[];
   }
+
+  $: folders = Array.from(
+    new Set($colorStore.palettes.map((pal) => pal.folder.toLowerCase()))
+  ).sort((a, b) => a.length - b.length);
 </script>
 
 <div class="bg-stone-300 py-2 px-6 flex-col">
@@ -101,30 +164,95 @@
     <GenerateNewNames />
   </div>
   <div class="text-xs">
-    These are the palettes you've created. Click on one to make it active
+    These are the palettes that you have made or that have been provided for
+    you. Click on one to make it active.
   </div>
 </div>
+
+<div class="bg-stone-200 px-6 py-1 flex">
+  <div class="text-sm">Premade Folders:</div>
+  {#each ["sequential", "categorical", "diverging"] as folder}
+    <button
+      class={buttonStyle
+        .split(" ")
+        .filter((x) => x !== "font-bold")
+        .join(" ")}
+      on:click={() =>
+        configStore.setSelectedFolder({ isPreMade: true, name: folder })}
+      class:underline={selectedFolder?.isPreMade &&
+        selectedFolder?.name === folder}
+    >
+      {folder}
+    </button>
+  {/each}
+</div>
+<div class="bg-stone-200 px-6 py-1 flex">
+  <div class="text-sm">My Folders:</div>
+  {#each folders as folder}
+    <button
+      class={buttonStyle
+        .split(" ")
+        .filter((x) => x !== "font-bold")
+        .join(" ")}
+      on:click={() =>
+        configStore.setSelectedFolder({ isPreMade: false, name: folder })}
+      class:underline={selectedFolder?.name === folder}
+    >
+      {folder.length ? `${folder}/` : "root/"}
+    </button>
+  {/each}
+</div>
+{#if selectedFolder?.isPreMade === false && selectedFolder?.name !== ""}
+  <div class="bg-stone-200 px-4">
+    <FolderConfig folder={selectedFolder.name} />
+  </div>
+{/if}
 
 <div
   class="flex flex-wrap bg-stone-100 h-full overflow-auto p-4 content-baseline"
 >
-  {#each $colorStore.palettes as pal, paletteIdx}
-    <BrowseCard
-      markAsCurrent={$colorStore.currentPal === paletteIdx}
-      onRename={(name) => {
-        const newPals = [...$colorStore.palettes];
-        newPals[paletteIdx] = { ...pal, name };
-        colorStore.setPalettes(newPals);
-      }}
-      allowInteraction={false}
-      allowResize={false}
-      palette={pal}
-      titleClick={() => {
-        colorStore.startUsingPal(paletteIdx);
-      }}
-      title={pal.name}
-      previewIndex={$configStore.manageBrowsePreviewIdx}
-      operations={makeOperations(paletteIdx, pal)}
-    />
-  {/each}
+  {#if selectedFolder.isPreMade}
+    {#each familiarPals as palette}
+      {#if palette.type === selectedFolder.name}
+        <BrowseCard
+          {palette}
+          markAsCurrent={false}
+          allowInteraction={false}
+          allowResize={false}
+          previewIndex={$configStore.manageBrowsePreviewIdx}
+          titleClick={() => usePal(palette)}
+          title={palette.name}
+          operations={[
+            {
+              name: "Use the palette",
+              action: () => usePal(palette),
+              closeOnClick: true,
+            },
+          ]}
+        />
+      {/if}
+    {/each}
+  {:else}
+    {#each $colorStore.palettes as pal, paletteIdx}
+      {#if pal.folder.toLowerCase() === selectedFolder?.name.toLowerCase()}
+        <BrowseCard
+          markAsCurrent={$colorStore.currentPal === paletteIdx}
+          onRename={(name) => {
+            const newPals = [...$colorStore.palettes];
+            newPals[paletteIdx] = { ...pal, name };
+            colorStore.setPalettes(newPals);
+          }}
+          allowInteraction={false}
+          allowResize={false}
+          palette={pal}
+          titleClick={() => {
+            colorStore.startUsingPal(paletteIdx);
+          }}
+          title={pal.name}
+          previewIndex={$configStore.manageBrowsePreviewIdx}
+          operations={makeOperations(paletteIdx, pal)}
+        />
+      {/if}
+    {/each}
+  {/if}
 </div>

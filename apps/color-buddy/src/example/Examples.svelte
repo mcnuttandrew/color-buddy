@@ -48,18 +48,22 @@
         action: () => {
           editTarget = idx;
         },
+        closeOnClick: true,
       },
       {
         name: "Delete",
         action: () => exampleStore.deleteExample(idx),
+        closeOnClick: true,
       },
       {
         name: "Duplicate",
         action: () => exampleStore.duplicateExample(idx),
+        closeOnClick: true,
       },
       {
         name: "Hide",
         action: () => exampleStore.toggleHidden(idx),
+        closeOnClick: true,
       },
 
       !exampleIsSoled && {
@@ -68,6 +72,7 @@
           exampleStore.hideAllExcept(idx);
           exampleStore.setExampleSize(idx, 600);
         },
+        closeOnClick: true,
       },
       exampleIsSoled && {
         name: "Unfocus (restore group)",
@@ -75,6 +80,7 @@
           exampleStore.restoreHiddenExamples();
           exampleStore.setExampleSize(idx, 250);
         },
+        closeOnClick: true,
       },
       // {
       //   name: "Expand",
@@ -91,7 +97,11 @@
       //   action: () => exampleStore.setExampleSize(idx, 50),
       //   condition: size !== 50,
       // },
-    ].filter((x) => x) as any[] as { name: string; action: () => void }[];
+    ].filter((x) => x) as any[] as {
+      name: string;
+      action: () => void;
+      closeOnClick: boolean;
+    }[];
   }
 </script>
 

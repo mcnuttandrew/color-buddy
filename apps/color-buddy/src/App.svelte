@@ -35,10 +35,9 @@
   import ComparePal from "./content-modules/ComparePal.svelte";
   import Manage from "./content-modules/Manage.svelte";
   import MainColumn from "./content-modules/MainColumn.svelte";
-  import Browse from "./content-modules/Browse.svelte";
   import TourProvider from "./content-modules/TourProvider.svelte";
 
-  const palettesTabs = ["manage", "browse"];
+  const palettesTabs = ["manage"];
 
   const currentPalTabs = ["examples", "compare", "eval"];
 
@@ -129,8 +128,6 @@
           <Eval maxWidth={columnWidth} />
         {:else if $configStore.route === "manage"}
           <Manage />
-        {:else if $configStore.route === "browse"}
-          <Browse />
         {/if}
       </div>
     </div>

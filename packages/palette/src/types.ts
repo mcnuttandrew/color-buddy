@@ -13,6 +13,7 @@ type Pal<A, B> = {
   tags: string[];
   name: string;
   type: PalType;
+  folder: string;
 };
 export type PalType = "sequential" | "diverging" | "categorical";
 

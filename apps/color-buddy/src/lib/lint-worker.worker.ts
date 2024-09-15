@@ -30,6 +30,7 @@ const hydratePal = (pal: string): Palette => {
     name: parsed.name,
     evalConfig: parsed.evalConfig,
     tags: parsed.tags,
+    folder: parsed.folder,
   };
 };
 

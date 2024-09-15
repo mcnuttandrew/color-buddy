@@ -12,7 +12,7 @@
   $: currentPal = $colorStore.palettes[$colorStore.currentPal];
   $: colorSpace = currentPal ? currentPal.colorSpace : "lab";
 
-  function newPal(newPal: Palette) {
+  function newPal(newPal: Palette, close: () => void) {
     const colors = newPal.colors.map((x) => x.toColorSpace(colorSpace));
     const background = newPal.background.toColorSpace(colorSpace);
     const pal = {
@@ -22,16 +22,17 @@
       colorSpace,
     } as Palette;
     colorStore.createNewPal(pal);
+    close();
   }
 
   let inputString = "";
-  function processBodyInput(body: string) {
+  function processBodyInput(body: string, close: () => void) {
     if (body.length === 0) {
       return;
     }
     try {
       const newColors = processBodyTextToColors(body, colorSpace as any);
-      newPal(makePalFromString(newColors.map((x) => x.toHex())));
+      newPal(makePalFromString(newColors.map((x) => x.toHex())), close);
     } catch (e) {
       console.error(e);
       return;
@@ -40,17 +41,17 @@
 </script>
 
 <Tooltip>
-  <div class="w-full" slot="content">
+  <div class="w-full" slot="content" let:onClick>
     <div class="">
       <button
         class={buttonStyle}
-        on:click={() => newPal(makePalFromString([]))}
+        on:click={() => newPal(makePalFromString([]), onClick)}
       >
         New blank
       </button>
       <button
         class={buttonStyle}
-        on:click={() => newPal(newGenericPal("new palette"))}
+        on:click={() => newPal(newGenericPal("new palette"), onClick)}
       >
         New categorical
       </button>
@@ -65,7 +66,7 @@
             "#ecddff",
           ]);
           pal.type = "sequential";
-          newPal(pal);
+          newPal(pal, onClick);
         }}
       >
         New sequential
@@ -81,7 +82,7 @@
             "#e25c36",
           ]);
           pal.type = "diverging";
-          newPal(pal);
+          newPal(pal, onClick);
         }}
       >
         New diverging
@@ -100,7 +101,7 @@
         }
       }}
       on:blur={(e) => {
-        processBodyInput(e.currentTarget.value);
+        processBodyInput(e.currentTarget.value, onClick);
         inputString = "";
       }}
     />

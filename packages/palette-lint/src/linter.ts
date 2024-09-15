@@ -77,6 +77,12 @@ function processLint(
   if (!ignored) {
     return { kind: "ignored", lintProgram: lint };
   }
+  // ignored colors
+  let pal = { ...palette };
+  pal.colors = palette.colors.filter((color) => {
+    const key = `${color.toHex()}-?-${lint.id}`;
+    return palette.evalConfig[key]?.ignore !== true;
+  });
 
   // run the lint
   if (prebuiltIdToCustomFunc[lint.id]) {
@@ -84,7 +90,7 @@ function processLint(
   }
   let result: LintResult;
   try {
-    result = RunLint(lint, palette, options);
+    result = RunLint(lint, pal, options);
   } catch (e) {
     console.error(e);
     result = { kind: "invalid", lintProgram: lint };

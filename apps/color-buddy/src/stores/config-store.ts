@@ -95,7 +95,6 @@ function hydrateStore(): StoreData {
   if (str === "undefined") {
     str = JSON.stringify(InitialStore);
   }
-  console.log(str, localStorage.getItem(storeName));
   const store = addDefaults(JSON.parse(str));
   if (store.tempPal) {
     store.tempPal = stringPalToColorPal(store.tempPal as any);

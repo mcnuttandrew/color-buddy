@@ -14,6 +14,12 @@
   $: evalConfig = currentPal.evalConfig;
   $: lintProgram = lintResult.lintProgram;
   $: isCompact = $configStore.evalDisplayMode === "compact";
+  $: ignoredColors = Object.entries(evalConfig)
+    .filter(
+      ([name, config]) =>
+        (name.split("-?-")[1] || "").trim() === lintProgram.id && config.ignore
+    )
+    .map(([name]) => name.split("-?-")[0]);
 </script>
 
 {#if lintResult.kind === "ignored"}
@@ -61,6 +67,26 @@
         </div>
         <EvalResponse {lintResult} />
       </div>
+      {#if ignoredColors.length > 0 && !isCompact}
+        <div class="text-sm italic">
+          Ignored colors for this lint:
+          {#each ignoredColors as color}
+            <div class="inline-block relative w-3 h-3 mx-1">
+              <button
+                on:click={() => {
+                  colorStore.setCurrentPalEvalConfig({
+                    ...evalConfig,
+                    [`${color}-?-${lintProgram.id}`]: { ignore: false },
+                  });
+                }}
+                class="rounded-full w-3 h-3 bottom-0 absolute inline-block opacity-100"
+                style={`background: ${color}`}
+              />
+            </div>
+          {/each}
+          (click to re-enable)
+        </div>
+      {/if}
       {#if lintResult.kind === "success" && !lintResult.passes && !isCompact}
         <ExplanationViewer {lintResult} />
       {/if}

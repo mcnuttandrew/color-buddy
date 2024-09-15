@@ -175,6 +175,7 @@
       </button>
     {/if}
 
+    <div>For just this lint</div>
     {#each blameData as index}
       <button
         class={buttonStyle
@@ -190,7 +191,7 @@
           });
         }}
       >
-        <span class="opacity-50">For just this lint, ignore</span>
+        <span class="opacity-50">ignore ({palette.colors[index].toHex()})</span>
 
         <div
           class="rounded-full w-3 h-3 ml-1 inline-block opacity-100"

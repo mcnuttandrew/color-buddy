@@ -57,7 +57,7 @@
       }}
       optionsAreColors={true}
       searchOptions={Object.keys(colorCentersFromStoneHeer)}
-      placeholder="e.g. purple or red"
+      placeholder="e.g. UW purple or Utah red"
       runSearch={(x) => {
         getColorForSearch(x);
       }}

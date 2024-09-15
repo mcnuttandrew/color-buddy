@@ -37,10 +37,7 @@
   let showDiff = false;
 
   let colorSpace = ComparisonPal?.colorSpace || "lab";
-  let selectedFolder: { isPreMade: boolean; name: string } = {
-    isPreMade: false,
-    name: "",
-  };
+  $: selectedFolder = $configStore.selectedFolder;
   $: familiarPals = $examplePalStore.palettes
     .map((x) => x.palette)
     .filter((x) => selectedFolder.isPreMade && x.type === selectedFolder.name);
@@ -80,7 +77,10 @@
               <button
                 class={buttonStyle}
                 on:click={() => {
-                  selectedFolder = { isPreMade: true, name: folder };
+                  configStore.setSelectedFolder({
+                    isPreMade: true,
+                    name: folder,
+                  });
                 }}
                 class:underline={selectedFolder?.isPreMade &&
                   selectedFolder?.name === folder}
@@ -94,9 +94,11 @@
             {#each folders as folder}
               <button
                 class={buttonStyle}
-                on:click={() => {
-                  selectedFolder = { isPreMade: false, name: folder };
-                }}
+                on:click={() =>
+                  configStore.setSelectedFolder({
+                    isPreMade: false,
+                    name: folder,
+                  })}
                 class:underline={selectedFolder?.isPreMade === false &&
                   selectedFolder?.name === folder}
               >

@@ -26,11 +26,12 @@
   $: familiarPals = $examplePalStore.palettes.map((x) => x.palette);
   $: currentPal = $colorStore.palettes[$colorStore.currentPal];
   $: colorSpace = currentPal.colorSpace;
+  $: selectedFolder = $configStore.selectedFolder;
 
   function usePal(palette: Palette) {
     colorStore.createNewPal(convertPalToSpace(palette, colorSpace));
     focusStore.clearColors();
-    selectedFolder = { isPreMade: false, name: "" };
+    configStore.setSelectedFolder({ isPreMade: false, name: "" });
   }
 
   function makeOperations(
@@ -151,10 +152,6 @@
   $: folders = Array.from(
     new Set($colorStore.palettes.map((pal) => pal.folder.toLowerCase()))
   ).sort((a, b) => a.length - b.length);
-  let selectedFolder: { isPreMade: boolean; name: string } = {
-    isPreMade: false,
-    name: "",
-  };
 </script>
 
 <div class="bg-stone-300 py-2 px-6 flex-col">
@@ -180,7 +177,8 @@
         .split(" ")
         .filter((x) => x !== "font-bold")
         .join(" ")}
-      on:click={() => (selectedFolder = { isPreMade: true, name: folder })}
+      on:click={() =>
+        configStore.setSelectedFolder({ isPreMade: true, name: folder })}
       class:underline={selectedFolder?.isPreMade &&
         selectedFolder?.name === folder}
     >
@@ -196,7 +194,8 @@
         .split(" ")
         .filter((x) => x !== "font-bold")
         .join(" ")}
-      on:click={() => (selectedFolder = { isPreMade: false, name: folder })}
+      on:click={() =>
+        configStore.setSelectedFolder({ isPreMade: false, name: folder })}
       class:underline={selectedFolder?.name === folder}
     >
       {folder.length ? `${folder}/` : "root/"}
@@ -205,16 +204,7 @@
 </div>
 {#if selectedFolder?.isPreMade === false && selectedFolder?.name !== ""}
   <div class="bg-stone-200 px-4">
-    <FolderConfig
-      folder={selectedFolder.name}
-      setFolder={(newFolder) => {
-        if (newFolder) {
-          selectedFolder = { isPreMade: false, name: newFolder };
-        } else {
-          selectedFolder = { isPreMade: false, name: "" };
-        }
-      }}
-    />
+    <FolderConfig folder={selectedFolder.name} />
   </div>
 {/if}
 

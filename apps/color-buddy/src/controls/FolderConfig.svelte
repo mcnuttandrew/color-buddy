@@ -1,8 +1,8 @@
 <script lang="ts">
   import colorStore from "../stores/color-store";
+  import configStore from "../stores/config-store";
   import Tooltip from "../components/Tooltip.svelte";
   import { buttonStyle } from "../lib/styles";
-  export let setFolder: (folder?: string) => void;
   export let folder: string;
   let renaming = false;
   function doRename(newFolder: string) {
@@ -15,7 +15,7 @@
       return hit ? { ...pal, folder: newFolder } : pal;
     });
     colorStore.setPalettes(pals);
-    setFolder(newFolder);
+    configStore.setSelectedFolder({ isPreMade: false, name: newFolder });
     renaming = false;
   }
 </script>
@@ -29,7 +29,7 @@
           pal.folder === folder ? { ...pal, folder: "" } : pal
         );
         colorStore.setPalettes(pals);
-        setFolder("");
+        configStore.setSelectedFolder({ isPreMade: false, name: "" });
       }}
     >
       Delete

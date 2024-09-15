@@ -20,6 +20,7 @@ interface StoreData {
   manageBrowsePreviewIdx: number;
   route: "examples" | "compare" | "eval" | "manage";
   scatterplotMode: "moving" | "putting";
+  selectedFolder: { isPreMade: boolean; name: string };
   showColorBackground: "always show" | "show on drag" | "never show";
   showGamutMarkers: boolean;
   tempPal: Palette | undefined;
@@ -52,6 +53,7 @@ const InitialStore: StoreData = {
   mainColumnSelectedExample: -1,
   manageBrowsePreviewIdx: -1,
   route: "examples",
+  selectedFolder: { isPreMade: false, name: "" },
   scatterplotMode: "moving",
   showColorBackground: "show on drag",
   showGamutMarkers: true,
@@ -159,6 +161,8 @@ function createStore() {
     setTour: (n: StoreData["tour"]) => persist((old) => ({ ...old, tour: n })),
     setManageBrowsePreviewIdx: (n: StoreData["manageBrowsePreviewIdx"]) =>
       persist((old) => ({ ...old, manageBrowsePreviewIdx: n })),
+    setSelectedFolder: (n: StoreData["selectedFolder"]) =>
+      persist((old) => ({ ...old, selectedFolder: n })),
   };
 }
 

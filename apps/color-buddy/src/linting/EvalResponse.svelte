@@ -84,6 +84,9 @@
     (x) => lintProgram.description.toLowerCase().includes(x) && x !== colorSpace
   ) as any;
   $: ignored = !!evalConfig[lintProgram.name]?.ignore;
+  $: blameData = (
+    lintResult.kind === "success" ? lintResult.blameData : []
+  ).flat();
 </script>
 
 <Tooltip {positionAlongRightEdge}>
@@ -171,6 +174,31 @@
         Customize
       </button>
     {/if}
+
+    <div>For just this lint</div>
+    {#each blameData as index}
+      <button
+        class={buttonStyle
+          .split(" ")
+          .filter((x) => x !== "opacity-50")
+          .join(" ")}
+        on:click={() => {
+          colorStore.setCurrentPalEvalConfig({
+            ...evalConfig,
+            [`${palette.colors[index].toHex()}-?-${lintProgram.id}`]: {
+              ignore: true,
+            },
+          });
+        }}
+      >
+        <span class="opacity-50">ignore ({palette.colors[index].toHex()})</span>
+
+        <div
+          class="rounded-full w-3 h-3 ml-1 inline-block opacity-100"
+          style={`background: ${palette.colors[index].toHex()}`}
+        />
+      </button>
+    {/each}
 
     {#if requestState === "loading"}
       <div>Loading...</div>

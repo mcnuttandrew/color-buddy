@@ -1,5 +1,6 @@
 <script lang="ts">
   import { Color } from "color-buddy-palette";
+  import DownChev from "virtual:icons/fa6-solid/angle-down";
   import ColorChannelPicker from "./ColorChannelPicker.svelte";
   import Tooltip from "./Tooltip.svelte";
   import { buttonStyle } from "../lib/styles";
@@ -10,34 +11,39 @@
   $: bgHex = bg.toHex();
 </script>
 
-<Tooltip top={"75px"} allowDrag={true}>
-  <div slot="content" class="flex flex-col">
-    <input
-      class="mb-2"
-      value={bgHex}
-      on:change={(e) => {
-        // @ts-ignore
-        onChange(Color.colorFromString(e.target.value, colorSpace));
-      }}
-    />
-    <ColorChannelPicker
-      {onSpaceChange}
-      colorMode={colorSpace}
-      color={bg}
-      onColorChange={onChange}
-    />
-  </div>
-  <button
-    let:toggle
-    slot="target"
-    class={`${buttonStyle} flex items-center justify-center this-button top-0.5 relative`}
-    on:click={() => toggle()}
-  >
-    Background
-    <div
-      class={"h-3 w-3 rounded-full ml-2"}
-      style={`background: ${bgHex}`}
-    ></div>
-    {bgHex}
-  </button>
-</Tooltip>
+<div class="flex flex-col">
+  <div class="text-sm">Background</div>
+  <Tooltip top={"20px"}>
+    <div slot="content" class="flex flex-col">
+      <input
+        class="mb-2"
+        value={bgHex}
+        on:change={(e) => {
+          // @ts-ignore
+          onChange(Color.colorFromString(e.target.value, colorSpace));
+        }}
+      />
+      <ColorChannelPicker
+        {onSpaceChange}
+        colorMode={colorSpace}
+        color={bg}
+        onColorChange={onChange}
+      />
+    </div>
+    <button
+      let:toggle
+      slot="target"
+      class={`${buttonStyle} flex items-center justify-between`}
+      on:click={() => toggle()}
+    >
+      <div class="flex items-center">
+        <div
+          class={"h-3 w-3 rounded-full ml-2"}
+          style={`background: ${bgHex}`}
+        ></div>
+        {bgHex}
+      </div>
+      <DownChev class="text-sm" />
+    </button>
+  </Tooltip>
+</div>

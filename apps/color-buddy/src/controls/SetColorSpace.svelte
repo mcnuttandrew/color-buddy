@@ -1,5 +1,6 @@
 <script lang="ts">
   import { colorPickerConfig } from "../lib/utils";
+  import DownChev from "virtual:icons/fa6-solid/angle-down";
   import Tooltip from "../components/Tooltip.svelte";
   import { buttonStyle } from "../lib/styles";
   export let colorSpace: string;
@@ -18,59 +19,63 @@
     .filter((x) => x.toLowerCase() !== "srgb");
 </script>
 
-<Tooltip>
-  <div slot="content" class="flex flex-col max-w-md" let:onClick>
-    <div class="font-bold">Set Color Space</div>
-    <div class="text-sm">
-      Select the color space to use for the color picker.
-    </div>
-    <div class="grid grid-cols-4 mt-2">
-      {#each basicOptions as space}
-        <button
-          class={`${buttonStyle} justify-self-start`}
-          class:font-bold={space === colorSpace}
-          on:click={() => {
-            onChange(space);
-            onClick();
-          }}
-        >
-          {space.toUpperCase()}
-        </button>
-        <span class="text-sm italic col-span-3">
-          {colorPickerConfig[space].description}
-        </span>
-      {/each}
-    </div>
+<div class="flex flex-col">
+  <div class="text-sm whitespace-nowrap">Color Space</div>
+  <Tooltip>
+    <div slot="content" class="flex flex-col max-w-md" let:onClick>
+      <div class="font-bold">Set Color Space</div>
+      <div class="text-sm">
+        Select the color space to use for the color picker.
+      </div>
+      <div class="grid grid-cols-4 mt-2">
+        {#each basicOptions as space}
+          <button
+            class={`${buttonStyle} justify-self-start`}
+            class:font-bold={space === colorSpace}
+            on:click={() => {
+              onChange(space);
+              onClick();
+            }}
+          >
+            {space.toUpperCase()}
+          </button>
+          <span class="text-sm italic col-span-3">
+            {colorPickerConfig[space].description}
+          </span>
+        {/each}
+      </div>
 
-    <div class="font-bold">Advanced Color Spaces</div>
-    <div class="text-sm">
-      These color spaces provide more control over the color representation, but
-      may be less intuitive or familiar
+      <div class="font-bold">Advanced Color Spaces</div>
+      <div class="text-sm">
+        These color spaces provide more control over the color representation,
+        but may be less intuitive or familiar
+      </div>
+      <div class="grid grid-cols-4 mt-2">
+        {#each advancedSpaceOptions as space}
+          <button
+            class={`${buttonStyle} justify-self-start`}
+            class:font-bold={space === colorSpace}
+            on:click={() => {
+              onChange(space);
+              onClick();
+            }}
+          >
+            {space.toUpperCase()}
+          </button>
+          <span class="text-sm italic col-span-3">
+            {colorPickerConfig[space].description}
+          </span>
+        {/each}
+      </div>
     </div>
-    <div class="grid grid-cols-4 mt-2">
-      {#each advancedSpaceOptions as space}
-        <button
-          class={`${buttonStyle} justify-self-start`}
-          class:font-bold={space === colorSpace}
-          on:click={() => {
-            onChange(space);
-            onClick();
-          }}
-        >
-          {space.toUpperCase()}
-        </button>
-        <span class="text-sm italic col-span-3">
-          {colorPickerConfig[space].description}
-        </span>
-      {/each}
-    </div>
-  </div>
-  <button
-    slot="target"
-    class={`${buttonStyle} pl-0`}
-    let:toggle
-    on:click={toggle}
-  >
-    Color Space: {colorSpace.toUpperCase()}
-  </button>
-</Tooltip>
+    <button
+      slot="target"
+      class={`${buttonStyle} flex items-center`}
+      let:toggle
+      on:click={toggle}
+    >
+      {colorSpace.toUpperCase()}
+      <DownChev class="text-sm" />
+    </button>
+  </Tooltip>
+</div>

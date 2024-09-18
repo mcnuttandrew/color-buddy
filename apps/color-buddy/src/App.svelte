@@ -36,6 +36,7 @@
   import Manage from "./content-modules/Manage.svelte";
   import MainColumn from "./content-modules/MainColumn.svelte";
   import TourProvider from "./content-modules/TourProvider.svelte";
+  import VersionPalette from "./controls/VersionPalette.svelte";
 
   const palettesTabs = ["manage"];
 
@@ -82,11 +83,19 @@
   <LeftPanel />
   <div class="h-full flex flex-col grow main-content">
     <div class="bg-stone-800 flex justify-between items-center">
-      <div
-        class="flex"
-        style={`margin-left: ${scatterSize + zWidth + padding}px`}
-      >
+      <div class="flex">
         <Manage />
+        <button
+          class={"text-white ml-2 mr-1"}
+          on:click={() => colorStore.undo()}
+        >
+          Undo
+        </button>
+        /
+        <button class={"text-white mr-2"} on:click={() => colorStore.redo()}>
+          Redo
+        </button>
+        <VersionPalette />
         {#each [// { tabs: palettesTabs, name: "Palettes" },
           { tabs: currentPalTabs, name: "Current Palette" }] as { tabs, name }}
           <div class="flex flex-col relative">

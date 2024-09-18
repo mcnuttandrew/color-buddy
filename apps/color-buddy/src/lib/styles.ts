@@ -19,4 +19,5 @@ export const denseButtonStyle = buttonStyle
   .replace("px-2", "p-0")
   .replace("mr-2", "mr-0");
 
-export const simpleTooltipRowStyle = "text-left px-2 hover:bg-stone-300";
+export const simpleTooltipRowStyle =
+  "text-left px-2 hover:bg-stone-300 cursor-pointer";

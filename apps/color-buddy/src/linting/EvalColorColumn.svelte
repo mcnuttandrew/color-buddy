@@ -8,10 +8,12 @@
   import configStore from "../stores/config-store";
   import lintStore from "../stores/lint-store";
 
+  import ModifySelection from "../controls/ModifySelection.svelte";
   import EvalResponse from "./EvalResponse.svelte";
   import { dealWithFocusEvent } from "../lib/utils";
   import { buttonStyle } from "../lib/styles";
   import { typeToSymbol } from "../constants";
+  import Sort from "../controls/Sort.svelte";
 
   $: checks = $lintStore.currentChecks;
 
@@ -48,8 +50,12 @@
     error: "❌",
     warning: "⚠️",
   } as any;
+  const ballSize = 25;
 </script>
 
+<div class="flex">
+  <ModifySelection />
+</div>
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <!-- svelte-ignore a11y-no-static-element-interactions -->
 <div
@@ -73,22 +79,27 @@
           dealWithFocusEvent(e, idx, $focusStore.focusedColors)
         );
       }}
-      class="w-full flex flex-col justify-center items-center text-sm mt-2 transition-all relative"
-      class:text-white={color.luminance() < 0.5}
+      class="w-full flex justify-center items-center text-sm mt-2 transition-all relative"
       class:ml-5={$focusStore.focusedColors.includes(idx)}
       class:mr-5={!$focusStore.focusedColors.includes(idx)}
       style="min-height: 40px"
     >
+      <!-- <div
+        class="rounded-full"
+        style="background-color: {color.toHex()}; width: 60px; height: 60px;"
+      /> -->
+      <svg height="{ballSize * 2}px" width="{ballSize * 3}px">
+        <circle
+          r={ballSize}
+          fill={color.toHex()}
+          cx={ballSize}
+          cy={ballSize}
+        ></circle>
+      </svg>
       <div class="w-full flex flex-col h-full absolute">
-        <div
-          class="grow h-full"
-          style="background-color: {color.toHex()}"
-        ></div>
+        <div class="h-full"></div>
         {#if selectedCVDType !== "none"}
-          <div
-            class="grow h-full"
-            style={`background-color: ${sim(color)}`}
-          ></div>
+          <div class="h-full" style={`background-color: ${sim(color)}`}></div>
         {/if}
       </div>
       <div class="flex justify-between w-full px-2 items-center z-10">
@@ -139,4 +150,5 @@
       {/each}
     </select>
   </div>
+  <Sort />
 </div>

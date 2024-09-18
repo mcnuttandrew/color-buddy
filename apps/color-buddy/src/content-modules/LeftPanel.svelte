@@ -5,8 +5,7 @@
   import Nav from "../components/Nav.svelte";
   import NewPal from "../controls/NewPal.svelte";
   import EvalColorColumn from "../linting/EvalColorColumn.svelte";
-  import SetSimulation from "../controls/SetSimulation.svelte";
-  import VersionPalette from "../controls/VersionPalette.svelte";
+
   import Zoom from "../controls/Zoom.svelte";
 
   import Config from "../controls/Config.svelte";
@@ -24,7 +23,7 @@
 </script>
 
 <!-- left panel -->
-<div class="bg-stone-200 w-80 container flex flex-col h-full flex-none">
+<div class="bg-white w-80 container flex flex-col h-full flex-none">
   <div class="text-4xl font-bold bg-stone-800 text-white px-2 py-1 flex">
     <img src="logo.png" alt="logo" class="h-10 mr-2" />
     <div class="">Color Buddy</div>
@@ -33,22 +32,6 @@
     <div class="flex w-full justify-between items-start">
       <div class="flex ml-2">
         <NewPal />
-      </div>
-      <VersionPalette />
-      <div class="flex mr-2">
-        <button
-          class={`${denseButtonStyle} p-0 mt-0.5`}
-          on:click={() => colorStore.undo()}
-        >
-          Undo
-        </button>
-        /
-        <button
-          class={`${denseButtonStyle} p-0 mt-0.5`}
-          on:click={() => colorStore.redo()}
-        >
-          Redo
-        </button>
       </div>
     </div>
     <div class="flex w-full justify-between items-start flex-wrap">
@@ -59,7 +42,6 @@
         </button>
       </div>
       <Config />
-      <SetSimulation />
     </div>
     <div class="flex justify-center z-50"></div>
   </section>

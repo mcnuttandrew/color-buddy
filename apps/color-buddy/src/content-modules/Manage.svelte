@@ -143,12 +143,12 @@
 </script>
 
 <button
-  class={buttonStyle}
+  class={"text-white"}
   on:click={() => {
     modalState = "open";
   }}
 >
-  Manage
+  Palettes...
 </button>
 
 <Modal

@@ -136,11 +136,20 @@
   $: folders = Array.from(
     new Set($colorStore.palettes.map((pal) => pal.folder.toLowerCase()))
   ).sort((a, b) => a.length - b.length);
-  let modalState: "closed" | "open" = "open";
+  let modalState: "closed" | "open" = "closed";
   function onClose() {
     modalState = "closed";
   }
 </script>
+
+<button
+  class={buttonStyle}
+  on:click={() => {
+    modalState = "open";
+  }}
+>
+  Manage
+</button>
 
 <Modal
   showModal={modalState === "open"}

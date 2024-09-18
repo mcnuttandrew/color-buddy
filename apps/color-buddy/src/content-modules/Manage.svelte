@@ -1,6 +1,7 @@
 <script lang="ts">
   import type { Palette } from "color-buddy-palette";
 
+  import Plus from "virtual:icons/fa6-solid/plus";
   import BrowseCard from "../example/BrowseCard.svelte";
   import ColorSimControl from "../example/ColorSimControl.svelte";
   import FolderConfig from "../controls/FolderConfig.svelte";
@@ -112,24 +113,6 @@
         closeOnClick: false,
       },
       "break",
-      {
-        name: "Create a new folder with this",
-        action: () => {
-          const newPals = [...$colorStore.palettes];
-          // todo make the folder name be unique
-          let folderName = "new folder";
-          let i = 1;
-          while ($colorStore.palettes.some((x) => x.folder === folderName)) {
-            folderName = `new folder ${i}`;
-            i++;
-          }
-
-          newPals[paletteIdx] = { ...pal, folder: folderName };
-          colorStore.setPalettes(newPals);
-          selectedFolder = { isPreMade: false, name: folderName };
-        },
-        closeOnClick: true,
-      },
       ...folders
         .filter((x) => pal.folder !== x)
         .map((x) => {
@@ -167,25 +150,20 @@
   }}
 >
   <div class="bg-stone-300 p-4 text-xl font-bold">Palettes</div>
-  <div class="bg-stone-200 flex h-full">
-    <div class="py-2 px-6 flex-col">
-      <div class="flex">
-        <PreviewSelector exampleName={example?.name || "Discs"} />
-        <div>
-          <NewExampleModal editTarget={null} onClose={() => {}} />
-        </div>
-        <ColorSimControl />
-        <GenerateNewNames />
-      </div>
-    </div>
-
+  <div class="bg-stone-200 flex h-full py-2 px-4">
     <div class="flex flex-col">
-      <div class="text-sm">My Folders</div>
+      <div class="text-sm uppercase font-bold">My Folders</div>
       <div class="flex">
         {#each folders as folder}
-          <div class="flex" class:border-b-2={selectedFolder?.name === folder}>
+          <div
+            class="flex duration-150 px-1 items-center"
+            class:border-stone-400={selectedFolder?.name !== folder}
+            class:border-b={selectedFolder?.name !== folder}
+            class:border-black={selectedFolder?.name === folder}
+            class:border-b-2={selectedFolder?.name === folder}
+          >
             <button
-              class={""}
+              class={"whitespace-nowrap "}
               on:click={() =>
                 configStore.setSelectedFolder({
                   isPreMade: false,
@@ -195,38 +173,72 @@
               {folder.length ? `${folder}` : "root"}
             </button>
             {#if folder !== ""}
-              <div class=" px-4">
+              <div class="px-1">
                 <FolderConfig {folder} />
               </div>
             {/if}
           </div>
         {/each}
+        <button
+          class="px-1"
+          on:click={() => {
+            let folderName = "new folder";
+            let i = 1;
+            while ($colorStore.palettes.some((x) => x.folder === folderName)) {
+              folderName = `new folder ${i}`;
+              i++;
+            }
+
+            // colorStore.setPalettes(newPals);
+            folders = [...folders, folderName];
+            // selectedFolder = { isPreMade: false, name: folderName };
+          }}
+        >
+          <Plus />
+        </button>
       </div>
     </div>
-    <div class="flex flex-col">
-      <div class="text-sm">Samples</div>
-      <div>
+    <div class="flex flex-col mx-2">
+      <div class="text-sm uppercase font-bold">Samples</div>
+      <div class="flex">
         {#each ["sequential", "categorical", "diverging"] as folder}
-          <button
-            on:click={() =>
-              configStore.setSelectedFolder({ isPreMade: true, name: folder })}
-            class:underline={selectedFolder?.isPreMade &&
-              selectedFolder?.name === folder}
+          <div
+            class="flex duration-150 px-1 items-center"
+            class:border-stone-400={selectedFolder?.name !== folder}
+            class:border-b={selectedFolder?.name !== folder}
+            class:border-black={selectedFolder?.name === folder}
+            class:border-b-2={selectedFolder?.name === folder}
           >
-            {folder}
-          </button>
+            <button
+              class={"whitespace-nowrap "}
+              on:click={() =>
+                configStore.setSelectedFolder({
+                  isPreMade: true,
+                  name: folder,
+                })}
+            >
+              {folder}
+            </button>
+          </div>
         {/each}
       </div>
     </div>
+    <GenerateNewNames />
+    <div class="flex justify-between items-center">
+      <span class="whitespace-nowrap mr-2 ml-4">Thumbnail Style:</span>
+      <PreviewSelector exampleName={example?.name || "Discs"} />
+    </div>
   </div>
 
-  <div class="flex flex-wrap h-full overflow-auto p-4 content-baseline h-full">
+  <div
+    class="flex flex-wrap h-full overflow-auto p-4 content-baseline min-h-96"
+  >
     {#if selectedFolder.isPreMade}
       {#each familiarPals as palette}
         {#if palette.type === selectedFolder.name}
           <BrowseCard
             {palette}
-            usePortal={false}
+            targetBody={false}
             markAsCurrent={false}
             allowInteraction={false}
             allowResize={false}
@@ -247,7 +259,7 @@
       {#each $colorStore.palettes as pal, paletteIdx}
         {#if pal.folder.toLowerCase() === selectedFolder?.name.toLowerCase()}
           <BrowseCard
-            usePortal={false}
+            targetBody={false}
             markAsCurrent={$colorStore.currentPal === paletteIdx}
             onRename={(name) => {
               const newPals = [...$colorStore.palettes];

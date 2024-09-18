@@ -2,7 +2,7 @@
   // @ts-nocheck
   import Portal from "svelte-portal";
   import configStore from "../stores/config-store";
-  export let top: string = "2rem";
+  export let top: string | number = "2rem";
   export let onClose: () => void = () => {};
   export let initiallyOpen: boolean = false;
   export let positionAlongRightEdge: boolean = false;
@@ -10,12 +10,19 @@
   import { draggable } from "../lib/utils";
   export let customClass: string = "";
   export let buttonName: string = "";
-  export let usePortal: boolean = true;
+  export let targetBody: boolean = true;
+  export let bg: string = "bg-stone-100";
   import { buttonStyle } from "../lib/styles";
   let tooltipOpen: boolean = initiallyOpen;
 
   const query = "main *";
   function onClick(e?: any) {
+    if (!targetBody) {
+      const tip = document.getElementById("tooltip");
+      if (tip && tip.contains(e.target)) {
+        return;
+      }
+    }
     e?.preventDefault();
     e?.stopPropagation();
 
@@ -69,94 +76,49 @@
   }
 </script>
 
-{#if tooltipOpen}
-  {#if boundingBox && usePortal}
-    <Portal target="body">
-      <!-- svelte-ignore a11y-click-events-have-key-events -->
-      <!-- svelte-ignore a11y-no-static-element-interactions -->
+{#if tooltipOpen && boundingBox}
+  <Portal target={targetBody ? "body" : "dialog"}>
+    <!-- svelte-ignore a11y-click-events-have-key-events -->
+    <!-- svelte-ignore a11y-no-static-element-interactions -->
+    <div
+      class="absolute min-w-10"
+      id="tooltip"
+      style={`left: ${leftString}; top: ${topString}; z-index: 1000;`}
+      on:click|stopPropagation={(e) => {
+        const id = e.target.id;
+        if (id === "tooltip") {
+          onClick(e);
+        }
+      }}
+    >
       <div
-        class="absolute min-w-10"
-        id="tooltip"
-        style={`left: ${leftString}; top: ${topString}; z-index: 1000; fill:`}
-        on:click|stopPropagation={(e) => {
-          const id = e.target.id;
-          if (id === "tooltip") {
-            onClick(e);
-          }
-        }}
+        class="relative"
+        class:right-edge={positionAlongRightEdge}
+        class:border-bg-stone={true}
+        class:border-2={true}
       >
-        <div
-          class="relative"
-          class:right-edge={positionAlongRightEdge}
-          class:border-bg-stone={true}
-          class:border-2={true}
+        <span
+          class="tooltip rounded shadow-lg p-4 {bg} text-black flex-wrap flex {customClass}"
+          class:p-4={true}
         >
-          <span
-            class="tooltip rounded shadow-lg p-4 bg-stone-100 text-black flex-wrap flex {customClass}"
-            class:p-4={true}
-          >
-            {#if allowDrag}
-              <div
-                class="absolute cursor-move w-12 h-12 bg-stone-300 rounded-full grab-handle"
-                use:draggable
-                on:dragmove|preventDefault={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  leftString = `${e.detail.x - 20}px`;
-                  topString = `${e.detail.y - 20}px`;
-                  configStore.setTooltipXY([leftString, topString]);
-                }}
-              ></div>
-            {/if}
-            <slot name="content" {onClick} />
-          </span>
-        </div>
-      </div>
-    </Portal>
-  {:else}
-    <div class="relative">
-      <!-- svelte-ignore a11y-click-events-have-key-events -->
-      <!-- svelte-ignore a11y-no-static-element-interactions -->
-      <div
-        class="absolute min-w-10 left-0 top-0"
-        style="z-index: 10000;"
-        id="tooltip"
-        on:click|stopPropagation={(e) => {
-          const id = e.target.id;
-          if (id === "tooltip") {
-            onClick(e);
-          }
-        }}
-      >
-        <div
-          class="relative"
-          class:right-edge={positionAlongRightEdge}
-          class:border-bg-stone={true}
-          class:border-2={true}
-        >
-          <span
-            class="tooltip rounded shadow-lg p-4 bg-stone-100 text-black flex-wrap flex {customClass}"
-            class:p-4={true}
-          >
-            {#if allowDrag}
-              <div
-                class="absolute cursor-move w-12 h-12 bg-stone-300 rounded-full grab-handle"
-                use:draggable
-                on:dragmove|preventDefault={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  leftString = `${e.detail.x - 20}px`;
-                  topString = `${e.detail.y - 20}px`;
-                  configStore.setTooltipXY([leftString, topString]);
-                }}
-              ></div>
-            {/if}
-            <slot name="content" {onClick} />
-          </span>
-        </div>
+          {#if allowDrag}
+            <div
+              class="absolute cursor-move w-12 h-12 bg-stone-300 rounded-full grab-handle"
+              use:draggable
+              on:dragmove|preventDefault={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                leftString = `${e.detail.x - 20}px`;
+                topString = `${e.detail.y - 20}px`;
+                configStore.setTooltipXY([leftString, topString]);
+              }}
+            ></div>
+          {/if}
+          <slot name="content" {onClick} />
+        </span>
       </div>
     </div>
-  {/if}
+  </Portal>
 {/if}
 
 <div bind:this={target}>

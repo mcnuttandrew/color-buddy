@@ -2,7 +2,8 @@
   import colorStore from "../stores/color-store";
   import configStore from "../stores/config-store";
   import Tooltip from "../components/Tooltip.svelte";
-  import { buttonStyle } from "../lib/styles";
+  import DownChev from "virtual:icons/fa6-solid/angle-down";
+  import { simpleTooltipRowStyle } from "../lib/styles";
   export let folder: string;
   let renaming = false;
   function doRename(newFolder: string) {
@@ -20,10 +21,17 @@
   }
 </script>
 
-<Tooltip usePortal={false}>
-  <div slot="content" class="text-xs flex flex-col">
+<Tooltip
+  targetBody={false}
+  top={0}
+  bg="bg-white"
+  onClose={() => {
+    renaming = false;
+  }}
+>
+  <div slot="content" class="flex flex-col">
     <button
-      class={buttonStyle}
+      class={simpleTooltipRowStyle}
       on:click={() => {
         const pals = [...$colorStore.palettes].map((pal) =>
           pal.folder === folder ? { ...pal, folder: "" } : pal
@@ -35,10 +43,8 @@
       Delete
     </button>
     <button
-      class={buttonStyle}
-      on:click={() => {
-        renaming = true;
-      }}
+      class={simpleTooltipRowStyle}
+      on:click|stopPropagation={() => (renaming = true)}
     >
       Rename
     </button>
@@ -56,7 +62,7 @@
       <button>Save</button>
     {/if}
   </div>
-  <div slot="target" let:toggle class="w-full block">
-    <button class={buttonStyle} on:click={toggle}>^</button>
-  </div>
+  <button slot="target" let:toggle class="block" on:click={toggle}>
+    <DownChev class="text-xs" />
+  </button>
 </Tooltip>

@@ -86,7 +86,9 @@
         class="flex"
         style={`margin-left: ${scatterSize + zWidth + padding}px`}
       >
-        {#each [{ tabs: palettesTabs, name: "Palettes" }, { tabs: currentPalTabs, name: "Current Palette" }] as { tabs, name }}
+        <Manage />
+        {#each [// { tabs: palettesTabs, name: "Palettes" },
+          { tabs: currentPalTabs, name: "Current Palette" }] as { tabs, name }}
           <div class="flex flex-col relative">
             <div class="uppercase text-xs text-white absolute italic left-2">
               {name}
@@ -129,9 +131,7 @@
           <ComparePal {scatterSize} />
         {:else if palPresent && $configStore.route === "eval"}
           <Eval maxWidth={columnWidth} />
-        {:else if $configStore.route === "manage"}
-          <Manage />
-        {/if}
+        {:else if $configStore.route === "manage"}{/if}
       </div>
     </div>
   </div>

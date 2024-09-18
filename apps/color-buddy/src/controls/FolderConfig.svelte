@@ -20,7 +20,7 @@
   }
 </script>
 
-<Tooltip>
+<Tooltip usePortal={false}>
   <div slot="content" class="text-xs flex flex-col">
     <button
       class={buttonStyle}
@@ -57,6 +57,6 @@
     {/if}
   </div>
   <div slot="target" let:toggle class="w-full block">
-    <button class={buttonStyle} on:click={toggle}>Folder Settings</button>
+    <button class={buttonStyle} on:click={toggle}>^</button>
   </div>
 </Tooltip>

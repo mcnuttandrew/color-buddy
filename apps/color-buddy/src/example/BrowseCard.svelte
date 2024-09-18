@@ -17,6 +17,7 @@
     | { name: string; action: () => void; closeOnClick: boolean }
     | "break"
   )[];
+  export let usePortal: boolean = true;
   export let palette: Palette;
   export let previewIndex: number;
   export let titleClick: (() => void) | false;
@@ -36,7 +37,7 @@
   class="flex flex-col border-2 rounded w-min min-w-fit mr-4 mb-2 browse-card shrink self-start"
   style={`background: ${palette.background.toHex()}; min-height: ${minHeight}px;`}
 >
-  <div class="bg-stone-300 w-full flex justify-between p-1">
+  <div class="bg-white w-full flex justify-between p-1">
     <div class="flex">
       {#if markAsCurrent}
         <div class="mr-1 font-bold italic">Current:</div>
@@ -60,10 +61,8 @@
       {/if}
     </div>
 
-    <Tooltip positionAlongRightEdge={true}>
-      <button slot="target" class={buttonStyle} let:toggle on:click={toggle}>
-        ⚙
-      </button>
+    <Tooltip positionAlongRightEdge={true} {usePortal}>
+      <button slot="target" let:toggle on:click={toggle}>⌄</button>
       <div slot="content" class="flex flex-col items-start" let:onClick>
         {#each operations as op}
           {#if op === "break"}

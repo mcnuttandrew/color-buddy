@@ -25,6 +25,7 @@
     /* border-radius: 0.2em; */
     border: none;
     padding: 0;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   }
   dialog::backdrop {
     background: rgba(0, 0, 0, 0.3);

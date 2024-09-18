@@ -12,6 +12,7 @@
   import PalPreview from "../components/PalPreview.svelte";
   import { buttonStyle } from "../lib/styles";
   import { JSONStringify } from "../lib/utils";
+  import { lintGroupNames, typeToImg } from "../constants";
 
   import LintCustomizationPreview from "./LintCustomizationPreview.svelte";
   import NewLintSuggestion from "./NewLintSuggestion.svelte";
@@ -115,12 +116,20 @@
 
 {#if !lint}
   <div class="flex flex-col p-4">
-    <div class="font-bold">Select a lint</div>
     <NewLintSuggestion />
     <div>
-      {#each Object.keys(sortedLintsByGroup) as group}
-        <div class="font-bold">{group}</div>
-        {#each sortedLintsByGroup[group] as lint}
+      {#each Object.keys(lintGroupNames) as lintGroup}
+        <div class="flex">
+          <div class="h-8 w-10 flex items-center justify-center">
+            <img
+              src={typeToImg[lintGroup]}
+              class="h-6 w-6"
+              alt="Logo for {lintGroup}"
+            />
+          </div>
+          <div class="text-xl">{lintGroupNames[lintGroup]}</div>
+        </div>
+        {#each sortedLintsByGroup[lintGroup] || [] as lint}
           <button
             class={buttonStyle}
             on:click={() => {
@@ -240,7 +249,7 @@
         <div class="mx-4">
           <div class="font-bold">Lint Group:</div>
           <select value={lint.group} class="px-2">
-            {#each ["usability", "accessibility", "design", "custom"] as group}
+            {#each ["usability", "color-accessibility", "contrast-accessibility", "design", "custom"] as group}
               <option
                 value={group}
                 on:change={(e) => {

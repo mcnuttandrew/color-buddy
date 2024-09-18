@@ -13,7 +13,8 @@
   import NewLintSuggestion from "./NewLintSuggestion.svelte";
   import { titleCase } from "../lib/utils";
   import EvalColorColumn from "./EvalColorColumn.svelte";
-  import GlobalLintConfig from "./GlobalLintConfig.svelte";
+  import GlobalLintConfig from "./GlobalLintConfigModal.svelte";
+  import { lintGroupNames, typeToImg } from "../constants";
 
   import { loadLints } from "../lib/api-calls";
   export let maxWidth: number;
@@ -41,10 +42,7 @@
       }
       return acc;
     },
-    { accessibility: [], usability: [], design: [] } as Record<
-      string,
-      LintResult[]
-    >
+    {} as Record<string, LintResult[]>
   );
 
   function setGroupTo(checks: LintResult[], ignore: boolean) {
@@ -108,7 +106,7 @@
           {#if Object.keys(currentPal.evalConfig)}
             <div>
               <button
-                class={`${buttonStyle} ml-0 pl-0`}
+                class={`${buttonStyle}`}
                 on:click={() => colorStore.setCurrentPalEvalConfig({})}
               >
                 Restore Defaults
@@ -123,19 +121,28 @@
           palette matches a number of commonly held beliefs about best
           practices. They wont fit every situation.
         </div>
-        {#each Object.entries(lintGroups) as lintGroup}
+        {#each Object.keys(lintGroupNames).filter((x) => (lintGroups[x] || []).length) as lintGroup}
           <div class="flex mt-4">
-            <div class="font-bold">{titleCase(lintGroup[0])} Checks</div>
+            <div class="flex">
+              <div class="h-8 w-10 flex items-center justify-center">
+                <img
+                  src={typeToImg[lintGroup]}
+                  class="h-6 w-6"
+                  alt="Logo for {lintGroup}"
+                />
+              </div>
+              <div class="text-xl">{lintGroupNames[lintGroup]}</div>
+            </div>
             <button
               class={`${buttonStyle} `}
-              on:click={() => setGroupTo(lintGroup[1], true)}
+              on:click={() => setGroupTo(lintGroups[lintGroup] || [], true)}
             >
               ignore all
             </button>
-            {#if lintGroup[1].some((x) => evalConfig[x.lintProgram.name]?.ignore)}
+            {#if (lintGroups[lintGroup] || []).some((x) => evalConfig[x.lintProgram.name]?.ignore)}
               <button
                 class={`${buttonStyle} `}
-                on:click={() => setGroupTo(lintGroup[1], false)}
+                on:click={() => setGroupTo(lintGroups[lintGroup] || [], false)}
               >
                 re-enable all
               </button>
@@ -143,19 +150,21 @@
           </div>
           <div class="flex">
             {#if isCompact}
-              {#each lintGroup[1] as lintResult}
+              {#each lintGroups[lintGroup] || [] as lintResult}
                 {#if lintResult.kind === "success" && !lintResult.passes}
                   <LintDisplay {lintResult} justSummary={true} />
                 {/if}
               {/each}
             {/if}
           </div>
-          {#each lintGroup[1] as lintResult}
-            {#if !isCompact || (isCompact && lintResult.kind === "success" && !lintResult.passes)}
-              <LintDisplay {lintResult} />
-            {/if}
-          {/each}
-          {#if lintGroup[1].length === 0 && $lintStore.loadState === "loading"}
+          <div class="ml-10">
+            {#each lintGroups[lintGroup] || [] as lintResult}
+              {#if !isCompact || (isCompact && lintResult.kind === "success" && !lintResult.passes)}
+                <LintDisplay {lintResult} />
+              {/if}
+            {/each}
+          </div>
+          {#if (lintGroups[lintGroup] || []).length === 0 && $lintStore.loadState === "loading"}
             <div class="text-sm animate-pulse italic font-bold">Loading</div>
           {/if}
         {/each}

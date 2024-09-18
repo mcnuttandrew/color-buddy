@@ -5,7 +5,7 @@ import type { LintFixer } from "../linter-tools/lint-fixer";
 import { schema } from "../constants";
 
 const evenHue: LintProgram = {
-  name: "Even Distribution in Hue",
+  name: "Even distribution in hue",
   program: JSONToPrettyString({
     // @ts-ignore
     $schema: schema,
@@ -74,7 +74,7 @@ export const fixHueDistribution: LintFixer = async (palette) => {
 };
 
 const evenLightness: LintProgram = {
-  name: "Even Distribution in Lightness",
+  name: "Even distribution in lightness",
   program: JSONToPrettyString({
     // @ts-ignore
     $schema: schema,

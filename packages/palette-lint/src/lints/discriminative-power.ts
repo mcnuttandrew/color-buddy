@@ -3,7 +3,7 @@ import type { LintProgram } from "../ColorLint";
 import { schema } from "../constants";
 
 const lint: LintProgram = {
-  name: "Discriminative Power Sufficient",
+  name: "Discriminative power sufficient",
   program: JSONToPrettyString({
     // @ts-ignore
     $schema: schema,

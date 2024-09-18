@@ -9,7 +9,12 @@ export interface LintProgram {
   customProgram?: (palette: Palette) => boolean;
   description: string;
   failMessage: string;
-  group: "design" | "accessibility" | "usability" | "custom";
+  group:
+    | "design"
+    | "color-accessibility"
+    | "contrast-accessibility"
+    | "usability"
+    | "custom";
   id: string;
   level: "error" | "warning";
   name: string;

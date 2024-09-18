@@ -11,6 +11,7 @@
   import EvalResponse from "./EvalResponse.svelte";
   import { dealWithFocusEvent } from "../lib/utils";
   import { buttonStyle } from "../lib/styles";
+  import { typeToSymbol } from "../constants";
 
   $: checks = $lintStore.currentChecks;
 
@@ -46,12 +47,6 @@
   const checkLevelToSymbol = {
     error: "❌",
     warning: "⚠️",
-  } as any;
-  const typeToSymbol = {
-    design: "🎨",
-    accessibility: "♿",
-    usability: "🔎",
-    custom: "⚙️",
   } as any;
 </script>
 

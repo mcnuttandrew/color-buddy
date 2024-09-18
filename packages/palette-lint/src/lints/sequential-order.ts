@@ -7,7 +7,7 @@ import type { LintFixer } from "../linter-tools/lint-fixer";
 import { schema } from "../constants";
 
 const lint: LintProgram = {
-  name: "Sequential Palette Order",
+  name: "Sequential palette order appropriate",
   program: JSONToPrettyString({
     // @ts-ignore
     $schema: schema,

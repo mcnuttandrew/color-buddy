@@ -173,65 +173,50 @@
     }}
   >
     <div class="bg-stone-200 p-4 text-xl font-bold">Palettes</div>
-    <div class="bg-stone-100 flex h-full py-2 px-4">
-      <div class="flex flex-col">
-        <div class="text-sm uppercase font-bold">My Folders</div>
-        <div class="flex">
-          {#each folders as folder}
-            <div
-              class="flex duration-150 px-1 items-center"
-              class:border-stone-400={selectedFolder?.name !== folder}
-              class:border-b={selectedFolder?.name !== folder}
-              class:border-black={selectedFolder?.name === folder}
-              class:border-b-2={selectedFolder?.name === folder}
-            >
-              <button
-                class={"whitespace-nowrap "}
-                on:click={() =>
-                  configStore.setSelectedFolder({
-                    isPreMade: false,
-                    name: folder,
-                  })}
-              >
-                {folder.length ? `${folder}` : "Home"}
-              </button>
-              {#if folder !== ""}
+    <div class="bg-stone-100 flex flex-col h-full py-2 px-4">
+      <div class="flex w-full">
+        <div class="flex flex-col">
+          <div class="text-sm uppercase font-bold">My Folders</div>
+          <Nav
+            tabs={folders}
+            isTabSelected={(tab) => selectedFolder?.name === tab}
+            formatter={(x) => x || "Home"}
+            selectTab={(tab) => {
+              configStore.setSelectedFolder({
+                isPreMade: false,
+                name: tab,
+              });
+            }}
+          >
+            <div slot="menu" let:tab>
+              {#if tab !== ""}
                 <div class="px-1">
-                  <FolderConfig {folder} />
+                  <FolderConfig folder={tab} />
                 </div>
               {/if}
             </div>
-          {/each}
-          <button
-            class="px-1"
-            on:click={() => {
-              folders = [...folders, newVersionName("new folder", folders)];
+          </Nav>
+        </div>
+        <div class="flex flex-col mx-2">
+          <div class="text-sm uppercase font-bold">Samples</div>
+          <Nav
+            tabs={["sequential", "categorical", "diverging"]}
+            isTabSelected={(tab) => selectedFolder?.name === tab}
+            selectTab={(tab) => {
+              configStore.setSelectedFolder({
+                isPreMade: true,
+                name: tab,
+              });
             }}
-          >
-            <Plus />
-          </button>
+          />
+        </div>
+        <GenerateNewNames />
+        <div class="flex justify-between items-center">
+          <span class="whitespace-nowrap mr-2 ml-4">Thumbnail Style:</span>
+          <PreviewSelector exampleName={example?.name || "Discs"} />
         </div>
       </div>
-      <div class="flex flex-col mx-2">
-        <div class="text-sm uppercase font-bold">Samples</div>
-        <Nav
-          tabs={["sequential", "categorical", "diverging"]}
-          isTabSelected={(tab) => selectedFolder?.name === tab}
-          selectTab={(tab) => {
-            configStore.setSelectedFolder({
-              isPreMade: true,
-              name: tab,
-            });
-          }}
-        />
-      </div>
-      <GenerateNewNames />
-      <div class="flex justify-between items-center">
-        <span class="whitespace-nowrap mr-2 ml-4">Thumbnail Style:</span>
-        <PreviewSelector exampleName={example?.name || "Discs"} />
-      </div>
     </div>
-
     <div
       class="flex flex-wrap h-full overflow-auto p-4 content-baseline min-h-96"
     >

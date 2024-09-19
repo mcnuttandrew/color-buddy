@@ -87,47 +87,8 @@
   </button>
   <div slot="content">
     <div class="flex mb-4">
-      <button
-        class={buttonStyle}
-        on:click={() => {
-          const pals = $colorStore.palettes.map((x) => {
-            const { colors, background, name, colorSpace, type } = x;
-            return {
-              background: background.toHex(),
-              colorSpace,
-              colors: colors.map((c) => c.toHex()),
-              name,
-              type,
-            };
-          });
-          const blob = new Blob([JSON.stringify(pals)], {
-            type: "application/json",
-          });
-
-          const url = window.URL.createObjectURL(blob);
-          const a = document.createElement("a");
-          a.style.display = "none";
-          a.href = url;
-
-          // the filename you want
-          a.download = "palettes-export.json";
-          document.body.appendChild(a);
-          a.click();
-          window.URL.revokeObjectURL(url);
-        }}
-      >
-        Export Palettes
-      </button>
       <button class={buttonStyle} on:click={() => importPals()}>
         Import Palettes
-      </button>
-      <button
-        class={buttonStyle}
-        on:click={() => {
-          colorStore.clearPalettes();
-        }}
-      >
-        Clear Palettes
       </button>
     </div>
     <div class="font-bold">Configurations</div>

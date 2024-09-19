@@ -20,6 +20,7 @@
           on:click={() => selectTab(tab)}
         >
           {formatter(tab)}
+          <slot name="menu" {tab} />
         </button>
       </li>
     {/each}

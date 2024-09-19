@@ -108,7 +108,7 @@
         closeOnClick: false,
       },
       {
-        name: "Generate New Name",
+        name: "Generate New Name (AI)",
         action: async () => {
           try {
             const names = await suggestNameForPalette(pal, $configStore.engine);

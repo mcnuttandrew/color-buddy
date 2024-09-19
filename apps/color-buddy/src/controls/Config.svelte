@@ -5,13 +5,15 @@
   import Tooltip from "../components/Tooltip.svelte";
   import colorStore from "../stores/color-store";
   import { buttonStyle } from "../lib/styles";
+  import Nav from "../components/Nav.svelte";
+  import QuestionIcon from "virtual:icons/fa6-solid/circle-question";
+  import ChevDown from "virtual:icons/fa6-solid/chevron-down";
   const aiModes = [
     // "google",
     "openai",
     "anthropic",
-  ] as const;
+  ] as string[];
   $: showBg = $configStore.showColorBackground;
-  $: showOutOfGamut = $configStore.showGamutMarkers;
 
   const isMac = navigator.userAgent.indexOf("Mac OS X") !== -1;
   const metaKey = isMac ? "⌘" : "ctrl";
@@ -82,41 +84,72 @@
 </script>
 
 <Tooltip positionAlongRightEdge={true}>
-  <button class={buttonStyle} slot="target" let:toggle on:click={toggle}>
-    Config ⚙
+  <button
+    class={"text-white flex items-center mr-10"}
+    slot="target"
+    let:toggle
+    on:click={toggle}
+  >
+    <QuestionIcon />
+    <ChevDown class="ml-2" />
   </button>
-  <div slot="content">
-    <div class="flex mb-4">
+  <div slot="content" class="">
+    <!-- <div class="flex mb-4">
       <button class={buttonStyle} on:click={() => importPals()}>
         Import Palettes
       </button>
-    </div>
-    <div class="font-bold">Configurations</div>
-    <div>Pick AI Provider</div>
-    <div>
-      {#each aiModes as ai}
-        <button
-          class={buttonStyle}
-          class:font-bold={ai === $configStore.engine}
-          on:click={() => configStore.setEngine(ai)}
-        >
-          {ai}
-        </button>
-      {/each}
-    </div>
-    <div>Color Space in Background</div>
-    {#each showTypes as show}
-      <button
-        class={buttonStyle}
-        class:font-bold={show === showBg}
-        on:click={() => configStore.setShowColorBackground(show)}
+    </div> -->
+
+    <div class="font-bold">About</div>
+    <div class="text-sm my-2">
+      Color buddy is an application that helps you build excellent color
+      palettes. It was originally written at the
+
+      <a
+        class="underline text-cyan-800"
+        href="https://uwdata.github.io/"
+        target="_blank"
       >
-        {show}
+        UW IDL
+      </a>
+      and is now a product of the
+
+      <a
+        class="underline text-cyan-800"
+        href="https://www.sci.utah.edu/"
+        target="_blank"
+      >
+        Scientific Computing and Imaging Institute.
+      </a>
+      You can learn more about it at the{" "}
+      <a
+        class="underline text-cyan-800"
+        href="https://color-buddy-docs.netlify.app/"
+        target="_blank"
+      >
+        docs.
+      </a>
+      You can also find the source code on{" "}
+      <a
+        class="underline text-cyan-800"
+        href="      https://github.com/mcnuttandrew/color-buddy"
+        target="_blank"
+      >
+        GitHub.
+      </a>
+      If you have any feedback or questions, please feel free to reach out via the
+      github issues page or via email. A small amount of non-identifiable usage data
+      is collected to help improve the application.
+    </div>
+
+    <div>
+      <button class={buttonStyle} on:click={() => configStore.setTour(true)}>
+        Show Tour
       </button>
-    {/each}
+    </div>
 
     <div class="font-bold mt-4">Short cuts</div>
-    <div>
+    <div class="text-sm">
       {#each shortCuts as { name, shortcut }}
         <div class="flex justify-between">
           <div class="mr-4">{name}</div>
@@ -124,5 +157,23 @@
         </div>
       {/each}
     </div>
+
+    <div class="font-bold mt-4">Configurations</div>
+    <div class="mt-2">AI Provider</div>
+
+    <Nav
+      tabs={aiModes}
+      className="text-sm"
+      isTabSelected={(x) => x === $configStore.engine}
+      selectTab={(x) => configStore.setEngine(x)}
+    />
+
+    <div class="mt-2">Color Space in Background</div>
+    <Nav
+      tabs={showTypes}
+      className="text-sm"
+      isTabSelected={(x) => x === showBg}
+      selectTab={(x) => configStore.setShowColorBackground(x)}
+    />
   </div>
 </Tooltip>

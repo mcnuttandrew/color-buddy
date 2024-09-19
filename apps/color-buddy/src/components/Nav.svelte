@@ -2,7 +2,7 @@
   import { titleCase } from "../lib/utils";
   export let tabs: string[];
   export let isTabSelected: (tab: string) => boolean;
-  export let selectTab: (tab: string) => void;
+  export let selectTab: (tab: any) => void;
   export let className: string = "justify-center";
   export let formatter: (x: string) => string = titleCase;
 </script>
@@ -17,6 +17,7 @@
           class:border-b={!isTabSelected(tab)}
           class:border-black={isTabSelected(tab)}
           class:border-b-2={isTabSelected(tab)}
+          class:font-bold={isTabSelected(tab)}
           on:click={() => selectTab(tab)}
         >
           {formatter(tab)}

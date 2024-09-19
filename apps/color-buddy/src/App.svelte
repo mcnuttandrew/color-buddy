@@ -28,7 +28,6 @@
   import Nav from "./components/Nav.svelte";
   import NewPal from "./controls/NewPal.svelte";
 
-  import About from "./components/About.svelte";
   import LeftPanel from "./content-modules/LeftPanel.svelte";
   import Examples from "./example/Examples.svelte";
   import Eval from "./linting/Eval.svelte";
@@ -37,8 +36,7 @@
   import Manage from "./content-modules/Manage.svelte";
   import MainColumn from "./content-modules/MainColumn.svelte";
   import TourProvider from "./content-modules/TourProvider.svelte";
-
-  const palettesTabs = ["manage"];
+  import Config from "./controls/Config.svelte";
 
   const currentPalTabs = ["examples", "compare", "eval"];
 
@@ -97,7 +95,7 @@
           Redo
         </button>
       </div>
-      <About />
+      <Config />
     </div>
     <div class="flex w-full grow overflow-y-auto overflow-x-hidden">
       <div class="flex flex-col">

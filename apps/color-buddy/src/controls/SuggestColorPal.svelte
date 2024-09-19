@@ -68,9 +68,6 @@
 </script>
 
 <div class="flex flex-col">
-  <label for="pal-prompt">
-    <div>Use the name of a new palette to generate a new palette</div>
-  </label>
   {#if requestState === "loaded"}
     {#each newPals as pal, idx}
       <PalPreview {pal} />

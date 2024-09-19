@@ -10,8 +10,11 @@
   $: vis = $exampleStore.examples.filter((x) => (x as any).vega);
 </script>
 
-<Tooltip targetBody={false} bg="bg-white" top={0}>
-  <div slot="content" class="max-w-md bg-white flex flex-col justify-start">
+<Tooltip targetBody={false} bg="bg-white" top={0} positionAlongRightEdge={true}>
+  <div
+    slot="content"
+    class="max-w-md bg-white flex flex-col justify-start w-52"
+  >
     <button
       class={simpleTooltipRowStyle}
       on:click={() => configStore.setManageBrowsePreviewIdx(-1)}

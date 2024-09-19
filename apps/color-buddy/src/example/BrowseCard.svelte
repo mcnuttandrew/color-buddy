@@ -39,7 +39,7 @@
   style={`background: ${palette.background.toHex()}; min-height: ${minHeight}px;`}
   class:border-stone-700={markAsCurrent}
   class:border-t-8={markAsCurrent}
-  class:pt-2={!markAsCurrent}
+  class:mt-2={!markAsCurrent}
 >
   <div class="bg-white w-full flex justify-between p-1">
     <!-- header -->
@@ -68,7 +68,7 @@
       <button slot="target" let:toggle on:click={toggle}>
         <DownChev />
       </button>
-      <div slot="content" class="flex flex-col items-start" let:onClick>
+      <div slot="content" class="flex flex-col items-start w-52" let:onClick>
         {#each operations as op}
           {#if op === "break"}
             <div class="border-b border-stone-300 w-full my-1"></div>

@@ -101,7 +101,12 @@
       <button>Save</button>
     {/if}
   </div>
-  <button slot="target" let:toggle class="block" on:click={toggle}>
+  <button
+    slot="target"
+    let:toggle
+    class="block"
+    on:click|stopPropagation={toggle}
+  >
     <DownChev class="text-xs" />
   </button>
 </Tooltip>

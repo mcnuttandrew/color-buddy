@@ -56,12 +56,27 @@
       x.setAttribute("class", newClass);
     });
   }
+  function getLeftOffset(): number {
+    if (targetBody) {
+      return 0;
+    }
+    const dialog = document.querySelector("dialog");
+    if (!dialog) {
+      return 0;
+    }
+    return dialog.getBoundingClientRect().x;
+  }
+
+  $: leftOffset = tooltipOpen && getLeftOffset();
+
   $: topString = boundingBox
     ? top
       ? `calc(${boundingBox.y}px + ${top})`
       : `${boundingBox.y}px`
     : "0";
-  $: leftString = boundingBox ? `${boundingBox.x}px` : "0";
+  $: leftString = boundingBox
+    ? `${boundingBox.x - leftOffset}px`
+    : `${-leftOffset}`;
   $: {
     if (boundingBox.y + 500 > window.screen.height) {
       topString = `${window.screen.height - 500}px`;

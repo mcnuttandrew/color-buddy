@@ -3,16 +3,16 @@
   export let tabs: string[];
   export let isTabSelected: (tab: string) => boolean;
   export let selectTab: (tab: string) => void;
-  export let className: string = "";
+  export let className: string = "justify-center";
   export let formatter: (x: string) => string = titleCase;
 </script>
 
-<nav aria-label="Page navigation" class="{className} flex justify-center">
+<nav aria-label="Page navigation" class="{className} flex">
   <ul class="inline-flex">
     {#each tabs as tab}
       <li class="">
         <button
-          class="flex duration-150 px-2 items-center hover:border-stone-700"
+          class="flex duration-150 px-2 items-center hover:border-stone-700 whitespace-nowrap"
           class:border-stone-400={!isTabSelected(tab)}
           class:border-b={!isTabSelected(tab)}
           class:border-black={isTabSelected(tab)}

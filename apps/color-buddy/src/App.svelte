@@ -37,7 +37,6 @@
   import Manage from "./content-modules/Manage.svelte";
   import MainColumn from "./content-modules/MainColumn.svelte";
   import TourProvider from "./content-modules/TourProvider.svelte";
-  import VersionPalette from "./controls/VersionPalette.svelte";
 
   const palettesTabs = ["manage"];
 
@@ -84,7 +83,7 @@
   <LeftPanel />
   <div class="h-full flex flex-col grow main-content">
     <div class="bg-stone-800 flex justify-between items-center">
-      <div class="flex">
+      <div class="flex h-12">
         <NewPal />
         <Manage />
         <button
@@ -97,24 +96,6 @@
         <button class={"text-white mr-2"} on:click={() => colorStore.redo()}>
           Redo
         </button>
-        <VersionPalette />
-        {#each [// { tabs: palettesTabs, name: "Palettes" },
-          { tabs: currentPalTabs, name: "Current Palette" }] as { tabs, name }}
-          <div class="flex flex-col relative">
-            <div class="uppercase text-xs text-white absolute italic left-2">
-              {name}
-            </div>
-            <Nav
-              className="bg-stone-800 text-white h-12 items-center"
-              {tabs}
-              isTabSelected={(x) => $configStore.route === x}
-              selectTab={(x) => {
-                // @ts-ignore
-                configStore.setRoute(x);
-              }}
-            />
-          </div>
-        {/each}
       </div>
       <About />
     </div>
@@ -134,7 +115,18 @@
           </div>
         {/if}
       </div>
-      <div class="flex" id="right-col">
+      <div class="flex flex-col" id="right-col">
+        <div class="flex bg-stone-500">
+          <Nav
+            className=""
+            tabs={currentPalTabs}
+            isTabSelected={(x) => $configStore.route === x}
+            selectTab={(x) => {
+              // @ts-ignore
+              configStore.setRoute(x);
+            }}
+          />
+        </div>
         <div class="">
           {#if palPresent && $configStore.route === "examples"}
             <Examples />

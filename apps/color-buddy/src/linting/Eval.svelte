@@ -109,9 +109,9 @@
           <GlobalLintConfig />
         </div>
         <div class="text-sm">
-          This collection of checks (called lints) validates whether or not your
-          palette matches a number of commonly held beliefs about best
-          practices. They wont fit every situation.
+          This collection of checks validates whether or not your palette
+          matches a number of commonly held beliefs about best practices. They
+          wont fit every situation.
         </div>
         {#each Object.keys(lintGroupNames).filter((x) => (lintGroups[x] || []).length) as lintGroup}
           <div class="flex mt-4">

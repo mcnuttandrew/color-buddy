@@ -10,6 +10,7 @@
   import PalTypeConfig from "../controls/PalTypeConfig.svelte";
   import SetSimulation from "../controls/SetSimulation.svelte";
   import Controls from "../content-modules/Controls.svelte";
+  import PalTags from "../controls/PalTags.svelte";
 
   import SetColorSpace from "../controls/SetColorSpace.svelte";
   import { cvdSim } from "color-buddy-palette";
@@ -22,6 +23,7 @@
 
 <div class="flex flex-col h-full px-4 mt-10">
   <div class="flex">
+    <PalTypeConfig />
     <SetColorSpace
       colorSpace={currentPal.colorSpace}
       onChange={(space) => colorStore.setColorSpace(space)}
@@ -36,7 +38,7 @@
       bg={currentPal.background}
       colorSpace={$configStore.channelPickerSpaceBackground}
     />
-    <PalTypeConfig />
+    <PalTags />
     <SetSimulation />
   </div>
   <div>

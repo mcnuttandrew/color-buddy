@@ -113,7 +113,7 @@
             <svg height="{ballSize * 2}px" width="{ballSize * 3}px">
               <circle
                 r={ballSize}
-                fill={color.toHex()}
+                fill={selectedCVDType !== "none" ? sim(color) : color.toHex()}
                 cx={ballSize}
                 cy={ballSize}
               ></circle>

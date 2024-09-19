@@ -117,7 +117,7 @@
         .filter((x) => pal.folder !== x)
         .map((x) => {
           return {
-            name: `Move to ${x || "root"}`,
+            name: `Move to ${x || "Home"}`,
             action: () => {
               const newPals = [...$colorStore.palettes];
               newPals[paletteIdx] = { ...pal, folder: x };
@@ -179,7 +179,7 @@
                   name: folder,
                 })}
             >
-              {folder.length ? `${folder}` : "root"}
+              {folder.length ? `${folder}` : "Home"}
             </button>
             {#if folder !== ""}
               <div class="px-1">

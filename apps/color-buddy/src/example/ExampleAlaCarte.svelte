@@ -6,7 +6,7 @@
   import Vega from "./Vega.svelte";
   import Swatches from "./Swatches.svelte";
   import Tooltip from "../components/Tooltip.svelte";
-  import { buttonStyle } from "../lib/styles";
+  import { buttonStyle, simpleTooltipRowStyle } from "../lib/styles";
   export let exampleIdx: number;
   export let setExampleIdx: (idx: number) => void;
   export let paletteIdx: number | "tempPal";
@@ -21,10 +21,11 @@
 </script>
 
 <div class="flex flex-col">
-  <Tooltip>
-    <div slot="content" class="max-w-md">
+  <div class="text-sm">Thumbnail</div>
+  <Tooltip bg="bg-white">
+    <div slot="content" class="max-w-md flex flex-col">
       <button
-        class={buttonStyle}
+        class={simpleTooltipRowStyle}
         on:click={() => {
           setExampleIdx(-1);
         }}
@@ -33,7 +34,7 @@
       </button>
       {#each $exampleStore.examples as example, idx}
         <button
-          class={buttonStyle}
+          class={simpleTooltipRowStyle}
           on:click={() => {
             setExampleIdx(idx);
           }}
@@ -48,7 +49,7 @@
       class={`${buttonStyle} pl-0`}
       on:click={toggle}
     >
-      Change example: {example?.name || "Swatches"}
+      {example?.name || "Swatches"}
     </button>
   </Tooltip>
 </div>

@@ -59,13 +59,13 @@
           <div class="text-sm">Compare Palette</div>
           <Tooltip>
             <button
-              class={`${buttonStyle} pl-0`}
+              class={`${buttonStyle} `}
               slot="target"
               let:toggle
               on:click={toggle}
             >
               {#if ComparisonPal !== undefined}
-                Compare: {ComparisonPal.name}
+                {ComparisonPal.name}
               {:else}
                 No Palette Selected
               {/if}

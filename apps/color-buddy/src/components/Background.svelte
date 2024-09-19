@@ -40,6 +40,8 @@
         <div
           class={"h-3 w-3 rounded-full ml-2"}
           style={`background: ${bgHex}`}
+          class:border={bg.luminance() > 0.5}
+          class:border-black={bg.luminance() > 0.5}
         ></div>
         {bgHex}
       </div>

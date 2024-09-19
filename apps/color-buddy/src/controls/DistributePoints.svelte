@@ -1,9 +1,10 @@
 <script lang="ts">
   import colorStore from "../stores/color-store";
   import focusStore from "../stores/focus-store";
-  import { buttonStyle } from "../lib/styles";
+  import { buttonStyle, simpleTooltipRowStyle } from "../lib/styles";
   import { colorPickerConfig } from "../lib/utils";
   import { distributePoints } from "color-buddy-palette";
+  import Tooltip from "../components/Tooltip.svelte";
 
   $: currentPal = $colorStore.palettes[$colorStore.currentPal];
   $: colors = currentPal.colors;
@@ -20,19 +21,24 @@
 </script>
 
 {#if focusedColors.length > 2}
-  <div class="w-full border-t-2 border-black my-2"></div>
-  <div class="font-bold">Distribute</div>
-  <div class="flex flex-wrap">
-    {#each directions as direction}
-      <button
-        class={buttonStyle}
-        on:click={() =>
-          colorStore.setCurrentPalColors(
-            distributePoints(direction, focusedColors, colors, colorSpace)
-          )}
-      >
-        {direction.name}
-      </button>
-    {/each}
-  </div>
+  <Tooltip bg="bg-white">
+    <div slot="content">
+      <div class="flex flex-col">
+        {#each directions as direction}
+          <button
+            class={simpleTooltipRowStyle}
+            on:click={() =>
+              colorStore.setCurrentPalColors(
+                distributePoints(direction, focusedColors, colors, colorSpace)
+              )}
+          >
+            {direction.name}
+          </button>
+        {/each}
+      </div>
+    </div>
+    <button class={buttonStyle} slot="target" let:toggle on:click={toggle}>
+      Distribute
+    </button>
+  </Tooltip>
 {/if}

@@ -38,7 +38,6 @@
   import MainColumn from "./content-modules/MainColumn.svelte";
   import TourProvider from "./content-modules/TourProvider.svelte";
   import VersionPalette from "./controls/VersionPalette.svelte";
-  import Controls from "./content-modules/Controls.svelte";
 
   const palettesTabs = ["manage"];
 
@@ -136,7 +135,6 @@
         {/if}
       </div>
       <div class="flex" id="right-col">
-        <Controls />
         <div class="">
           {#if palPresent && $configStore.route === "examples"}
             <Examples />

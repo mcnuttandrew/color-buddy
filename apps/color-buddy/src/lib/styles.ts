@@ -9,7 +9,7 @@
 // const baseButtonStyle =
 //   "text-sm h-5 px-2 transition-colors duration-150 border  mr-2 whitespace-nowrap border-0 font-bold opacity-50 hover:opacity-100";
 const baseButtonStyle =
-  "px-2 rounded-md  border border-stone-800 bg-white  mr-2 whitespace-nowrap bg-stone-200 hover:opacity-50 transition-opacity duration-150";
+  "px-2 rounded-md  border border-stone-400 bg-white  mr-2 whitespace-nowrap bg-stone-200 hover:opacity-50 transition-opacity duration-150";
 export const buttonStyle = `${baseButtonStyle}`;
 
 export const linkStyle = "text-cyan-800";

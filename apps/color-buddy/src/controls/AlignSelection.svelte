@@ -3,7 +3,8 @@
   import colorStore from "../stores/color-store";
   import { Color } from "color-buddy-palette";
   import { colorPickerConfig } from "../lib/utils";
-  import { buttonStyle } from "../lib/styles";
+  import { buttonStyle, simpleTooltipRowStyle } from "../lib/styles";
+  import Tooltip from "../components/Tooltip.svelte";
 
   $: currentPal = $colorStore.palettes[$colorStore.currentPal];
   $: colors = currentPal.colors;
@@ -52,39 +53,44 @@
 </script>
 
 {#if focusedColors.length > 1}
-  <div class="w-full border-t-2 border-black my-2"></div>
-  <div class="font-bold">Align</div>
-  <div class="flex flex-wrap">
-    {#each ALIGNS as { pos, name, op }}
-      <button
-        class={buttonStyle}
-        on:click={() => {
-          const newCoordinate = op(
-            ...colors
-              .map((x) => x.toChannels())
-              .filter((_, idx) => focusSet.has(idx))
-              .map((x) => x[pos])
-          );
-          const newColors = colors
-            .map((x) => x.toChannels())
-            .map((x, idx) => {
-              let y = x;
-              if (focusSet.has(idx)) {
-                y[pos] = newCoordinate;
-              }
-              return y;
-            })
-            .map((x, idx) => {
-              const newColor = Color.colorFromChannels(x, colorSpace);
-              newColor.tags = colors[idx].tags;
-              return newColor;
-            });
+  <Tooltip bg="bg-white">
+    <div slot="content">
+      <div class="flex flex-col">
+        {#each ALIGNS as { pos, name, op }}
+          <button
+            class={simpleTooltipRowStyle}
+            on:click={() => {
+              const newCoordinate = op(
+                ...colors
+                  .map((x) => x.toChannels())
+                  .filter((_, idx) => focusSet.has(idx))
+                  .map((x) => x[pos])
+              );
+              const newColors = colors
+                .map((x) => x.toChannels())
+                .map((x, idx) => {
+                  let y = x;
+                  if (focusSet.has(idx)) {
+                    y[pos] = newCoordinate;
+                  }
+                  return y;
+                })
+                .map((x, idx) => {
+                  const newColor = Color.colorFromChannels(x, colorSpace);
+                  newColor.tags = colors[idx].tags;
+                  return newColor;
+                });
 
-          colorStore.setCurrentPalColors(newColors);
-        }}
-      >
-        {name}
-      </button>
-    {/each}
-  </div>
+              colorStore.setCurrentPalColors(newColors);
+            }}
+          >
+            {name}
+          </button>
+        {/each}
+      </div>
+    </div>
+    <button class={buttonStyle} slot="target" let:toggle on:click={toggle}>
+      Align
+    </button>
+  </Tooltip>
 {/if}

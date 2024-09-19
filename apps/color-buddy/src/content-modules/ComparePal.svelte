@@ -194,22 +194,6 @@
         below
       </div>
     {/if}
-    <div>&nbsp;</div>
-    {#if ComparisonPal !== undefined}
-      <div
-        class="flex flex-col pl-2"
-        style={`max-width: ${scatterSize + 110}px;`}
-      >
-        <PalPreview
-          highlightSelected={false}
-          pal={{
-            ...ComparisonPal,
-            background: Color.colorFromHex(bg, colorSpace),
-          }}
-          allowModification={false}
-        />
-      </div>
-    {/if}
 
     {#if compareIdx !== undefined}
       <div

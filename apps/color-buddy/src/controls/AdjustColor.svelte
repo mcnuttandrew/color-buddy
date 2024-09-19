@@ -4,8 +4,9 @@
   import colorStore from "../stores/color-store";
   import focusStore from "../stores/focus-store";
   import { clamp } from "../lib/utils";
+  import Tooltip from "../components/Tooltip.svelte";
 
-  import { buttonStyle } from "../lib/styles";
+  import { buttonStyle, simpleTooltipRowStyle } from "../lib/styles";
 
   $: currentPal = $colorStore.palettes[$colorStore.currentPal];
   $: colors = currentPal.colors;
@@ -71,18 +72,19 @@
 </script>
 
 {#if focusedColors.length >= 1}
-  <div class="w-full border-t-2 border-black my-2"></div>
-  <div class="text-sm italic">
-    Adjust selected color{focusedColors.length > 1 ? "s" : ""}
-  </div>
-  <div>
-    {#each actions as action}
-      <button
-        class={buttonStyle}
-        on:click={() => actionOnColor(focusedColors, action.effect)}
-      >
-        {action.name}
-      </button>
-    {/each}
-  </div>
+  <Tooltip bg="bg-white">
+    <div slot="content" class="flex flex-col">
+      {#each actions as action}
+        <button
+          class={simpleTooltipRowStyle}
+          on:click={() => actionOnColor(focusedColors, action.effect)}
+        >
+          {action.name}
+        </button>
+      {/each}
+    </div>
+    <button class={buttonStyle} slot="target" let:toggle on:click={toggle}>
+      Adjust Color{focusedColors.length > 1 ? "s" : ""}
+    </button>
+  </Tooltip>
 {/if}

@@ -2,6 +2,7 @@
   import { Color } from "color-buddy-palette";
   import { colorPickerConfig } from "../lib/utils";
   import ColorIO from "colorjs.io";
+  import { buttonStyle } from "../lib/styles";
 
   export let color: Color;
   export let onColorChange: (color: Color) => void;
@@ -135,14 +136,18 @@
 </script>
 
 <div class="flex flex-col">
-  <select
-    value={colorMode}
-    on:change={(e) => onSpaceChange(e.currentTarget.value)}
-  >
-    {#each [...Object.keys(colorConfigs)] as colorMode}
-      <option value={colorMode}>{colorMode}</option>
-    {/each}
-  </select>
+  <div class="flex h-full items-center justify-between">
+    <div>Color Space</div>
+    <select
+      class="h-full {buttonStyle}"
+      value={colorMode}
+      on:change={(e) => onSpaceChange(e.currentTarget.value)}
+    >
+      {#each [...Object.keys(colorConfigs)] as colorMode}
+        <option value={colorMode}>{colorMode}</option>
+      {/each}
+    </select>
+  </div>
   <div class="flex h-full mr-2">
     <div class="flex flex-col">
       <div class="flex flex-col">
@@ -203,7 +208,8 @@
     height: 2.2em;
     border-radius: 0.3em;
     box-shadow: 0 0 1px rgba(0, 0, 0, 0.5);
-    min-width: 285px;
+    /* min-width: 285px; */
+    min-width: 225px;
   }
 
   .color-slider::-webkit-slider-thumb {

@@ -4,6 +4,8 @@
   import { colorPickerConfig } from "../lib/utils";
   import colorStore from "../stores/color-store";
   import focusStore from "../stores/focus-store";
+  import Tooltip from "../components/Tooltip.svelte";
+  import { buttonStyle } from "../lib/styles";
 
   $: focusedColors = $focusStore.focusedColors;
   $: currentPal = $colorStore.palettes[$colorStore.currentPal];
@@ -99,18 +101,25 @@
   }
 </script>
 
-<div class="w-full border-t-2 border-black my-2"></div>
-<div class="text-sm italic">Rotate</div>
-<div class="flex flex-col">
-  <div class="w-full flex justify-between">
-    <input min={0} max={360} step={1} type="range" bind:value={angle} />
-    <input
-      min={0}
-      max={360}
-      step={1}
-      type="number"
-      bind:value={angle}
-      class="w-16 text-sm"
-    />
-  </div>
-</div>
+{#if focusedColors.length > 0}
+  <Tooltip bg="bg-white">
+    <div slot="content">
+      <div class="flex flex-col">
+        <div class="w-full flex justify-between">
+          <input min={0} max={360} step={1} type="range" bind:value={angle} />
+          <input
+            min={0}
+            max={360}
+            step={1}
+            type="number"
+            bind:value={angle}
+            class="w-16 text-sm"
+          />
+        </div>
+      </div>
+    </div>
+    <button class={buttonStyle} slot="target" let:toggle on:click={toggle}>
+      Rotate
+    </button>
+  </Tooltip>
+{/if}

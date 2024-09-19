@@ -100,7 +100,7 @@
       </div>
     </div>
     <button
-      class={`${buttonStyle} flex`}
+      class={`${buttonStyle} flex justify-center  items-center`}
       slot="target"
       let:toggle
       on:click={toggle}

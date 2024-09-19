@@ -9,6 +9,7 @@
   import ExampleAlaCart from "../example/ExampleAlaCarte.svelte";
   import PalTypeConfig from "../controls/PalTypeConfig.svelte";
   import SetSimulation from "../controls/SetSimulation.svelte";
+  import Controls from "../content-modules/Controls.svelte";
 
   import SetColorSpace from "../controls/SetColorSpace.svelte";
   import { cvdSim } from "color-buddy-palette";
@@ -65,6 +66,7 @@
   />
 
   <div class="flex flex-col pl-2" style={`max-width: ${scatterSize + 110}px;`}>
+    <Controls />
     <ExampleAlaCart
       paletteIdx={$colorStore.currentPal}
       exampleIdx={$configStore.mainColumnSelectedExample}

@@ -16,8 +16,8 @@
   import AddColor from "../controls/AddColor.svelte";
   import GetColorsFromString from "../controls/GetColorsFromString.svelte";
   import DeMetric from "../controls/DeMetric.svelte";
-
   import ContentEditable from "../components/ContentEditable.svelte";
+  import EditColor from "../components/EditColor.svelte";
 
   $: checks = $lintStore.currentChecks;
 
@@ -55,6 +55,9 @@
     warning: "⚠️",
   } as any;
   const ballSize = 25;
+  $: focusedSet = new Set($focusStore.focusedColors);
+
+  $: colorSpace = currentPal.colorSpace;
 </script>
 
 <!-- left panel -->
@@ -83,33 +86,40 @@
     </div>
     <!-- svelte-ignore a11y-click-events-have-key-events -->
     <!-- svelte-ignore a11y-no-static-element-interactions -->
-    <div
-      class="flex flex-col overflow-auto mr-5 px-4 h-full"
-      on:click={() => {
+    <div class="flex flex-col overflow-auto mr-5 px-4 h-full">
+      <!-- on:click={(e) => {
         focusStore.setColors([]);
-      }}
-    >
-      {#each colors as color, idx}
-        <button
-          on:click|stopPropagation={(e) => {
+      }} -->
+      <!-- on:click|stopPropagation={(e) => {
             focusStore.setColors(
               dealWithFocusEvent(e, idx, $focusStore.focusedColors)
             );
-          }}
+          }} -->
+      {#each colors as color, idx}
+        <div
           class="w-full flex justify-center items-center text-sm mt-2 transition-all relative"
-          class:ml-5={$focusStore.focusedColors.includes(idx)}
-          class:mr-5={!$focusStore.focusedColors.includes(idx)}
+          class:ml-5={focusedSet.has(idx)}
+          class:mr-5={!focusedSet.has(idx)}
           style="min-height: 40px"
         >
-          <svg height="{ballSize * 2}px" width="{ballSize * 3}px">
-            <circle
-              r={ballSize}
-              fill={color.toHex()}
-              cx={ballSize}
-              cy={ballSize}
-            ></circle>
-          </svg>
-          <div class="w-full flex flex-col h-full absolute">
+          <button
+            class="cursor-pointer"
+            on:click={(e) => {
+              focusStore.setColors(
+                dealWithFocusEvent(e, idx, $focusStore.focusedColors)
+              );
+            }}
+          >
+            <svg height="{ballSize * 2}px" width="{ballSize * 3}px">
+              <circle
+                r={ballSize}
+                fill={color.toHex()}
+                cx={ballSize}
+                cy={ballSize}
+              ></circle>
+            </svg>
+          </button>
+          <!-- <div class="w-full flex flex-col h-full absolute">
             <div class="h-full"></div>
             {#if selectedCVDType !== "none"}
               <div
@@ -117,13 +127,28 @@
                 style={`background-color: ${sim(color)}`}
               ></div>
             {/if}
-          </div>
+          </div> -->
           <div class="flex justify-between w-full px-2 items-center z-10">
             <span class="flex flex-col items-start">
-              <span>{color.toHex()}</span>
+              <span>
+                <ContentEditable
+                  onChange={(x) => {
+                    const updatedColors = [...colors];
+                    updatedColors[idx] = Color.colorFromString(x, colorSpace);
+                    colorStore.setCurrentPalColors(updatedColors);
+                  }}
+                  value={color.toHex()}
+                  useEditButton={false}
+                />
+              </span>
               {#if colorNames[idx]}<span class="text-right text-xs">
                   {colorNames[idx]}
                 </span>{/if}
+              {#if color.tags.length}
+                <span class="text-right text-xs">
+                  Tags: {color.tags.join(", ")}
+                </span>
+              {/if}
             </span>
             <div>
               {#if colorsToIssues[idx].length}
@@ -142,11 +167,16 @@
               </span>
             </div>
           </div>
-        </button>
+        </div>
 
         {#if stats[idx]}
           <div class=" text-black text-right text-xs">
             <div>dE: {Math.round(stats[idx])}</div>
+          </div>
+        {/if}
+        {#if focusedSet.has(idx) && focusedSet.size === 1}
+          <div class="ml-6" id="">
+            <EditColor />
           </div>
         {/if}
       {/each}

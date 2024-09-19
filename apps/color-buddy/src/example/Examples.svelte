@@ -33,7 +33,7 @@
   const navNameMap = {
     svg: "SVG",
     vega: "Visualizations (via Vega)",
-    swatches: "Swatches",
+    // swatches: "Swatches",
   } as any;
   const navNameMapRev = Object.keys(navNameMap).reduce((acc, key) => {
     acc[navNameMap[key]] = key;

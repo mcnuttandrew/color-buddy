@@ -153,17 +153,6 @@
         {show}
       </button>
     {/each}
-    <div>Show Out of Gamut Marker</div>
-    {#each ["show", "hide"] as show}
-      <button
-        class={buttonStyle}
-        class:font-bold={(show === "show" && showOutOfGamut) ||
-          (show == "hide" && !showOutOfGamut)}
-        on:click={() => configStore.setShowGamutMarkers(show === "show")}
-      >
-        {show}
-      </button>
-    {/each}
 
     <div class="font-bold mt-4">Short cuts</div>
     <div>

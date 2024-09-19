@@ -11,6 +11,7 @@
   import SetSimulation from "../controls/SetSimulation.svelte";
   import Controls from "../content-modules/Controls.svelte";
   import PalTags from "../controls/PalTags.svelte";
+  import Zoom from "../controls/Zoom.svelte";
 
   import SetColorSpace from "../controls/SetColorSpace.svelte";
   import { cvdSim } from "color-buddy-palette";
@@ -66,6 +67,19 @@
       ? []
       : currentPal.colors.map((x) => cvdSim(selectedCVDType, x))}
   />
+  <div class="w-full justify-between flex">
+    <div class="flex justify-start text-gray-400 text-sm">
+      <input
+        class="mr-1"
+        on:change={(e) =>
+          configStore.setShowGamutMarkers(e.currentTarget.checked)}
+        type="checkbox"
+        checked={$configStore.showGamutMarkers}
+      />
+      <span>Mark out-of-gamut colors with ⨂</span>
+    </div>
+    <Zoom />
+  </div>
 
   <div class="flex flex-col pl-2" style={`max-width: ${scatterSize + 110}px;`}>
     <Controls />

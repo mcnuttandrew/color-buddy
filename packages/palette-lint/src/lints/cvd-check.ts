@@ -58,7 +58,7 @@ const lints: LintProgram[] = cvdTypes.map((type) => ({
       ? "Right in black and white"
       : `${capitalize(type)}-friendly`,
   taskTypes: ["sequential", "diverging", "categorical"],
-  group: "contrast-accessibility",
+  group: "color-accessibility",
   description: `All colors in a palette should be differentiable by people with ${type} ${cvdLabels[type]}. This is because if they are not, then they will not be differentiable from each other in some contexts.`,
   level: "error" as const,
   failMessage:

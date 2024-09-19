@@ -39,7 +39,7 @@ const lintBase: LintProgram = {
   name: "AA text contrast (text-tagged colors only)",
   taskTypes: ["sequential", "diverging", "categorical"] as const,
   level: "error",
-  group: "color-accessibility",
+  group: "contrast-accessibility",
   description: descriptionBase + textPart,
   failMessage: `These text colors ({{blame}) do not have a sufficient contrast do not have sufficient contrast with the background to be easily readable.`,
   id: "background-contrast-built-in",

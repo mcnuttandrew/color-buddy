@@ -3,11 +3,9 @@
 
   import Plus from "virtual:icons/fa6-solid/plus";
   import BrowseCard from "../example/BrowseCard.svelte";
-  import ColorSimControl from "../example/ColorSimControl.svelte";
   import FolderConfig from "../controls/FolderConfig.svelte";
   import GenerateNewNames from "../components/GenerateNewNames.svelte";
   import Modal from "../components/Modal.svelte";
-  import NewExampleModal from "../example/NewExampleModal.svelte";
   import PreviewSelector from "../example/PreviewSelector.svelte";
   import colorStore from "../stores/color-store";
   import configStore from "../stores/config-store";
@@ -17,7 +15,9 @@
   import { buttonStyle } from "../lib/styles";
   import { convertPalToSpace } from "../lib/utils";
   import { suggestNameForPalette } from "../lib/api-calls";
+  import Nav from "../components/Nav.svelte";
 
+  import { newVersionName } from "../lib/utils";
   $: example = $exampleStore.examples[
     $configStore.manageBrowsePreviewIdx
   ] as any;
@@ -205,18 +205,7 @@
           <button
             class="px-1"
             on:click={() => {
-              let folderName = "new folder";
-              let i = 1;
-              while (
-                $colorStore.palettes.some((x) => x.folder === folderName)
-              ) {
-                folderName = `new folder ${i}`;
-                i++;
-              }
-
-              // colorStore.setPalettes(newPals);
-              folders = [...folders, folderName];
-              // selectedFolder = { isPreMade: false, name: folderName };
+              folders = [...folders, newVersionName("new folder", folders)];
             }}
           >
             <Plus />
@@ -225,28 +214,16 @@
       </div>
       <div class="flex flex-col mx-2">
         <div class="text-sm uppercase font-bold">Samples</div>
-        <div class="flex">
-          {#each ["sequential", "categorical", "diverging"] as folder}
-            <div
-              class="flex duration-150 px-1 items-center"
-              class:border-stone-400={selectedFolder?.name !== folder}
-              class:border-b={selectedFolder?.name !== folder}
-              class:border-black={selectedFolder?.name === folder}
-              class:border-b-2={selectedFolder?.name === folder}
-            >
-              <button
-                class={"whitespace-nowrap "}
-                on:click={() =>
-                  configStore.setSelectedFolder({
-                    isPreMade: true,
-                    name: folder,
-                  })}
-              >
-                {folder}
-              </button>
-            </div>
-          {/each}
-        </div>
+        <Nav
+          tabs={["sequential", "categorical", "diverging"]}
+          isTabSelected={(tab) => selectedFolder?.name === tab}
+          selectTab={(tab) => {
+            configStore.setSelectedFolder({
+              isPreMade: true,
+              name: tab,
+            });
+          }}
+        />
       </div>
       <GenerateNewNames />
       <div class="flex justify-between items-center">

@@ -539,3 +539,13 @@ export function colorPalToStringPal(pal: Palette): StringPalette {
     }),
   };
 }
+
+export function newVersionName(name: string, previousNames: string[]): string {
+  let newName = name;
+  let version = 2;
+  while (previousNames.includes(newName)) {
+    newName = `${name} v${version}`;
+    version++;
+  }
+  return newName;
+}

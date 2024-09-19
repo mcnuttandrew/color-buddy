@@ -1,4 +1,5 @@
 <script lang="ts">
+  import focusStore from "../stores/focus-store";
   import AdjustColor from "../controls/AdjustColor.svelte";
   import AlignSelection from "../controls/AlignSelection.svelte";
   import DistributePoints from "../controls/DistributePoints.svelte";
@@ -12,7 +13,10 @@
     <AdjustColor />
     <DistributePoints />
     <AlignSelection />
-    <Rotate />
+    <!-- use this to try to quash the rotation/selection bug -->
+    {#if $focusStore.focusedColors.length > 1}
+      <Rotate />
+    {/if}
     <InterpolatePoints />
   </div>
 </div>

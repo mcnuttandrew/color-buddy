@@ -2,6 +2,12 @@
   import focusStore from "../stores/focus-store";
   import colorStore from "../stores/color-store";
   import { Color } from "color-buddy-palette";
+  import AlignBottomIcon from "virtual:icons/custom/align-bottom";
+  import AlignTopIcon from "virtual:icons/custom/align-top";
+  import AlignLeftIcon from "virtual:icons/custom/align-left";
+  import AlignRightIcon from "virtual:icons/custom/align-right";
+  import AlignZTop from "virtual:icons/custom/max-3rd";
+  import AlignZBottom from "virtual:icons/custom/min-3rd";
   import { colorPickerConfig } from "../lib/utils";
   import { buttonStyle, simpleTooltipRowStyle } from "../lib/styles";
   import Tooltip from "../components/Tooltip.svelte";
@@ -23,31 +29,37 @@
       pos: config.xChannelIndex,
       name: isPolar ? "Inner Radius" : "Left",
       op: xRev ? Math.max : Math.min,
+      icon: xRev ? AlignLeftIcon : AlignRightIcon,
     },
     {
       pos: config.xChannelIndex,
       name: isPolar ? "Outer Radius" : "Right",
       op: xRev ? Math.min : Math.max,
+      icon: xRev ? AlignRightIcon : AlignLeftIcon,
     },
     {
       pos: config.yChannelIndex,
       name: isPolar ? "Min Angle" : "Top",
       op: yRev ? Math.max : Math.min,
+      icon: yRev ? AlignTopIcon : AlignBottomIcon,
     },
     {
       pos: config.yChannelIndex,
       name: isPolar ? "Max Angle" : "Bottom",
       op: yRev ? Math.min : Math.max,
+      icon: yRev ? AlignBottomIcon : AlignTopIcon,
     },
     {
       pos: config.zChannelIndex,
       name: `${zName} Min`,
       op: zRev ? Math.max : Math.min,
+      icon: zRev ? AlignZTop : AlignZBottom,
     },
     {
       pos: config.zChannelIndex,
       name: `${zName} Max`,
       op: zRev ? Math.min : Math.max,
+      icon: zRev ? AlignZBottom : AlignZTop,
     },
   ];
 </script>
@@ -56,9 +68,9 @@
   <Tooltip bg="bg-white">
     <div slot="content">
       <div class="flex flex-col">
-        {#each ALIGNS as { pos, name, op }}
+        {#each ALIGNS as { pos, name, op, icon }}
           <button
-            class={simpleTooltipRowStyle}
+            class={`${simpleTooltipRowStyle} h-full flex justify-between items-center`}
             on:click={() => {
               const newCoordinate = op(
                 ...colors
@@ -85,6 +97,11 @@
             }}
           >
             {name}
+            {#if icon}
+              <span class="ml-2">
+                <svelte:component this={icon} />
+              </span>
+            {/if}
           </button>
         {/each}
       </div>

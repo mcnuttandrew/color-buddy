@@ -1,4 +1,5 @@
 <script lang="ts">
+  import CenterIcon from "virtual:icons/fa6-solid/align-center";
   import colorStore from "../stores/color-store";
   import focusStore from "../stores/focus-store";
   import { buttonStyle, simpleTooltipRowStyle } from "../lib/styles";
@@ -14,7 +15,10 @@
   $: zName = colorPickerConfig[colorSpace].zChannel;
 
   $: directions = [
-    { direction: "horizontal", name: config.isPolar ? "radial" : "horizontal" },
+    {
+      direction: "horizontal",
+      name: config.isPolar ? "radial" : "horizontal",
+    },
     { direction: "vertical", name: config.isPolar ? "angle" : "vertical" },
     { direction: "in z space", name: `in ${zName.toUpperCase()} space` },
   ] as Parameters<typeof distributePoints>[0][];
@@ -26,13 +30,18 @@
       <div class="flex flex-col">
         {#each directions as direction}
           <button
-            class={simpleTooltipRowStyle}
+            class={`${simpleTooltipRowStyle} flex items-center h-full justify-between`}
             on:click={() =>
               colorStore.setCurrentPalColors(
                 distributePoints(direction, focusedColors, colors, colorSpace)
               )}
           >
             {direction.name}
+            {#if direction.name === "vertical"}
+              <CenterIcon class="text-sm ml-3" />
+            {:else if direction.name === "horizontal"}
+              <CenterIcon class="text-sm ml-3 rotate-90" />
+            {/if}
           </button>
         {/each}
       </div>

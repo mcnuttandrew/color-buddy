@@ -4,19 +4,24 @@
   import Tooltip from "../components/Tooltip.svelte";
   import DownChev from "virtual:icons/fa6-solid/angle-down";
   import { simpleTooltipRowStyle, buttonStyle } from "../lib/styles";
+  import { newVersionName } from "../lib/utils";
   export let folder: string;
   let renaming = false;
   function doRename(newFolder: string) {
     if (!newFolder) {
       return;
     }
+    let newName = newVersionName(
+      newFolder.trim(),
+      $colorStore.palettes.map((x) => x.folder)
+    );
 
     const pals = [...$colorStore.palettes].map((pal) => {
       const hit = pal.folder.toLowerCase() === folder.toLowerCase();
-      return hit ? { ...pal, folder: newFolder } : pal;
+      return hit ? { ...pal, folder: newName } : pal;
     });
     colorStore.setPalettes(pals);
-    configStore.setSelectedFolder({ isPreMade: false, name: newFolder });
+    configStore.setSelectedFolder({ isPreMade: false, name: newName });
     renaming = false;
   }
 </script>

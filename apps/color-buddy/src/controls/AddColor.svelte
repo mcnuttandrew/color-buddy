@@ -41,10 +41,7 @@
   }
 </script>
 
-<div class="flex w-full justify-between">
-  <div class="italic text-sm">Add Color</div>
-</div>
-<section class="mb-4">
+<div class="flex flex-col w-full mt-3">
   <div class="flex w-full justify-between items-center">
     <AutocompleteOrSearch
       setValue={(x) => {
@@ -87,6 +84,16 @@
           }}
         />
       {/each}
+      {#if interpretations.length > 0}
+        <button
+          class={"cursor-pointer"}
+          on:click={() => {
+            interpretations = [];
+          }}
+        >
+          Clear
+        </button>
+      {/if}
     </div>
   {/if}
-</section>
+</div>

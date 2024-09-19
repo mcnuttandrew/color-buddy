@@ -13,40 +13,13 @@
   import SetColorSpace from "../controls/SetColorSpace.svelte";
   import { cvdSim } from "color-buddy-palette";
 
-  import ContentEditable from "../components/ContentEditable.svelte";
-
   export let scatterSize = 450;
 
   $: currentPal = $colorStore.palettes[$colorStore.currentPal];
   $: selectedCVDType = $configStore.colorSim;
 </script>
 
-<div class="flex flex-col h-full px-4">
-  <!-- naming stuff -->
-  <div class="flex font-bold justify-between">
-    <div class="flex">
-      <span class="italic">Current:</span>
-      <div class="flex">
-        <ContentEditable
-          onChange={(x) => colorStore.setCurrentPalName(x)}
-          value={currentPal.name}
-          useEditButton={true}
-        />
-      </div>
-    </div>
-    <PalTypeConfig />
-  </div>
-  <!-- tags -->
-  <div class="flex text-sm italic">
-    {#if currentPal.tags.length}
-      Tags:
-      {#each currentPal.tags as tag}
-        <div class="ml-2">{tag}</div>
-      {/each}
-    {:else}
-      <div>&nbsp;</div>
-    {/if}
-  </div>
+<div class="flex flex-col h-full px-4 mt-10">
   <div class="flex">
     <SetColorSpace
       colorSpace={currentPal.colorSpace}
@@ -62,6 +35,7 @@
       bg={currentPal.background}
       colorSpace={$configStore.channelPickerSpaceBackground}
     />
+    <PalTypeConfig />
     <SetSimulation />
   </div>
   <div>
@@ -90,28 +64,7 @@
       : currentPal.colors.map((x) => cvdSim(selectedCVDType, x))}
   />
 
-  <!-- <div
-    class="flex flex-wrap"
-    id="scatterplot-controls"
-    style={`max-width: ${scatterSize + 110}px;`}
-  ></div> -->
-  <!-- <div
-    class="flex flex-wrap"
-    id="scatterplot-controls"
-    style={`max-width: ${scatterSize + 110}px;`}
-  >
-    <AdjustOrder />
-
-  </div> -->
   <div class="flex flex-col pl-2" style={`max-width: ${scatterSize + 110}px;`}>
-    <!-- overview / preview -->
-    <!-- <PalPreview
-      allowModification={true}
-      highlightSelected={true}
-      pal={currentPal}
-      showTags={true}
-    /> -->
-
     <ExampleAlaCart
       paletteIdx={$colorStore.currentPal}
       exampleIdx={$configStore.mainColumnSelectedExample}

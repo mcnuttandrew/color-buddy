@@ -1,7 +1,9 @@
 <script>
   import colorStore from "../stores/color-store";
   import Tooltip from "../components/Tooltip.svelte";
-  import { buttonStyle } from "../lib/styles";
+  import { buttonStyle, simpleTooltipRowStyle } from "../lib/styles";
+  import DownChev from "virtual:icons/fa6-solid/angle-down";
+  import { titleCase } from "../lib/utils";
 
   $: currentPal = $colorStore.palettes[$colorStore.currentPal];
   $: palType = currentPal.type;
@@ -22,66 +24,89 @@
   );
 </script>
 
-<Tooltip>
-  <div slot="content" class="max-w-md">
-    <div class="max-w-lg text-sm italic">
-      This is a <select
-        value={palType}
-        class="font-bold"
-        on:change={(e) => {
-          // @ts-ignore
-          colorStore.setCurrentPalType(e.target.value);
-        }}
-      >
-        {#each ["sequential", "diverging", "categorical"] as type}
-          <option value={type}>{type}</option>
-        {/each}
-      </select>
-      palette. {descriptions[palType]}
-    </div>
-    <div class="font-bold">Tags</div>
-    {#each tags as tag}
-      <div class={buttonStyle}>
-        {tag}
+<div class="flex flex-col">
+  <div class="text-sm">Palette Type</div>
+  <Tooltip>
+    <div slot="content" class="flex flex-col">
+      {#each ["sequential", "diverging", "categorical"] as type}
         <button
-          class="text-xs"
+          class={simpleTooltipRowStyle}
+          value={type}
           on:click={() =>
-            colorStore.setCurrentTags(
-              tags.filter((x) => x.toLowerCase() !== tag)
-            )}
+            // @ts-ignore
+            colorStore.setCurrentPalType(type)}
+          class:font-bold={type === palType}
         >
-          x
+          {type}
         </button>
-      </div>
-    {/each}
-    <div>
+      {/each}
+    </div>
+    <button
+      class={`${buttonStyle} flex`}
+      slot="target"
+      let:toggle
+      on:click={toggle}
+    >
+      <div>{titleCase(palType)}</div>
+      <DownChev class="text-sm" />
+    </button>
+  </Tooltip>
+</div>
+<div class="flex flex-col">
+  <div class="text-sm whitespace-nowrap">Palette Tags</div>
+  <Tooltip>
+    <div slot="content" class="max-w-md">
       <div class="italic text-sm">
-        These tags describe palette level usages, like the intended affect and
-        so on. {#if commonTags.length}
+        Tags describe palette level usages, like the intended affect and so on. {#if commonTags.length}
           Here are some common ones that are have specific effects in the app
           (such as engaging lints for specific affects).{/if}
       </div>
-      {#each commonTags as tag}
-        <button
-          class={buttonStyle}
-          on:click={() => colorStore.setCurrentTags([...tags, tag])}
-        >
-          {tag}
-        </button>
-      {/each}
-      <div class="flex">
-        <form
-          placeholder="Add Tag"
-          on:submit|preventDefault|stopPropagation={() =>
-            colorStore.setCurrentTags([...tags, tagInput])}
-        >
-          <input class="w-24" bind:value={tagInput} />
-          <button class={buttonStyle}>Add Tag</button>
-        </form>
+      <div class="font-bold">Tags</div>
+      <div class="flex flex-wrap">
+        {#each tags as tag}
+          <div class={buttonStyle}>
+            {tag}
+            <button
+              class="text-xs"
+              on:click={() =>
+                colorStore.setCurrentTags(
+                  tags.filter((x) => x.toLowerCase() !== tag)
+                )}
+            >
+              x
+            </button>
+          </div>
+        {/each}
+      </div>
+      <div>
+        {#each commonTags as tag}
+          <button
+            class={buttonStyle}
+            on:click={() => colorStore.setCurrentTags([...tags, tag])}
+          >
+            {tag}
+          </button>
+        {/each}
+        <div class="flex">
+          <form
+            placeholder="Add Tag"
+            on:submit|preventDefault|stopPropagation={() =>
+              colorStore.setCurrentTags([...tags, tagInput])}
+          >
+            <input class="w-24" bind:value={tagInput} />
+            <button class={buttonStyle}>Add Tag</button>
+          </form>
+        </div>
       </div>
     </div>
-  </div>
-  <button class={buttonStyle} slot="target" let:toggle on:click={toggle}>
-    {palType.toUpperCase()} ⚙
-  </button>
-</Tooltip>
+    <button
+      class={`${buttonStyle} flex`}
+      slot="target"
+      let:toggle
+      on:click={toggle}
+    >
+      <div>{tags.join(", ")}</div>
+      <DownChev class="text-sm" />
+    </button>
+  </Tooltip>
+</div>

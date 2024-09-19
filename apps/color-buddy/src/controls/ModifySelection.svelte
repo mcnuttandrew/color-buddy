@@ -7,7 +7,7 @@
   import SuggestionModificationToSelection from "../controls/SuggestionModificationToSelection.svelte";
   import focusStore from "../stores/focus-store";
   import colorStore from "../stores/color-store";
-  import { buttonStyle } from "../lib/styles";
+  import { buttonStyle, controlButtonStyle } from "../lib/styles";
   $: focusedColors = $focusStore.focusedColors;
   $: focusedSet = new Set(focusedColors);
   $: currentPal = $colorStore.palettes[$colorStore.currentPal];
@@ -15,11 +15,10 @@
   $: focused = $focusStore.focusedColors;
 
   $: buttonsActive = focusedColors.length > 0;
-  const style = "border border-stone-400 rounded mr-2 px-2";
 </script>
 
 <button
-  class={style}
+  class={`${controlButtonStyle} `}
   class:opacity-30={!buttonsActive}
   class:opacity-50={buttonsActive}
   class:cursor-not-allowed={!buttonsActive}
@@ -43,7 +42,7 @@
   <UpArrow />
 </button>
 <button
-  class={style}
+  class={controlButtonStyle}
   class:opacity-30={!buttonsActive}
   class:opacity-50={buttonsActive}
   class:cursor-not-allowed={!buttonsActive}
@@ -68,7 +67,7 @@
 </button>
 
 <button
-  class={style}
+  class={controlButtonStyle}
   class:button-deactivated={!buttonsActive}
   on:click={() => {
     colorStore.setCurrentPalColors(

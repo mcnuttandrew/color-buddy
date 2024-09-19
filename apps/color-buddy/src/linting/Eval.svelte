@@ -11,8 +11,6 @@
   import LintCustomizationModal from "./LintCustomizationTab.svelte";
   import Nav from "../components/Nav.svelte";
   import NewLintSuggestion from "./NewLintSuggestion.svelte";
-  import { titleCase } from "../lib/utils";
-  import EvalColorColumn from "./EvalColorColumn.svelte";
   import GlobalLintConfig from "./GlobalLintConfigModal.svelte";
   import { lintGroupNames, typeToImg } from "../constants";
 
@@ -56,7 +54,6 @@
   $: isCompact = displayMode === "compact";
 
   let innerWidth = window.innerWidth;
-  $: showEvalColumn = innerWidth >= 1600;
 </script>
 
 <div class="bg-stone-300 w-full flex">
@@ -92,11 +89,6 @@
   {#if displayMode === "lint-customization"}
     <LintCustomizationModal {maxWidth} />
   {:else}
-    {#if showEvalColumn}
-      <div class="bg-stone-300">
-        <EvalColorColumn />
-      </div>
-    {/if}
     <div class="flex flex-col ml-2">
       <div
         class="overflow-auto h-full max-w-lg mb-28 px-2"

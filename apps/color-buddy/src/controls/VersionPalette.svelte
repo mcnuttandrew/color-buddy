@@ -18,5 +18,5 @@
     colorStore.createNewPal(newPal);
   }}
 >
-  Duplicate
+  Duplicate Palette
 </button>

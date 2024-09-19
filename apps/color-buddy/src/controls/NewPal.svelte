@@ -109,7 +109,12 @@
     <div class="font-bold">Generate a new palette using AI</div>
     <SuggestColorPal />
   </div>
-  <button slot="target" let:toggle on:click={toggle} class={denseButtonStyle}>
-    New
+  <button
+    slot="target"
+    let:toggle
+    on:click={toggle}
+    class={"text-white h-full mx-2"}
+  >
+    New Palette
   </button>
 </Tooltip>

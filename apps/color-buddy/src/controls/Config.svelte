@@ -81,7 +81,7 @@
   >[0][];
 </script>
 
-<Tooltip>
+<Tooltip positionAlongRightEdge={true}>
   <button class={buttonStyle} slot="target" let:toggle on:click={toggle}>
     Config ⚙
   </button>

@@ -1,7 +1,8 @@
 <script lang="ts">
   import colorStore from "../stores/color-store";
   import Tooltip from "../components/Tooltip.svelte";
-  import { buttonStyle } from "../lib/styles";
+  import SortIcon from "virtual:icons/fa6-solid/sort";
+  import { buttonStyle, controlButtonStyle } from "../lib/styles";
   const spaces = ["lab", "lch", "hsl", "hsv"];
   let selectedColorSpace: (typeof spaces)[number] = "lab";
   let selectedLetter = "a";
@@ -79,10 +80,10 @@
     slot="target"
     id="sort-button"
     let:toggle
-    class={buttonStyle}
+    class={controlButtonStyle}
     on:click={toggle}
   >
-    Sort
+    <SortIcon />
   </button>
 </Tooltip>
 

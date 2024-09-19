@@ -1,8 +1,16 @@
 <script lang="ts">
   import Tooltip from "./Tooltip.svelte";
+  import configStore from "../stores/config-store";
+  import Config from "../controls/Config.svelte";
 </script>
 
-<div>
+<div class="flex">
+  <Config />
+  <div>
+    <button class={"text-white"} on:click={() => configStore.setTour(true)}>
+      Tour
+    </button>
+  </div>
   <Tooltip positionAlongRightEdge>
     <button slot="target" let:toggle on:click={toggle} class="text-white px-4">
       About

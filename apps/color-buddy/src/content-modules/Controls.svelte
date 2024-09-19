@@ -6,7 +6,6 @@
 
   import { Color } from "color-buddy-palette";
 
-  import AddColor from "../controls/AddColor.svelte";
   import AdjustColor from "../controls/AdjustColor.svelte";
   import AlignSelection from "../controls/AlignSelection.svelte";
   import ColorChannelPicker from "../components/ColorChannelPicker.svelte";
@@ -22,18 +21,8 @@
   $: focusedColors = $focusStore.focusedColors;
 </script>
 
-<div class="px-2">
-  <GetColorsFromString
-    onChange={(colors) => colorStore.setCurrentPalColors(colors)}
-    colorSpace={currentPal.colorSpace}
-    colors={currentPal.colors}
-  />
-  <div class="w-full border-t-2 border-black my-2"></div>
-
-  <AddColor />
-
+<div class="px-2 w-96 block bg-stone-300">
   {#if focusedColors.length === 1}
-    <div class="w-full border-t-2 border-black my-2"></div>
     <input
       class="w-full"
       value={colors[focusedColors[0]].toHex()}
@@ -66,10 +55,11 @@
         colorStore.setCurrentPalColors(updatedColors);
       }}
     />
-    <div class="w-full border-t-2 border-black my-2"></div>
+
     <ColorTagger />
   {/if}
   <AdjustColor />
+  <div class="w-96"></div>
 
   <DistributePoints />
   <AlignSelection />
@@ -78,7 +68,4 @@
   {/if}
 
   <InterpolatePoints />
-  <div class="w-full border-t-2 border-black my-2"></div>
-
-  <SuggestionModificationToSelection />
 </div>

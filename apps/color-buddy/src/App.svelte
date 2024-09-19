@@ -26,6 +26,7 @@
   }
 
   import Nav from "./components/Nav.svelte";
+  import NewPal from "./controls/NewPal.svelte";
 
   import About from "./components/About.svelte";
   import LeftPanel from "./content-modules/LeftPanel.svelte";
@@ -37,6 +38,7 @@
   import MainColumn from "./content-modules/MainColumn.svelte";
   import TourProvider from "./content-modules/TourProvider.svelte";
   import VersionPalette from "./controls/VersionPalette.svelte";
+  import Controls from "./content-modules/Controls.svelte";
 
   const palettesTabs = ["manage"];
 
@@ -84,6 +86,7 @@
   <div class="h-full flex flex-col grow main-content">
     <div class="bg-stone-800 flex justify-between items-center">
       <div class="flex">
+        <NewPal />
         <Manage />
         <button
           class={"text-white ml-2 mr-1"}
@@ -132,15 +135,17 @@
           </div>
         {/if}
       </div>
-
-      <div class="grow" id="right-col">
-        {#if palPresent && $configStore.route === "examples"}
-          <Examples />
-        {:else if palPresent && $configStore.route === "compare"}
-          <ComparePal {scatterSize} />
-        {:else if palPresent && $configStore.route === "eval"}
-          <Eval maxWidth={columnWidth} />
-        {:else if $configStore.route === "manage"}{/if}
+      <div class="flex" id="right-col">
+        <Controls />
+        <div class="">
+          {#if palPresent && $configStore.route === "examples"}
+            <Examples />
+          {:else if palPresent && $configStore.route === "compare"}
+            <ComparePal {scatterSize} />
+          {:else if palPresent && $configStore.route === "eval"}
+            <Eval maxWidth={columnWidth} />
+          {/if}
+        </div>
       </div>
     </div>
   </div>

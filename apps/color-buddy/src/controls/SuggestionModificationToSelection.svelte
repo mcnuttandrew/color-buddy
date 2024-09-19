@@ -88,7 +88,12 @@
 </script>
 
 <Tooltip bg="bg-white">
-  <button slot="target" let:toggle on:click={toggle} class={buttonStyle}>
+  <button
+    slot="target"
+    let:toggle
+    on:click={toggle}
+    class={"border border-stone-400 rounded mr-2 h-8 w-8 flex justify-center items-center"}
+  >
     <Wand />
   </button>
   <div slot="content" let:onClick>

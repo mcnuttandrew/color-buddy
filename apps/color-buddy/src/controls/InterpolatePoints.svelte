@@ -91,7 +91,7 @@
     </div>
     <div class="flex items-center justify-between">
       <label class="whitespace-nowrap mr-2" for="interpolate-count">
-        Interpolation steps
+        Number of steps
       </label>
       <input
         id="interpolate-count"

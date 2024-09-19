@@ -169,7 +169,7 @@
         class={buttonStyle}
         on:click={() => {
           lintStore.setFocusedLint(lintProgram.id);
-          configStore.setEvalDisplayMode("lint-customization");
+          configStore.setEvalDisplayMode("check-customization");
         }}
       >
         Customize

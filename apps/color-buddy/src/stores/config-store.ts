@@ -17,7 +17,7 @@ interface StoreData {
     | (typeof deltaMetrics)[number]
     | (typeof contrastMetrics)[number]
     | "none";
-  evalDisplayMode: "regular" | "compact" | "lint-customization";
+  evalDisplayMode: "regular" | "compact" | "check-customization";
   exampleRoute: "svg" | "vega" | "swatches";
   includeQuotes: boolean;
   mainColumnSelectedExample: number;

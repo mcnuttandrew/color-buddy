@@ -51,7 +51,7 @@
         setTimeout(() => {
           loadLints();
           lintPrompt = "";
-          configStore.setEvalDisplayMode("lint-customization");
+          configStore.setEvalDisplayMode("check-customization");
         }, 100);
 
         requestState = "loaded";
@@ -97,7 +97,7 @@
               failMessage: "",
               program: "true",
             });
-            configStore.setEvalDisplayMode("lint-customization");
+            configStore.setEvalDisplayMode("check-customization");
           }}
         >
           Just give me a blank one

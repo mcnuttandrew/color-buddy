@@ -3,13 +3,18 @@
   import focusStore from "../stores/focus-store";
   import configStore from "../stores/config-store";
 
+  import AdjustColor from "../controls/AdjustColor.svelte";
+  import AlignSelection from "../controls/AlignSelection.svelte";
+  import DistributePoints from "../controls/DistributePoints.svelte";
+  import InterpolatePoints from "../controls/InterpolatePoints.svelte";
+  import Rotate from "../controls/Rotate.svelte";
+
   import { buttonStyle } from "../lib/styles";
   import Background from "../components/Background.svelte";
   import ColorScatterPlot from "../scatterplot/ColorScatterPlot.svelte";
   import ExampleAlaCart from "../example/ExampleAlaCarte.svelte";
   import PalTypeConfig from "../controls/PalTypeConfig.svelte";
   import SetSimulation from "../controls/SetSimulation.svelte";
-  import Controls from "../content-modules/Controls.svelte";
   import PalTags from "../controls/PalTags.svelte";
   import Zoom from "../controls/Zoom.svelte";
   import Finger from "virtual:icons/fa6-solid/hand-pointer";
@@ -24,7 +29,10 @@
 </script>
 
 <div class="flex flex-col h-full px-4 mt-10">
-  <div class="flex text-sm mb-2">
+  <div
+    class="flex text-sm mb-2 flex-wrap"
+    style={`max-width: ${scatterSize + 110}px`}
+  >
     <PalTypeConfig />
     <SetColorSpace
       colorSpace={currentPal.colorSpace}
@@ -84,7 +92,20 @@
   </div>
 
   <div class="flex flex-col pl-2" style={`max-width: ${scatterSize + 110}px;`}>
-    <Controls />
+    <div class="flex flex-col">
+      <div class="text-sm">Controls</div>
+      <div class="flex flex-wrap" style={`max-width: ${scatterSize + 110}px`}>
+        <AdjustColor />
+        <DistributePoints />
+        <AlignSelection />
+        <!-- use this to try to quash the rotation/selection bug -->
+        {#if $focusStore.focusedColors.length > 1}
+          <Rotate />
+        {/if}
+        <InterpolatePoints />
+      </div>
+    </div>
+
     <ExampleAlaCart
       paletteIdx={$colorStore.currentPal}
       exampleIdx={$configStore.mainColumnSelectedExample}

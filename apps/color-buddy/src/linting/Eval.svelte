@@ -56,13 +56,13 @@
   let innerWidth = window.innerWidth;
 </script>
 
-<div class="bg-stone-300 w-full flex">
+<div class="bg-stone-100 w-full flex">
   <Nav
-    tabs={["regular", "compact", "lint-customization"]}
+    tabs={["regular", "compact", "check-customization"]}
     isTabSelected={(x) => x === displayMode}
     selectTab={(x) => {
       // TODO: maybe need to update the lints on change?
-      if (displayMode === "lint-customization") {
+      if (displayMode === "check-customization") {
         const outPal = {
           ...currentPal,
           evalConfig: {
@@ -76,7 +76,7 @@
             lintResults = res;
           });
       }
-      if (x === "lint-customization") {
+      if (x === "check-customization") {
         // unset the current lint
         lintStore.setFocusedLint(false);
       }
@@ -85,8 +85,8 @@
     }}
   />
 </div>
-<div class="flex h-full bg-stone-100" style={`width: ${maxWidth}px`}>
-  {#if displayMode === "lint-customization"}
+<div class="flex h-full" style={`width: ${maxWidth}px`}>
+  {#if displayMode === "check-customization"}
     <LintCustomizationModal {maxWidth} />
   {:else}
     <div class="flex flex-col ml-2">
@@ -95,17 +95,6 @@
         style={`max-width: ${maxWidth - 4}px`}
       >
         <div class="flex items-start justify-start">
-          {#if Object.keys(currentPal.evalConfig)}
-            <div>
-              <button
-                class={`${buttonStyle}`}
-                on:click={() => colorStore.setCurrentPalEvalConfig({})}
-              >
-                Restore Defaults
-              </button>
-            </div>
-          {/if}
-          <NewLintSuggestion />
           <GlobalLintConfig />
         </div>
         <div class="text-sm">

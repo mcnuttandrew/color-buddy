@@ -52,7 +52,7 @@
   let updateSearchDebounced = debounce(10, (x: [any, string]) => {
     const [pal, ignoreString] = x;
     // keep the noise down on the console
-    if ((route !== "eval" || evalRoute !== "lint-customization") && pal) {
+    if ((route !== "eval" || evalRoute !== "check-customization") && pal) {
       lintStore.setLoadState("loading");
 
       const outPal = {
@@ -115,8 +115,8 @@
           </div>
         {/if}
       </div>
-      <div class="flex flex-col" id="right-col">
-        <div class="flex bg-stone-100">
+      <div class="flex flex-col w-full" id="right-col">
+        <div class="flex bg-stone-100 w-full">
           <Nav
             className=""
             tabs={currentPalTabs}

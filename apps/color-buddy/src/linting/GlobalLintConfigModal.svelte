@@ -10,6 +10,7 @@
   $: lints = [...$lintStore.lints].sort((a, b) => a.name.localeCompare(b.name));
   $: ignoreList = $colorStore.globallyIgnoredLints;
   $: ignoredSet = new Set(ignoreList);
+  $: currentPal = $colorStore.palettes[$colorStore.currentPal];
 
   $: lintsByGroup = lints.reduce(
     (acc, lint) => {
@@ -68,6 +69,16 @@
       </div>
     {/each}
     <a class={linkStyle} href="https://color-buddy-docs.netlify.app/">Help</a>
+    {#if Object.keys(currentPal.evalConfig)}
+      <div>
+        <button
+          class={`${buttonStyle}`}
+          on:click={() => colorStore.setCurrentPalEvalConfig({})}
+        >
+          Restore Defaults
+        </button>
+      </div>
+    {/if}
   </div>
   <div class="flex flex-col px-4">
     <div class="flex flex-col overflow-scroll">

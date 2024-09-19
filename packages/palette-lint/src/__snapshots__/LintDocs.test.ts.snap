@@ -5,47 +5,47 @@ exports[`Docs have not changed 1`] = `
 
 This page contains examples of the language used to define palettes and the expected behavior of the linter.
 
-- [WCAG Contrast Graphical Objects](#wcag-contrast-graphical-objects)
-- [WCAG Text Contrast: AA (text colors only)](#wcag-text-contrast--aa--text-colors-only-)
-- [WCAG Text Contrast: AAA (text colors only)](#wcag-text-contrast--aaa--text-colors-only-)
-- [WCAG Text Contrast: AA (all colors)](#wcag-text-contrast--aa--all-colors-)
-- [WCAG Text Contrast: AAA (all colors)](#wcag-text-contrast--aaa--all-colors-)
+- [ Graphical objects contrast](#-graphical-objects-contrast)
+- [AA text contrast (text-tagged colors only)](#aa-text-contrast--text-tagged-colors-only-)
+- [AAA text contrast (text colors only)](#aaa-text-contrast--text-colors-only-)
+- [AA text contrast (all colors)](#aa-text-contrast--all-colors-)
+- [AAA text contrast (all colors)](#aaa-text-contrast--all-colors-)
 - [Saturated not appropriate for serious affect](#saturated-not-appropriate-for-serious-affect)
 - [Saturated not appropriate for trustworthy affect](#saturated-not-appropriate-for-trustworthy-affect)
 - [Saturated not appropriate for calm affect](#saturated-not-appropriate-for-calm-affect)
 - [Playful affects can have light blues, beiges, and grays](#playful-affects-can-have-light-blues--beiges--and-grays)
 - [Dark reds and browns are not positive](#dark-reds-and-browns-are-not-positive)
 - [Negative palettes should not have light colors, particularly greens](#negative-palettes-should-not-have-light-colors--particularly-greens)
-- [CVD: Deuteranopia Friendly](#cvd--deuteranopia-friendly)
-- [CVD: Protanopia Friendly](#cvd--protanopia-friendly)
-- [CVD: Tritanopia Friendly](#cvd--tritanopia-friendly)
+- [Deuteranopia-friendly](#deuteranopia-friendly)
+- [Protanopia-friendly](#protanopia-friendly)
+- [Tritanopia-friendly](#tritanopia-friendly)
 - [Right in black and white](#right-in-black-and-white)
 - [Axes should have low contrast with background](#axes-should-have-low-contrast-with-background)
 - [Blue should be high probability for the basic color term blue](#blue-should-be-high-probability-for-the-basic-color-term-blue)
-- [Even Distribution in Hue](#even-distribution-in-hue)
-- [Even Distribution in Lightness](#even-distribution-in-lightness)
+- [Even distribution in hue](#even-distribution-in-hue)
+- [Even distribution in lightness](#even-distribution-in-lightness)
 - [Fair](#fair)
 - [Fair](#fair)
 - [Background desaturation sufficient](#background-desaturation-sufficient)
-- [Avoid Tetradic Palettes](#avoid-tetradic-palettes)
+- [Avoid tetradic palettes](#avoid-tetradic-palettes)
 - [Prefer yellowish or blueish greens](#prefer-yellowish-or-blueish-greens)
 - [Avoid too much contrast with the background](#avoid-too-much-contrast-with-the-background)
 - [Require color complements](#require-color-complements)
-- [Color Distinctness: Thin Size Objects](#color-distinctness--thin-size-objects)
-- [Color Distinctness: Medium Size Objects](#color-distinctness--medium-size-objects)
-- [Color Distinctness: Wide Size Objects](#color-distinctness--wide-size-objects)
+- [Color distinctness: thin-sized objects](#color-distinctness--thin-sized-objects)
+- [Color distinctness: medium-sized objects](#color-distinctness--medium-sized-objects)
+- [Color distinctness: wide-sized objects](#color-distinctness--wide-sized-objects)
 - [Avoid extreme colors](#avoid-extreme-colors)
 - [Colors distinguishable in order](#colors-distinguishable-in-order)
-- [Diverging Palettes order](#diverging-palettes-order)
-- [In Gamut](#in-gamut)
-- [Max Colors](#max-colors)
-- [Mutually Distinct](#mutually-distinct)
-- [Color Name Discriminability](#color-name-discriminability)
-- [Sequential Palette Order](#sequential-palette-order)
+- [Diverging palettes order appropriate](#diverging-palettes-order-appropriate)
+- [In gamut](#in-gamut)
+- [Max colors](#max-colors)
+- [Mutually distinct](#mutually-distinct)
+- [Color name discriminability](#color-name-discriminability)
+- [Sequential palette order appropriate](#sequential-palette-order-appropriate)
 - [Palette does not have ugly colors](#palette-does-not-have-ugly-colors)
 
 
-### WCAG Contrast Graphical Objects
+###  Graphical objects contrast
 **Tasks**: sequential, diverging, categorical
 
 
@@ -87,7 +87,7 @@ Palettes that will pass this test:
 
 
 
-### WCAG Text Contrast: AA (text colors only)
+### AA text contrast (text-tagged colors only)
 **Tasks**: sequential, diverging, categorical
 
 
@@ -130,7 +130,7 @@ Palettes that will pass this test:
 
 
 
-### WCAG Text Contrast: AAA (text colors only)
+### AAA text contrast (text colors only)
 **Tasks**: sequential, diverging, categorical
 
 
@@ -173,7 +173,7 @@ Palettes that will pass this test:
 
 
 
-### WCAG Text Contrast: AA (all colors)
+### AA text contrast (all colors)
 **Tasks**: sequential, diverging, categorical
 
 
@@ -215,13 +215,13 @@ Palettes that will pass this test:
 
 
 
-### WCAG Text Contrast: AAA (all colors)
+### AAA text contrast (all colors)
 **Tasks**: sequential, diverging, categorical
 
 
 **Description**: All colors in a palette should have a sufficient contrast ratio with the background color. This is because if they are not, then they will not be differentiable from each other in some contexts. Valid algorithms are "APCA", "WCAG21", "Michelson", "Weber", "Lstar", "DeltaPhi".
 
-**Natural Language**: ALL a IN colors SUCH THAT contrast(a, background, WCAG21) > 4.5
+**Natural Language**: ALL a IN colors SUCH THAT contrast(a, background, WCAG21) > 7
 
 Palettes that will fail this test:
 
@@ -245,7 +245,7 @@ Palettes that will pass this test:
         "predicate": {
             ">": {
                 "left": { "contrast": {"left": "a", "right": "background"}, "algorithm": "WCAG21" }, 
-                "right": 4.5
+                "right": 7
             }
         }
     }
@@ -462,7 +462,7 @@ Palettes that will pass this test:
 
 
 
-### CVD: Deuteranopia Friendly
+### Deuteranopia-friendly
 **Tasks**: sequential, diverging, categorical
 
 
@@ -508,7 +508,7 @@ Palettes that will pass this test:
 
 
 
-### CVD: Protanopia Friendly
+### Protanopia-friendly
 **Tasks**: sequential, diverging, categorical
 
 
@@ -554,7 +554,7 @@ Palettes that will pass this test:
 
 
 
-### CVD: Tritanopia Friendly
+### Tritanopia-friendly
 **Tasks**: sequential, diverging, categorical
 
 
@@ -731,7 +731,7 @@ Palettes that will pass this test:
 
 
 
-### Even Distribution in Hue
+### Even distribution in hue
 **Tasks**: categorical
 
 
@@ -798,7 +798,7 @@ Palettes that will pass this test:
 
 
 
-### Even Distribution in Lightness
+### Even distribution in lightness
 **Tasks**: categorical, diverging, sequential
 
 
@@ -994,7 +994,7 @@ Palettes that will pass this test:
 
 
 
-### Avoid Tetradic Palettes
+### Avoid tetradic palettes
 **Tasks**: sequential, diverging, categorical
 
 
@@ -1233,7 +1233,7 @@ Palettes that will pass this test:
 
 
 
-### Color Distinctness: Thin Size Objects
+### Color distinctness: thin-sized objects
 **Tasks**: sequential, diverging, categorical
 
 
@@ -1298,7 +1298,7 @@ Palettes that will pass this test:
 
 
 
-### Color Distinctness: Medium Size Objects
+### Color distinctness: medium-sized objects
 **Tasks**: sequential, diverging, categorical
 
 
@@ -1363,7 +1363,7 @@ Palettes that will pass this test:
 
 
 
-### Color Distinctness: Wide Size Objects
+### Color distinctness: wide-sized objects
 **Tasks**: sequential, diverging, categorical
 
 
@@ -1521,7 +1521,7 @@ Palettes that will pass this test:
 
 
 
-### Diverging Palettes order
+### Diverging palettes order appropriate
 **Tasks**: diverging
 
 
@@ -1552,7 +1552,7 @@ Palettes that will pass this test:
 
 
 
-### In Gamut
+### In gamut
 **Tasks**: sequential, diverging, categorical
 
 
@@ -1591,7 +1591,7 @@ Palettes that will pass this test:
 
 
 
-### Max Colors
+### Max colors
 **Tasks**: sequential, diverging, categorical
 
 
@@ -1624,7 +1624,7 @@ Palettes that will pass this test:
 
 
 
-### Mutually Distinct
+### Mutually distinct
 **Tasks**: categorical
 
 
@@ -1667,7 +1667,7 @@ Palettes that will pass this test:
 
 
 
-### Color Name Discriminability
+### Color name discriminability
 **Tasks**: sequential, categorical, diverging
 
 
@@ -1707,7 +1707,7 @@ Palettes that will pass this test:
 
 
 
-### Sequential Palette Order
+### Sequential palette order appropriate
 **Tasks**: sequential
 
 

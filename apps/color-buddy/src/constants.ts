@@ -23,3 +23,13 @@ export const typeToImg = {
   usability: "./distinctness.png",
   custom: "./Subtract.png",
 } as any;
+
+export const deltaMetrics = ["76", "CMC", "2000", "ITP"] as const;
+export const contrastMetrics = [
+  "APCA",
+  "WCAG21",
+  "Michelson",
+  "Weber",
+  "Lstar",
+  "DeltaPhi",
+] as const;

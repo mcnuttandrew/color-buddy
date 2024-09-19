@@ -18,11 +18,13 @@
   import DeMetric from "../controls/DeMetric.svelte";
   import ContentEditable from "../components/ContentEditable.svelte";
   import EditColor from "../components/EditColor.svelte";
+  import { typeToImg, deltaMetrics } from "../constants";
 
   $: checks = $lintStore.currentChecks;
 
   $: colorNames = colors.map((x) => nameColor(x)[0]);
   $: colors = $colorStore.palettes[$colorStore.currentPal].colors;
+  $: bg = $colorStore.palettes[$colorStore.currentPal].background;
   $: selectedCVDType = $configStore.colorSim;
   $: sim = (color: Color): string => cvdSim(selectedCVDType, color).toHex();
 
@@ -36,7 +38,18 @@
 
   $: currentPal = $colorStore.palettes[$colorStore.currentPal];
   $: evalConfig = currentPal.evalConfig;
-  function computeDeltas(colors: Color[], metric: string = "2000") {
+  function computeStats(
+    colors: Color[],
+    metric: typeof $configStore.evalDeltaDisplay
+  ) {
+    // is contrast metric
+    if (!deltaMetricsSet.has(metric as any)) {
+      return colors.map((color) => {
+        const clr = color.toColorIO();
+        return clr.contrast(bg.toColorIO(), metric as any);
+      });
+    }
+    // is delta metric
     const deltas = [];
     for (let i = 1; i < colors.length; i++) {
       const left = colors[i - 1];
@@ -48,16 +61,16 @@
   $: stats =
     $configStore.evalDeltaDisplay === "none"
       ? []
-      : computeDeltas(colors, $configStore.evalDeltaDisplay);
+      : computeStats(colors, $configStore.evalDeltaDisplay);
 
-  const checkLevelToSymbol = {
-    error: "❌",
-    warning: "⚠️",
-  } as any;
   const ballSize = 25;
   $: focusedSet = new Set($focusStore.focusedColors);
 
   $: colorSpace = currentPal.colorSpace;
+  const deltaMetricsSet = new Set(deltaMetrics);
+  $: statsTypeIsDelta = deltaMetricsSet.has(
+    $configStore.evalDeltaDisplay as any
+  );
 </script>
 
 <!-- left panel -->
@@ -87,14 +100,6 @@
     <!-- svelte-ignore a11y-click-events-have-key-events -->
     <!-- svelte-ignore a11y-no-static-element-interactions -->
     <div class="flex flex-col overflow-auto mr-5 px-4 h-full">
-      <!-- on:click={(e) => {
-        focusStore.setColors([]);
-      }} -->
-      <!-- on:click|stopPropagation={(e) => {
-            focusStore.setColors(
-              dealWithFocusEvent(e, idx, $focusStore.focusedColors)
-            );
-          }} -->
       {#each colors as color, idx}
         <div
           class="w-full flex justify-center items-center text-sm mt-2 transition-all relative"
@@ -110,7 +115,7 @@
               );
             }}
           >
-            <svg height="{ballSize * 2}px" width="{ballSize * 3}px">
+            <svg height="{ballSize * 2}px" width="{ballSize * 2}px">
               <circle
                 r={ballSize}
                 fill={selectedCVDType !== "none" ? sim(color) : color.toHex()}
@@ -119,15 +124,6 @@
               ></circle>
             </svg>
           </button>
-          <!-- <div class="w-full flex flex-col h-full absolute">
-            <div class="h-full"></div>
-            {#if selectedCVDType !== "none"}
-              <div
-                class="h-full"
-                style={`background-color: ${sim(color)}`}
-              ></div>
-            {/if}
-          </div> -->
           <div class="flex justify-between w-full px-2 items-center z-10">
             <span class="flex flex-col items-start">
               <span>
@@ -150,28 +146,36 @@
                 </span>
               {/if}
             </span>
-            <div>
-              {#if colorsToIssues[idx].length}
-                <span>Issues</span>
+            <div class="text-right">
+              {#if $configStore.showIssuesOnLeft}
+                {#if colorsToIssues[idx].length}
+                  <span>Issues</span>
+                {/if}
+                <span class="flex flex-wrap flex-row-reverse">
+                  {#each colorsToIssues[idx] as check}
+                    {#if !evalConfig[check.lintProgram.name]?.ignore}
+                      <EvalResponse
+                        lintResult={check}
+                        positionAlongRightEdge={false}
+                        customWord={typeToImg[check.lintProgram.group]}
+                        customWordIsImg={true}
+                      />
+                    {/if}
+                  {/each}
+                </span>
               {/if}
-              <span class="flex flex-wrap flex-row-reverse">
-                {#each colorsToIssues[idx] as check}
-                  {#if !evalConfig[check.lintProgram.name]?.ignore}
-                    <EvalResponse
-                      lintResult={check}
-                      positionAlongRightEdge={false}
-                      customWord={typeToSymbol[check.lintProgram.group]}
-                    />
-                  {/if}
-                {/each}
-              </span>
+              {#if stats[idx] && !statsTypeIsDelta}
+                <div class=" text-black text-right text-xs whitespace-nowrap">
+                  Contrast: {Math.round(stats[idx])}
+                </div>
+              {/if}
             </div>
           </div>
         </div>
 
-        {#if stats[idx]}
-          <div class=" text-black text-right text-xs">
-            <div>dE: {Math.round(stats[idx])}</div>
+        {#if stats[idx] && statsTypeIsDelta}
+          <div class=" text-black text-right text-xs whitespace-nowrap">
+            dE: {Math.round(stats[idx])}
           </div>
         {/if}
         {#if focusedSet.has(idx) && focusedSet.size === 1}
@@ -194,9 +198,18 @@
         <AddColor />
       </div>
 
-      <div class="flex">
+      <div class="flex items-center mt-2">
         <DeMetric />
         <Sort />
+        <label>
+          Show Issues <input
+            class="ml-1"
+            on:change={(e) =>
+              configStore.setShowIssuesOnLeft(e.currentTarget.checked)}
+            type="checkbox"
+            checked={$configStore.showIssuesOnLeft}
+          />
+        </label>
       </div>
     </div>
   </section>

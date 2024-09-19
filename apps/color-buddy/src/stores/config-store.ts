@@ -2,6 +2,7 @@ import { writable } from "svelte/store";
 import type { Palette } from "color-buddy-palette";
 import type { Engine } from "../lib/api-calls";
 import { colorPalToStringPal, stringPalToColorPal } from "../lib/utils";
+import { deltaMetrics, contrastMetrics } from "../constants";
 
 interface StoreData {
   channelPickerSpace: "lab" | "lch" | "hsl" | "hsv" | "rgb";
@@ -12,18 +13,21 @@ interface StoreData {
   comparePal: number | undefined | "tempPal";
   compareSelectedExample: number;
   engine: Engine;
-  evalDeltaDisplay: "none" | "76" | "CMC" | "2000" | "ITP" | "Jz" | "OK";
+  evalDeltaDisplay:
+    | (typeof deltaMetrics)[number]
+    | (typeof contrastMetrics)[number]
+    | "none";
   evalDisplayMode: "regular" | "compact" | "lint-customization";
   exampleRoute: "svg" | "vega" | "swatches";
   includeQuotes: boolean;
-  leftRoute: "controls" | "colors";
   mainColumnSelectedExample: number;
   manageBrowsePreviewIdx: number;
-  route: "examples" | "compare" | "eval" | "manage";
+  route: "examples" | "compare" | "eval";
   scatterplotMode: "moving" | "putting";
   selectedFolder: { isPreMade: boolean; name: string };
   showColorBackground: "always show" | "show on drag" | "never show";
   showGamutMarkers: boolean;
+  showIssuesOnLeft: boolean;
   tempPal: Palette | undefined;
   tooltipXY?: [string, string];
   tour: boolean;
@@ -50,7 +54,6 @@ const InitialStore: StoreData = {
   evalDisplayMode: "regular",
   exampleRoute: "vega",
   includeQuotes: false,
-  leftRoute: "controls",
   mainColumnSelectedExample: -1,
   manageBrowsePreviewIdx: -1,
   route: "examples",
@@ -58,6 +61,7 @@ const InitialStore: StoreData = {
   scatterplotMode: "moving",
   showColorBackground: "show on drag",
   showGamutMarkers: true,
+  showIssuesOnLeft: true,
   tempPal: undefined,
   tooltipXY: undefined,
   tour: false,
@@ -153,8 +157,8 @@ function createStore() {
       persist((old) => ({ ...old, showColorBackground: n })),
     setTooltipXY: (xy: StoreData["tooltipXY"]) =>
       persist((old) => ({ ...old, tooltipXY: xy })),
-    setLeftPanelRoute: (route: StoreData["leftRoute"]) =>
-      persist((old) => ({ ...old, leftRoute: route })),
+    setShowIssuesOnLeft: (n: StoreData["showIssuesOnLeft"]) =>
+      persist((old) => ({ ...old, showIssuesOnLeft: n })),
     setScatterplotMode: (n: StoreData["scatterplotMode"]) =>
       persist((old) => ({ ...old, scatterplotMode: n })),
     setShowGamutMarkers: (n: StoreData["showGamutMarkers"]) =>

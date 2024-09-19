@@ -83,13 +83,6 @@
     class={controlButtonStyle}
     on:click={toggle}
   >
-    <SortIcon />
+    <SortIcon class="text-sm" />
   </button>
 </Tooltip>
-
-<style>
-  #sort-button {
-    top: -2px;
-    position: relative;
-  }
-</style>

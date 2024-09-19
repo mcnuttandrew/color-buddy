@@ -19,6 +19,7 @@
   let requestState: "idle" | "loading" | "loaded" | "failed" = "idle";
   export let lintResult: LintResult;
   export let customWord: string = "";
+  export let customWordIsImg: boolean = false;
   export let positionAlongRightEdge: boolean = true;
 
   $: palette = $colorStore.palettes[$colorStore.currentPal];
@@ -249,8 +250,10 @@
     class={customWord ? "" : `${buttonStyle}`}
     on:click|stopPropagation={toggle}
   >
-    {#if customWord}
+    {#if customWord && !customWordIsImg}
       {customWord}
+    {:else if customWord && customWordIsImg}
+      <img src={customWord} class="h-4" />
     {:else if lintResult.kind === "success" && lintResult.passes}info{:else}fixes{/if}
   </button>
 </Tooltip>

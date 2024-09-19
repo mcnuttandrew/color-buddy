@@ -29,6 +29,7 @@
 </script>
 
 <Modal
+  size="600px"
   showModal={modalState === "open"}
   closeModal={() => {
     modalState = "closed";
@@ -38,7 +39,7 @@
   <div class="w-full bg-stone-200 text-xl px-4 py-2 font-bold">
     Evaluation Tests
   </div>
-  <div class="flex bg-stone-100 p-4 justify-between pr-8">
+  <div class="flex bg-stone-100 p-4 pr-8 flex-wrap">
     <button
       class={buttonStyle}
       on:click={() =>
@@ -68,7 +69,6 @@
         <!-- <span class="text-sm">{pack.description}</span> -->
       </div>
     {/each}
-    <a class={linkStyle} href="https://color-buddy-docs.netlify.app/">Help</a>
     {#if Object.keys(currentPal.evalConfig)}
       <div>
         <button
@@ -79,6 +79,7 @@
         </button>
       </div>
     {/if}
+    <a class={linkStyle} href="https://color-buddy-docs.netlify.app/">Help</a>
   </div>
   <div class="flex flex-col px-4">
     <div class="flex flex-col overflow-scroll">

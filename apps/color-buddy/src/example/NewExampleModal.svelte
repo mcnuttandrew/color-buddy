@@ -10,6 +10,7 @@
   import Modal from "../components/Modal.svelte";
   import { buttonStyle } from "../lib/styles";
   import MonacoEditor from "../components/MonacoEditor.svelte";
+  import Nav from "../components/Nav.svelte";
   let modalState: "closed" | "input-svg" | "input-vega" | "edit-colors" =
     "closed";
 
@@ -57,6 +58,7 @@
 {#if modalState !== "closed"}
   <Modal
     showModal={true}
+    size="700px"
     closeModal={() => {
       modalState = "closed";
       onClose();
@@ -64,20 +66,12 @@
   >
     <div class="bg-stone-200 h-12 flex justify-between items-center px-4">
       <div class="font-bold">Add an Example</div>
-      <div>
-        {#each ["svg", "vega (or vega-lite)"] as mode}
-          <button
-            class={buttonStyle}
-            class:font-bold={(modalState === "input-svg" && mode === "svg") ||
-              (modalState === "input-vega" && mode === "vega (or vega-lite)")}
-            on:click={() => {
-              modalState = mode === "svg" ? "input-svg" : "input-vega";
-            }}
-          >
-            {mode}
-          </button>
-        {/each}
-      </div>
+      <Nav
+        tabs={["svg", "vega (or vega-lite)"]}
+        isTabSelected={(x) => modalState === "input-svg" && x === "svg"}
+        selectTab={(x) =>
+          (modalState = x === "svg" ? "input-svg" : "input-vega")}
+      />
     </div>
     <div class="h-full px-4" style="width: 700px;">
       <div>

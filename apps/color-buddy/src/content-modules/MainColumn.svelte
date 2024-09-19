@@ -12,6 +12,7 @@
   import Controls from "../content-modules/Controls.svelte";
   import PalTags from "../controls/PalTags.svelte";
   import Zoom from "../controls/Zoom.svelte";
+  import Finger from "virtual:icons/fa6-solid/hand-pointer";
 
   import SetColorSpace from "../controls/SetColorSpace.svelte";
   import { cvdSim } from "color-buddy-palette";
@@ -23,7 +24,7 @@
 </script>
 
 <div class="flex flex-col h-full px-4 mt-10">
-  <div class="flex">
+  <div class="flex text-sm mb-2">
     <PalTypeConfig />
     <SetColorSpace
       colorSpace={currentPal.colorSpace}
@@ -42,15 +43,7 @@
     <PalTags />
     <SetSimulation />
   </div>
-  <div>
-    <button
-      class={`${buttonStyle} pl-0`}
-      on:click={() => configStore.setScatterplotMode("putting")}
-    >
-      Add color {#if $configStore.scatterplotMode === "putting"}(move mouse on
-        chart){/if}
-    </button>
-  </div>
+
   <ColorScatterPlot
     scatterPlotMode={$configStore.scatterplotMode}
     colorSpace={currentPal.colorSpace}
@@ -78,7 +71,16 @@
       />
       <span>Mark out-of-gamut colors with ⨂</span>
     </div>
-    <Zoom />
+    <div class="flex">
+      <Zoom />
+      <button
+        class={`${buttonStyle} text-sm flex items-center`}
+        on:click={() => configStore.setScatterplotMode("putting")}
+      >
+        <Finger class="text-xs mr-2" />
+        {#if $configStore.scatterplotMode === "putting"}Adding{:else}Add color{/if}
+      </button>
+    </div>
   </div>
 
   <div class="flex flex-col pl-2" style={`max-width: ${scatterSize + 110}px;`}>

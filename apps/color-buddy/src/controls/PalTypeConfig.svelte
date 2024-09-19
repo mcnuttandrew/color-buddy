@@ -30,13 +30,13 @@
       {/each}
     </div>
     <button
-      class={`${buttonStyle} flex`}
+      class={`${buttonStyle} flex items-center`}
       slot="target"
       let:toggle
       on:click={toggle}
     >
       <div>{titleCase(palType)}</div>
-      <DownChev class="text-sm" />
+      <DownChev class="ml-2 text-sm" />
     </button>
   </Tooltip>
 </div>

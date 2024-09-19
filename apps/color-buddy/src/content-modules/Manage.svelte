@@ -172,8 +172,8 @@
       onClose();
     }}
   >
-    <div class="bg-stone-300 p-4 text-xl font-bold">Palettes</div>
-    <div class="bg-stone-200 flex h-full py-2 px-4">
+    <div class="bg-stone-200 p-4 text-xl font-bold">Palettes</div>
+    <div class="bg-stone-100 flex h-full py-2 px-4">
       <div class="flex flex-col">
         <div class="text-sm uppercase font-bold">My Folders</div>
         <div class="flex">

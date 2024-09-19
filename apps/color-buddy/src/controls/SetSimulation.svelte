@@ -4,6 +4,7 @@
   import Tooltip from "../components/Tooltip.svelte";
   import configStore from "../stores/config-store";
   import { simpleTooltipRowStyle } from "../lib/styles";
+  import { titleCase } from "../lib/utils";
   const options = [
     "none",
     "deuteranopia",
@@ -13,7 +14,7 @@
   ] as const;
 </script>
 
-<div class="w-full flex flex-col">
+<div class="flex flex-col ml-1">
   <div class="text-sm">CVD Simulation:</div>
   <Tooltip bg="bg-white">
     <div slot="content" class="flex flex-col">
@@ -34,10 +35,10 @@
       slot="target"
       let:toggle
       on:click={toggle}
-      class={`${buttonStyle} whitespace-nowrap flex items-center`}
+      class={`${buttonStyle} whitespace-nowrap flex items-center w-full justify-between`}
     >
-      {$configStore.colorSim}
-      <DownChev class="text-sm" />
+      {titleCase($configStore.colorSim)}
+      <DownChev class="ml-2 text-sm" />
     </button>
   </Tooltip>
 </div>

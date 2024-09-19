@@ -116,7 +116,7 @@
         {/if}
       </div>
       <div class="flex flex-col" id="right-col">
-        <div class="flex bg-stone-500">
+        <div class="flex bg-stone-100">
           <Nav
             className=""
             tabs={currentPalTabs}

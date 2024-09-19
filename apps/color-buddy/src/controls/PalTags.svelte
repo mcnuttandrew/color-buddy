@@ -67,8 +67,8 @@
       let:toggle
       on:click={toggle}
     >
-      <div>{tags.join(", ")}</div>
-      <DownChev class="text-sm" />
+      <div>{tags.join(", ") || "None"}</div>
+      <DownChev class="ml-2 text-sm" />
     </button>
   </Tooltip>
 </div>

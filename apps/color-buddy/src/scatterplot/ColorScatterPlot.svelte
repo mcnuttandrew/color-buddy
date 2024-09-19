@@ -320,7 +320,6 @@
     puttingPreview = false;
   }
   let svgContainer: any;
-  $: console.log($configStore.showGamutMarkers);
 </script>
 
 <!-- svelte-ignore a11y-no-static-element-interactions -->

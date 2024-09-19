@@ -11,7 +11,7 @@
   export let customClass: string = "";
   export let buttonName: string = "";
   export let targetBody: boolean = true;
-  export let bg: string = "bg-stone-100";
+  export let bg: string = "bg-white";
   import { buttonStyle } from "../lib/styles";
   let tooltipOpen: boolean = initiallyOpen;
 

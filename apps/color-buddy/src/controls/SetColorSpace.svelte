@@ -70,12 +70,12 @@
     </div>
     <button
       slot="target"
-      class={`${buttonStyle} flex items-center`}
+      class={`${buttonStyle} flex items-center w-full justify-between`}
       let:toggle
       on:click={toggle}
     >
       {colorSpace.toUpperCase()}
-      <DownChev class="text-sm" />
+      <DownChev class="text-sm ml-2" />
     </button>
   </Tooltip>
 </div>

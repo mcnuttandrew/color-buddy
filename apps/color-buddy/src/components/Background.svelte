@@ -11,7 +11,7 @@
   $: bgHex = bg.toHex();
 </script>
 
-<div class="flex flex-col">
+<div class="flex flex-col ml-1">
   <div class="text-sm">Background</div>
   <Tooltip top={"20px"}>
     <div slot="content" class="flex flex-col">
@@ -45,7 +45,7 @@
         ></div>
         {bgHex}
       </div>
-      <DownChev class="text-sm" />
+      <DownChev class="text-sm ml-2" />
     </button>
   </Tooltip>
 </div>

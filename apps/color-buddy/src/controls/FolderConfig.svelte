@@ -3,7 +3,7 @@
   import configStore from "../stores/config-store";
   import Tooltip from "../components/Tooltip.svelte";
   import DownChev from "virtual:icons/fa6-solid/angle-down";
-  import { simpleTooltipRowStyle } from "../lib/styles";
+  import { simpleTooltipRowStyle, buttonStyle } from "../lib/styles";
   export let folder: string;
   let renaming = false;
   function doRename(newFolder: string) {
@@ -51,6 +51,7 @@
     {#if renaming}
       <input
         type="text"
+        class={buttonStyle}
         value={folder}
         on:keydown={(e) => {
           if (e.key === "Enter") {

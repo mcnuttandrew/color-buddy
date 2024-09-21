@@ -32,6 +32,7 @@
       example.size = 250;
     }
   }
+  let renaming = false;
 </script>
 
 <div
@@ -44,15 +45,7 @@
   <div class="bg-white w-full flex justify-between p-1">
     <!-- header -->
     <div class="flex">
-      {#if onRename}
-        <ContentEditable
-          value={title}
-          onChange={onRename}
-          limitWidth={true}
-          useEditButton={true}
-          onClick={() => titleClick && titleClick()}
-        />
-      {:else if titleClick}
+      {#if titleClick}
         <button class="mr-1 title" on:click={titleClick}>
           {title}
         </button>
@@ -68,13 +61,13 @@
       <button slot="target" let:toggle on:click={toggle}>
         <DownChev />
       </button>
-      <div slot="content" class="flex flex-col items-start w-52" let:onClick>
+      <div slot="content" class="flex flex-col items-start w-64" let:onClick>
         {#each operations as op}
           {#if op === "break"}
             <div class="border-b border-stone-300 w-full my-1"></div>
           {:else}
             <button
-              class={simpleTooltipRowStyle}
+              class={`${simpleTooltipRowStyle} whitespace-nowrap`}
               on:click={() => {
                 op.action();
                 if (op.closeOnClick) onClick();
@@ -84,6 +77,25 @@
             </button>
           {/if}
         {/each}
+        {#if onRename}
+          <button
+            class={`${simpleTooltipRowStyle} `}
+            on:click={() => (renaming = true)}
+          >
+            Rename
+          </button>
+          {#if renaming}
+            <input
+              value={title}
+              class={`${buttonStyle} w-full`}
+              on:change={(e) => {
+                onRename(e.currentTarget.value);
+                renaming = false;
+                onClick();
+              }}
+            />
+          {/if}
+        {/if}
       </div>
     </Tooltip>
   </div>

@@ -23,24 +23,37 @@
 <div class="flex flex-col">
   <div class="text-sm">Thumbnail</div>
   <Tooltip bg="bg-white">
-    <div slot="content" class="max-w-md flex flex-col">
+    <div slot="content" class="max-w-md flex flex-col max-h-96 overflow-auto">
       <button
         class={simpleTooltipRowStyle}
-        on:click={() => {
-          setExampleIdx(-1);
-        }}
+        class:font-bold={exampleIdx === -1}
+        on:click={() => setExampleIdx(-1)}
       >
         Swatches
       </button>
+      <div class="my-3 border-t border-black"></div>
       {#each $exampleStore.examples as example, idx}
-        <button
-          class={simpleTooltipRowStyle}
-          on:click={() => {
-            setExampleIdx(idx);
-          }}
-        >
-          {example.name}
-        </button>
+        {#if "vega" in example}
+          <button
+            class={simpleTooltipRowStyle}
+            class:font-bold={exampleIdx === idx}
+            on:click={() => setExampleIdx(idx)}
+          >
+            {example.name}
+          </button>
+        {/if}
+      {/each}
+      <div class="my-3 border-t border-black"></div>
+      {#each $exampleStore.examples as example, idx}
+        {#if "svg" in example}
+          <button
+            class={simpleTooltipRowStyle}
+            class:font-bold={exampleIdx === idx}
+            on:click={() => setExampleIdx(idx)}
+          >
+            {example.name}
+          </button>
+        {/if}
       {/each}
     </div>
     <button

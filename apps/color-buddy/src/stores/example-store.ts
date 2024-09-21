@@ -209,10 +209,14 @@ function createStore() {
       persistUpdate((old) => {
         return { ...old, examples: hideAllExamples(old.examples) };
       }),
-    setExampleSize: (idx: number, size: number) =>
+    setExampleSize: (idx: number | "all", size: number) =>
       persistUpdate((old) => {
         const newExamples = [...old.examples];
-        newExamples[idx].size = size;
+        if (idx === "all") {
+          newExamples.forEach((x) => (x.size = size));
+        } else {
+          newExamples[idx].size = size;
+        }
         return { ...old, examples: newExamples };
       }),
     setExampleName: (idx: number, name: string) =>

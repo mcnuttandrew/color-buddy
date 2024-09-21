@@ -4,20 +4,26 @@
   import configStore from "../stores/config-store";
 
   import BrowseCard from "./BrowseCard.svelte";
-  import { buttonStyle } from "../lib/styles";
+  import { buttonStyle, simpleTooltipRowStyle } from "../lib/styles";
   import Swatches from "./Swatches.svelte";
   import Tooltip from "../components/Tooltip.svelte";
   import Nav from "../components/Nav.svelte";
   import NewExampleModal from "./NewExampleModal.svelte";
   import ColorSimControl from "./ColorSimControl.svelte";
 
+  import ChevDown from "virtual:icons/fa6-solid/angle-down";
+
   $: currentPal = $colorStore.palettes[$colorStore.currentPal];
   let editTarget = null as null | number;
 
-  $: exampleShowMap = $exampleStore.examples.map((x: any) => {
+  $: examples = $exampleStore.examples;
+
+  $: allSelected = examples.every((x) => !x.hidden);
+  $: exampleShowMap = examples.map((x: any) => {
     if (x.hidden) {
       return false;
     }
+    if (!allSelected) return true;
     if ($configStore.exampleRoute === "svg" && x?.svg) {
       return true;
     }
@@ -26,9 +32,9 @@
     }
     return false;
   });
-  $: examples = $exampleStore.examples;
-  $: hiddenExamples = $exampleStore.examples.filter((x: any) => x.hidden);
-  $: numberHidden = hiddenExamples.length;
+  $: selectedExamples = examples.filter((_, idx) => exampleShowMap[idx]);
+  $: exampleName =
+    selectedExamples.length > 1 ? "All" : selectedExamples[0].name;
 
   const navNameMap = {
     svg: "SVG",
@@ -41,10 +47,9 @@
   }, {} as any);
 
   function makeOperations(idx: number, name: string) {
-    let exampleIsSoled = $exampleStore.examples[idx].size === 600;
     return [
       {
-        name: "Edit",
+        name: "Edit...",
         action: () => {
           editTarget = idx;
         },
@@ -66,22 +71,22 @@
         closeOnClick: true,
       },
 
-      !exampleIsSoled && {
-        name: "Focus (expand and hide others)",
-        action: () => {
-          exampleStore.hideAllExcept(idx);
-          exampleStore.setExampleSize(idx, 600);
-        },
-        closeOnClick: true,
-      },
-      exampleIsSoled && {
-        name: "Unfocus (restore group)",
-        action: () => {
-          exampleStore.restoreHiddenExamples();
-          exampleStore.setExampleSize(idx, 250);
-        },
-        closeOnClick: true,
-      },
+      // !exampleIsSoled && {
+      //   name: "Focus (Expand & hide others)",
+      //   action: () => {
+      //     exampleStore.hideAllExcept(idx);
+      //     exampleStore.setExampleSize(idx, 600);
+      //   },
+      //   closeOnClick: true,
+      // },
+      // exampleIsSoled && {
+      //   name: "Unfocus (show all examples)",
+      //   action: () => {
+      //     exampleStore.restoreHiddenExamples();
+      //     exampleStore.setExampleSize(idx, 250);
+      //   },
+      //   closeOnClick: true,
+      // },
       // {
       //   name: "Expand",
       //   action: () => exampleStore.setExampleSize(idx, 600),
@@ -105,65 +110,9 @@
   }
 </script>
 
-<div class="flex flex-col bg-stone-300 px-4 py-2">
-  <div class="flex">
-    <NewExampleModal
-      {editTarget}
-      onClose={() => {
-        editTarget = null;
-      }}
-    />
-    <Tooltip>
-      <div slot="content" let:onClick class="max-w-md">
-        <div>
-          Are you sure you want to reset to the default examples? This will
-          remove any custom ones you've uploaded
-        </div>
-        <div class="flex justify-between">
-          <button
-            class={buttonStyle}
-            on:click={() => {
-              configStore.setUseSimulatorOnExamples(false);
-              exampleStore.restoreDefaultExamples();
-              onClick();
-            }}
-          >
-            Yes! Reset em now
-          </button>
-          <button class={buttonStyle} on:click={onClick}>No! Never mind</button>
-        </div>
-      </div>
-      <button slot="target" let:toggle class={buttonStyle} on:click={toggle}>
-        Reset to defaults
-      </button>
-    </Tooltip>
-    <ColorSimControl />
-    {#if numberHidden > 0}
-      <Tooltip>
-        <div slot="content">
-          <button
-            class={buttonStyle}
-            on:click={() => exampleStore.restoreHiddenExamples()}
-          >
-            Restore All Examples
-          </button>
-          <div>Restore individual example</div>
-          {#each hiddenExamples as example, idx}
-            <button
-              class={buttonStyle}
-              on:click={() => exampleStore.restoreHiddenExample(idx)}
-            >
-              {example.name}
-            </button>
-          {/each}
-        </div>
-        <button slot="target" let:toggle on:click={toggle} class={buttonStyle}>
-          Restore hidden examples
-        </button>
-      </Tooltip>
-    {/if}
-  </div>
-  <div class="flex">
+<div class="flex bg-stone-200 px-4 py-2 items-end">
+  <div class="flex flex-col mr-2">
+    <div class="text-sm">Examples</div>
     <Nav
       tabs={Object.values(navNameMap)}
       isTabSelected={(x) => navNameMapRev[x] === $configStore.exampleRoute}
@@ -174,6 +123,100 @@
       }}
     />
   </div>
+  <div class="flex flex-col">
+    <div class="text-sm">Focused example</div>
+    <Tooltip>
+      <div class="flex flex-col" slot="content">
+        <button
+          class={simpleTooltipRowStyle}
+          class:font-bold={allSelected}
+          on:click={() => {
+            exampleStore.restoreHiddenExamples();
+            exampleStore.setExampleSize("all", 250);
+          }}
+        >
+          All
+        </button>
+        <div class="my-3 border-t border-black"></div>
+        {#each examples as example, idx}
+          {#if "vega" in example}
+            <button
+              class={simpleTooltipRowStyle}
+              on:click={() => {
+                exampleStore.hideAllExcept(idx);
+                exampleStore.setExampleSize(idx, 600);
+              }}
+            >
+              {example.name}
+            </button>
+          {/if}
+        {/each}
+        <div class="my-3 border-t border-black"></div>
+        {#each examples as example, idx}
+          {#if "svg" in example}
+            <button
+              class={simpleTooltipRowStyle}
+              on:click={() => {
+                exampleStore.hideAllExcept(idx);
+                exampleStore.setExampleSize(idx, 600);
+              }}
+            >
+              {example.name}
+            </button>
+          {/if}
+        {/each}
+        <div class="my-3 border-t border-black"></div>
+        <NewExampleModal
+          {editTarget}
+          onClose={() => {
+            editTarget = null;
+          }}
+        />
+        <Tooltip positionAlongRightEdge={true}>
+          <div slot="content" let:onClick class="max-w-md">
+            <div>
+              Are you sure you want to reset to the default examples? This will
+              remove any custom ones you've uploaded
+            </div>
+            <div class="flex justify-between">
+              <button
+                class={buttonStyle}
+                on:click={() => {
+                  configStore.setUseSimulatorOnExamples(false);
+                  exampleStore.restoreDefaultExamples();
+                  onClick();
+                }}
+              >
+                Yes! Reset em now
+              </button>
+              <button class={buttonStyle} on:click={onClick}>
+                No! Never mind
+              </button>
+            </div>
+          </div>
+          <button
+            slot="target"
+            let:toggle
+            class={buttonStyle}
+            on:click={toggle}
+          >
+            Reset Modifications
+          </button>
+        </Tooltip>
+      </div>
+      <button
+        slot="target"
+        let:toggle
+        on:click={toggle}
+        class="{buttonStyle} flex items-center"
+      >
+        {exampleName}
+        <ChevDown class="ml-2 text-sm" />
+      </button>
+    </Tooltip>
+  </div>
+
+  <ColorSimControl />
 </div>
 <div
   class="flex flex-wrap overflow-auto p-4 w-full bg-stone-100 pb-20"

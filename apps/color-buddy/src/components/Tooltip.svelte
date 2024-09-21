@@ -136,7 +136,7 @@
   </Portal>
 {/if}
 
-<div bind:this={target}>
+<div bind:this={target} class:text-cyan-800={tooltipOpen}>
   <slot name="target" {toggle} {tooltipOpen}>
     {#if buttonName}
       <button class={buttonStyle} on:click={toggle}>{buttonName}</button>

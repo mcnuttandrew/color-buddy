@@ -54,104 +54,116 @@
   $: isCompact = displayMode === "compact";
 
   let innerWidth = window.innerWidth;
+
+  function refreshLints() {
+    const outPal = {
+      ...currentPal,
+      evalConfig: {
+        ...currentPal.evalConfig,
+        globallyIgnoredLints: $colorStore.globallyIgnoredLints,
+      },
+    };
+    loadLints()
+      .then(() => lint(outPal, false))
+      .then((res) => {
+        lintResults = res;
+      });
+  }
 </script>
 
+{#if displayMode === "check-customization"}
+  <LintCustomizationModal onClose={() => refreshLints()} />
+{/if}
 <div class="bg-stone-100 w-full flex">
   <Nav
-    tabs={["regular", "compact", "check-customization"]}
+    tabs={[
+      "regular",
+      "compact",
+      // "check-customization"
+    ]}
     isTabSelected={(x) => x === displayMode}
     selectTab={(x) => {
       // TODO: maybe need to update the lints on change?
       if (displayMode === "check-customization") {
-        const outPal = {
-          ...currentPal,
-          evalConfig: {
-            ...currentPal.evalConfig,
-            globallyIgnoredLints: $colorStore.globallyIgnoredLints,
-          },
-        };
-        loadLints()
-          .then(() => lint(outPal, false))
-          .then((res) => {
-            lintResults = res;
-          });
-      }
-      if (x === "check-customization") {
-        // unset the current lint
-        lintStore.setFocusedLint(false);
+        refreshLints();
       }
       //@ts-ignore
       configStore.setEvalDisplayMode(x);
     }}
   />
+  <div class="ml-4">
+    <GlobalLintConfig />
+  </div>
+  <div class="ml-4">
+    <button
+      class={buttonStyle}
+      on:click={() => {
+        configStore.setEvalDisplayMode("check-customization");
+        lintStore.setFocusedLint(false);
+      }}
+    >
+      Customize a check
+    </button>
+  </div>
 </div>
 <div class="flex h-full" style={`width: ${maxWidth}px`}>
-  {#if displayMode === "check-customization"}
-    <LintCustomizationModal {maxWidth} />
-  {:else}
-    <div class="flex flex-col ml-2">
-      <div
-        class="overflow-auto h-full max-w-lg mb-28 px-2"
-        style={`max-width: ${maxWidth - 4}px`}
-      >
-        <div class="flex items-start justify-start">
-          <GlobalLintConfig />
-        </div>
-        <div class="text-sm">
-          This collection of checks validates whether or not your palette
-          matches a number of commonly held beliefs about best practices. They
-          wont fit every situation.
-        </div>
-        {#each Object.keys(lintGroupNames).filter((x) => (lintGroups[x] || []).length) as lintGroup}
-          <div class="flex mt-4">
-            <div class="flex">
-              <div class="h-8 w-10 flex items-center justify-center">
-                <img
-                  src={typeToImg[lintGroup]}
-                  class="h-6 w-6"
-                  alt="Logo for {lintGroup}"
-                />
-              </div>
-              <div class="text-xl">{lintGroupNames[lintGroup]}</div>
+  <div class="flex flex-col ml-2">
+    <div class="overflow-auto h-full mb-28 px-2">
+      <div class="text-sm">
+        This collection of checks validates whether or not your palette matches
+        a number of commonly held beliefs about best practices. They wont fit
+        every situation.
+      </div>
+      {#each Object.keys(lintGroupNames).filter((x) => (lintGroups[x] || []).length) as lintGroup}
+        <div class="flex mt-4">
+          <div class="flex">
+            <div class="h-8 w-10 flex items-center justify-center">
+              <img
+                src={typeToImg[lintGroup]}
+                class="h-6 w-6"
+                alt="Logo for {lintGroup}"
+              />
             </div>
+            <div class="text-xl">{lintGroupNames[lintGroup]}</div>
+          </div>
+          <button
+            class={`${buttonStyle} `}
+            on:click={() => setGroupTo(lintGroups[lintGroup] || [], true)}
+          >
+            ignore all
+          </button>
+          {#if (lintGroups[lintGroup] || []).some((x) => evalConfig[x.lintProgram.name]?.ignore)}
             <button
               class={`${buttonStyle} `}
-              on:click={() => setGroupTo(lintGroups[lintGroup] || [], true)}
+              on:click={() => setGroupTo(lintGroups[lintGroup] || [], false)}
             >
-              ignore all
+              re-enable all
             </button>
-            {#if (lintGroups[lintGroup] || []).some((x) => evalConfig[x.lintProgram.name]?.ignore)}
-              <button
-                class={`${buttonStyle} `}
-                on:click={() => setGroupTo(lintGroups[lintGroup] || [], false)}
-              >
-                re-enable all
-              </button>
-            {/if}
-          </div>
-          <div class="flex">
-            {#if isCompact}
-              {#each lintGroups[lintGroup] || [] as lintResult}
-                {#if lintResult.kind === "success" && !lintResult.passes}
-                  <LintDisplay {lintResult} justSummary={true} />
-                {/if}
-              {/each}
-            {/if}
-          </div>
-          <div class="ml-10">
+          {/if}
+        </div>
+        <div class="flex">
+          {#if isCompact}
             {#each lintGroups[lintGroup] || [] as lintResult}
-              {#if !isCompact || (isCompact && lintResult.kind === "success" && !lintResult.passes)}
-                <LintDisplay {lintResult} />
+              {#if lintResult.kind === "success" && !lintResult.passes}
+                <LintDisplay {lintResult} justSummary={true} />
               {/if}
             {/each}
-          </div>
-          {#if (lintGroups[lintGroup] || []).length === 0 && $lintStore.loadState === "loading"}
-            <div class="text-sm animate-pulse italic font-bold">Loading</div>
           {/if}
-        {/each}
-      </div>
+        </div>
+        <div class="ml-10">
+          {#each lintGroups[lintGroup] || [] as lintResult}
+            {#if !isCompact || (isCompact && lintResult.kind === "success" && !lintResult.passes)}
+              <LintDisplay {lintResult} />
+            {/if}
+          {/each}
+        </div>
+        {#if (lintGroups[lintGroup] || []).length === 0 && $lintStore.loadState === "loading"}
+          <div class="text-sm animate-pulse italic font-bold">Loading</div>
+        {/if}
+      {/each}
     </div>
-  {/if}
+  </div>
+  <!-- {/if} -->
 </div>
 
 <svelte:window bind:innerWidth />

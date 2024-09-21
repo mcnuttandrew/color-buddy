@@ -63,7 +63,7 @@
   }
 </script>
 
-<Tooltip positionAlongRightEdge={true}>
+<Tooltip targetBody={false}>
   <div slot="content" class="w-96">
     <div>What would you like your check to be able to do?</div>
     <form on:submit|preventDefault={makeRequest} class="flex flex-col">

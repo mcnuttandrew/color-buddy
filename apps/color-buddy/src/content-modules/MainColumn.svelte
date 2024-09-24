@@ -30,7 +30,7 @@
 
 <div class="flex flex-col h-full px-4 mt-10">
   <div
-    class="flex text-sm mb-2 flex-wrap"
+    class="flex text-sm flex-wrap"
     style={`max-width: ${scatterSize + 110}px`}
   >
     <PalTypeConfig />
@@ -48,6 +48,8 @@
       bg={currentPal.background}
       colorSpace={$configStore.channelPickerSpaceBackground}
     />
+  </div>
+  <div class="flex mb-2">
     <PalTags />
     <SetSimulation />
   </div>
@@ -103,6 +105,10 @@
           <Rotate />
         {/if}
         <InterpolatePoints />
+        {#if $focusStore.focusedColors.length === 0}
+          <!-- blank -->
+          <div class="{buttonStyle} opacity-0">empty</div>
+        {/if}
       </div>
     </div>
 

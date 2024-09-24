@@ -26,7 +26,7 @@
           on:click={() => configStore.setColorSim(value)}
           class:font-bold={$configStore.colorSim === value}
         >
-          {value}
+          {titleCase(value)}
         </div>
       {/each}
     </div>

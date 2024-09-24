@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   import colorStore from "../stores/color-store";
   import Tooltip from "../components/Tooltip.svelte";
   import { buttonStyle, simpleTooltipRowStyle } from "../lib/styles";
@@ -7,25 +7,31 @@
 
   $: currentPal = $colorStore.palettes[$colorStore.currentPal];
   $: palType = currentPal.type;
-  $: tags = currentPal?.tags || [];
 
-  $: inUseTags = new Set(tags);
+  const types = ["sequential", "diverging", "categorical"] as const;
+  const descriptions: Record<(typeof types)[number], string> = {
+    categorical:
+      "palettes are used to represent a set of discrete values. They are often used to represent qualitative data, such as different types of land cover or different political parties.",
+    diverging:
+      "palettes are used to represent a range of values around a central point. They are often used to represent quantitative data, such as temperature or elevation.",
+    sequential:
+      "palettes are used to represent a range of values. They are often used to represent quantitative data, such as temperature or elevation.",
+  };
 </script>
 
 <div class="flex flex-col">
   <div class="text-sm">Palette Type</div>
   <Tooltip>
-    <div slot="content" class="flex flex-col">
-      {#each ["sequential", "diverging", "categorical"] as type}
+    <div slot="content" class="flex flex-col max-w-md">
+      {#each types as type}
         <button
-          class={simpleTooltipRowStyle}
+          class={`${simpleTooltipRowStyle} text-sm py-1`}
           value={type}
-          on:click={() =>
-            // @ts-ignore
-            colorStore.setCurrentPalType(type)}
-          class:font-bold={type === palType}
+          class:border-l-4={type === palType}
+          on:click={() => colorStore.setCurrentPalType(type)}
         >
-          {type}
+          <span class:font-bold={type === palType}>{titleCase(type)}</span>
+          <span>{descriptions[type]}</span>
         </button>
       {/each}
     </div>

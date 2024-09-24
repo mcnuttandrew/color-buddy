@@ -137,7 +137,7 @@
 
 <div class="flex flex-col">
   <div class="flex h-full items-center justify-between">
-    <div>Color Space</div>
+    <div class="text-sm">Color Space</div>
     <select
       class="h-full {buttonStyle}"
       value={colorMode}
@@ -161,7 +161,10 @@
                       {channel.name} ({channel.min}-{channel.max})
                     </span>
                     <input
-                      class="h-6 text-right w-16 border-2"
+                      class="h-6 text-right w-16 border-2 {buttonStyle
+                        .split(' ')
+                        .filter((x) => !x.startsWith('mr'))
+                        .join(' ')}"
                       type="number"
                       value={formatter(channel.value)}
                       min={channel.min}

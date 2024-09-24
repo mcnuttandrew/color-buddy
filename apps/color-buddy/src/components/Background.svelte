@@ -15,8 +15,9 @@
   <div class="text-sm">Background</div>
   <Tooltip top={"20px"}>
     <div slot="content" class="flex flex-col">
+      <div class="text-sm">Current Color</div>
       <input
-        class="mb-2"
+        class="mb-2 {buttonStyle}"
         value={bgHex}
         on:change={(e) => {
           // @ts-ignore

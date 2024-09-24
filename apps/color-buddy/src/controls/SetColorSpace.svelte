@@ -2,7 +2,7 @@
   import { colorPickerConfig } from "../lib/utils";
   import DownChev from "virtual:icons/fa6-solid/angle-down";
   import Tooltip from "../components/Tooltip.svelte";
-  import { buttonStyle } from "../lib/styles";
+  import { buttonStyle, simpleTooltipRowStyle } from "../lib/styles";
   export let colorSpace: string;
   export let onChange: (e: any) => void;
   const notAllowed = new Set(["rgb"]);
@@ -27,46 +27,42 @@
       <div class="text-sm">
         Select the color space to use for the color picker.
       </div>
-      <div class="grid grid-cols-4 mt-2">
-        {#each basicOptions as space}
-          <button
-            class={`${buttonStyle} justify-self-start`}
-            class:font-bold={space === colorSpace}
-            on:click={() => {
-              onChange(space);
-              onClick();
-            }}
-          >
+      {#each basicOptions as space}
+        <button
+          class={`${simpleTooltipRowStyle} py-1 text-sm`}
+          class:border-l-4={space === colorSpace}
+          on:click={() => {
+            onChange(space);
+            onClick();
+          }}
+        >
+          <span class:font-bold={space === colorSpace}>
             {space.toUpperCase()}
-          </button>
-          <span class="text-sm italic col-span-3">
-            {colorPickerConfig[space].description}
           </span>
-        {/each}
-      </div>
+          {colorPickerConfig[space].description.split(" ").slice(1).join(" ")}
+        </button>
+      {/each}
 
       <div class="font-bold">Advanced Color Spaces</div>
       <div class="text-sm">
         These color spaces provide more control over the color representation,
         but may be less intuitive or familiar
       </div>
-      <div class="grid grid-cols-4 mt-2">
-        {#each advancedSpaceOptions as space}
-          <button
-            class={`${buttonStyle} justify-self-start`}
-            class:font-bold={space === colorSpace}
-            on:click={() => {
-              onChange(space);
-              onClick();
-            }}
-          >
+      {#each advancedSpaceOptions as space}
+        <button
+          class={`${simpleTooltipRowStyle} py-1 text-sm`}
+          class:border-l-4={space === colorSpace}
+          on:click={() => {
+            onChange(space);
+            onClick();
+          }}
+        >
+          <span class:font-bold={space === colorSpace}>
             {space.toUpperCase()}
-          </button>
-          <span class="text-sm italic col-span-3">
-            {colorPickerConfig[space].description}
           </span>
-        {/each}
-      </div>
+          {colorPickerConfig[space].description.split(" ").slice(1).join(" ")}
+        </button>
+      {/each}
     </div>
     <button
       slot="target"

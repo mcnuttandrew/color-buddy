@@ -3,15 +3,21 @@
   import Tooltip from "../components/Tooltip.svelte";
   import { buttonStyle } from "../lib/styles";
   import DownChev from "virtual:icons/fa6-solid/angle-down";
+  import Times from "virtual:icons/fa6-solid/xmark";
 
   $: currentPal = $colorStore.palettes[$colorStore.currentPal];
   $: tags = currentPal?.tags || [];
 
   let tagInput = "";
   $: inUseTags = new Set(tags);
-  $: commonTags = ["serious", "trustworthy", "calm"].filter(
-    (x) => !inUseTags.has(x)
-  );
+  $: commonTags = [
+    "serious",
+    "trustworthy",
+    "calm",
+    "playful",
+    "negative",
+    "positive",
+  ].filter((x) => !inUseTags.has(x));
 </script>
 
 <div class="flex flex-col">
@@ -19,46 +25,49 @@
   <Tooltip>
     <div slot="content" class="max-w-md">
       <div class="italic text-sm">
-        Tags describe palette level usages, like the intended affect and so on. {#if commonTags.length}
-          Here are some common ones that are have specific effects in the app
-          (such as engaging lints for specific affects).{/if}
+        Tags describe palette level usages, like the intended affect and so on.
+        They govern which checks are run on the palette.
       </div>
-      <div class="font-bold">Tags</div>
+      <div class="text-sm">Current Tags</div>
       <div class="flex flex-wrap">
         {#each tags as tag}
-          <div class={buttonStyle}>
+          <div class="bg-stone-200 flex items-center px-1 text-sm mr-2">
             {tag}
             <button
-              class="text-xs"
+              class="text-xs px-1"
               on:click={() =>
                 colorStore.setCurrentTags(
-                  tags.filter((x) => x.toLowerCase() !== tag)
+                  tags.filter((x) => x.toLowerCase() !== tag.toLowerCase())
                 )}
             >
-              x
+              <Times />
             </button>
           </div>
         {/each}
       </div>
-      <div>
-        {#each commonTags as tag}
-          <button
-            class={buttonStyle}
-            on:click={() => colorStore.setCurrentTags([...tags, tag])}
-          >
-            {tag}
-          </button>
-        {/each}
+      <div class="flex flex-col mt-4">
+        <span class="text-sm">Common tags</span>
         <div class="flex">
-          <form
-            placeholder="Add Tag"
-            on:submit|preventDefault|stopPropagation={() =>
-              colorStore.setCurrentTags([...tags, tagInput])}
-          >
-            <input class="w-24" bind:value={tagInput} />
-            <button class={buttonStyle}>Add Tag</button>
-          </form>
+          {#each commonTags as tag}
+            <button
+              class={buttonStyle}
+              on:click={() => colorStore.setCurrentTags([...tags, tag])}
+            >
+              {tag}
+            </button>
+          {/each}
         </div>
+      </div>
+      <div class="flex flex-col mt-4">
+        <div class="text-sm">Custom Tag</div>
+        <form
+          placeholder="Add Tag"
+          on:submit|preventDefault|stopPropagation={() =>
+            colorStore.setCurrentTags([...tags, tagInput])}
+        >
+          <input class="w-24 {buttonStyle}" bind:value={tagInput} />
+          <button class={buttonStyle}>Add Tag</button>
+        </form>
       </div>
     </div>
     <button

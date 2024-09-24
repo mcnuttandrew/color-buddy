@@ -253,7 +253,7 @@
     {#if customWord && !customWordIsImg}
       {customWord}
     {:else if customWord && customWordIsImg}
-      <img src={customWord} class="h-4" />
+      <img src={customWord} class="h-4" alt={`Logo for ${customWord} checks`} />
     {:else if lintResult.kind === "success" && lintResult.passes}info{:else}fixes{/if}
   </button>
 </Tooltip>

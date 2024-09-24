@@ -139,6 +139,11 @@ export class Color {
     return this.toColorIO().luminance;
   }
   deltaE(color: Color, algorithm: DistAlgorithm = "2000"): number {
+    const allowedAlgorithms = new Set(["76", "CMC", "2000", "ITP", "Jz", "OK"]);
+    if (!allowedAlgorithms.has(algorithm)) {
+      return 0;
+    }
+
     const left = this.toColorIO().to("srgb");
     const right = color.toColorIO().to("srgb");
     return left.deltaE(right, algorithm);

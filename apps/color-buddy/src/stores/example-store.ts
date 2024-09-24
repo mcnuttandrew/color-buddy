@@ -30,7 +30,7 @@ export const DEMOS = [
     filename: "./examples/grouped-bar-chart.json",
   },
   { type: "vega", title: "Heatmap", filename: "./examples/heatmap.json" },
-  { type: "vega", title: "Map", filename: "./examples/illinois-map.json" },
+  { type: "vega", title: "Map", filename: "./examples/map.json" },
   {
     type: "vega",
     title: "Scatterplot",

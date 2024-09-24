@@ -19,7 +19,7 @@
         },
         {
           "type": "filter",
-          "expr": "datum.id2 > 17000 && datum.id2 < 18000"
+          "expr": "datum.id2 > 49000 && datum.id2 < 50000"
         }
       ]
     }
@@ -27,9 +27,9 @@
   "projections": [
     {
       "name": "projection",
-      "type": "albersUsa",
-      "translate": [-100, 180],
-      "scale": 2500
+      "type": "mercator",
+      "center": [-102, 37],
+      "scale": 2200
     }
   ],
   "scales": [

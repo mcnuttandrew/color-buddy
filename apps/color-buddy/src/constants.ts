@@ -6,15 +6,6 @@ export const lintGroupNames: Record<string, string> = {
   custom: "Custom",
 };
 
-export const typeToSymbol = {
-  design: "🎨",
-  "contrast-accessibility": "♿",
-  "color-accessibility": "♿",
-  accessibility: "♿",
-  usability: "🔎",
-  custom: "⚙️",
-} as any;
-
 export const typeToImg = {
   design: "./design.png",
   "contrast-accessibility": "./wcag-object.png",

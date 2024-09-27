@@ -11,7 +11,6 @@
   import ModifySelection from "../controls/ModifySelection.svelte";
   import EvalResponse from "../linting/EvalResponse.svelte";
   import { dealWithFocusEvent } from "../lib/utils";
-  import { typeToSymbol } from "../constants";
   import Sort from "../controls/Sort.svelte";
   import AddColor from "../controls/AddColor.svelte";
   import GetColorsFromString from "../controls/GetColorsFromString.svelte";

@@ -114,7 +114,7 @@
         {/if}
       </div>
       <div class="flex flex-col w-full" id="right-col">
-        <div class="flex bg-stone-100 w-full">
+        <div class="flex bg-stone-300 w-full">
           <Nav
             className=""
             tabs={currentPalTabs}
@@ -125,7 +125,7 @@
             }}
           />
         </div>
-        <div class="">
+        <div class="bg-stone-100 h-full">
           {#if palPresent && $configStore.route === "examples"}
             <Examples />
           {:else if palPresent && $configStore.route === "compare"}

@@ -1,5 +1,7 @@
 <script lang="ts">
-  import type { LintResult, LintProgram } from "color-buddy-palette-lint";
+  import type { LintResult } from "color-buddy-palette-lint";
+
+  import IgnoreIcon from "virtual:icons/fa6-solid/eye-slash";
 
   import colorStore from "../stores/color-store";
   import configStore from "../stores/config-store";
@@ -23,9 +25,7 @@
 </script>
 
 {#if lintResult.kind === "ignored"}
-  <div class="text-xs flex">
-    Ignored "{lintProgram.name}"
-    <EvalResponse {lintResult} customWord={"⚙️"} />
+  <div class="text-xs flex items-center">
     <button
       class={buttonStyle}
       on:click={() => {
@@ -35,8 +35,10 @@
         });
       }}
     >
-      re-enable
+      <IgnoreIcon class="h-3 w-3" />
     </button>
+    {lintProgram.name}
+    <EvalResponse {lintResult} customWord={"⚙️"} />
   </div>
 {:else if lintResult.kind === "success"}
   {#if justSummary && lintResult}

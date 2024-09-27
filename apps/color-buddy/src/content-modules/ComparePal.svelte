@@ -58,127 +58,125 @@
     : $colorStore.palettes.filter((x) => x.folder === selectedFolder.name);
 </script>
 
-<div class="w-full border-l-8 border-stone-200 h-full">
+<div class="w-full h-full bg-stone-100">
   <!-- main -->
-  <div class="px-6">
-    <div class="flex flex-wrap w-full">
-      <div class="flex flex-col mr-2">
-        <div class="text-sm">Compare Palette</div>
-        <Tooltip>
-          <button
-            class={`${buttonStyle} `}
-            slot="target"
-            let:toggle
-            on:click={toggle}
-          >
-            {#if ComparisonPal !== undefined}
-              {ComparisonPal.name}
-            {:else}
-              No Palette Selected
-            {/if}
-          </button>
-          <div class="flex flex-col w-80" slot="content">
-            <div class="text-sm">Premade:</div>
-            <div class="flex">
-              {#each ["sequential", "categorical", "diverging"] as folder}
-                <button
-                  class={buttonStyle}
-                  on:click={() => {
-                    configStore.setSelectedFolder({
-                      isPreMade: true,
-                      name: folder,
-                    });
-                  }}
-                  class:underline={selectedFolder?.isPreMade &&
-                    selectedFolder?.name === folder}
-                >
-                  {folder}/
-                </button>
-              {/each}
-            </div>
-            <div class="text-sm">Your folders:</div>
-            <div class="flex flex-wrap">
-              {#each folders as folder}
-                <button
-                  class={buttonStyle}
-                  on:click={() =>
-                    configStore.setSelectedFolder({
-                      isPreMade: false,
-                      name: folder,
-                    })}
-                  class:underline={selectedFolder?.isPreMade === false &&
-                    selectedFolder?.name === folder}
-                >
-                  {folder}/
-                </button>
-              {/each}
-            </div>
-
-            <div class="flex flex-wrap mt-4">
-              {#each selectedPals as pal, idx (idx)}
-                <MiniPalPreview
-                  {pal}
-                  className={compareIdx === idx ? "border-2 border-black" : ""}
-                  onClick={() =>
-                    configStore.setComparePal(
-                      selectedFolder.isPreMade ? pal : idx
-                    )}
-                />
-              {/each}
-            </div>
-          </div>
-        </Tooltip>
-      </div>
-      {#if ComparisonPal !== undefined}
-        <div class="mr-2">
-          <SetColorSpace
-            {colorSpace}
-            onChange={(space) => {
-              colorSpace = space;
-            }}
-          />
-        </div>
-        <div class="mr-2">
-          <Background
-            onChange={(background) => {
-              bg = background.toHex();
-              configStore.setCompareBackground(background.toHex());
-            }}
-            onSpaceChange={(space) => {
-              // @ts-ignore
-              configStore.setCompareBackgroundSpace(space);
-            }}
-            bg={Color.colorFromHex(bg, colorSpace)}
-            colorSpace={$configStore.compareBackgroundSpace}
-          />
-        </div>
-        <div>
-          <div class="flex flex-col">
-            <div class="text-sm">Diff</div>
-            <Tooltip positionAlongRightEdge={true}>
-              <div slot="content" class="flex flex-col">
-                {#each diffOptions as diff}
-                  <button
-                    class={simpleTooltipRowStyle}
-                    on:click={() => configStore.setCompareDiff(diff)}
-                    class:font-bold={showDiff === diff}
-                  >
-                    {diffToLabel[diff]}
-                  </button>
-                {/each}
-              </div>
+  <div class="flex flex-wrap w-full bg-stone-200 py-2 px-2">
+    <div class="flex flex-col mr-2">
+      <div class="text-sm">Compare Palette</div>
+      <Tooltip>
+        <button
+          class={`${buttonStyle} `}
+          slot="target"
+          let:toggle
+          on:click={toggle}
+        >
+          {#if ComparisonPal !== undefined}
+            {ComparisonPal.name}
+          {:else}
+            No Palette Selected
+          {/if}
+        </button>
+        <div class="flex flex-col w-80" slot="content">
+          <div class="text-sm">Premade:</div>
+          <div class="flex">
+            {#each ["sequential", "categorical", "diverging"] as folder}
               <button
-                slot="target"
-                let:toggle
-                class={`${buttonStyle} flex items-center`}
-                on:click={toggle}
+                class={buttonStyle}
+                on:click={() => {
+                  configStore.setSelectedFolder({
+                    isPreMade: true,
+                    name: folder,
+                  });
+                }}
+                class:underline={selectedFolder?.isPreMade &&
+                  selectedFolder?.name === folder}
               >
-                {diffToLabel[showDiff]}
-
-                <ChevDown class="text-sm ml-2" />
+                {folder}/
               </button>
-            </Tooltip>
+            {/each}
           </div>
+          <div class="text-sm">Your folders:</div>
+          <div class="flex flex-wrap">
+            {#each folders as folder}
+              <button
+                class={buttonStyle}
+                on:click={() =>
+                  configStore.setSelectedFolder({
+                    isPreMade: false,
+                    name: folder,
+                  })}
+                class:underline={selectedFolder?.isPreMade === false &&
+                  selectedFolder?.name === folder}
+              >
+                {folder}/
+              </button>
+            {/each}
+          </div>
+
+          <div class="flex flex-wrap mt-4">
+            {#each selectedPals as pal, idx (idx)}
+              <MiniPalPreview
+                {pal}
+                className={compareIdx === idx ? "border-2 border-black" : ""}
+                onClick={() =>
+                  configStore.setComparePal(
+                    selectedFolder.isPreMade ? pal : idx
+                  )}
+              />
+            {/each}
+          </div>
+        </div>
+      </Tooltip>
+    </div>
+    {#if ComparisonPal !== undefined}
+      <div class="mr-2">
+        <SetColorSpace
+          {colorSpace}
+          onChange={(space) => {
+            colorSpace = space;
+          }}
+        />
+      </div>
+      <div class="mr-2">
+        <Background
+          onChange={(background) => {
+            bg = background.toHex();
+            configStore.setCompareBackground(background.toHex());
+          }}
+          onSpaceChange={(space) => {
+            // @ts-ignore
+            configStore.setCompareBackgroundSpace(space);
+          }}
+          bg={Color.colorFromHex(bg, colorSpace)}
+          colorSpace={$configStore.compareBackgroundSpace}
+        />
+      </div>
+      <div class="flex flex-col">
+        <div class="text-sm">Diff</div>
+        <div class="flex">
+          <Tooltip positionAlongRightEdge={true}>
+            <div slot="content" class="flex flex-col">
+              {#each diffOptions as diff}
+                <button
+                  class={simpleTooltipRowStyle}
+                  on:click={() => configStore.setCompareDiff(diff)}
+                  class:font-bold={showDiff === diff}
+                >
+                  {diffToLabel[diff]}
+                </button>
+              {/each}
+            </div>
+            <button
+              slot="target"
+              let:toggle
+              class={`${buttonStyle} flex items-center`}
+              on:click={toggle}
+            >
+              {diffToLabel[showDiff]}
+
+              <ChevDown class="text-sm ml-2" />
+            </button>
+          </Tooltip>
           {#if compareIdx === "tempPal" && ComparisonPal}
             <button
               class={buttonStyle}
@@ -191,8 +189,10 @@
             </button>
           {/if}
         </div>
-      {/if}
-    </div>
+      </div>
+    {/if}
+  </div>
+  <div class="px-6">
     <div>&nbsp;</div>
     {#if ComparisonPal !== undefined}
       <div style={`max-width: ${scatterSize + 110}px`}>

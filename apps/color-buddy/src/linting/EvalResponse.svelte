@@ -3,6 +3,8 @@
   import type { Palette } from "color-buddy-palette";
   import { suggestLintFix } from "color-buddy-palette-lint";
   import { suggestLintAIFix, suggestLintMonteFix } from "../lib/lint-fixer";
+  import InfoIcon from "virtual:icons/fa6-solid/circle-info";
+  import FixIcon from "virtual:icons/fa6-solid/hammer";
 
   import { logEvent } from "../lib/api-calls";
 
@@ -85,9 +87,9 @@
     (x) => lintProgram.description.toLowerCase().includes(x) && x !== colorSpace
   ) as any;
   $: ignored = !!evalConfig[lintProgram.name]?.ignore;
-  $: blameData = (
-    lintResult.kind === "success" ? lintResult.blameData : []
-  ).flat();
+  $: blameData = Array.from(
+    new Set((lintResult.kind === "success" ? lintResult.blameData : []).flat())
+  );
 </script>
 
 <Tooltip {positionAlongRightEdge}>
@@ -176,30 +178,34 @@
       </button>
     {/if}
 
-    <div>For just this lint</div>
-    {#each blameData as index}
-      <button
-        class={buttonStyle
-          .split(" ")
-          .filter((x) => x !== "opacity-50")
-          .join(" ")}
-        on:click={() => {
-          colorStore.setCurrentPalEvalConfig({
-            ...evalConfig,
-            [`${palette.colors[index].toHex()}-?-${lintProgram.id}`]: {
-              ignore: true,
-            },
-          });
-        }}
-      >
-        <span class="opacity-50">ignore ({palette.colors[index].toHex()})</span>
+    {#if blameData.length}
+      <div>For just this lint</div>
+      {#each blameData as index}
+        <button
+          class={buttonStyle
+            .split(" ")
+            .filter((x) => x !== "opacity-50")
+            .join(" ")}
+          on:click={() => {
+            colorStore.setCurrentPalEvalConfig({
+              ...evalConfig,
+              [`${palette.colors[index].toHex()}-?-${lintProgram.id}`]: {
+                ignore: true,
+              },
+            });
+          }}
+        >
+          <span class="opacity-50">
+            ignore ({palette.colors[index].toHex()})
+          </span>
 
-        <div
-          class="rounded-full w-3 h-3 ml-1 inline-block opacity-100"
-          style={`background: ${palette.colors[index].toHex()}`}
-        />
-      </button>
-    {/each}
+          <div
+            class="rounded-full w-3 h-3 ml-1 inline-block opacity-100"
+            style={`background: ${palette.colors[index].toHex()}`}
+          />
+        </button>
+      {/each}
+    {/if}
 
     {#if requestState === "loading"}
       <div>Loading...</div>
@@ -247,14 +253,17 @@
   <button
     slot="target"
     let:toggle
-    class={customWord ? "" : `${buttonStyle}`}
+    class={"flex items-center"}
     on:click|stopPropagation={toggle}
   >
     {#if customWord && !customWordIsImg}
       {customWord}
     {:else if customWord && customWordIsImg}
       <img src={customWord} class="h-4" alt={`Logo for ${customWord} checks`} />
-    {:else if lintResult.kind === "success" && lintResult.passes}info{:else}fixes{/if}
+    {:else if lintResult.kind === "success" && lintResult.passes}
+      <InfoIcon class="h-4 w-4 mx-2 text-sm" />{:else}<FixIcon
+        class="h-4 w-4 mx-2 text-sm"
+      />{/if}
   </button>
 </Tooltip>
 

@@ -1,6 +1,9 @@
 <script lang="ts">
   import type { LintResult } from "color-buddy-palette-lint";
 
+  import IgnoreIcon from "virtual:icons/fa6-solid/eye-slash";
+  import ShowIcon from "virtual:icons/fa6-solid/eye";
+
   import colorStore from "../stores/color-store";
   import configStore from "../stores/config-store";
   import lintStore from "../stores/lint-store";
@@ -10,7 +13,6 @@
   import LintDisplay from "./LintDisplay.svelte";
   import LintCustomizationModal from "./LintCustomizationTab.svelte";
   import Nav from "../components/Nav.svelte";
-  import NewLintSuggestion from "./NewLintSuggestion.svelte";
   import GlobalLintConfig from "./GlobalLintConfigModal.svelte";
   import { lintGroupNames, typeToImg } from "../constants";
 
@@ -74,36 +76,45 @@
 {#if displayMode === "check-customization"}
   <LintCustomizationModal onClose={() => refreshLints()} />
 {/if}
-<div class="bg-stone-100 w-full flex">
-  <Nav
-    tabs={[
-      "regular",
-      "compact",
-      // "check-customization"
-    ]}
-    isTabSelected={(x) => x === displayMode}
-    selectTab={(x) => {
-      // TODO: maybe need to update the lints on change?
-      if (displayMode === "check-customization") {
-        refreshLints();
-      }
-      //@ts-ignore
-      configStore.setEvalDisplayMode(x);
-    }}
-  />
-  <div class="ml-4">
-    <GlobalLintConfig />
-  </div>
-  <div class="ml-4">
-    <button
-      class={buttonStyle}
-      on:click={() => {
-        configStore.setEvalDisplayMode("check-customization");
-        lintStore.setFocusedLint(false);
+<div class="bg-stone-200 w-full flex py-1 px-2">
+  <div>
+    <div class="text-sm">Check Display</div>
+
+    <Nav
+      tabs={[
+        "regular",
+        "compact",
+        // "check-customization"
+      ]}
+      isTabSelected={(x) => x === displayMode}
+      selectTab={(x) => {
+        // TODO: maybe need to update the lints on change?
+        if (displayMode === "check-customization") {
+          refreshLints();
+        }
+        //@ts-ignore
+        configStore.setEvalDisplayMode(x);
       }}
-    >
-      Customize a check
-    </button>
+    />
+  </div>
+  <div class="flex flex-col ml-4">
+    <div class="text-sm">Check Config</div>
+    <div class="flex">
+      <div class="">
+        <GlobalLintConfig />
+      </div>
+      <div class="ml-4">
+        <button
+          class={buttonStyle}
+          on:click={() => {
+            configStore.setEvalDisplayMode("check-customization");
+            lintStore.setFocusedLint(false);
+          }}
+        >
+          Customize a check
+        </button>
+      </div>
+    </div>
   </div>
 </div>
 <div class="flex h-full" style={`width: ${maxWidth}px`}>
@@ -112,7 +123,7 @@
       <div class="text-sm">
         This collection of checks validates whether or not your palette matches
         a number of commonly held beliefs about best practices. They wont fit
-        every situation.
+        every situation! So feel free to turn some off.
       </div>
       {#each Object.keys(lintGroupNames).filter((x) => (lintGroups[x] || []).length) as lintGroup}
         <div class="flex mt-4">
@@ -126,18 +137,20 @@
             </div>
             <div class="text-xl">{lintGroupNames[lintGroup]}</div>
           </div>
-          <button
-            class={`${buttonStyle} `}
-            on:click={() => setGroupTo(lintGroups[lintGroup] || [], true)}
-          >
-            ignore all
-          </button>
+          {#if (lintGroups[lintGroup] || []).every((x) => !evalConfig[x.lintProgram.name]?.ignore)}
+            <button
+              class={`${buttonStyle} `}
+              on:click={() => setGroupTo(lintGroups[lintGroup] || [], true)}
+            >
+              <IgnoreIcon class="h-4 w-4" />
+            </button>
+          {/if}
           {#if (lintGroups[lintGroup] || []).some((x) => evalConfig[x.lintProgram.name]?.ignore)}
             <button
               class={`${buttonStyle} `}
               on:click={() => setGroupTo(lintGroups[lintGroup] || [], false)}
             >
-              re-enable all
+              <ShowIcon class="h-4 w-4" />
             </button>
           {/if}
         </div>

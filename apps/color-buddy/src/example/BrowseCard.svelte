@@ -119,6 +119,7 @@
         <Example
           example={example.svg}
           size={example.size}
+          bgColor={palette.background.toHex()}
           {palette}
           {allowInteraction}
         />
@@ -126,6 +127,7 @@
       {#if example && example.vega}
         <Vega
           spec={example.vega}
+          bgColor={palette.background.toHex()}
           size={example.size}
           {palette}
           {allowInteraction}

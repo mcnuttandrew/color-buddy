@@ -14,6 +14,8 @@
   export let size = 300;
   export let palette: Palette;
   export let allowInteraction = true;
+  export let bgColor: string;
+  $: bg = bgColor || currentPal.background.toHex();
 
   let focusedColor = false as false | number;
   function countNumberOfExamplesInUse(example: string): number {
@@ -61,7 +63,7 @@
       colors = currentPal.colors;
     }
   }
-  $: bg = currentPal.background;
+
   $: colors, example, attachListeners();
 
   function onClick(e: any) {
@@ -110,7 +112,7 @@
     class:example-container={allowInteraction}
   >
     <InView>
-      {@html insertColorsToExample(example, mappedColors, bg.toHex(), size)}
+      {@html insertColorsToExample(example, mappedColors, bg, size)}
     </InView>
   </div>
 </div>

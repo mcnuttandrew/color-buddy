@@ -34,7 +34,9 @@
   });
   $: selectedExamples = examples.filter((_, idx) => exampleShowMap[idx]);
   $: exampleName =
-    selectedExamples.length > 1 ? "All" : selectedExamples[0].name;
+    selectedExamples.length > 1
+      ? "All"
+      : selectedExamples.at(0)?.name || "None";
 
   const navNameMap = {
     svg: "SVG",

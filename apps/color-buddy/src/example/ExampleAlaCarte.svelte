@@ -82,6 +82,7 @@
       <Example
         example={example.svg}
         size={example.size}
+        {bgColor}
         {palette}
         allowInteraction={true}
       />
@@ -90,6 +91,7 @@
       <Vega
         spec={example.vega}
         size={example.size}
+        {bgColor}
         {palette}
         allowInteraction={true}
       />

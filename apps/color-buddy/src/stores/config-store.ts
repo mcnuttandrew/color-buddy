@@ -11,6 +11,7 @@ interface StoreData {
   compareBackground: string | undefined;
   compareBackgroundSpace: "lab" | "lch" | "hsl" | "hsv" | "rgb";
   comparePal: number | undefined | "tempPal";
+  compareDiff: "off" | "dots" | "dots-and-lines";
   compareSelectedExample: number;
   engine: Engine;
   evalDeltaDisplay:
@@ -48,6 +49,7 @@ const InitialStore: StoreData = {
   compareBackground: undefined,
   compareBackgroundSpace: "lab",
   comparePal: undefined,
+  compareDiff: "off",
   compareSelectedExample: -1,
   engine: "openai",
   evalDeltaDisplay: "none",
@@ -185,6 +187,8 @@ function createStore() {
       persist((old) => ({ ...old, manageBrowsePreviewIdx: n })),
     setSelectedFolder: (n: StoreData["selectedFolder"]) =>
       persist((old) => ({ ...old, selectedFolder: n })),
+    setCompareDiff: (n: StoreData["compareDiff"]) =>
+      persist((old) => ({ ...old, compareDiff: n })),
   };
 }
 

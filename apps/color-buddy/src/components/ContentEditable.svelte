@@ -1,9 +1,9 @@
 <script lang="ts">
   export let onChange: (str: string) => void;
   export let value: string;
-  export let limitWidth: boolean = false;
   export let useEditButton: boolean = false;
   export let onClick: () => void = () => {};
+  export let displayValue: string = value;
 
   let focused = false;
 </script>
@@ -12,6 +12,7 @@
   <input
     type="text"
     bind:value
+    class="border-2 border-gray-300 w-fit"
     on:blur={() => {
       onChange(value);
       focused = false;
@@ -32,19 +33,10 @@
         focused = true;
       }
     }}
-    class:wrap-title={limitWidth}
   >
-    {value}
+    {displayValue}
   </button>
 {/if}
-{#if useEditButton}
+{#if useEditButton && !focused}
   <button on:click={() => (focused = true)}>✎</button>
 {/if}
-
-<style>
-  .wrap-title {
-    max-width: 205px;
-    white-space: break-spaces;
-    line-break: anywhere;
-  }
-</style>

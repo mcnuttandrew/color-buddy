@@ -84,6 +84,9 @@
       <ContentEditable
         onChange={(x) => colorStore.setCurrentPalName(x)}
         value={currentPal.name}
+        displayValue={`${currentPal.name.slice(0, 20)}${
+          currentPal.name.length > 20 ? "..." : ""
+        }`}
         useEditButton={true}
       />
     </div>
@@ -125,7 +128,7 @@
           </button>
           <div class="flex justify-between w-full px-2 items-center z-10">
             <span class="flex flex-col items-start">
-              <span>
+              <span class="flex max-w-5">
                 <ContentEditable
                   onChange={(x) => {
                     const updatedColors = [...colors];
@@ -133,7 +136,7 @@
                     colorStore.setCurrentPalColors(updatedColors);
                   }}
                   value={color.toHex()}
-                  useEditButton={false}
+                  useEditButton={true}
                 />
               </span>
               {#if colorNames[idx]}<span class="text-right text-xs">

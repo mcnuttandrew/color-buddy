@@ -77,7 +77,7 @@
   <LintCustomizationModal onClose={() => refreshLints()} />
 {/if}
 <div class="bg-stone-200 w-full flex py-1 px-2">
-  <div>
+  <!-- <div>
     <div class="text-sm">Check Display</div>
 
     <Nav
@@ -96,8 +96,8 @@
         configStore.setEvalDisplayMode(x);
       }}
     />
-  </div>
-  <div class="flex flex-col ml-4">
+  </div> -->
+  <div class="flex flex-col">
     <div class="text-sm">Check Config</div>
     <div class="flex">
       <div class="">

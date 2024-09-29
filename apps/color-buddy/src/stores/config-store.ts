@@ -153,6 +153,13 @@ function createStore() {
       persist((old) => ({ ...old, includeQuotes })),
     setZoom: (axis: "x" | "y" | "z", zoom: [number, number]) =>
       persist((old) => ({ ...old, [axis + "Zoom"]: zoom })),
+    unsetZoom: () =>
+      persist((old) => ({
+        ...old,
+        xZoom: [0, 1],
+        yZoom: [0, 1],
+        zZoom: [0, 1],
+      })),
     setEngine: (engine: StoreData["engine"]) =>
       persist((old) => ({ ...old, engine })),
     setShowColorBackground: (n: StoreData["showColorBackground"]) =>

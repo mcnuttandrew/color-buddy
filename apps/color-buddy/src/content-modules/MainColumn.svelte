@@ -19,6 +19,8 @@
   import Zoom from "../controls/Zoom.svelte";
   import Finger from "virtual:icons/fa6-solid/hand-pointer";
 
+  import { colorPickerConfig } from "../lib/utils";
+
   import SetColorSpace from "../controls/SetColorSpace.svelte";
   import { cvdSim } from "color-buddy-palette";
 
@@ -26,6 +28,7 @@
 
   $: currentPal = $colorStore.palettes[$colorStore.currentPal];
   $: selectedCVDType = $configStore.colorSim;
+  $: config = colorPickerConfig[currentPal.colorSpace];
 </script>
 
 <div class="flex flex-col h-full px-4 mt-10">
@@ -36,7 +39,10 @@
     <PalTypeConfig />
     <SetColorSpace
       colorSpace={currentPal.colorSpace}
-      onChange={(space) => colorStore.setColorSpace(space)}
+      onChange={(space) => {
+        colorStore.setColorSpace(space);
+        configStore.unsetZoom();
+      }}
     />
     <Background
       onSpaceChange={(space) => {
@@ -82,7 +88,9 @@
       <span>Mark out-of-gamut colors with ⨂</span>
     </div>
     <div class="flex">
-      <Zoom />
+      {#if !config.isPolar}
+        <Zoom />
+      {/if}
       <button
         class={`${buttonStyle} text-sm flex items-center`}
         on:click={() => configStore.setScatterplotMode("putting")}

@@ -54,7 +54,7 @@
     {/if}
     <textarea
       id="current-colors"
-      class="w-full p-2 rounded border-2 text-sm"
+      class="w-full p-2 rounded border-2 text-sm font-mono"
       value={colors
         .map((color) => color.toHex())
         .map((x) => (includeQuotes ? `"${x}"` : x))

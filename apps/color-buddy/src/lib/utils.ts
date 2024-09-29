@@ -411,7 +411,7 @@ export const screenSpaceAvg = (colors: { x: number; y: number }[]) => {
 export const titleCase = (str: string) =>
   str
     .split(" ")
-    .map((x) => x[0].toUpperCase() + x.slice(1))
+    .map((x) => (x.at(0) || "").toUpperCase() + x.slice(1))
     .join(" ");
 
 const oxfordJoin = (arr: string[]) => {

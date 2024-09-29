@@ -4,6 +4,8 @@
   import configStore from "../stores/config-store";
   import focusStore from "../stores/focus-store";
   import examplePalStore from "../stores/example-palette-store";
+  import Nav from "../components/Nav.svelte";
+  import PalPreview from "../components/PalPreview.svelte";
 
   import ChevDown from "virtual:icons/fa6-solid/angle-down";
 
@@ -11,7 +13,6 @@
   import ColorScatterPlot from "../scatterplot/ColorScatterPlot.svelte";
   import ExampleAlaCart from "../example/ExampleAlaCarte.svelte";
   import MiniPalPreview from "../components/MiniPalPreview.svelte";
-  import PalPreview from "../components/PalPreview.svelte";
   import Tooltip from "../components/Tooltip.svelte";
 
   import { buttonStyle, simpleTooltipRowStyle } from "../lib/styles";
@@ -54,8 +55,8 @@
   ).sort((a, b) => a.length - b.length);
 
   $: selectedPals = selectedFolder.isPreMade
-    ? familiarPals
-    : $colorStore.palettes.filter((x) => x.folder === selectedFolder.name);
+    ? $examplePalStore.palettes.map((x) => x.palette)
+    : $colorStore.palettes;
 </script>
 
 <div class="w-full h-full bg-stone-100">
@@ -76,53 +77,59 @@
             No Palette Selected
           {/if}
         </button>
-        <div class="flex flex-col w-80" slot="content">
+        <div
+          class="flex flex-col max-w-md max-h-96 overflow-y-auto"
+          slot="content"
+        >
           <div class="text-sm">Premade:</div>
-          <div class="flex">
-            {#each ["sequential", "categorical", "diverging"] as folder}
-              <button
-                class={buttonStyle}
-                on:click={() => {
-                  configStore.setSelectedFolder({
-                    isPreMade: true,
-                    name: folder,
-                  });
-                }}
-                class:underline={selectedFolder?.isPreMade &&
-                  selectedFolder?.name === folder}
-              >
-                {folder}/
-              </button>
-            {/each}
-          </div>
+          <Nav
+            className=""
+            tabs={["sequential", "categorical", "diverging"]}
+            isTabSelected={(x) =>
+              selectedFolder?.isPreMade && selectedFolder?.name === x}
+            selectTab={(x) => {
+              configStore.setSelectedFolder({
+                isPreMade: true,
+                name: x,
+              });
+            }}
+          />
+
           <div class="text-sm">Your folders:</div>
-          <div class="flex flex-wrap">
-            {#each folders as folder}
-              <button
-                class={buttonStyle}
-                on:click={() =>
-                  configStore.setSelectedFolder({
-                    isPreMade: false,
-                    name: folder,
-                  })}
-                class:underline={selectedFolder?.isPreMade === false &&
-                  selectedFolder?.name === folder}
-              >
-                {folder}/
-              </button>
-            {/each}
-          </div>
+          <Nav
+            className=""
+            tabs={folders}
+            isTabSelected={(x) =>
+              selectedFolder?.isPreMade === false && selectedFolder?.name === x}
+            selectTab={(x) => {
+              configStore.setSelectedFolder({
+                isPreMade: false,
+                name: x,
+              });
+            }}
+            formatter={(x) => (x.length ? `${x}` : "Home")}
+          />
 
           <div class="flex flex-wrap mt-4">
             {#each selectedPals as pal, idx (idx)}
-              <MiniPalPreview
-                {pal}
-                className={compareIdx === idx ? "border-2 border-black" : ""}
-                onClick={() =>
-                  configStore.setComparePal(
-                    selectedFolder.isPreMade ? pal : idx
-                  )}
-              />
+              {#if (selectedFolder.isPreMade && pal.type === selectedFolder.name) || (!selectedFolder.isPreMade && pal.folder === selectedFolder.name)}
+                <button
+                  class="flex flex-col items-start cursor-pointer border-2 p-1 rounded"
+                  class:border-black={selectedFolder.isPreMade
+                    ? pal.name === ComparisonPal?.name
+                    : compareIdx === idx}
+                  class:border-white={selectedFolder.isPreMade
+                    ? pal.name !== ComparisonPal?.name
+                    : compareIdx !== idx}
+                  on:click={() =>
+                    configStore.setComparePal(
+                      selectedFolder.isPreMade ? pal : idx
+                    )}
+                >
+                  <span class="text-xs">{pal.name}</span>
+                  <PalPreview {pal} />
+                </button>
+              {/if}
             {/each}
           </div>
         </div>
@@ -183,6 +190,16 @@
               on:click={() => {
                 configStore.setComparePal(currentPalIdx);
                 colorStore.createNewPal(ComparisonPal);
+              }}
+            >
+              Modify this palette
+            </button>
+          {/if}
+          {#if compareIdx !== "tempPal" && ComparisonPal}
+            <button
+              class={buttonStyle}
+              on:click={() => {
+                colorStore.startUsingPal(compareIdx);
               }}
             >
               Modify this palette

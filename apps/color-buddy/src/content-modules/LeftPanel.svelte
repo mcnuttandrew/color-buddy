@@ -7,24 +7,19 @@
   import focusStore from "../stores/focus-store";
   import configStore from "../stores/config-store";
   import lintStore from "../stores/lint-store";
+  import ColorBall from "../components/ColorBall.svelte";
 
   import ModifySelection from "../controls/ModifySelection.svelte";
-  import EvalResponse from "../linting/EvalResponse.svelte";
-  import { dealWithFocusEvent } from "../lib/utils";
   import Sort from "../controls/Sort.svelte";
   import AddColor from "../controls/AddColor.svelte";
   import DeMetric from "../controls/DeMetric.svelte";
-  import ContentEditable from "../components/ContentEditable.svelte";
-  import EditColor from "../components/EditColor.svelte";
-  import { typeToImg, deltaMetrics } from "../constants";
+  import { deltaMetrics, ballSize } from "../constants";
 
   $: checks = $lintStore.currentChecks;
 
   $: colorNames = colors.map((x) => nameColor(x)[0]);
   $: colors = $colorStore.palettes[$colorStore.currentPal].colors;
   $: bg = $colorStore.palettes[$colorStore.currentPal].background;
-  $: selectedCVDType = $configStore.colorSim;
-  $: sim = (color: Color): string => cvdSim(selectedCVDType, color).toHex();
 
   $: colorsToIssues = colors.map((x) => {
     const hex = `${x.toHex()}`;
@@ -34,14 +29,12 @@
     );
   });
 
-  $: currentPal = $colorStore.palettes[$colorStore.currentPal];
-  $: evalConfig = currentPal.evalConfig;
   function computeStats(
     colors: Color[],
     metric: typeof $configStore.evalDeltaDisplay
   ) {
     // is contrast metric
-    if (!deltaMetricsSet.has(metric as any)) {
+    if (!new Set(deltaMetrics).has(metric as any)) {
       return colors.map((color) => {
         const clr = color.toColorIO();
         return clr.contrast(bg.toColorIO(), metric as any);
@@ -61,14 +54,7 @@
       ? []
       : computeStats(colors, $configStore.evalDeltaDisplay);
 
-  const ballSize = 25;
   $: focusedSet = new Set($focusStore.focusedColors);
-
-  $: colorSpace = currentPal.colorSpace;
-  const deltaMetricsSet = new Set(deltaMetrics);
-  $: statsTypeIsDelta = deltaMetricsSet.has(
-    $configStore.evalDeltaDisplay as any
-  );
 </script>
 
 <!-- left panel -->
@@ -81,88 +67,14 @@
     <!-- svelte-ignore a11y-no-static-element-interactions -->
     <div class="flex flex-col overflow-auto mr-5 px-4 h-full">
       {#each colors as color, idx}
-        <div
-          class="w-full flex justify-center items-center text-sm mt-2 transition-all relative"
-          class:ml-5={focusedSet.has(idx)}
-          class:mr-5={!focusedSet.has(idx)}
-          style="min-height: 40px"
-        >
-          <button
-            class="cursor-pointer"
-            on:click={(e) => {
-              focusStore.setColors(
-                dealWithFocusEvent(e, idx, $focusStore.focusedColors)
-              );
-            }}
-          >
-            <svg height="{ballSize * 2}px" width="{ballSize * 2}px">
-              <circle
-                r={ballSize}
-                fill={selectedCVDType !== "none" ? sim(color) : color.toHex()}
-                cx={ballSize}
-                cy={ballSize}
-              ></circle>
-            </svg>
-          </button>
-          <div class="flex justify-between w-full px-2 items-center z-10">
-            <span class="flex flex-col items-start">
-              <span class="flex max-w-5">
-                <ContentEditable
-                  onChange={(x) => {
-                    const updatedColors = [...colors];
-                    updatedColors[idx] = Color.colorFromString(x, colorSpace);
-                    colorStore.setCurrentPalColors(updatedColors);
-                  }}
-                  value={color.toHex()}
-                  useEditButton={true}
-                />
-              </span>
-              {#if colorNames[idx]}<span class="text-right text-xs">
-                  {colorNames[idx]}
-                </span>{/if}
-              {#if color.tags.length}
-                <span class="text-right text-xs">
-                  Tags: {color.tags.join(", ")}
-                </span>
-              {/if}
-            </span>
-            <div class="text-right">
-              {#if $configStore.showIssuesOnLeft}
-                {#if colorsToIssues[idx].length}
-                  <span>Issues</span>
-                {/if}
-                <span class="flex flex-wrap flex-row-reverse">
-                  {#each colorsToIssues[idx] as check}
-                    {#if !evalConfig[check.lintProgram.name]?.ignore}
-                      <EvalResponse
-                        lintResult={check}
-                        positionAlongRightEdge={false}
-                        customWord={typeToImg[check.lintProgram.group]}
-                        customWordIsImg={true}
-                      />
-                    {/if}
-                  {/each}
-                </span>
-              {/if}
-              {#if stats[idx] && !statsTypeIsDelta}
-                <div class=" text-black text-right text-xs whitespace-nowrap">
-                  Contrast: {Math.round(stats[idx])}
-                </div>
-              {/if}
-            </div>
-          </div>
-        </div>
-
-        {#if stats[idx] && statsTypeIsDelta}
-          <div class=" text-black text-right text-xs whitespace-nowrap">
-            dE: {Math.round(stats[idx])}
-          </div>
-        {/if}
-        {#if focusedSet.has(idx) && focusedSet.size === 1}
-          <div class="ml-6" id="">
-            <EditColor />
-          </div>
-        {/if}
+        <ColorBall
+          {color}
+          colorName={colorNames[idx]}
+          {colorsToIssues}
+          {idx}
+          isFocused={focusedSet.has(idx)}
+          {stats}
+        />
       {/each}
       <div class="flex mt-2">
         <svg height="{ballSize * 2}px" width="{ballSize * 3}px">

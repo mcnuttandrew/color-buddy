@@ -24,3 +24,4 @@ export const contrastMetrics = [
   "Lstar",
   "DeltaPhi",
 ] as const;
+export const ballSize = 25;

@@ -39,7 +39,7 @@
     </button>
   </div>
 </div>
-<div class="flex flex-col px-4 mt-10">
+<div class="flex flex-col px-4">
   <ColorScatterPlot
     scatterPlotMode={$configStore.scatterplotMode}
     colorSpace={currentPal.colorSpace}

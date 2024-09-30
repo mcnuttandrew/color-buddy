@@ -69,12 +69,20 @@
   >
     <div class="bg-stone-200 h-12 flex justify-between items-center px-4">
       <div class="font-bold">Add an Example</div>
-      <Nav
-        tabs={["svg", "vega (or vega-lite)"]}
-        isTabSelected={(x) => modalState === "input-svg" && x === "svg"}
-        selectTab={(x) =>
-          (modalState = x === "svg" ? "input-svg" : "input-vega")}
-      />
+      {#if modalState === "edit-colors"}
+        <div>
+          Detected colors: {detectedColors.length}
+        </div>
+      {:else}
+        <Nav
+          tabs={["svg", "vega (or vega-lite)"]}
+          isTabSelected={(x) =>
+            (modalState === "input-svg" && x === "svg") ||
+            (modalState === "input-vega" && x === "vega (or vega-lite)")}
+          selectTab={(x) =>
+            (modalState = x === "svg" ? "input-svg" : "input-vega")}
+        />
+      {/if}
     </div>
     <div class="h-full px-4" style="width: 700px;">
       <div>
@@ -103,7 +111,11 @@
         {#if modalState === "input-svg" || modalState === "input-vega"}
           Demos:
           {#each DEMOS.filter((demo) => {
-            return modalState === "input-svg" ? demo.type === "svg" : demo.type === "vega";
+            if (modalState === "input-svg") {
+              return demo.type === "svg";
+            } else {
+              return demo.type === "vega";
+            }
           }) as demo}
             <button
               class={buttonStyle}
@@ -198,9 +210,7 @@
         </div>
       {/if}
     </div>
-    <div class="px-4">
-      <div>Next Step</div>
-
+    <div class="px-4 bg-stone-100 py-4 flex justify-center">
       {#if modalState === "edit-colors"}
         <button
           class={buttonStyle}
@@ -223,7 +233,7 @@
             configStore.setNewExampleModalTarget("off");
           }}
         >
-          {typeof externalModalState === "number" ? "Update" : "Add"} Example
+          This looks good to me!
         </button>
         <button
           class={buttonStyle}
@@ -250,7 +260,7 @@
             detectedColors = detectColorsInSvgString(value);
           }}
         >
-          Mark Colors
+          This svg looks good to me!
         </button>
       {/if}
       {#if modalState === "input-vega" && !validJSON}

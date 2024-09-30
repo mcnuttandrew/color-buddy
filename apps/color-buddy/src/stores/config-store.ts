@@ -2,6 +2,7 @@ import { writable } from "svelte/store";
 import type { Palette } from "color-buddy-palette";
 import type { Engine } from "../lib/api-calls";
 import { colorPalToStringPal, stringPalToColorPal } from "../lib/utils";
+import { deltaMetrics, contrastMetrics } from "../constants";
 
 interface StoreData {
   channelPickerSpace: "lab" | "lch" | "hsl" | "hsv" | "rgb";
@@ -10,20 +11,25 @@ interface StoreData {
   compareBackground: string | undefined;
   compareBackgroundSpace: "lab" | "lch" | "hsl" | "hsv" | "rgb";
   comparePal: number | undefined | "tempPal";
+  compareDiff: "off" | "dots" | "dots-and-lines";
   compareSelectedExample: number;
   engine: Engine;
-  evalDeltaDisplay: "none" | "76" | "CMC" | "2000" | "ITP" | "Jz" | "OK";
-  evalDisplayMode: "regular" | "compact" | "lint-customization";
+  evalDeltaDisplay:
+    | (typeof deltaMetrics)[number]
+    | (typeof contrastMetrics)[number]
+    | "none";
+  evalDisplayMode: "regular" | "check-customization";
   exampleRoute: "svg" | "vega" | "swatches";
   includeQuotes: boolean;
-  leftRoute: "controls" | "colors";
   mainColumnSelectedExample: number;
   manageBrowsePreviewIdx: number;
-  route: "examples" | "compare" | "eval" | "manage";
+  newExampleModalTarget: "off" | number | "new";
+  route: "examples" | "compare" | "eval";
   scatterplotMode: "moving" | "putting";
   selectedFolder: { isPreMade: boolean; name: string };
   showColorBackground: "always show" | "show on drag" | "never show";
   showGamutMarkers: boolean;
+  showIssuesOnLeft: boolean;
   tempPal: Palette | undefined;
   tooltipXY?: [string, string];
   tour: boolean;
@@ -44,20 +50,22 @@ const InitialStore: StoreData = {
   compareBackground: undefined,
   compareBackgroundSpace: "lab",
   comparePal: undefined,
+  compareDiff: "off",
   compareSelectedExample: -1,
   engine: "openai",
   evalDeltaDisplay: "none",
   evalDisplayMode: "regular",
   exampleRoute: "vega",
   includeQuotes: false,
-  leftRoute: "controls",
   mainColumnSelectedExample: -1,
   manageBrowsePreviewIdx: -1,
+  newExampleModalTarget: "off",
   route: "examples",
   selectedFolder: { isPreMade: false, name: "" },
   scatterplotMode: "moving",
   showColorBackground: "show on drag",
   showGamutMarkers: true,
+  showIssuesOnLeft: true,
   tempPal: undefined,
   tooltipXY: undefined,
   tour: false,
@@ -147,14 +155,21 @@ function createStore() {
       persist((old) => ({ ...old, includeQuotes })),
     setZoom: (axis: "x" | "y" | "z", zoom: [number, number]) =>
       persist((old) => ({ ...old, [axis + "Zoom"]: zoom })),
+    unsetZoom: () =>
+      persist((old) => ({
+        ...old,
+        xZoom: [0, 1],
+        yZoom: [0, 1],
+        zZoom: [0, 1],
+      })),
     setEngine: (engine: StoreData["engine"]) =>
       persist((old) => ({ ...old, engine })),
     setShowColorBackground: (n: StoreData["showColorBackground"]) =>
       persist((old) => ({ ...old, showColorBackground: n })),
     setTooltipXY: (xy: StoreData["tooltipXY"]) =>
       persist((old) => ({ ...old, tooltipXY: xy })),
-    setLeftPanelRoute: (route: StoreData["leftRoute"]) =>
-      persist((old) => ({ ...old, leftRoute: route })),
+    setShowIssuesOnLeft: (n: StoreData["showIssuesOnLeft"]) =>
+      persist((old) => ({ ...old, showIssuesOnLeft: n })),
     setScatterplotMode: (n: StoreData["scatterplotMode"]) =>
       persist((old) => ({ ...old, scatterplotMode: n })),
     setShowGamutMarkers: (n: StoreData["showGamutMarkers"]) =>
@@ -181,6 +196,10 @@ function createStore() {
       persist((old) => ({ ...old, manageBrowsePreviewIdx: n })),
     setSelectedFolder: (n: StoreData["selectedFolder"]) =>
       persist((old) => ({ ...old, selectedFolder: n })),
+    setCompareDiff: (n: StoreData["compareDiff"]) =>
+      persist((old) => ({ ...old, compareDiff: n })),
+    setNewExampleModalTarget: (n: StoreData["newExampleModalTarget"]) =>
+      persist((old) => ({ ...old, newExampleModalTarget: n })),
   };
 }
 

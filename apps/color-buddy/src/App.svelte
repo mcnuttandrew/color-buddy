@@ -26,8 +26,8 @@
   }
 
   import Nav from "./components/Nav.svelte";
+  import NewPal from "./controls/NewPal.svelte";
 
-  import About from "./components/About.svelte";
   import LeftPanel from "./content-modules/LeftPanel.svelte";
   import Examples from "./example/Examples.svelte";
   import Eval from "./linting/Eval.svelte";
@@ -36,10 +36,8 @@
   import Manage from "./content-modules/Manage.svelte";
   import MainColumn from "./content-modules/MainColumn.svelte";
   import TourProvider from "./content-modules/TourProvider.svelte";
-
-  const palettesTabs = ["manage"];
-
-  const currentPalTabs = ["examples", "compare", "eval"];
+  import Config from "./controls/Config.svelte";
+  import Title from "./controls/Title.svelte";
 
   import { lint } from "./lib/api-calls";
   import { debounce } from "vega";
@@ -51,7 +49,7 @@
   let updateSearchDebounced = debounce(10, (x: [any, string]) => {
     const [pal, ignoreString] = x;
     // keep the noise down on the console
-    if ((route !== "eval" || evalRoute !== "lint-customization") && pal) {
+    if ((route !== "eval" || evalRoute !== "check-customization") && pal) {
       lintStore.setLoadState("loading");
 
       const outPal = {
@@ -76,63 +74,115 @@
   const padding = 40;
   const zWidth = 110;
   $: scatterSize = Math.max(Math.min(columnWidth - zWidth - padding, 420), 200);
+
+  const currentPalTabs = ["examples", "compare", "eval"];
 </script>
 
-<main class="flex h-full">
-  <LeftPanel />
-  <div class="h-full flex flex-col grow main-content">
-    <div class="bg-stone-800 flex justify-between items-center">
-      <div
-        class="flex"
-        style={`margin-left: ${scatterSize + zWidth + padding}px`}
-      >
-        {#each [{ tabs: palettesTabs, name: "Palettes" }, { tabs: currentPalTabs, name: "Current Palette" }] as { tabs, name }}
-          <div class="flex flex-col relative">
-            <div class="uppercase text-xs text-white absolute italic left-2">
-              {name}
-            </div>
-            <Nav
-              className="bg-stone-800 text-white h-12 items-center"
-              {tabs}
-              isTabSelected={(x) => $configStore.route === x}
-              selectTab={(x) => {
-                // @ts-ignore
-                configStore.setRoute(x);
-              }}
-            />
-          </div>
-        {/each}
-      </div>
-      <About />
+<header class="flex w-full bg-stone-800 justify-between min-h-12">
+  <div class="flex" id="top-controls">
+    <div class="text-4xl font-bold text-white px-2 py-1 flex">
+      <img src="logo.png" alt="logo" class="h-10 mr-2" />
+      <div class="">Color Buddy</div>
     </div>
-    <div class="flex w-full grow overflow-y-auto overflow-x-hidden">
-      <div class="flex flex-col">
-        {#if palPresent}
-          <MainColumn {scatterSize} />
-        {:else}
-          <div
-            class="flex-grow flex justify-center items-center"
-            style={`width: ${columnWidth}px`}
-          >
-            <div class="text-2xl max-w-md text-center">
-              No palettes present, click "New" in the upper left to create a new
-              one, or "Browse" to pick from existing ones.
-            </div>
+    <div>
+      <div class="flex h-12">
+        <NewPal />
+        <Manage />
+        <button
+          class={"text-white ml-2 mr-1"}
+          on:click={() => colorStore.undo()}
+        >
+          Undo
+        </button>
+        /
+        <button class={"text-white mr-2"} on:click={() => colorStore.redo()}>
+          Redo
+        </button>
+      </div>
+    </div>
+  </div>
+  <div class="flex justify-between items-center">
+    <Config />
+  </div>
+</header>
+<main class="flex h-full overflow-auto">
+  <!-- left and main panel -->
+  <div class="flex flex-col">
+    <!-- name -->
+    <Title />
+    <!-- main content -->
+    <div class="flex">
+      <!-- left -->
+      <LeftPanel />
+      <!-- main -->
+      <div
+        class="h-full flex flex-col grow main-content border-b border-l border-stone-200"
+      >
+        <div class="flex w-full grow overflow-y-auto overflow-x-hidden">
+          <div class="flex flex-col">
+            {#if palPresent}
+              <MainColumn {scatterSize} />
+            {:else}
+              <div
+                class="flex-grow flex justify-center items-center"
+                style={`width: ${columnWidth}px`}
+              >
+                <div class="text-2xl max-w-md text-center">
+                  No palettes present, click "New" in the upper left to create a
+                  new one, or "Browse" to pick from existing ones.
+                </div>
+              </div>
+            {/if}
           </div>
-        {/if}
+        </div>
       </div>
-
-      <div class="grow" id="right-col">
-        {#if palPresent && $configStore.route === "examples"}
-          <Examples />
-        {:else if palPresent && $configStore.route === "compare"}
-          <ComparePal {scatterSize} />
-        {:else if palPresent && $configStore.route === "eval"}
-          <Eval maxWidth={columnWidth} />
-        {:else if $configStore.route === "manage"}
-          <Manage />
-        {/if}
-      </div>
+    </div>
+  </div>
+  <!-- right col -->
+  <div
+    class="flex flex-col w-full border-b border-l border-stone-200 h-full"
+    id="right-col"
+  >
+    <div class="flex bg-stone-100 w-full border-b border-l border-stone-200">
+      <Nav
+        className=""
+        tabs={currentPalTabs}
+        isTabSelected={(x) => $configStore.route === x}
+        selectTab={(x) => {
+          // @ts-ignore
+          configStore.setRoute(x);
+        }}
+        formatter={(x) => {
+          if (x === "eval") {
+            return "Evaluation";
+          } else if (x === "compare") {
+            return "Comparison";
+          } else {
+            return "Examples";
+          }
+        }}
+      >
+        <div slot="menu" let:tab>
+          {#if tab === "eval"}
+            <div
+              class="bg-red-700 text-white rounded-full w-4 h-4 text-xs text-center flex items-center justify-center mx-1"
+            >
+              {$lintStore.currentChecks.filter(
+                (x) => x.kind === "success" && !x.passes
+              ).length}
+            </div>
+          {/if}
+        </div>
+      </Nav>
+    </div>
+    <div class="bg-stone-100 h-full">
+      {#if palPresent && $configStore.route === "examples"}
+        <Examples />
+      {:else if palPresent && $configStore.route === "compare"}
+        <ComparePal {scatterSize} />
+      {:else if palPresent && $configStore.route === "eval"}
+        <Eval />
+      {/if}
     </div>
   </div>
 </main>

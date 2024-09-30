@@ -89,7 +89,7 @@ const lints: LintProgram[] = keys.map((key) => {
   const s = key as keyof typeof sMap;
   const jnd = jndLabInterval(p, s);
   return {
-    name: `Color Distinctness: ${key} Size Objects`,
+    name: `Color distinctness: ${key.toLowerCase()}-sized objects`,
     program: JSONToPrettyString({
       // @ts-ignore
       $schema: schema,

@@ -1,7 +1,8 @@
 <script lang="ts">
   import type { Palette } from "color-buddy-palette";
 
-  import { buttonStyle } from "../lib/styles";
+  import DownChev from "virtual:icons/fa6-solid/angle-down";
+  import { buttonStyle, simpleTooltipRowStyle } from "../lib/styles";
   import exampleStore from "../stores/example-store";
   import Vega from "./Vega.svelte";
   import Example from "./Example.svelte";
@@ -17,6 +18,7 @@
     | { name: string; action: () => void; closeOnClick: boolean }
     | "break"
   )[];
+  export let targetBody: boolean = true;
   export let palette: Palette;
   export let previewIndex: number;
   export let titleClick: (() => void) | false;
@@ -30,26 +32,20 @@
       example.size = 250;
     }
   }
+  let renaming = false;
 </script>
 
 <div
   class="flex flex-col border-2 rounded w-min min-w-fit mr-4 mb-2 browse-card shrink self-start"
   style={`background: ${palette.background.toHex()}; min-height: ${minHeight}px;`}
+  class:border-stone-700={markAsCurrent}
+  class:border-t-8={markAsCurrent}
+  class:mt-2={!markAsCurrent}
 >
-  <div class="bg-stone-300 w-full flex justify-between p-1">
+  <div class="bg-white w-full flex justify-between p-1">
+    <!-- header -->
     <div class="flex">
-      {#if markAsCurrent}
-        <div class="mr-1 font-bold italic">Current:</div>
-      {/if}
-      {#if onRename}
-        <ContentEditable
-          value={title}
-          onChange={onRename}
-          limitWidth={true}
-          useEditButton={true}
-          onClick={() => titleClick && titleClick()}
-        />
-      {:else if titleClick}
+      {#if titleClick}
         <button class="mr-1 title" on:click={titleClick}>
           {title}
         </button>
@@ -60,17 +56,18 @@
       {/if}
     </div>
 
-    <Tooltip positionAlongRightEdge={true}>
-      <button slot="target" class={buttonStyle} let:toggle on:click={toggle}>
-        ⚙
+    <!-- controls -->
+    <Tooltip positionAlongRightEdge={true} {targetBody} top={0} bg="bg-white">
+      <button slot="target" let:toggle on:click={toggle}>
+        <DownChev />
       </button>
-      <div slot="content" class="flex flex-col items-start" let:onClick>
+      <div slot="content" class="flex flex-col items-start w-64" let:onClick>
         {#each operations as op}
           {#if op === "break"}
             <div class="border-b border-stone-300 w-full my-1"></div>
           {:else}
             <button
-              class={buttonStyle}
+              class={`${simpleTooltipRowStyle} whitespace-nowrap`}
               on:click={() => {
                 op.action();
                 if (op.closeOnClick) onClick();
@@ -80,10 +77,37 @@
             </button>
           {/if}
         {/each}
+        {#if onRename}
+          <button
+            class={`${simpleTooltipRowStyle} `}
+            on:click={() => (renaming = true)}
+          >
+            Rename
+          </button>
+          {#if renaming}
+            <input
+              value={title}
+              class={`${buttonStyle} w-full`}
+              on:change={(e) => {
+                onRename(e.currentTarget.value);
+                renaming = false;
+                onClick();
+              }}
+            />
+          {/if}
+        {/if}
       </div>
     </Tooltip>
   </div>
-  <div class="flex shrink justify-center items-center p-4">
+  <!-- body -->
+
+  <!-- svelte-ignore a11y-click-events-have-key-events -->
+  <!-- svelte-ignore a11y-no-static-element-interactions -->
+  <div
+    class="flex shrink justify-center items-center p-4"
+    class:cursor-pointer={titleClick}
+    on:click={() => titleClick && titleClick()}
+  >
     {#if previewIndex === -1}
       <PalPreview pal={palette} allowModification={false} />
     {:else if !example}
@@ -95,6 +119,7 @@
         <Example
           example={example.svg}
           size={example.size}
+          bgColor={palette.background.toHex()}
           {palette}
           {allowInteraction}
         />
@@ -102,6 +127,7 @@
       {#if example && example.vega}
         <Vega
           spec={example.vega}
+          bgColor={palette.background.toHex()}
           size={example.size}
           {palette}
           {allowInteraction}

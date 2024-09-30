@@ -1,10 +1,11 @@
 <script lang="ts">
-  import type { LintResult, LintProgram } from "color-buddy-palette-lint";
+  import type { LintResult } from "color-buddy-palette-lint";
+
+  import IgnoreIcon from "virtual:icons/fa6-solid/eye-slash";
 
   import colorStore from "../stores/color-store";
-  import configStore from "../stores/config-store";
 
-  import { buttonStyle } from "../lib/styles";
+  import { buttonStyle, simpleTooltipRowStyle } from "../lib/styles";
   import ExplanationViewer from "./ExplanationViewer.svelte";
   import EvalResponse from "./EvalResponse.svelte";
   export let lintResult: LintResult;
@@ -13,19 +14,17 @@
   $: currentPal = $colorStore.palettes[$colorStore.currentPal];
   $: evalConfig = currentPal.evalConfig;
   $: lintProgram = lintResult.lintProgram;
-  $: isCompact = $configStore.evalDisplayMode === "compact";
   $: ignoredColors = Object.entries(evalConfig)
     .filter(
       ([name, config]) =>
         (name.split("-?-")[1] || "").trim() === lintProgram.id && config.ignore
     )
     .map(([name]) => name.split("-?-")[0]);
+  $: showMessage = false;
 </script>
 
 {#if lintResult.kind === "ignored"}
-  <div class="text-xs flex">
-    Ignored "{lintProgram.name}"
-    <EvalResponse {lintResult} customWord={"⚙️"} />
+  <div class="text-xs flex items-center">
     <button
       class={buttonStyle}
       on:click={() => {
@@ -35,8 +34,10 @@
         });
       }}
     >
-      re-enable
+      <IgnoreIcon class="h-3 w-3" />
     </button>
+    {lintProgram.name}
+    <EvalResponse {lintResult} customWord={"⚙️"} />
   </div>
 {:else if lintResult.kind === "success"}
   {#if justSummary && lintResult}
@@ -60,14 +61,18 @@
             </div>
           {/if}
         {/if}
-        <div
+        <button
           class:font-bold={lintResult.kind === "success" && !lintResult.passes}
+          class:hover:bg-stone-300={lintResult.kind === "success"}
+          on:click={() => {
+            showMessage = !showMessage;
+          }}
         >
           {lintProgram.name}
-        </div>
+        </button>
         <EvalResponse {lintResult} />
       </div>
-      {#if ignoredColors.length > 0 && !isCompact}
+      {#if ignoredColors.length > 0}
         <div class="text-sm italic">
           Ignored colors for this lint:
           {#each ignoredColors as color}
@@ -87,8 +92,12 @@
           (click to re-enable)
         </div>
       {/if}
-      {#if lintResult.kind === "success" && !lintResult.passes && !isCompact}
-        <ExplanationViewer {lintResult} />
+      {#if lintResult.kind === "success" && showMessage}
+        {#if !lintResult.passes}
+          <ExplanationViewer {lintResult} />
+        {:else}
+          <div class="text-sm italic">{lintProgram.description}</div>
+        {/if}
       {/if}
     </div>
   {/if}

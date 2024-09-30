@@ -4,6 +4,7 @@
   import colorStore from "../stores/color-store";
   import focusStore from "../stores/focus-store";
   import { buttonStyle } from "../lib/styles";
+  import Tooltip from "../components/Tooltip.svelte";
   import PalPreview from "../components/PalPreview.svelte";
 
   $: currentPal = $colorStore.palettes[$colorStore.currentPal];
@@ -77,51 +78,58 @@
   ] as const;
 </script>
 
-{#if focusedColors.length >= 2}
-  <div class="w-full border-t-2 border-black my-2"></div>
-  <div class="font-bold">Interpolate</div>
-  <div class="">
-    <div class="flex justify-between">
-      <label for="color-space-select">Color Space</label>
-      <select id="color-space-select" bind:value={colorSpace}>
-        {#each interpolationSpecs as space}
-          <option value={space}>{space}</option>
-        {/each}
-      </select>
-    </div>
-    <div class="flex items-center justify-between">
-      <label class="whitespace-nowrap mr-2" for="interpolate-count">
-        Interpolation steps
-      </label>
-      <input
-        id="interpolate-count"
-        class="h-4 text-sm leading-6 w-16"
-        type="number"
-        min="1"
-        step="1"
-        bind:value={numPoints}
-      />
-    </div>
+{#if focusSet.size >= 2}
+  <Tooltip>
+    <div class="flex flex-col" slot="content">
+      <div class="flex justify-between">
+        <label for="color-space-select">Color Space</label>
+        <select id="color-space-select" bind:value={colorSpace}>
+          {#each interpolationSpecs as space}
+            <option value={space}>{space}</option>
+          {/each}
+        </select>
+      </div>
+      <div class="flex items-center justify-between">
+        <label class="whitespace-nowrap mr-2" for="interpolate-count">
+          Number of steps
+        </label>
+        <input
+          id="interpolate-count"
+          class="h-4 text-sm leading-6 w-16"
+          type="number"
+          min="1"
+          step="1"
+          bind:value={numPoints}
+        />
+      </div>
 
-    <div class="flex w-full justify-between items-baseline">
       <div>Preview</div>
-      <button
-        class="{buttonStyle} mt-5"
-        on:click={() => {
-          let newColors = [...colors].filter((_, idx) => !focusSet.has(idx));
-          const offset = newColors.length;
-          const newPoints = createInterpolation();
-          newColors = [...newColors, ...newPoints];
-          colorStore.setCurrentPalColors(newColors);
-          // also focus all of the new points
-          focusStore.setColors([...newPoints.map((_, idx) => offset + idx)]);
-        }}
-      >
-        Add points
-      </button>
+      {#if tempPal}
+        <PalPreview pal={tempPal} />
+      {/if}
+      <div class="w-full flex justify-end">
+        <button
+          class={buttonStyle}
+          on:click={() => {
+            let newColors = [...colors].filter((_, idx) => !focusSet.has(idx));
+            const offset = newColors.length;
+            const newPoints = createInterpolation();
+            newColors = [...newColors, ...newPoints];
+            colorStore.setCurrentPalColors(newColors);
+            // also focus all of the new points
+            focusStore.setColors([...newPoints.map((_, idx) => offset + idx)]);
+          }}
+        >
+          Add these colors
+        </button>
+      </div>
     </div>
-    {#if tempPal}
-      <PalPreview pal={tempPal} />
-    {/if}
-  </div>
+    <button slot="target" let:toggle on:click={toggle} class={buttonStyle}>
+      Interpolate
+    </button>
+  </Tooltip>
+{:else}
+  <button class={`${buttonStyle} cursor-not-allowed opacity-50`}>
+    Interpolate
+  </button>
 {/if}

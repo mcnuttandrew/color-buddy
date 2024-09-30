@@ -2,7 +2,7 @@
   // @ts-nocheck
   import Portal from "svelte-portal";
   import configStore from "../stores/config-store";
-  export let top: string = "2rem";
+  export let top: string | number = "2rem";
   export let onClose: () => void = () => {};
   export let initiallyOpen: boolean = false;
   export let positionAlongRightEdge: boolean = false;
@@ -10,11 +10,19 @@
   import { draggable } from "../lib/utils";
   export let customClass: string = "";
   export let buttonName: string = "";
+  export let targetBody: boolean = true;
+  export let bg: string = "bg-white";
   import { buttonStyle } from "../lib/styles";
   let tooltipOpen: boolean = initiallyOpen;
 
   const query = "main *";
   function onClick(e?: any) {
+    if (!targetBody) {
+      const tip = document.getElementById("tooltip");
+      if (tip && tip.contains(e.target)) {
+        return;
+      }
+    }
     e?.preventDefault();
     e?.stopPropagation();
 
@@ -48,12 +56,27 @@
       x.setAttribute("class", newClass);
     });
   }
+  function getLeftOffset(): number {
+    if (targetBody) {
+      return 0;
+    }
+    const dialog = document.querySelector("dialog");
+    if (!dialog) {
+      return 0;
+    }
+    return dialog.getBoundingClientRect().x;
+  }
+
+  $: leftOffset = tooltipOpen && getLeftOffset();
+
   $: topString = boundingBox
     ? top
       ? `calc(${boundingBox.y}px + ${top})`
       : `${boundingBox.y}px`
     : "0";
-  $: leftString = boundingBox ? `${boundingBox.x}px` : "0";
+  $: leftString = boundingBox
+    ? `${boundingBox.x - leftOffset}px`
+    : `${-leftOffset}`;
   $: {
     if (boundingBox.y + 500 > window.screen.height) {
       topString = `${window.screen.height - 500}px`;
@@ -69,13 +92,13 @@
 </script>
 
 {#if tooltipOpen && boundingBox}
-  <Portal target="body">
+  <Portal target={targetBody ? "body" : "dialog"}>
     <!-- svelte-ignore a11y-click-events-have-key-events -->
     <!-- svelte-ignore a11y-no-static-element-interactions -->
     <div
       class="absolute min-w-10"
       id="tooltip"
-      style={`left: ${leftString}; top: ${topString}; z-index: 1000`}
+      style={`left: ${leftString}; top: ${topString}; z-index: 1000;`}
       on:click|stopPropagation={(e) => {
         const id = e.target.id;
         if (id === "tooltip") {
@@ -90,7 +113,7 @@
         class:border-2={true}
       >
         <span
-          class="tooltip rounded shadow-lg p-4 bg-stone-100 text-black flex-wrap flex {customClass}"
+          class="tooltip rounded shadow-lg p-4 {bg} text-black flex-wrap flex {customClass}"
           class:p-4={true}
         >
           {#if allowDrag}
@@ -106,15 +129,14 @@
               }}
             ></div>
           {/if}
-          {#if tooltipOpen}
-            <slot name="content" {onClick} />
-          {/if}
+          <slot name="content" {onClick} />
         </span>
       </div>
     </div>
   </Portal>
 {/if}
-<div bind:this={target}>
+
+<div bind:this={target} class:text-cyan-800={tooltipOpen}>
   <slot name="target" {toggle} {tooltipOpen}>
     {#if buttonName}
       <button class={buttonStyle} on:click={toggle}>{buttonName}</button>

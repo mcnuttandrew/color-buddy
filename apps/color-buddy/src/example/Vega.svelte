@@ -7,6 +7,8 @@
   export let spec: any;
   export let size = 300;
   export let allowInteraction: boolean;
+  export let bgColor: string;
+  $: bg = bgColor || palette.background.toHex();
 
   let producedSVG: string = "";
   $: getSVG(spec, palette).then((x) => {
@@ -14,4 +16,10 @@
   });
 </script>
 
-<Example example={producedSVG} {size} {palette} {allowInteraction} />
+<Example
+  example={producedSVG}
+  {size}
+  {palette}
+  {allowInteraction}
+  bgColor={bg}
+/>

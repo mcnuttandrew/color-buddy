@@ -11,10 +11,10 @@
 
   function getNewName(): string {
     const lintNames = new Set($lintStore.lints.map((x) => x.name));
-    let name = "New Lint";
+    let name = "New Check";
     let i = 2;
     while (lintNames.has(name)) {
-      name = `New Lint ${i}`;
+      name = `New Check ${i}`;
       i++;
     }
     return name;
@@ -51,7 +51,7 @@
         setTimeout(() => {
           loadLints();
           lintPrompt = "";
-          configStore.setEvalDisplayMode("lint-customization");
+          configStore.setEvalDisplayMode("check-customization");
         }, 100);
 
         requestState = "loaded";
@@ -63,9 +63,9 @@
   }
 </script>
 
-<Tooltip positionAlongRightEdge={true}>
+<Tooltip targetBody={false}>
   <div slot="content" class="w-96">
-    <div>What would you like your lint to be able to do?</div>
+    <div>What would you like your check to be able to do?</div>
     <form on:submit|preventDefault={makeRequest} class="flex flex-col">
       <textarea
         bind:value={lintPrompt}
@@ -97,7 +97,7 @@
               failMessage: "",
               program: "true",
             });
-            configStore.setEvalDisplayMode("lint-customization");
+            configStore.setEvalDisplayMode("check-customization");
           }}
         >
           Just give me a blank one
@@ -113,6 +113,6 @@
       toggle();
     }}
   >
-    Create New Lint
+    Create New Check
   </button>
 </Tooltip>

@@ -2,6 +2,8 @@
   import { Color } from "color-buddy-palette";
   import configStore from "../stores/config-store";
   import { processBodyTextToColors } from "../lib/utils";
+  import Tooltip from "../components/Tooltip.svelte";
+  import Export from "virtual:icons/fa6-solid/file-export";
 
   let state: "idle" | "error" = "idle";
   export let onChange: (colors: Color[]) => void;
@@ -32,26 +34,15 @@
   $: includeQuotes = $configStore.includeQuotes;
 </script>
 
-<div class="mt-2">
-  <div class="flex justify-between w-full text-sm">
-    <label for="current-colors" class="italic">Current Colors</label>
-    <div class="flex items-center">
-      <label for="include-quotes" class="mr-2">Include quotes</label>
-      <input
-        type="checkbox"
-        id="include-quotes"
-        class="mr-2"
-        checked={includeQuotes}
-        on:change={() => configStore.setIncludeQuotes(!includeQuotes)}
-      />
-    </div>
-  </div>
+<div class="mt-2 w-full">
+  <!-- <label for="current-colors" class="text-xs">Current Colors</label> -->
+
   {#if state === "error"}
     <div class="text-red-500">Error parsing colors. {errorMsg}</div>
   {/if}
   <textarea
     id="current-colors"
-    class="w-full p-2 rounded border-2 text-sm"
+    class="w-full p-2 rounded border-2 text-sm font-mono"
     value={colors
       .map((color) => color.toHex())
       .map((x) => (includeQuotes ? `"${x}"` : x))
@@ -65,7 +56,28 @@
     }}
     on:change={(e) => processBodyInput(e.currentTarget.value)}
   />
+  <div class="flex justify-between w-full text-sm">
+    <div class="flex items-center">
+      <label for="include-quotes" class="mr-2">Include quotes</label>
+      <input
+        type="checkbox"
+        id="include-quotes"
+        class="mr-2"
+        checked={includeQuotes}
+        on:change={() => configStore.setIncludeQuotes(!includeQuotes)}
+      />
+    </div>
+  </div>
 </div>
+
+<!-- <button
+    slot="target"
+    class={"border border-stone-400 rounded mr-2 h-8 w-8 flex justify-center items-center"}
+    let:toggle
+    on:click={toggle}
+  >
+    <Export />
+  </button> -->
 
 <style>
   #current-colors {

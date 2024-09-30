@@ -18,7 +18,7 @@ const lint: LintProgram = {
       predicate: { "!=": { left: { name: "a" }, right: { name: "b" } } },
     },
   }),
-  name: "Color Name Discriminability",
+  name: "Color name discriminability",
   taskTypes: ["sequential", "categorical", "diverging"] as const,
   level: "error",
   group: "usability",

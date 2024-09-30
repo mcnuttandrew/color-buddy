@@ -4,77 +4,51 @@
   import configStore from "../stores/config-store";
 
   import { buttonStyle } from "../lib/styles";
-  import AdjustOrder from "../controls/AdjustOrder.svelte";
-  import Background from "../components/Background.svelte";
   import ColorScatterPlot from "../scatterplot/ColorScatterPlot.svelte";
   import ExampleAlaCart from "../example/ExampleAlaCarte.svelte";
-  import PalTypeConfig from "../controls/PalTypeConfig.svelte";
-  import Sort from "../controls/Sort.svelte";
-
-  import ModifySelection from "../controls/ModifySelection.svelte";
-  import PalPreview from "../components/PalPreview.svelte";
+  import ExampleAlaCarteHeader from "../example/ExampleAlaCarteHeader.svelte";
   import SetColorSpace from "../controls/SetColorSpace.svelte";
-  import { cvdSim } from "color-buddy-palette";
 
-  import ContentEditable from "../components/ContentEditable.svelte";
+  import SetSimulation from "../controls/SetSimulation.svelte";
+  import Zoom from "../controls/Zoom.svelte";
+  import Finger from "virtual:icons/fa6-solid/hand-pointer";
+
+  import Background from "../components/Background.svelte";
+  import DesignTooltip from "../controls/DesignTooltip.svelte";
+  import InterpolatePoints from "../controls/InterpolatePoints.svelte";
+
+  import { colorPickerConfig } from "../lib/utils";
+
+  import { cvdSim } from "color-buddy-palette";
 
   export let scatterSize = 450;
 
   $: currentPal = $colorStore.palettes[$colorStore.currentPal];
   $: selectedCVDType = $configStore.colorSim;
+  $: config = colorPickerConfig[currentPal.colorSpace];
 </script>
 
-<div class="flex flex-col h-full px-4">
-  <!-- naming stuff -->
-  <div class="flex font-bold justify-between">
-    <div class="flex">
-      <span class="italic">Current:</span>
-      <div class="flex">
-        <ContentEditable
-          onChange={(x) => colorStore.setCurrentPalName(x)}
-          value={currentPal.name}
-          useEditButton={true}
-        />
-      </div>
-    </div>
-    <PalTypeConfig />
-  </div>
-  <!-- tags -->
-  <div class="flex text-sm italic">
-    {#if currentPal.tags.length}
-      Tags:
-      {#each currentPal.tags as tag}
-        <div class="ml-2">{tag}</div>
-      {/each}
-    {:else}
-      <div>&nbsp;</div>
-    {/if}
-  </div>
-  <div class="flex">
-    <SetColorSpace
-      colorSpace={currentPal.colorSpace}
-      onChange={(space) => colorStore.setColorSpace(space)}
-    />
-    <Background
-      onSpaceChange={(space) => {
-        // @ts-ignore
-        configStore.setChannelPickerSpaceBackground(space);
-      }}
-      onChange={(bg) =>
-        colorStore.setBackground(bg.toColorSpace(currentPal.colorSpace))}
-      bg={currentPal.background}
-      colorSpace={$configStore.channelPickerSpaceBackground}
-    />
-  </div>
-  <div>
-    <button
-      class={`${buttonStyle} pl-0`}
-      on:click={() => configStore.setScatterplotMode("putting")}
-    >
-      Add color {#if $configStore.scatterplotMode === "putting"}(move mouse on
-        chart){/if}
-    </button>
-  </div>
+<div class="flex mb-2 w-full bg-stone-100 py-1 px-4 border-stone-200">
+  <SetColorSpace
+    colorSpace={currentPal.colorSpace}
+    onChange={(space) => {
+      colorStore.setColorSpace(space);
+      configStore.unsetZoom();
+    }}
+  />
+  <Background
+    onSpaceChange={(space) => {
+      // @ts-ignore
+      configStore.setChannelPickerSpaceBackground(space);
+    }}
+    onChange={(bg) =>
+      colorStore.setBackground(bg.toColorSpace(currentPal.colorSpace))}
+    bg={currentPal.background}
+    colorSpace={$configStore.channelPickerSpaceBackground}
+  />
+  <SetSimulation />
+</div>
+<div class="flex flex-col px-4">
   <ColorScatterPlot
     scatterPlotMode={$configStore.scatterplotMode}
     colorSpace={currentPal.colorSpace}
@@ -91,38 +65,50 @@
       ? []
       : currentPal.colors.map((x) => cvdSim(selectedCVDType, x))}
   />
-
-  <div
-    class="flex flex-wrap"
-    id="scatterplot-controls"
-    style={`max-width: ${scatterSize + 110}px;`}
-  >
-    <ModifySelection />
+  <div class="w-full justify-between flex">
+    <div class="flex justify-start text-gray-400 text-sm mb-2">
+      <input
+        class="mr-1"
+        on:change={(e) =>
+          configStore.setShowGamutMarkers(e.currentTarget.checked)}
+        type="checkbox"
+        checked={$configStore.showGamutMarkers}
+      />
+      <span>Mark out-of-gamut colors with ⨂</span>
+    </div>
+    <div class="flex items-center">
+      {#if !config.isPolar}
+        <Zoom />
+      {/if}
+      <button
+        class={`${buttonStyle} text-sm flex items-center justify-center `}
+        on:click={() => configStore.setScatterplotMode("putting")}
+      >
+        <Finger class="text-xs mr-1" />
+        {#if $configStore.scatterplotMode === "putting"}Adding{:else}Add color{/if}
+      </button>
+    </div>
   </div>
+</div>
+<div class="flex flex-col">
   <div
-    class="flex flex-wrap"
-    id="scatterplot-controls"
-    style={`max-width: ${scatterSize + 110}px;`}
+    class="bg-stone-100 py-2 px-4 border-t border-stone-200 flex items-end"
+    id="adjust-controls"
   >
-    <AdjustOrder />
-    <Sort />
-  </div>
-  <div class="flex flex-col pl-2" style={`max-width: ${scatterSize + 110}px;`}>
-    <!-- overview / preview -->
-    <PalPreview
-      allowModification={true}
-      highlightSelected={true}
-      pal={currentPal}
-      showTags={true}
-    />
-
-    <ExampleAlaCart
-      paletteIdx={$colorStore.currentPal}
+    <ExampleAlaCarteHeader
+      labelStyle={""}
       exampleIdx={$configStore.mainColumnSelectedExample}
       setExampleIdx={(idx) => configStore.setMainColumnSelectedExample(idx)}
-      allowModification={true}
-      bgColor={currentPal.background.toHex()}
       size={scatterSize}
     />
+    <DesignTooltip />
+    <InterpolatePoints />
   </div>
+  <ExampleAlaCart
+    paletteIdx={$colorStore.currentPal}
+    exampleIdx={$configStore.mainColumnSelectedExample}
+    allowModification={true}
+    bgColor={currentPal.background.toHex()}
+    size={scatterSize}
+  />
 </div>

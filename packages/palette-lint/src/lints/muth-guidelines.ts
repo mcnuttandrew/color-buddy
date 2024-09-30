@@ -54,7 +54,7 @@ const bgDeSaturated: LintProgram = {
 lints.push(bgDeSaturated);
 
 const avoidTetradic: LintProgram = {
-  name: `Avoid Tetradic Palettes`,
+  name: `Avoid tetradic palettes`,
   program: JSONToPrettyString({
     // @ts-ignore
     $schema: schema,

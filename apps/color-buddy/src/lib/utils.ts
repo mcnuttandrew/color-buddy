@@ -411,10 +411,11 @@ export const screenSpaceAvg = (colors: { x: number; y: number }[]) => {
 export const titleCase = (str: string) =>
   str
     .split(" ")
-    .map((x) => x[0].toUpperCase() + x.slice(1))
+    .map((x) => (x.at(0) || "").toUpperCase() + x.slice(1))
     .join(" ");
 
-const oxfordJoin = (arr: string[]) => {
+export const oxfordJoin = (arr: string[]) => {
+  if (arr.length === 0) return "";
   if (arr.length === 1) return arr[0];
   if (arr.length === 2) return arr.join(" and ");
   return arr.slice(0, -1).join(", ") + ", and " + arr.slice(-1);
@@ -538,4 +539,14 @@ export function colorPalToStringPal(pal: Palette): StringPalette {
       return { color: x.toString(), tags: x.tags };
     }),
   };
+}
+
+export function newVersionName(name: string, previousNames: string[]): string {
+  let newName = name;
+  let version = 2;
+  while (previousNames.includes(newName)) {
+    newName = `${name} v${version}`;
+    version++;
+  }
+  return newName;
 }

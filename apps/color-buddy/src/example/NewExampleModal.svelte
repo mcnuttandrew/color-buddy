@@ -6,15 +6,16 @@
     modifySVGForExampleStore,
   } from "../stores/example-store";
   import colorStore from "../stores/color-store";
+  import configStore from "../stores/config-store";
 
   import Modal from "../components/Modal.svelte";
   import { buttonStyle } from "../lib/styles";
   import MonacoEditor from "../components/MonacoEditor.svelte";
+  import Nav from "../components/Nav.svelte";
   let modalState: "closed" | "input-svg" | "input-vega" | "edit-colors" =
     "closed";
 
-  export let editTarget: null | number = null;
-  export let onClose: () => void;
+  $: externalModalState = $configStore.newExampleModalTarget;
   let value = "";
   $: currentPal = $colorStore.palettes[$colorStore.currentPal];
   $: colorSpace = currentPal?.colorSpace || "lab";
@@ -34,8 +35,8 @@
   }
 
   $: {
-    if (editTarget !== null) {
-      const example = $exampleStore.examples[editTarget] as any;
+    if (typeof externalModalState === "number") {
+      const example = $exampleStore.examples[externalModalState] as any;
       if (example.svg) {
         value = example.svg;
         modalState = "input-svg";
@@ -44,6 +45,9 @@
         value = example.vega;
         modalState = "input-vega";
       }
+    } else if (externalModalState === "new") {
+      modalState = "input-svg";
+      value = "";
     }
   }
 
@@ -54,30 +58,31 @@
   }
 </script>
 
-{#if modalState !== "closed"}
+{#if modalState !== "closed" && externalModalState !== "off"}
   <Modal
     showModal={true}
+    size="700px"
     closeModal={() => {
       modalState = "closed";
-      onClose();
+      configStore.setNewExampleModalTarget("off");
     }}
   >
     <div class="bg-stone-200 h-12 flex justify-between items-center px-4">
       <div class="font-bold">Add an Example</div>
-      <div>
-        {#each ["svg", "vega (or vega-lite)"] as mode}
-          <button
-            class={buttonStyle}
-            class:font-bold={(modalState === "input-svg" && mode === "svg") ||
-              (modalState === "input-vega" && mode === "vega (or vega-lite)")}
-            on:click={() => {
-              modalState = mode === "svg" ? "input-svg" : "input-vega";
-            }}
-          >
-            {mode}
-          </button>
-        {/each}
-      </div>
+      {#if modalState === "edit-colors"}
+        <div>
+          Detected colors: {detectedColors.length}
+        </div>
+      {:else}
+        <Nav
+          tabs={["svg", "vega (or vega-lite)"]}
+          isTabSelected={(x) =>
+            (modalState === "input-svg" && x === "svg") ||
+            (modalState === "input-vega" && x === "vega (or vega-lite)")}
+          selectTab={(x) =>
+            (modalState = x === "svg" ? "input-svg" : "input-vega")}
+        />
+      {/if}
     </div>
     <div class="h-full px-4" style="width: 700px;">
       <div>
@@ -106,7 +111,11 @@
         {#if modalState === "input-svg" || modalState === "input-vega"}
           Demos:
           {#each DEMOS.filter((demo) => {
-            return modalState === "input-svg" ? demo.type === "svg" : demo.type === "vega";
+            if (modalState === "input-svg") {
+              return demo.type === "svg";
+            } else {
+              return demo.type === "vega";
+            }
           }) as demo}
             <button
               class={buttonStyle}
@@ -201,9 +210,7 @@
         </div>
       {/if}
     </div>
-    <div class="px-4">
-      <div>Next Step</div>
-
+    <div class="px-4 bg-stone-100 py-4 flex justify-center">
       {#if modalState === "edit-colors"}
         <button
           class={buttonStyle}
@@ -215,17 +222,18 @@
               name: "Custom Example",
               size: 250,
             };
-            if (editTarget !== null) {
-              exampleStore.updateExample(example, editTarget);
+            if (typeof externalModalState === "number") {
+              exampleStore.updateExample(example, externalModalState);
             } else {
               exampleStore.addExample(example);
             }
             modalState = "closed";
             value = "";
-            onClose();
+
+            configStore.setNewExampleModalTarget("off");
           }}
         >
-          {editTarget !== null ? "Update" : "Add"} Example
+          This looks good to me!
         </button>
         <button
           class={buttonStyle}
@@ -252,7 +260,7 @@
             detectedColors = detectColorsInSvgString(value);
           }}
         >
-          Mark Colors
+          This svg looks good to me!
         </button>
       {/if}
       {#if modalState === "input-vega" && !validJSON}
@@ -263,23 +271,24 @@
           class={buttonStyle}
           on:click={() => {
             const example = { vega: value, name: "Custom Example", size: 300 };
-            if (editTarget !== null) {
-              exampleStore.updateExample(example, editTarget);
+            if (typeof externalModalState === "number") {
+              exampleStore.updateExample(example, externalModalState);
             } else {
               exampleStore.addExample(example);
             }
             modalState = "closed";
             value = "";
-            onClose();
+
+            configStore.setNewExampleModalTarget("off");
           }}
         >
-          {editTarget !== null ? "Update" : "Add"} Example
+          {typeof externalModalState === "number" ? "Update" : "Add"} Example
         </button>
       {/if}
     </div>
   </Modal>
 {/if}
-<button
+<!-- <button
   class={buttonStyle}
   on:click={() => {
     modalState = "input-svg";
@@ -287,4 +296,4 @@
   }}
 >
   Add New Example
-</button>
+</button> -->

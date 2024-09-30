@@ -5,13 +5,15 @@
   import Tooltip from "../components/Tooltip.svelte";
   import colorStore from "../stores/color-store";
   import { buttonStyle } from "../lib/styles";
+  import Nav from "../components/Nav.svelte";
+  import QuestionIcon from "virtual:icons/fa6-solid/circle-question";
+  import ChevDown from "virtual:icons/fa6-solid/chevron-down";
   const aiModes = [
     // "google",
     "openai",
     "anthropic",
-  ] as const;
+  ] as string[];
   $: showBg = $configStore.showColorBackground;
-  $: showOutOfGamut = $configStore.showGamutMarkers;
 
   const isMac = navigator.userAgent.indexOf("Mac OS X") !== -1;
   const metaKey = isMac ? "⌘" : "ctrl";
@@ -81,92 +83,73 @@
   >[0][];
 </script>
 
-<Tooltip>
-  <button class={buttonStyle} slot="target" let:toggle on:click={toggle}>
-    Config ⚙
+<Tooltip positionAlongRightEdge={true}>
+  <button
+    class={"text-white flex items-center mr-10"}
+    slot="target"
+    let:toggle
+    on:click={toggle}
+  >
+    <QuestionIcon />
+    <ChevDown class="ml-2" />
   </button>
-  <div slot="content">
-    <div class="flex mb-4">
-      <button
-        class={buttonStyle}
-        on:click={() => {
-          const pals = $colorStore.palettes.map((x) => {
-            const { colors, background, name, colorSpace, type } = x;
-            return {
-              background: background.toHex(),
-              colorSpace,
-              colors: colors.map((c) => c.toHex()),
-              name,
-              type,
-            };
-          });
-          const blob = new Blob([JSON.stringify(pals)], {
-            type: "application/json",
-          });
-
-          const url = window.URL.createObjectURL(blob);
-          const a = document.createElement("a");
-          a.style.display = "none";
-          a.href = url;
-
-          // the filename you want
-          a.download = "palettes-export.json";
-          document.body.appendChild(a);
-          a.click();
-          window.URL.revokeObjectURL(url);
-        }}
-      >
-        Export Palettes
-      </button>
+  <div slot="content" class="">
+    <!-- <div class="flex mb-4">
       <button class={buttonStyle} on:click={() => importPals()}>
         Import Palettes
       </button>
-      <button
-        class={buttonStyle}
-        on:click={() => {
-          colorStore.clearPalettes();
-        }}
+    </div> -->
+
+    <div class="font-bold">About</div>
+    <div class="text-sm my-2">
+      Color buddy is an application that helps you build excellent color
+      palettes. It was originally written at the
+
+      <a
+        class="underline text-cyan-800"
+        href="https://uwdata.github.io/"
+        target="_blank"
       >
-        Clear Palettes
-      </button>
+        UW IDL
+      </a>
+      and is now a product of the
+
+      <a
+        class="underline text-cyan-800"
+        href="https://www.sci.utah.edu/"
+        target="_blank"
+      >
+        Scientific Computing and Imaging Institute.
+      </a>
+      You can learn more about it at the{" "}
+      <a
+        class="underline text-cyan-800"
+        href="https://color-buddy-docs.netlify.app/"
+        target="_blank"
+      >
+        docs.
+      </a>
+      You can also find the source code on{" "}
+      <a
+        class="underline text-cyan-800"
+        href="      https://github.com/mcnuttandrew/color-buddy"
+        target="_blank"
+      >
+        GitHub.
+      </a>
+      If you have any feedback or questions, please feel free to reach out via the
+      github issues page or via email. A small amount of non-identifiable usage data
+      is collected to help improve the application.
     </div>
-    <div class="font-bold">Configurations</div>
-    <div>Pick AI Provider</div>
+
     <div>
-      {#each aiModes as ai}
-        <button
-          class={buttonStyle}
-          class:font-bold={ai === $configStore.engine}
-          on:click={() => configStore.setEngine(ai)}
-        >
-          {ai}
-        </button>
-      {/each}
+      <button class={buttonStyle} on:click={() => configStore.setTour(true)}>
+        Show Tour
+      </button>
     </div>
-    <div>Color Space in Background</div>
-    {#each showTypes as show}
-      <button
-        class={buttonStyle}
-        class:font-bold={show === showBg}
-        on:click={() => configStore.setShowColorBackground(show)}
-      >
-        {show}
-      </button>
-    {/each}
-    <div>Show Out of Gamut Marker</div>
-    {#each ["show", "hide"] as show}
-      <button
-        class={buttonStyle}
-        class:font-bold={(show === "show" && showOutOfGamut) ||
-          (show == "hide" && !showOutOfGamut)}
-        on:click={() => configStore.setShowGamutMarkers(show === "show")}
-      >
-        {show}
-      </button>
-    {/each}
 
     <div class="font-bold mt-4">Short cuts</div>
-    <div>
+    <div class="text-sm">
       {#each shortCuts as { name, shortcut }}
         <div class="flex justify-between">
           <div class="mr-4">{name}</div>
@@ -174,5 +157,23 @@
         </div>
       {/each}
     </div>
+
+    <div class="font-bold mt-4">Configurations</div>
+    <div class="mt-2">AI Provider</div>
+
+    <Nav
+      tabs={aiModes}
+      className="text-sm"
+      isTabSelected={(x) => x === $configStore.engine}
+      selectTab={(x) => configStore.setEngine(x)}
+    />
+
+    <div class="mt-2">Color Space in Background</div>
+    <Nav
+      tabs={showTypes}
+      className="text-sm"
+      isTabSelected={(x) => x === showBg}
+      selectTab={(x) => configStore.setShowColorBackground(x)}
+    />
   </div>
 </Tooltip>

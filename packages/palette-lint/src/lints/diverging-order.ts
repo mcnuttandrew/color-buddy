@@ -16,7 +16,7 @@ function isDiverging(colors: Color[]): boolean {
 }
 
 const DivergingOrder: LintProgram = {
-  name: "Diverging Palettes order",
+  name: "Diverging palettes order appropriate",
   taskTypes: ["diverging"],
   group: "usability",
   requiredTags: [],

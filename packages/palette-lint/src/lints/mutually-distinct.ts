@@ -19,7 +19,7 @@ const lint: LintProgram = {
       },
     },
   }),
-  name: "Mutually Distinct",
+  name: "Mutually distinct",
   taskTypes: ["categorical"] as const,
   group: "usability",
   level: "error",

@@ -5,7 +5,7 @@ import type { LintFixer } from "../linter-tools/lint-fixer";
 import { schema } from "../constants";
 
 const lint: LintProgram = {
-  name: "In Gamut",
+  name: "In gamut",
   program: JSONToPrettyString({
     // @ts-ignore
     $schema: schema,

@@ -25,7 +25,7 @@
       {placeholder}
       bind:value
       type="text"
-      class="indent-2 text-sm leading-6"
+      class="indent-2 text-sm leading-6 border"
       on:blur={() => {
         setTimeout(() => {
           currentOptions = [];
@@ -68,7 +68,6 @@
         }
       }}
     />
-    <button class={buttonStyle}>Search</button>
   </form>
   {#if currentOptions.length > 0}
     <div class="absolute z-10">

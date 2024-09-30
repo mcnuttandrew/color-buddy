@@ -622,10 +622,6 @@
     </div>
   </div>
 </div>
-<div class="flex justify-start text-gray-400 text-sm">
-  {#if $configStore.showGamutMarkers}
-    ⨂indicates out of gamut value{:else}&nbsp;{/if}
-</div>
 
 <style>
   circle {

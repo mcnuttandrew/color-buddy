@@ -6,19 +6,21 @@
 //   "text-sm h-5 px-2 transition-colors duration-150 border rounded-lg border-0 text-white mr-2 whitespace-nowrap";
 // export const buttonStyle = `${baseButtonStyle} bg-stone-600`;
 
+// const baseButtonStyle =
+//   "text-sm h-5 px-2 transition-colors duration-150 border  mr-2 whitespace-nowrap border-0 font-bold opacity-50 hover:opacity-100";
 const baseButtonStyle =
-  "text-sm h-5 px-2 transition-colors duration-150 border  mr-2 whitespace-nowrap border-0 font-bold opacity-50 hover:opacity-100";
+  "px-2 rounded-md  border border-stone-300 bg-white  mr-2 whitespace-nowrap bg-stone-200 hover:opacity-50 transition-opacity duration-150";
 export const buttonStyle = `${baseButtonStyle}`;
 
-export const buttonStyleSelected = `${baseButtonStyle} font-bold bg-stone-600 text-white`;
-
-export const buttonStyleDisabled = `${baseButtonStyle} bg-stone-300 text-stone-500 cursor-not-allowed`;
-
-// export const AIButtonStyle = `${baseButtonStyle} bg-amber-900`;
-
-export const AIButtonStyle = `${baseButtonStyle} `;
+export const linkStyle = "text-cyan-800";
 
 export const denseButtonStyle = buttonStyle
   .replace("p-2", "p-1")
   .replace("px-2", "p-0")
   .replace("mr-2", "mr-0");
+
+export const simpleTooltipRowStyle =
+  "text-left px-2 hover:bg-stone-300 cursor-pointer";
+
+export const controlButtonStyle =
+  "border border-stone-400 rounded mr-2 h-8 w-8 flex justify-center items-center";

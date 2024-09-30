@@ -1,87 +1,117 @@
 <script lang="ts">
+  import { nameColor } from "color-buddy-color-namer";
+  import { cvdSim } from "color-buddy-palette";
+  import { Color } from "color-buddy-palette";
+
   import colorStore from "../stores/color-store";
+  import focusStore from "../stores/focus-store";
   import configStore from "../stores/config-store";
+  import lintStore from "../stores/lint-store";
+  import ColorBall from "../components/ColorBall.svelte";
 
-  import Nav from "../components/Nav.svelte";
-  import NewPal from "../controls/NewPal.svelte";
-  import EvalColorColumn from "../linting/EvalColorColumn.svelte";
-  import SetSimulation from "../controls/SetSimulation.svelte";
-  import VersionPalette from "../controls/VersionPalette.svelte";
-  import Zoom from "../controls/Zoom.svelte";
+  import ModifySelection from "../controls/ModifySelection.svelte";
+  import Sort from "../controls/Sort.svelte";
+  import AddColor from "../controls/AddColor.svelte";
+  import DeMetric from "../controls/DeMetric.svelte";
+  import GetColorsFromString from "../controls/GetColorsFromString.svelte";
 
-  import Config from "../controls/Config.svelte";
-  import Controls from "./Controls.svelte";
-  import { denseButtonStyle, buttonStyle } from "../lib/styles";
+  import { deltaMetrics, ballSize } from "../constants";
 
+  $: checks = $lintStore.currentChecks;
+
+  $: colorNames = colors.map((x) => nameColor(x)[0]);
   $: currentPal = $colorStore.palettes[$colorStore.currentPal];
-  $: leftPanelTabs = ["controls", "colors"];
+  $: colors = currentPal.colors;
+  $: bg = currentPal.background;
 
-  $: {
-    if (!new Set(["controls", "colors"]).has($configStore.leftRoute)) {
-      configStore.setLeftPanelRoute("controls");
+  $: colorsToIssues = colors.map((x) => {
+    const hex = `${x.toHex()}`;
+    return checks.filter(
+      (check) =>
+        check.kind === "success" && !check.passes && check.message.includes(hex)
+    );
+  });
+
+  function computeStats(
+    colors: Color[],
+    metric: typeof $configStore.evalDeltaDisplay
+  ) {
+    // is contrast metric
+    if (!new Set(deltaMetrics).has(metric as any)) {
+      return colors.map((color) => {
+        const clr = color.toColorIO();
+        return clr.contrast(bg.toColorIO(), metric as any);
+      });
     }
+    // is delta metric
+    const deltas = [];
+    for (let i = 1; i < colors.length; i++) {
+      const left = colors[i - 1];
+      const right = colors[i];
+      deltas.push(left.symmetricDeltaE(right, metric as any));
+    }
+    return deltas;
   }
+  $: stats =
+    $configStore.evalDeltaDisplay === "none"
+      ? []
+      : computeStats(colors, $configStore.evalDeltaDisplay);
+
+  $: focusedSet = new Set($focusStore.focusedColors);
 </script>
 
 <!-- left panel -->
-<div class="bg-stone-200 w-80 container flex flex-col h-full flex-none">
-  <div class="text-4xl font-bold bg-stone-800 text-white px-2 py-1 flex">
-    <img src="logo.png" alt="logo" class="h-10 mr-2" />
-    <div class="">Color Buddy</div>
-  </div>
-  <section class="flex flex-col flex-none" id="top-controls">
-    <div class="flex w-full justify-between items-start">
-      <div class="flex ml-2">
-        <NewPal />
-      </div>
-      <VersionPalette />
-      <div class="flex mr-2">
-        <button
-          class={`${denseButtonStyle} p-0 mt-0.5`}
-          on:click={() => colorStore.undo()}
-        >
-          Undo
-        </button>
-        /
-        <button
-          class={`${denseButtonStyle} p-0 mt-0.5`}
-          on:click={() => colorStore.redo()}
-        >
-          Redo
-        </button>
-      </div>
-    </div>
-    <div class="flex w-full justify-between items-start flex-wrap">
-      <Zoom />
-      <div>
-        <button class={buttonStyle} on:click={() => configStore.setTour(true)}>
-          Tour
-        </button>
-      </div>
-      <Config />
-      <SetSimulation />
-    </div>
-    <div class="flex justify-center z-50"></div>
-  </section>
-
+<div class="bg-white w-80 container flex flex-col h-full flex-none">
   <section class="flex flex-col flex-1 overflow-auto p-1" id="left-panel">
-    <div class="flex justify-center items-center">
-      <Nav
-        tabs={leftPanelTabs}
-        isTabSelected={(x) => x === $configStore.leftRoute}
-        selectTab={(x) => {
-          //@ts-ignore
-          configStore.setLeftPanelRoute(x);
-        }}
+    <div class="flex px-4">
+      <ModifySelection />
+    </div>
+    <!-- svelte-ignore a11y-click-events-have-key-events -->
+    <!-- svelte-ignore a11y-no-static-element-interactions -->
+    <div class="flex flex-col overflow-auto mr-5 px-4 h-full">
+      {#each colors as color, idx}
+        <ColorBall
+          {color}
+          colorName={colorNames[idx]}
+          {colorsToIssues}
+          {idx}
+          isFocused={focusedSet.has(idx)}
+          {stats}
+        />
+      {/each}
+      <div class="flex mt-2">
+        <svg height="{ballSize * 2}px" width="{ballSize * 3}px">
+          <circle
+            r={ballSize}
+            fill={"white"}
+            stroke={"black"}
+            stroke-dasharray="5,5"
+            cx={ballSize}
+            cy={ballSize}
+          ></circle>
+        </svg>
+        <AddColor />
+      </div>
+
+      <div class="flex items-center mt-2">
+        <DeMetric />
+        <Sort />
+        <label>
+          Show Issues <input
+            class="ml-1"
+            on:change={(e) =>
+              configStore.setShowIssuesOnLeft(e.currentTarget.checked)}
+            type="checkbox"
+            checked={$configStore.showIssuesOnLeft}
+          />
+        </label>
+      </div>
+      <GetColorsFromString
+        onChange={(colors) => colorStore.setCurrentPalColors(colors)}
+        colorSpace={currentPal.colorSpace}
+        colors={currentPal.colors}
       />
     </div>
-    <div class="w-full border-t-2 border-black my-2"></div>
-    {#if $configStore.leftRoute === "controls" && currentPal}
-      <Controls />
-    {/if}
-    {#if $configStore.leftRoute === "colors" && currentPal}
-      <EvalColorColumn />
-    {/if}
   </section>
 </div>
 

@@ -4,15 +4,18 @@
   import configStore from "../stores/config-store";
   import focusStore from "../stores/focus-store";
   import examplePalStore from "../stores/example-palette-store";
+  import Nav from "../components/Nav.svelte";
+  import PalPreview from "../components/PalPreview.svelte";
+
+  import ChevDown from "virtual:icons/fa6-solid/angle-down";
 
   import Background from "../components/Background.svelte";
   import ColorScatterPlot from "../scatterplot/ColorScatterPlot.svelte";
   import ExampleAlaCart from "../example/ExampleAlaCarte.svelte";
-  import MiniPalPreview from "../components/MiniPalPreview.svelte";
-  import PalPreview from "../components/PalPreview.svelte";
+  import ExampleAlaCarteHeader from "../example/ExampleAlaCarteHeader.svelte";
   import Tooltip from "../components/Tooltip.svelte";
 
-  import { buttonStyle } from "../lib/styles";
+  import { buttonStyle, simpleTooltipRowStyle } from "../lib/styles";
 
   import SetColorSpace from "../controls/SetColorSpace.svelte";
 
@@ -34,7 +37,13 @@
     ComparisonPal?.background.toHex() ||
     "white";
 
-  let showDiff = false;
+  const diffOptions = ["off", "dots", "dots-and-lines"] as const;
+  const diffToLabel = {
+    off: "Off",
+    dots: "Dots",
+    "dots-and-lines": "Dots and Lines",
+  };
+  $: showDiff = $configStore.compareDiff || "off";
 
   let colorSpace = ComparisonPal?.colorSpace || "lab";
   $: selectedFolder = $configStore.selectedFolder;
@@ -46,110 +55,96 @@
   ).sort((a, b) => a.length - b.length);
 
   $: selectedPals = selectedFolder.isPreMade
-    ? familiarPals
-    : $colorStore.palettes.filter((x) => x.folder === selectedFolder.name);
+    ? $examplePalStore.palettes.map((x) => x.palette)
+    : $colorStore.palettes;
 </script>
 
-<div class="w-full border-l-8 border-stone-200 h-full">
-  <!-- header -->
-  <div class="w-full bg-stone-200 px-6 flex flex-col">
-    <div class="font-bold italic">
-      {#if ComparisonPal !== undefined}
-        Compare: {ComparisonPal.name}
-      {:else}
-        No Palette Selected
-      {/if}
-    </div>
-    <div class="flex">
+<div class="w-full h-full bg-stone-100">
+  <!-- main -->
+  <div class="flex flex-wrap w-full py-2 px-2 mt-8 mb-1">
+    <div class="flex flex-col mr-2">
+      <div class="text-xs">Compare Palette</div>
       <Tooltip>
         <button
-          class={`${buttonStyle} pl-0`}
+          class={`${buttonStyle} `}
           slot="target"
           let:toggle
           on:click={toggle}
         >
-          Change Compared Palette
+          {#if ComparisonPal !== undefined}
+            {ComparisonPal.name}
+          {:else}
+            No Palette Selected
+          {/if}
         </button>
-        <div class="flex flex-col w-80" slot="content">
+        <div
+          class="flex flex-col max-w-md max-h-96 overflow-y-auto"
+          slot="content"
+        >
           <div class="text-sm">Premade:</div>
-          <div class="flex">
-            {#each ["sequential", "categorical", "diverging"] as folder}
-              <button
-                class={buttonStyle}
-                on:click={() => {
-                  configStore.setSelectedFolder({
-                    isPreMade: true,
-                    name: folder,
-                  });
-                }}
-                class:underline={selectedFolder?.isPreMade &&
-                  selectedFolder?.name === folder}
-              >
-                {folder}/
-              </button>
-            {/each}
-          </div>
+          <Nav
+            className=""
+            tabs={["sequential", "categorical", "diverging"]}
+            isTabSelected={(x) =>
+              selectedFolder?.isPreMade && selectedFolder?.name === x}
+            selectTab={(x) => {
+              configStore.setSelectedFolder({
+                isPreMade: true,
+                name: x,
+              });
+            }}
+          />
+
           <div class="text-sm">Your folders:</div>
-          <div class="flex flex-wrap">
-            {#each folders as folder}
-              <button
-                class={buttonStyle}
-                on:click={() =>
-                  configStore.setSelectedFolder({
-                    isPreMade: false,
-                    name: folder,
-                  })}
-                class:underline={selectedFolder?.isPreMade === false &&
-                  selectedFolder?.name === folder}
-              >
-                {folder}/
-              </button>
-            {/each}
-          </div>
+          <Nav
+            className=""
+            tabs={folders}
+            isTabSelected={(x) =>
+              selectedFolder?.isPreMade === false && selectedFolder?.name === x}
+            selectTab={(x) => {
+              configStore.setSelectedFolder({
+                isPreMade: false,
+                name: x,
+              });
+            }}
+            formatter={(x) => (x.length ? `${x}` : "Home")}
+          />
 
           <div class="flex flex-wrap mt-4">
             {#each selectedPals as pal, idx (idx)}
-              <MiniPalPreview
-                {pal}
-                className={compareIdx === idx ? "border-2 border-black" : ""}
-                onClick={() =>
-                  configStore.setComparePal(
-                    selectedFolder.isPreMade ? pal : idx
-                  )}
-              />
+              {#if (selectedFolder.isPreMade && pal.type === selectedFolder.name) || (!selectedFolder.isPreMade && pal.folder === selectedFolder.name)}
+                <button
+                  class="flex flex-col items-start cursor-pointer border-2 p-1 rounded"
+                  class:border-black={selectedFolder.isPreMade
+                    ? pal.name === ComparisonPal?.name
+                    : compareIdx === idx}
+                  class:border-white={selectedFolder.isPreMade
+                    ? pal.name !== ComparisonPal?.name
+                    : compareIdx !== idx}
+                  on:click={() =>
+                    configStore.setComparePal(
+                      selectedFolder.isPreMade ? pal : idx
+                    )}
+                >
+                  <span class="text-xs">{pal.name}</span>
+                  <PalPreview {pal} />
+                </button>
+              {/if}
             {/each}
           </div>
         </div>
       </Tooltip>
-      <div>
-        <button class={buttonStyle} on:click={() => (showDiff = !showDiff)}>
-          {#if showDiff}Hide{:else}Show{/if} diff
-        </button>
-        {#if compareIdx === "tempPal" && ComparisonPal}
-          <button
-            class={buttonStyle}
-            on:click={() => {
-              configStore.setComparePal(currentPalIdx);
-              colorStore.createNewPal(ComparisonPal);
-            }}
-          >
-            Modify this palette
-          </button>
-        {/if}
-      </div>
     </div>
-  </div>
-  <!-- main -->
-  <div class="px-6">
     {#if ComparisonPal !== undefined}
-      <!-- keep even with the tags line -->
-      <div class="flex flex-wrap w-full">
+      <div class="mr-2">
         <SetColorSpace
           {colorSpace}
           onChange={(space) => {
             colorSpace = space;
           }}
         />
+      </div>
+      <div class="mr-2">
         <Background
           onChange={(background) => {
             bg = background.toHex();
@@ -163,51 +158,40 @@
           colorSpace={$configStore.compareBackgroundSpace}
         />
       </div>
-      <div>&nbsp;</div>
-
-      <ColorScatterPlot
-        scatterPlotMode="looking"
-        Pal={{
-          ...ComparisonPal,
-          background: Color.colorFromHex(bg, colorSpace),
-          colorSpace,
-        }}
-        {colorSpace}
-        focusedColors={currentPalIdx === compareIdx ? focused : []}
-        height={scatterSize}
-        width={scatterSize}
-        onColorsChange={() => {}}
-        onFocusedColorsChange={() => {}}
-        startDragging={() => {}}
-        stopDragging={() => {}}
-        annotationColors={(showDiff
-          ? currentPal.colors.map((x) => x.toColorSpace(colorSpace))
-          : []
-        ).slice(
-          0,
-          Math.min(ComparisonPal.colors.length, currentPal.colors.length)
-        )}
-      />
+    {/if}
+  </div>
+  <div class="px-6">
+    {#if ComparisonPal !== undefined}
+      <div style={`max-width: ${scatterSize + 110}px`}>
+        <ColorScatterPlot
+          scatterPlotMode="looking"
+          Pal={{
+            ...ComparisonPal,
+            background: Color.colorFromHex(bg, colorSpace),
+            colorSpace,
+          }}
+          {colorSpace}
+          focusedColors={currentPalIdx === compareIdx ? focused : []}
+          height={scatterSize}
+          width={scatterSize}
+          onColorsChange={() => {}}
+          onFocusedColorsChange={() => {}}
+          startDragging={() => {}}
+          stopDragging={() => {}}
+          showLines={showDiff === "dots-and-lines"}
+          annotationColors={(showDiff !== "off"
+            ? currentPal.colors.map((x) => x.toColorSpace(colorSpace))
+            : []
+          ).slice(
+            0,
+            Math.min(ComparisonPal.colors.length, currentPal.colors.length)
+          )}
+        />
+      </div>
     {:else}
       <div class="empty-pal-holder flex justify-center items-center">
         Select a palette to compare to. You can do this by clicking the button
         below
-      </div>
-    {/if}
-    <div>&nbsp;</div>
-    {#if ComparisonPal !== undefined}
-      <div
-        class="flex flex-col pl-2"
-        style={`max-width: ${scatterSize + 110}px;`}
-      >
-        <PalPreview
-          highlightSelected={false}
-          pal={{
-            ...ComparisonPal,
-            background: Color.colorFromHex(bg, colorSpace),
-          }}
-          allowModification={false}
-        />
       </div>
     {/if}
 
@@ -216,10 +200,67 @@
         class="flex justify-center-center flex-col"
         style={`max-width: ${scatterSize + 110}px`}
       >
+        <div class="flex py-2 items-end">
+          <ExampleAlaCarteHeader
+            exampleIdx={$configStore.compareSelectedExample}
+            setExampleIdx={(idx) => configStore.setCompareSelectedExample(idx)}
+            size={scatterSize}
+          />
+          <div>
+            {#if compareIdx === "tempPal" && ComparisonPal}
+              <button
+                class={buttonStyle}
+                on:click={() => {
+                  configStore.setComparePal(currentPalIdx);
+                  colorStore.createNewPal(ComparisonPal);
+                }}
+              >
+                Modify this palette
+              </button>
+            {/if}
+            {#if compareIdx !== "tempPal" && ComparisonPal && compareIdx !== undefined}
+              <button
+                class={buttonStyle}
+                on:click={() => {
+                  colorStore.startUsingPal(compareIdx);
+                }}
+              >
+                Modify this palette
+              </button>
+            {/if}
+          </div>
+          <div class="flex flex-col">
+            <div class="text-xs">Diff</div>
+            <div class="flex">
+              <Tooltip positionAlongRightEdge={true}>
+                <div slot="content" class="flex flex-col">
+                  {#each diffOptions as diff}
+                    <button
+                      class={simpleTooltipRowStyle}
+                      on:click={() => configStore.setCompareDiff(diff)}
+                      class:font-bold={showDiff === diff}
+                    >
+                      {diffToLabel[diff]}
+                    </button>
+                  {/each}
+                </div>
+                <button
+                  slot="target"
+                  let:toggle
+                  class={`${buttonStyle} flex items-center`}
+                  on:click={toggle}
+                >
+                  {diffToLabel[showDiff]}
+
+                  <ChevDown class="text-sm ml-2" />
+                </button>
+              </Tooltip>
+            </div>
+          </div>
+        </div>
         <ExampleAlaCart
           paletteIdx={compareIdx}
           exampleIdx={$configStore.compareSelectedExample}
-          setExampleIdx={(idx) => configStore.setCompareSelectedExample(idx)}
           allowModification={false}
           bgColor={bg}
           size={scatterSize}

@@ -3,6 +3,8 @@
   import type { Palette } from "color-buddy-palette";
   import { suggestLintFix } from "color-buddy-palette-lint";
   import { suggestLintAIFix, suggestLintMonteFix } from "../lib/lint-fixer";
+  import InfoIcon from "virtual:icons/fa6-solid/circle-info";
+  import FixIcon from "virtual:icons/fa6-solid/hammer";
 
   import { logEvent } from "../lib/api-calls";
 
@@ -19,16 +21,17 @@
   let requestState: "idle" | "loading" | "loaded" | "failed" = "idle";
   export let lintResult: LintResult;
   export let customWord: string = "";
+  export let customWordIsImg: boolean = false;
   export let positionAlongRightEdge: boolean = true;
 
   $: palette = $colorStore.palettes[$colorStore.currentPal];
   $: engine = $configStore.engine;
-  $: suggestions = [] as { pal: Palette; label: string }[];
+  type FixSuggestion = { pal: Palette; label: string; fixesIssue: boolean };
+  $: suggestions = [] as FixSuggestion[];
   $: colorSpace = palette.colorSpace;
   $: lintProgram = lintResult.lintProgram;
 
   function proposeFix(fixType: "ai" | "monte" | "heuristic", label: string) {
-    requestState = "loading";
     let hasRetried = false;
     const getFix = () => {
       let fix;
@@ -39,22 +42,25 @@
       } else {
         fix = suggestLintFix(palette, lintResult);
       }
-      return fix.then((x) => {
-        suggestions = [...suggestions, ...x.map((pal) => ({ pal, label }))];
-        requestState = "loaded";
-        logEvent(
-          "lint-fix",
-          {
-            fixType,
-            errorName: lintProgram.name,
-            lintProgram: lintProgram.program,
-            palette: palette.colors.map((x) => x.toDisplay()),
-            background: palette.background.toDisplay(),
-            fix: x.map((y) => y.colors.map((z) => z.toDisplay())),
-          },
-          $configStore.userName
-        );
-      });
+      return fix
+        .then((x) => x.map((pal) => ({ pal, label })).at(0))
+
+        .then((x) => {
+          suggestions = [...suggestions, x].filter((x) => x) as FixSuggestion[];
+          requestState = "loaded";
+          logEvent(
+            "lint-fix",
+            {
+              fixType,
+              errorName: lintProgram.name,
+              lintProgram: lintProgram.program,
+              palette: palette.colors.map((x) => x.toDisplay()),
+              background: palette.background.toDisplay(),
+              fix: x?.pal?.colors.map((z) => z.toDisplay()),
+            },
+            $configStore.userName
+          );
+        });
     };
 
     getFix().catch((e) => {
@@ -67,6 +73,16 @@
       }
     });
   }
+  function generateFixes() {
+    proposeFix("ai", "LLMs");
+    if (lintProgram && lintProgram.program.length) {
+      proposeFix("monte", "Monte Carlo");
+    }
+    if (lintProgram.subscribedFix && lintProgram.subscribedFix !== "none") {
+      proposeFix("heuristic", "Hand tuned fix");
+    }
+  }
+
   $: currentPal = $colorStore.palettes[$colorStore.currentPal];
   $: evalConfig = currentPal.evalConfig;
 
@@ -84,9 +100,9 @@
     (x) => lintProgram.description.toLowerCase().includes(x) && x !== colorSpace
   ) as any;
   $: ignored = !!evalConfig[lintProgram.name]?.ignore;
-  $: blameData = (
-    lintResult.kind === "success" ? lintResult.blameData : []
-  ).flat();
+  $: blameData = Array.from(
+    new Set((lintResult.kind === "success" ? lintResult.blameData : []).flat())
+  );
 </script>
 
 <Tooltip {positionAlongRightEdge}>
@@ -120,22 +136,9 @@
 
     {#if lintResult.kind === "success" && !lintResult.passes}
       <!-- hiding the LLM based solution, bc it works poorly -->
-      <button class={buttonStyle} on:click={() => proposeFix("ai", "LLM")}>
-        Try to fix (LLM)
+      <button on:click={generateFixes} class={buttonStyle}>
+        Suggest Fixes
       </button>
-      {#if lintProgram && lintProgram.program.length}
-        <button class={buttonStyle} on:click={() => proposeFix("monte", "AI")}>
-          Try to fix (AI)
-        </button>
-      {/if}
-      {#if lintProgram.subscribedFix && lintProgram.subscribedFix !== "none"}
-        <button
-          class={buttonStyle}
-          on:click={() => proposeFix("heuristic", "ColorBuddy")}
-        >
-          Try to fix (ColorBuddy)
-        </button>
-      {/if}
     {/if}
 
     {#if !ignored}
@@ -168,37 +171,41 @@
         class={buttonStyle}
         on:click={() => {
           lintStore.setFocusedLint(lintProgram.id);
-          configStore.setEvalDisplayMode("lint-customization");
+          configStore.setEvalDisplayMode("check-customization");
         }}
       >
         Customize
       </button>
     {/if}
 
-    <div>For just this lint</div>
-    {#each blameData as index}
-      <button
-        class={buttonStyle
-          .split(" ")
-          .filter((x) => x !== "opacity-50")
-          .join(" ")}
-        on:click={() => {
-          colorStore.setCurrentPalEvalConfig({
-            ...evalConfig,
-            [`${palette.colors[index].toHex()}-?-${lintProgram.id}`]: {
-              ignore: true,
-            },
-          });
-        }}
-      >
-        <span class="opacity-50">ignore ({palette.colors[index].toHex()})</span>
+    {#if blameData.length}
+      <div>For just this lint</div>
+      {#each blameData as index}
+        <button
+          class={buttonStyle
+            .split(" ")
+            .filter((x) => x !== "opacity-50")
+            .join(" ")}
+          on:click={() => {
+            colorStore.setCurrentPalEvalConfig({
+              ...evalConfig,
+              [`${palette.colors[index].toHex()}-?-${lintProgram.id}`]: {
+                ignore: true,
+              },
+            });
+          }}
+        >
+          <span class="opacity-50">
+            ignore ({palette.colors[index].toHex()})
+          </span>
 
-        <div
-          class="rounded-full w-3 h-3 ml-1 inline-block opacity-100"
-          style={`background: ${palette.colors[index].toHex()}`}
-        />
-      </button>
-    {/each}
+          <div
+            class="rounded-full w-3 h-3 ml-1 inline-block opacity-100"
+            style={`background: ${palette.colors[index].toHex()}`}
+          />
+        </button>
+      {/each}
+    {/if}
 
     {#if requestState === "loading"}
       <div>Loading...</div>
@@ -246,12 +253,17 @@
   <button
     slot="target"
     let:toggle
-    class={customWord ? "" : `${buttonStyle}`}
+    class={"flex items-center"}
     on:click|stopPropagation={toggle}
   >
-    {#if customWord}
+    {#if customWord && !customWordIsImg}
       {customWord}
-    {:else if lintResult.kind === "success" && lintResult.passes}info{:else}fixes{/if}
+    {:else if customWord && customWordIsImg}
+      <img src={customWord} class="h-4" alt={`Logo for ${customWord} checks`} />
+    {:else if lintResult.kind === "success" && lintResult.passes}
+      <InfoIcon class="h-4 w-4 mx-2 text-sm" />{:else}<FixIcon
+        class="h-4 w-4 mx-2 text-sm"
+      />{/if}
   </button>
 </Tooltip>
 

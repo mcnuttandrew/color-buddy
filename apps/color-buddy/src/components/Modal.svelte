@@ -1,5 +1,6 @@
 <script lang="ts">
   export let showModal: boolean;
+  export let size: string = "80%";
 
   export let closeModal: () => void;
   let dialog: HTMLDialogElement;
@@ -11,6 +12,7 @@
   bind:this={dialog}
   on:close={closeModal}
   on:click|self={() => dialog.close()}
+  style="width: {size};"
 >
   <!-- svelte-ignore a11y-no-static-element-interactions -->
   <div on:click|stopPropagation class="p-0">
@@ -21,10 +23,9 @@
 <style>
   dialog {
     height: 100%;
-    max-width: 1000px;
-    /* border-radius: 0.2em; */
     border: none;
     padding: 0;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   }
   dialog::backdrop {
     background: rgba(0, 0, 0, 0.3);

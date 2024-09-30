@@ -1,4 +1,6 @@
 <script lang="ts">
+  import Wand from "virtual:icons/fa6-solid/wand-magic-sparkles";
+
   import colorStore from "../stores/color-store";
   import focusStore from "../stores/focus-store";
   import configStore from "../stores/config-store";
@@ -6,6 +8,7 @@
   import { suggestContextualAdjustments } from "../lib/api-calls";
   import { buttonStyle } from "../lib/styles";
   import PalDiff from "../components/PalDiff.svelte";
+  import Tooltip from "../components/Tooltip.svelte";
 
   let requestState: "idle" | "loading" | "loaded" | "failed" = "idle";
   $: currentPal = $colorStore.palettes[$colorStore.currentPal];
@@ -84,8 +87,16 @@
   }
 </script>
 
-<div>
-  <div class="flex flex-col w-full">
+<Tooltip bg="bg-white">
+  <button
+    slot="target"
+    let:toggle
+    on:click={toggle}
+    class={"border border-stone-400 rounded mr-2 h-8 w-8 flex justify-center items-center"}
+  >
+    <Wand />
+  </button>
+  <div slot="content" let:onClick class="flex flex-col w-full">
     <label for="pal-prompt" class="italic text-sm">
       <div>
         Change {selectedColors.length ? "selected" : "all"} points with AI
@@ -102,7 +113,13 @@
           />
         </div>
         <div class="flex justify-between">
-          <button class={buttonStyle} on:click={() => useSuggestion(idx)}>
+          <button
+            class={buttonStyle}
+            on:click={() => {
+              useSuggestion(idx);
+              onClick();
+            }}
+          >
             Use
           </button>
           <button
@@ -135,7 +152,7 @@
             }
           }}
           id="pal-prompt"
-          class="indent-2 text-sm leading-6 border-2 w-full"
+          class="indent-2 text-sm leading-6 border-2 w-full min-w-80"
           placeholder="e.g. 'Make them groovier' or 'Add two more colors'"
         />
         <button
@@ -150,5 +167,4 @@
       <div class="text-red-500">No suggestions found, please try again</div>
     {/if}
   </div>
-</div>
-<!-- </Tooltip> -->
+</Tooltip>

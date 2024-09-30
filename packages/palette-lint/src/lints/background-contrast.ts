@@ -36,10 +36,10 @@ const textPart = ` If this lint is not failing and you believe it should be, ens
 const lintBase: LintProgram = {
   program: JSONToPrettyString(false),
   requiredTags: [],
-  name: "WCAG Contrast -- AA (text colors only)",
+  name: "AA text contrast (text-tagged colors only)",
   taskTypes: ["sequential", "diverging", "categorical"] as const,
   level: "error",
-  group: "accessibility",
+  group: "contrast-accessibility",
   description: descriptionBase + textPart,
   failMessage: `These text colors ({{blame}) do not have a sufficient contrast do not have sufficient contrast with the background to be easily readable.`,
   id: "background-contrast-built-in",
@@ -52,7 +52,7 @@ const lintBase: LintProgram = {
 const contrastGraphicalObjects: LintProgram = {
   ...lintBase,
   program: JSONToPrettyString(buildProgram(3, false)),
-  name: "WCAG Contrast Graphical Objects",
+  name: " Graphical objects contrast",
   id: "contrast-graphical-objects-built-in",
   expectedFailingTests: [makePalFromString(["#feed72", "#f8f4d2", "#eb717b"])],
   expectedPassingTests: [makePalFromString(["#cf5f67", "#468bbc", "#848475"])],
@@ -62,7 +62,7 @@ const contrastGraphicalObjects: LintProgram = {
 const contrastTextAA: LintProgram = {
   ...lintBase,
   program: JSONToPrettyString(buildProgram(4.5, true)),
-  name: "WCAG Text Contrast: AA (text colors only)",
+  name: "AA text contrast (text-tagged colors only)",
   id: "contrast-aa-built-in",
   expectedFailingTests: [
     createPalWithTags(["#feed72", "#f8f4d2", "#eb717b"], [[2, "text"]]),
@@ -74,7 +74,7 @@ const contrastTextAA: LintProgram = {
 const contrastTextAAAll: LintProgram = {
   ...lintBase,
   program: JSONToPrettyString(buildProgram(4.5, false)),
-  name: "WCAG Text Contrast: AA (all colors)",
+  name: "AA text contrast (all colors)",
   id: "contrast-aa-all-built-in",
   expectedFailingTests: [makePalFromString(["#feed72", "#f8f4d2", "#eb717b"])],
   expectedPassingTests: [makePalFromString(["#feed72", "#f8f4d2", "#af3b4b"])],
@@ -83,7 +83,7 @@ const contrastTextAAAll: LintProgram = {
 const contrastTextAAA: LintProgram = {
   ...lintBase,
   program: JSONToPrettyString(buildProgram(7, true)),
-  name: "WCAG Text Contrast: AAA (text colors only)",
+  name: "AAA text contrast (text-tagged colors only)",
   id: "contrast-aaa-built-in",
   expectedFailingTests: [
     createPalWithTags(["#feed72", "#f8f4d2", "#af3b4b"], [[2, "text"]]),
@@ -94,8 +94,8 @@ const contrastTextAAA: LintProgram = {
 };
 const contrastTextAAAAll: LintProgram = {
   ...lintBase,
-  program: JSONToPrettyString(buildProgram(4.5, false)),
-  name: "WCAG Text Contrast: AAA (all colors)",
+  program: JSONToPrettyString(buildProgram(7, false)),
+  name: "AAA text contrast (all colors)",
   id: "contrast-aaa-all-built-in",
   expectedFailingTests: [makePalFromString(["#feed72", "#f8f4d2", "#eb717b"])],
   expectedPassingTests: [makePalFromString(["#feed72", "#f8f4d2", "#af3b4b"])],

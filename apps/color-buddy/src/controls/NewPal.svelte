@@ -42,18 +42,19 @@
 
 <Tooltip>
   <div class="w-full" slot="content" let:onClick>
+    <div class="font-bold">Start a new palette from</div>
     <div class="">
       <button
         class={buttonStyle}
         on:click={() => newPal(makePalFromString([]), onClick)}
       >
-        New blank
+        Blank
       </button>
       <button
         class={buttonStyle}
         on:click={() => newPal(newGenericPal("new palette"), onClick)}
       >
-        New categorical
+        Categorical
       </button>
       <button
         class={buttonStyle}
@@ -69,7 +70,7 @@
           newPal(pal, onClick);
         }}
       >
-        New sequential
+        Sequential
       </button>
       <button
         class={buttonStyle}
@@ -85,11 +86,13 @@
           newPal(pal, onClick);
         }}
       >
-        New diverging
+        Diverging
       </button>
     </div>
-    <div class="mt-5 border-t-2 border-black"></div>
-    <div class="font-bold">New from string of hex</div>
+    <div class="mt-5 border-t border-black"></div>
+    <div class="font-bold">
+      Make a new palette from string of hex (e.g. "#f00", "#0f0", "#00f")
+    </div>
     <textarea
       id="current-colors"
       class="w-full p-2 rounded border-2"
@@ -105,11 +108,16 @@
         inputString = "";
       }}
     />
-    <div class="mt-5 border-t-2 border-black"></div>
+    <div class="mt-5 border-t border-black"></div>
     <div class="font-bold">Generate a new palette using AI</div>
     <SuggestColorPal />
   </div>
-  <button slot="target" let:toggle on:click={toggle} class={denseButtonStyle}>
-    New
+  <button
+    slot="target"
+    let:toggle
+    on:click={toggle}
+    class={"text-white h-full mx-2"}
+  >
+    New Palette
   </button>
 </Tooltip>

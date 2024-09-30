@@ -2,6 +2,7 @@
   import type { Palette } from "color-buddy-palette";
 
   import Plus from "virtual:icons/fa6-solid/plus";
+  import Times from "virtual:icons/fa6-solid/xmark";
   import BrowseCard from "../example/BrowseCard.svelte";
   import FolderConfig from "../controls/FolderConfig.svelte";
   import GenerateNewNames from "../components/GenerateNewNames.svelte";
@@ -12,7 +13,6 @@
   import examplePalStore from "../stores/example-palette-store";
   import exampleStore from "../stores/example-store";
   import focusStore from "../stores/focus-store";
-  import { buttonStyle } from "../lib/styles";
   import { convertPalToSpace } from "../lib/utils";
   import { suggestNameForPalette } from "../lib/api-calls";
   import Nav from "../components/Nav.svelte";
@@ -172,7 +172,18 @@
       onClose();
     }}
   >
-    <div class="bg-stone-200 p-4 text-xl font-bold">Palettes</div>
+    <div class="w-full bg-stone-200 p-4 flex justify-between">
+      <div class="text-xl font-bold">Palettes</div>
+      <button
+        on:click={() => {
+          modalState = "closed";
+          onClose();
+        }}
+      >
+        <Times />
+      </button>
+    </div>
+
     <div class="bg-stone-100 flex flex-col h-full py-2 px-4">
       <div class="flex w-full items-center justify-between">
         <div class="flex flex-col">

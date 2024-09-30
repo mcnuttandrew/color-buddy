@@ -23,7 +23,7 @@ interface StoreData {
   includeQuotes: boolean;
   mainColumnSelectedExample: number;
   manageBrowsePreviewIdx: number;
-  route: "examples" | "compare" | "eval" | "design";
+  route: "examples" | "compare" | "eval";
   scatterplotMode: "moving" | "putting";
   selectedFolder: { isPreMade: boolean; name: string };
   showColorBackground: "always show" | "show on drag" | "never show";

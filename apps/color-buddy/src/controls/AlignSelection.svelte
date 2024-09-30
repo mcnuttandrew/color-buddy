@@ -32,16 +32,16 @@
       pos: config.xChannelIndex,
       name: isPolar ? "Inner Radius" : "Left",
       op: xRev ? Math.max : Math.min,
-      icon: xRev ? AlignLeftIcon : AlignRightIcon,
+      icon: xRev ? AlignRightIcon : AlignLeftIcon,
     },
     {
       type: "single",
       pos: config.xChannelIndex,
       name: isPolar ? "Outer Radius" : "Right",
       op: xRev ? Math.min : Math.max,
-      icon: xRev ? AlignRightIcon : AlignLeftIcon,
+      icon: xRev ? AlignLeftIcon : AlignRightIcon,
     },
-    { type: "divide" },
+    // { type: "divide" },
     {
       type: "single",
       pos: config.yChannelIndex,
@@ -56,7 +56,7 @@
       op: yRev ? Math.min : Math.max,
       icon: yRev ? AlignBottomIcon : AlignTopIcon,
     },
-    { type: "divide" },
+    // { type: "divide" },
     {
       type: "single",
       pos: config.zChannelIndex,
@@ -78,7 +78,7 @@
   {#each ALIGNS as align}
     {#if align.type === "single"}
       <button
-        class={`${buttonStyle} h-full flex justify-between items-center`}
+        class={`${buttonStyle} h-full flex justify-between items-center py-1`}
         on:click={() => {
           const newCoordinate = align.op(
             ...colors

@@ -414,7 +414,8 @@ export const titleCase = (str: string) =>
     .map((x) => (x.at(0) || "").toUpperCase() + x.slice(1))
     .join(" ");
 
-const oxfordJoin = (arr: string[]) => {
+export const oxfordJoin = (arr: string[]) => {
+  if (arr.length === 0) return "";
   if (arr.length === 1) return arr[0];
   if (arr.length === 2) return arr.join(" and ");
   return arr.slice(0, -1).join(", ") + ", and " + arr.slice(-1);

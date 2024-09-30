@@ -13,13 +13,16 @@
   import Sort from "../controls/Sort.svelte";
   import AddColor from "../controls/AddColor.svelte";
   import DeMetric from "../controls/DeMetric.svelte";
+  import GetColorsFromString from "../controls/GetColorsFromString.svelte";
+
   import { deltaMetrics, ballSize } from "../constants";
 
   $: checks = $lintStore.currentChecks;
 
   $: colorNames = colors.map((x) => nameColor(x)[0]);
-  $: colors = $colorStore.palettes[$colorStore.currentPal].colors;
-  $: bg = $colorStore.palettes[$colorStore.currentPal].background;
+  $: currentPal = $colorStore.palettes[$colorStore.currentPal];
+  $: colors = currentPal.colors;
+  $: bg = currentPal.background;
 
   $: colorsToIssues = colors.map((x) => {
     const hex = `${x.toHex()}`;
@@ -103,6 +106,11 @@
           />
         </label>
       </div>
+      <GetColorsFromString
+        onChange={(colors) => colorStore.setCurrentPalColors(colors)}
+        colorSpace={currentPal.colorSpace}
+        colors={currentPal.colors}
+      />
     </div>
   </section>
 </div>

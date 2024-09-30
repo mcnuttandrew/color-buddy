@@ -86,12 +86,12 @@
 <div class="flex flex-wrap">
   {#each actions as action}
     {#if action.type === "double"}
-      <div class="w-full my-2">
+      <div class="my-2">
         <div
           class={`${buttonStyle
             .split(" ")
             .filter((x) => !x.startsWith("hover"))
-            .join(" ")} flex w-48 justify-between`}
+            .join(" ")} flex w-40 justify-between`}
         >
           <button
             class={"cursor-pointer"}

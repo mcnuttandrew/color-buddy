@@ -12,7 +12,7 @@
   import Background from "../components/Background.svelte";
   import ColorScatterPlot from "../scatterplot/ColorScatterPlot.svelte";
   import ExampleAlaCart from "../example/ExampleAlaCarte.svelte";
-  import MiniPalPreview from "../components/MiniPalPreview.svelte";
+  import ExampleAlaCarteHeader from "../example/ExampleAlaCarteHeader.svelte";
   import Tooltip from "../components/Tooltip.svelte";
 
   import { buttonStyle, simpleTooltipRowStyle } from "../lib/styles";
@@ -250,10 +250,15 @@
         class="flex justify-center-center flex-col"
         style={`max-width: ${scatterSize + 110}px`}
       >
+        <ExampleAlaCarteHeader
+          exampleIdx={$configStore.compareSelectedExample}
+          setExampleIdx={(idx) => configStore.setCompareSelectedExample(idx)}
+          size={scatterSize}
+          labelStyle="py-2"
+        />
         <ExampleAlaCart
           paletteIdx={compareIdx}
           exampleIdx={$configStore.compareSelectedExample}
-          setExampleIdx={(idx) => configStore.setCompareSelectedExample(idx)}
           allowModification={false}
           bgColor={bg}
           size={scatterSize}

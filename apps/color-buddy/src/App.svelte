@@ -37,11 +37,7 @@
   import MainColumn from "./content-modules/MainColumn.svelte";
   import TourProvider from "./content-modules/TourProvider.svelte";
   import Config from "./controls/Config.svelte";
-  import Design from "./content-modules/Design.svelte";
-
-  import ContentEditable from "./components/ContentEditable.svelte";
-
-  import { titleCase } from "./lib/utils";
+  import Title from "./controls/Title.svelte";
 
   import { lint } from "./lib/api-calls";
   import { debounce } from "vega";
@@ -78,16 +74,8 @@
   const padding = 40;
   const zWidth = 110;
   $: scatterSize = Math.max(Math.min(columnWidth - zWidth - padding, 420), 200);
-  $: bigEnoughForIndependentDesign = innerWidth > 1600;
 
-  $: currentPalTabs = bigEnoughForIndependentDesign
-    ? ["examples", "compare", "eval"]
-    : ["design", "examples", "compare", "eval"];
-  $: {
-    if (bigEnoughForIndependentDesign && $configStore.route === "design") {
-      configStore.setRoute("examples");
-    }
-  }
+  const currentPalTabs = ["examples", "compare", "eval"];
 </script>
 
 <header class="flex w-full bg-stone-800 justify-between">
@@ -121,14 +109,7 @@
   <!-- left and main panel -->
   <div class="flex flex-col">
     <!-- name -->
-    <div class="flex text-2xl py-2 px-4 border-b border-l border-stone-200">
-      <ContentEditable
-        onChange={(x) => colorStore.setCurrentPalName(x)}
-        value={currentPal.name}
-        displayValue={`${currentPal.name}`}
-        useEditButton={true}
-      />
-    </div>
+    <Title />
     <!-- main content -->
     <div class="flex">
       <!-- left -->
@@ -158,14 +139,6 @@
     </div>
   </div>
   <!-- right col -->
-  {#if bigEnoughForIndependentDesign}
-    <div
-      class="flex flex-col w-full border-b border-l border-stone-200 bg-stone-100 max-w-md"
-      id="right-col"
-    >
-      <Design />
-    </div>
-  {/if}
   <div
     class="flex flex-col w-full border-b border-l border-stone-200"
     id="right-col"
@@ -178,6 +151,15 @@
         selectTab={(x) => {
           // @ts-ignore
           configStore.setRoute(x);
+        }}
+        formatter={(x) => {
+          if (x === "eval") {
+            return "Evaluation";
+          } else if (x === "compare") {
+            return "Comparison";
+          } else {
+            return "Examples";
+          }
         }}
       >
         <div slot="menu" let:tab>
@@ -200,8 +182,6 @@
         <ComparePal {scatterSize} />
       {:else if palPresent && $configStore.route === "eval"}
         <Eval />
-      {:else if palPresent && $configStore.route === "design"}
-        <Design />
       {/if}
     </div>
   </div>

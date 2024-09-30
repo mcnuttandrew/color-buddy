@@ -6,10 +6,16 @@
   import { buttonStyle } from "../lib/styles";
   import ColorScatterPlot from "../scatterplot/ColorScatterPlot.svelte";
   import ExampleAlaCart from "../example/ExampleAlaCarte.svelte";
+  import ExampleAlaCarteHeader from "../example/ExampleAlaCarteHeader.svelte";
+  import SetColorSpace from "../controls/SetColorSpace.svelte";
 
   import SetSimulation from "../controls/SetSimulation.svelte";
   import Zoom from "../controls/Zoom.svelte";
   import Finger from "virtual:icons/fa6-solid/hand-pointer";
+
+  import Background from "../components/Background.svelte";
+  import DesignTooltip from "../controls/DesignTooltip.svelte";
+  import InterpolatePoints from "../controls/InterpolatePoints.svelte";
 
   import { colorPickerConfig } from "../lib/utils";
 
@@ -23,21 +29,24 @@
 </script>
 
 <div class="flex mb-2 w-full bg-stone-100 py-1 px-4 border-stone-200">
+  <SetColorSpace
+    colorSpace={currentPal.colorSpace}
+    onChange={(space) => {
+      colorStore.setColorSpace(space);
+      configStore.unsetZoom();
+    }}
+  />
+  <Background
+    onSpaceChange={(space) => {
+      // @ts-ignore
+      configStore.setChannelPickerSpaceBackground(space);
+    }}
+    onChange={(bg) =>
+      colorStore.setBackground(bg.toColorSpace(currentPal.colorSpace))}
+    bg={currentPal.background}
+    colorSpace={$configStore.channelPickerSpaceBackground}
+  />
   <SetSimulation />
-  {#if !config.isPolar}
-    <Zoom />
-  {/if}
-  <div class="flex flex-col ml-2">
-    <div class="text-sm">
-      {#if $configStore.scatterplotMode === "putting"}Adding{:else}Add color{/if}
-    </div>
-    <button
-      class={`${buttonStyle} text-sm flex items-center justify-center py-1`}
-      on:click={() => configStore.setScatterplotMode("putting")}
-    >
-      <Finger class="text-xs" />
-    </button>
-  </div>
 </div>
 <div class="flex flex-col px-4">
   <ColorScatterPlot
@@ -67,15 +76,34 @@
       />
       <span>Mark out-of-gamut colors with ⨂</span>
     </div>
-    <div class="flex"></div>
+    <div class="flex items-center">
+      {#if !config.isPolar}
+        <Zoom />
+      {/if}
+      <button
+        class={`${buttonStyle} text-sm flex items-center justify-center `}
+        on:click={() => configStore.setScatterplotMode("putting")}
+      >
+        <Finger class="text-xs mr-1" />
+        {#if $configStore.scatterplotMode === "putting"}Adding{:else}Add color{/if}
+      </button>
+    </div>
   </div>
 </div>
 <div class="flex flex-col">
+  <div class="bg-stone-100 py-2 px-4 border-t border-stone-200 flex items-end">
+    <ExampleAlaCarteHeader
+      labelStyle={""}
+      exampleIdx={$configStore.mainColumnSelectedExample}
+      setExampleIdx={(idx) => configStore.setMainColumnSelectedExample(idx)}
+      size={scatterSize}
+    />
+    <DesignTooltip />
+    <InterpolatePoints />
+  </div>
   <ExampleAlaCart
-    labelStyle={"bg-stone-100 py-2 px-4 border-t border-stone-200"}
     paletteIdx={$colorStore.currentPal}
     exampleIdx={$configStore.mainColumnSelectedExample}
-    setExampleIdx={(idx) => configStore.setMainColumnSelectedExample(idx)}
     allowModification={true}
     bgColor={currentPal.background.toHex()}
     size={scatterSize}

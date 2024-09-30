@@ -26,12 +26,12 @@
 
   $: palette = $colorStore.palettes[$colorStore.currentPal];
   $: engine = $configStore.engine;
-  $: suggestions = [] as { pal: Palette; label: string }[];
+  type FixSuggestion = { pal: Palette; label: string; fixesIssue: boolean };
+  $: suggestions = [] as FixSuggestion[];
   $: colorSpace = palette.colorSpace;
   $: lintProgram = lintResult.lintProgram;
 
   function proposeFix(fixType: "ai" | "monte" | "heuristic", label: string) {
-    requestState = "loading";
     let hasRetried = false;
     const getFix = () => {
       let fix;
@@ -42,22 +42,25 @@
       } else {
         fix = suggestLintFix(palette, lintResult);
       }
-      return fix.then((x) => {
-        suggestions = [...suggestions, ...x.map((pal) => ({ pal, label }))];
-        requestState = "loaded";
-        logEvent(
-          "lint-fix",
-          {
-            fixType,
-            errorName: lintProgram.name,
-            lintProgram: lintProgram.program,
-            palette: palette.colors.map((x) => x.toDisplay()),
-            background: palette.background.toDisplay(),
-            fix: x.map((y) => y.colors.map((z) => z.toDisplay())),
-          },
-          $configStore.userName
-        );
-      });
+      return fix
+        .then((x) => x.map((pal) => ({ pal, label })).at(0))
+
+        .then((x) => {
+          suggestions = [...suggestions, x].filter((x) => x) as FixSuggestion[];
+          requestState = "loaded";
+          logEvent(
+            "lint-fix",
+            {
+              fixType,
+              errorName: lintProgram.name,
+              lintProgram: lintProgram.program,
+              palette: palette.colors.map((x) => x.toDisplay()),
+              background: palette.background.toDisplay(),
+              fix: x?.pal?.colors.map((z) => z.toDisplay()),
+            },
+            $configStore.userName
+          );
+        });
     };
 
     getFix().catch((e) => {
@@ -70,6 +73,16 @@
       }
     });
   }
+  function generateFixes() {
+    proposeFix("ai", "LLMs");
+    if (lintProgram && lintProgram.program.length) {
+      proposeFix("monte", "Monte Carlo");
+    }
+    if (lintProgram.subscribedFix && lintProgram.subscribedFix !== "none") {
+      proposeFix("heuristic", "Hand tuned fix");
+    }
+  }
+
   $: currentPal = $colorStore.palettes[$colorStore.currentPal];
   $: evalConfig = currentPal.evalConfig;
 
@@ -123,22 +136,9 @@
 
     {#if lintResult.kind === "success" && !lintResult.passes}
       <!-- hiding the LLM based solution, bc it works poorly -->
-      <button class={buttonStyle} on:click={() => proposeFix("ai", "LLM")}>
-        Try to fix (LLM)
+      <button on:click={generateFixes} class={buttonStyle}>
+        Suggest Fixes
       </button>
-      {#if lintProgram && lintProgram.program.length}
-        <button class={buttonStyle} on:click={() => proposeFix("monte", "AI")}>
-          Try to fix (AI)
-        </button>
-      {/if}
-      {#if lintProgram.subscribedFix && lintProgram.subscribedFix !== "none"}
-        <button
-          class={buttonStyle}
-          on:click={() => proposeFix("heuristic", "ColorBuddy")}
-        >
-          Try to fix (ColorBuddy)
-        </button>
-      {/if}
     {/if}
 
     {#if !ignored}

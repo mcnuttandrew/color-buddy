@@ -23,6 +23,7 @@ interface StoreData {
   includeQuotes: boolean;
   mainColumnSelectedExample: number;
   manageBrowsePreviewIdx: number;
+  newExampleModalTarget: "off" | number | "new";
   route: "examples" | "compare" | "eval";
   scatterplotMode: "moving" | "putting";
   selectedFolder: { isPreMade: boolean; name: string };
@@ -58,6 +59,7 @@ const InitialStore: StoreData = {
   includeQuotes: false,
   mainColumnSelectedExample: -1,
   manageBrowsePreviewIdx: -1,
+  newExampleModalTarget: "off",
   route: "examples",
   selectedFolder: { isPreMade: false, name: "" },
   scatterplotMode: "moving",
@@ -196,6 +198,8 @@ function createStore() {
       persist((old) => ({ ...old, selectedFolder: n })),
     setCompareDiff: (n: StoreData["compareDiff"]) =>
       persist((old) => ({ ...old, compareDiff: n })),
+    setNewExampleModalTarget: (n: StoreData["newExampleModalTarget"]) =>
+      persist((old) => ({ ...old, newExampleModalTarget: n })),
   };
 }
 

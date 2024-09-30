@@ -14,8 +14,6 @@
   import ChevDown from "virtual:icons/fa6-solid/angle-down";
 
   $: currentPal = $colorStore.palettes[$colorStore.currentPal];
-  let editTarget = null as null | number;
-
   $: examples = $exampleStore.examples;
 
   $: allSelected = examples.every((x) => !x.hidden);
@@ -38,6 +36,8 @@
       ? "All"
       : selectedExamples.at(0)?.name || "None";
 
+  $: numHidden = examples.filter((x) => x.hidden).length;
+
   const navNameMap = {
     svg: "SVG",
     vega: "Visualizations (via Vega)",
@@ -52,9 +52,7 @@
     return [
       {
         name: "Edit...",
-        action: () => {
-          editTarget = idx;
-        },
+        action: () => configStore.setNewExampleModalTarget(idx),
         closeOnClick: true,
       },
       {
@@ -72,38 +70,6 @@
         action: () => exampleStore.toggleHidden(idx),
         closeOnClick: true,
       },
-
-      // !exampleIsSoled && {
-      //   name: "Focus (Expand & hide others)",
-      //   action: () => {
-      //     exampleStore.hideAllExcept(idx);
-      //     exampleStore.setExampleSize(idx, 600);
-      //   },
-      //   closeOnClick: true,
-      // },
-      // exampleIsSoled && {
-      //   name: "Unfocus (show all examples)",
-      //   action: () => {
-      //     exampleStore.restoreHiddenExamples();
-      //     exampleStore.setExampleSize(idx, 250);
-      //   },
-      //   closeOnClick: true,
-      // },
-      // {
-      //   name: "Expand",
-      //   action: () => exampleStore.setExampleSize(idx, 600),
-      //   condition: size !== 600,
-      // },
-      // {
-      //   name: "Reset size",
-      //   action: () => exampleStore.setExampleSize(idx, 250),
-      //   condition: size !== 250,
-      // },
-      // {
-      //   name: "Shrink",
-      //   action: () => exampleStore.setExampleSize(idx, 50),
-      //   condition: size !== 50,
-      // },
     ].filter((x) => x) as any[] as {
       name: string;
       action: () => void;
@@ -114,7 +80,7 @@
 
 <div class="flex px-4 py-2 items-end">
   <div class="flex flex-col mr-2">
-    <div class="text-sm">Examples</div>
+    <div class="text-xs">Examples</div>
     <Nav
       tabs={Object.values(navNameMap)}
       isTabSelected={(x) => navNameMapRev[x] === $configStore.exampleRoute}
@@ -126,7 +92,7 @@
     />
   </div>
   <div class="flex flex-col">
-    <div class="text-sm">Focused example</div>
+    <div class="text-xs">Focused example</div>
     <Tooltip>
       <div class="flex flex-col" slot="content">
         <button
@@ -168,12 +134,13 @@
           {/if}
         {/each}
         <div class="my-3 border-t border-black"></div>
-        <NewExampleModal
-          {editTarget}
-          onClose={() => {
-            editTarget = null;
-          }}
-        />
+        <button
+          class={buttonStyle}
+          on:click={() => configStore.setNewExampleModalTarget("new")}
+        >
+          Add New Example
+        </button>
+
         <Tooltip positionAlongRightEdge={true}>
           <div slot="content" let:onClick class="max-w-md">
             <div>
@@ -217,6 +184,17 @@
       </button>
     </Tooltip>
   </div>
+  {#if numHidden > 0}
+    <div class="flex flex-col ml-2">
+      <div class="text-xs">{numHidden} hidden</div>
+      <button
+        class={buttonStyle}
+        on:click={() => exampleStore.restoreHiddenExamples()}
+      >
+        Unhide all
+      </button>
+    </div>
+  {/if}
 
   <ColorSimControl />
 </div>
@@ -243,3 +221,4 @@
     {/if}
   {/each}
 </div>
+<NewExampleModal />

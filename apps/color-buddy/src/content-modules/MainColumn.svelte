@@ -39,7 +39,7 @@
     </button>
   </div>
 </div>
-<div class="flex flex-col h-full px-4 mt-10">
+<div class="flex flex-col px-4 mt-10">
   <ColorScatterPlot
     scatterPlotMode={$configStore.scatterplotMode}
     colorSpace={currentPal.colorSpace}
@@ -72,7 +72,7 @@
 </div>
 <div class="flex flex-col">
   <ExampleAlaCart
-    labelStyle={"bg-stone-100 py-2 px-4 border-t border-r border-stone-200"}
+    labelStyle={"bg-stone-100 py-2 px-4 border-t border-stone-200"}
     paletteIdx={$colorStore.currentPal}
     exampleIdx={$configStore.mainColumnSelectedExample}
     setExampleIdx={(idx) => configStore.setMainColumnSelectedExample(idx)}

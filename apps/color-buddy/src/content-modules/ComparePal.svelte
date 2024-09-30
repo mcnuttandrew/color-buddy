@@ -61,7 +61,7 @@
 
 <div class="w-full h-full bg-stone-100">
   <!-- main -->
-  <div class="flex flex-wrap w-full bg-stone-200 py-2 px-2">
+  <div class="flex flex-wrap w-full py-2 px-2">
     <div class="flex flex-col mr-2">
       <div class="text-sm">Compare Palette</div>
       <Tooltip>

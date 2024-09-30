@@ -107,7 +107,7 @@
     <Config />
   </div>
 </header>
-<main class="flex h-full">
+<main class="flex h-full overflow-auto">
   <!-- left and main panel -->
   <div class="flex flex-col">
     <!-- name -->

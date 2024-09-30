@@ -112,7 +112,7 @@
   }
 </script>
 
-<div class="flex bg-stone-200 px-4 py-2 items-end">
+<div class="flex px-4 py-2 items-end">
   <div class="flex flex-col mr-2">
     <div class="text-sm">Examples</div>
     <Nav

@@ -74,7 +74,7 @@
 {#if displayMode === "check-customization"}
   <LintCustomizationModal onClose={() => refreshLints()} />
 {/if}
-<div class="bg-stone-200 w-full flex py-1 px-2">
+<div class=" w-full flex py-1 px-2">
   <!-- <div>
     <div class="text-sm">Check Display</div>
 

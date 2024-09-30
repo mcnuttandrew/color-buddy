@@ -416,6 +416,32 @@ class JZAZBZ extends Color {
   }
 }
 
+class XYZ extends Color {
+  static name = "XYZ";
+  static channelNames = ["x", "y", "z"];
+  channels = { x: 0, y: 0, z: 0 };
+  spaceName = "xyz-d65" as const;
+  // static domains = { x: [0, 9504.7], y: [0, 10000], z: [0, 10888.3] } as Domain;
+  // static domains = { x: [0, 100], y: [0, 100], z: [0, 100] } as Domain;
+  static domains = { x: [0, 1.1], y: [1.1, 0], z: [0, 1.1] } as Domain;
+  static stepSize: Channels = [0.01, 0.01, 0.01];
+  static dimensionToChannel = { x: "x", y: "z", z: "y" };
+  static description =
+    "The fundamental CIE color space, derived from color-matching experiments on human vision. All other color spaces can be converted to XYZ.";
+
+  toString(): string {
+    const [x, y, z] = Object.values(this.channels).map((x) =>
+      isNaN(x) ? 0 : x
+    );
+    return `color(--xyz-d65 ${x} ${y} ${z})`;
+  }
+  toPrettyString(): string {
+    const [x, y, z] = this.prettyChannels();
+    // return `xyz(${x} ${y} ${z})`;
+    return `color(--xyz-d65 ${x} ${y} ${z})`;
+  }
+}
+
 class HCT extends Color {
   static name = "HCT";
   static channelNames = ["h", "c", "t"];
@@ -533,5 +559,6 @@ export const ColorSpaceDirectory = {
   rgb: RGB,
   // srgb: RGB,
   srgb: SRGB,
+  "xyz-d65": XYZ,
 };
 type ColorSpace = keyof typeof ColorSpaceDirectory;

@@ -4,6 +4,7 @@
   import { buttonStyle, linkStyle } from "../lib/styles";
   import { lintPacks } from "../lib/pre-built-lint-configs";
   import Modal from "../components/Modal.svelte";
+  import Tooltip from "../components/Tooltip.svelte";
   import { lintGroupNames, typeToImg } from "../constants";
   import { titleCase } from "../lib/utils";
 
@@ -127,11 +128,60 @@
   </div>
 </Modal>
 
-<button
+<!-- <button
   class={buttonStyle}
   on:click={() => {
     modalState = "open";
   }}
 >
   Settings
-</button>
+</button> -->
+
+<Tooltip>
+  <div slot="content" let:onClick class="max-w-md">
+    <div class="font-bold">Pre-configured check lists</div>
+    <div>
+      {#each lintPacks as pack}
+        <div class="flex">
+          <button class={`inline ${buttonStyle} `}>{pack.name}</button>
+          <span>{pack.description}</span>
+        </div>
+      {/each}
+
+      <div class="flex">
+        <button
+          class={buttonStyle}
+          on:click={() =>
+            colorStore.setGloballyIgnoredLints(lints.map((x) => x.id))}
+        >
+          None
+        </button>
+        <div>No checks</div>
+      </div>
+      <div class="flex">
+        <button
+          class={buttonStyle}
+          on:click={() => colorStore.setGloballyIgnoredLints([])}
+        >
+          All
+        </button>
+        <div>All of the available checks</div>
+      </div>
+      <div class="flex">
+        <button
+          class={buttonStyle}
+          on:click={() => {
+            modalState = "open";
+            onClick();
+          }}
+        >
+          Custom
+        </button>
+        <div>Make your own to suit your needs!</div>
+      </div>
+    </div>
+  </div>
+  <button slot="target" class={buttonStyle} let:toggle on:click={toggle}>
+    Settings
+  </button>
+</Tooltip>

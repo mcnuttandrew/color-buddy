@@ -4,7 +4,7 @@ This page contains examples of the language used to define palettes and the expe
 
 - [ Graphical objects contrast](#-graphical-objects-contrast)
 - [AA text contrast (text-tagged colors only)](#aa-text-contrast--text-tagged-colors-only-)
-- [AAA text contrast (text colors only)](#aaa-text-contrast--text-colors-only-)
+- [AAA text contrast (text-tagged colors only)](#aaa-text-contrast--text-tagged-colors-only-)
 - [AA text contrast (all colors)](#aa-text-contrast--all-colors-)
 - [AAA text contrast (all colors)](#aaa-text-contrast--all-colors-)
 - [Saturated not appropriate for serious affect](#saturated-not-appropriate-for-serious-affect)
@@ -127,7 +127,7 @@ Palettes that will pass this test:
 
 
 
-### AAA text contrast (text colors only)
+### AAA text contrast (text-tagged colors only)
 **Tasks**: sequential, diverging, categorical
 
 

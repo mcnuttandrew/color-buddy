@@ -61,9 +61,9 @@
 
 <div class="w-full h-full bg-stone-100">
   <!-- main -->
-  <div class="flex flex-wrap w-full py-2 px-2">
+  <div class="flex flex-wrap w-full py-2 px-2 mt-8 mb-1">
     <div class="flex flex-col mr-2">
-      <div class="text-sm">Compare Palette</div>
+      <div class="text-xs">Compare Palette</div>
       <Tooltip>
         <button
           class={`${buttonStyle} `}
@@ -158,59 +158,9 @@
           colorSpace={$configStore.compareBackgroundSpace}
         />
       </div>
-      <div class="flex flex-col">
-        <div class="text-sm">Diff</div>
-        <div class="flex">
-          <Tooltip positionAlongRightEdge={true}>
-            <div slot="content" class="flex flex-col">
-              {#each diffOptions as diff}
-                <button
-                  class={simpleTooltipRowStyle}
-                  on:click={() => configStore.setCompareDiff(diff)}
-                  class:font-bold={showDiff === diff}
-                >
-                  {diffToLabel[diff]}
-                </button>
-              {/each}
-            </div>
-            <button
-              slot="target"
-              let:toggle
-              class={`${buttonStyle} flex items-center`}
-              on:click={toggle}
-            >
-              {diffToLabel[showDiff]}
-
-              <ChevDown class="text-sm ml-2" />
-            </button>
-          </Tooltip>
-          {#if compareIdx === "tempPal" && ComparisonPal}
-            <button
-              class={buttonStyle}
-              on:click={() => {
-                configStore.setComparePal(currentPalIdx);
-                colorStore.createNewPal(ComparisonPal);
-              }}
-            >
-              Modify this palette
-            </button>
-          {/if}
-          {#if compareIdx !== "tempPal" && ComparisonPal && compareIdx !== undefined}
-            <button
-              class={buttonStyle}
-              on:click={() => {
-                colorStore.startUsingPal(compareIdx);
-              }}
-            >
-              Modify this palette
-            </button>
-          {/if}
-        </div>
-      </div>
     {/if}
   </div>
   <div class="px-6">
-    <div>&nbsp;</div>
     {#if ComparisonPal !== undefined}
       <div style={`max-width: ${scatterSize + 110}px`}>
         <ColorScatterPlot
@@ -250,12 +200,64 @@
         class="flex justify-center-center flex-col"
         style={`max-width: ${scatterSize + 110}px`}
       >
-        <ExampleAlaCarteHeader
-          exampleIdx={$configStore.compareSelectedExample}
-          setExampleIdx={(idx) => configStore.setCompareSelectedExample(idx)}
-          size={scatterSize}
-          labelStyle="py-2"
-        />
+        <div class="flex py-2 items-end">
+          <ExampleAlaCarteHeader
+            exampleIdx={$configStore.compareSelectedExample}
+            setExampleIdx={(idx) => configStore.setCompareSelectedExample(idx)}
+            size={scatterSize}
+          />
+          <div>
+            {#if compareIdx === "tempPal" && ComparisonPal}
+              <button
+                class={buttonStyle}
+                on:click={() => {
+                  configStore.setComparePal(currentPalIdx);
+                  colorStore.createNewPal(ComparisonPal);
+                }}
+              >
+                Modify this palette
+              </button>
+            {/if}
+            {#if compareIdx !== "tempPal" && ComparisonPal && compareIdx !== undefined}
+              <button
+                class={buttonStyle}
+                on:click={() => {
+                  colorStore.startUsingPal(compareIdx);
+                }}
+              >
+                Modify this palette
+              </button>
+            {/if}
+          </div>
+          <div class="flex flex-col">
+            <div class="text-xs">Diff</div>
+            <div class="flex">
+              <Tooltip positionAlongRightEdge={true}>
+                <div slot="content" class="flex flex-col">
+                  {#each diffOptions as diff}
+                    <button
+                      class={simpleTooltipRowStyle}
+                      on:click={() => configStore.setCompareDiff(diff)}
+                      class:font-bold={showDiff === diff}
+                    >
+                      {diffToLabel[diff]}
+                    </button>
+                  {/each}
+                </div>
+                <button
+                  slot="target"
+                  let:toggle
+                  class={`${buttonStyle} flex items-center`}
+                  on:click={toggle}
+                >
+                  {diffToLabel[showDiff]}
+
+                  <ChevDown class="text-sm ml-2" />
+                </button>
+              </Tooltip>
+            </div>
+          </div>
+        </div>
         <ExampleAlaCart
           paletteIdx={compareIdx}
           exampleIdx={$configStore.compareSelectedExample}

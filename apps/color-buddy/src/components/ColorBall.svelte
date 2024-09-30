@@ -12,6 +12,7 @@
   import ContentEditable from "../components/ContentEditable.svelte";
   import EditColor from "../components/EditColor.svelte";
   import { typeToImg, deltaMetrics, ballSize } from "../constants";
+  import { buttonStyle } from "../lib/styles";
 
   export let isFocused: Boolean;
   export let idx: number;
@@ -120,7 +121,16 @@
   </div>
 {/if}
 {#if isFocused && $focusStore.focusedColors.length === 1}
-  <div class="ml-6" id="">
+  <div class="flex text-xs w-full justify-end" id="">
     <EditColor />
+    <button
+      class={buttonStyle}
+      on:click={() => {
+        colorStore.setCurrentPalColors([...colors].filter((_, i) => i !== idx));
+        focusStore.setColors([]);
+      }}
+    >
+      Delete Color
+    </button>
   </div>
 {/if}

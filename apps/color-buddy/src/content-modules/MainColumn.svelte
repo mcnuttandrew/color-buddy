@@ -91,7 +91,10 @@
   </div>
 </div>
 <div class="flex flex-col">
-  <div class="bg-stone-100 py-2 px-4 border-t border-stone-200 flex items-end">
+  <div
+    class="bg-stone-100 py-2 px-4 border-t border-stone-200 flex items-end"
+    id="adjust-controls"
+  >
     <ExampleAlaCarteHeader
       labelStyle={""}
       exampleIdx={$configStore.mainColumnSelectedExample}

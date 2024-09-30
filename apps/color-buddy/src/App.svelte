@@ -78,8 +78,8 @@
   const currentPalTabs = ["examples", "compare", "eval"];
 </script>
 
-<header class="flex w-full bg-stone-800 justify-between">
-  <div class="flex">
+<header class="flex w-full bg-stone-800 justify-between min-h-12">
+  <div class="flex" id="top-controls">
     <div class="text-4xl font-bold text-white px-2 py-1 flex">
       <img src="logo.png" alt="logo" class="h-10 mr-2" />
       <div class="">Color Buddy</div>
@@ -140,7 +140,7 @@
   </div>
   <!-- right col -->
   <div
-    class="flex flex-col w-full border-b border-l border-stone-200"
+    class="flex flex-col w-full border-b border-l border-stone-200 h-full"
     id="right-col"
   >
     <div class="flex bg-stone-100 w-full border-b border-l border-stone-200">

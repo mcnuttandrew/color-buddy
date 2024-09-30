@@ -142,13 +142,23 @@
     <div class="font-bold">Pre-configured check lists</div>
     <div>
       {#each lintPacks as pack}
-        <div class="flex">
-          <button class={`inline ${buttonStyle} `}>{pack.name}</button>
+        <div class="">
+          <button
+            class={`${buttonStyle} `}
+            on:click={() => {
+              const recommendedList = new Set(pack.lints);
+              colorStore.setGloballyIgnoredLints(
+                lints.filter((x) => !recommendedList.has(x.id)).map((x) => x.id)
+              );
+            }}
+          >
+            {pack.name}
+          </button>
           <span>{pack.description}</span>
         </div>
       {/each}
 
-      <div class="flex">
+      <div class="">
         <button
           class={buttonStyle}
           on:click={() =>
@@ -156,18 +166,18 @@
         >
           None
         </button>
-        <div>No checks</div>
+        <span>No checks</span>
       </div>
-      <div class="flex">
+      <div class="">
         <button
           class={buttonStyle}
           on:click={() => colorStore.setGloballyIgnoredLints([])}
         >
           All
         </button>
-        <div>All of the available checks</div>
+        <span>All of the available checks</span>
       </div>
-      <div class="flex">
+      <div class="">
         <button
           class={buttonStyle}
           on:click={() => {
@@ -177,7 +187,7 @@
         >
           Custom
         </button>
-        <div>Make your own to suit your needs!</div>
+        <span>Make your own to suit your needs!</span>
       </div>
     </div>
   </div>

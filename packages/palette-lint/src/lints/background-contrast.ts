@@ -83,7 +83,7 @@ const contrastTextAAAll: LintProgram = {
 const contrastTextAAA: LintProgram = {
   ...lintBase,
   program: JSONToPrettyString(buildProgram(7, true)),
-  name: "AAA text contrast (text colors only)",
+  name: "AAA text contrast (text-tagged colors only)",
   id: "contrast-aaa-built-in",
   expectedFailingTests: [
     createPalWithTags(["#feed72", "#f8f4d2", "#af3b4b"], [[2, "text"]]),

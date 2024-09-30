@@ -128,4 +128,8 @@
       Interpolate
     </button>
   </Tooltip>
+{:else}
+  <button class={`${buttonStyle} cursor-not-allowed opacity-50`}>
+    Interpolate
+  </button>
 {/if}

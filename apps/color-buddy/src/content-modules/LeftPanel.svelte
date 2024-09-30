@@ -38,10 +38,7 @@
   ) {
     // is contrast metric
     if (!new Set(deltaMetrics).has(metric as any)) {
-      return colors.map((color) => {
-        const clr = color.toColorIO();
-        return clr.contrast(bg.toColorIO(), metric as any);
-      });
+      return colors.map((color) => color.contrast(bg, metric));
     }
     // is delta metric
     const deltas = [];

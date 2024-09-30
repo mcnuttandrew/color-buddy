@@ -10,6 +10,7 @@ type DistAlgorithm = "76" | "CMC" | "2000" | "ITP" | "Jz" | "OK";
 
 const ColorIOCaches = new Map<string, ColorIO>();
 const InGamutCache = new Map<string, boolean>();
+const colorStateCache = new Map<string, number>();
 /**
  * The base class for all color spaces
  *
@@ -70,7 +71,6 @@ export class Color {
     const newColor = this.copy();
     newColor.channels[channel] = value;
     return newColor;
-    // this.channels[channel] = value;
   }
   toDisplay(): string {
     return this.toHex();
@@ -143,10 +143,38 @@ export class Color {
     if (!allowedAlgorithms.has(algorithm)) {
       return 0;
     }
+    const key = `${this.toString()}-${color.toString()}-${algorithm}`;
 
     const left = this.toColorIO().to("srgb");
     const right = color.toColorIO().to("srgb");
-    return left.deltaE(right, algorithm);
+    const val = left.deltaE(right, algorithm);
+    colorStateCache.set(key, val);
+    return val;
+  }
+  contrast(
+    color: Color,
+    algorithm:
+      | "76"
+      | "CMC"
+      | "2000"
+      | "ITP"
+      | "APCA"
+      | "WCAG21"
+      | "Michelson"
+      | "Weber"
+      | "Lstar"
+      | "DeltaPhi"
+      | "none"
+  ): number {
+    const key = `${this.toString()}-${color.toString()}-${algorithm}`;
+    if (colorStateCache.has(key)) {
+      return colorStateCache.get(key)!;
+    }
+    const left = this.toColorIO().to("srgb");
+    const right = color.toColorIO().to("srgb");
+    const val = left.contrast(right, algorithm as any);
+    colorStateCache.set(key, val);
+    return val;
   }
   distance(color: Color, space: string): number {
     const colorSpace = space || this.spaceName;

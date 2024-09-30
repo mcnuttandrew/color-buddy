@@ -63,7 +63,8 @@
     </button>
     <span class="flex flex-col items-start w-24 mx-2">
       <span class="flex max-w-5">
-        <ContentEditable
+        {color.toHex()}
+        <!-- <ContentEditable
           onChange={(x) => {
             const updatedColors = [...colors];
             updatedColors[idx] = Color.colorFromString(x, colorSpace);
@@ -71,7 +72,7 @@
           }}
           value={color.toHex()}
           useEditButton={true}
-        />
+        /> -->
       </span>
       {#if colorName}<span class="text-right text-xs">
           {colorName}

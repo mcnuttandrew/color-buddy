@@ -41,6 +41,8 @@
 
   import ContentEditable from "./components/ContentEditable.svelte";
 
+  import { titleCase } from "./lib/utils";
+
   import { lint } from "./lib/api-calls";
   import { debounce } from "vega";
 
@@ -177,7 +179,19 @@
           // @ts-ignore
           configStore.setRoute(x);
         }}
-      />
+      >
+        <div slot="menu" let:tab>
+          {#if tab === "eval"}
+            <div
+              class="bg-red-700 text-white rounded-full w-4 h-4 text-xs text-center flex items-center justify-center mx-1"
+            >
+              {$lintStore.currentChecks.filter(
+                (x) => x.kind === "success" && !x.passes
+              ).length}
+            </div>
+          {/if}
+        </div>
+      </Nav>
     </div>
     <div class="bg-stone-100 h-full">
       {#if palPresent && $configStore.route === "examples"}

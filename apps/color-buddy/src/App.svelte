@@ -41,8 +41,6 @@
 
   import ContentEditable from "./components/ContentEditable.svelte";
 
-  const currentPalTabs = ["design", "examples", "compare", "eval"];
-
   import { lint } from "./lib/api-calls";
   import { debounce } from "vega";
 
@@ -78,6 +76,16 @@
   const padding = 40;
   const zWidth = 110;
   $: scatterSize = Math.max(Math.min(columnWidth - zWidth - padding, 420), 200);
+  $: bigEnoughForIndependentDesign = innerWidth > 1600;
+
+  $: currentPalTabs = bigEnoughForIndependentDesign
+    ? ["examples", "compare", "eval"]
+    : ["design", "examples", "compare", "eval"];
+  $: {
+    if (bigEnoughForIndependentDesign && $configStore.route === "design") {
+      configStore.setRoute("examples");
+    }
+  }
 </script>
 
 <header class="flex w-full bg-stone-800 justify-between">
@@ -148,6 +156,14 @@
     </div>
   </div>
   <!-- right col -->
+  {#if bigEnoughForIndependentDesign}
+    <div
+      class="flex flex-col w-full border-b border-l border-stone-200 bg-stone-100 max-w-md"
+      id="right-col"
+    >
+      <Design />
+    </div>
+  {/if}
   <div
     class="flex flex-col w-full border-b border-l border-stone-200"
     id="right-col"

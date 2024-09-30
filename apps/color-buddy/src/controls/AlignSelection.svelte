@@ -9,8 +9,7 @@
   import AlignZTop from "virtual:icons/custom/max-3rd";
   import AlignZBottom from "virtual:icons/custom/min-3rd";
   import { colorPickerConfig } from "../lib/utils";
-  import { buttonStyle, simpleTooltipRowStyle } from "../lib/styles";
-  import Tooltip from "../components/Tooltip.svelte";
+  import { buttonStyle } from "../lib/styles";
 
   $: currentPal = $colorStore.palettes[$colorStore.currentPal];
   $: colors = currentPal.colors;
@@ -24,6 +23,9 @@
   $: zRev = config.zDomain[1] < config.zDomain[0];
   $: isPolar = config.isPolar;
 
+  type AlignTypes =
+    | { type: "single"; pos: number; name: String; op: any; icon: any }
+    | { type: "divide" };
   $: ALIGNS = [
     {
       type: "single",
@@ -69,27 +71,27 @@
       op: zRev ? Math.min : Math.max,
       icon: zRev ? AlignZBottom : AlignZTop,
     },
-  ];
+  ] as AlignTypes[];
 </script>
 
 <div class="flex flex-wrap">
-  {#each ALIGNS as { pos, name, op, icon, type }}
-    {#if type === "single"}
+  {#each ALIGNS as align}
+    {#if align.type === "single"}
       <button
         class={`${buttonStyle} h-full flex justify-between items-center`}
         on:click={() => {
-          const newCoordinate = op(
+          const newCoordinate = align.op(
             ...colors
               .map((x) => x.toChannels())
               .filter((_, idx) => focusSet.has(idx))
-              .map((x) => x[pos])
+              .map((x) => x[align.pos])
           );
           const newColors = colors
             .map((x) => x.toChannels())
             .map((x, idx) => {
               let y = x;
               if (focusSet.has(idx)) {
-                y[pos] = newCoordinate;
+                y[align.pos] = newCoordinate;
               }
               return y;
             })
@@ -103,9 +105,9 @@
         }}
       >
         {name}
-        {#if icon}
+        {#if align.icon}
           <span class="ml-2">
-            <svelte:component this={icon} />
+            <svelte:component this={align.icon} />
           </span>
         {/if}
       </button>

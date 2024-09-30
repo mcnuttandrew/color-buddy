@@ -195,7 +195,7 @@
               Modify this palette
             </button>
           {/if}
-          {#if compareIdx !== "tempPal" && ComparisonPal}
+          {#if compareIdx !== "tempPal" && ComparisonPal && compareIdx !== undefined}
             <button
               class={buttonStyle}
               on:click={() => {

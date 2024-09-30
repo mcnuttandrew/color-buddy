@@ -320,6 +320,31 @@
     puttingPreview = false;
   }
   let svgContainer: any;
+
+  function computeStroke(
+    color: Color,
+    idx: number,
+    focusSet: Set<number>
+  ): string {
+    if (focusSet.has(idx) && focusedColors.length > 1) {
+      return "none";
+    }
+    const contrast = color.contrast(bg, "WCAG21");
+    const lum = color.luminance();
+    if (contrast < 1.1 && lum > 0.5) {
+      const darkerVersion = color.toColorSpace("lab");
+      return darkerVersion
+        .setChannel("L", Math.max(darkerVersion.getChannel("L") - 20))
+        .toHex();
+    }
+    if (contrast < 1.1 && lum <= 0.5) {
+      const darkerVersion = color.toColorSpace("lab");
+      return darkerVersion
+        .setChannel("L", Math.max(darkerVersion.getChannel("L") + 20))
+        .toHex();
+    }
+    return "none";
+  }
 </script>
 
 <!-- svelte-ignore a11y-no-static-element-interactions -->
@@ -380,7 +405,7 @@
               {#if scatterPlotMode === "moving"}
                 <circle
                   {...CircleProps(color, i)}
-                  stroke={focusedColors.length === 1 ? "white" : "none"}
+                  stroke={computeStroke(color, i, focusSet)}
                   on:touchstart|preventDefault={(e) => {
                     onFocusedColorsChange([i]);
                     dragStart(e);
@@ -396,7 +421,7 @@
               {#if scatterPlotMode !== "moving"}
                 <circle
                   {...CircleProps(color, i)}
-                  stroke={focusedColors.length === 1 ? "white" : "none"}
+                  stroke={computeStroke(color, i, focusSet)}
                   on:mouseenter|preventDefault={() => hoverPoint(i)}
                 />
               {/if}

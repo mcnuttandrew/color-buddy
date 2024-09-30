@@ -7,7 +7,7 @@
   import Plus from "virtual:icons/fa6-solid/plus";
   import Minus from "virtual:icons/fa6-solid/minus";
 
-  import { buttonStyle, simpleTooltipRowStyle } from "../lib/styles";
+  import { buttonStyle } from "../lib/styles";
 
   $: currentPal = $colorStore.palettes[$colorStore.currentPal];
   $: colors = currentPal.colors;

@@ -71,7 +71,6 @@ export class Color {
     const newColor = this.copy();
     newColor.channels[channel] = value;
     return newColor;
-    // this.channels[channel] = value;
   }
   toDisplay(): string {
     return this.toHex();

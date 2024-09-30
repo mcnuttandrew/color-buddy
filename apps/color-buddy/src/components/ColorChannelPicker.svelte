@@ -136,17 +136,20 @@
 </script>
 
 <div class="flex flex-col">
-  <div class="flex h-full items-center justify-between">
-    <div class="text-sm">Color Space</div>
-    <select
-      class="h-full {buttonStyle}"
-      value={colorMode}
-      on:change={(e) => onSpaceChange(e.currentTarget.value)}
-    >
-      {#each [...Object.keys(colorConfigs)] as colorMode}
-        <option value={colorMode}>{colorMode}</option>
-      {/each}
-    </select>
+  <div class="flex justify-between w-full">
+    <div class="flex flex-col items-center justify-between">
+      <div class="text-xs">Color Space</div>
+      <select
+        class="h-full {buttonStyle}"
+        value={colorMode}
+        on:change={(e) => onSpaceChange(e.currentTarget.value)}
+      >
+        {#each [...Object.keys(colorConfigs)] as colorMode}
+          <option value={colorMode}>{colorMode}</option>
+        {/each}
+      </select>
+    </div>
+    <slot />
   </div>
   <div class="flex h-full mr-2">
     <div class="flex flex-col">

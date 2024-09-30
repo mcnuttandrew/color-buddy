@@ -11,8 +11,8 @@
   $: bgHex = bg.toHex();
 </script>
 
-<div class="flex flex-col ml-1">
-  <div class="text-sm">Background</div>
+<div class="flex flex-col">
+  <div class="text-xs">Background</div>
   <Tooltip top={"20px"}>
     <div slot="content" class="flex flex-col">
       <div class="text-sm">Current Color</div>
@@ -34,17 +34,17 @@
     <button
       let:toggle
       slot="target"
-      class={`${buttonStyle} flex items-center justify-between`}
+      class={`${buttonStyle} flex items-center justify-between w-36`}
       on:click={() => toggle()}
     >
       <div class="flex items-center">
+        {bgHex}
         <div
           class={"h-3 w-3 rounded-full ml-2"}
           style={`background: ${bgHex}`}
           class:border={bg.luminance() > 0.5}
           class:border-black={bg.luminance() > 0.5}
         ></div>
-        {bgHex}
       </div>
       <DownChev class="text-sm ml-2" />
     </button>

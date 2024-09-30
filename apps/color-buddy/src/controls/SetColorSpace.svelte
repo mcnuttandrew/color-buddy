@@ -20,7 +20,7 @@
 </script>
 
 <div class="flex flex-col">
-  <div class="text-sm whitespace-nowrap">Color Space</div>
+  <div class="whitespace-nowrap text-xs">Color Space</div>
   <Tooltip>
     <div slot="content" class="flex flex-col max-w-md" let:onClick>
       <div class="font-bold">Set Color Space</div>
@@ -66,7 +66,7 @@
     </div>
     <button
       slot="target"
-      class={`${buttonStyle} flex items-center w-full justify-between`}
+      class={`${buttonStyle} flex items-center w-36 justify-between`}
       let:toggle
       on:click={toggle}
     >

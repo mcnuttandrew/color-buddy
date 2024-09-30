@@ -12,12 +12,10 @@
   import { buttonStyle } from "../lib/styles";
   import LintDisplay from "./LintDisplay.svelte";
   import LintCustomizationModal from "./LintCustomizationTab.svelte";
-  import Nav from "../components/Nav.svelte";
   import GlobalLintConfig from "./GlobalLintConfigModal.svelte";
   import { lintGroupNames, typeToImg } from "../constants";
 
   import { loadLints } from "../lib/api-calls";
-  export let maxWidth: number;
 
   $: currentPal = $colorStore.palettes[$colorStore.currentPal];
   $: evalConfig = currentPal.evalConfig;
@@ -117,7 +115,7 @@
     </div>
   </div>
 </div>
-<div class="flex h-full" style={`width: ${maxWidth}px`}>
+<div class="flex h-full max-w-lg">
   <div class="flex flex-col ml-2">
     <div class="overflow-auto h-full mb-28 px-2">
       <div class="text-sm">

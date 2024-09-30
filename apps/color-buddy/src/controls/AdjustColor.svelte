@@ -4,7 +4,8 @@
   import colorStore from "../stores/color-store";
   import focusStore from "../stores/focus-store";
   import { clamp } from "../lib/utils";
-  import Tooltip from "../components/Tooltip.svelte";
+  import Plus from "virtual:icons/fa6-solid/plus";
+  import Minus from "virtual:icons/fa6-solid/minus";
 
   import { buttonStyle, simpleTooltipRowStyle } from "../lib/styles";
 
@@ -24,37 +25,43 @@
     });
     colorStore.setCurrentPalColors(newColors);
   }
-  const actions: { name: string; effect: ColorEffect }[] = [
+  const actions: (
+    | { type: "single"; name: string; effect: ColorEffect }
+    | {
+        type: "double";
+        name: string;
+        negative: ColorEffect;
+        positive: ColorEffect;
+      }
+  )[] = [
     {
+      type: "double",
       name: "Lighten",
-      effect: (color) =>
+      positive: (color) =>
         color.toColorIO().set("lch.l", (l) => clamp(l ? l * 1.2 : 5, 0, 100))
           .coords,
+      negative: (color) =>
+        color.toColorIO().set("lch.l", (l) => l * 0.8).coords,
     },
+
     {
-      name: "Darken",
-      effect: (color) => color.toColorIO().set("lch.l", (l) => l * 0.8).coords,
-    },
-    {
+      type: "double",
       name: "Saturate",
-      effect: (color) =>
+      positive: (color) =>
         color.toColorIO().set("hsl.s", (c) => clamp(c ? c * 1.2 : 5, 0, 100))
           .coords,
+      negative: (color) =>
+        color.toColorIO().set("hsl.s", (c) => c * 0.8).coords,
     },
+
     {
-      name: "Desaturate",
-      effect: (color) => color.toColorIO().set("hsl.s", (c) => c * 0.8).coords,
-    },
-    {
-      name: "Convert To Opposing",
+      type: "single",
+      name: "Flip To Opposing",
       effect: (color) =>
-        color.toColorIO().set("hsl.h", (h) => (h + 180) % 360).coords,
+        color.toColorIO().set("lch.h", (h) => (h + 180) % 360).coords,
     },
     {
-      name: "Clip to gamut",
-      effect: (color) => clipToGamut(color),
-    },
-    {
+      type: "single",
       name: "Jitter",
       effect: (color) => {
         const newChannels = [...color.toChannels()];
@@ -68,23 +75,46 @@
         return newChannels as [number, number, number];
       },
     },
+    {
+      type: "single",
+      name: "Clip to gamut",
+      effect: (color) => clipToGamut(color),
+    },
   ];
 </script>
 
-{#if focusedColors.length >= 1}
-  <Tooltip bg="bg-white">
-    <div slot="content" class="flex flex-col">
-      {#each actions as action}
-        <button
-          class={simpleTooltipRowStyle}
-          on:click={() => actionOnColor(focusedColors, action.effect)}
+<div class="flex flex-wrap">
+  {#each actions as action}
+    {#if action.type === "double"}
+      <div class="w-full my-2">
+        <div
+          class={`${buttonStyle
+            .split(" ")
+            .filter((x) => !x.startsWith("hover"))
+            .join(" ")} flex w-48 justify-between`}
         >
-          {action.name}
-        </button>
-      {/each}
-    </div>
-    <button class={buttonStyle} slot="target" let:toggle on:click={toggle}>
-      Adjust Color{focusedColors.length > 1 ? "s" : ""}
-    </button>
-  </Tooltip>
-{/if}
+          <button
+            class={"cursor-pointer"}
+            on:click={() => actionOnColor(focusedColors, action.negative)}
+          >
+            <Minus />
+          </button>
+          <div>{action.name}</div>
+          <button
+            class={"cursor-pointer"}
+            on:click={() => actionOnColor(focusedColors, action.positive)}
+          >
+            <Plus />
+          </button>
+        </div>
+      </div>
+    {:else}
+      <button
+        class={buttonStyle}
+        on:click={() => actionOnColor(focusedColors, action.effect)}
+      >
+        {action.name}
+      </button>
+    {/if}
+  {/each}
+</div>

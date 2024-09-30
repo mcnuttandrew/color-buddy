@@ -78,54 +78,47 @@
   ] as const;
 </script>
 
-{#if focusedColors.length >= 2}
-  <Tooltip bg="bg-white">
-    <div slot="content" class="flex flex-col">
-      <div class="flex justify-between">
-        <label for="color-space-select">Color Space</label>
-        <select id="color-space-select" bind:value={colorSpace}>
-          {#each interpolationSpecs as space}
-            <option value={space}>{space}</option>
-          {/each}
-        </select>
-      </div>
-      <div class="flex items-center justify-between">
-        <label class="whitespace-nowrap mr-2" for="interpolate-count">
-          Number of steps
-        </label>
-        <input
-          id="interpolate-count"
-          class="h-4 text-sm leading-6 w-16"
-          type="number"
-          min="1"
-          step="1"
-          bind:value={numPoints}
-        />
-      </div>
+<div class="flex flex-col">
+  <div class="flex justify-between">
+    <label for="color-space-select">Color Space</label>
+    <select id="color-space-select" bind:value={colorSpace}>
+      {#each interpolationSpecs as space}
+        <option value={space}>{space}</option>
+      {/each}
+    </select>
+  </div>
+  <div class="flex items-center justify-between">
+    <label class="whitespace-nowrap mr-2" for="interpolate-count">
+      Number of steps
+    </label>
+    <input
+      id="interpolate-count"
+      class="h-4 text-sm leading-6 w-16"
+      type="number"
+      min="1"
+      step="1"
+      bind:value={numPoints}
+    />
+  </div>
 
-      <div class="flex w-full justify-between items-baseline">
-        <div>Preview</div>
-        <button
-          class="{buttonStyle} mt-5"
-          on:click={() => {
-            let newColors = [...colors].filter((_, idx) => !focusSet.has(idx));
-            const offset = newColors.length;
-            const newPoints = createInterpolation();
-            newColors = [...newColors, ...newPoints];
-            colorStore.setCurrentPalColors(newColors);
-            // also focus all of the new points
-            focusStore.setColors([...newPoints.map((_, idx) => offset + idx)]);
-          }}
-        >
-          Add points
-        </button>
-      </div>
-      {#if tempPal}
-        <PalPreview pal={tempPal} />
-      {/if}
-    </div>
-    <button class={buttonStyle} slot="target" let:toggle on:click={toggle}>
-      Interpolate
+  <div>Preview</div>
+  {#if tempPal}
+    <PalPreview pal={tempPal} />
+  {/if}
+  <div class="w-full flex justify-end">
+    <button
+      class={buttonStyle}
+      on:click={() => {
+        let newColors = [...colors].filter((_, idx) => !focusSet.has(idx));
+        const offset = newColors.length;
+        const newPoints = createInterpolation();
+        newColors = [...newColors, ...newPoints];
+        colorStore.setCurrentPalColors(newColors);
+        // also focus all of the new points
+        focusStore.setColors([...newPoints.map((_, idx) => offset + idx)]);
+      }}
+    >
+      Add these colors
     </button>
-  </Tooltip>
-{/if}
+  </div>
+</div>

@@ -13,8 +13,6 @@
       <li class="">
         <button
           class="flex duration-150 px-2 items-center hover:border-stone-700 whitespace-nowrap"
-          class:border-stone-400={!isTabSelected(tab)}
-          class:border-b={!isTabSelected(tab)}
           class:border-black={isTabSelected(tab)}
           class:border-b-2={isTabSelected(tab)}
           class:font-bold={isTabSelected(tab)}

@@ -13,7 +13,6 @@
   import { dealWithFocusEvent } from "../lib/utils";
   import Sort from "../controls/Sort.svelte";
   import AddColor from "../controls/AddColor.svelte";
-  import GetColorsFromString from "../controls/GetColorsFromString.svelte";
   import DeMetric from "../controls/DeMetric.svelte";
   import ContentEditable from "../components/ContentEditable.svelte";
   import EditColor from "../components/EditColor.svelte";
@@ -74,30 +73,9 @@
 
 <!-- left panel -->
 <div class="bg-white w-80 container flex flex-col h-full flex-none">
-  <div class="text-4xl font-bold bg-stone-800 text-white px-2 py-1 flex">
-    <img src="logo.png" alt="logo" class="h-10 mr-2" />
-    <div class="">Color Buddy</div>
-  </div>
-
   <section class="flex flex-col flex-1 overflow-auto p-1" id="left-panel">
-    <div class="flex text-2xl py-2 px-4">
-      <ContentEditable
-        onChange={(x) => colorStore.setCurrentPalName(x)}
-        value={currentPal.name}
-        displayValue={`${currentPal.name.slice(0, 20)}${
-          currentPal.name.length > 20 ? "..." : ""
-        }`}
-        useEditButton={true}
-      />
-    </div>
-
     <div class="flex px-4">
       <ModifySelection />
-      <GetColorsFromString
-        onChange={(colors) => colorStore.setCurrentPalColors(colors)}
-        colorSpace={currentPal.colorSpace}
-        colors={currentPal.colors}
-      />
     </div>
     <!-- svelte-ignore a11y-click-events-have-key-events -->
     <!-- svelte-ignore a11y-no-static-element-interactions -->

@@ -37,8 +37,11 @@
   import MainColumn from "./content-modules/MainColumn.svelte";
   import TourProvider from "./content-modules/TourProvider.svelte";
   import Config from "./controls/Config.svelte";
+  import Design from "./content-modules/Design.svelte";
 
-  const currentPalTabs = ["examples", "compare", "eval"];
+  import ContentEditable from "./components/ContentEditable.svelte";
+
+  const currentPalTabs = ["design", "examples", "compare", "eval"];
 
   import { lint } from "./lib/api-calls";
   import { debounce } from "vega";
@@ -77,10 +80,13 @@
   $: scatterSize = Math.max(Math.min(columnWidth - zWidth - padding, 420), 200);
 </script>
 
-<main class="flex h-full">
-  <LeftPanel />
-  <div class="h-full flex flex-col grow main-content">
-    <div class="bg-stone-800 flex justify-between items-center">
+<header class="flex w-full bg-stone-800 justify-between">
+  <div class="flex">
+    <div class="text-4xl font-bold text-white px-2 py-1 flex">
+      <img src="logo.png" alt="logo" class="h-10 mr-2" />
+      <div class="">Color Buddy</div>
+    </div>
+    <div>
       <div class="flex h-12">
         <NewPal />
         <Manage />
@@ -95,46 +101,78 @@
           Redo
         </button>
       </div>
-      <Config />
     </div>
-    <div class="flex w-full grow overflow-y-auto overflow-x-hidden">
-      <div class="flex flex-col">
-        {#if palPresent}
-          <MainColumn {scatterSize} />
-        {:else}
-          <div
-            class="flex-grow flex justify-center items-center"
-            style={`width: ${columnWidth}px`}
-          >
-            <div class="text-2xl max-w-md text-center">
-              No palettes present, click "New" in the upper left to create a new
-              one, or "Browse" to pick from existing ones.
-            </div>
+  </div>
+  <div class="flex justify-between items-center">
+    <Config />
+  </div>
+</header>
+<main class="flex h-full">
+  <!-- left and main panel -->
+  <div class="flex flex-col">
+    <!-- name -->
+    <div class="flex text-2xl py-2 px-4 border-b border-l border-stone-200">
+      <ContentEditable
+        onChange={(x) => colorStore.setCurrentPalName(x)}
+        value={currentPal.name}
+        displayValue={`${currentPal.name}`}
+        useEditButton={true}
+      />
+    </div>
+    <!-- main content -->
+    <div class="flex">
+      <!-- left -->
+      <LeftPanel />
+      <!-- main -->
+      <div
+        class="h-full flex flex-col grow main-content border-b border-l border-stone-200"
+      >
+        <div class="flex w-full grow overflow-y-auto overflow-x-hidden">
+          <div class="flex flex-col">
+            {#if palPresent}
+              <MainColumn {scatterSize} />
+            {:else}
+              <div
+                class="flex-grow flex justify-center items-center"
+                style={`width: ${columnWidth}px`}
+              >
+                <div class="text-2xl max-w-md text-center">
+                  No palettes present, click "New" in the upper left to create a
+                  new one, or "Browse" to pick from existing ones.
+                </div>
+              </div>
+            {/if}
           </div>
-        {/if}
-      </div>
-      <div class="flex flex-col w-full" id="right-col">
-        <div class="flex bg-stone-300 w-full">
-          <Nav
-            className=""
-            tabs={currentPalTabs}
-            isTabSelected={(x) => $configStore.route === x}
-            selectTab={(x) => {
-              // @ts-ignore
-              configStore.setRoute(x);
-            }}
-          />
-        </div>
-        <div class="bg-stone-100 h-full">
-          {#if palPresent && $configStore.route === "examples"}
-            <Examples />
-          {:else if palPresent && $configStore.route === "compare"}
-            <ComparePal {scatterSize} />
-          {:else if palPresent && $configStore.route === "eval"}
-            <Eval maxWidth={columnWidth} />
-          {/if}
         </div>
       </div>
+    </div>
+  </div>
+  <!-- right col -->
+  <div
+    class="flex flex-col w-full border-b border-l border-stone-200"
+    id="right-col"
+  >
+    <div class="flex bg-stone-100 w-full border-b border-l border-stone-200">
+      <Nav
+        className=""
+        tabs={currentPalTabs}
+        isTabSelected={(x) => $configStore.route === x}
+        selectTab={(x) => {
+          // @ts-ignore
+          configStore.setRoute(x);
+        }}
+      />
+    </div>
+    <div class="bg-stone-100 h-full">
+      {#if palPresent && $configStore.route === "examples"}
+        <Examples />
+      {:else if palPresent && $configStore.route === "compare"}
+        <ComparePal {scatterSize} />
+      {:else if palPresent && $configStore.route === "eval"}
+        <Eval />
+      {:else if palPresent && $configStore.route === "design"}
+        <Design />
+      {/if}
     </div>
   </div>
 </main>

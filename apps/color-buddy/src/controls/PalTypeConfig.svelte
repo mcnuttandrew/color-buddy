@@ -20,7 +20,7 @@
 </script>
 
 <div class="flex flex-col">
-  <div class="text-sm">Palette Type</div>
+  <div class="text-xs">Palette Type</div>
   <Tooltip>
     <div slot="content" class="flex flex-col max-w-md">
       {#each types as type}
@@ -36,7 +36,7 @@
       {/each}
     </div>
     <button
-      class={`${buttonStyle} flex items-center`}
+      class={`${buttonStyle} flex items-center justify-between w-36`}
       slot="target"
       let:toggle
       on:click={toggle}

@@ -4,7 +4,6 @@
   import exampleStore from "../stores/example-store";
   import configStore from "../stores/config-store";
   import Tooltip from "../components/Tooltip.svelte";
-  import NewExampleModal from "../example/NewExampleModal.svelte";
   export let exampleName: string;
   $: SVGs = $exampleStore.examples.filter((x) => (x as any).svg);
   $: vis = $exampleStore.examples.filter((x) => (x as any).vega);
@@ -40,7 +39,6 @@
       </button>
     {/each}
     <div class="w-full border border-stone-300 my-2" />
-    <NewExampleModal editTarget={null} onClose={() => {}} />
   </div>
   <button
     slot="target"

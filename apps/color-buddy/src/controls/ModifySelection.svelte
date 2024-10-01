@@ -7,6 +7,7 @@
   import SuggestionModificationToSelection from "../controls/SuggestionModificationToSelection.svelte";
   import focusStore from "../stores/focus-store";
   import colorStore from "../stores/color-store";
+  import Sort from "../controls/Sort.svelte";
   import { buttonStyle, controlButtonStyle } from "../lib/styles";
   $: focusedColors = $focusStore.focusedColors;
   $: focusedSet = new Set(focusedColors);
@@ -20,7 +21,6 @@
 <button
   class={`${controlButtonStyle} `}
   class:opacity-30={!buttonsActive}
-  class:opacity-50={buttonsActive}
   class:cursor-not-allowed={!buttonsActive}
   on:click|stopPropagation|preventDefault={() => {
     // move every element to the left
@@ -44,7 +44,6 @@
 <button
   class={controlButtonStyle}
   class:opacity-30={!buttonsActive}
-  class:opacity-50={buttonsActive}
   class:cursor-not-allowed={!buttonsActive}
   on:click|stopPropagation|preventDefault={() => {
     // move every element to the right
@@ -65,8 +64,8 @@
 >
   <DownArrow />
 </button>
-
-<button
+<Sort />
+<!-- <button
   class={controlButtonStyle}
   class:button-deactivated={!buttonsActive}
   on:click={() => {
@@ -77,7 +76,7 @@
   }}
 >
   <Cross />
-</button>
+</button> -->
 <!-- <button
   class={buttonStyle}
   class:button-deactivated={!buttonsActive}
@@ -91,7 +90,7 @@
 >
   Select All
 </button> -->
-<button
+<!-- <button
   class={`${buttonStyle} flex items-center`}
   class:button-deactivated={!buttonsActive}
   on:click={() =>
@@ -101,7 +100,7 @@
     ])}
 >
   <Cross /><NumTwo />
-</button>
+</button> -->
 <SuggestionModificationToSelection />
 
 <style>

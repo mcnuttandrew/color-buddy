@@ -138,6 +138,7 @@
     {#if ComparisonPal !== undefined}
       <div class="mr-2">
         <SetColorSpace
+          showDragPicker={false}
           {colorSpace}
           onChange={(space) => {
             colorSpace = space;

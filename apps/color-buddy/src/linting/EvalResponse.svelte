@@ -5,6 +5,7 @@
   import { suggestLintAIFix, suggestLintMonteFix } from "../lib/lint-fixer";
   import InfoIcon from "virtual:icons/fa6-solid/circle-info";
   import FixIcon from "virtual:icons/fa6-solid/hammer";
+  import Equal from "virtual:icons/fa6-solid/equals";
 
   import { logEvent } from "../lib/api-calls";
 
@@ -48,6 +49,7 @@
         .then((x) => {
           suggestions = [...suggestions, x].filter((x) => x) as FixSuggestion[];
           requestState = "loaded";
+          waitingOnFixes = waitingOnFixes - 1;
           logEvent(
             "lint-fix",
             {
@@ -73,14 +75,20 @@
       }
     });
   }
+  $: waitingOnFixes = 0;
   function generateFixes() {
-    proposeFix("ai", "LLMs");
+    let numAdd = 0;
+    proposeFix("ai", "LLM Suggestion");
+    numAdd += 1;
     if (lintProgram && lintProgram.program.length) {
-      proposeFix("monte", "Monte Carlo");
+      proposeFix("monte", "Monte Carlo Suggestion");
+      numAdd += 1;
     }
     if (lintProgram.subscribedFix && lintProgram.subscribedFix !== "none") {
-      proposeFix("heuristic", "Hand tuned fix");
+      proposeFix("heuristic", "Hand tuned Suggestion");
+      numAdd += 1;
     }
+    waitingOnFixes = numAdd;
   }
 
   $: currentPal = $colorStore.palettes[$colorStore.currentPal];
@@ -106,7 +114,7 @@
 </script>
 
 <Tooltip {positionAlongRightEdge}>
-  <div slot="content" let:onClick class="max-w-2xl eval-tooltip">
+  <div slot="content" let:onClick class="max-w-xl eval-tooltip">
     <div class="font-bold">{lintProgram.name}</div>
     <div class="max-h-52 overflow-y-auto">
       {#if lintResult.kind === "ignored" || (lintResult.kind === "success" && lintResult.passes)}
@@ -115,71 +123,70 @@
         <ExplanationViewer {lintResult} />
       {/if}
     </div>
+    <div class="my-2">
+      {#if cbMatch}
+        <button
+          class={buttonStyle}
+          on:click={() => configStore.setColorSim(cbMatch)}
+        >
+          Turn on {cbMatch} sim
+        </button>
+      {/if}
+      {#if !!spaceMatch}
+        <button
+          class={buttonStyle}
+          on:click={() => colorStore.setColorSpace(spaceMatch)}
+        >
+          Switch to {spaceMatch} color space
+        </button>
+      {/if}
 
-    <div class="font-bold mt-4">Actions</div>
-    {#if cbMatch}
-      <button
-        class={buttonStyle}
-        on:click={() => configStore.setColorSim(cbMatch)}
-      >
-        Activate {cbMatch} simulator
-      </button>
-    {/if}
-    {#if !!spaceMatch}
-      <button
-        class={buttonStyle}
-        on:click={() => colorStore.setColorSpace(spaceMatch)}
-      >
-        Switch to {spaceMatch} color space
-      </button>
-    {/if}
+      {#if lintResult.kind === "success" && !lintResult.passes}
+        <button on:click={generateFixes} class={buttonStyle}>
+          Suggest Fixes
+        </button>
+      {/if}
 
-    {#if lintResult.kind === "success" && !lintResult.passes}
-      <!-- hiding the LLM based solution, bc it works poorly -->
-      <button on:click={generateFixes} class={buttonStyle}>
-        Suggest Fixes
-      </button>
-    {/if}
-
-    {#if !ignored}
-      <button
-        class={buttonStyle}
-        on:click={() => {
-          colorStore.setCurrentPalEvalConfig({
-            ...evalConfig,
-            [lintProgram.name]: { ignore: true },
-          });
-        }}
-      >
-        Ignore for this palette
-      </button>
-    {:else}
-      <button
-        class={buttonStyle}
-        on:click={() => {
-          colorStore.setCurrentPalEvalConfig({
-            ...evalConfig,
-            [lintProgram.name]: { ignore: false },
-          });
-        }}
-      >
-        Re-enable
-      </button>
-    {/if}
-    {#if !lintProgram.customProgram}
-      <button
-        class={buttonStyle}
-        on:click={() => {
-          lintStore.setFocusedLint(lintProgram.id);
-          configStore.setEvalDisplayMode("check-customization");
-        }}
-      >
-        Customize
-      </button>
-    {/if}
+      {#if !ignored}
+        <button
+          class={buttonStyle}
+          on:click={() => {
+            colorStore.setCurrentPalEvalConfig({
+              ...evalConfig,
+              [lintProgram.name]: { ignore: true },
+            });
+          }}
+        >
+          Ignore for this palette
+        </button>
+      {:else}
+        <button
+          class={buttonStyle}
+          on:click={() => {
+            colorStore.setCurrentPalEvalConfig({
+              ...evalConfig,
+              [lintProgram.name]: { ignore: false },
+            });
+          }}
+        >
+          Re-enable
+        </button>
+      {/if}
+      {#if !lintProgram.customProgram}
+        <button
+          class={buttonStyle}
+          on:click={() => {
+            lintStore.setFocusedLint(lintProgram.id);
+            configStore.setEvalDisplayMode("check-customization");
+          }}
+        >
+          Customize
+        </button>
+      {/if}
+    </div>
 
     {#if blameData.length}
-      <div>For just this lint</div>
+      <div class="text-xs">Ignore these colors for this check</div>
       {#each blameData as index}
         <button
           class={buttonStyle
@@ -196,7 +203,7 @@
           }}
         >
           <span class="opacity-50">
-            ignore ({palette.colors[index].toHex()})
+            {palette.colors[index].toHex()}
           </span>
 
           <div
@@ -212,29 +219,67 @@
     {:else if requestState === "failed"}
       <div>Failed to generate suggestions</div>
     {/if}
-    <div class="max-h-40 overflow-auto">
+
+    <div class="max-h-52 overflow-auto">
+      {#if suggestions.length > 0}
+        <div class=" text-xs">Current</div>
+        <div class="w-fit">
+          <div
+            class="rounded px-2 py-1 flex items-center"
+            style={`background: ${currentPal.background.toHex()}`}
+          >
+            {#each currentPal.colors as color, idx}
+              <div
+                class="h-5 w-5 inline-block rounded-full mx-1"
+                style={`background: ${color.toHex()}`}
+              ></div>
+            {/each}
+          </div>
+        </div>
+      {/if}
       {#each suggestions as suggestion, idx}
-        <div class="flex relative mb-4">
-          <PalDiff beforePal={currentPal} afterPal={suggestion.pal} />
-          <div class="flex flex-col justify-between items-baseline">
-            <div class="font-bold pl-2 mb-0">
-              {suggestion.label} fix
-            </div>
-            <button
-              class={buttonStyle}
-              on:click={() => {
-                if (suggestion) {
-                  colorStore.setCurrentPal(suggestion.pal);
-                  focusStore.clearColors();
-                  requestState = "idle";
-                  suggestions = [];
-                  onClick();
-                }
-              }}
-            >
-              Use
-            </button>
-            <button
+        <div class=" text-xs">{suggestion.label}</div>
+        <div class="flex relative mb-1 items-center">
+          <div
+            class="rounded px-2 py-1 flex items-center"
+            style={`background: ${suggestion.pal.background.toHex()}`}
+          >
+            {#each suggestion.pal.colors as color, idx}
+              <div
+                class="h-5 w-5 rounded-full mx-1 flex items-center justify-center"
+                style={`background: ${color.toHex()}`}
+              >
+                {#if color.toHex() === currentPal.colors[idx].toHex()}
+                  <div
+                    class:text-white={color.luminance() < 0.5}
+                    class="text-xs"
+                  >
+                    <Equal />
+                  </div>
+                {/if}
+              </div>
+            {/each}
+          </div>
+          <!-- <PalDiff beforePal={currentPal} afterPal={suggestion.pal} /> -->
+          <!-- <div class="flex flex-col justify-between items-baseline"> -->
+          <!-- <div class="font-bold pl-2 mb-0"> -->
+          <!-- {suggestion.label} fix
+            </div> -->
+          <button
+            class={buttonStyle}
+            on:click={() => {
+              if (suggestion) {
+                colorStore.setCurrentPal(suggestion.pal);
+                focusStore.clearColors();
+                requestState = "idle";
+                suggestions = [];
+                onClick();
+              }
+            }}
+          >
+            Use
+          </button>
+          <!-- <button
               class={buttonStyle}
               on:click={() => {
                 suggestions = suggestions.filter((_, jdx) => jdx !== idx);
@@ -244,10 +289,13 @@
               }}
             >
               Reject
-            </button>
-          </div>
+            </button> -->
+          <!-- </div> -->
         </div>
       {/each}
+      {#if waitingOnFixes > 0}
+        <div>Loading... {waitingOnFixes} remaining</div>
+      {/if}
     </div>
   </div>
   <button

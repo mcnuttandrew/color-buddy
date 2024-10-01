@@ -13,7 +13,6 @@
     "openai",
     "anthropic",
   ] as string[];
-  $: showBg = $configStore.showColorBackground;
 
   const isMac = navigator.userAgent.indexOf("Mac OS X") !== -1;
   const metaKey = isMac ? "⌘" : "ctrl";
@@ -79,14 +78,11 @@
     };
     input.click();
   }
-  const showTypes = ["show on drag", "always show", "never show"] as Parameters<
-    typeof configStore.setShowColorBackground
-  >[0][];
 </script>
 
 <Tooltip positionAlongRightEdge={true}>
   <button
-    class={"text-white flex items-center mr-10"}
+    class={"text-white flex items-center mr-10 "}
     slot="target"
     let:toggle
     on:click={toggle}
@@ -94,7 +90,7 @@
     <QuestionIcon />
     <ChevDown class="ml-2" />
   </button>
-  <div slot="content" class="">
+  <div slot="content" class="w-96">
     <!-- <div class="flex mb-4">
       <button class={buttonStyle} on:click={() => importPals()}>
         Import Palettes
@@ -159,7 +155,7 @@
       {/each}
     </div>
 
-    <div class="font-bold mt-4">Configurations</div>
+    <!-- <div class="font-bold mt-4">Configurations</div>
     <div class="mt-2">AI Provider</div>
 
     <Nav
@@ -167,14 +163,6 @@
       className="text-sm"
       isTabSelected={(x) => x === $configStore.engine}
       selectTab={(x) => configStore.setEngine(x)}
-    />
-
-    <div class="mt-2">Color Space in Background</div>
-    <Nav
-      tabs={showTypes}
-      className="text-sm"
-      isTabSelected={(x) => x === showBg}
-      selectTab={(x) => configStore.setShowColorBackground(x)}
-    />
+    /> -->
   </div>
 </Tooltip>

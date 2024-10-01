@@ -102,7 +102,7 @@ test("ColorLint - ColorNameDiscriminability", async () => {
     if (lintResult.kind !== "success") return;
     expect(lintResult.passes).toBe(false);
     expect(lintResult.message).toBe(
-      `The following pairs of colors have the same name: ${colors[0]} and ${colors[1]}`
+      `The following pairs of colors have the same name: (${colors[0]}, ${colors[1]})`
     );
     const fix = await suggestLintFix(examplePal, lintResult);
     const oldColorNames = unique<string>(

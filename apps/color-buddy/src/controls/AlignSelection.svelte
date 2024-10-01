@@ -78,7 +78,7 @@
   {#each ALIGNS as align}
     {#if align.type === "single"}
       <button
-        class={`${buttonStyle} h-full flex justify-between items-center py-1`}
+        class={`${buttonStyle} flex justify-between items-center`}
         on:click={() => {
           const newCoordinate = align.op(
             ...colors
@@ -106,8 +106,9 @@
       >
         {name}
         {#if align.icon}
-          <span class="ml-2">
+          <span class="ml-2 flex items-center">
             <svelte:component this={align.icon} />
+            <span class="ml-2">{align.name}</span>
           </span>
         {/if}
       </button>

@@ -70,7 +70,7 @@ function buildMessage(
   let blame = "";
   if (lintProgram.blameMode === "pair") {
     blame = (blameData as number[][])
-      .map((x) => x.map((x) => palette.colors[x].toHex()).join(" and "))
+      .map((x) => `(${x.map((x) => palette.colors[x].toHex()).join(", ")})`)
       .join(", ");
   } else {
     blame = (blameData as number[])

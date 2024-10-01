@@ -37,7 +37,9 @@
       on:click={toggle}
       class={`${buttonStyle} whitespace-nowrap flex items-center w-full justify-between`}
     >
-      {titleCase($configStore.colorSim)}
+      {$configStore.colorSim === "none"
+        ? "(off)"
+        : titleCase($configStore.colorSim)}
       <DownChev class="ml-2 text-sm" />
     </button>
   </Tooltip>

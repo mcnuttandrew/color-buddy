@@ -59,14 +59,17 @@
     : $colorStore.palettes;
 </script>
 
-<div class="w-full h-full bg-stone-100">
+<div class="w-full h-full">
   <!-- main -->
-  <div class="flex flex-wrap w-full py-2 px-2 mt-8 mb-1">
-    <div class="flex flex-col mr-2">
-      <div class="text-xs">Compare Palette</div>
+  <div class="bg-stone-100 w-full py-1 px-2">
+    <div class="flex">
+      <div class="mr-2">Compare Palette</div>
       <Tooltip>
         <button
-          class={`${buttonStyle} `}
+          class={`${buttonStyle
+            .split(" ")
+            .filter((x) => !x.startsWith("py"))
+            .join(" ")} `}
           slot="target"
           let:toggle
           on:click={toggle}
@@ -135,6 +138,8 @@
         </div>
       </Tooltip>
     </div>
+  </div>
+  <div class="flex flex-wrap w-full py-2 px-2 mb-1">
     {#if ComparisonPal !== undefined}
       <div class="mr-2">
         <SetColorSpace

@@ -39,7 +39,7 @@
       ? "All"
       : selectedExamples.at(0)?.name || "None";
 
-  $: numHidden = examples.filter((x) => x.hidden).length;
+  // $: numHidden = examples.filter((x) => x.hidden).length;
 
   const navNameMap = {
     swatches: "Swatches",
@@ -68,11 +68,11 @@
         action: () => exampleStore.duplicateExample(idx),
         closeOnClick: true,
       },
-      {
-        name: "Hide",
-        action: () => exampleStore.toggleHidden(idx),
-        closeOnClick: true,
-      },
+      // {
+      //   name: "Hide",
+      //   action: () => exampleStore.toggleHidden(idx),
+      //   closeOnClick: true,
+      // },
     ].filter((x) => x) as any[] as {
       name: string;
       action: () => void;
@@ -81,7 +81,7 @@
   }
 </script>
 
-<div class="flex py-2 items-end">
+<div class="flex py-1 items-center bg-stone-100">
   <div class="flex flex-col mr-2">
     <Nav
       tabs={Object.values(navNameMap)}
@@ -96,7 +96,7 @@
   <div class="flex ml-2">
     {#if $configStore.exampleRoute !== "swatches"}
       <div class="mr-1">Thumbnail:</div>
-      <Tooltip>
+      <Tooltip positionAlongRightEdge={true}>
         <div class="flex flex-col" slot="content">
           <button
             class={simpleTooltipRowStyle}
@@ -180,7 +180,10 @@
           slot="target"
           let:toggle
           on:click={toggle}
-          class="{buttonStyle} flex items-center"
+          class="{buttonStyle
+            .split(' ')
+            .filter((x) => !x.startsWith('py'))
+            .join(' ')} flex items-center"
         >
           {exampleName}
           <ChevDown class="ml-2 text-sm" />
@@ -188,7 +191,7 @@
       </Tooltip>
     {/if}
   </div>
-  {#if numHidden > 0 && $configStore.exampleRoute === "swatches"}
+  <!-- {#if numHidden > 0 && $configStore.exampleRoute === "swatches"}
     <div class="flex flex-col ml-2">
       <button
         class={buttonStyle}
@@ -197,12 +200,12 @@
         Unhide {numHidden} examples
       </button>
     </div>
-  {/if}
+  {/if} -->
 
   <ColorSimControl />
 </div>
 <div
-  class="flex flex-wrap overflow-auto p-4 w-full bg-stone-100 pb-20"
+  class="flex flex-wrap overflow-auto p-4 w-full pb-20"
   style={`height: calc(100% - 100px)`}
 >
   {#if $configStore.exampleRoute === "swatches"}

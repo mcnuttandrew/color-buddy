@@ -1,9 +1,13 @@
 <script lang="ts">
   import { Color } from "color-buddy-palette";
+
   import focusStore from "../stores/focus-store";
   import colorStore from "../stores/color-store";
   import configStore from "../stores/config-store";
+
   import ColorChannelPicker from "./ColorChannelPicker.svelte";
+  import { buttonStyle } from "../lib/styles";
+
   $: focusedColors = $focusStore.focusedColors;
   $: colors = $colorStore.palettes[$colorStore.currentPal].colors;
   $: currentPal = $colorStore.palettes[$colorStore.currentPal];
@@ -29,7 +33,7 @@
   <div>
     <div class="text-xs">RGB Hex</div>
     <input
-      class="w-24"
+      class={buttonStyle}
       value={colors[focusedColors[0]].toHex()}
       on:change={(e) => {
         const updatedColors = [...colors];

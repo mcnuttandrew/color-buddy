@@ -113,36 +113,32 @@
     <Config />
   </div>
 </header>
-<main class="flex h-full overflow-auto">
+<main class="flex h-full">
   <!-- left and main panel -->
   <div class="flex flex-col">
     <!-- name -->
     <Title />
     <!-- main content -->
-    <div class="flex">
+    <div class="flex h-full">
       <!-- left -->
       <LeftPanel />
       <!-- main -->
       <div
         class="h-full flex flex-col grow main-content border-b border-l border-stone-200"
       >
-        <div class="flex w-full grow overflow-y-auto overflow-x-hidden">
-          <div class="flex flex-col">
-            {#if palPresent}
-              <MainColumn {scatterSize} />
-            {:else}
-              <div
-                class="flex-grow flex justify-center items-center"
-                style={`width: ${columnWidth}px`}
-              >
-                <div class="text-2xl max-w-md text-center">
-                  No palettes present, click "New" in the upper left to create a
-                  new one, or "Browse" to pick from existing ones.
-                </div>
-              </div>
-            {/if}
+        {#if palPresent}
+          <MainColumn {scatterSize} />
+        {:else}
+          <div
+            class="flex-grow flex justify-center items-center"
+            style={`width: ${columnWidth}px`}
+          >
+            <div class="text-2xl max-w-md text-center">
+              No palettes present, click "New" in the upper left to create a new
+              one, or "Browse" to pick from existing ones.
+            </div>
           </div>
-        </div>
+        {/if}
       </div>
     </div>
   </div>
@@ -153,7 +149,7 @@
   >
     <div class="flex bg-stone-200 w-full border-b border-l border-stone-200">
       <Nav
-        className=""
+        className="mt-1"
         tabs={currentPalTabs}
         isTabSelected={(x) => $configStore.route === x}
         selectTab={(x) => {
@@ -183,7 +179,7 @@
         </div>
       </Nav>
     </div>
-    <div class="bg-stone-100 h-full">
+    <div class=" h-full">
       {#if palPresent && $configStore.route === "examples"}
         <Examples />
       {:else if palPresent && $configStore.route === "compare"}

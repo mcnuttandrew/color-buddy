@@ -17,7 +17,7 @@
     let:toggle
     on:click={toggle}
   >
-    Metrics <ChevDown class="text-base ml-1" />
+    Metrics <ChevDown class="ml-2 text-sm" />
   </button>
   <div slot="content" class="flex flex-col">
     <button

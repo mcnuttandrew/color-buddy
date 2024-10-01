@@ -75,34 +75,24 @@
 {#if displayMode === "check-customization"}
   <LintCustomizationModal onClose={() => refreshLints()} />
 {/if}
-<div class=" w-full flex py-1 px-2 items-end">
-  <Tooltip>
-    <div class="text-sm max-w-md" slot="content">
-      This collection of checks validates whether or not your palette matches a
-      number of commonly held beliefs about best practices. They wont fit every
-      situation! So feel free to turn some off.
+<div class=" w-full flex py-1 px-2 items-end bg-stone-100">
+  <div class="flex">
+    <div class="">
+      <GlobalLintConfig />
     </div>
-    <button slot="target" let:toggle on:click={toggle} class="mx-6">
-      <QuestionIcon />
-    </button>
-  </Tooltip>
-  <div class="flex flex-col">
-    <div class="text-xs">Check Config</div>
-    <div class="flex">
-      <div class="">
-        <GlobalLintConfig />
-      </div>
-      <div class="ml-4">
-        <button
-          class={buttonStyle}
-          on:click={() => {
-            configStore.setEvalDisplayMode("check-customization");
-            lintStore.setFocusedLint(false);
-          }}
-        >
-          Customize a check
-        </button>
-      </div>
+    <div class="ml-4">
+      <button
+        class={buttonStyle
+          .split(" ")
+          .filter((x) => !x.startsWith("py"))
+          .join(" ")}
+        on:click={() => {
+          configStore.setEvalDisplayMode("check-customization");
+          lintStore.setFocusedLint(false);
+        }}
+      >
+        Customize a check
+      </button>
     </div>
   </div>
   {#if numIgnored > 0}
@@ -125,6 +115,16 @@
       </button>
     </div>
   {/if}
+  <Tooltip>
+    <div class="text-sm max-w-md" slot="content">
+      This collection of checks validates whether or not your palette matches a
+      number of commonly held beliefs about best practices. They wont fit every
+      situation! So feel free to turn some off.
+    </div>
+    <button slot="target" let:toggle on:click={toggle} class="mx-2">
+      <QuestionIcon />
+    </button>
+  </Tooltip>
 </div>
 <div class="flex h-full">
   <div class="flex flex-col ml-2">

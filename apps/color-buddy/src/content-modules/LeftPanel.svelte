@@ -13,7 +13,6 @@
 
   import AddColor from "../controls/AddColor.svelte";
   import DeMetric from "../controls/DeMetric.svelte";
-  import GetColorsFromString from "../controls/GetColorsFromString.svelte";
 
   import { deltaMetrics, ballSize } from "../constants";
 
@@ -63,8 +62,10 @@
 <!-- left panel -->
 <div class="bg-white w-80 container flex flex-col h-full flex-none">
   <section class="flex flex-col flex-1 overflow-auto p-1" id="left-panel">
-    <div class="flex px-4">
-      <ModifySelection />
+    <div class="flex px-4 w-full justify-between">
+      <div class="flex">
+        <ModifySelection />
+      </div>
       <DeMetric />
     </div>
     <!-- svelte-ignore a11y-click-events-have-key-events -->
@@ -93,13 +94,6 @@
         </svg>
         <AddColor />
       </div>
-
-      <div class="flex items-center mt-2"></div>
-      <GetColorsFromString
-        onChange={(colors) => colorStore.setCurrentPalColors(colors)}
-        colorSpace={currentPal.colorSpace}
-        colors={currentPal.colors}
-      />
     </div>
   </section>
 </div>

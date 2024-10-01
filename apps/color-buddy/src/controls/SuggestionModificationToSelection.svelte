@@ -1,9 +1,8 @@
 <script lang="ts">
-  import Wand from "virtual:icons/fa6-solid/wand-magic-sparkles";
-
   import colorStore from "../stores/color-store";
   import focusStore from "../stores/focus-store";
   import configStore from "../stores/config-store";
+
   import { Color, toPal } from "color-buddy-palette";
   import { suggestContextualAdjustments } from "../lib/api-calls";
   import { buttonStyle } from "../lib/styles";
@@ -13,6 +12,7 @@
   let requestState: "idle" | "loading" | "loaded" | "failed" = "idle";
   $: currentPal = $colorStore.palettes[$colorStore.currentPal];
   $: colorSpace = currentPal ? currentPal.colorSpace : "lab";
+  $: numFocused = $focusStore.focusedColors.length;
   $: colors = currentPal.colors;
   $: selectedColors = $focusStore.focusedColors
     .map((x) => colors[x]?.toHex())
@@ -88,13 +88,12 @@
 </script>
 
 <Tooltip bg="bg-white">
-  <button
-    slot="target"
-    let:toggle
-    on:click={toggle}
-    class={"border border-stone-400 rounded mr-2 h-8 w-8 flex justify-center items-center"}
-  >
-    <Wand />
+  <button slot="target" let:toggle on:click={toggle} class={buttonStyle}>
+    Change {numFocused === 0
+      ? "all points"
+      : numFocused > 1
+        ? "selected points"
+        : "selected point"} with AI
   </button>
   <div slot="content" let:onClick class="flex flex-col w-full">
     <label for="pal-prompt" class="italic text-sm">

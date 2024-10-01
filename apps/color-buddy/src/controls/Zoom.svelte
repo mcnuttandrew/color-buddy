@@ -25,7 +25,10 @@
 
 <Tooltip>
   <button
-    class={`${buttonStyle} flex items-center text-sm `}
+    class={`${buttonStyle
+      .split(" ")
+      .filter((x) => !x.startsWith("py"))
+      .join(" ")} flex items-center text-sm `}
     slot="target"
     let:toggle
     on:click={toggle}

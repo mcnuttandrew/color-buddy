@@ -14,8 +14,7 @@
   import Finger from "virtual:icons/fa6-solid/hand-pointer";
 
   import Background from "../components/Background.svelte";
-  import DesignTooltip from "../controls/DesignTooltip.svelte";
-  import InterpolatePoints from "../controls/InterpolatePoints.svelte";
+  import DesignPit from "../controls/DesignPit.svelte";
 
   import { colorPickerConfig } from "../lib/utils";
 
@@ -49,7 +48,7 @@
   />
   <SetSimulation />
 </div>
-<div class="flex flex-col px-4">
+<div class="flex flex-col px-4 pb-2">
   <ColorScatterPlot
     scatterPlotMode={$configStore.scatterplotMode}
     colorSpace={currentPal.colorSpace}
@@ -84,7 +83,10 @@
         <Zoom />
       {/if}
       <button
-        class={`${buttonStyle} text-sm flex items-center justify-center `}
+        class={`${buttonStyle
+          .split(" ")
+          .filter((x) => !x.startsWith("py"))
+          .join(" ")} text-sm flex items-center justify-center `}
         on:click={() => configStore.setScatterplotMode("putting")}
       >
         <Finger class="text-xs mr-1" />
@@ -93,26 +95,5 @@
     </div>
   </div>
 </div>
-<div class="flex flex-col">
-  <div
-    class="bg-stone-100 py-2 px-4 border-t border-stone-200 flex items-end"
-    id="adjust-controls"
-  >
-    <!-- todo remove mainColumnSelectedExample -->
-    <!-- <ExampleAlaCarteHeader
-      labelStyle={""}
-      exampleIdx={$configStore.mainColumnSelectedExample}
-      setExampleIdx={(idx) => configStore.setMainColumnSelectedExample(idx)}
-      size={scatterSize}
-    /> -->
-    <DesignTooltip />
-    <InterpolatePoints />
-  </div>
-  <!-- <ExampleAlaCart
-    paletteIdx={$colorStore.currentPal}
-    exampleIdx={$configStore.mainColumnSelectedExample}
-    allowModification={true}
-    bgColor={currentPal.background.toHex()}
-    size={scatterSize}
-  /> -->
-</div>
+
+<DesignPit />

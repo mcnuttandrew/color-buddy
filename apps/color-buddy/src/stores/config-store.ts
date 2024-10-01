@@ -21,7 +21,6 @@ interface StoreData {
   evalDisplayMode: "regular" | "check-customization";
   exampleRoute: "svg" | "vega" | "swatches";
   includeQuotes: boolean;
-  mainColumnSelectedExample: number;
   manageBrowsePreviewIdx: number;
   newExampleModalTarget: "off" | number | "new";
   route: "examples" | "compare" | "eval";
@@ -57,7 +56,6 @@ const InitialStore: StoreData = {
   evalDisplayMode: "regular",
   exampleRoute: "vega",
   includeQuotes: false,
-  mainColumnSelectedExample: -1,
   manageBrowsePreviewIdx: -1,
   newExampleModalTarget: "off",
   route: "examples",
@@ -176,8 +174,6 @@ function createStore() {
       persist((old) => ({ ...old, showGamutMarkers: n })),
     setUseSimulatorOnExamples: (n: StoreData["useSimulatorOnExamples"]) =>
       persist((old) => ({ ...old, useSimulatorOnExamples: n })),
-    setMainColumnSelectedExample: (n: StoreData["mainColumnSelectedExample"]) =>
-      persist((old) => ({ ...old, mainColumnSelectedExample: n })),
     setCompareSelectedExample: (n: StoreData["compareSelectedExample"]) =>
       persist((old) => ({ ...old, compareSelectedExample: n })),
     setExampleRoute: (n: StoreData["exampleRoute"]) =>

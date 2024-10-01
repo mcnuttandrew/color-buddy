@@ -67,14 +67,16 @@
   />
   <div class="w-full justify-between flex">
     <div class="flex justify-start text-gray-400 text-sm mb-2">
-      <input
-        class="mr-1"
-        on:change={(e) =>
-          configStore.setShowGamutMarkers(e.currentTarget.checked)}
-        type="checkbox"
-        checked={$configStore.showGamutMarkers}
-      />
-      <span>Mark out-of-gamut colors with ⨂</span>
+      <label class="cursor-pointer">
+        <input
+          class="mr-1"
+          on:change={(e) =>
+            configStore.setShowGamutMarkers(e.currentTarget.checked)}
+          type="checkbox"
+          checked={$configStore.showGamutMarkers}
+        />
+        <span>Show out-of-gamut ⨂</span>
+      </label>
     </div>
     <div class="flex items-center">
       {#if !config.isPolar}

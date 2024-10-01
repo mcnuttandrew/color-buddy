@@ -20,6 +20,13 @@
     dE <ChevDown class="text-base ml-1" />
   </button>
   <div slot="content" class="flex flex-col">
+    <button
+      class={simpleTooltipRowStyle}
+      class:font-bold={$configStore.evalDeltaDisplay === "none"}
+      on:click={() => configStore.setEvalDeltaDisplay("none")}
+    >
+      None
+    </button>
     <div class="text-sm font-bold">Order Difference Metrics</div>
     {#each deltaMetrics as metric}
       <button

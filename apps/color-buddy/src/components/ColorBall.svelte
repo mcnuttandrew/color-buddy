@@ -107,7 +107,7 @@
           {/each}
         </span>
       {/if}
-      {#if stats[idx] && !statsTypeIsDelta}
+      {#if stats[idx] && !statsTypeIsDelta && $configStore.evalDeltaDisplay !== "none"}
         <div class=" text-black text-right text-xs whitespace-nowrap">
           Contrast: {Math.round(stats[idx])}
         </div>
@@ -116,7 +116,7 @@
   </div>
 </div>
 
-{#if stats[idx] && statsTypeIsDelta}
+{#if stats[idx] && statsTypeIsDelta && $configStore.evalDeltaDisplay !== "none"}
   <div class=" text-black text-right text-xs whitespace-nowrap">
     dE: {Math.round(stats[idx])}
   </div>

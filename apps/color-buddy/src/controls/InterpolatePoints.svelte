@@ -80,7 +80,7 @@
 
 {#if focusSet.size >= 2}
   <Tooltip>
-    <div class="flex flex-col" slot="content">
+    <div class="flex flex-col max-w-lg" slot="content">
       <div class="flex justify-between">
         <label for="color-space-select">Color Space</label>
         <select id="color-space-select" bind:value={colorSpace}>
@@ -105,7 +105,9 @@
 
       <div>Preview</div>
       {#if tempPal}
-        <PalPreview pal={tempPal} />
+        <div class="border bg-stone-100 mb-2 ml-1">
+          <PalPreview pal={tempPal} />
+        </div>
       {/if}
       <div class="w-full flex justify-end">
         <button

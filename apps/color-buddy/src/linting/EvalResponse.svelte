@@ -49,6 +49,7 @@
         .then((x) => {
           suggestions = [...suggestions, x].filter((x) => x) as FixSuggestion[];
           requestState = "loaded";
+          waitingOnFixes = waitingOnFixes - 1;
           logEvent(
             "lint-fix",
             {
@@ -74,14 +75,20 @@
       }
     });
   }
+  $: waitingOnFixes = 0;
   function generateFixes() {
-    proposeFix("ai", "LLMs");
+    let numAdd = 0;
+    proposeFix("ai", "LLM Suggestion");
+    numAdd += 1;
     if (lintProgram && lintProgram.program.length) {
-      proposeFix("monte", "Monte Carlo");
+      proposeFix("monte", "Monte Carlo Suggestion");
+      numAdd += 1;
     }
     if (lintProgram.subscribedFix && lintProgram.subscribedFix !== "none") {
-      proposeFix("heuristic", "Hand tuned fix");
+      proposeFix("heuristic", "Hand tuned Suggestion");
+      numAdd += 1;
     }
+    waitingOnFixes = numAdd;
   }
 
   $: currentPal = $colorStore.palettes[$colorStore.currentPal];
@@ -212,10 +219,8 @@
     {:else if requestState === "failed"}
       <div>Failed to generate suggestions</div>
     {/if}
-    {#if suggestions.length}
-      <div class="text-sm mt-2 mb-1">Suggestions</div>
-    {/if}
-    <div class="max-h-40 overflow-auto">
+
+    <div class="max-h-52 overflow-auto">
       {#if suggestions.length > 0}
         <div class=" text-xs">Current</div>
         <div class="w-fit">
@@ -288,6 +293,9 @@
           <!-- </div> -->
         </div>
       {/each}
+      {#if waitingOnFixes > 0}
+        <div>Loading... {waitingOnFixes} remaining</div>
+      {/if}
     </div>
   </div>
   <button

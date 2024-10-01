@@ -64,7 +64,7 @@ const lints: LintProgram[] = cvdTypes.map((type) => ({
   failMessage:
     type === "grayscale"
       ? `This palette may not work in black and white. The following pairs are hard to tell the difference between: ({{blame}})`
-      : `This palette is not friendly for people with ${type} color vision deficiency. The following pairs are undifferentiable: ({{blame}})`,
+      : `This palette is not friendly for people with ${type} color vision deficiency. The following pairs are undifferentiable: \n{{blame}}`,
   id: `cvd-friendly-${type}-built-in`,
   blameMode: "pair" as const,
   expectedPassingTests: [

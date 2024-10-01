@@ -66,6 +66,7 @@
             </div>
           {/if}
         {/if}
+        <EvalResponse {lintResult} />
         <button
           class:hover:bg-stone-300={lintResult.kind === "success"}
           on:click={() => {
@@ -74,7 +75,6 @@
         >
           {lintProgram.name}
         </button>
-        <EvalResponse {lintResult} />
       </div>
       {#if ignoredColors.length > 0}
         <div class="text-sm italic">

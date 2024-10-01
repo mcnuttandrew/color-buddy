@@ -84,35 +84,33 @@
       {/if}
     </span>
   </div>
-  <div class="flex justify-between w-full px-2 items-center z-10">
-    <div class="text-right">
-      {#if $configStore.showIssuesOnLeft}
-        <span>
-          {#if colorsToIssues[idx].length}
-            Issues
-          {:else}
-            &nbsp
+  <div class="text-right flex items-end flex-col justify-end w-16">
+    {#if $configStore.showIssuesOnLeft}
+      <span>
+        {#if colorsToIssues[idx].length}
+          Issues
+        {:else}
+          &nbsp
+        {/if}
+      </span>
+      <span class="flex flex-wrap flex-row-reverse min-h-4">
+        {#each colorsToIssues[idx] as check}
+          {#if !evalConfig[check.lintProgram.name]?.ignore}
+            <EvalResponse
+              lintResult={check}
+              positionAlongRightEdge={false}
+              customWord={typeToImg[check.lintProgram.group]}
+              customWordIsImg={true}
+            />
           {/if}
-        </span>
-        <span class="flex flex-wrap flex-row-reverse min-h-4">
-          {#each colorsToIssues[idx] as check}
-            {#if !evalConfig[check.lintProgram.name]?.ignore}
-              <EvalResponse
-                lintResult={check}
-                positionAlongRightEdge={false}
-                customWord={typeToImg[check.lintProgram.group]}
-                customWordIsImg={true}
-              />
-            {/if}
-          {/each}
-        </span>
-      {/if}
-      {#if stats[idx] && !statsTypeIsDelta && $configStore.evalDeltaDisplay !== "none"}
-        <div class=" text-black text-right text-xs whitespace-nowrap">
-          Contrast: {Math.round(stats[idx])}
-        </div>
-      {/if}
-    </div>
+        {/each}
+      </span>
+    {/if}
+    {#if stats[idx] && !statsTypeIsDelta && $configStore.evalDeltaDisplay !== "none"}
+      <div class=" text-black text-right text-xs whitespace-nowrap">
+        Contrast: {Math.round(stats[idx])}
+      </div>
+    {/if}
   </div>
 </div>
 

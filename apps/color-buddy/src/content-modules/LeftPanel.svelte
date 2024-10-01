@@ -36,6 +36,9 @@
     colors: Color[],
     metric: typeof $configStore.evalDeltaDisplay
   ) {
+    if (metric === "none") {
+      return [];
+    }
     // is contrast metric
     if (!new Set(deltaMetrics).has(metric as any)) {
       return colors.map((color) => color.contrast(bg, metric));

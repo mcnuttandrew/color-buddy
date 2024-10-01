@@ -87,7 +87,7 @@
     </button>
   </Tooltip>
   <div class="flex flex-col">
-    <div class="text-sm">Check Config</div>
+    <div class="text-xs">Check Config</div>
     <div class="flex">
       <div class="">
         <GlobalLintConfig />

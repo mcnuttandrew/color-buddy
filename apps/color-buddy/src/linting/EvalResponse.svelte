@@ -75,7 +75,7 @@
     });
   }
   function generateFixes() {
-    // proposeFix("ai", "LLMs");
+    proposeFix("ai", "LLMs");
     if (lintProgram && lintProgram.program.length) {
       proposeFix("monte", "Monte Carlo");
     }

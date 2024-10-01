@@ -1,7 +1,10 @@
 <script lang="ts">
   import type { LintResult } from "color-buddy-palette-lint";
 
+  import Times from "virtual:icons/fa6-solid/xmark";
   import IgnoreIcon from "virtual:icons/fa6-solid/eye-slash";
+  import Triangle from "virtual:icons/fa6-solid/triangle-exclamation";
+  import Check from "virtual:icons/fa6-solid/check";
 
   import colorStore from "../stores/color-store";
 
@@ -49,20 +52,21 @@
           {#if lintResult?.passes}<div
               class="text-bf text-sm italic mr-2 text-green-500"
             >
-              Pass
+              <Check />
             </div>
           {/if}
           {#if !lintResult.passes && lintProgram.level === "error"}
-            <div class="text-bf text-sm italic mr-2 text-red-500">Fail</div>
+            <div class="text-bf text-sm italic mr-2 text-red-500">
+              <Times />
+            </div>
           {/if}
           {#if !lintResult.passes && lintProgram.level === "warning"}
             <div class="text-bf text-sm italic mr-2 text-yellow-400">
-              Warning
+              <Triangle />
             </div>
           {/if}
         {/if}
         <button
-          class:font-bold={lintResult.kind === "success" && !lintResult.passes}
           class:hover:bg-stone-300={lintResult.kind === "success"}
           on:click={() => {
             showMessage = !showMessage;

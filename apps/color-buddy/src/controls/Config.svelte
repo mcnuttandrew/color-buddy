@@ -21,6 +21,7 @@
   const shortCuts = [
     { name: "Undo", shortcut: `${metaKey}+z` },
     { name: "Redo", shortcut: `${metaKey}+y` },
+    { name: "Select All", shortcut: `${metaKey}+a` },
     { name: "Delete Selection", shortcut: "delete" },
     { name: "Copy", shortcut: `${metaKey}+c` },
     { name: "Paste", shortcut: `${metaKey}+v` },

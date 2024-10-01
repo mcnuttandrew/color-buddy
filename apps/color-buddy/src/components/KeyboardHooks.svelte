@@ -124,6 +124,9 @@
     if (key === "v" && metaKey && copiedData.length) {
       colorStore.setCurrentPalColors([...currentPal.colors, ...copiedData]);
     }
+    if (key === "a" && metaKey) {
+      focusStore.setColors(currentPal.colors.map((_, idx) => idx));
+    }
   }
 </script>
 

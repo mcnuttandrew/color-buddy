@@ -24,29 +24,47 @@ exports[`ColorLint - Background Contrast 2`] = `
 ]
 `;
 
-exports[`ColorLint - CVD: Deuteranopia 1`] = `"This palette is not friendly for people with deuteranopia color vision deficiency. The following pairs are undifferentiable: ()"`;
+exports[`ColorLint - CVD: Deuteranopia 1`] = `
+"This palette is not friendly for people with deuteranopia color vision deficiency. The following pairs are undifferentiable: 
+"
+`;
 
-exports[`ColorLint - CVD: Deuteranopia 2`] = `"This palette is not friendly for people with deuteranopia color vision deficiency. The following pairs are undifferentiable: (#0078b4 and #8c69bc, #ff7e0e and #c4bc27, #3d9f2f and #da2827, #e179c1 and #00becf)"`;
+exports[`ColorLint - CVD: Deuteranopia 2`] = `
+"This palette is not friendly for people with deuteranopia color vision deficiency. The following pairs are undifferentiable: 
+(#0078b4, #8c69bc), (#ff7e0e, #c4bc27), (#3d9f2f, #da2827), (#e179c1, #00becf)"
+`;
 
 exports[`ColorLint - CVD: Grayscale 1`] = `"This palette may not work in black and white. The following pairs are hard to tell the difference between: ()"`;
 
-exports[`ColorLint - CVD: Grayscale 2`] = `"This palette may not work in black and white. The following pairs are hard to tell the difference between: (#0078b4 and #da2827, #0078b4 and #8c69bc, #0078b4 and #8e564b, #0078b4 and #7f7f7f, #ff7e0e and #3d9f2f, #ff7e0e and #e179c1, #ff7e0e and #c4bc27, #ff7e0e and #00becf, #3d9f2f and #8c69bc, #3d9f2f and #e179c1, #3d9f2f and #7f7f7f, #da2827 and #8c69bc, #da2827 and #8e564b, #da2827 and #7f7f7f, #8c69bc and #8e564b, #8c69bc and #7f7f7f, #e179c1 and #c4bc27, #e179c1 and #00becf, #c4bc27 and #00becf)"`;
+exports[`ColorLint - CVD: Grayscale 2`] = `"This palette may not work in black and white. The following pairs are hard to tell the difference between: ((#0078b4, #da2827), (#0078b4, #8c69bc), (#0078b4, #8e564b), (#0078b4, #7f7f7f), (#ff7e0e, #3d9f2f), (#ff7e0e, #e179c1), (#ff7e0e, #c4bc27), (#ff7e0e, #00becf), (#3d9f2f, #8c69bc), (#3d9f2f, #e179c1), (#3d9f2f, #7f7f7f), (#da2827, #8c69bc), (#da2827, #8e564b), (#da2827, #7f7f7f), (#8c69bc, #8e564b), (#8c69bc, #7f7f7f), (#e179c1, #c4bc27), (#e179c1, #00becf), (#c4bc27, #00becf))"`;
 
-exports[`ColorLint - CVD: Protanopia 1`] = `"This palette is not friendly for people with protanopia color vision deficiency. The following pairs are undifferentiable: ()"`;
+exports[`ColorLint - CVD: Protanopia 1`] = `
+"This palette is not friendly for people with protanopia color vision deficiency. The following pairs are undifferentiable: 
+"
+`;
 
-exports[`ColorLint - CVD: Protanopia 2`] = `"This palette is not friendly for people with protanopia color vision deficiency. The following pairs are undifferentiable: (#0078b4 and #8c69bc, #ff7e0e and #3d9f2f, #ff7e0e and #c4bc27)"`;
+exports[`ColorLint - CVD: Protanopia 2`] = `
+"This palette is not friendly for people with protanopia color vision deficiency. The following pairs are undifferentiable: 
+(#0078b4, #8c69bc), (#ff7e0e, #3d9f2f), (#ff7e0e, #c4bc27)"
+`;
 
-exports[`ColorLint - CVD: Tritanopia 1`] = `"This palette is not friendly for people with tritanopia color vision deficiency. The following pairs are undifferentiable: ()"`;
+exports[`ColorLint - CVD: Tritanopia 1`] = `
+"This palette is not friendly for people with tritanopia color vision deficiency. The following pairs are undifferentiable: 
+"
+`;
 
-exports[`ColorLint - CVD: Tritanopia 2`] = `"This palette is not friendly for people with tritanopia color vision deficiency. The following pairs are undifferentiable: (#ff7e0e and #e179c1, #8c69bc and #7f7f7f)"`;
+exports[`ColorLint - CVD: Tritanopia 2`] = `
+"This palette is not friendly for people with tritanopia color vision deficiency. The following pairs are undifferentiable: 
+(#ff7e0e, #e179c1), (#8c69bc, #7f7f7f)"
+`;
 
 exports[`ColorLint - CatOrderSimilarity 1`] = `"Some sequences of colors are too similar based on dE scores: . Try reordering them or making them more distinguishable"`;
 
-exports[`ColorLint - CatOrderSimilarity 2`] = `"Some sequences of colors are too similar based on dE scores: #009de5 and #5fb1ff. Try reordering them or making them more distinguishable"`;
+exports[`ColorLint - CatOrderSimilarity 2`] = `"Some sequences of colors are too similar based on dE scores: (#009de5, #5fb1ff). Try reordering them or making them more distinguishable"`;
 
 exports[`ColorLint - ColorNameDiscriminability 1`] = `"The following pairs of colors have the same name: "`;
 
-exports[`ColorLint - ColorNameDiscriminability 2`] = `"The following pairs of colors have the same name: #5866d3 and #19437d"`;
+exports[`ColorLint - ColorNameDiscriminability 2`] = `"The following pairs of colors have the same name: (#5866d3, #19437d)"`;
 
 exports[`ColorLint - Contrast (1) GraphicalObjs 1`] = `"These colors () do not have a sufficient contrast do not have sufficient contrast with the background to be easily readable."`;
 
@@ -118,7 +136,7 @@ exports[`ColorLint - MuthGuidelines (4) Avoid too much contrast with the backgro
 
 exports[`ColorLint - MutuallyDistinct 1`] = `"Some colors in this palette () are not differentiable from each other."`;
 
-exports[`ColorLint - MutuallyDistinct 2`] = `"Some colors in this palette (#f5f5dc and #d7fcef) are not differentiable from each other."`;
+exports[`ColorLint - MutuallyDistinct 2`] = `"Some colors in this palette ((#f5f5dc, #d7fcef)) are not differentiable from each other."`;
 
 exports[`ColorLint - SequentialOrder 1`] = `"This palette should be ordered by lightness if being used as a sequential palette.  may be to blame."`;
 
@@ -126,15 +144,15 @@ exports[`ColorLint - SequentialOrder 2`] = `"This palette should be ordered by l
 
 exports[`ColorLint - SizeDiscrim (Medium) 1`] = `"This palette has some colors () that are close to each other in perceptual space and will not be resolvable for Medium areas. This involves elements like medium blocks such as bars in a bar chart or small graphics"`;
 
-exports[`ColorLint - SizeDiscrim (Medium) 2`] = `"This palette has some colors (#a77865 and #a67873) that are close to each other in perceptual space and will not be resolvable for Medium areas. This involves elements like medium blocks such as bars in a bar chart or small graphics"`;
+exports[`ColorLint - SizeDiscrim (Medium) 2`] = `"This palette has some colors ((#a77865, #a67873)) that are close to each other in perceptual space and will not be resolvable for Medium areas. This involves elements like medium blocks such as bars in a bar chart or small graphics"`;
 
 exports[`ColorLint - SizeDiscrim (Thin) 1`] = `"This palette has some colors () that are close to each other in perceptual space and will not be resolvable for Thin areas. This involves elements like small blocks such as small circles or lines"`;
 
-exports[`ColorLint - SizeDiscrim (Thin) 2`] = `"This palette has some colors (#0084a9 and #009de5) that are close to each other in perceptual space and will not be resolvable for Thin areas. This involves elements like small blocks such as small circles or lines"`;
+exports[`ColorLint - SizeDiscrim (Thin) 2`] = `"This palette has some colors ((#0084a9, #009de5)) that are close to each other in perceptual space and will not be resolvable for Thin areas. This involves elements like small blocks such as small circles or lines"`;
 
 exports[`ColorLint - SizeDiscrim (Wide) 1`] = `"This palette has some colors () that are close to each other in perceptual space and will not be resolvable for Wide areas. This involves elements like large blocks of color such as backgrounds or countries on a map"`;
 
-exports[`ColorLint - SizeDiscrim (Wide) 2`] = `"This palette has some colors (#a77865 and #a67873) that are close to each other in perceptual space and will not be resolvable for Wide areas. This involves elements like large blocks of color such as backgrounds or countries on a map"`;
+exports[`ColorLint - SizeDiscrim (Wide) 2`] = `"This palette has some colors ((#a77865, #a67873)) that are close to each other in perceptual space and will not be resolvable for Wide areas. This involves elements like large blocks of color such as backgrounds or countries on a map"`;
 
 exports[`ColorLint - UglyColors 1`] = `"This palette has some colors (specifically ) that are close to what are known as ugly colors"`;
 

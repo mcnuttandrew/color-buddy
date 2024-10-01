@@ -35,6 +35,7 @@
       colorStore.setColorSpace(space);
       configStore.unsetZoom();
     }}
+    showDragPicker={true}
   />
   <Background
     onSpaceChange={(space) => {

@@ -271,7 +271,7 @@ class CIELAB extends Color {
   static stepSize: Channels = [1, 1, 1];
   static dimensionToChannel = { x: "a", y: "b", z: "L" };
   static description =
-    "CIELAB is a perceptually uniform color space. Roughly, L is lightness, a is red-green, and b is blue-yellow. This is the default color space for Color Buddy.";
+    "Lightness, Red-green (a), and Yellow-blue (b). Perceptually uniform.";
   static advancedSpace = false;
   static axisLabel = (num: number) => `${Math.round(num)}`;
 
@@ -292,8 +292,7 @@ class HSV extends Color {
   static domains = { h: [0, 360], s: [0, 100], v: [100, 0] } as Domain;
   spaceName = "hsv" as const;
   static dimensionToChannel = { x: "s", y: "h", z: "v" };
-  static description =
-    "HSV is a cylindrical color space. H is hue, S is saturation, and V is value.";
+  static description = "Hue, Saturation, Value. Cylindrical";
   static advancedSpace = false;
   toString(): string {
     const [h, s, v] = this.stringChannels();
@@ -313,8 +312,7 @@ class RGB extends Color {
   static domains = { r: [0, 255], g: [0, 255], b: [0, 255] } as Domain;
   static stepSize: Channels = [1, 1, 1];
   static dimensionToChannel = { x: "g", y: "b", z: "r" };
-  static description =
-    "RGB is an rectangular color space. R is red, G is green, and B is blue.";
+  static description = "Red, Green, Blue.";
   static axisLabel = (num: number) => `${Math.round(num)}`;
   toString(): string {
     const [r, g, b] = this.stringChannels();
@@ -334,8 +332,7 @@ class SRGB extends Color {
   static domains = { r: [0, 1], g: [0, 1], b: [0, 1] } as Domain;
   static stepSize: Channels = [0.01, 0.01, 0.01];
   static dimensionToChannel = { x: "g", y: "b", z: "r" };
-  static description =
-    "sRGB is an rectangular color space. R is red, G is green, and B is blue.";
+  static description = "Red, Green, Blue.";
   static axisLabel = (num: number) => `${Math.round(num)}`;
   toString(): string {
     const [r, g, b] = this.stringChannels();
@@ -355,8 +352,7 @@ class HSL extends Color {
   static domains = { h: [0, 360], s: [0, 100], l: [100, 0] } as Domain;
   static stepSize: Channels = [1, 1, 1];
   static dimensionToChannel = { x: "s", y: "h", z: "l" };
-  static description =
-    "HSL is a cylindrical color space. H is hue, S is saturation, and L is lightness.";
+  static description = "Hue, Saturation, Lightness. Cylindrical";
   static advancedSpace = false;
   static isPolar = true;
 
@@ -377,8 +373,7 @@ class LCH extends Color {
   static domains = { l: [100, 0], c: [0, 120], h: [360, 0] } as Domain;
   static stepSize: Channels = [1, 1, 1];
   static dimensionToChannel = { x: "c", y: "h", z: "l" };
-  static description =
-    "LCH is a cylindrical color space. L is lightness, C is chroma, and H is hue.";
+  static description = "Luminance, Chroma, Hue. Cylindrical";
   static advancedSpace = false;
   static isPolar = true;
   static axisLabel = (num: number) => `${Math.round(num)}`;
@@ -416,8 +411,7 @@ class OKLCH extends Color {
   static domains = { l: [1, 0], c: [0, 0.4], h: [360, 0] } as Domain;
   static stepSize: Channels = [0.01, 0.01, 1];
   static dimensionToChannel = { x: "c", y: "h", z: "l" };
-  static description =
-    "OKLCH is a cylindrical color space. It is a refinement of LCH.";
+  static description = "Luminance, Chroma, Hue. Cylindrical (based on LCH)";
   static isPolar = true;
 }
 
@@ -430,7 +424,7 @@ class JZAZBZ extends Color {
   static stepSize: Channels = [0.01, 0.01, 0.01];
   static dimensionToChannel = { x: "az", y: "bz", z: "jz" };
   static description =
-    "JzAzBz is a refinement of CIELAB Lab, with much better perceptual uniformity, and also supports High Dynamic Range (HDR), or very bright colors brighter than a paper white.";
+    "Lightness (JZ), Red-green (az), Blue-yellow (bz). Perceptually uniform (based on LAB)";
 
   toString(): string {
     const [jz, az, bz] = Object.values(this.channels).map((x) =>
@@ -455,7 +449,7 @@ class XYZ extends Color {
   static stepSize: Channels = [0.01, 0.01, 0.01];
   static dimensionToChannel = { x: "x", y: "z", z: "y" };
   static description =
-    "The fundamental CIE color space, derived from color-matching experiments on human vision. All other color spaces can be converted to XYZ.";
+    "X (Curves), Y (Luminance), Z (Blue). International Standard";
 
   toString(): string {
     const [x, y, z] = Object.values(this.channels).map((x) =>
@@ -479,8 +473,7 @@ class HCT extends Color {
   static stepSize: Channels = [1, 1, 1];
   static dimensionToChannel = { x: "c", y: "h", z: "t" };
   static isPolar = true;
-  static description =
-    "HCT is Google's attempt to create a perceptually uniform color space. H is hue, C is chroma, and T is tone.";
+  static description = "Hue, Chroma, Tone. Perceptually uniform (from Google)";
 
   toString(): string {
     const [h, c, t] = Object.values(this.channels).map((x) =>
@@ -502,7 +495,7 @@ class CAM16 extends Color {
   static stepSize: Channels = [1, 1, 1];
   static dimensionToChannel = { x: "m", y: "h", z: "j" };
   static description =
-    "CAM16 is a perceptually uniform color space. J is lightness, M is colorfulness, and H is hue.";
+    "J (lightness), M (colorfulness), H (hue). Perceptually uniform";
   static isPolar = true;
 
   toString(): string {

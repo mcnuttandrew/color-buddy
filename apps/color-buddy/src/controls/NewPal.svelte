@@ -116,7 +116,7 @@
     slot="target"
     let:toggle
     on:click={toggle}
-    class={"text-white h-full mx-2"}
+    class={`mx-2 ${buttonStyle}`}
   >
     New Palette
   </button>

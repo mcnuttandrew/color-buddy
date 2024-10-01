@@ -125,6 +125,7 @@
       colorStore.setCurrentPalColors([...currentPal.colors, ...copiedData]);
     }
     if (key === "a" && metaKey) {
+      e.preventDefault();
       focusStore.setColors(currentPal.colors.map((_, idx) => idx));
     }
   }

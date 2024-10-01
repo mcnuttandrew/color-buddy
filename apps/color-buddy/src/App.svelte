@@ -42,6 +42,8 @@
   import { lint } from "./lib/api-calls";
   import { debounce } from "vega";
 
+  import { buttonStyle } from "./lib/styles";
+
   $: route = $configStore.route;
   $: evalRoute = $configStore.evalDisplayMode;
   const bindStr = "!!";
@@ -85,19 +87,25 @@
       <div class="">Color Buddy</div>
     </div>
     <div>
-      <div class="flex h-12">
+      <div class="flex h-12 items-center">
         <NewPal />
         <Manage />
-        <button
-          class={"text-white ml-2 mr-1"}
-          on:click={() => colorStore.undo()}
-        >
-          Undo
-        </button>
-        /
-        <button class={"text-white mr-2"} on:click={() => colorStore.redo()}>
-          Redo
-        </button>
+        <div>
+          <button
+            class={`${buttonStyle} ml-2 mr-1`}
+            on:click={() => colorStore.undo()}
+          >
+            Undo
+          </button>
+        </div>
+        <div>
+          <button
+            class={`${buttonStyle} mr-2`}
+            on:click={() => colorStore.redo()}
+          >
+            Redo
+          </button>
+        </div>
       </div>
     </div>
   </div>
@@ -143,7 +151,7 @@
     class="flex flex-col w-full border-b border-l border-stone-200 h-full"
     id="right-col"
   >
-    <div class="flex bg-stone-100 w-full border-b border-l border-stone-200">
+    <div class="flex bg-stone-200 w-full border-b border-l border-stone-200">
       <Nav
         className=""
         tabs={currentPalTabs}

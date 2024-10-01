@@ -13,11 +13,11 @@
   import examplePalStore from "../stores/example-palette-store";
   import exampleStore from "../stores/example-store";
   import focusStore from "../stores/focus-store";
-  import { convertPalToSpace } from "../lib/utils";
+  import { convertPalToSpace, newVersionName } from "../lib/utils";
   import { suggestNameForPalette } from "../lib/api-calls";
   import Nav from "../components/Nav.svelte";
+  import { buttonStyle } from "../lib/styles";
 
-  import { newVersionName } from "../lib/utils";
   $: example = $exampleStore.examples[
     $configStore.manageBrowsePreviewIdx
   ] as any;
@@ -155,14 +155,16 @@
   }
 </script>
 
-<button
-  class={"text-white"}
-  on:click={() => {
-    modalState = "open";
-  }}
->
-  Palettes...
-</button>
+<div>
+  <button
+    class={buttonStyle}
+    on:click={() => {
+      modalState = "open";
+    }}
+  >
+    Palettes Manager
+  </button>
+</div>
 
 {#if modalState === "open"}
   <Modal

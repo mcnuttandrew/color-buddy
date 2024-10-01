@@ -10,7 +10,7 @@
   import ColorBall from "../components/ColorBall.svelte";
 
   import ModifySelection from "../controls/ModifySelection.svelte";
-  import Sort from "../controls/Sort.svelte";
+
   import AddColor from "../controls/AddColor.svelte";
   import DeMetric from "../controls/DeMetric.svelte";
   import GetColorsFromString from "../controls/GetColorsFromString.svelte";
@@ -65,6 +65,7 @@
   <section class="flex flex-col flex-1 overflow-auto p-1" id="left-panel">
     <div class="flex px-4">
       <ModifySelection />
+      <DeMetric />
     </div>
     <!-- svelte-ignore a11y-click-events-have-key-events -->
     <!-- svelte-ignore a11y-no-static-element-interactions -->
@@ -93,19 +94,7 @@
         <AddColor />
       </div>
 
-      <div class="flex items-center mt-2">
-        <DeMetric />
-        <Sort />
-        <label>
-          Show Issues <input
-            class="ml-1"
-            on:change={(e) =>
-              configStore.setShowIssuesOnLeft(e.currentTarget.checked)}
-            type="checkbox"
-            checked={$configStore.showIssuesOnLeft}
-          />
-        </label>
-      </div>
+      <div class="flex items-center mt-2"></div>
       <GetColorsFromString
         onChange={(colors) => colorStore.setCurrentPalColors(colors)}
         colorSpace={currentPal.colorSpace}

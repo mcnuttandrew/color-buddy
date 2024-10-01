@@ -12,16 +12,19 @@
     class={`${controlButtonStyle
       .split(" ")
       .filter((x) => !x.startsWith("w-"))
-      .join(" ")} px-2 w-12`}
+      .join(" ")} px-2`}
     slot="target"
     let:toggle
     on:click={toggle}
   >
-    dE <ChevDown class="text-base ml-1" />
+    Metrics <ChevDown class="text-base ml-1" />
   </button>
   <div slot="content" class="flex flex-col">
     <button
-      class={simpleTooltipRowStyle}
+      class={simpleTooltipRowStyle
+        .split(" ")
+        .filter((x) => !x.startsWith("px"))
+        .join(" ")}
       class:font-bold={$configStore.evalDeltaDisplay === "none"}
       on:click={() => configStore.setEvalDeltaDisplay("none")}
     >
@@ -46,9 +49,19 @@
       >
         {metric}
         {#if metric === "WCAG21"}
-          <span class="font-normal">(You probably want this one)</span>
+          <span class="font-normal">(recommended)</span>
         {/if}
       </button>
     {/each}
+    <div class="w-full border-b border-stone-200 my-2"></div>
+    <label>
+      Show Issues <input
+        class="ml-1"
+        on:change={(e) =>
+          configStore.setShowIssuesOnLeft(e.currentTarget.checked)}
+        type="checkbox"
+        checked={$configStore.showIssuesOnLeft}
+      />
+    </label>
   </div>
 </Tooltip>

@@ -36,7 +36,7 @@
 </script>
 
 <div
-  class="w-full flex justify-center items-center text-sm mt-2 relative"
+  class="w-full flex justify-between items-center text-sm mt-2 relative"
   style="min-height: 40px"
 >
   <div

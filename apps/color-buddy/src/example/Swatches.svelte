@@ -9,7 +9,6 @@
 
   export let paletteIdx: number | "tempPal";
   export let allowInteraction: boolean = true;
-  export let hideHeader: boolean = false;
   export let maxWidth: number | undefined = undefined;
 
   $: currentPal =
@@ -80,9 +79,6 @@
     }
   }}
 >
-  {#if !hideHeader}
-    <div class="bg-stone-300 w-full justify-between flex p-1">Swatches</div>
-  {/if}
   <div class="flex flex-wrap justify-center">
     {#each colors as color, i}
       <button

@@ -26,7 +26,6 @@
   {#if exampleIdx === -1}
     <Swatches
       {paletteIdx}
-      hideHeader={true}
       allowInteraction={allowModification}
       maxWidth={size}
     />

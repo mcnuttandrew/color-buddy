@@ -98,20 +98,21 @@
     class="bg-stone-100 py-2 px-4 border-t border-stone-200 flex items-end"
     id="adjust-controls"
   >
-    <ExampleAlaCarteHeader
+    <!-- todo remove mainColumnSelectedExample -->
+    <!-- <ExampleAlaCarteHeader
       labelStyle={""}
       exampleIdx={$configStore.mainColumnSelectedExample}
       setExampleIdx={(idx) => configStore.setMainColumnSelectedExample(idx)}
       size={scatterSize}
-    />
+    /> -->
     <DesignTooltip />
     <InterpolatePoints />
   </div>
-  <ExampleAlaCart
+  <!-- <ExampleAlaCart
     paletteIdx={$colorStore.currentPal}
     exampleIdx={$configStore.mainColumnSelectedExample}
     allowModification={true}
     bgColor={currentPal.background.toHex()}
     size={scatterSize}
-  />
+  /> -->
 </div>

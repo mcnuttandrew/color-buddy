@@ -13,7 +13,7 @@
 </script>
 
 <div class="flex flex-col {labelStyle}">
-  <div class="mr-2 text-xs">Preview style:</div>
+  <div class="mr-2 text-xs">Preview style</div>
   <Tooltip bg="bg-white">
     <div slot="content" class="max-w-md flex flex-col max-h-96 overflow-auto">
       <button

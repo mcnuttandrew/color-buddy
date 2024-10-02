@@ -46,14 +46,14 @@
       //   { name: "b", min: -0.4, max: 0.4, step: 0.01 },
       // ],
       hsv: [
-        { name: "h", min: 0, max: 360, step: 1 },
-        { name: "s", min: 0, max: 100, step: 1 },
-        { name: "v", min: 0, max: 100, step: 1 },
+        { name: "Hue", min: 0, max: 360, step: 1 },
+        { name: "Saturation", min: 0, max: 100, step: 1 },
+        { name: "Value", min: 0, max: 100, step: 1 },
       ],
       lch: [
-        { name: "L", min: 0, max: 100, step: 1 },
-        { name: "c", min: 0, max: 150, step: 1 },
-        { name: "h", min: 0, max: 360, step: 1 },
+        { name: "Lightness", min: 0, max: 100, step: 1 },
+        { name: "Chroma", min: 0, max: 150, step: 1 },
+        { name: "Hue", min: 0, max: 360, step: 1 },
       ],
       // hct: [
       //   { name: "h", min: 0, max: 360, step: 1 },
@@ -137,7 +137,7 @@
 
 <div class="flex flex-col">
   <div class="flex justify-between w-full">
-    <div class="flex flex-col items-center justify-between">
+    <div class="flex flex-col w-full">
       <div class="text-xs">Color Space</div>
       <select
         class="h-full {buttonStyle}"
@@ -145,55 +145,47 @@
         on:change={(e) => onSpaceChange(e.currentTarget.value)}
       >
         {#each [...Object.keys(colorConfigs)] as colorMode}
-          <option value={colorMode}>{colorMode}</option>
+          <option value={colorMode}>{colorMode.toUpperCase()}</option>
         {/each}
       </select>
     </div>
     <slot />
   </div>
-  <div class="flex h-full mr-2">
-    <div class="flex flex-col">
-      <div class="flex flex-col">
-        <div class="w-full">
-          {#each colorConfigs[colorMode] as channel, idx}
-            <div class="flex items-start flex-col mb-2">
-              <div class="flex">
-                <label class="block uppercase text-sm mt-2">
-                  <div class="flex w-full justify-between items-center">
-                    <span class="whitespace-nowrap mr-2">
-                      {channel.name} ({channel.min}-{channel.max})
-                    </span>
-                    <input
-                      class="h-6 text-right w-16 border-2 {buttonStyle
-                        .split(' ')
-                        .filter((x) => !x.startsWith('mr'))
-                        .join(' ')}"
-                      type="number"
-                      value={formatter(channel.value)}
-                      min={channel.min}
-                      max={channel.max}
-                      step={channel.step}
-                      on:input={(e) => colorUpdate(e, idx)}
-                    />
-                  </div>
-                  <input
-                    class="color-slider"
-                    type="range"
-                    style={`--stops: ${sliderSteps[idx]}`}
-                    value={channel.value}
-                    min={channel.min}
-                    max={channel.max}
-                    step={channel.step}
-                    on:input={(e) => colorUpdate(e, idx)}
-                    on:input={(e) => colorUpdate(e, idx)}
-                  />
-                </label>
-              </div>
-            </div>
-          {/each}
-        </div>
+  <div class="flex flex-col h-full mr-2 w-full items-center">
+    {#each colorConfigs[colorMode] as channel, idx}
+      <div class="flex items-start flex-col mb-2">
+        <label class="block uppercase text-sm mt-2">
+          <div class="flex w-full justify-between items-center">
+            <span class="whitespace-nowrap mr-2">
+              {channel.name} ({channel.min}-{channel.max})
+            </span>
+            <input
+              class="h-6 text-right border-2 {buttonStyle
+                .split(' ')
+                .filter((x) => !x.startsWith('mr'))
+                .join(' ')}"
+              type="number"
+              value={formatter(channel.value)}
+              min={channel.min}
+              max={channel.max}
+              step={channel.step}
+              on:input={(e) => colorUpdate(e, idx)}
+            />
+          </div>
+          <input
+            class="color-slider"
+            type="range"
+            style={`--stops: ${sliderSteps[idx]}`}
+            value={channel.value}
+            min={channel.min}
+            max={channel.max}
+            step={channel.step}
+            on:input={(e) => colorUpdate(e, idx)}
+            on:input={(e) => colorUpdate(e, idx)}
+          />
+        </label>
       </div>
-    </div>
+    {/each}
   </div>
 </div>
 
@@ -215,7 +207,8 @@
     border-radius: 0.3em;
     box-shadow: 0 0 1px rgba(0, 0, 0, 0.5);
     /* min-width: 285px; */
-    min-width: 225px;
+    min-width: 285px;
+    /* min-width: 225px; */
   }
 
   .color-slider::-webkit-slider-thumb {

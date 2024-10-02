@@ -9,10 +9,7 @@
   import EvalResponse from "../linting/EvalResponse.svelte";
   import { dealWithFocusEvent } from "../lib/utils";
 
-  import ContentEditable from "../components/ContentEditable.svelte";
-  import EditColor from "../components/EditColor.svelte";
   import { typeToImg, deltaMetrics, ballSize } from "../constants";
-  import { buttonStyle } from "../lib/styles";
 
   export let isFocused: Boolean;
   export let idx: number;
@@ -64,15 +61,6 @@
     <span class="flex flex-col items-start w-24 mx-2">
       <span class="flex max-w-5">
         {color.toHex()}
-        <!-- <ContentEditable
-          onChange={(x) => {
-            const updatedColors = [...colors];
-            updatedColors[idx] = Color.colorFromString(x, colorSpace);
-            colorStore.setCurrentPalColors(updatedColors);
-          }}
-          value={color.toHex()}
-          useEditButton={true}
-        /> -->
       </span>
       {#if colorName}<span class="text-right text-xs">
           {colorName}
@@ -117,19 +105,5 @@
 {#if stats[idx] && statsTypeIsDelta && $configStore.evalDeltaDisplay !== "none"}
   <div class=" text-black text-right text-xs whitespace-nowrap">
     dE: {Math.round(stats[idx])}
-  </div>
-{/if}
-{#if isFocused && $focusStore.focusedColors.length === 1}
-  <div class="flex text-xs w-full justify-end" id="">
-    <EditColor />
-    <button
-      class={buttonStyle}
-      on:click={() => {
-        colorStore.setCurrentPalColors([...colors].filter((_, i) => i !== idx));
-        focusStore.setColors([]);
-      }}
-    >
-      Delete Color
-    </button>
   </div>
 {/if}

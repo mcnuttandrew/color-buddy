@@ -70,72 +70,74 @@
   }
 
   $: numIgnored = Object.values(evalConfig).filter((x) => x.ignore).length;
+  $: groupNames = [
+    "usability",
+    "contrast-accessibility",
+    "color-accessibility",
+    "design",
+    "custom",
+  ].filter((x) => (lintGroups[x] || []).length);
 </script>
 
 {#if displayMode === "check-customization"}
   <LintCustomizationModal onClose={() => refreshLints()} />
 {/if}
-<div class=" w-full flex py-1 px-2 items-end">
+<div class=" w-full flex py-1 px-2 items-end bg-stone-100">
+  <div class="flex">
+    <GlobalLintConfig />
+    <div class="ml-1">
+      <button
+        class={buttonStyle
+          .split(" ")
+          .filter((x) => !x.startsWith("py"))
+          .join(" ")}
+        on:click={() => {
+          configStore.setEvalDisplayMode("check-customization");
+          lintStore.setFocusedLint(false);
+        }}
+      >
+        Customize tests
+      </button>
+    </div>
+  </div>
+  {#if numIgnored > 0}
+    <button
+      class={buttonStyle
+        .split(" ")
+        .filter((x) => !x.startsWith("py"))
+        .join(" ")}
+      on:click={() => {
+        const newEvalConfig = { ...evalConfig };
+        Object.keys(newEvalConfig).forEach((key) => {
+          newEvalConfig[key] = { ignore: false };
+        });
+        colorStore.setCurrentPalEvalConfig(newEvalConfig);
+      }}
+    >
+      Unhide all
+    </button>
+  {/if}
   <Tooltip>
     <div class="text-sm max-w-md" slot="content">
       This collection of checks validates whether or not your palette matches a
       number of commonly held beliefs about best practices. They wont fit every
       situation! So feel free to turn some off.
     </div>
-    <button slot="target" let:toggle on:click={toggle} class="mx-6">
+    <button slot="target" let:toggle on:click={toggle} class="mx-2">
       <QuestionIcon />
     </button>
   </Tooltip>
-  <div class="flex flex-col">
-    <div class="text-xs">Check Config</div>
-    <div class="flex">
-      <div class="">
-        <GlobalLintConfig />
-      </div>
-      <div class="ml-4">
-        <button
-          class={buttonStyle}
-          on:click={() => {
-            configStore.setEvalDisplayMode("check-customization");
-            lintStore.setFocusedLint(false);
-          }}
-        >
-          Customize a check
-        </button>
-      </div>
-    </div>
-  </div>
-  {#if numIgnored > 0}
-    <div>
-      <div class="text-xs">
-        <span class="text-red-500">{numIgnored}</span>
-        checks ignored
-      </div>
-      <button
-        class={buttonStyle}
-        on:click={() => {
-          const newEvalConfig = { ...evalConfig };
-          Object.keys(newEvalConfig).forEach((key) => {
-            newEvalConfig[key] = { ignore: false };
-          });
-          colorStore.setCurrentPalEvalConfig(newEvalConfig);
-        }}
-      >
-        Unhide all
-      </button>
-    </div>
-  {/if}
 </div>
 <div class="flex h-full">
   <div class="flex flex-col ml-2">
     <div class="overflow-auto h-full mb-28 px-2">
       <!-- lint group -->
       <div class="flex flex-wrap">
-        {#each Object.keys(lintGroupNames).filter((x) => (lintGroups[x] || []).length) as lintGroup}
-          <div
-            class="border border-stone-200 bg-white px-4 py-2 max-w-md w-full m-2"
-          >
-            <div class="flex justify-between items-center mb-2">
+        {#each groupNames as lintGroup}
+          <div class="border border-stone-200 bg-white max-w-md w-full m-2">
+            <div
+              class="flex justify-between items-center mb-2 bg-stone-100 pl-2 pr-1 py-1"
+            >
               <!-- logo -->
               <div class="flex">
                 <div class="h-8 w-8 flex items-center justify-center">
@@ -143,6 +145,7 @@
                     src={typeToImg[lintGroup]}
                     class="h-6 w-6"
                     alt="Logo for {lintGroup}"
+                    title="Logo for {lintGroup} tests"
                   />
                 </div>
                 <div class="text-xl">{lintGroupNames[lintGroup]}</div>
@@ -174,23 +177,27 @@
                 {/if}
               </div>
             </div>
-            <!-- lints in the lint group -->
-            {#if !lintGroups[lintGroup].every((x) => x.kind === "ignored" || x.kind === "invalid")}
-              <div class="">
-                {#each (lintGroups[lintGroup] || []).sort((a, b) => {
-                  return a.kind === "ignored" ? 1 : -1;
-                }) as lintResult}
-                  <LintDisplay {lintResult} />
-                {/each}
-              </div>
-            {:else}
-              <div class="text-sm italic">
-                All checks in this group are ignored
-              </div>
-            {/if}
-            {#if (lintGroups[lintGroup] || []).length === 0 && $lintStore.loadState === "loading"}
-              <div class="text-sm animate-pulse italic font-bold">Loading</div>
-            {/if}
+            <div class="px-4">
+              <!-- lints in the lint group -->
+              {#if !lintGroups[lintGroup].every((x) => x.kind === "ignored" || x.kind === "invalid")}
+                <div class="">
+                  {#each (lintGroups[lintGroup] || []).sort((a, b) => {
+                    return a.kind === "ignored" ? 1 : -1;
+                  }) as lintResult}
+                    <LintDisplay {lintResult} />
+                  {/each}
+                </div>
+              {:else}
+                <div class="text-sm italic">
+                  All checks in this group are ignored
+                </div>
+              {/if}
+              {#if (lintGroups[lintGroup] || []).length === 0 && $lintStore.loadState === "loading"}
+                <div class="text-sm animate-pulse italic font-bold">
+                  Loading
+                </div>
+              {/if}
+            </div>
           </div>
         {/each}
       </div>

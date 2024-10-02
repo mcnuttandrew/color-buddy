@@ -35,8 +35,6 @@
 </script>
 
 <div class="mt-2 w-full">
-  <!-- <label for="current-colors" class="text-xs">Current Colors</label> -->
-
   {#if state === "error"}
     <div class="text-red-500">Error parsing colors. {errorMsg}</div>
   {/if}

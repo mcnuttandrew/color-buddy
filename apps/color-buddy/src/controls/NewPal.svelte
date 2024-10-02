@@ -118,6 +118,6 @@
     on:click={toggle}
     class={`mx-2 ${buttonStyle}`}
   >
-    New Palette
+    New palette
   </button>
 </Tooltip>

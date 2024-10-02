@@ -191,7 +191,15 @@
       </div>
     </div>
   </div>
-  <button slot="target" class={buttonStyle} let:toggle on:click={toggle}>
-    Settings
+  <button
+    slot="target"
+    class={buttonStyle
+      .split(" ")
+      .filter((x) => !x.startsWith("py"))
+      .join(" ")}
+    let:toggle
+    on:click={toggle}
+  >
+    Choose tests
   </button>
 </Tooltip>

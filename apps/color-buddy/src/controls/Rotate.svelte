@@ -101,8 +101,8 @@
   }
 </script>
 
-<div class="w-full flex justify-between">
-  <div>Rotate:</div>
+<div class="w-full flex">
+  <div class="mr-2">Rotate</div>
   <input min={0} max={360} step={1} type="range" bind:value={angle} />
   <input
     min={0}
@@ -110,6 +110,6 @@
     step={1}
     type="number"
     bind:value={angle}
-    class="w-16 text-sm"
+    class="w-16 text-sm {buttonStyle} ml-2"
   />
 </div>

@@ -4,9 +4,8 @@
   import Pencil from "virtual:icons/fa6-solid/pen-to-square";
   import PalTypeConfig from "../controls/PalTypeConfig.svelte";
   import PalTags from "../controls/PalTags.svelte";
-  import ContentEditable from "../components/ContentEditable.svelte";
 
-  import { titleCase, oxfordJoin } from "../lib/utils";
+  import { oxfordJoin } from "../lib/utils";
   import { buttonStyle } from "../lib/styles";
 
   $: currentPal = $colorStore.palettes[$colorStore.currentPal];
@@ -19,12 +18,6 @@
   <div class="flex flex-col">
     <div class="flex">
       {currentPal.name}
-      <!-- <ContentEditable
-        onChange={(x) => colorStore.setCurrentPalName(x)}
-        value={currentPal.name}
-        displayValue={`${}`}
-        useEditButton={true}
-      /> -->
       <Tooltip>
         <div slot="content">
           <PalTypeConfig />
@@ -45,7 +38,7 @@
       </Tooltip>
     </div>
     <div class="text-xs">
-      A {titleCase(currentPal.type)} palette{tagsString.length
+      A {currentPal.type} palette{tagsString.length
         ? ` for  ${tagsString} contexts`
         : ""}
     </div>

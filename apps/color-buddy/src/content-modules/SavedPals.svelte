@@ -20,7 +20,7 @@
       <div class="flex items-center justify-between">
         <div>
           {#if i === $colorStore.currentPal}
-            <span class="font-bold">Current:</span>
+            <span class="font-bold">Current</span>
           {/if}
           <button
             class={buttonStyle}

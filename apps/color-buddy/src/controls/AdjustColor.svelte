@@ -27,6 +27,7 @@
   }
   const actions: (
     | { type: "single"; name: string; effect: ColorEffect }
+    | { type: "break" }
     | {
         type: "double";
         name: string;
@@ -53,7 +54,7 @@
       negative: (color) =>
         color.toColorIO().set("hsl.s", (c) => c * 0.8).coords,
     },
-
+    { type: "break" },
     {
       type: "single",
       name: "Flip To Opposing",
@@ -83,7 +84,7 @@
   ];
 </script>
 
-<div class="flex flex-wrap">
+<div class="flex flex-wrap items-center">
   {#each actions as action}
     {#if action.type === "double"}
       <div class="my-2">
@@ -91,7 +92,7 @@
           class={`${buttonStyle
             .split(" ")
             .filter((x) => !x.startsWith("hover"))
-            .join(" ")} flex w-40 justify-between`}
+            .join(" ")} flex w-48 justify-between`}
         >
           <button
             class={"cursor-pointer"}
@@ -108,13 +109,17 @@
           </button>
         </div>
       </div>
+    {:else if action.type === "break"}
+      <div class="w-full"></div>
     {:else}
-      <button
-        class={buttonStyle}
-        on:click={() => actionOnColor(focusedColors, action.effect)}
-      >
-        {action.name}
-      </button>
+      <div>
+        <button
+          class={buttonStyle}
+          on:click={() => actionOnColor(focusedColors, action.effect)}
+        >
+          {action.name}
+        </button>
+      </div>
     {/if}
   {/each}
 </div>

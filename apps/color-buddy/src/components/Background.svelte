@@ -15,7 +15,7 @@
   <div class="text-xs">Background</div>
   <Tooltip top={"20px"}>
     <div slot="content" class="flex flex-col">
-      <div class="text-sm">Current Color</div>
+      <div class="text-xs">Current color</div>
       <input
         class="mb-2 {buttonStyle}"
         value={bgHex}

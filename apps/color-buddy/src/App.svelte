@@ -169,7 +169,7 @@
         <div slot="menu" let:tab>
           {#if tab === "eval"}
             <div
-              class="bg-red-700 text-white rounded-full w-4 h-4 text-xs text-center flex items-center justify-center mx-1"
+              class="bg-red-700 text-white rounded-full w-5 h-5 text-xs text-center flex items-center justify-center mx-1 font-normal"
             >
               {$lintStore.currentChecks.filter(
                 (x) => x.kind === "success" && !x.passes

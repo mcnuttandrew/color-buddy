@@ -42,7 +42,7 @@
   class:border-t-8={markAsCurrent}
   class:mt-2={!markAsCurrent}
 >
-  <div class="bg-white w-full flex justify-between p-1">
+  <div class="bg-stone-100 w-full flex justify-between p-1">
     <!-- header -->
     <div class="flex">
       {#if titleClick}

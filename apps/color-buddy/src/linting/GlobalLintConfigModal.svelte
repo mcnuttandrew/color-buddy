@@ -200,6 +200,6 @@
     let:toggle
     on:click={toggle}
   >
-    Settings
+    Choose tests
   </button>
 </Tooltip>

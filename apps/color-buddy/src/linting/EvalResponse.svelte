@@ -307,7 +307,12 @@
     {#if customWord && !customWordIsImg}
       {customWord}
     {:else if customWord && customWordIsImg}
-      <img src={customWord} class="h-4" alt={`Logo for ${customWord} checks`} />
+      <img
+        src={customWord}
+        class="h-4"
+        alt={`Logo for a ${lintResult.lintProgram.group} check. Indicates that there is an issues with ${lintResult.lintProgram.name}`}
+        title={`Logo for a ${lintResult.lintProgram.group} check. Indicates that there is an issues with ${lintResult.lintProgram.name}`}
+      />
     {:else if lintResult.kind === "success" && lintResult.passes}
       <InfoIcon class="h-4 w-4 mx-2 text-sm" />{:else}<FixIcon
         class="h-4 w-4 mx-2 text-sm"

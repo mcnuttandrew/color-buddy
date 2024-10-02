@@ -5,7 +5,7 @@
   import PalTypeConfig from "../controls/PalTypeConfig.svelte";
   import PalTags from "../controls/PalTags.svelte";
 
-  import { titleCase, oxfordJoin } from "../lib/utils";
+  import { oxfordJoin } from "../lib/utils";
   import { buttonStyle } from "../lib/styles";
 
   $: currentPal = $colorStore.palettes[$colorStore.currentPal];
@@ -38,7 +38,7 @@
       </Tooltip>
     </div>
     <div class="text-xs">
-      A {titleCase(currentPal.type)} palette{tagsString.length
+      A {currentPal.type} palette{tagsString.length
         ? ` for  ${tagsString} contexts`
         : ""}
     </div>

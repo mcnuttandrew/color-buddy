@@ -63,7 +63,7 @@
   <!-- main -->
   <div class="bg-stone-100 w-full py-1 px-2">
     <div class="flex">
-      <div class="mr-2">Compare Palette</div>
+      <div class="mr-2">Compare palette</div>
       <Tooltip>
         <button
           class={`${buttonStyle
@@ -77,14 +77,14 @@
           {#if ComparisonPal !== undefined}
             {ComparisonPal.name}
           {:else}
-            No Palette Selected
+            No palette selected
           {/if}
         </button>
         <div
           class="flex flex-col max-w-md max-h-96 overflow-y-auto"
           slot="content"
         >
-          <div class="text-sm">Premade:</div>
+          <div class="text-sm">Premade</div>
           <Nav
             className=""
             tabs={["sequential", "categorical", "diverging"]}
@@ -98,7 +98,7 @@
             }}
           />
 
-          <div class="text-sm">Your folders:</div>
+          <div class="text-sm">Your folders</div>
           <Nav
             className=""
             tabs={folders}

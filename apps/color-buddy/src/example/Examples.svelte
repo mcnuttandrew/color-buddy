@@ -95,7 +95,7 @@
   </div>
   <div class="flex ml-2">
     {#if $configStore.exampleRoute !== "swatches"}
-      <div class="mr-1">Thumbnail:</div>
+      <div class="mr-1">Thumbnail</div>
       <Tooltip positionAlongRightEdge={true}>
         <div class="flex flex-col" slot="content">
           <button

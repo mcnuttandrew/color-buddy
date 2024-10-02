@@ -12,7 +12,7 @@
   );
   async function GenerateNewNames() {
     if (state !== "ready") return;
-    console.log("Generating new names for New Palettes");
+    console.log("Generating new names for New palettes");
     state = "loading";
     for (const idx of paletteIndexesToRename) {
       const palette = $colorStore.palettes[idx];
@@ -39,7 +39,7 @@
 
 {#if paletteIndexesToRename.length > 0 && state === "ready"}
   <button on:click={GenerateNewNames} class={buttonStyle}>
-    Generate names for "New Palette"s
+    Generate names for "New palette"s
   </button>
 {/if}
 {#if state === "loading"}

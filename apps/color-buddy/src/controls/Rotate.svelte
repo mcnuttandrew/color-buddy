@@ -102,7 +102,7 @@
 </script>
 
 <div class="w-full flex">
-  <div class="mr-2">Rotate:</div>
+  <div class="mr-2">Rotate</div>
   <input min={0} max={360} step={1} type="range" bind:value={angle} />
   <input
     min={0}

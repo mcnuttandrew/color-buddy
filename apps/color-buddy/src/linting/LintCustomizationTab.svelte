@@ -181,7 +181,7 @@
       <div class="px-4 flex flex-col">
         <!-- MAIN CONTENT -->
         <div class="flex flex-col">
-          <div class="font-bold">Name:</div>
+          <div class="font-bold">Name</div>
           <input
             class="ml-2 border border-gray-300 rounded px-2 py-1"
             type="text"
@@ -195,7 +195,7 @@
         </div>
         <div class="flex flex-wrap">
           <!-- <div>
-          <div class="font-bold">Lint Level:</div>
+          <div class="font-bold">Lint Level</div>
           <select
             class="px-2"
             on:change={(e) => {
@@ -210,7 +210,7 @@
           </select>
         </div> -->
           <div class="mx-2">
-            <div class="font-bold">Group:</div>
+            <div class="font-bold">Group</div>
             <select value={lint.group} class="px-2">
               {#each ["usability", "color-accessibility", "contrast-accessibility", "design", "custom"] as group}
                 <option
@@ -227,7 +227,7 @@
           </div>
           <!-- TASK TYPES -->
           <div class="flex flex-col">
-            <div class="mr-2 font-bold">Task Types:</div>
+            <div class="mr-2 font-bold">Task Types</div>
             <div class="flex flex-wrap">
               {#each taskTypes as taskType}
                 <div class="flex items-center mr-4">
@@ -362,7 +362,7 @@
         </div>
 
         <div>
-          <div>Description:</div>
+          <div>Description</div>
           <textarea
             class="ml-2 border-2 border-gray-300 rounded px-2 py-1 w-full"
             value={lint.description}
@@ -375,7 +375,7 @@
         </div>
         <div>
           <div class="flex">
-            <div class="">Error Message:</div>
+            <div class="">Error message</div>
             <div class="text-sm italic ml-4">
               {"If lint failures caused by specific color can mark them via {{blame}}"}
             </div>

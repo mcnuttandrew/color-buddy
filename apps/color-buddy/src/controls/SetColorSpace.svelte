@@ -32,7 +32,7 @@
 </script>
 
 <div class="flex flex-col">
-  <div class="whitespace-nowrap text-xs">Color Space</div>
+  <div class="whitespace-nowrap text-xs">Color space</div>
   <Tooltip>
     <div slot="content" class="flex flex-col max-w-md" let:onClick>
       <div class="text-xs">Basic color spaces</div>
@@ -98,7 +98,7 @@
 
       {#if showDragPicker}
         <div class="w-full border-b border-stone-200" />
-        <div class="mt-2 text-xs">Background Color Space</div>
+        <div class="mt-2 text-xs">Background Color space</div>
         <Nav
           tabs={showTypes}
           className="text-sm"

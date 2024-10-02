@@ -65,34 +65,30 @@
       ? []
       : currentPal.colors.map((x) => cvdSim(selectedCVDType, x))}
   />
-  <div class="w-full justify-between flex">
-    <div class="flex justify-start text-gray-400 text-sm mb-2">
-      <label class="cursor-pointer">
-        <input
-          class="mr-1"
-          on:change={(e) =>
-            configStore.setShowGamutMarkers(e.currentTarget.checked)}
-          type="checkbox"
-          checked={$configStore.showGamutMarkers}
-        />
-        <span>Show out-of-gamut ⨂</span>
-      </label>
-    </div>
-    <div class="flex items-center">
-      {#if !config.isPolar}
-        <Zoom />
-      {/if}
-      <button
-        class={`${buttonStyle
-          .split(" ")
-          .filter((x) => !x.startsWith("py"))
-          .join(" ")} text-sm flex items-center justify-center `}
-        on:click={() => configStore.setScatterplotMode("putting")}
-      >
-        <Finger class="text-xs mr-1" />
-        {#if $configStore.scatterplotMode === "putting"}Adding{:else}Add color{/if}
-      </button>
-    </div>
+  <div class="w-full justify-between flex text-sm mb-2">
+    <button
+      class={`${buttonStyle
+        .split(" ")
+        .filter((x) => !x.startsWith("py"))
+        .join(" ")} text-sm flex items-center justify-center `}
+      on:click={() => configStore.setScatterplotMode("putting")}
+    >
+      <Finger class="text-xs mr-1" />
+      {#if $configStore.scatterplotMode === "putting"}Adding{:else}Add color{/if}
+    </button>
+    <label class="cursor-pointer">
+      <input
+        class="mr-1"
+        on:change={(e) =>
+          configStore.setShowGamutMarkers(e.currentTarget.checked)}
+        type="checkbox"
+        checked={$configStore.showGamutMarkers}
+      />
+      <span>Show out-of-gamut ⨂</span>
+    </label>
+    {#if !config.isPolar}
+      <Zoom />
+    {/if}
   </div>
 </div>
 

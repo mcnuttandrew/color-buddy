@@ -15,7 +15,7 @@
 </script>
 
 <div class="flex flex-col ml-1">
-  <div class="text-xs">CVD Simulation:</div>
+  <div class="text-xs">CVD simulation</div>
   <Tooltip bg="bg-white">
     <div slot="content" class="flex flex-col">
       {#each options as value}

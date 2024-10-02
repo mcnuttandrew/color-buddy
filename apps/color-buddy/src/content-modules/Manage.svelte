@@ -162,7 +162,7 @@
       modalState = "open";
     }}
   >
-    Palettes Manager
+    Palettes manager
   </button>
 </div>
 
@@ -238,7 +238,7 @@
           </div>
         </div>
         <div class="flex flex-col items-start">
-          <span class="whitespace-nowrap text-sm">Thumbnail Style:</span>
+          <span class="whitespace-nowrap text-sm">Thumbnail</span>
           <PreviewSelector exampleName={example?.name || "Discs"} />
           <GenerateNewNames />
         </div>

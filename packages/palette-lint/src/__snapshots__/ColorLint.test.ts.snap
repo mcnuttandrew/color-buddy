@@ -70,13 +70,13 @@ exports[`ColorLint - Contrast (1) GraphicalObjs 1`] = `"These colors () do not h
 
 exports[`ColorLint - Contrast (1) GraphicalObjs 2`] = `"These colors (#feed72, #f8f4d2, #eb717b) do not have a sufficient contrast do not have sufficient contrast with the background to be easily readable."`;
 
-exports[`ColorLint - Contrast (2) contrastTextAA 1`] = `"These text colors ({{blame}) do not have a sufficient contrast do not have sufficient contrast with the background to be easily readable."`;
+exports[`ColorLint - Contrast (2) contrastTextAA 1`] = `"These text colors () do not have a sufficient contrast do not have sufficient contrast with the background to be easily readable."`;
 
-exports[`ColorLint - Contrast (2) contrastTextAA 2`] = `"These text colors ({{blame}) do not have a sufficient contrast do not have sufficient contrast with the background to be easily readable."`;
+exports[`ColorLint - Contrast (2) contrastTextAA 2`] = `"These text colors (#eb717b) do not have a sufficient contrast do not have sufficient contrast with the background to be easily readable."`;
 
-exports[`ColorLint - Contrast (3) contrastTextAAA 1`] = `"These text colors ({{blame}) do not have a sufficient contrast do not have sufficient contrast with the background to be easily readable."`;
+exports[`ColorLint - Contrast (3) contrastTextAAA 1`] = `"These text colors () do not have a sufficient contrast do not have sufficient contrast with the background to be easily readable."`;
 
-exports[`ColorLint - Contrast (3) contrastTextAAA 2`] = `"These text colors ({{blame}) do not have a sufficient contrast do not have sufficient contrast with the background to be easily readable."`;
+exports[`ColorLint - Contrast (3) contrastTextAAA 2`] = `"These text colors (#af3b4b) do not have a sufficient contrast do not have sufficient contrast with the background to be easily readable."`;
 
 exports[`ColorLint - Diverging Order 1`] = `""`;
 

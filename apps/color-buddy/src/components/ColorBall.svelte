@@ -96,7 +96,7 @@
     {/if}
     {#if stats[idx] && !statsTypeIsDelta && $configStore.evalDeltaDisplay !== "none"}
       <div class=" text-black text-right text-xs whitespace-nowrap">
-        Contrast: {Math.round(stats[idx])}
+        Contrast: {Math.round(stats[idx] * 10) / 10}
       </div>
     {/if}
   </div>
@@ -104,6 +104,6 @@
 
 {#if stats[idx] && statsTypeIsDelta && $configStore.evalDeltaDisplay !== "none"}
   <div class=" text-black text-right text-xs whitespace-nowrap">
-    dE: {Math.round(stats[idx])}
+    dE: {Math.round(stats[idx] * 10) / 10}
   </div>
 {/if}

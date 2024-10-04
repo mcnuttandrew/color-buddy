@@ -28,11 +28,23 @@
               on:submit|preventDefault={() =>
                 colorStore.setCurrentPalName(nameBind)}
             >
-              <input type="text" class={buttonStyle} bind:value={nameBind} />
+              <input
+                type="text"
+                class={buttonStyle}
+                bind:value={nameBind}
+                on:blur={() => colorStore.setCurrentPalName(nameBind)}
+              />
             </form>
           </div>
         </div>
-        <button slot="target" let:toggle on:click={toggle}>
+        <button
+          slot="target"
+          let:toggle
+          on:click={(x) => {
+            toggle();
+            nameBind = currentPal.name;
+          }}
+        >
           <Pencil class="text-sm mx-1" />
         </button>
       </Tooltip>

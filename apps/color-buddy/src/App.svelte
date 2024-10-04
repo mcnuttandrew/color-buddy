@@ -168,13 +168,28 @@
       >
         <div slot="menu" let:tab>
           {#if tab === "eval"}
-            <div
-              class="bg-red-700 text-white rounded-full w-5 h-5 text-xs text-center flex items-center justify-center mx-1 font-normal"
-            >
-              {$lintStore.currentChecks.filter(
-                (x) => x.kind === "success" && !x.passes
-              ).length}
-            </div>
+            <svg width={`${18}px`} height={`${18}px`} class="ml-1">
+              <circle
+                r={9}
+                cx={9}
+                cy={9}
+                fill={"rgb(185 28 28 / var(--tw-bg-opacity))"}
+              />
+              <!-- text aligned with center -->
+              <text
+                x={9}
+                y={13.5}
+                font-size={13}
+                fill="white"
+                text-anchor="middle"
+                font-weight="normal"
+                alignment-baseline="middle"
+              >
+                {$lintStore.currentChecks.filter(
+                  (x) => x.kind === "success" && !x.passes
+                ).length}
+              </text>
+            </svg>
           {/if}
         </div>
       </Nav>

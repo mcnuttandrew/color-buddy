@@ -41,7 +41,7 @@ const lintBase: LintProgram = {
   level: "error",
   group: "contrast-accessibility",
   description: descriptionBase + textPart,
-  failMessage: `These text colors ({{blame}) do not have a sufficient contrast do not have sufficient contrast with the background to be easily readable.`,
+  failMessage: `These text colors ({{blame}}) do not have a sufficient contrast do not have sufficient contrast with the background to be easily readable.`,
   id: "background-contrast-built-in",
   blameMode: "single" as const,
   subscribedFix: "fixBackgroundDifferentiability",

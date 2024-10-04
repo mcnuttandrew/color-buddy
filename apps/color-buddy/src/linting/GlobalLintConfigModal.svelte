@@ -27,6 +27,13 @@
   function onClose() {
     modalState = "closed";
   }
+  $: groupNames = [
+    "usability",
+    "contrast-accessibility",
+    "color-accessibility",
+    "design",
+    "custom",
+  ].filter((x) => (lintsByGroup[x] || []).length);
 </script>
 
 <Modal
@@ -84,7 +91,7 @@
   </div>
   <div class="flex flex-col px-4">
     <div class="flex flex-col overflow-scroll">
-      {#each Object.keys(lintGroupNames) as group}
+      {#each groupNames as group}
         {#if (lintsByGroup[group] || []).length > 0}
           <div class="mt-2 flex items-center">
             <div class="h-8 w-10 flex items-center justify-center">

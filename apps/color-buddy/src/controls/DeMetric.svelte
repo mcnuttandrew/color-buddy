@@ -5,6 +5,10 @@
   import ChevDown from "virtual:icons/fa6-solid/chevron-down";
   import { controlButtonStyle } from "../lib/styles";
   import { contrastMetrics, deltaMetrics } from "../constants";
+
+  const nameMap: Record<string, string> = {
+    Lstar: "Delta L*",
+  };
 </script>
 
 <Tooltip bg="bg-white">
@@ -47,7 +51,7 @@
         class:font-bold={$configStore.evalDeltaDisplay === metric}
         on:click={() => configStore.setEvalDeltaDisplay(metric)}
       >
-        {metric}
+        {nameMap[metric] || metric}
         {#if metric === "WCAG21"}
           <span class="font-normal">(recommended)</span>
         {/if}

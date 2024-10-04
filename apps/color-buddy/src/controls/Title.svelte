@@ -32,7 +32,7 @@
                 type="text"
                 class={buttonStyle}
                 bind:value={nameBind}
-                on:blur={colorStore.setCurrentPalName(nameBind)}
+                on:blur={() => colorStore.setCurrentPalName(nameBind)}
               />
             </form>
           </div>

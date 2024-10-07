@@ -16,7 +16,6 @@ Output: {"background": "#FFFFFF", "colors": ["#9E9E9E", "#F8BBD0", "#D3EC8A", "#
 
 Present your names a single JSON object. It should have a type like {"background: string; colors: string[]}. 
 Unless specified otherwise, it should have EXACTLY the same number of colors as the input. 
-Do your best to make the colors match the prompt.
 Do not offer any other response.
 
 Palette: ${JSON.stringify(pal.inputColors)}

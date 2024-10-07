@@ -36,12 +36,12 @@
     "dist"
   ],
   "exports": {
-    "default": {
+    "lib-build": {
       "import": "./dist/color-buddy-palette-lint.js",
       "require": "./dist/color-buddy-palette-lint.umd.js",
       "types": "./dist/src/main.d.ts"
     },
-    "lib-build": {
+    "default": {
       "import": "./src/main.ts",
       "require": "./src/main.ts"
     }

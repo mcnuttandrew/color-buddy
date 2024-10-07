@@ -27,15 +27,14 @@ type ColorSpace = keyof typeof ColorSpaceDirectory;
 export const colorPickerConfig = Object.fromEntries(
   (Object.keys(ColorSpaceDirectory) as ColorSpace[]).map((name: ColorSpace) => {
     const space = (ColorSpaceDirectory as any)[name] as typeof Color;
-    const exampleColor = new (ColorSpaceDirectory as any)[name]() as Color;
     const { x, y, z } = space.dimensionToChannel;
     return [
       name,
       {
-        advancedSpace: space.advancedSpace,
         axisLabel: space.axisLabel,
         description: space.description,
         isPolar: space.isPolar,
+        spaceType: space.spaceType,
         title: space.name,
         xChannel: x,
         xChannelIndex: space.channelNames.indexOf(x),

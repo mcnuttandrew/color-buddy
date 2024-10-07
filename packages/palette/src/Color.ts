@@ -11,6 +11,7 @@ type DistAlgorithm = "76" | "CMC" | "2000" | "ITP" | "Jz" | "OK";
 const ColorIOCaches = new Map<string, ColorIO>();
 const InGamutCache = new Map<string, boolean>();
 const colorStateCache = new Map<string, number>();
+
 /**
  * The base class for all color spaces
  *
@@ -24,7 +25,7 @@ export class Color {
   static stepSize: Channels = [1, 1, 1];
   static channelNames: string[] = [];
   static description: string = "";
-  static advancedSpace = true;
+  static spaceType: string = "rgb based";
   static dimensionToChannel: Record<"x" | "y" | "z", string> = {
     x: "",
     y: "",
@@ -271,8 +272,8 @@ class CIELAB extends Color {
   static stepSize: Channels = [1, 1, 1];
   static dimensionToChannel = { x: "a", y: "b", z: "L" };
   static description =
-    "Lightness, Red-green (a), and Yellow-blue (b). Perceptually uniform.";
-  static advancedSpace = false;
+    "Lightness, Red-green (a), and Yellow-blue (b). International standard";
+  static spaceType = "perceptually uniform";
   static axisLabel = (num: number) => `${Math.round(num)}`;
 
   toString(): string {
@@ -293,7 +294,7 @@ class HSV extends Color {
   spaceName = "hsv" as const;
   static dimensionToChannel = { x: "s", y: "h", z: "v" };
   static description = "Hue, Saturation, Value. Cylindrical";
-  static advancedSpace = false;
+  static spaceType = "rgb based";
   toString(): string {
     const [h, s, v] = this.stringChannels();
     return `color(hsv ${h} ${s} ${v})`;
@@ -313,6 +314,7 @@ class RGB extends Color {
   static stepSize: Channels = [1, 1, 1];
   static dimensionToChannel = { x: "g", y: "b", z: "r" };
   static description = "Red, Green, Blue.";
+  static spaceType = "rgb based";
   static axisLabel = (num: number) => `${Math.round(num)}`;
   toString(): string {
     const [r, g, b] = this.stringChannels();
@@ -329,10 +331,12 @@ class SRGB extends Color {
   static channelNames = ["r", "g", "b"];
   channels = { r: 0, g: 0, b: 0 };
   spaceName = "srgb" as const;
-  static domains = { r: [0, 1], g: [0, 1], b: [0, 1] } as Domain;
+  static domains = { r: [1, 0], g: [0, 1], b: [1, 0] } as Domain;
   static stepSize: Channels = [0.01, 0.01, 0.01];
   static dimensionToChannel = { x: "g", y: "b", z: "r" };
-  static description = "Red, Green, Blue.";
+  static description =
+    "Red, Green, Blue. Designed for display, but not palette design";
+  static spaceType = "rgb based";
   static axisLabel = (num: number) => `${Math.round(num)}`;
   toString(): string {
     const [r, g, b] = this.stringChannels();
@@ -353,7 +357,7 @@ class HSL extends Color {
   static stepSize: Channels = [1, 1, 1];
   static dimensionToChannel = { x: "s", y: "h", z: "l" };
   static description = "Hue, Saturation, Lightness. Cylindrical";
-  static advancedSpace = false;
+  static spaceType = "rgb based";
   static isPolar = true;
 
   toString(): string {
@@ -373,8 +377,8 @@ class LCH extends Color {
   static domains = { l: [100, 0], c: [0, 120], h: [360, 0] } as Domain;
   static stepSize: Channels = [1, 1, 1];
   static dimensionToChannel = { x: "c", y: "h", z: "l" };
-  static description = "Luminance, Chroma, Hue. Cylindrical";
-  static advancedSpace = false;
+  static description = "Luminance, Chroma, Hue. Cylindrical, refinement of LAB";
+  static spaceType = "perceptually uniform";
   static isPolar = true;
   static axisLabel = (num: number) => `${Math.round(num)}`;
 }
@@ -411,7 +415,8 @@ class OKLCH extends Color {
   static domains = { l: [1, 0], c: [0, 0.4], h: [360, 0] } as Domain;
   static stepSize: Channels = [0.01, 0.01, 1];
   static dimensionToChannel = { x: "c", y: "h", z: "l" };
-  static description = "Luminance, Chroma, Hue. Cylindrical (based on LCH)";
+  static description = "Luminance, Chroma, Hue. Cylindrical";
+  static spaceType = "perceptually uniform";
   static isPolar = true;
 }
 
@@ -424,8 +429,9 @@ class JZAZBZ extends Color {
   static stepSize: Channels = [0.01, 0.01, 0.01];
   static dimensionToChannel = { x: "az", y: "bz", z: "jz" };
   static description =
-    "Lightness (JZ), Red-green (az), Blue-yellow (bz). Perceptually uniform (based on LAB)";
+    "Lightness (JZ), Red-green (az), Blue-yellow (bz). Designed for HD imagery";
 
+  static spaceType = "other interesting spaces";
   toString(): string {
     const [jz, az, bz] = Object.values(this.channels).map((x) =>
       isNaN(x) ? 0 : x
@@ -450,7 +456,7 @@ class XYZ extends Color {
   static dimensionToChannel = { x: "x", y: "z", z: "y" };
   static description =
     "X (Curves), Y (Luminance), Z (Blue). International Standard";
-
+  static spaceType = "other interesting spaces";
   toString(): string {
     const [x, y, z] = Object.values(this.channels).map((x) =>
       isNaN(x) ? 0 : x
@@ -474,6 +480,7 @@ class HCT extends Color {
   static dimensionToChannel = { x: "c", y: "h", z: "t" };
   static isPolar = true;
   static description = "Hue, Chroma, Tone. Perceptually uniform (from Google)";
+  static spaceType = "other interesting spaces";
 
   toString(): string {
     const [h, c, t] = Object.values(this.channels).map((x) =>
@@ -495,8 +502,9 @@ class CAM16 extends Color {
   static stepSize: Channels = [1, 1, 1];
   static dimensionToChannel = { x: "m", y: "h", z: "j" };
   static description =
-    "J (lightness), M (colorfulness), H (hue). Perceptually uniform";
+    "J (lightness), M (colorfulness), H (hue). Designed for color management";
   static isPolar = true;
+  static spaceType = "other interesting spaces";
 
   toString(): string {
     const [h, c, t] = Object.values(this.channels).map((x) =>
@@ -515,10 +523,8 @@ function colorFromString(
   colorSpace: keyof typeof ColorSpaceDirectory = "lab",
   allowError?: boolean
 ): Color {
-  const result = new ColorSpaceDirectory[colorSpace]().fromString(
-    colorString,
-    allowError
-  );
+  const result = new (ColorSpaceDirectory[colorSpace] ||
+    ColorSpaceDirectory.lab)().fromString(colorString, allowError);
   return result;
 }
 
@@ -531,9 +537,8 @@ function colorFromHex(
     return colorHexCache.get(hex)!.copy() as Color;
   }
   const color = new ColorIO(hex).to(colorSpace);
-  const outColor = new ColorSpaceDirectory[colorSpace]().fromChannels(
-    color.coords
-  );
+  const outColor = new (ColorSpaceDirectory[colorSpace] ||
+    ColorSpaceDirectory.lab)().fromChannels(color.coords);
   colorHexCache.set(hex, outColor);
   return outColor;
 }
@@ -547,7 +552,8 @@ function colorFromChannels(
   if (colorChannelsCache.has(cacheKey)) {
     return colorChannelsCache.get(cacheKey)!.copy() as Color;
   }
-  const color = new ColorSpaceDirectory[colorSpace]().fromChannels(channels);
+  const color = new (ColorSpaceDirectory[colorSpace] ||
+    ColorSpaceDirectory.lab)().fromChannels(channels);
   colorChannelsCache.set(cacheKey, color);
   return color;
 }
@@ -562,7 +568,8 @@ function toColorSpace(
   const space = colorSpace === "rgb" ? "srgb" : colorSpace;
   const channels = color.toColorIO().to(space, { inGamut: true }).coords;
 
-  const newColor = new ColorSpaceDirectory[colorSpace]().fromChannels(channels);
+  const newColor = new (ColorSpaceDirectory[colorSpace] ||
+    ColorSpaceDirectory.lab)().fromChannels(channels);
   newColor.tags = color.tags;
   return newColor;
 }
@@ -572,7 +579,7 @@ export const ColorSpaceDirectory = {
   hct: HCT,
   hsl: HSL,
   hsv: HSV,
-  jzazbz: JZAZBZ,
+  // jzazbz: JZAZBZ,
   lab: CIELAB,
   lch: LCH,
   // oklab: OKLAB,

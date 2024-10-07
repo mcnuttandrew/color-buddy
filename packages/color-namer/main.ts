@@ -5,7 +5,7 @@ import { colorCentersFromStoneHeer } from "color-buddy-color-lists";
 type ColorName = { color: Color; name: string };
 function closestColors(color: Color, colors: ColorName[]): ColorName[] {
   return colors
-    .map((x) => ({ ...x, dist: color.symmetricDeltaE(x.color, "OK") }))
+    .map((x) => ({ ...x, dist: color.symmetricDeltaE(x.color) }))
     .sort((a, b) => a.dist - b.dist);
 }
 

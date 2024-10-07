@@ -19,6 +19,7 @@
   import ColorScatterPlotPolarGuide from "./ColorScatterPlotPolarGuide.svelte";
   import ColorScatterPlotZGuide from "./ColorScatterPlotZGuide.svelte";
   import GamutMarker from "./GamutMarker.svelte";
+  import { computeStroke } from "../lib/utils";
 
   export let scatterPlotMode: "moving" | "looking" | "putting";
 
@@ -320,31 +321,6 @@
     puttingPreview = false;
   }
   let svgContainer: any;
-
-  function computeStroke(
-    color: Color,
-    idx: number,
-    focusSet: Set<number>
-  ): string {
-    if (focusSet.has(idx) && focusedColors.length > 1) {
-      return "none";
-    }
-    const contrast = color.contrast(bg, "WCAG21");
-    const lum = color.luminance();
-    if (contrast < 1.1 && lum > 0.5) {
-      const darkerVersion = color.toColorSpace("lab");
-      return darkerVersion
-        .setChannel("L", Math.max(darkerVersion.getChannel("L") - 20))
-        .toHex();
-    }
-    if (contrast < 1.1 && lum <= 0.5) {
-      const darkerVersion = color.toColorSpace("lab");
-      return darkerVersion
-        .setChannel("L", Math.max(darkerVersion.getChannel("L") + 20))
-        .toHex();
-    }
-    return "none";
-  }
 </script>
 
 <!-- svelte-ignore a11y-no-static-element-interactions -->
@@ -405,7 +381,7 @@
               {#if scatterPlotMode === "moving"}
                 <circle
                   {...CircleProps(color, i)}
-                  stroke={computeStroke(color, i, focusSet)}
+                  stroke={computeStroke(color, i, focusSet, bg)}
                   on:touchstart|preventDefault={(e) => {
                     onFocusedColorsChange([i]);
                     dragStart(e);
@@ -421,7 +397,7 @@
               {#if scatterPlotMode !== "moving"}
                 <circle
                   {...CircleProps(color, i)}
-                  stroke={computeStroke(color, i, focusSet)}
+                  stroke={computeStroke(color, i, focusSet, bg)}
                   on:mouseenter|preventDefault={() => hoverPoint(i)}
                 />
               {/if}

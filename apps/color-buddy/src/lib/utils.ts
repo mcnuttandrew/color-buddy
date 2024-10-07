@@ -549,3 +549,30 @@ export function newVersionName(name: string, previousNames: string[]): string {
   }
   return newName;
 }
+
+export function computeStroke(
+  color: Color,
+  idx: number,
+  focusSet: Set<number>,
+  bg?: Color
+): string {
+  if (focusSet.has(idx) && focusSet.size > 1) {
+    return "none";
+  }
+  let localBg = bg || Color.colorFromString("#FFFFFF", "lab");
+  const contrast = color.contrast(localBg, "WCAG21");
+  const lum = color.luminance();
+  if (contrast < 1.1 && lum > 0.5) {
+    const darkerVersion = color.toColorSpace("lab");
+    return darkerVersion
+      .setChannel("L", Math.max(darkerVersion.getChannel("L") - 20))
+      .toHex();
+  }
+  if (contrast < 1.1 && lum <= 0.5) {
+    const darkerVersion = color.toColorSpace("lab");
+    return darkerVersion
+      .setChannel("L", Math.max(darkerVersion.getChannel("L") + 20))
+      .toHex();
+  }
+  return "none";
+}

@@ -89,11 +89,8 @@
 
 <Tooltip bg="bg-white">
   <button slot="target" let:toggle on:click={toggle} class={buttonStyle}>
-    Change {numFocused === 0
-      ? "all points"
-      : numFocused > 1
-        ? "selected points"
-        : "selected point"} with AI
+    Change {numFocused === 0 ? "all points" : numFocused > 1 ? "these" : "this"}
+    w/ AI
   </button>
   <div slot="content" let:onClick class="flex flex-col w-full">
     <label for="pal-prompt" class="italic text-sm">

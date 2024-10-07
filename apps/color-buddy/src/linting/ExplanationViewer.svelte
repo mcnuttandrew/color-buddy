@@ -7,12 +7,24 @@
   import {
     dealWithFocusEvent,
     splitMessageIntoTextAndColors,
+    computeStroke,
   } from "../lib/utils";
 
   export let lintResult: LintResult;
 
   $: currentPal = $colorStore.palettes[$colorStore.currentPal];
   $: colors = currentPal.colors;
+
+  $: hexes = colors.map((x) => x.toHex().toLowerCase());
+  $: hexToColor = new Map(hexes.map((x, i) => [x, colors[i]]));
+
+  function stroke(block: string): string {
+    const color = hexToColor.get(block);
+    if (!color) {
+      return "none";
+    }
+    return computeStroke(color, -1, new Set([-1]));
+  }
 </script>
 
 {#if lintResult.kind === "success"}
@@ -23,17 +35,24 @@
       {:else}
         <button
           on:click|stopPropagation={(e) => {
-            const hexes = colors.map((x) => x.toHex().toLowerCase());
-            const idx = hexes.findIndex(
-              (x) => x === block.content.toLowerCase()
-            );
+            const idx = hexes.indexOf(block.content);
             focusStore.setColors(
               dealWithFocusEvent(e, idx, $focusStore.focusedColors)
             );
           }}
-          style={`background-color: ${block.content}; top: -3px`}
-          class="rounded-full w-3 h-3 ml-1 mr-1 inline-block cursor-pointer relative"
-        ></button>
+          class="w-3 h-3 ml-1 mr-1 inline-block cursor-pointer relative"
+          style={"top: 1.5px;"}
+        >
+          <svg height={12} width={12}>
+            <circle
+              r={5.8}
+              cx={6}
+              cy={6}
+              fill={block.content}
+              stroke={stroke(block.content)}
+            />
+          </svg>
+        </button>
       {/if}
     {/each}
   </div>

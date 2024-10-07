@@ -97,6 +97,7 @@
     "tritanopia",
     "grayscale",
   ] as const;
+  $: currentSim = $configStore.colorSim;
   $: cbMatch = options.find((x) =>
     lintProgram.name.toLowerCase().includes(x)
   ) as (typeof options)[number];
@@ -124,9 +125,10 @@
   {#if cbMatch}
     <button
       class={buttonStyle}
-      on:click={() => configStore.setColorSim(cbMatch)}
+      on:click={() =>
+        configStore.setColorSim(currentSim === cbMatch ? "none" : cbMatch)}
     >
-      Turn on {cbMatch} sim
+      {currentSim === cbMatch ? "Turn off sim" : `Turn on ${cbMatch} sim`}
     </button>
   {/if}
   {#if !!spaceMatch}

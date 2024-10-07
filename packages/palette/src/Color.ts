@@ -420,29 +420,29 @@ class OKLCH extends Color {
   static isPolar = true;
 }
 
-class JZAZBZ extends Color {
-  static name = "JZAZBZ";
-  static channelNames = ["jz", "az", "bz"];
-  channels = { jz: 0, az: 0, bz: 0 };
-  spaceName = "jzazbz" as const;
-  static domains = { jz: [1, 0], az: [-0.5, 0.5], bz: [0.5, -0.5] } as Domain;
-  static stepSize: Channels = [0.01, 0.01, 0.01];
-  static dimensionToChannel = { x: "az", y: "bz", z: "jz" };
-  static description =
-    "Lightness (JZ), Red-green (az), Blue-yellow (bz). Designed for HD imagery";
+// class JZAZBZ extends Color {
+//   static name = "JZAZBZ";
+//   static channelNames = ["jz", "az", "bz"];
+//   channels = { jz: 0, az: 0, bz: 0 };
+//   spaceName = "jzazbz" as const;
+//   static domains = { jz: [1, 0], az: [-0.5, 0.5], bz: [0.5, -0.5] } as Domain;
+//   static stepSize: Channels = [0.01, 0.01, 0.01];
+//   static dimensionToChannel = { x: "az", y: "bz", z: "jz" };
+//   static description =
+//     "Lightness (JZ), Red-green (az), Blue-yellow (bz). Designed for HD imagery";
 
-  static spaceType = "other interesting spaces";
-  toString(): string {
-    const [jz, az, bz] = Object.values(this.channels).map((x) =>
-      isNaN(x) ? 0 : x
-    );
-    return `color(jzazbz ${jz} ${az} ${bz})`;
-  }
-  toPrettyString(): string {
-    const [jz, az, bz] = this.prettyChannels();
-    return `jzazbz(${jz} ${az} ${bz})`;
-  }
-}
+//   static spaceType = "other interesting spaces";
+//   toString(): string {
+//     const [jz, az, bz] = Object.values(this.channels).map((x) =>
+//       isNaN(x) ? 0 : x
+//     );
+//     return `color(jzazbz ${jz} ${az} ${bz})`;
+//   }
+//   toPrettyString(): string {
+//     const [jz, az, bz] = this.prettyChannels();
+//     return `jzazbz(${jz} ${az} ${bz})`;
+//   }
+// }
 
 class XYZ extends Color {
   static name = "XYZ";

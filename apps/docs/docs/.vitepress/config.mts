@@ -15,7 +15,17 @@ export default defineConfig({
     sidebar: [
       {
         text: "Color Buddy",
-        items: [{ text: "Introduction", link: "/" }],
+        items: [
+          { text: "Introduction", link: "/index" },
+          { text: "Motivation", link: "/motivation" },
+          { text: "Editing Model", link: "/editing-model" },
+        ],
+      },
+      {
+        text: "Technical Topics",
+        items: [
+          { text: "Color Models", link: "/color-models" },
+        ],
       },
       {
         text: "Packages",

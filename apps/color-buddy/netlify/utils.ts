@@ -37,8 +37,8 @@ const engines = {
   anthropic: (prompt: string) =>
     anthropic.messages.create({
       // model: "claude-3-opus-20240229",
-      model: "claude-3-haiku-20240307",
-      // model: "claude-3-sonnet-20240229",
+      // model: "claude-3-haiku-20240307",
+      model: "claude-3-sonnet-20240229",
       max_tokens: 256,
       temperature: 0,
       messages: [{ role: "user", content: prompt }],

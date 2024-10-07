@@ -75,7 +75,7 @@
   $: columnWidth = (innerWidth - leftPanelWidth) / 2;
   const padding = 40;
   const zWidth = 110;
-  $: scatterSize = Math.max(Math.min(columnWidth - zWidth - padding, 420), 200);
+  $: scatterSize = Math.max(Math.min(columnWidth - zWidth - padding, 420), 300);
 
   const currentPalTabs = ["examples", "compare", "eval"];
 </script>

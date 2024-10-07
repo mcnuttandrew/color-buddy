@@ -7,7 +7,7 @@
   import configStore from "../stores/config-store";
 
   import EvalResponse from "../linting/EvalResponse.svelte";
-  import { dealWithFocusEvent } from "../lib/utils";
+  import { dealWithFocusEvent, computeStroke } from "../lib/utils";
 
   import { typeToImg, deltaMetrics, ballSize } from "../constants";
 
@@ -19,12 +19,8 @@
   export let stats: number[];
 
   $: selectedCVDType = $configStore.colorSim;
-  $: sim = (color: Color): string => cvdSim(selectedCVDType, color).toHex();
-  $: colors = $colorStore.palettes[$colorStore.currentPal].colors;
-
   $: currentPal = $colorStore.palettes[$colorStore.currentPal];
   $: evalConfig = currentPal.evalConfig;
-  $: colorSpace = currentPal.colorSpace;
 
   const deltaMetricsSet = new Set(deltaMetrics);
   $: statsTypeIsDelta = deltaMetricsSet.has(
@@ -51,10 +47,13 @@
     >
       <svg height="{ballSize * 2}px" width="{ballSize * 2}px">
         <circle
-          r={ballSize}
-          fill={selectedCVDType !== "none" ? sim(color) : color.toHex()}
+          r={ballSize * 0.9}
+          fill={selectedCVDType !== "none"
+            ? cvdSim(selectedCVDType, color).toHex()
+            : color.toHex()}
           cx={ballSize}
           cy={ballSize}
+          stroke={computeStroke(color, idx, new Set([idx]))}
         ></circle>
       </svg>
     </button>

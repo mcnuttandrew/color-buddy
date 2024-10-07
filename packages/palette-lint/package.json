@@ -1,6 +1,6 @@
 {
   "name": "color-buddy-palette-lint",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "type": "module",
   "main": "./dist/palette.js",
   "scripts": {
@@ -36,14 +36,14 @@
     "dist"
   ],
   "exports": {
-    "default": {
-      "import": "./src/main.ts",
-      "require": "./src/main.ts"
-    },
     "lib-build": {
       "import": "./dist/color-buddy-palette-lint.js",
       "require": "./dist/color-buddy-palette-lint.umd.js",
       "types": "./dist/src/main.d.ts"
+    },
+    "default": {
+      "import": "./src/main.ts",
+      "require": "./src/main.ts"
     }
   }
 }

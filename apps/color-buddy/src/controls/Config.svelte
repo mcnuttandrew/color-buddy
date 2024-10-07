@@ -155,7 +155,7 @@
       {/each}
     </div>
 
-    <!-- <div class="font-bold mt-4">Configurations</div>
+    <div class="font-bold mt-4">Configurations</div>
     <div class="mt-2">AI Provider</div>
 
     <Nav
@@ -163,6 +163,6 @@
       className="text-sm"
       isTabSelected={(x) => x === $configStore.engine}
       selectTab={(x) => configStore.setEngine(x)}
-    /> -->
+    />
   </div>
 </Tooltip>

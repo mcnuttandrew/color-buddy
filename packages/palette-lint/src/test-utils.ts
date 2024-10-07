@@ -9,6 +9,7 @@ export const toPal = (colors: string[]): Palette => ({
   background: toColors(["#fff"])[0],
   colors: toColors(colors),
   tags: [],
+  folder: "",
 });
 
 export const toColors = (colors: string[]) =>

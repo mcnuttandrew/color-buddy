@@ -27,15 +27,14 @@ type ColorSpace = keyof typeof ColorSpaceDirectory;
 export const colorPickerConfig = Object.fromEntries(
   (Object.keys(ColorSpaceDirectory) as ColorSpace[]).map((name: ColorSpace) => {
     const space = (ColorSpaceDirectory as any)[name] as typeof Color;
-    const exampleColor = new (ColorSpaceDirectory as any)[name]() as Color;
     const { x, y, z } = space.dimensionToChannel;
     return [
       name,
       {
-        advancedSpace: space.advancedSpace,
         axisLabel: space.axisLabel,
         description: space.description,
         isPolar: space.isPolar,
+        spaceType: space.spaceType,
         title: space.name,
         xChannel: x,
         xChannelIndex: space.channelNames.indexOf(x),
@@ -549,4 +548,31 @@ export function newVersionName(name: string, previousNames: string[]): string {
     version++;
   }
   return newName;
+}
+
+export function computeStroke(
+  color: Color,
+  idx: number,
+  focusSet: Set<number>,
+  bg?: Color
+): string {
+  if (focusSet.has(idx) && focusSet.size > 1) {
+    return "none";
+  }
+  let localBg = bg || Color.colorFromString("#FFFFFF", "lab");
+  const contrast = color.contrast(localBg, "WCAG21");
+  const lum = color.luminance();
+  if (contrast < 1.1 && lum > 0.5) {
+    const darkerVersion = color.toColorSpace("lab");
+    return darkerVersion
+      .setChannel("L", Math.max(darkerVersion.getChannel("L") - 20))
+      .toHex();
+  }
+  if (contrast < 1.1 && lum <= 0.5) {
+    const darkerVersion = color.toColorSpace("lab");
+    return darkerVersion
+      .setChannel("L", Math.max(darkerVersion.getChannel("L") + 20))
+      .toHex();
+  }
+  return "none";
 }

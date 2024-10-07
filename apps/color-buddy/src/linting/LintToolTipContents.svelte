@@ -5,8 +5,6 @@
   import { suggestLintAIFix, suggestLintMonteFix } from "../lib/lint-fixer";
   import Equal from "virtual:icons/fa6-solid/equals";
 
-  import { logEvent } from "../lib/api-calls";
-
   import colorStore from "../stores/color-store";
   import focusStore from "../stores/focus-store";
   import lintStore from "../stores/lint-store";
@@ -19,6 +17,8 @@
   export let hideTitle: boolean = false;
 
   import { buttonStyle } from "../lib/styles";
+  import { logEvent } from "../lib/api-calls";
+  import { computeStroke } from "../lib/utils";
   let requestState: "idle" | "loading" | "loaded" | "failed" = "idle";
 
   $: palette = $colorStore.palettes[$colorStore.currentPal];
@@ -97,6 +97,7 @@
     "tritanopia",
     "grayscale",
   ] as const;
+  $: currentSim = $configStore.colorSim;
   $: cbMatch = options.find((x) =>
     lintProgram.name.toLowerCase().includes(x)
   ) as (typeof options)[number];
@@ -124,9 +125,10 @@
   {#if cbMatch}
     <button
       class={buttonStyle}
-      on:click={() => configStore.setColorSim(cbMatch)}
+      on:click={() =>
+        configStore.setColorSim(currentSim === cbMatch ? "none" : cbMatch)}
     >
-      Turn on {cbMatch} sim
+      {currentSim === cbMatch ? "Turn off sim" : `Turn on ${cbMatch} sim`}
     </button>
   {/if}
   {#if !!spaceMatch}
@@ -205,7 +207,11 @@
 
         <div
           class="rounded-full w-3 h-3 ml-1 inline-block opacity-100"
-          style={`background: ${palette.colors[index]?.toHex()}`}
+          style={`background: ${palette.colors[index]?.toHex()}; border: 1px solid ${computeStroke(
+            palette.colors[index],
+            index,
+            new Set([index])
+          )}`}
         />
       </button>
     {/each}

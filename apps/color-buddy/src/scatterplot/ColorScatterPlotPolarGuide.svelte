@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Color } from "color-buddy-palette";
+  import { Color, cvdSim } from "color-buddy-palette";
   import { colorPickerConfig } from "../lib/utils";
   import { arc } from "d3-shape";
 
@@ -7,6 +7,7 @@
   import colorStore from "../stores/color-store";
   import configStore from "../stores/config-store";
   import { scaleLinear } from "d3-scale";
+
   export let rScale: any;
   export let yScale: any;
   export let xScale: any;
@@ -16,6 +17,8 @@
   export let dragging: boolean;
   export let axisColor: string;
   export const textColor: string = "";
+
+  $: currentSim = $configStore.colorSim;
 
   $: config = colorPickerConfig[colorSpace as keyof typeof colorPickerConfig];
   $: rNonDimScale = scaleLinear().domain([0, 1]).range(rScale.domain());
@@ -67,7 +70,12 @@
     coords[zIdx] = focusedColors.length
       ? colors[focusedColors[0]].toChannels()[zIdx]
       : midPoint;
-    return Color.colorFromChannels(coords, colorSpace as any).toDisplay();
+    const newColor = Color.colorFromChannels(coords, colorSpace as any);
+    if (currentSim !== "none") {
+      return cvdSim(currentSim, newColor).toDisplay();
+    } else {
+      return newColor.toDisplay();
+    }
   };
   $: arcScale = arc();
   $: angleScale = scaleLinear()

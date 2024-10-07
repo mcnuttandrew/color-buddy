@@ -1,10 +1,11 @@
 <script lang="ts">
-  import { Color } from "color-buddy-palette";
+  import { Color, cvdSim } from "color-buddy-palette";
   import { colorPickerConfig } from "../lib/utils";
   import focusStore from "../stores/focus-store";
   import colorStore from "../stores/color-store";
   import configStore from "../stores/config-store";
   import { scaleLinear } from "d3-scale";
+
   export let xScale: any;
   export let yScale: any;
   export let plotHeight: number;
@@ -13,6 +14,8 @@
   export let dragging: boolean;
   export let axisColor: string;
   export let textColor: string;
+
+  $: currentSim = $configStore.colorSim;
 
   $: config = colorPickerConfig[colorSpace as keyof typeof colorPickerConfig];
   $: xNonDimScale = scaleLinear().domain([0, 1]).range(xScale.domain());
@@ -66,7 +69,12 @@
     const avgZChannel = avgNums(fColors.map((x) => x[config.zChannelIndex]));
     const midPoint = (config.zDomain[0] + config.zDomain[1]) / 2;
     coords[config.zChannelIndex] = fColors.length ? avgZChannel : midPoint;
-    return Color.colorFromChannels(coords, colorSpace as any).toDisplay();
+    const newColor = Color.colorFromChannels(coords, colorSpace as any);
+    if (currentSim !== "none") {
+      return cvdSim(currentSim, newColor).toDisplay();
+    } else {
+      return newColor.toDisplay();
+    }
   };
   $: shouldShowColorBackground =
     $configStore.showColorBackground === "always show" ||

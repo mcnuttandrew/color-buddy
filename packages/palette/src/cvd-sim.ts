@@ -136,8 +136,8 @@ export default function simulate_cvd(
     return simulationCache.get(key)!;
   }
   const colorIOcolor = color.toColorIO();
-  const isachroma =
-    deficiency == "achromatopsia" || deficiency == "achromatomaly";
+  // const isachroma =
+  //   deficiency == "achromatopsia" || deficiency == "achromatomaly";
   // const spaceName = isachroma ? "srgb" : "srgb-linear";
   // const spaceName = isachroma ? "srgb" : "srgb-linear";
   const spaceName = "srgb-linear";

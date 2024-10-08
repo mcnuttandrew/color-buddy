@@ -9,7 +9,11 @@
   import { logEvent } from "./lib/api-calls";
 
   onMount(() => {
-    logEvent("start-up", {}, $configStore.userName);
+    logEvent(
+      "start-up",
+      localStorage.getItem("color-pal"),
+      $configStore.userName
+    );
   });
 
   // make sure no focused colors are out of bounds

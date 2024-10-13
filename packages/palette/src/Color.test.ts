@@ -1,5 +1,9 @@
 import { expect, test } from "vitest";
-import { Color, ColorSpaceDirectory } from "color-buddy-palette";
+import {
+  Color,
+  ColorSpaceDirectory,
+  distributePoints,
+} from "color-buddy-palette";
 
 test("Color string extractor works", () => {
   expect(Color.stringToChannels("lab", "lab(50% 0 0)")).toStrictEqual([
@@ -98,4 +102,17 @@ test("In gamut tests", () => {
       );
     });
   });
+});
+
+test("Distribute colors", () => {
+  const exampleColors = ["#072536", "#144327", "#dea1db", "#c6338f", "#822b21"];
+  const colors = exampleColors.map((hex) => Color.colorFromHex(hex, "hsl"));
+
+  const result = distributePoints(
+    { direction: "in z space", name: "L" },
+    exampleColors.map((_, idx) => idx),
+    colors,
+    "hsl"
+  );
+  expect(result.map((x) => x.toHex())).toMatchSnapshot();
 });

@@ -87,11 +87,14 @@ export function distributePoints(
     yChannelIndex: space.channelNames.indexOf(y),
     zChannelIndex: space.channelNames.indexOf(z),
   };
+  const idxMap = {
+    horizontal: config.xChannelIndex,
+    vertical: config.yChannelIndex,
+    "in z space": config.zChannelIndex,
+  } as const;
   let sortedIndexes = focusedColors.sort((a, b) => {
-    const modeToIdx = { horizontal: 1, vertical: 2, "in z space": 0 };
-    const idx = modeToIdx[dir.direction] || 0;
-    const pointA = colors[a].toChannels()[idx];
-    const pointB = colors[b].toChannels()[idx];
+    const pointA = colors[a].toChannels()[idxMap[dir.direction]];
+    const pointB = colors[b].toChannels()[idxMap[dir.direction]];
     return pointA - pointB;
   });
   type Channels = [number, number, number];

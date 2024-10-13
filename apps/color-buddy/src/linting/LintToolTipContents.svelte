@@ -3,6 +3,7 @@
   import type { Palette } from "color-buddy-palette";
   import { suggestLintFix } from "color-buddy-palette-lint";
   import { suggestLintAIFix, suggestLintMonteFix } from "../lib/lint-fixer";
+  import { linter } from "color-buddy-palette-lint";
   import Equal from "virtual:icons/fa6-solid/equals";
 
   import colorStore from "../stores/color-store";
@@ -43,6 +44,11 @@
         .then((x) => x.map((pal) => ({ pal, label })).at(0))
 
         .then((x) => {
+          const lintResult = x?.pal
+            ? linter(x.pal, [lintProgram], { computeBlame: true }).at(0)
+            : { kind: "success", passes: false };
+          (x as any).fixesIssue =
+            lintResult?.kind === "success" && lintResult.passes;
           suggestions = [...suggestions, x].filter((x) => x) as FixSuggestion[];
           requestState = "loaded";
           waitingOnFixes = waitingOnFixes - 1;
@@ -241,57 +247,55 @@
       </div>
     </div>
   {/if}
+
   {#each suggestions as suggestion, idx}
-    <div class=" text-xs">{suggestion.label}</div>
-    <div class="flex relative mb-1 items-center">
-      <div
-        class="rounded px-2 py-1 flex items-center"
-        style={`background: ${suggestion.pal.background?.toHex()}`}
-      >
-        {#each suggestion.pal.colors as color, idx}
+    <div class="flex">
+      <div class="flex flex-col">
+        <div class=" text-xs">{suggestion.label}</div>
+        <div class="flex relative mb-1 items-center">
           <div
-            class="h-5 w-5 rounded-full mx-1 flex items-center justify-center"
-            style={`background: ${color?.toHex()}`}
+            class="rounded px-2 py-1 flex items-center"
+            style={`background: ${suggestion.pal.background?.toHex()}`}
           >
-            {#if color?.toHex() === currentPal.colors[idx]?.toHex()}
-              <div class:text-white={color.luminance() < 0.5} class="text-xs">
-                <Equal />
+            {#each suggestion.pal.colors as color, idx}
+              <div
+                class="h-5 w-5 rounded-full mx-1 flex items-center justify-center"
+                style={`background: ${color?.toHex()}`}
+              >
+                {#if color?.toHex() === currentPal.colors[idx]?.toHex()}
+                  <div
+                    class:text-white={color.luminance() < 0.5}
+                    class="text-xs"
+                  >
+                    <Equal />
+                  </div>
+                {/if}
               </div>
-            {/if}
+            {/each}
           </div>
-        {/each}
+        </div>
       </div>
-      <!-- <PalDiff beforePal={currentPal} afterPal={suggestion.pal} /> -->
-      <!-- <div class="flex flex-col justify-between items-baseline"> -->
-      <!-- <div class="font-bold pl-2 mb-0"> -->
-      <!-- {suggestion.label} fix
-            </div> -->
-      <button
-        class={buttonStyle}
-        on:click={() => {
-          if (suggestion) {
-            colorStore.setCurrentPal(suggestion.pal);
-            focusStore.clearColors();
-            requestState = "idle";
-            suggestions = [];
-            onClick();
-          }
-        }}
-      >
-        Use
-      </button>
-      <!-- <button
-              class={buttonStyle}
-              on:click={() => {
-                suggestions = suggestions.filter((_, jdx) => jdx !== idx);
-                if (suggestions.length === 0) {
-                  requestState = "idle";
-                }
-              }}
-            >
-              Reject
-            </button> -->
-      <!-- </div> -->
+      <div class="flex flex-col">
+        {#if suggestion.fixesIssue}
+          <div class="text-xs text-green-500">Fixes issue</div>
+        {:else}
+          <div class="text-xs text-red-500">Does not fix</div>
+        {/if}
+        <button
+          class={buttonStyle}
+          on:click={() => {
+            if (suggestion) {
+              colorStore.setCurrentPal(suggestion.pal);
+              focusStore.clearColors();
+              requestState = "idle";
+              suggestions = [];
+              onClick();
+            }
+          }}
+        >
+          Use
+        </button>
+      </div>
     </div>
   {/each}
   {#if waitingOnFixes > 0}

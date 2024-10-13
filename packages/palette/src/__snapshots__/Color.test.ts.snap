@@ -1,0 +1,11 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Distribute colors 1`] = `
+[
+  "#072536",
+  "#216d3f",
+  "#dea1db",
+  "#d55aa7",
+  "#b13b2d",
+]
+`;

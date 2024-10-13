@@ -104,7 +104,7 @@ test("In gamut tests", () => {
   });
 });
 
-test.only("Distribute colors", () => {
+test("Distribute colors", () => {
   const exampleColors = ["#072536", "#144327", "#dea1db", "#c6338f", "#822b21"];
   const colors = exampleColors.map((hex) => Color.colorFromHex(hex, "hsl"));
 

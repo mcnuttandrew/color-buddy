@@ -6,6 +6,8 @@
   import configStore from "./stores/config-store";
   import lintStore from "./stores/lint-store";
 
+  import Github from "virtual:icons/custom/github-mark-white";
+
   import { logEvent } from "./lib/api-calls";
 
   onMount(() => {
@@ -114,6 +116,13 @@
     </div>
   </div>
   <div class="flex justify-between items-center">
+    <a
+      href="https://github.com/mcnuttandrew/color-buddy"
+      class="text-sm"
+      target="_blank"
+    >
+      <img src={"./github-mark-white.png"} alt="github" class="h-5 mr-4" />
+    </a>
     <Config />
   </div>
 </header>

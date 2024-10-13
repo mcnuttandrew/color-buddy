@@ -6,8 +6,6 @@
   import configStore from "./stores/config-store";
   import lintStore from "./stores/lint-store";
 
-  import Github from "virtual:icons/custom/github-mark-white";
-
   import { logEvent } from "./lib/api-calls";
 
   onMount(() => {

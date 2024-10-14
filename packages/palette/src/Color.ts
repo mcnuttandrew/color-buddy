@@ -377,7 +377,7 @@ class LCH extends Color {
   static domains = { l: [100, 0], c: [0, 120], h: [360, 0] } as Domain;
   static stepSize: Channels = [1, 1, 1];
   static dimensionToChannel = { x: "c", y: "h", z: "l" };
-  static description = "Luminance, Chroma, Hue. Cylindrical, refinement of LAB";
+  static description = "Lightness, Chroma, Hue. Cylindrical, refinement of LAB";
   static spaceType = "perceptually uniform";
   static isPolar = true;
   static axisLabel = (num: number) => `${Math.round(num)}`;
@@ -415,7 +415,7 @@ class OKLCH extends Color {
   static domains = { l: [1, 0], c: [0, 0.4], h: [360, 0] } as Domain;
   static stepSize: Channels = [0.01, 0.01, 1];
   static dimensionToChannel = { x: "c", y: "h", z: "l" };
-  static description = "Luminance, Chroma, Hue. Cylindrical";
+  static description = "Lightness, Chroma, Hue. Cylindrical";
   static spaceType = "perceptually uniform";
   static isPolar = true;
 }
@@ -454,8 +454,7 @@ class XYZ extends Color {
   static domains = { x: [0, 1.1], y: [1.1, 0], z: [1.1, 0] } as Domain;
   static stepSize: Channels = [0.01, 0.01, 0.01];
   static dimensionToChannel = { x: "x", y: "z", z: "y" };
-  static description =
-    "X (Curves), Y (Luminance), Z (Blue). International Standard";
+  static description = "X, Y (Luminance), Z. International Standard";
   static spaceType = "other interesting spaces";
   toString(): string {
     const [x, y, z] = Object.values(this.channels).map((x) =>

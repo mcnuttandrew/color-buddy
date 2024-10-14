@@ -11,7 +11,8 @@
   onMount(() => {
     logEvent(
       "start-up",
-      localStorage.getItem("color-pal"),
+      // localStorage.getItem("color-pal"),
+      {},
       $configStore.userName
     );
   });

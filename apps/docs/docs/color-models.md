@@ -3,8 +3,8 @@
 layout: doc
 ---
 
-# Color and Color Models
-Models for color can be found in art, science, design and engineering. The color models in the Color Buddy come from the domain of digital color and its application. The color models in the Color Buddy are all implemented using [colorjs.io](https://colorjs.io/docs/spaces), which offers a comprehensive set of models for specifying color, which they call "color spaces." The next section offers a brief overview of the color science underlying these models, followed by some additional detail about the  [specific color models](#color-buddy) offered in the Color Buddy.
+# Color Models and Spaces
+Models for color can be found in art, science, design and engineering. The color models in the Color Buddy come from the domain of digital color and its application. The term "color space" is used for models that define 3D cartesian or polar coordinate system (not all do).  The color models in the Color Buddy are all implemented using [colorjs.io](https://colorjs.io/docs/spaces), which offers a comprehensive set of models for specifying color. The next section offers a brief overview of the color science underlying these models, followed by some additional detail about the  [specific color models](#color-buddy) offered in the Color Buddy.
 
 ## Background and terminology
 Digital color models start with the technology of color displays, then procede to connect color technology to color vision. 
@@ -27,7 +27,7 @@ Color appearance models are not simple uniform color spaces, though some are des
 ## Color Buddy
 These are the current color spaces offered in the Color Buddy. We would appreciate feedback on their effectiveness, and which others might be useful.
 ### Perceptually Uniform
-The Color Buddy offers the two CIELAB color spaces as its default editing space, LAB and LCH, which produce equivalent color values. That is, they are two views of the same color space, therefore colors appear in the same locations in the visualization. Interpolated values, however, will be different. The CIELAB spaces are recommended because they are an established standard with good perceptual uniformity (excellent for L*, less so for highly saturated colors). In Color Buddy, the profile for LAB and LCH is sRGB, to match the CSS implementation.
+The Color Buddy offers the two CIELAB color spaces as its default editing space, LAB and LCH, which produce equivalent color values. That is, they are two views of the same color space, therefore colors appear in the same locations in the visualization. Interpolated values, however, will be different. The CIELAB spaces are recommended because they are an established standard with good perceptual uniformity (excellent for L*, less so for highly saturated colors). The current implementation uses a white point of D50, which is more common for print than for display applications but is the standard specification for CIELAB and is the only form that color.js supports in both LAB and LCH formulations. 
 
 In addition, Color Buddy offers OKLCH, which is provided in CSS to support a wider gamut than its implementation of LCH. The default profile for OKLCH is Display-P3, which better matches newer displays like the Apple wide gamut displays. [blog](https://blog.logrocket.com/oklch-css-consistent-accessible-color-palettes/) There is a corresponding OKLAB, which may be added at a later date
 ### RGB Based

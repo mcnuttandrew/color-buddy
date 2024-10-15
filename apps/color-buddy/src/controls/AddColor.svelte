@@ -15,6 +15,9 @@
   let requestState: "idle" | "loading" | "loaded" | "failed" = "idle";
 
   function getColorForSearch(searchedString: string) {
+    if ($configStore.engine === "none") {
+      return;
+    }
     const allowedStates = new Set(["idle", "loaded", "failed"]);
     if (!allowedStates.has(requestState)) {
       return;

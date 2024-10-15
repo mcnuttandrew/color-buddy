@@ -1,6 +1,7 @@
 <script lang="ts">
   import focusStore from "../stores/focus-store";
   import colorStore from "../stores/color-store";
+  import configStore from "../stores/config-store";
 
   import Tooltip from "../components/Tooltip.svelte";
   import AdjustColor from "./AdjustColor.svelte";
@@ -28,12 +29,16 @@
   style={`max-height: calc(100% - (450px + 65px + 48px + 20px))`}
 >
   <div class="flex w-full flex-wrap">
-    <SuggestionModificationToSelection />
+    {#if $configStore.engine !== "none"}
+      <SuggestionModificationToSelection />
+    {/if}
     {#if numFocused > 0}
       <DupAndDelete />
     {/if}
   </div>
-  <div class={breaker} />
+  {#if !($configStore.engine === "none" && numFocused === 0)}
+    <div class={breaker} />
+  {/if}
   {#if numFocused >= 1}
     <!-- <div class="font-bold">Adjust</div> -->
     <AdjustColor />

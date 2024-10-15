@@ -4,7 +4,7 @@ import LintWorker from "./lint-worker.worker?worker";
 import { summarizePal } from "./utils";
 import type { WorkerCommand } from "./worker-types";
 
-export type Engine = "openai" | "google" | "anthropic";
+export type Engine = "openai" | "google" | "anthropic" | "none";
 type SimplePal = { background: string; colors: string[] };
 const palToString = (pal: Palette) => ({
   background: pal.background.toHex(),
@@ -85,6 +85,7 @@ const engineToScaffold = {
   openai: openAIScaffold,
   google: googleScaffold,
   anthropic: anthropicScaffold,
+  none: openAIScaffold,
 };
 
 // supports the add color search function

@@ -1,9 +1,9 @@
 <script lang="ts">
   import type { LintResult } from "color-buddy-palette-lint";
   import type { Palette } from "color-buddy-palette";
-  import { suggestLintFix } from "color-buddy-palette-lint";
+  import { linter, suggestLintFix } from "color-buddy-palette-lint";
+
   import { suggestLintAIFix, suggestLintMonteFix } from "../lib/lint-fixer";
-  import { linter } from "color-buddy-palette-lint";
   import Equal from "virtual:icons/fa6-solid/equals";
 
   import colorStore from "../stores/color-store";
@@ -81,8 +81,11 @@
   $: waitingOnFixes = 0;
   function generateFixes() {
     let numAdd = 0;
-    proposeFix("ai", "LLM Suggestion");
-    numAdd += 1;
+    if ($configStore.engine !== "none") {
+      proposeFix("ai", "LLM Suggestion");
+      numAdd += 1;
+    }
+
     if (lintProgram && lintProgram.program.length) {
       proposeFix("monte", "Monte Carlo Suggestion");
       numAdd += 1;

@@ -3,6 +3,7 @@
   import type { Palette } from "color-buddy-palette";
 
   import colorStore from "../stores/color-store";
+  import configStore from "../stores/config-store";
 
   import { processBodyTextToColors, newGenericPal } from "../lib/utils";
   import { buttonStyle, denseButtonStyle } from "../lib/styles";
@@ -108,9 +109,11 @@
         inputString = "";
       }}
     />
-    <div class="mt-5 border-t border-black"></div>
-    <div class="font-bold">Generate a new palette using AI</div>
-    <SuggestColorPal />
+    {#if $configStore.engine !== "none"}
+      <div class="mt-5 border-t border-black"></div>
+      <div class="font-bold">Generate a new palette using AI</div>
+      <SuggestColorPal />
+    {/if}
   </div>
   <button
     slot="target"

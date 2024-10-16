@@ -91,17 +91,11 @@
     <QuestionIcon />
     <ChevDown class="ml-2" />
   </button>
-  <div slot="content" class="w-96">
-    <!-- <div class="flex mb-4">
-      <button class={buttonStyle} on:click={() => importPals()}>
-        Import Palettes
-      </button>
-    </div> -->
-
+  <div slot="content" class="w-96" let:onClick>
     <div class="font-bold">About</div>
     <div class="text-sm my-2">
-      Color buddy is an application that helps you build excellent color
-      palettes. It was originally written at the
+      Color buddy is a tool for building color palettes. It was originally
+      written at the
 
       <a
         class="underline text-cyan-800"
@@ -140,10 +134,19 @@
       is collected to help improve the application.
     </div>
 
-    <div>
-      <button class={buttonStyle} on:click={() => configStore.setTour(true)}>
+    <div class="flex">
+      <button
+        class={buttonStyle}
+        on:click={() => {
+          configStore.setTour(true);
+          onClick();
+        }}
+      >
         Show Tour
       </button>
+      <!-- <button class={buttonStyle} on:click={() => importPals()}>
+        Import Palettes
+      </button> -->
     </div>
 
     <div class="font-bold mt-4">Short cuts</div>

@@ -8,11 +8,13 @@
   import GenerateNewNames from "../components/GenerateNewNames.svelte";
   import Modal from "../components/Modal.svelte";
   import PreviewSelector from "../example/PreviewSelector.svelte";
+
   import colorStore from "../stores/color-store";
   import configStore from "../stores/config-store";
   import examplePalStore from "../stores/example-palette-store";
   import exampleStore from "../stores/example-store";
   import focusStore from "../stores/focus-store";
+
   import { convertPalToSpace, newVersionName } from "../lib/utils";
   import { suggestNameForPalette } from "../lib/api-calls";
   import Nav from "../components/Nav.svelte";
@@ -240,7 +242,9 @@
         <div class="flex flex-col items-start">
           <span class="whitespace-nowrap text-sm">Thumbnail</span>
           <PreviewSelector exampleName={example?.name || "Discs"} />
-          <GenerateNewNames />
+          {#if $configStore.engine !== "none"}
+            <GenerateNewNames />
+          {/if}
         </div>
       </div>
     </div>

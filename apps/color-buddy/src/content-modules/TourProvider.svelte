@@ -68,7 +68,7 @@
       {
         element: "#left-panel",
         popover: {
-          title: "Colors Panel",
+          title: "Palette Pane",
           onCloseClick: closeClick,
           description:
             "Here are the colors in your palette! You can click on a color to select it and edit it. Each color also shows any issues we've found with it. You can learn more by clicking on the issue icon",

@@ -54,8 +54,7 @@ const contrastGraphicalObjects: LintProgram = {
   ...lintBase,
   description:
     descriptionBase +
-    " For this check (for graphical objects) there should be at least a 3:1 contrast ratio." +
-    textPart,
+    " For this check (for graphical objects) there should be at least a 3:1 contrast ratio.",
   program: JSONToPrettyString(buildProgram(3, false)),
   name: " Graphical objects contrast",
   id: "contrast-graphical-objects-built-in",

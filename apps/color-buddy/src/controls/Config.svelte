@@ -94,7 +94,8 @@
   <div slot="content" class="w-96" let:onClick>
     <div class="font-bold">About</div>
     <div class="text-sm my-2">
-      Color buddy is a tool for building color palettes. It was originally
+      Color buddy is a tool for building color palettes.
+      <!-- It was originally
       written at the
 
       <a
@@ -112,7 +113,7 @@
         target="_blank"
       >
         Scientific Computing and Imaging Institute.
-      </a>
+      </a> -->
       You can learn more about it at the{" "}
       <a
         class="underline text-cyan-800"
@@ -121,19 +122,17 @@
       >
         docs.
       </a>
-      You can also find the source code on{" "}
-      <a
-        class="underline text-cyan-800"
-        href="      https://github.com/mcnuttandrew/color-buddy"
-        target="_blank"
-      >
-        GitHub.
-      </a>
-      If you have any feedback or questions, please feel free to reach out via the
-      github issues page or via email. A small amount of non-identifiable usage data
-      is collected to help improve the application.
+
+      Feedback (via github issues or email) is welcome.
+    </div>
+    <div class="font-bold">What is saved and where?</div>
+    <div class="text-sm my-2">
+      Palettes are saved in your browser's local storage. They are not shared!
+      They are not available on other browsers or devices. A small amount of
+      non-identifiable usage data is collected to help improve the application.
     </div>
 
+    <div class="font-bold">Tools</div>
     <div class="flex">
       <button
         class={buttonStyle}

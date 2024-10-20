@@ -539,6 +539,7 @@
               {#if scatterPlotMode === "moving"}
                 <rect
                   {...RectProps(color, i)}
+                  stroke={computeStroke(color, i, focusSet, bg)}
                   on:mousedown|preventDefault={pointMouseDown}
                   on:mouseup|preventDefault={pointMouseUp(i)}
                   on:mouseleave|preventDefault={switchToDragPoint(i)}
@@ -553,6 +554,7 @@
               {:else}
                 <rect
                   {...RectProps(color, i)}
+                  stroke={computeStroke(color, i, focusSet, bg)}
                   on:mouseenter|preventDefault={() => hoverPoint(i)}
                 />
               {/if}

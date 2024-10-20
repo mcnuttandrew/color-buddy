@@ -46,7 +46,7 @@ This page contains examples of the language used to define palettes and the expe
 **Tasks**: sequential, diverging, categorical
 
 
-**Description**: Colors used need to have sufficient contrast with the background to make them legible, as defined by WCAG21 contrast ratios. For this check (for graphical objects) there should be at least a 3:1 contrast ratio. If this lint is not failing and you believe it should be, ensure that a color has been selected as having the "text" tag.
+**Description**: Colors used need to have sufficient contrast with the background to make them legible, as defined by WCAG21 contrast ratios. For this check (for graphical objects) there should be at least a 3:1 contrast ratio.
 
 **Natural Language**: ALL a IN colors SUCH THAT contrast(a, background, WCAG21) > 3
 

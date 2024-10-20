@@ -4,8 +4,19 @@ declare module "color-blind" {
   export default blinder;
 }
 
+// https://github.com/lokesh/color-thief/issues/188
 declare module "colorthief" {
-  // make this be of any type
-  const colorThief: any;
-  export default colorThief;
+  export type RGBColor = [number, number, number];
+  export default class ColorThief {
+    getColor: (
+      img: HTMLImageElement | null,
+      quality: number = 10
+    ) => RGBColor | null;
+
+    getPalette: (
+      img: HTMLImageElement | null,
+      colorCount: number = 10,
+      quality: number = 10
+    ) => RGBColor[] | null;
+  }
 }

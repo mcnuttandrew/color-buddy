@@ -6,7 +6,7 @@
   import configStore from "../stores/config-store";
 
   import { processBodyTextToColors, newGenericPal } from "../lib/utils";
-  import { buttonStyle, denseButtonStyle } from "../lib/styles";
+  import { buttonStyle } from "../lib/styles";
   import Tooltip from "../components/Tooltip.svelte";
   import SuggestColorPal from "./SuggestColorPal.svelte";
   import ColorThief from "colorthief";

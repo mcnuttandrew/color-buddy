@@ -3,3 +3,5 @@ declare module "color-blind" {
   const blinder: any;
   export default blinder;
 }
+
+declare module "colorthief" {}

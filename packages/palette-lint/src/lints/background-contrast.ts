@@ -31,7 +31,8 @@ const buildProgram = (level: number, textOnly: boolean): LLProgram => {
   return program;
 };
 
-const descriptionBase = `All colors in a palette should have a sufficient contrast ratio with the background color. This is because if they are not, then they will not be differentiable from each other in some contexts. Valid algorithms are "APCA", "WCAG21", "Michelson", "Weber", "Lstar", "DeltaPhi".`;
+// const descriptionBase = `All colors in a palette should have a sufficient contrast ratio with the background color. This is because if they are not, then they will not be differentiable from each other in some contexts. Valid algorithms are "APCA", "WCAG21", "Michelson", "Weber", "Lstar", "DeltaPhi".`;
+const descriptionBase = `Colors used need to have sufficient contrast with the background to make them legible, as defined by WCAG21 contrast ratios.`;
 const textPart = ` If this lint is not failing and you believe it should be, ensure that a color has been selected as having the "text" tag.`;
 const lintBase: LintProgram = {
   program: JSONToPrettyString(false),
@@ -51,6 +52,10 @@ const lintBase: LintProgram = {
 
 const contrastGraphicalObjects: LintProgram = {
   ...lintBase,
+  description:
+    descriptionBase +
+    " For this check (for graphical objects) there should be at least a 3:1 contrast ratio." +
+    textPart,
   program: JSONToPrettyString(buildProgram(3, false)),
   name: " Graphical objects contrast",
   id: "contrast-graphical-objects-built-in",
@@ -62,6 +67,10 @@ const contrastGraphicalObjects: LintProgram = {
 const contrastTextAA: LintProgram = {
   ...lintBase,
   program: JSONToPrettyString(buildProgram(4.5, true)),
+  description:
+    descriptionBase +
+    " For this check (for AA text) there should be at least a 4.5:1 contrast ratio." +
+    textPart,
   name: "AA text contrast (text-tagged colors only)",
   id: "contrast-aa-built-in",
   expectedFailingTests: [
@@ -74,16 +83,22 @@ const contrastTextAA: LintProgram = {
 const contrastTextAAAll: LintProgram = {
   ...lintBase,
   program: JSONToPrettyString(buildProgram(4.5, false)),
+  description:
+    descriptionBase +
+    " For this check (for AA text) there should be at least a 4.5:1 contrast ratio.",
   name: "AA text contrast (all colors)",
   id: "contrast-aa-all-built-in",
   expectedFailingTests: [makePalFromString(["#feed72", "#f8f4d2", "#eb717b"])],
   expectedPassingTests: [makePalFromString(["#feed72", "#f8f4d2", "#af3b4b"])],
-  description: descriptionBase,
 };
 const contrastTextAAA: LintProgram = {
   ...lintBase,
   program: JSONToPrettyString(buildProgram(7, true)),
   name: "AAA text contrast (text-tagged colors only)",
+  description:
+    descriptionBase +
+    " For this check (for AAA text) there should be at least a 7:1 contrast ratio." +
+    textPart,
   id: "contrast-aaa-built-in",
   expectedFailingTests: [
     createPalWithTags(["#feed72", "#f8f4d2", "#af3b4b"], [[2, "text"]]),
@@ -99,7 +114,9 @@ const contrastTextAAAAll: LintProgram = {
   id: "contrast-aaa-all-built-in",
   expectedFailingTests: [makePalFromString(["#feed72", "#f8f4d2", "#eb717b"])],
   expectedPassingTests: [makePalFromString(["#feed72", "#f8f4d2", "#af3b4b"])],
-  description: descriptionBase,
+  description:
+    descriptionBase +
+    " For this check (for AAA text) there should be at least a 7:1 contrast ratio.",
 };
 
 export default [

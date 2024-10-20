@@ -83,6 +83,9 @@
   $: scatterSize = Math.max(Math.min(columnWidth - zWidth - padding, 420), 300);
 
   const currentPalTabs = ["examples", "compare", "eval"];
+  $: numPassing = $lintStore.currentChecks.filter(
+    (x) => x.kind === "success" && !x.passes
+  ).length;
 </script>
 
 <header class="flex w-full bg-stone-800 justify-between min-h-12">
@@ -179,7 +182,7 @@
         }}
       >
         <div slot="menu" let:tab>
-          {#if tab === "eval"}
+          {#if tab === "eval" && numPassing > 0}
             <svg width={`${18}px`} height={`${18}px`} class="ml-1">
               <circle
                 r={9}
@@ -195,11 +198,8 @@
                 fill="white"
                 text-anchor="middle"
                 font-weight="normal"
-                alignment-baseline="middle"
               >
-                {$lintStore.currentChecks.filter(
-                  (x) => x.kind === "success" && !x.passes
-                ).length}
+                {numPassing}
               </text>
             </svg>
           {/if}

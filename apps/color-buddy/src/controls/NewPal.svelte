@@ -6,9 +6,10 @@
   import configStore from "../stores/config-store";
 
   import { processBodyTextToColors, newGenericPal } from "../lib/utils";
-  import { buttonStyle, denseButtonStyle } from "../lib/styles";
+  import { buttonStyle } from "../lib/styles";
   import Tooltip from "../components/Tooltip.svelte";
   import SuggestColorPal from "./SuggestColorPal.svelte";
+  import ColorThief from "colorthief";
 
   $: currentPal = $colorStore.palettes[$colorStore.currentPal];
   $: colorSpace = currentPal ? currentPal.colorSpace : "lab";
@@ -37,6 +38,48 @@
     } catch (e) {
       console.error(e);
       return;
+    }
+  }
+  let palFromImgError = "";
+  let palFromImgState: "idle" | "loading" = "idle";
+  function processImg(e: any, onClick: () => void) {
+    const colorThief = new ColorThief();
+    palFromImgState = "loading";
+    try {
+      const target = e.target as HTMLInputElement;
+      const files = target?.files;
+      console.log(files);
+      if (!files) {
+        return;
+      }
+      const file = [...files].at(0);
+      if (!file) {
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const img = new Image();
+        img.src = (e.target as FileReader).result as string;
+        img.onload = () => {
+          try {
+            const colors = colorThief.getPalette(img, 5) as number[][];
+            const palRGB = colors.map((x) => `rgb(${x.join(", ")})`);
+            const pal = makePalFromString(palRGB);
+            console.log(colors);
+
+            newPal(pal, onClick);
+          } catch (e) {
+            console.error(e);
+            palFromImgState = "idle";
+            palFromImgError = "Error processing image";
+          }
+        };
+      };
+      reader.readAsDataURL(file);
+    } catch (e) {
+      console.error(e);
+      palFromImgError = "Error processing image";
+      palFromImgState = "idle";
     }
   }
 </script>
@@ -113,6 +156,20 @@
       <div class="mt-5 border-t border-black"></div>
       <div class="font-bold">Generate a new palette using AI</div>
       <SuggestColorPal />
+    {/if}
+    <div class="mt-5 border-t border-black"></div>
+    <div class="font-bold">Generate From Image (png or jpg)</div>
+    <input
+      type="file"
+      accept="image/*"
+      id="file"
+      on:change={(e) => processImg(e, onClick)}
+    />
+    {#if palFromImgState === "loading"}
+      <div>Loading...</div>
+    {/if}
+    {#if palFromImgError}
+      <div class="text-red-600">{palFromImgError}</div>
     {/if}
   </div>
   <button

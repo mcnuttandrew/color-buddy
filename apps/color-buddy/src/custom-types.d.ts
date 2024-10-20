@@ -4,4 +4,8 @@ declare module "color-blind" {
   export default blinder;
 }
 
-declare module "colorthief" {}
+declare module "colorthief" {
+  // make this be of any type
+  const colorThief: any;
+  export default colorThief;
+}

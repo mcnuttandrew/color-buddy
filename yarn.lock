@@ -2314,11 +2314,6 @@
   resolved "https://registry.npmjs.org/@types/color-namer/-/color-namer-1.3.3.tgz"
   integrity sha512-DJ0MHHqazwb94dUBRhahK49nXhRGk2DIRNrVNVR3U3uQjYWY4uNhEjHXO+TbFQGpZcwli1pCj6xm3S3KsB/+3A==
 
-"@types/color-thief-node@^1.0.4":
-  version "1.0.4"
-  resolved "https://registry.yarnpkg.com/@types/color-thief-node/-/color-thief-node-1.0.4.tgz#33b250895de87ed7090dce44bee2b19a419acbb6"
-  integrity sha512-9mHoSyLAojvDQsZWxu3FHhiwUsQC7Lfuxrii6rnYc11uJ7GH2ODaM82gyDCXnR/5eXqlOymauUXU5eCEYAHS4A==
-
 "@types/d3-array@*":
   version "3.2.1"
   resolved "https://registry.npmjs.org/@types/d3-array/-/d3-array-3.2.1.tgz"

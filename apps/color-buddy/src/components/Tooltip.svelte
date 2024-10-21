@@ -129,7 +129,7 @@
               }}
             ></div>
           {/if}
-          <slot name="content" {onClick} />
+          <slot name="content" {onClick} open={tooltipOpen} />
         </span>
       </div>
     </div>

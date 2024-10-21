@@ -15,6 +15,40 @@
       {},
       $configStore.userName
     );
+
+    // check if there's a palette specified in the url
+    const url = new URL(window.location.href);
+    const colors = url.searchParams.get("colors");
+    const background = url.searchParams.get("background") || "#ffffff";
+    const palName = url.searchParams.get("palName");
+    const space = url.searchParams.get("space");
+    if (colors) {
+      console.log(colors, background, palName, space);
+      let parsedColors = [];
+      try {
+        parsedColors = JSON.parse(colors || "[]");
+      } catch (e) {
+        console.error(e);
+      }
+      const newPal = makePalFromString(parsedColors, background);
+      if (palName) {
+        newPal.name = palName;
+      }
+      if (space) {
+        newPal.colorSpace = space as any;
+      }
+      if (parsedColors.length > 0) {
+        console.log("here", newPal);
+        colorStore.createNewPal(newPal);
+      }
+
+      // remove the palette from the url
+      url.searchParams.delete("colors");
+      url.searchParams.delete("background");
+      url.searchParams.delete("palName");
+      url.searchParams.delete("space");
+      window.history.replaceState({}, "", url.toString());
+    }
   });
 
   // make sure no focused colors are out of bounds
@@ -43,11 +77,14 @@
   import TourProvider from "./content-modules/TourProvider.svelte";
   import Config from "./controls/Config.svelte";
   import Title from "./controls/Title.svelte";
+  import SharePal from "./components/SharePal.svelte";
 
   import { lint } from "./lib/api-calls";
   import { debounce } from "vega";
 
   import { buttonStyle } from "./lib/styles";
+
+  import { makePalFromString } from "color-buddy-palette";
 
   $: route = $configStore.route;
   $: evalRoute = $configStore.evalDisplayMode;
@@ -114,6 +151,7 @@
             Redo
           </button>
         </div>
+        <SharePal />
       </div>
     </div>
   </div>

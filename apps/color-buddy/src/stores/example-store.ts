@@ -129,8 +129,11 @@ function createStore() {
       return acc;
     }, {} as any);
     if (x) {
-      const examples = x.examples.filter((x: any) => !preBuiltMap[x.name]);
-      const newStore = { examples: [...prebuiltExamples, ...examples] };
+      // if there are prebuilt examples, add them to the store
+      x.examples.forEach((x: any) => {
+        preBuiltMap[x.name] = x;
+      });
+      const newStore = { examples: Object.values(preBuiltMap) };
       set(newStore as StoreData);
     } else {
       set({ ...InitialStore, examples: prebuiltExamples });

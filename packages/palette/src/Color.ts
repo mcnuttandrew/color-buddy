@@ -11,6 +11,7 @@ type DistAlgorithm = "76" | "CMC" | "2000" | "ITP" | "Jz" | "OK";
 const ColorIOCaches = new Map<string, ColorIO>();
 const InGamutCache = new Map<string, boolean>();
 const colorStateCache = new Map<string, number>();
+const distCache = new Map<string, number>();
 
 /**
  * The base class for all color spaces
@@ -178,16 +179,28 @@ export class Color {
     return val;
   }
   distance(color: Color, space: string): number {
+    const key = `distance-${this.toString()}-${color.toString()}-${space}`;
+    if (distCache.has(key)) {
+      return distCache.get(key)!;
+    }
     const colorSpace = space || this.spaceName;
     const targetSpace = space === "rgb" ? "srgb" : colorSpace;
     const left = this.toColorIO().to(targetSpace);
     const right = color.toColorIO().to(targetSpace);
-    return left.distance(right);
+    const val = left.distance(right);
+    distCache.set(key, val);
+    return val;
   }
   symmetricDeltaE(color: Color, algorithm: DistAlgorithm = "2000"): number {
+    const key = `${this.toString()}-${color.toString()}-${algorithm}`;
+    if (distCache.has(key)) {
+      return distCache.get(key)!;
+    }
     const left = this.deltaE(color, algorithm);
     const right = color.deltaE(this, algorithm);
-    return 0.5 * (left + right);
+    const val = 0.5 * (left + right);
+    distCache.set(key, val);
+    return val;
   }
   copy(): Color {
     return this.fromChannels(this.toChannels());

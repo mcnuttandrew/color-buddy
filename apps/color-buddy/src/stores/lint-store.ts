@@ -103,9 +103,9 @@ function createStore() {
     let lints = (storeBase.lints || []) as LintProgram[];
     // force-ably set lints to defaults
     // TODO turn off for release...
-    lints = lints.map(
-      (x: LintProgram) => builtInIndex[x.id] || x
-    ) as LintProgram[];
+    // lints = lints.map(
+    //   (x: LintProgram) => builtInIndex[x.id] || x
+    // ) as LintProgram[];
     const missingBuiltIns = PREBUILT_LINTS.filter(
       (x) => !lints.find((y) => y.id === x.id)
     ).map((x) => ({

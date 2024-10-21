@@ -2,21 +2,11 @@
   import ExportIcon from "virtual:icons/fa6-solid/file-export";
   import Tooltip from "./Tooltip.svelte";
   import { buttonStyle } from "../lib/styles";
+  import { serializePaletteForUrl } from "../lib/utils";
 
   import colorStore from "../stores/color-store";
 
   $: palette = $colorStore.palettes[$colorStore.currentPal];
-
-  function generateWebUrl() {
-    const colors = `[${palette.colors.map((x) => `"${x.toHex()}"`).join(",")}]`;
-    const background = palette.background.toHex();
-    const newUrl = new URL(window.location.href);
-    newUrl.searchParams.set("colors", colors);
-    newUrl.searchParams.set("background", background);
-    newUrl.searchParams.set("palName", palette.name);
-    newUrl.searchParams.set("space", palette.colorSpace);
-    return newUrl.toString();
-  }
 
   let copyState = "idle" as "idle" | "copied";
 </script>
@@ -25,12 +15,14 @@
   <Tooltip>
     <div slot="content" let:open class="max-w-md overflow-hidden">
       <div class="font-bold">Share via url</div>
-      <div class="font-mono text-sm p-1 border">{open && generateWebUrl()}</div>
+      <div class="font-mono text-sm p-1 border">
+        {open && serializePaletteForUrl(palette)}
+      </div>
       <div class="flex items-center">
         <button
           class={buttonStyle}
           on:click={() => {
-            navigator.clipboard.writeText(generateWebUrl());
+            navigator.clipboard.writeText(serializePaletteForUrl(palette));
             copyState = "copied";
             setTimeout(() => {
               copyState = "idle";

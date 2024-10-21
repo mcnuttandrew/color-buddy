@@ -33,7 +33,7 @@ export function nameColor(
   const numResults = props?.numResults ?? 1;
   const colors = props?.colors ?? heerStoneColors;
   const listName = props?.colorListName ?? "heerStone";
-  const str = `${color.toString().toUpperCase()}-${numResults}-${listName}`;
+  const str = `${color.toHex().toUpperCase()}-${numResults}-${listName}`;
   if (nameCache.has(str)) {
     return nameCache.get(str)!;
   }

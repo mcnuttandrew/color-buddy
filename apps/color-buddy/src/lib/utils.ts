@@ -4,6 +4,7 @@ import {
   makePalFromString,
 } from "color-buddy-palette";
 import type { Palette, StringPalette } from "color-buddy-palette";
+import queryString from "query-string";
 
 import { Formatter, FracturedJsonOptions, EolStyle } from "fracturedjsonjs";
 import fits from "../assets/outfits.json";
@@ -575,4 +576,37 @@ export function computeStroke(
       .toHex();
   }
   return "none";
+}
+
+export function serializePaletteForUrl(palette: Palette): string {
+  const colors = palette.colors.map((color) => color.toString());
+  const bg = palette.background.toString();
+  const name = palette.name;
+  const space = palette.colorSpace;
+  const params = { colors, bg, name, space };
+  console.log(params);
+  const str = queryString.stringify(params);
+  const prefix = window.location.origin + window.location.pathname;
+  return `${prefix}?&${str}`;
+}
+
+export function deserializePaletteForUrl(url: string): Palette | undefined {
+  const parsed = queryString.parse(url);
+  console.log(parsed);
+  const colorSpace = parsed.space as ColorSpace;
+  const colors = parsed.colors as string[];
+  const bg = parsed.bg as string;
+  const name = parsed.name as string;
+  console.log(name, bg, colors, colorSpace);
+  if (!colorSpace || !colors || !bg || !name) {
+    return undefined;
+  }
+  try {
+    const newPal = makePalFromString(colors, bg);
+    newPal.name = name;
+    return convertPalToSpace(newPal, colorSpace);
+  } catch (e) {
+    console.log(e);
+    return undefined;
+  }
 }

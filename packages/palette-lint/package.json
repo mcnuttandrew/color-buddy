@@ -20,8 +20,8 @@
     "rollup": "^4.18.0",
     "ts-json-schema-generator": "^1.5.0",
     "typescript": "^5.5.3",
-    "vite-plugin-dts": "^4.0.0-beta.1",
     "vite": "^5.2.0",
+    "vite-plugin-dts": "^4.0.0-beta.1",
     "vitest": "^1.6.0"
   },
   "dependencies": {
@@ -29,7 +29,8 @@
     "color-buddy-color-namer": "*",
     "color-buddy-palette": "*",
     "fracturedjsonjs": "^4.0.1",
-    "ohm-js": "^17.1.0"
+    "ohm-js": "^17.1.0",
+    "query-string": "^9.1.1"
   },
   "license": "BSD-3-Clause",
   "files": [

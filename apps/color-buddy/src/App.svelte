@@ -18,37 +18,47 @@
 
     // check if there's a palette specified in the url
     const url = new URL(window.location.href);
-    const colors = url.searchParams.get("colors");
-    const background = url.searchParams.get("background") || "#ffffff";
-    const palName = url.searchParams.get("palName");
-    const space = url.searchParams.get("space");
-    if (colors) {
-      console.log(colors, background, palName, space);
-      let parsedColors = [];
-      try {
-        parsedColors = JSON.parse(colors || "[]");
-      } catch (e) {
-        console.error(e);
-      }
-      const newPal = makePalFromString(parsedColors, background);
-      if (palName) {
-        newPal.name = palName;
-      }
-      if (space) {
-        newPal.colorSpace = space as any;
-      }
-      if (parsedColors.length > 0) {
-        console.log("here", newPal);
-        colorStore.createNewPal(newPal);
-      }
-
-      // remove the palette from the url
+    // const colors = url.searchParams.get("colors");
+    // const background = url.searchParams.get("background") || "#ffffff";
+    // const palName = url.searchParams.get("palName");
+    // const space = url.searchParams.get("space");
+    const pal = deserializePaletteForUrl(window.location.href);
+    if (pal) {
+      colorStore.createNewPal(pal);
       url.searchParams.delete("colors");
-      url.searchParams.delete("background");
-      url.searchParams.delete("palName");
+      url.searchParams.delete("bg");
+      url.searchParams.delete("name");
       url.searchParams.delete("space");
       window.history.replaceState({}, "", url.toString());
     }
+    // // } else
+    // if (colors) {
+    //   console.log(colors, background, palName, space);
+    //   let parsedColors = [];
+    //   try {
+    //     parsedColors = JSON.parse(colors || "[]");
+    //   } catch (e) {
+    //     console.error(e);
+    //   }
+    //   const newPal = makePalFromString(parsedColors, background);
+    //   if (palName) {
+    //     newPal.name = palName;
+    //   }
+    //   if (space) {
+    //     newPal.colorSpace = space as any;
+    //   }
+    //   if (parsedColors.length > 0) {
+    //     console.log("here", newPal);
+    //     colorStore.createNewPal(newPal);
+    //   }
+
+    //   // remove the palette from the url
+    //   url.searchParams.delete("colors");
+    //   url.searchParams.delete("background");
+    //   url.searchParams.delete("palName");
+    //   url.searchParams.delete("space");
+    //   window.history.replaceState({}, "", url.toString());
+    // }
   });
 
   // make sure no focused colors are out of bounds
@@ -83,8 +93,7 @@
   import { debounce } from "vega";
 
   import { buttonStyle } from "./lib/styles";
-
-  import { makePalFromString } from "color-buddy-palette";
+  import { deserializePaletteForUrl } from "./lib/utils";
 
   $: route = $configStore.route;
   $: evalRoute = $configStore.evalDisplayMode;

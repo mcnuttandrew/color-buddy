@@ -1,10 +1,10 @@
 <script lang="ts">
+  import { onMount } from "svelte";
   import { Color } from "color-buddy-palette";
   import type { Palette } from "color-buddy-palette";
   import colorStore from "../stores/color-store";
   import focusStore from "../stores/focus-store";
   import { buttonStyle } from "../lib/styles";
-  import Tooltip from "../components/Tooltip.svelte";
   import PalPreview from "../components/PalPreview.svelte";
 
   $: currentPal = $colorStore.palettes[$colorStore.currentPal];
@@ -12,6 +12,11 @@
   $: focusSet = new Set(focusedColors);
   $: colors = currentPal.colors;
   let colorSpace = "lab";
+  onMount(() => {
+    if (currentPal) {
+      colorSpace = currentPal.colorSpace;
+    }
+  });
   let numPoints = 1;
   $: tempPal = (numPoints &&
     colorSpace &&

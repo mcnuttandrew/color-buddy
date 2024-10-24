@@ -19,7 +19,7 @@ const lint: LintProgram = {
     },
   }),
   name: "Color name discriminability",
-  taskTypes: ["sequential", "categorical", "diverging"] as const,
+  taskTypes: ["categorical", "diverging"] as const,
   level: "error",
   group: "usability",
   description: `Being able to identify colors by name is important for usability and for memorability.`,

@@ -36,12 +36,16 @@
 
   $: {
     if (typeof externalModalState === "number") {
-      const example = $exampleStore.examples[externalModalState] as any;
-      if (example.svg) {
+      let example = $exampleStore.examples[externalModalState] as any;
+      if (!example) {
+        example = $exampleStore.examples[0];
+      }
+      console.log(example);
+      if (example && example.svg) {
         value = example.svg;
         modalState = "input-svg";
       }
-      if (example.vega) {
+      if (example && example.vega) {
         value = example.vega;
         modalState = "input-vega";
       }
@@ -270,7 +274,15 @@
         <button
           class={buttonStyle}
           on:click={() => {
-            const example = { vega: value, name: "Custom Example", size: 300 };
+            let example = { vega: value, name: "Custom Example", size: 300 };
+            if (typeof externalModalState === "number") {
+              example = {
+                ...example,
+                ...$exampleStore.examples[externalModalState],
+                vega: value,
+              };
+            }
+            console.log(example);
             if (typeof externalModalState === "number") {
               exampleStore.updateExample(example, externalModalState);
             } else {

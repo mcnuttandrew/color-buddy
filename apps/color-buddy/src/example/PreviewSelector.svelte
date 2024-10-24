@@ -5,8 +5,7 @@
   import configStore from "../stores/config-store";
   import Tooltip from "../components/Tooltip.svelte";
   export let exampleName: string;
-  $: SVGs = $exampleStore.examples.filter((x) => (x as any).svg);
-  $: vis = $exampleStore.examples.filter((x) => (x as any).vega);
+  $: examples = $exampleStore.examples as any[];
 </script>
 
 <Tooltip targetBody={false} bg="bg-white" top={0} positionAlongRightEdge={true}>
@@ -21,24 +20,27 @@
       Discs
     </button>
     <div class="w-full border border-stone-300 my-2" />
-    {#each SVGs as example, idx}
-      <button
-        class={simpleTooltipRowStyle}
-        on:click={() => configStore.setManageBrowsePreviewIdx(idx)}
-      >
-        {example.name}
-      </button>
+    {#each examples as example, idx}
+      {#if example.svg}
+        <button
+          class={simpleTooltipRowStyle}
+          on:click={() => configStore.setManageBrowsePreviewIdx(idx)}
+        >
+          {example.name}
+        </button>
+      {/if}
     {/each}
     <div class="w-full border border-stone-300 my-2" />
-    {#each vis as example, idx}
-      <button
-        class={simpleTooltipRowStyle}
-        on:click={() => configStore.setManageBrowsePreviewIdx(idx)}
-      >
-        {example.name}
-      </button>
+    {#each examples as example, idx}
+      {#if example.vega}
+        <button
+          class={simpleTooltipRowStyle}
+          on:click={() => configStore.setManageBrowsePreviewIdx(idx)}
+        >
+          {example.name}
+        </button>
+      {/if}
     {/each}
-    <div class="w-full border border-stone-300 my-2" />
   </div>
   <button
     slot="target"

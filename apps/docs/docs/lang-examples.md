@@ -46,7 +46,7 @@ This page contains examples of the language used to define palettes and the expe
 **Tasks**: sequential, diverging, categorical
 
 
-**Description**: All colors in a palette should have a sufficient contrast ratio with the background color. This is because if they are not, then they will not be differentiable from each other in some contexts. Valid algorithms are "APCA", "WCAG21", "Michelson", "Weber", "Lstar", "DeltaPhi". If this lint is not failing and you believe it should be, ensure that a color has been selected as having the "text" tag.
+**Description**: Colors used need to have sufficient contrast with the background to make them legible, as defined by WCAG21 contrast ratios. For this check (for graphical objects) there should be at least a 3:1 contrast ratio.
 
 **Natural Language**: ALL a IN colors SUCH THAT contrast(a, background, WCAG21) > 3
 
@@ -88,7 +88,7 @@ Palettes that will pass this test:
 **Tasks**: sequential, diverging, categorical
 
 
-**Description**: All colors in a palette should have a sufficient contrast ratio with the background color. This is because if they are not, then they will not be differentiable from each other in some contexts. Valid algorithms are "APCA", "WCAG21", "Michelson", "Weber", "Lstar", "DeltaPhi". If this lint is not failing and you believe it should be, ensure that a color has been selected as having the "text" tag.
+**Description**: Colors used need to have sufficient contrast with the background to make them legible, as defined by WCAG21 contrast ratios. For this check (for AA text) there should be at least a 4.5:1 contrast ratio. If this lint is not failing and you believe it should be, ensure that a color has been selected as having the "text" tag.
 
 **Natural Language**: ALL a IN colors WHERE isTag(a, text) SUCH THAT contrast(a, background, WCAG21) > 4.5
 
@@ -131,7 +131,7 @@ Palettes that will pass this test:
 **Tasks**: sequential, diverging, categorical
 
 
-**Description**: All colors in a palette should have a sufficient contrast ratio with the background color. This is because if they are not, then they will not be differentiable from each other in some contexts. Valid algorithms are "APCA", "WCAG21", "Michelson", "Weber", "Lstar", "DeltaPhi". If this lint is not failing and you believe it should be, ensure that a color has been selected as having the "text" tag.
+**Description**: Colors used need to have sufficient contrast with the background to make them legible, as defined by WCAG21 contrast ratios. For this check (for AAA text) there should be at least a 7:1 contrast ratio. If this lint is not failing and you believe it should be, ensure that a color has been selected as having the "text" tag.
 
 **Natural Language**: ALL a IN colors WHERE isTag(a, text) SUCH THAT contrast(a, background, WCAG21) > 7
 
@@ -174,7 +174,7 @@ Palettes that will pass this test:
 **Tasks**: sequential, diverging, categorical
 
 
-**Description**: All colors in a palette should have a sufficient contrast ratio with the background color. This is because if they are not, then they will not be differentiable from each other in some contexts. Valid algorithms are "APCA", "WCAG21", "Michelson", "Weber", "Lstar", "DeltaPhi".
+**Description**: Colors used need to have sufficient contrast with the background to make them legible, as defined by WCAG21 contrast ratios. For this check (for AA text) there should be at least a 4.5:1 contrast ratio.
 
 **Natural Language**: ALL a IN colors SUCH THAT contrast(a, background, WCAG21) > 4.5
 
@@ -216,7 +216,7 @@ Palettes that will pass this test:
 **Tasks**: sequential, diverging, categorical
 
 
-**Description**: All colors in a palette should have a sufficient contrast ratio with the background color. This is because if they are not, then they will not be differentiable from each other in some contexts. Valid algorithms are "APCA", "WCAG21", "Michelson", "Weber", "Lstar", "DeltaPhi".
+**Description**: Colors used need to have sufficient contrast with the background to make them legible, as defined by WCAG21 contrast ratios. For this check (for AAA text) there should be at least a 7:1 contrast ratio.
 
 **Natural Language**: ALL a IN colors SUCH THAT contrast(a, background, WCAG21) > 7
 
@@ -1665,7 +1665,7 @@ Palettes that will pass this test:
 
 
 ### Color name discriminability
-**Tasks**: sequential, categorical, diverging
+**Tasks**: categorical, diverging
 
 
 **Description**: Being able to identify colors by name is important for usability and for memorability.

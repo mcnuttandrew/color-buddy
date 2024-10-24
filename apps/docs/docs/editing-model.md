@@ -26,7 +26,7 @@ The Evaluation pane manages all the algorithmic tests for compatibility with the
 
 The Usability tests ensure that the colors in the palette are distinct from one another. Distinctness is a function of color difference (deltaE values), which varies with the size of the glyph. In addition, there is a test for color name distinctness, which is based on the automatically generated color names. For sequential and diverging palettes, there are tests that the colors appear to be in a sequence.
 
-The Contrast accessibility (WCAG) test for luminance contrast with the background as defined in the current WCAG 2.1 requirements. Contrast is calculated as (L1 + 0.05) / (L2 + 0.05), with luminance defined by assuming the RGB pixel values can be converted to luminance via the sRGB display specification. The requirements are 7:1 (AAA text), 4.5:1 (AA text) and 3:1 (Graphical objects).
+The Contrast accessibility (WCAG) test for luminance contrast with the background as defined in the current [WCAG 2.1 requirements](https://webaim.org/articles/contrast/). Contrast is calculated as (L1 + 0.05) / (L2 + 0.05), with luminance defined by assuming the RGB pixel values can be converted to luminance via the sRGB display specification. The requirements are 7:1 (AAA text), 4.5:1 (AA text) and 3:1 (Graphical objects).
 
 To be continued...
 

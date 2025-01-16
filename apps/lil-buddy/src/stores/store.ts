@@ -19,7 +19,18 @@ interface StoreData {
 }
 
 const InitialStore: StoreData = {
-  lints: PREBUILT_LINTS,
+  lints: PREBUILT_LINTS.map((x) => {
+    delete x.customProgram;
+    return {
+      ...x,
+      expectedFailingTests: (x.expectedFailingTests || []).map(
+        colorPalToStringPal
+      ),
+      expectedPassingTests: (x.expectedPassingTests || []).map(
+        colorPalToStringPal
+      ),
+    };
+  }) as any as LintProgram[],
   focusedLint: false,
   currentChecks: [],
   loadState: "idle",
@@ -48,12 +59,12 @@ function deserializeStore(store: any) {
   return {
     ...store,
     lints: store.lints.map((x: any) => ({
-      requiredTags: [],
-      taskTypes: [],
       ...x,
-      expectedFailingTests: (x.expectedFailingTests || []).map(
-        stringPalToColorPal
-      ),
+      expectedFailingTests: (x.expectedFailingTests || []).map((x) => {
+        const newPal = stringPalToColorPal(x);
+        console.log(newPal.colors, x.colors);
+        return newPal;
+      }),
       expectedPassingTests: (x.expectedPassingTests || []).map(
         stringPalToColorPal
       ),
@@ -68,14 +79,14 @@ function addDefaults(store: Partial<StoreData>): StoreData {
   return storeData as StoreData;
 }
 
-const storeName = "lil-buddy-store-x4";
+const storeName = "lil-buddy-store";
 function createStore() {
   const target =
     localStorage.getItem(storeName) || JSON.stringify(InitialStore);
   let storeData: StoreData = deserializeStore(addDefaults(JSON.parse(target)));
 
   // persist new store to storage
-  localStorage.setItem(storeName, JSON.stringify(deserializeStore(storeData)));
+  localStorage.setItem(storeName, JSON.stringify(serializeStore(storeData)));
   // create store
   const { subscribe, update } = writable<StoreData>(storeData);
   let undoStack: StoreData[] = [];

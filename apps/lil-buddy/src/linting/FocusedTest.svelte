@@ -12,7 +12,13 @@
       : lint.expectedFailingTests[focusedTest.index]
     : null;
   $: lintRun = testPal
-    ? runLint(lint, {}, testPal)
+    ? runLint(
+        lint,
+        {
+          computeBlame: lint.blameMode !== "none",
+        },
+        testPal
+      )
     : ({
         result: { kind: "invalid" } as LintResult,
         error: null,

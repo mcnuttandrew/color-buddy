@@ -1,84 +1,31 @@
-import { writable } from "svelte/store";
 import { Color } from "color-buddy-palette";
+import { writable } from "svelte/store";
 import type { LintResult, LintProgram } from "color-buddy-palette-lint";
-import type { Palette, StringPalette, ColorSpace } from "color-buddy-palette";
-
-import { DEFAULT_LINT_LIST } from "../lib/pre-built-lint-configs";
-const DEFAULT_LINT_SET = new Set(DEFAULT_LINT_LIST);
-
-export function newId() {
-  return Math.random().toString();
-}
-
-function newLint(newLintFrag: Partial<LintProgram>): LintProgram {
-  return {
-    blameMode: "none",
-    description: "v confusing",
-    expectedFailingTests: [...(newLintFrag.expectedFailingTests || [])],
-    expectedPassingTests: [...(newLintFrag.expectedPassingTests || [])],
-    failMessage: "v confusing",
-    group: "custom",
-    id: newId(),
-    level: "warning",
-    name: "New lint",
-    program: JSON.stringify("{}"),
-    requiredTags: [],
-    taskTypes: ["categorical", "sequential", "diverging"],
-    ...newLintFrag,
-  };
-}
+import { PREBUILT_LINTS } from "color-buddy-palette-lint";
+import type { Palette } from "color-buddy-palette";
+import {
+  newLint,
+  colorPalToStringPal,
+  stringPalToColorPal,
+} from "../lib/utils";
 
 interface StoreData {
   lints: LintProgram[];
   focusedLint: string | false;
+  focusedTest: false | { type: "passing" | "failing"; index: number };
   currentChecks: LintResult[];
   loadState?: "loading" | "idle";
   engine: "openai" | "anthropic";
 }
 
-interface StorageData {
-  lints: [];
-  focusedLint: false;
-  currentChecks: [];
-  loadState: "idle";
-  engine: "openai" | "anthropic";
-}
-
-const InitialStore: StorageData = {
-  lints: [],
+const InitialStore: StoreData = {
+  lints: PREBUILT_LINTS,
   focusedLint: false,
   currentChecks: [],
   loadState: "idle",
   engine: "openai",
+  focusedTest: false,
 };
-
-function serializePalette(pal: Palette): StringPalette {
-  return {
-    ...pal,
-    background: pal.background.toString(),
-    colors: pal.colors.map((x) => ({
-      tags: x.tags,
-      color: x.toString(),
-    })),
-  };
-}
-
-function deserializePalette(pal: StringPalette): Palette {
-  return {
-    ...pal,
-    background: Color.colorFromString(pal.background, pal.colorSpace),
-    colors: pal.colors.map((x) => {
-      if (typeof x === "string") {
-        const color = Color.colorFromString(x, pal.colorSpace);
-        color.tags = [];
-        return color;
-      }
-      const color = Color.colorFromString(x.color, pal.colorSpace);
-      color.tags = x.tags;
-      return color;
-    }),
-  };
-}
 
 function serializeStore(store: StoreData) {
   return {
@@ -88,10 +35,10 @@ function serializeStore(store: StoreData) {
       return {
         ...x,
         expectedFailingTests: (x.expectedFailingTests || []).map(
-          serializePalette
+          colorPalToStringPal
         ),
         expectedPassingTests: (x.expectedPassingTests || []).map(
-          serializePalette
+          colorPalToStringPal
         ),
       };
     }),
@@ -105,24 +52,23 @@ function deserializeStore(store: any) {
       taskTypes: [],
       ...x,
       expectedFailingTests: (x.expectedFailingTests || []).map(
-        deserializePalette
+        stringPalToColorPal
       ),
       expectedPassingTests: (x.expectedPassingTests || []).map(
-        deserializePalette
+        stringPalToColorPal
       ),
     })),
   };
 }
 
 // install defaults if not present
-function addDefaults(store: Partial<StorageData>): StorageData {
+function addDefaults(store: Partial<StoreData>): StoreData {
   // check if the base store objects work right
   const storeData = { ...InitialStore, ...store };
-
-  return storeData as StorageData;
+  return storeData as StoreData;
 }
 
-const storeName = "lil-buddy-store";
+const storeName = "lil-buddy-store-x4";
 function createStore() {
   const target =
     localStorage.getItem(storeName) || JSON.stringify(InitialStore);
@@ -131,18 +77,18 @@ function createStore() {
   // persist new store to storage
   localStorage.setItem(storeName, JSON.stringify(deserializeStore(storeData)));
   // create store
-  const { subscribe, set, update } = writable<StoreData>(storeData);
+  const { subscribe, update } = writable<StoreData>(storeData);
   let undoStack: StoreData[] = [];
   let redoStack: StoreData[] = [];
   // special logic to enable not capturing too many steps via dragging
-  let pausePersistance = false;
+  let pausePersistence = false;
   let lastStore: StoreData = storeData;
   const save = (store: StoreData) =>
     localStorage.setItem(storeName, JSON.stringify(serializeStore(store)));
 
   const persistUpdate = (updateFunc: (old: StoreData) => StoreData) =>
     update((oldStore) => {
-      if (pausePersistance) {
+      if (pausePersistence) {
         lastStore = oldStore;
         return updateFunc(oldStore);
       }
@@ -190,21 +136,21 @@ function createStore() {
         undoStack.push(currentVal);
         return redoStack.pop()!;
       }),
-    pausePersistance: () =>
+    pausePersistence: () =>
       simpleUpdate((currentVal) => {
         lastStore = currentVal;
         undoStack.push(currentVal);
         redoStack = [];
-        pausePersistance = true;
+        pausePersistence = true;
         return currentVal;
       }),
-    resumePersistance: () => {
-      pausePersistance = false;
+    resumePersistence: () => {
+      pausePersistence = false;
       persistUpdate(() => lastStore);
       undoStack.pop();
     },
     setFocusedLint: (n: StoreData["focusedLint"]) =>
-      persistUpdate((old) => ({ ...old, focusedLint: n })),
+      persistUpdate((old) => ({ ...old, focusedLint: n, focusedTest: false })),
     setCurrentLintProgram: (program: string) =>
       lintUpdate((old) => ({ ...old, program })),
     setCurrentLintName: (name: string) =>
@@ -263,6 +209,8 @@ function createStore() {
       persistUpdate((old) => ({ ...old, loadState: state })),
     setEngine: (engine: StoreData["engine"]) =>
       persistUpdate((old) => ({ ...old, engine })),
+    setFocusedTest: (test: StoreData["focusedTest"]) =>
+      persistUpdate((old) => ({ ...old, focusedTest: test })),
   };
 }
 

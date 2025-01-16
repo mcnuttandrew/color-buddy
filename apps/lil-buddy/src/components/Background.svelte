@@ -1,0 +1,51 @@
+<script lang="ts">
+  import { Color } from "color-buddy-palette";
+  import DownChev from "virtual:icons/fa6-solid/angle-down";
+  import ColorChannelPicker from "./ColorChannelPicker.svelte";
+  import Tooltip from "./Tooltip.svelte";
+  export let onChange: (color: Color) => void;
+  export let bg: Color;
+  export let colorSpace: any;
+  export let onSpaceChange: (space: string) => void;
+  $: bgHex = bg.toHex();
+</script>
+
+<div class="flex flex-col">
+  <div class="text-xs">Background</div>
+  <Tooltip top={"20px"}>
+    <div slot="content" class="flex flex-col">
+      <div class="text-xs">Current color</div>
+      <input
+        class="mb-2 {''}"
+        value={bgHex}
+        on:change={(e) => {
+          // @ts-ignore
+          onChange(Color.colorFromString(e.target.value, colorSpace));
+        }}
+      />
+      <ColorChannelPicker
+        {onSpaceChange}
+        colorMode={colorSpace}
+        color={bg}
+        onColorChange={onChange}
+      />
+    </div>
+    <button
+      let:toggle
+      slot="target"
+      class={`${""} flex items-center justify-between w-36`}
+      on:click={() => toggle()}
+    >
+      <div class="flex items-center">
+        {bgHex}
+        <div
+          class={"h-3 w-3 rounded-full ml-2"}
+          style={`background: ${bgHex}`}
+          class:border={bg.luminance() > 0.5}
+          class:border-black={bg.luminance() > 0.5}
+        ></div>
+      </div>
+      <DownChev class="text-sm ml-2" />
+    </button>
+  </Tooltip>
+</div>

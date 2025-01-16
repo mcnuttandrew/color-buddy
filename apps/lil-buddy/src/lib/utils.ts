@@ -1,10 +1,7 @@
-import {
-  Color,
-  ColorSpaceDirectory,
-  makePalFromString,
-} from "color-buddy-palette";
+import { Color, ColorSpaceDirectory } from "color-buddy-palette";
 import type { Palette, StringPalette } from "color-buddy-palette";
-import queryString from "query-string";
+import type { LintProgram, LintResult } from "color-buddy-palette-lint";
+import { linter } from "color-buddy-palette-lint";
 
 type ColorSpace = keyof typeof ColorSpaceDirectory;
 export const colorPickerConfig = Object.fromEntries(
@@ -60,44 +57,6 @@ export const swap = (arr: any[], i: number, j: number) => {
   newArr[i] = newArr[j];
   newArr[j] = temp;
   return newArr;
-};
-
-export const extent = (arr: number[]) => [Math.min(...arr), Math.max(...arr)];
-function makeExtents(arr: number[][]) {
-  return Object.fromEntries(
-    ["x", "y", "z"].map((key, idx) => [key, extent(arr.map((el) => el[idx]))])
-  ) as { x: number[]; y: number[]; z: number[] };
-}
-
-// works over screen space coordinates
-export function makePosAndSizes(pickedColors: number[][]) {
-  const selectionExtents = makeExtents(pickedColors);
-  const makePos = (key: keyof typeof selectionExtents) =>
-    selectionExtents[key][0];
-  const diff = (key: keyof typeof selectionExtents) => {
-    const [a, b] = selectionExtents[key];
-    return Math.abs(a - b);
-  };
-
-  let xPos = makePos("x") - 15;
-  let yPos = makePos("y") - 15;
-  let zPos = makePos("z");
-  let selectionWidth = diff("x") + 30;
-  let selectionHeight = diff("y") + 30;
-  let selectionDepth = diff("z");
-  return { xPos, yPos, zPos, selectionWidth, selectionHeight, selectionDepth };
-}
-
-export const clampToRange = (val: number, range: number[]) => {
-  const min = Math.min(...range);
-  const max = Math.max(...range);
-  return Math.min(Math.max(val, min), max);
-};
-
-export const screenSpaceAvg = (colors: { x: number; y: number }[]) => {
-  const xAvg = colors.reduce((acc, x) => acc + x.x, 0) / colors.length;
-  const yAvg = colors.reduce((acc, x) => acc + x.y, 0) / colors.length;
-  return { x: xAvg, y: yAvg };
 };
 
 export const titleCase = (str: string) =>
@@ -216,76 +175,6 @@ export function colorPalToStringPal(pal: Palette): StringPalette {
   };
 }
 
-export function newVersionName(name: string, previousNames: string[]): string {
-  let newName = name;
-  let version = 2;
-  while (previousNames.includes(newName)) {
-    newName = `${name} v${version}`;
-    version++;
-  }
-  return newName;
-}
-
-export function computeStroke(
-  color: Color,
-  idx: number,
-  focusSet: Set<number>,
-  bg?: Color
-): string {
-  if (focusSet.has(idx) && focusSet.size > 1) {
-    return "none";
-  }
-  let localBg = bg || Color.colorFromString("#FFFFFF", "lab");
-  const contrast = color.contrast(localBg, "WCAG21");
-  const lum = color.luminance();
-  if (contrast < 1.1 && lum > 0.5) {
-    const darkerVersion = color.toColorSpace("lab");
-    return darkerVersion
-      .setChannel("L", Math.max(darkerVersion.getChannel("L") - 20))
-      .toHex();
-  }
-  if (contrast < 1.1 && lum <= 0.5) {
-    const darkerVersion = color.toColorSpace("lab");
-    return darkerVersion
-      .setChannel("L", Math.max(darkerVersion.getChannel("L") + 20))
-      .toHex();
-  }
-  return "none";
-}
-
-export function serializePaletteForUrl(palette: Palette): string {
-  const colors = palette.colors.map((color) => color.toString());
-  const bg = palette.background.toString();
-  const name = palette.name;
-  const space = palette.colorSpace;
-  const params = { colors, bg, name, space };
-  console.log(params);
-  const str = queryString.stringify(params);
-  const prefix = window.location.origin + window.location.pathname;
-  return `${prefix}?&${str}`;
-}
-
-export function deserializePaletteForUrl(url: string): Palette | undefined {
-  const parsed = queryString.parse(url);
-  console.log(parsed);
-  const colorSpace = parsed.space as ColorSpace;
-  const colors = parsed.colors as string[];
-  const bg = parsed.bg as string;
-  const name = parsed.name as string;
-  console.log(name, bg, colors, colorSpace);
-  if (!colorSpace || !colors || !bg || !name) {
-    return undefined;
-  }
-  try {
-    const newPal = makePalFromString(colors, bg);
-    newPal.name = name;
-    return convertPalToSpace(newPal, colorSpace);
-  } catch (e) {
-    console.log(e);
-    return undefined;
-  }
-}
-
 export function draggable(node: any) {
   let x: number;
   let y: number;
@@ -354,4 +243,48 @@ export function draggable(node: any) {
       node.removeEventListener("touchstart", handleMousedown);
     },
   };
+}
+
+export function newId() {
+  return Math.random().toString();
+}
+
+export function newLint(newLintFrag: Partial<LintProgram>): LintProgram {
+  return {
+    blameMode: "none",
+    description: "v confusing",
+    expectedFailingTests: [...(newLintFrag.expectedFailingTests || [])],
+    expectedPassingTests: [...(newLintFrag.expectedPassingTests || [])],
+    failMessage: "v confusing",
+    group: "custom",
+    id: newId(),
+    level: "warning",
+    name: "New lint",
+    program: JSON.stringify("{}"),
+    requiredTags: [],
+    taskTypes: ["categorical", "sequential", "diverging"],
+    ...newLintFrag,
+  };
+}
+
+export function runLint(
+  lint: LintProgram,
+  options: Parameters<typeof linter>[2],
+  pal: Palette
+): { result: LintResult; errors: any } {
+  if (!lint) {
+    return {
+      result: { kind: "ignored", lintProgram: lint } as LintResult,
+      errors: null,
+    };
+  }
+  try {
+    const result = linter(pal, [lint], options);
+    return { result: result[0], errors: null };
+  } catch (e) {
+    return {
+      result: { kind: "error", message: e.message } as LintResult,
+      errors: e,
+    };
+  }
 }

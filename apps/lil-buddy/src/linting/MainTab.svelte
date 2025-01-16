@@ -52,6 +52,14 @@
       >
         Clone this lint
       </button>
+      <div>
+        <div>Engine</div>
+        <Nav
+          tabs={["openai", "anthropic", "gemini"]}
+          isTabSelected={(x) => x === $store.engine}
+          selectTab={(x) => store.setEngine(x)}
+        />
+      </div>
     </div>
     <div class="font-bold">Lint Meta</div>
     <LintMeta {lint} />

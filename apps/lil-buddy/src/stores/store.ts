@@ -60,11 +60,9 @@ function deserializeStore(store: any) {
     ...store,
     lints: store.lints.map((x: any) => ({
       ...x,
-      expectedFailingTests: (x.expectedFailingTests || []).map((x) => {
-        const newPal = stringPalToColorPal(x);
-        console.log(newPal.colors, x.colors);
-        return newPal;
-      }),
+      expectedFailingTests: (x.expectedFailingTests || []).map((x) =>
+        stringPalToColorPal(x)
+      ),
       expectedPassingTests: (x.expectedPassingTests || []).map(
         stringPalToColorPal
       ),

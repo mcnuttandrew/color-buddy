@@ -1,7 +1,7 @@
 <script lang="ts">
   import store from "../stores/store";
   import Tooltip from "../components/Tooltip.svelte";
-  import { suggestLint, loadLints } from "../lib/api-calls";
+  import { suggestLint } from "../lib/api-calls";
 
   let lintPrompt: string = "";
   let requestState: "idle" | "loading" | "loaded" | "failed" = "idle";
@@ -46,7 +46,6 @@
           program,
         });
         setTimeout(() => {
-          loadLints();
           lintPrompt = "";
           // lintStore.setEvalDisplayMode("check-customization");
         }, 100);

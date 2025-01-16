@@ -32,8 +32,8 @@
 </script>
 
 <div>
-  <div class="flex">
-    <div class="flex flex-col w-1/2">
+  <div class="flex flex-col">
+    <div class="flex flex-col">
       <div class="flex">
         <div class="font-bold">Expected to be passing:</div>
       </div>
@@ -66,11 +66,12 @@
         {/each}
       </div>
       <AddTest
+        {lint}
         currentTests={lint.expectedPassingTests}
         setNewTests={(tests) => store.setCurrentLintExpectedPassingTests(tests)}
       />
     </div>
-    <div class="flex flex-col w-1/2">
+    <div class="flex flex-col">
       <div class="flex">
         <div class="font-bold">Expected to be failing</div>
       </div>
@@ -106,6 +107,7 @@
         {/each}
       </div>
       <AddTest
+        {lint}
         currentTests={lint.expectedFailingTests}
         setNewTests={(tests) => store.setCurrentLintExpectedFailingTests(tests)}
       />

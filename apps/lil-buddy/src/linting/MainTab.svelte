@@ -55,7 +55,7 @@
       <div>
         <div>Engine</div>
         <Nav
-          tabs={["openai", "anthropic", "gemini"]}
+          tabs={["openai", "anthropic", "google"]}
           isTabSelected={(x) => x === $store.engine}
           selectTab={(x) => store.setEngine(x)}
         />

@@ -1,0 +1,6 @@
+[build]
+command = "yarn workspace lil-buddy build"
+publish = "apps/lil-buddy/dist"
+
+[dev]
+command = "yarn workspace lil-buddy dev"

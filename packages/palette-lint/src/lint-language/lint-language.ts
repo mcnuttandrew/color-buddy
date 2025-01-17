@@ -11,10 +11,10 @@ function isColor(x: any): x is Color {
 }
 
 type RawValues = string | number | Color | string[] | number[] | Color[];
-class Environment {
+export class Environment {
   constructor(
-    private palette: Palette,
-    private variables: Record<string, LLVariable | LLValue | LLValueArray>,
+    public palette: Palette,
+    public variables: Record<string, LLVariable | LLValue | LLValueArray>,
     public options: OptionsConfig,
     public colorBlame: Record<number, boolean> = {}
   ) {}
@@ -144,6 +144,7 @@ const checkIfValsPresent = (node: Record<any, any>, keys: string[]) =>
 
 type ReturnVal<A> = { result: A; env: Environment };
 export class LLNode {
+  nodeType: string = "node";
   evaluate(env: Environment): ReturnVal<any> {
     this.evalCheck(env);
     throw new Error("Invalid node");
@@ -163,8 +164,9 @@ export class LLNode {
 }
 
 export class LLExpression extends LLNode {
+  nodeType: string = "expression";
   constructor(
-    private value: LLConjunction | LLPredicate | LLQuantifier | LLBool
+    public value: LLConjunction | LLPredicate | LLQuantifier | LLBool
   ) {
     super();
   }
@@ -187,9 +189,10 @@ export class LLExpression extends LLNode {
 
 const ConjunctionTypes = ["and", "or", "not", "none", "id"] as const;
 export class LLConjunction extends LLNode {
+  nodeType: string = "conjunction";
   constructor(
-    private type: (typeof ConjunctionTypes)[number],
-    private children: LLConjunction[]
+    public type: (typeof ConjunctionTypes)[number],
+    public children: LLConjunction[]
   ) {
     super();
   }
@@ -249,7 +252,8 @@ export class LLConjunction extends LLNode {
 }
 
 export class LLValueArray extends LLNode {
-  constructor(private children: LLValue[]) {
+  nodeType: string = "array";
+  constructor(public children: LLValue[]) {
     super();
   }
   evaluate(env: Environment): ReturnVal<RawValues[]> {
@@ -269,7 +273,8 @@ export class LLValueArray extends LLNode {
 }
 
 export class LLBool extends LLNode {
-  constructor(private value: boolean) {
+  nodeType: string = "bool";
+  constructor(public value: boolean) {
     super();
   }
   evaluate(env: Environment): ReturnVal<boolean> {
@@ -286,7 +291,8 @@ export class LLBool extends LLNode {
 }
 
 export class LLVariable extends LLNode {
-  constructor(private value: string) {
+  nodeType: string = "variable";
+  constructor(public value: string) {
     super();
   }
   evaluate(env: Environment): any {
@@ -304,9 +310,10 @@ export class LLVariable extends LLNode {
 }
 
 export class LLColor extends LLNode {
+  nodeType: string = "color";
   constructor(
-    private value: Color,
-    private constructorString: string
+    public value: Color,
+    public constructorString: string
   ) {
     super();
   }
@@ -333,7 +340,8 @@ export class LLColor extends LLNode {
 }
 
 export class LLNumber extends LLNode {
-  constructor(private value: number) {
+  nodeType: string = "number";
+  constructor(public value: number) {
     super();
   }
   evaluate(env: Environment): ReturnVal<number> {
@@ -351,10 +359,11 @@ export class LLNumber extends LLNode {
 
 const LLNumberOpTypes = ["+", "-", "*", "/", "//", "absDiff", "%"] as const;
 export class LLNumberOp extends LLNode {
+  nodeType: string = "numberOp";
   constructor(
-    private type: (typeof LLNumberOpTypes)[number],
-    private left: LLValue,
-    private right: LLValue
+    public type: (typeof LLNumberOpTypes)[number],
+    public left: LLValue,
+    public right: LLValue
   ) {
     super();
   }
@@ -474,10 +483,11 @@ const getType = (x: any): string => {
     : typeof x;
 };
 export class LLPredicate extends LLNode {
+  nodeType: string = "predicate";
   constructor(
     public type: (typeof predicateTypes)[number],
-    private left: LLValue | LLValueArray | LLMap,
-    private right: LLValue | LLValueArray | LLMap,
+    public left: LLValue | LLValueArray | LLMap,
+    public right: LLValue | LLValueArray | LLMap,
     public threshold?: number
   ) {
     super();
@@ -544,8 +554,9 @@ export class LLPredicate extends LLNode {
 }
 
 export class LLValue extends LLNode {
+  nodeType: string = "value";
   constructor(
-    private value:
+    public value:
       | LLValueFunction
       | LLPairFunction
       | LLColor
@@ -630,10 +641,11 @@ Object.entries(ColorSpaceDirectory).map(([colorSpace, space]) => {
 });
 
 export class LLValueFunction extends LLNode {
+  nodeType: string = "valueFunction";
   constructor(
-    private type: (typeof VFTypes)[number]["primaryKey"],
-    private input: LLColor | LLVariable,
-    private params: Record<string, string>
+    public type: (typeof VFTypes)[number]["primaryKey"],
+    public input: LLColor | LLVariable,
+    public params: Record<string, string>
   ) {
     super();
   }
@@ -729,11 +741,12 @@ const LLPairFunctionTypes: {
   },
 ];
 export class LLPairFunction extends LLNode {
+  nodeType: string = "pairFunction";
   constructor(
-    private type: (typeof LLPairFunctionTypes)[number]["primaryKey"],
-    private left: LLColor | LLVariable,
-    private right: LLColor | LLVariable,
-    private params: Record<string, string>
+    public type: (typeof LLPairFunctionTypes)[number]["primaryKey"],
+    public left: LLColor | LLVariable,
+    public right: LLColor | LLVariable,
+    public params: Record<string, string>
   ) {
     super();
   }
@@ -785,12 +798,13 @@ let cartesian = (a: any[], b: any[], ...c: any[]): any[] =>
 const QuantifierTypes = ["exist", "all"] as const;
 const QuantifierTypeErrors = [{ wrong: "exists", right: "exist" }] as const;
 export class LLQuantifier extends LLNode {
+  nodeType: string = "quantifier";
   constructor(
-    private type: (typeof QuantifierTypes)[number],
-    private input: LLValueArray | LLVariable | LLMap,
-    private predicate: LLPredicate,
-    private varbs: string[],
-    private where?: LLPredicate | LLValueFunction
+    public type: (typeof QuantifierTypes)[number],
+    public input: LLValueArray | LLVariable | LLMap,
+    public predicate: LLPredicate,
+    public varbs: string[],
+    public where?: LLPredicate | LLValueFunction
   ) {
     super();
   }
@@ -913,9 +927,10 @@ const reduceTypes = [
   "extent",
 ] as const;
 export class LLAggregate extends LLNode {
+  nodeType: string = "aggregate";
   constructor(
-    private type: (typeof reduceTypes)[number],
-    private children: LLValueArray | LLVariable | LLMap
+    public type: (typeof reduceTypes)[number],
+    public children: LLValueArray | LLVariable | LLMap
   ) {
     super();
   }
@@ -988,11 +1003,12 @@ const mapTypes = ["map", "filter", "sort", "reverse", "speed"] as const;
 // example syntax
 // {map: colors, func: {cvdSim: {type: "protanomaly"}}, varb: "x"}
 export class LLMap extends LLNode {
+  nodeType: string = "map";
   constructor(
-    private type: (typeof mapTypes)[number],
-    private children: LLValueArray | LLVariable | LLMap,
-    private func: LLValueFunction | LLPairFunction | LLNumberOp,
-    private varb: string
+    public type: (typeof mapTypes)[number],
+    public children: LLValueArray | LLVariable | LLMap,
+    public func: LLValueFunction | LLPairFunction | LLNumberOp,
+    public varb: string
   ) {
     super();
   }
@@ -1142,3 +1158,29 @@ export function prettyPrintLL(
   const ast = parseToAST({ id: [root] }, opts);
   return ast.toString();
 }
+
+export function GenerateAST(
+  root: LintProgram,
+  options: Partial<typeof DEFAULT_OPTIONS> = {}
+) {
+  return parseToAST({ id: [root] }, { ...DEFAULT_OPTIONS, ...options });
+}
+
+export const LLTypes = {
+  LLAggregate,
+  LLBool,
+  LLColor,
+  LLConjunction,
+  LLExpression,
+  LLMap,
+  LLNode,
+  LLNumber,
+  LLNumberOp,
+  LLPairFunction,
+  LLPredicate,
+  LLQuantifier,
+  LLValue,
+  LLValueArray,
+  LLValueFunction,
+  LLVariable,
+};

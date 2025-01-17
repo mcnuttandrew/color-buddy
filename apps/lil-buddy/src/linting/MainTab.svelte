@@ -1,8 +1,8 @@
 <script lang="ts">
-  import { PREBUILT_LINTS, linter } from "color-buddy-palette-lint";
+  import { PREBUILT_LINTS } from "color-buddy-palette-lint";
 
   import store from "../stores/store";
-  import { newId, runLint } from "../lib/utils";
+  import { newId } from "../lib/utils";
   import { buttonStyle } from "../lib/styles";
   import LintMeta from "./LintMeta.svelte";
 

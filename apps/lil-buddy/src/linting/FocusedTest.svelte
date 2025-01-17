@@ -5,6 +5,7 @@
   import store from "../stores/store";
   export let lint: LintProgram;
   import { runLint } from "../lib/utils";
+  import VisualSummarizer from "./VisualSummarizer.svelte";
   $: focusedTest = $store.focusedTest;
   $: testPal = focusedTest
     ? focusedTest.type === "passing"
@@ -33,8 +34,12 @@
   $: blameData = (lintResult.kind === "success" && lintResult.blameData) || [];
   $: errors = lintRun.errors;
   $: pairData = blameData as number[][];
+  $: console.log(lint);
 </script>
 
+{#if testPal}
+  <VisualSummarizer lint={lint.program} pal={testPal} />
+{/if}
 {#if currentLintAppliesToCurrentPalette && testPal}
   <PalPreview pal={{ ...testPal }} />
   {#if lintResult.kind === "success" && lintResult.passes}

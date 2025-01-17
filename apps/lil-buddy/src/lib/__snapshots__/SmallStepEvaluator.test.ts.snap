@@ -1,0 +1,107 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`SmallStepEvaluator works 1`] = `
+[
+  LLExpression {
+    "nodeType": "expression",
+    "value": LLPredicate {
+      "left": LLPairFunction {
+        "left": LLVariable {
+          "nodeType": "variable",
+          "value": "a",
+        },
+        "nodeType": "pairFunction",
+        "params": {
+          "algorithm": "2000",
+        },
+        "right": LLVariable {
+          "nodeType": "variable",
+          "value": "b",
+        },
+        "type": "deltaE",
+      },
+      "nodeType": "predicate",
+      "right": LLNumber {
+        "nodeType": "number",
+        "value": 10,
+      },
+      "threshold": undefined,
+      "type": ">",
+    },
+  },
+  {
+    "left": LLNumber {
+      "nodeType": "number",
+      "value": 70.2365636120491,
+    },
+    "nodeType": "predicate",
+    "right": LLNumber {
+      "nodeType": "number",
+      "value": 10,
+    },
+    "threshold": undefined,
+    "type": ">",
+  },
+  LLBool {
+    "nodeType": "bool",
+    "value": true,
+  },
+]
+`;
+
+exports[`SmallStepEvaluator works with small not example 1`] = `
+[
+  LLExpression {
+    "nodeType": "expression",
+    "value": LLConjunction {
+      "children": [
+        LLBool {
+          "nodeType": "bool",
+          "value": true,
+        },
+      ],
+      "nodeType": "conjunction",
+      "type": "not",
+    },
+  },
+  LLConjunction {
+    "children": [
+      LLBool {
+        "nodeType": "bool",
+        "value": true,
+      },
+    ],
+    "nodeType": "conjunction",
+    "type": "not",
+  },
+  LLBool {
+    "nodeType": "bool",
+    "value": false,
+  },
+]
+`;
+
+exports[`SmallStepEvaluator works with smaller example 1`] = `
+[
+  LLExpression {
+    "nodeType": "expression",
+    "value": LLPredicate {
+      "left": LLNumber {
+        "nodeType": "number",
+        "value": 11,
+      },
+      "nodeType": "predicate",
+      "right": LLNumber {
+        "nodeType": "number",
+        "value": 10,
+      },
+      "threshold": undefined,
+      "type": ">",
+    },
+  },
+  LLBool {
+    "nodeType": "bool",
+    "value": true,
+  },
+]
+`;

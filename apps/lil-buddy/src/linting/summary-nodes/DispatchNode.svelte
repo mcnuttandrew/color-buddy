@@ -1,30 +1,35 @@
 <script lang="ts">
-  import { LLTypes } from "color-buddy-palette-lint";
   import type { Palette, Color } from "color-buddy-palette";
   import { generateEvaluations } from "../../lib/small-step-evaluator";
 
   import InlineNode from "./InlineNode.svelte";
   import QuantifierNode from "./QuantifierNode.svelte";
 
-  type LLNode = InstanceType<(typeof LLTypes)["LLNode"]>;
-
   export let node: any;
   export let pal: Palette;
   export let inducedVariables: Record<string, Color> = {};
 
-  let predicateNodes = [] as any[];
-  const evaluableNodeTypes = new Set(["predicate"]);
-  if (evaluableNodeTypes.has(node.nodeType)) {
-    try {
-      predicateNodes = generateEvaluations(node, inducedVariables, pal);
-    } catch (e) {
-      console.error(e);
+  $: predicateNodes = getPredNodes(node, inducedVariables, pal) as any[];
+  const evalNodeTypes = new Set(["predicate"]);
+  $: isNotNode = node.nodeType === "conjunction" && node.type === "not";
+  function getPredNodes(
+    node: any,
+    inducedVariables: Record<string, Color> = {},
+    pal: Palette
+  ) {
+    const isNotNode = node.nodeType === "conjunction" && node.type === "not";
+    if (evalNodeTypes.has(node.nodeType) || isNotNode) {
+      try {
+        return generateEvaluations(node, inducedVariables, pal);
+      } catch (e) {
+        console.error(e);
+      }
     }
+    return [];
   }
-  $: console.log(node);
 </script>
 
-{#if node.nodeType == "conjunction"}
+{#if node.nodeType == "conjunction" && !isNotNode}
   {#each node.children as child}
     <svelte:self node={child.value} {pal} {inducedVariables} />
   {/each}
@@ -37,6 +42,6 @@
       <InlineNode node={predicateNode} {pal} {inducedVariables} />
     </div>
   {/each}
-{:else}
+{:else if node.nodeType === "quantifier"}
   <QuantifierNode {node} {pal} {inducedVariables} />
 {/if}

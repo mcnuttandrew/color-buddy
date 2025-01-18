@@ -1,5 +1,47 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
+exports[`Agg Test 1`] = `
+[
+  LLExpression {
+    "nodeType": "expression",
+    "value": LLPredicate {
+      "left": LLAggregate {
+        "children": LLVariable {
+          "nodeType": "variable",
+          "value": "colors",
+        },
+        "nodeType": "aggregate",
+        "type": "count",
+      },
+      "nodeType": "predicate",
+      "right": LLNumber {
+        "nodeType": "number",
+        "value": 11,
+      },
+      "threshold": undefined,
+      "type": "<",
+    },
+  },
+  LLPredicate {
+    "left": LLNumber {
+      "nodeType": "number",
+      "value": 2,
+    },
+    "nodeType": "predicate",
+    "right": LLNumber {
+      "nodeType": "number",
+      "value": 11,
+    },
+    "threshold": undefined,
+    "type": "<",
+  },
+  LLBool {
+    "nodeType": "bool",
+    "value": true,
+  },
+]
+`;
+
 exports[`SmallStepEvaluator works 1`] = `
 [
   LLExpression {
@@ -29,7 +71,7 @@ exports[`SmallStepEvaluator works 1`] = `
       "type": ">",
     },
   },
-  {
+  LLPredicate {
     "left": LLNumber {
       "nodeType": "number",
       "value": 70.2365636120491,
@@ -55,9 +97,21 @@ exports[`SmallStepEvaluator works with small not example 1`] = `
     "nodeType": "expression",
     "value": LLConjunction {
       "children": [
-        LLBool {
-          "nodeType": "bool",
-          "value": true,
+        LLExpression {
+          "nodeType": "expression",
+          "value": LLPredicate {
+            "left": LLNumber {
+              "nodeType": "number",
+              "value": 11,
+            },
+            "nodeType": "predicate",
+            "right": LLNumber {
+              "nodeType": "number",
+              "value": 10,
+            },
+            "threshold": undefined,
+            "type": ">",
+          },
         },
       ],
       "nodeType": "conjunction",

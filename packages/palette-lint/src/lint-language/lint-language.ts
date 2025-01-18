@@ -161,6 +161,10 @@ export class LLNode {
   toString() {
     return "Node";
   }
+  copy() {
+    console.log("asd", this);
+    return new LLNode();
+  }
 }
 
 export class LLExpression extends LLNode {
@@ -184,6 +188,9 @@ export class LLExpression extends LLNode {
   }
   toString(): string {
     return this.value.toString();
+  }
+  copy() {
+    return new LLExpression(this.value);
   }
 }
 
@@ -241,6 +248,9 @@ export class LLConjunction extends LLNode {
     if (childrenTypes.some((x) => x === false)) return false;
     return new LLConjunction(exprType, childrenTypes);
   }
+  copy() {
+    return new LLConjunction(this.type, this.children);
+  }
   toString(): string {
     if (this.type === "id") return this.children[0].toString();
     if (this.type === "none") return "";
@@ -267,6 +277,9 @@ export class LLValueArray extends LLNode {
     if (childrenTypes.some((x) => x === false)) return false;
     return new LLValueArray(childrenTypes);
   }
+  copy() {
+    return new LLValueArray(this.children);
+  }
   toString(): string {
     return `[${this.children.map((x) => x.toString()).join(", ")}]`;
   }
@@ -284,6 +297,9 @@ export class LLBool extends LLNode {
   static tryToConstruct(value: any, _options: OptionsConfig) {
     if (typeof value !== "boolean") return false;
     return new LLBool(value);
+  }
+  copy() {
+    return new LLBool(this.value);
   }
   toString(): string {
     return this.value ? "TRUE" : "FALSE";
@@ -303,6 +319,9 @@ export class LLVariable extends LLNode {
   static tryToConstruct(value: any, _options: OptionsConfig) {
     if (typeof value !== "string") return false;
     return new LLVariable(value);
+  }
+  copy() {
+    return new LLVariable(this.value);
   }
   toString(): string {
     return this.value;
@@ -333,6 +352,9 @@ export class LLColor extends LLNode {
     }
     return false;
   }
+  copy() {
+    return new LLColor(this.value, this.constructorString);
+  }
   toString(): string {
     return this.constructorString;
     // return this.value.toHex();
@@ -351,6 +373,9 @@ export class LLNumber extends LLNode {
   static tryToConstruct(value: any, _options: OptionsConfig) {
     if (typeof value !== "number") return false;
     return new LLNumber(value);
+  }
+  copy() {
+    return new LLNumber(this.value);
   }
   toString(): string {
     return this.value.toString();
@@ -401,6 +426,9 @@ export class LLNumberOp extends LLNode {
       throw new Error(`Type error in ${opType}`);
     }
     return new LLNumberOp(opType, leftType, rightType);
+  }
+  copy() {
+    return new LLNumberOp(this.type, this.left, this.right);
   }
   toString(): string {
     let left = this.left.toString();
@@ -542,6 +570,9 @@ export class LLPredicate extends LLNode {
     if (!leftType || !rightType) return false;
     return new LLPredicate(predicateType, leftType, rightType, threshold);
   }
+  copy() {
+    return new LLPredicate(this.type, this.left, this.right, this.threshold);
+  }
   toString(): string {
     let type = "" + this.type;
     const left = this.left.toString();
@@ -585,6 +616,9 @@ export class LLValue extends LLNode {
     const value = tryTypes(types, options)(node);
     if (!value) return false;
     return value;
+  }
+  copy() {
+    return new LLValue(this.value);
   }
   toString(): string {
     return this.value.toString();
@@ -676,6 +710,9 @@ export class LLValueFunction extends LLNode {
     if (!input) return false;
     const params = getParams(op, node);
     return new LLValueFunction(op.primaryKey, input, params);
+  }
+  copy() {
+    return new LLValueFunction(this.type, this.input, this.params);
   }
   toString(): string {
     const params = Object.values(this.params).join(", ");
@@ -897,6 +934,15 @@ export class LLQuantifier extends LLNode {
       where && tryTypes([LLPredicate, LLValueFunction], options)(where)
     );
   }
+  copy() {
+    return new LLQuantifier(
+      this.type,
+      this.input,
+      this.predicate,
+      this.varbs,
+      this.where
+    );
+  }
   toString(): string {
     const varbs = this.varbs.join(", ");
     let target = this.input.toString();
@@ -993,6 +1039,9 @@ export class LLAggregate extends LLNode {
       throw new Error(`Type error in ${reduceType}`);
     }
     return new LLAggregate(reduceType, childType);
+  }
+  copy() {
+    return new LLAggregate(this.type, this.children);
   }
   toString(): string {
     return `${this.type}(${this.children.toString()})`;
@@ -1103,6 +1152,9 @@ export class LLMap extends LLNode {
       return false;
     }
     return new LLMap(op, childType, func, varb);
+  }
+  copy() {
+    return new LLMap(this.type, this.children, this.func, this.varb);
   }
   toString(): string {
     const type = this.type;

@@ -4,7 +4,6 @@
   export let node: any;
   export let pal: Palette;
   export let inducedVariables: Record<string, Color> = {};
-  $: console.log("asd", node);
 </script>
 
 <div class="flex items-center">
@@ -17,8 +16,9 @@
       </div>
     </div>
   {:else if node.nodeType === "conjunction" && node.type === "not"}
-    <div>
-      NOT <svelte:self node={node.children[0]} {pal} {inducedVariables} />
+    <div class="flex items-center">
+      <span class="mr-2">NOT</span>
+      <svelte:self node={node.children[0]} {pal} {inducedVariables} />
     </div>
   {:else if node.nodeType === "number"}
     <div>{node.value}</div>
@@ -28,6 +28,13 @@
         class="h-5 w-5 rounded-full"
         style={`background: ${inducedVariables[node.value].toHex()}`}
       />
+    {:else if node.value === "colors"}
+      {#each pal.colors as color}
+        <div
+          class="h-5 w-5 rounded-full"
+          style={`background: ${color.toHex()}`}
+        />
+      {/each}
     {:else}
       <div>{node.value}</div>
     {/if}
@@ -47,9 +54,35 @@
       <svelte:self node={node.input} {pal} {inducedVariables} />
       <span>{")"}</span>
     </div>
-  {:else if node.type === "color"}
-    <div>hi</div>
+  {:else if node.nodeType === "color"}
+    <!-- color names are parsed as colors unfortunately, so this is a hack -->
+    {#if node.value.channels["L"] === 0 && node.value.channels["a"] === 0 && node.value.channels["b"] === 0}
+      {node.constructorString}
+    {:else}
+      <div
+        class="h-5 w-5 rounded-full"
+        style={`background: ${node.value.toHex()}`}
+      />
+    {/if}
   {:else if node.nodeType === "bool"}
     <div>{node.value}</div>
+  {:else if node.nodeType === "aggregate"}
+    <div class="flex">
+      {node.type}
+      <span>{"("}</span>
+      {#if node.children?.nodeType === "variable"}
+        <svelte:self node={node.children} {pal} {inducedVariables} />
+      {:else}
+        {#each node.children as child}
+          <svelte:self node={child} {pal} {inducedVariables} />
+          {#if child !== node.children[node.children.length - 1]}
+            <span>{","}</span>
+          {/if}
+        {/each}
+      {/if}
+      <span>{")"}</span>
+    </div>
+  {:else if node.nodeType === "expression"}
+    <svelte:self node={node.value} {pal} {inducedVariables} />
   {/if}
 </div>

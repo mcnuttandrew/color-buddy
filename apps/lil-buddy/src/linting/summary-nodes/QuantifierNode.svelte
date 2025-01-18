@@ -5,8 +5,7 @@
   import DispatchNode from "./DispatchNode.svelte";
   import { evaluateNode } from "../../lib/small-step-evaluator";
 
-  type LLNode = InstanceType<(typeof LLTypes)["LLNode"]>;
-  export let node: LLNode;
+  export let node: any;
   export let pal: Palette;
   export let inducedVariables: Record<string, Color> = {};
 
@@ -20,22 +19,29 @@
       typeof node.input.children?.at(0)?.constructorString
     ) {
       return makePalFromString(
-        node.input.children.map((x) => x.constructorString)
+        node.input.children.map((x: any) => x.constructorString)
       ).colors;
     }
 
     return [];
   }
   $: nodeResult = evaluateNode(node, inducedVariables, pal);
+
+  function checkWhere(node: any, color: Color, varb: string): boolean {
+    if (!node) return true;
+    const result = evaluateNode(
+      node,
+      { ...inducedVariables, [varb]: color },
+      pal
+    );
+    return result.result;
+  }
 </script>
 
-<!-- {#if Node} -->
-
 <div class="flex items-center">
-  <div>
+  <div class="flex flex-col">
     <div class="font-bold">{node.type} - {node.varbs}</div>
     <div class="bg-opacity-30 bg-slate-300 flex flex-col p-2">
-      <!-- show combinations -->
       {#each values as color}
         <div class="flex items-center">
           <div class="flex">
@@ -52,14 +58,19 @@
           </div>
           <div class="flex flex-col">
             <div class="flex">
-              <DispatchNode
-                node={node.predicate.value}
-                {pal}
-                inducedVariables={{
-                  ...inducedVariables,
-                  [node.varbs[0]]: color,
-                }}
-              />
+              {#if checkWhere(node.where, color, node.varbs[0])}
+                <DispatchNode
+                  node={node.predicate.value}
+                  {pal}
+                  inducedVariables={{
+                    ...inducedVariables,
+                    [node.varbs[0]]: color,
+                  }}
+                />
+              {:else}
+                <div class="text-red-500">✗</div>
+                removed by where
+              {/if}
             </div>
           </div>
         </div>
@@ -67,33 +78,5 @@
     </div>
   </div>
   <div>→{nodeResult.result}</div>
+  <!-- <div>→</div> -->
 </div>
-<!-- {:else if Array.isArray(node.input.children) && typeof node.input.children?.at(0)?.constructorString}
-    {#each makePalFromString(node.input.children.map((x) => x.constructorString)).colors as color}
-      <div class="flex">
-        <div class="flex">
-          {#each Object.values(inducedVariables) as innerColor}
-            <div
-              class="h-8 w-8 rounded-full"
-              style={`background: ${innerColor.toHex()}`}
-            />
-          {/each}
-          <div
-            class="h-8 w-8 rounded-full"
-            style={`background: ${color.toHex()}`}
-          />
-        </div>
-        {#if isQuantifierAndChildIsQuantifier}
-          <div>Predicate</div>
-        {/if}
-        <svelte:self
-          node={node.predicate.value}
-          {pal}
-          inducedVariables={{
-            ...inducedVariables,
-            [node.varbs[0]]: color,
-          }}
-        />
-      </div>
-    {/each}
-  {/if} -->

@@ -10,6 +10,8 @@
   let monaco: typeof Monaco;
   let editorContainer: HTMLElement;
 
+  let isTyping = false;
+
   onMount(async () => {
     // Import our 'monaco.ts' file here
     // (onMount() will only be executed in the browser, which is what we want)
@@ -24,6 +26,7 @@
     const model = monaco.editor.createModel(value, language);
     editor.setModel(model);
     editor.onDidChangeModelContent(() => {
+      // redo this such that there is a debounce
       onChange(editor.getValue());
     });
   });

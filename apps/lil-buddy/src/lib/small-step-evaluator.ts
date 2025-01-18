@@ -9,14 +9,12 @@ export function evaluateNode(
   pal: Palette
 ) {
   const opts = { debugParse: false, debugEval: false, debugCompare: false };
-  let newEnv = new Environment(pal, {}, opts, {});
-
-  newEnv = Object.entries(inducedVariables).reduce((acc, [key, value]) => {
-    const newVal = new LLTypes.LLValue(
-      new LLTypes.LLColor(value, value.toHex())
-    );
-    return acc.set(key, newVal);
-  }, newEnv);
+  const toVal = (x: Color) =>
+    new LLTypes.LLValue(new LLTypes.LLColor(x, x.toHex()));
+  const newEnv = Object.entries(inducedVariables).reduce(
+    (acc, [key, value]) => acc.set(key, toVal(value)),
+    new Environment(pal, {}, opts, {})
+  );
   return node.evaluate(newEnv);
 }
 
@@ -40,6 +38,7 @@ function isValue(node: any) {
 function subTreeIsPureOp(node: any): boolean {
   switch (node.nodeType) {
     case "pairFunction":
+    case "numberOp":
     case "predicate":
       return isValue(node.left) && isValue(node.right);
     case "conjunction":
@@ -47,7 +46,11 @@ function subTreeIsPureOp(node: any): boolean {
         return isValue(node.children[0]);
       }
       return node.children.every((x: any) => subTreeIsPureOp(x));
+    case "aggregate":
     case "array":
+      if (node.children?.nodeType === "variable") {
+        return true;
+      }
       return node.children.every((x: any) => subTreeIsPureOp(x));
     case "node":
     case "expression":
@@ -60,9 +63,7 @@ function subTreeIsPureOp(node: any): boolean {
       return false;
     case "valueFunction":
       return isValue(node.input);
-    // todo
     case "quantifier":
-    case "aggregate":
     case "map":
     default:
       return false;
@@ -82,10 +83,10 @@ function traverseAndMaybeExecute(
     const astResult = LLTypes.LLValue.tryToConstruct(result, {} as any);
     return { result: astResult, didEval: true };
   }
-  //   let updatedNode = node.deepCopy();
-  let updatedNode = Object.assign({}, node);
+  let updatedNode = node.copy();
   switch (node.nodeType) {
     case "pairFunction":
+    case "numberOp":
     case "predicate":
       const leftTraverse = traverseAndMaybeExecute(
         node.left,
@@ -107,16 +108,16 @@ function traverseAndMaybeExecute(
       }
       return { result: updatedNode, didEval: false };
     case "conjunction":
-
     case "array":
+    case "aggregate":
       const newChildren = [];
       let found = false;
-      for (let idx = 0; idx < node.children.length; idx++) {
+      for (let idx = 0; idx < updatedNode.children.length; idx++) {
         if (found) {
-          newChildren.push(node.children[idx]);
+          newChildren.push(updatedNode.children[idx]);
           continue;
         }
-        const child = node.children[idx];
+        const child = updatedNode.children[idx];
         const childResult = traverseAndMaybeExecute(
           child,
           inducedVariables,
@@ -125,8 +126,12 @@ function traverseAndMaybeExecute(
         newChildren.push(childResult.result);
         found = childResult.didEval;
       }
-      node.children = newChildren;
-      return { result: node, didEval: found };
+      // let found = false
+      // updatedNode.children = updatedNode.children.map(x => {
+
+      // })
+      updatedNode.children = newChildren;
+      return { result: updatedNode, didEval: found };
     case "node":
     case "expression":
       return traverseAndMaybeExecute(node.value, inducedVariables, pal);
@@ -147,7 +152,8 @@ function traverseAndMaybeExecute(
       }
 
     case "quantifier":
-    case "aggregate":
+      throw new Error("Quantifiers should not be evaluated here", node);
+
     case "map":
     default:
       console.log(node.nodeType, " not implemented yet", node);
@@ -160,9 +166,8 @@ export function generateEvaluations(
   inducedVariables: Record<string, Color>,
   pal: Palette
 ): LLNode[] {
-  const evalLog = [node];
-  //   let currentNode = node.deepCopy();
-  let currentNode = Object.assign({}, node);
+  const evalLog = [node.copy()];
+  let currentNode = node.copy();
   while (!subTreeIsPureOp(currentNode)) {
     const result = traverseAndMaybeExecute(currentNode, inducedVariables, pal);
     evalLog.push(result.result);

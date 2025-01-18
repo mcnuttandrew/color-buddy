@@ -1,6 +1,5 @@
 <script lang="ts">
   import type { LintProgram, LintResult } from "color-buddy-palette-lint";
-  import type { Palette } from "color-buddy-palette";
   import PalPreview from "../components/PalPreview.svelte";
   import store from "../stores/store";
   export let lint: LintProgram;
@@ -12,18 +11,14 @@
       ? lint.expectedPassingTests[focusedTest.index]
       : lint.expectedFailingTests[focusedTest.index]
     : null;
-  $: lintRun = testPal
-    ? runLint(
-        lint,
-        {
-          computeBlame: lint.blameMode !== "none",
-        },
-        testPal
-      )
-    : ({
-        result: { kind: "invalid" } as LintResult,
-        error: null,
-      } as any as ReturnType<typeof runLint>);
+  $: blameMode = {
+    computeBlame: lint.blameMode !== "none",
+  };
+  const nullLint = {
+    result: { kind: "invalid" } as LintResult,
+    error: null,
+  } as any as ReturnType<typeof runLint>;
+  $: lintRun = testPal ? runLint(lint, blameMode, testPal) : nullLint;
   $: lintResult = lintRun.result;
 
   $: currentLintAppliesToCurrentPalette = (lint?.requiredTags || []).every(
@@ -34,7 +29,6 @@
   $: blameData = (lintResult.kind === "success" && lintResult.blameData) || [];
   $: errors = lintRun.errors;
   $: pairData = blameData as number[][];
-  $: console.log(lint);
 </script>
 
 {#if testPal}

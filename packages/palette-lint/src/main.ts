@@ -4,6 +4,7 @@ import {
   GenerateAST,
   Environment,
   LLTypes,
+  prettyPrintLL,
 } from "./lint-language/lint-language";
 import { suggestMCFix } from "./linter-tools/monte-carlo-fix";
 import { suggestLintFix } from "./linter-tools/lint-fixer";
@@ -13,6 +14,7 @@ export {
   LLTypes,
   PREBUILT_LINTS,
   linter,
+  prettyPrintLL,
   suggestLintFix,
   suggestMCFix,
 };

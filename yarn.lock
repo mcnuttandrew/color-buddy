@@ -6409,6 +6409,11 @@ fracturedjsonjs@^4.0.1:
   resolved "https://registry.npmjs.org/fracturedjsonjs/-/fracturedjsonjs-4.0.1.tgz"
   integrity sha512-KMhSx7o45aPVj4w27dwdQyKJkNU8oBqw8UiK/s3VzsQB3+pKQ/3AqG/YOEQblV2BDuYE5dKp0OMf8RDsshrjTA==
 
+fracturedjsonjs@^4.0.2:
+  version "4.0.2"
+  resolved "https://registry.yarnpkg.com/fracturedjsonjs/-/fracturedjsonjs-4.0.2.tgz#ca6ba0212ab00fa9b18ad4918653e66f3c93bf97"
+  integrity sha512-+vGJH9wK0EEhbbn50V2sOebLRaar1VL3EXr02kxchIwpkhQk0ItrPjIOtYPYuU9hNFpVzxjrPgzjtMJih+ae4A==
+
 fresh@0.5.2:
   version "0.5.2"
   resolved "https://registry.npmjs.org/fresh/-/fresh-0.5.2.tgz"

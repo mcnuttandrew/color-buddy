@@ -25,7 +25,15 @@
 
     return [];
   }
-  $: nodeResult = evaluateNode(node, inducedVariables, pal);
+  function handleEval(node: any, inducedVariables: any, pal: any) {
+    try {
+      return evaluateNode(node, inducedVariables, pal);
+    } catch (e) {
+      console.error(e);
+      return { result: "error" };
+    }
+  }
+  $: nodeResult = handleEval(node, inducedVariables, pal);
 
   function checkWhere(node: any, color: Color, varb: string): boolean {
     if (!node) return true;

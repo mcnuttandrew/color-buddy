@@ -1,10 +1,12 @@
 <script lang="ts">
-  import { PREBUILT_LINTS } from "color-buddy-palette-lint";
+  import { PREBUILT_LINTS, prettyPrintLL } from "color-buddy-palette-lint";
 
   import store from "../stores/store";
   import { newId } from "../lib/utils";
   import { buttonStyle } from "../lib/styles";
   import LintMeta from "./LintMeta.svelte";
+
+  import { JSONStringify } from "../lib/utils";
 
   import MonacoEditor from "../components/MonacoEditor.svelte";
   import Nav from "../components/Nav.svelte";
@@ -22,7 +24,15 @@
 
   // run this lint
   let errors: any = null;
-  let debugCompare = false;
+
+  function generatePrettyText(program: string): string {
+    try {
+      return prettyPrintLL(JSON.parse(program));
+    } catch (e) {
+      console.log(e);
+      return "parsing error";
+    }
+  }
 </script>
 
 <div class="w-full flex">
@@ -79,25 +89,14 @@
       <button
         class={buttonStyle}
         on:click={() => {
-          store.setCurrentLintProgram(JSON.stringify(program) || "");
+          store.setCurrentLintProgram(JSONStringify(program) || "");
         }}
       >
         Clean up Program
       </button>
-      <div class="flex justify-between">
-        <div class="flex flex-col">
-          <div class="font-bold">Show Compare Debug In Terminal</div>
-          <div>
-            <Nav
-              tabs={["Show", "Hide"]}
-              isTabSelected={(x) => (debugCompare ? "Show" : "Hide") === x}
-              selectTab={(x) => {
-                debugCompare = x === "Show";
-              }}
-            />
-          </div>
-        </div>
-      </div>
+    </div>
+    <div>
+      {generatePrettyText(program)}
     </div>
     <MonacoEditor
       value={program}

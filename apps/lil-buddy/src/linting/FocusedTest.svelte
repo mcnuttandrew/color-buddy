@@ -18,7 +18,15 @@
     result: { kind: "invalid" } as LintResult,
     error: null,
   } as any as ReturnType<typeof runLint>;
-  $: lintRun = testPal ? runLint(lint, blameMode, testPal) : nullLint;
+  $: lintRun = testPal ? handleLint(lint, blameMode, testPal) : nullLint;
+  function handleLint(lint: LintProgram, blameMode: any, testPal: any) {
+    try {
+      return runLint(lint, blameMode, testPal);
+    } catch (e) {
+      console.error(e);
+      return nullLint;
+    }
+  }
   $: lintResult = lintRun.result;
 
   $: currentLintAppliesToCurrentPalette = (lint?.requiredTags || []).every(

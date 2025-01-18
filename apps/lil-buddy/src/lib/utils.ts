@@ -3,6 +3,20 @@ import type { Palette, StringPalette } from "color-buddy-palette";
 import type { LintProgram, LintResult } from "color-buddy-palette-lint";
 import { linter } from "color-buddy-palette-lint";
 
+import { Formatter, FracturedJsonOptions, EolStyle } from "fracturedjsonjs";
+
+const options = new FracturedJsonOptions();
+options.MaxTotalLineLength = 120;
+options.MaxInlineComplexity = 2;
+options.JsonEolStyle = EolStyle.Crlf;
+
+const formatter = new Formatter();
+formatter.Options = options;
+
+export function JSONStringify(obj: string) {
+  return formatter.Reformat(obj);
+}
+
 type ColorSpace = keyof typeof ColorSpaceDirectory;
 export const colorPickerConfig = Object.fromEntries(
   (Object.keys(ColorSpaceDirectory) as ColorSpace[]).map((name: ColorSpace) => {

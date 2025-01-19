@@ -11,6 +11,7 @@
   import MonacoEditor from "../components/MonacoEditor.svelte";
   import Nav from "../components/Nav.svelte";
   import DeleteLint from "./DeleteLint.svelte";
+  import ProgramCommand from "./ProgramCommand.svelte";
 
   import LintTests from "./LintTests.svelte";
   import FocusedTest from "./FocusedTest.svelte";
@@ -94,6 +95,7 @@
       >
         Clean up Program
       </button>
+      <ProgramCommand currentProgram={lint.program} />
     </div>
     <div>
       {generatePrettyText(program)}

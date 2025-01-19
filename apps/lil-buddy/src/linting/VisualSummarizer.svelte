@@ -14,6 +14,7 @@
       error = e;
     }
   }
+  $: console.log("summarizer");
 </script>
 
 <div class="flex">

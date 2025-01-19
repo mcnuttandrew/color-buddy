@@ -3,6 +3,7 @@
   import AddTest from "./AddTest.svelte";
   import type { LintProgram, LintResult } from "color-buddy-palette-lint";
   import type { Palette } from "color-buddy-palette";
+  import PalPreview from "../components/PalPreview.svelte";
   import store from "../stores/store";
   import { runLint } from "../lib/utils";
   export let lint: LintProgram;
@@ -31,38 +32,27 @@
   }) as TestResult[];
 </script>
 
-<div>
+<div class="border">
   <div class="flex flex-col">
     <div class="flex flex-col">
       <div class="flex">
-        <div class="font-bold">Expected to be passing:</div>
+        <div class="font-bold">Palettes that should pass this test:</div>
       </div>
       <div class="flex">
         {#each passingTestResults as passing, idx}
-          <div class="flex flex-col w-fit">
-            <LintTest
-              clickFocus={() =>
-                store.setFocusedTest({ type: "passing", index: idx })}
-              removeCase={() => {
-                const newTests = [...lint.expectedPassingTests].filter(
-                  (_, i) => i !== idx
-                );
-                store.setCurrentLintExpectedPassingTests(newTests);
-              }}
-              pal={passing.pal}
-              blamedSet={new Set(passing.blame)}
-              updatePal={(newPal) => {
-                const newTests = [...lint.expectedPassingTests];
-                newTests[idx] = newPal;
-                store.setCurrentLintExpectedPassingTests(newTests);
-              }}
-            />
+          <button
+            class="flex border items-center px-2 mx-2 rounded"
+            on:click={() => {
+              store.setFocusedTest({ type: "passing", index: idx });
+            }}
+          >
+            <PalPreview pal={passing.pal} showTags={true} />
             {#if passing.result.kind === "success" && passing.result?.passes}
               <div class="text-green-500">Correct</div>
             {:else}
               <div class="text-red-500">Incorrect</div>
             {/if}
-          </div>
+          </button>
         {/each}
       </div>
       <AddTest
@@ -77,8 +67,14 @@
       </div>
       <div class="flex">
         {#each failingTestResults as failing, idx}
-          <div class="flex flex-col w-fit">
-            <LintTest
+          <button
+            class="flex border items-center px-2 mx-2 rounded"
+            on:click={() => {
+              store.setFocusedTest({ type: "failing", index: idx });
+            }}
+          >
+            <PalPreview pal={failing.pal} showTags={true} />
+            <!-- <LintTest
               clickFocus={() =>
                 store.setFocusedTest({ type: "failing", index: idx })}
               pivotRight={true}
@@ -95,7 +91,7 @@
                 newTests[idx] = newPal;
                 store.setCurrentLintExpectedFailingTests(newTests);
               }}
-            />
+            /> -->
             {#if failing.result.kind === "success"}
               {#if !failing.result?.passes}
                 <div class="text-green-500">Correct</div>
@@ -103,7 +99,7 @@
                 <div class="text-red-500">Incorrect</div>
               {/if}
             {/if}
-          </div>
+          </button>
         {/each}
       </div>
       <AddTest

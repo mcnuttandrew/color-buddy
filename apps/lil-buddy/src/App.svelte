@@ -2,6 +2,8 @@
   import LintCustomizationTab from "./linting/MainTab.svelte";
   import { buttonStyle } from "./lib/styles";
   import store from "./stores/store";
+  import LintPicker from "./linting/LintPicker.svelte";
+
   import NewLintSuggestion from "./linting/NewLintSuggestion.svelte";
   $: lint = $store.lints.find((lint) => lint.id === $store.focusedLint)!;
 </script>
@@ -12,16 +14,8 @@
   >
     Lil Buddy
 
-    {#if lint}
-      <button
-        class={buttonStyle}
-        on:click={() => {
-          store.setFocusedLint(false);
-        }}
-      >
-        Customize Another Check
-      </button>
-    {/if}
+    <LintPicker />
+
     <NewLintSuggestion />
     <a
       class={buttonStyle}

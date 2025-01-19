@@ -5,6 +5,7 @@
   export let lint: LintProgram;
   import { runLint } from "../lib/utils";
   import VisualSummarizer from "./VisualSummarizer.svelte";
+  import LintTest from "./LintTest.svelte";
   $: focusedTest = $store.focusedTest;
   $: testPal = focusedTest
     ? focusedTest.type === "passing"
@@ -37,22 +38,53 @@
   $: blameData = (lintResult.kind === "success" && lintResult.blameData) || [];
   $: errors = lintRun.errors;
   $: pairData = blameData as number[][];
+  $: program = lint.program;
 </script>
 
-{#if testPal}
-  <VisualSummarizer lint={lint.program} pal={testPal} />
-{/if}
 {#if currentLintAppliesToCurrentPalette && testPal}
-  <PalPreview pal={{ ...testPal }} />
   {#if lintResult.kind === "success" && lintResult.passes}
     <div class="text-green-500">This lint passes for the current palette</div>
   {/if}
   {#if lintResult.kind === "success" && !lintResult.passes && !errors}
-    <div>
-      <div class="flex">
-        <div class="text-red-500 mr-2">
-          This lint fails for the current palette.
-        </div>
+    <div class="flex">
+      <div class="text-red-500 mr-2">
+        This lint fails for the current palette.
+      </div>
+    </div>
+  {/if}
+{/if}
+{#if testPal}
+  <VisualSummarizer lint={program} pal={testPal} />
+{/if}
+<div class="border p-2 rounded">
+  {#if testPal && focusedTest}
+    <LintTest
+      removeCase={() => {
+        const newTests = [...lint.expectedPassingTests].filter(
+          (_, i) => i !== focusedTest.index
+        );
+        store.setCurrentLintExpectedPassingTests(newTests);
+      }}
+      pal={testPal}
+      updatePal={(newPal) => {
+        const oldTests =
+          focusedTest.type === "passing"
+            ? lint.expectedPassingTests
+            : lint.expectedFailingTests;
+        const newTests = [...oldTests];
+        newTests[focusedTest.index] = newPal;
+        if (focusedTest.type === "passing") {
+          store.setCurrentLintExpectedPassingTests(newTests);
+        } else {
+          store.setCurrentLintExpectedFailingTests(newTests);
+        }
+      }}
+    />
+  {/if}
+
+  {#if currentLintAppliesToCurrentPalette && testPal}
+    {#if lintResult.kind === "success" && !lintResult.passes && !errors}
+      <div class="border">
         The following colors are blamed. Using
         <select
           value={lint.blameMode}
@@ -67,33 +99,33 @@
           <option>pair</option>
         </select>
         Blame mode
+        {#if lint.blameMode === "pair"}
+          <div class="flex flex-wrap">
+            {#each pairData as pair}
+              <div class="mr-2 mb-1 border-2 border-black rounded">
+                <PalPreview
+                  pal={{
+                    ...testPal,
+                    colors: pair.map((x) => testPal.colors[x]),
+                  }}
+                />
+              </div>
+            {/each}
+          </div>
+        {:else}
+          <PalPreview
+            pal={{
+              ...testPal,
+              colors: blameData.flatMap((x) => x).map((x) => testPal.colors[x]),
+            }}
+          />
+        {/if}
       </div>
-      {#if lint.blameMode === "pair"}
-        <div class="flex flex-wrap">
-          {#each pairData as pair}
-            <div class="mr-2 mb-1 border-2 border-black rounded">
-              <PalPreview
-                pal={{
-                  ...testPal,
-                  colors: pair.map((x) => testPal.colors[x]),
-                }}
-              />
-            </div>
-          {/each}
-        </div>
-      {:else}
-        <PalPreview
-          pal={{
-            ...testPal,
-            colors: blameData.flatMap((x) => x).map((x) => testPal.colors[x]),
-          }}
-        />
-      {/if}
+    {/if}
+  {:else}
+    <div class="text-red-500">
+      This lint does not apply to the current palette due to a mismatch between
+      its tags and the palette's tags
     </div>
   {/if}
-{:else}
-  <div class="text-red-500">
-    This lint does not apply to the current palette due to a mismatch between
-    its tags and the palette's tags
-  </div>
-{/if}
+</div>

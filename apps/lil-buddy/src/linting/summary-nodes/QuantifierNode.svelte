@@ -1,49 +1,14 @@
 <script lang="ts">
-  import { LLTypes, linter, Environment } from "color-buddy-palette-lint";
   import type { Palette, Color } from "color-buddy-palette";
-  import { makePalFromString } from "color-buddy-palette";
   import DispatchNode from "./DispatchNode.svelte";
-  import { evaluateNode } from "../../lib/small-step-evaluator";
+  import { handleEval, checkWhere, getValues } from "./visual-summary-utils";
 
   export let node: any;
   export let pal: Palette;
   export let inducedVariables: Record<string, Color> = {};
 
-  $: values = getValues(node);
-  function getValues(node: any) {
-    if (node?.input?.value === "colors") {
-      return pal.colors;
-    }
-    if (
-      Array.isArray(node?.input?.children) &&
-      typeof node.input.children?.at(0)?.constructorString
-    ) {
-      return makePalFromString(
-        node.input.children.map((x: any) => x.constructorString)
-      ).colors;
-    }
-
-    return [];
-  }
-  function handleEval(node: any, inducedVariables: any, pal: any) {
-    try {
-      return evaluateNode(node, inducedVariables, pal);
-    } catch (e) {
-      console.error(e);
-      return { result: "error" };
-    }
-  }
+  $: values = getValues(node, pal);
   $: nodeResult = handleEval(node, inducedVariables, pal);
-
-  function checkWhere(node: any, color: Color, varb: string): boolean {
-    if (!node) return true;
-    const result = evaluateNode(
-      node,
-      { ...inducedVariables, [varb]: color },
-      pal
-    );
-    return result.result;
-  }
 </script>
 
 <div class="flex items-center">
@@ -66,7 +31,7 @@
           </div>
           <div class="flex flex-col">
             <div class="flex">
-              {#if checkWhere(node.where, color, node.varbs[0])}
+              {#if checkWhere(node.where, color, node.varbs[0], pal, inducedVariables)}
                 <DispatchNode
                   node={node.predicate.value}
                   {pal}

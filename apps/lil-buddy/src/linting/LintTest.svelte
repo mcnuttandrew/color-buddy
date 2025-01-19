@@ -7,68 +7,60 @@
   import Background from "../components/Background.svelte";
   import { buttonStyle } from "../lib/styles";
   export let pal: Palette;
-  export let blamedSet: Set<number> = new Set();
   export let updatePal: (newPal: Palette) => void;
   export let removeCase: () => void;
-  export let pivotRight: boolean = false;
-  export let clickFocus: () => void;
+  $: bgLum = pal.background.luminance();
+  $: textColor = bgLum > 0.4 ? "#00000066" : "#ffffffaa";
 </script>
 
 <div class="flex flex-col border rounded">
   <div class="bg-stone-400 flex w-full">
-    <Tooltip positionAlongRightEdge={pivotRight}>
-      <div slot="content" class="flex flex-col items-start">
-        <button
-          class={""}
-          on:click={() => {
-            const newColors = [
-              ...pal.colors,
-              Color.colorFromString("steelblue"),
-            ];
-            updatePal({ ...pal, colors: newColors });
-          }}
-        >
-          Add Color
-        </button>
-        <button
-          class={""}
-          on:click={() => {
-            removeCase();
-          }}
-        >
-          Remove Test Case
-        </button>
+    <!-- <Tooltip positionAlongRightEdge={pivotRight}> -->
+    <div class="flex items-start">
+      <button
+        class={buttonStyle}
+        on:click={() => {
+          const newColors = [...pal.colors, Color.colorFromString("steelblue")];
+          updatePal({ ...pal, colors: newColors });
+        }}
+      >
+        Add Color
+      </button>
+      <button
+        class={buttonStyle}
+        on:click={() => {
+          removeCase();
+        }}
+      >
+        Remove Test Case
+      </button>
 
-        <Background
-          onChange={(newColor) => updatePal({ ...pal, background: newColor })}
-          bg={pal.background}
-          colorSpace={pal.colorSpace}
-          onSpaceChange={(newSpace) => {
-            updatePal({
-              ...pal,
-              //   @ts-ignore
-              colors: pal.colors.map((x) => x.toColorSpace(newSpace)),
-              //   @ts-ignore
-              colorSpace: newSpace,
-            });
-          }}
-        />
-        <div>
-          Colors: [{pal.colors.map((x) => `"${x.toHex()}"`).join(", ")}]
-        </div>
-      </div>
-      <button class={buttonStyle} slot="target" let:toggle on:click={toggle}>
+      <Background
+        onChange={(newColor) => updatePal({ ...pal, background: newColor })}
+        bg={pal.background}
+        colorSpace={pal.colorSpace}
+        onSpaceChange={(newSpace) => {
+          updatePal({
+            ...pal,
+            //   @ts-ignore
+            colors: pal.colors.map((x) => x.toColorSpace(newSpace)),
+            //   @ts-ignore
+            colorSpace: newSpace,
+          });
+        }}
+      />
+    </div>
+    <!-- <button class={buttonStyle} slot="target" let:toggle on:click={toggle}>
         Config
       </button>
-    </Tooltip>
-    <button on:click={clickFocus} class={buttonStyle}>Focus test</button>
+    </Tooltip> -->
   </div>
   <div
     class="flex flex-wrap rounded p-2 grow items-center"
     style="background-color: {pal.background.toDisplay()};"
   >
     {#each pal.colors as color, idx}
-      <Tooltip top={"75px"} allowDrag={true}>
+      <Tooltip top={"75px"}>
         <div slot="content" class="flex flex-col">
           <input
             class="mb-2"
@@ -114,7 +106,7 @@
           <div class="font-bold">Tags</div>
           <div class="flex flex-wrap">
             {#each color.tags as tag, jdx}
-              <div class={""}>
+              <div class={buttonStyle}>
                 {tag}
                 <button
                   on:click={() => {
@@ -151,14 +143,23 @@
           on:click|stopPropagation|preventDefault={(e) => {
             toggle();
           }}
-          class={"w-6 h-6 mx-2 rounded-full transition-all"}
-          class:border-4={blamedSet.has(idx)}
-          class:border-dashed={blamedSet.has(idx)}
-          class:border-black={blamedSet.has(idx) && color.luminance() > 0.5}
-          class:border-white={blamedSet.has(idx) && color.luminance() <= 0.5}
-          style="background-color: {color.toDisplay()}"
-        ></button>
+        >
+          <div class="flex flex-col text-center relative items-center">
+            <div
+              class={"w-6 h-6 mx-1 rounded-full dot"}
+              style="background-color: {color.toDisplay()}"
+            ></div>
+            <div class="flex flex-col text-center pointer-events-none">
+              {#each color.tags as tag}
+                <div class="text-xs" style={`color: ${textColor}`}>{tag}</div>
+              {/each}
+            </div>
+          </div>
+        </button>
       </Tooltip>
     {/each}
   </div>
+  <!-- <div>
+    Colors: [{pal.colors.map((x) => `"${x.toHex()}"`).join(", ")}]
+  </div> -->
 </div>

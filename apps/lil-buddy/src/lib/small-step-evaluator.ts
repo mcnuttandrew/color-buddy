@@ -15,7 +15,8 @@ export function evaluateNode(
     (acc, [key, value]) => acc.set(key, toVal(value)),
     new Environment(pal, {}, opts, {})
   );
-  return node.evaluate(newEnv);
+  const result = node.evaluate(newEnv);
+  return result;
 }
 
 function isValue(node: any) {
@@ -31,6 +32,8 @@ function isValue(node: any) {
     case "variable":
     case undefined:
       return true;
+    case "array":
+      return node.children.every(isValue);
     default:
       return false;
   }
@@ -41,17 +44,23 @@ function subTreeIsPureOp(node: any): boolean {
     case "numberOp":
     case "predicate":
       return isValue(node.left) && isValue(node.right);
-    case "conjunction":
+    case "aggregate":
+    case "array":
+    case "map":
+      // special thing for conjunction
       if (node.type === "not") {
         return isValue(node.children[0]);
       }
-      return node.children.every((x: any) => subTreeIsPureOp(x));
-    case "aggregate":
-    case "array":
       if (node.children?.nodeType === "variable") {
         return true;
       }
-      return node.children.every((x: any) => subTreeIsPureOp(x));
+      const children = node.children;
+      if (Array.isArray(children)) {
+        return children.every((x: any) => isValue(x));
+      } else {
+        // for variables and such
+        return isValue(children);
+      }
     case "node":
     case "expression":
       return subTreeIsPureOp(node.value);
@@ -64,7 +73,7 @@ function subTreeIsPureOp(node: any): boolean {
     case "valueFunction":
       return isValue(node.input);
     case "quantifier":
-    case "map":
+      throw new Error("Quantifiers should not be evaluated here", node);
     default:
       return false;
   }
@@ -80,7 +89,12 @@ function traverseAndMaybeExecute(
   const thisIsPureOp = subTreeIsPureOp(node);
   if (thisIsPureOp) {
     const result = evaluateNode(node, inducedVariables, pal).result;
-    const astResult = LLTypes.LLValue.tryToConstruct(result, {} as any);
+    let astResult;
+    if (Array.isArray(result)) {
+      astResult = LLTypes.LLValueArray.tryToConstruct(result, {} as any);
+    } else {
+      astResult = LLTypes.LLValue.tryToConstruct(result, {} as any);
+    }
     return { result: astResult, didEval: true };
   }
   let updatedNode = node.copy();
@@ -102,7 +116,7 @@ function traverseAndMaybeExecute(
         inducedVariables,
         pal
       );
-      if (rightTraverse) {
+      if (rightTraverse.didEval) {
         updatedNode.right = rightTraverse.result;
         return { result: updatedNode, didEval: true };
       }
@@ -110,28 +124,36 @@ function traverseAndMaybeExecute(
     case "conjunction":
     case "array":
     case "aggregate":
-      const newChildren = [];
-      let found = false;
-      for (let idx = 0; idx < updatedNode.children.length; idx++) {
-        if (found) {
-          newChildren.push(updatedNode.children[idx]);
-          continue;
+    case "map":
+      const children = updatedNode.children;
+      if (Array.isArray(children)) {
+        const newChildren = [];
+        let found = false;
+        for (let idx = 0; idx < updatedNode.children.length; idx++) {
+          if (found) {
+            newChildren.push(updatedNode.children[idx]);
+            continue;
+          }
+          const child = updatedNode.children[idx];
+          const childResult = traverseAndMaybeExecute(
+            child,
+            inducedVariables,
+            pal
+          );
+          newChildren.push(childResult.result);
+          found = childResult.didEval;
         }
-        const child = updatedNode.children[idx];
+        updatedNode.children = newChildren;
+        return { result: updatedNode, didEval: found };
+      } else {
         const childResult = traverseAndMaybeExecute(
-          child,
+          updatedNode.children,
           inducedVariables,
           pal
         );
-        newChildren.push(childResult.result);
-        found = childResult.didEval;
+        updatedNode.children = childResult.result;
+        return { result: updatedNode, didEval: childResult.didEval };
       }
-      // let found = false
-      // updatedNode.children = updatedNode.children.map(x => {
-
-      // })
-      updatedNode.children = newChildren;
-      return { result: updatedNode, didEval: found };
     case "node":
     case "expression":
       return traverseAndMaybeExecute(node.value, inducedVariables, pal);
@@ -154,7 +176,6 @@ function traverseAndMaybeExecute(
     case "quantifier":
       throw new Error("Quantifiers should not be evaluated here", node);
 
-    case "map":
     default:
       console.log(node.nodeType, " not implemented yet", node);
       throw new Error(`${node.nodeType} not implemented yet`, node);

@@ -42,6 +42,88 @@ exports[`Agg Test 1`] = `
 ]
 `;
 
+exports[`Fair Test 1`] = `
+[
+  LLExpression {
+    "nodeType": "expression",
+    "value": LLPredicate {
+      "left": LLAggregate {
+        "children": LLMap {
+          "children": LLVariable {
+            "nodeType": "variable",
+            "value": "colors",
+          },
+          "func": LLValueFunction {
+            "input": LLVariable {
+              "nodeType": "variable",
+              "value": "x",
+            },
+            "nodeType": "valueFunction",
+            "params": {},
+            "type": "lch.l",
+          },
+          "nodeType": "map",
+          "type": "sort",
+          "varb": "x",
+        },
+        "nodeType": "aggregate",
+        "type": "extent",
+      },
+      "nodeType": "predicate",
+      "right": LLNumber {
+        "nodeType": "number",
+        "value": 50,
+      },
+      "threshold": undefined,
+      "type": "<",
+    },
+  },
+  LLPredicate {
+    "left": LLAggregate {
+      "children": LLValueArray {
+        "children": [
+          LLNumber {
+            "nodeType": "number",
+            "value": 46.278,
+          },
+          LLNumber {
+            "nodeType": "number",
+            "value": 54.291,
+          },
+        ],
+        "nodeType": "array",
+      },
+      "nodeType": "aggregate",
+      "type": "extent",
+    },
+    "nodeType": "predicate",
+    "right": LLNumber {
+      "nodeType": "number",
+      "value": 50,
+    },
+    "threshold": undefined,
+    "type": "<",
+  },
+  LLPredicate {
+    "left": LLNumber {
+      "nodeType": "number",
+      "value": 8.012999999999998,
+    },
+    "nodeType": "predicate",
+    "right": LLNumber {
+      "nodeType": "number",
+      "value": 50,
+    },
+    "threshold": undefined,
+    "type": "<",
+  },
+  LLBool {
+    "nodeType": "bool",
+    "value": true,
+  },
+]
+`;
+
 exports[`SmallStepEvaluator works 1`] = `
 [
   LLExpression {

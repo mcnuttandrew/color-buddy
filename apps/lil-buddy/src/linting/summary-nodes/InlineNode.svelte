@@ -20,8 +20,15 @@
       <span class="mr-2">NOT</span>
       <svelte:self node={node.children[0]} {pal} {inducedVariables} />
     </div>
+  {:else if node.nodeType === "conjunction"}
+    <div class="flex flex-col">
+      <div>{node.type}</div>
+      {#each node.children as child}
+        <svelte:self node={child} {pal} {inducedVariables} />
+      {/each}
+    </div>
   {:else if node.nodeType === "number"}
-    <div>{node.value}</div>
+    <div>{Math.round(node.value * 1000) / 1000}</div>
   {:else if node.nodeType === "variable"}
     {#if inducedVariables[node.value]}
       <div
@@ -70,16 +77,51 @@
     <div class="flex">
       {node.type}
       <span>{"("}</span>
-      {#if node.children?.nodeType === "variable"}
-        <svelte:self node={node.children} {pal} {inducedVariables} />
-      {:else}
+      {#if Array.isArray(node.children)}
         {#each node.children as child}
           <svelte:self node={child} {pal} {inducedVariables} />
           {#if child !== node.children[node.children.length - 1]}
             <span>{","}</span>
           {/if}
         {/each}
+      {:else}
+        <svelte:self node={node.children} {pal} {inducedVariables} />
       {/if}
+      <span>{")"}</span>
+    </div>
+  {:else if node.nodeType === "array"}
+    <div class="flex">
+      <span>{"["}</span>
+      {#if Array.isArray(node.children)}
+        {#each node.children as child}
+          <svelte:self node={child} {pal} {inducedVariables} />
+          {#if child !== node.children[node.children.length - 1]}
+            <span>{","}</span>
+          {/if}
+        {/each}
+      {:else}
+        <svelte:self node={node.children} {pal} {inducedVariables} />
+      {/if}
+      <span>{"]"}</span>
+    </div>
+  {:else if node.nodeType === "map"}
+    <div class="flex">
+      {node.type}
+      <span>{"("}</span>
+      {#if Array.isArray(node.children)}
+        {#each node.children as child}
+          <svelte:self node={child} {pal} {inducedVariables} />
+          {#if child !== node.children[node.children.length - 1]}
+            <span>{","}</span>
+          {/if}
+        {/each}
+      {:else}
+        <svelte:self node={node.children} {pal} {inducedVariables} />
+      {/if}
+      <span>{","}</span>
+      <div>{node.varb}</div>
+      <span>{"=>"}</span>
+      <svelte:self node={node.func} {pal} {inducedVariables} />
       <span>{")"}</span>
     </div>
   {:else if node.nodeType === "expression"}

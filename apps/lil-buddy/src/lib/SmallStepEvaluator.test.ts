@@ -1,6 +1,6 @@
 import { expect, test } from "vitest";
 import { makePalFromString } from "color-buddy-palette";
-import { GenerateAST } from "color-buddy-palette-lint";
+import { GenerateAST, PREBUILT_LINTS } from "color-buddy-palette-lint";
 import { generateEvaluations } from "./small-step-evaluator";
 
 const defaultPal = makePalFromString(["red", "green"]);
@@ -42,3 +42,26 @@ test("Agg Test", () => {
   const result = generateEvaluations(ast, {}, defaultPal);
   expect(result).toMatchSnapshot();
 });
+
+test("Fair Test", () => {
+  const fair = {
+    "<": {
+      left: { extent: { sort: "colors", varb: "x", func: { "lch.l": "x" } } },
+      right: 50,
+    },
+  };
+  const ast = (GenerateAST(fair as any).value as any).children[0] as any;
+  const result = generateEvaluations(ast, {}, defaultPal);
+  expect(result).toMatchSnapshot();
+});
+
+// test("All Test", () => {
+//   for (const test in PREBUILT_LINTS) {
+//     const lint = PREBUILT_LINTS[test as keyof typeof PREBUILT_LINTS];
+//     console.log(lint);
+//     const lintProgram = JSON.parse(lint.program);
+//     const ast = (GenerateAST(lintProgram).value as any).children[0] as any;
+//     const result = generateEvaluations(ast, {}, defaultPal);
+//     expect(result).toMatchSnapshot();
+//   }
+// });

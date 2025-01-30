@@ -16,6 +16,7 @@ interface StoreData {
   currentChecks: LintResult[];
   loadState?: "loading" | "idle";
   engine: "openai" | "anthropic";
+  okayToExecute: boolean;
 }
 
 const InitialStore: StoreData = {
@@ -36,6 +37,7 @@ const InitialStore: StoreData = {
   loadState: "idle",
   engine: "openai",
   focusedTest: false,
+  okayToExecute: true,
 };
 
 function serializeStore(store: StoreData) {
@@ -220,6 +222,8 @@ function createStore() {
       persistUpdate((old) => ({ ...old, engine })),
     setFocusedTest: (test: StoreData["focusedTest"]) =>
       persistUpdate((old) => ({ ...old, focusedTest: test })),
+    setOkayToExecute: (okay: StoreData["okayToExecute"]) =>
+      persistUpdate((old) => ({ ...old, okayToExecute: okay })),
   };
 }
 

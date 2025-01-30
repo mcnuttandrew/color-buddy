@@ -5,6 +5,7 @@
   import LintPicker from "./linting/LintPicker.svelte";
 
   import NewLintSuggestion from "./linting/NewLintSuggestion.svelte";
+  import KeyboardHooks from "./components/KeyboardHooks.svelte";
   $: lint = $store.lints.find((lint) => lint.id === $store.focusedLint)!;
 </script>
 
@@ -45,3 +46,4 @@
     </div>
   {/if}
 </main>
+<KeyboardHooks />

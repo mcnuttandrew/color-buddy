@@ -90,7 +90,7 @@
     </div>
     <div class="flex flex-wrap">
       {#each lint.requiredTags as tag}
-        <div>
+        <div class="mr-2 border rounded px-2 py-1">
           {tag}
           <button
             class={""}

@@ -39,6 +39,7 @@
   $: errors = lintRun.errors;
   $: pairData = blameData as number[][];
   $: program = lint.program;
+  let editTime: null | number = null;
 </script>
 
 {#if currentLintAppliesToCurrentPalette && testPal}
@@ -67,6 +68,10 @@
       }}
       pal={testPal}
       updatePal={(newPal) => {
+        if (editTime === null) {
+          editTime = Date.now();
+          store.setOkayToExecute(false);
+        }
         const oldTests =
           focusedTest.type === "passing"
             ? lint.expectedPassingTests
@@ -78,6 +83,15 @@
         } else {
           store.setCurrentLintExpectedFailingTests(newTests);
         }
+        editTime = Date.now();
+        setTimeout(() => {
+          if (!editTime) {
+            store.setOkayToExecute(true);
+          } else if (Date.now() - editTime > 1000) {
+            store.setOkayToExecute(true);
+            editTime = null;
+          }
+        }, 1000);
       }}
     />
   {/if}
@@ -125,7 +139,16 @@
   {:else}
     <div class="text-red-500">
       This lint does not apply to the current palette due to a mismatch between
-      its tags and the palette's tags
+      its tags and the palette's tags. This lint requires the following tags: {lint.requiredTags
+        .map((x) => `"${x}"`)
+        .join(", ")}.
+      {#if testPal?.tags?.length}
+        The palette has the following tags: {(testPal?.tags || [])
+          .map((x) => `"${x}"`)
+          .join(", ")}
+      {:else}
+        The palette has no tags.
+      {/if}
     </div>
   {/if}
 </div>

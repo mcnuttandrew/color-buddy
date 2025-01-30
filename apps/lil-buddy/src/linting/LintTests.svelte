@@ -74,24 +74,6 @@
             }}
           >
             <PalPreview pal={failing.pal} showTags={true} />
-            <!-- <LintTest
-              clickFocus={() =>
-                store.setFocusedTest({ type: "failing", index: idx })}
-              pivotRight={true}
-              removeCase={() => {
-                const newTests = [...lint.expectedFailingTests].filter(
-                  (_, i) => i !== idx
-                );
-                store.setCurrentLintExpectedFailingTests(newTests);
-              }}
-              pal={failing.pal}
-              blamedSet={new Set(failing.blame)}
-              updatePal={(newPal) => {
-                const newTests = [...lint.expectedFailingTests];
-                newTests[idx] = newPal;
-                store.setCurrentLintExpectedFailingTests(newTests);
-              }}
-            /> -->
             {#if failing.result.kind === "success"}
               {#if !failing.result?.passes}
                 <div class="text-green-500">Correct</div>

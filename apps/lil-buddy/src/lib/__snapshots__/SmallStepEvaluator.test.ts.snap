@@ -214,6 +214,10 @@ exports[`SmallStepEvaluator works with small not example 1`] = `
     "nodeType": "bool",
     "value": false,
   },
+  LLBool {
+    "nodeType": "bool",
+    "value": false,
+  },
 ]
 `;
 

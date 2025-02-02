@@ -78,6 +78,8 @@ function subTreeIsPureOp(node: any): boolean {
       return false;
   }
 }
+
+let counter = 0;
 function traverseAndMaybeExecute(
   node: any,
   inducedVariables: Record<string, Color>,
@@ -86,8 +88,15 @@ function traverseAndMaybeExecute(
   result: any;
   didEval: boolean;
 } {
+  counter++;
+  if (counter > 500) {
+    throw new Error("Too many iterations");
+  }
   const thisIsPureOp = subTreeIsPureOp(node);
-  if (thisIsPureOp) {
+  const allChildrenPureOps = Array.isArray(node?.children)
+    ? (node?.children || []).every((x: any) => isValue(x))
+    : false;
+  if (thisIsPureOp || allChildrenPureOps) {
     const result = evaluateNode(node, inducedVariables, pal).result;
     let astResult;
     if (Array.isArray(result)) {
@@ -189,7 +198,7 @@ export function generateEvaluations(
 ): LLNode[] {
   const evalLog = [node.copy()];
   let currentNode = node.copy();
-  while (!subTreeIsPureOp(currentNode)) {
+  while (!subTreeIsPureOp(currentNode) && !isValue(currentNode)) {
     const result = traverseAndMaybeExecute(currentNode, inducedVariables, pal);
     evalLog.push(result.result);
     currentNode = result.result;

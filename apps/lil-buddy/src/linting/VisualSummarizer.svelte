@@ -2,31 +2,41 @@
   import type { Palette } from "color-buddy-palette";
   import DispatchNode from "./summary-nodes/DispatchNode.svelte";
   import { GenerateAST } from "color-buddy-palette-lint";
+  import {
+    generateEvaluations,
+    rewriteQuantifiers,
+  } from "../lib/small-step-evaluator";
   import store from "../stores/store";
   export let pal: Palette;
   export let lint: string;
 
-  $: ast = getAST(lint, $store.okayToExecute);
+  $: executionLog = getExecutionLog(lint, $store.okayToExecute);
   let error: any;
-  function getAST(lint: string, okayToExecute: boolean) {
-    console.log("ast");
+  function getExecutionLog(lint: string, okayToExecute: boolean) {
     if (!okayToExecute) {
       error = "Changes in process";
       return null;
     }
     try {
-      return GenerateAST(JSON.parse(lint)).value as any;
+      const ast = (GenerateAST(JSON.parse(lint) as any).value as any)
+        .children[0] as any;
+      const rewrittenAST = rewriteQuantifiers(ast);
+      const result = generateEvaluations(rewrittenAST, {}, pal, true).slice(1);
+      error = null;
+      return result;
     } catch (e) {
       error = e;
     }
   }
-  $: console.log("summarizer", $store.okayToExecute);
+  // $: console.log("summarizer", $store.okayToExecute, executionLog);
 </script>
 
 <div class="flex">
   {#if error}
     <div>{error}</div>
   {:else}
-    <DispatchNode node={ast} {pal} />
+    {#each executionLog || [] as log}
+      <DispatchNode node={log} {pal} />
+    {/each}
   {/if}
 </div>

@@ -2,19 +2,11 @@
   import type { Palette, Color } from "color-buddy-palette";
   import InlineNode from "./InlineNode.svelte";
   import QuantifierNode from "./QuantifierNode.svelte";
-  import { getPredNodes, handleEval } from "./visual-summary-utils";
 
   export let node: any;
   export let pal: Palette;
-  export let inducedVariables: Record<string, Color> = {};
-
-  $: predicateNodes = getPredNodes(node, inducedVariables, pal) as any[];
 
   $: isNotNode = node.nodeType === "conjunction" && node.type === "not";
-  function shouldComputeResult(node: any) {
-    const conjTypes = new Set(["and", "or"]);
-    return node.nodeType === "conjunction" && conjTypes.has(node.type);
-  }
 </script>
 
 {#if node.nodeType == "conjunction" && !isNotNode}
@@ -29,23 +21,15 @@
       {/if}
       {#each node.children as child}
         <div class="flex">
-          <svelte:self node={child.value} {pal} {inducedVariables} />
+          <svelte:self node={child.value} {pal} />
         </div>
       {/each}
     </div>
-    {#if shouldComputeResult(node)}
-      <div>→{handleEval(node, inducedVariables, pal).result}</div>
-    {/if}
   </div>
 {:else if node.nodeType === "expression"}
-  <svelte:self node={node.value} {pal} {inducedVariables} />
-{:else if predicateNodes.length}
-  {#each predicateNodes as predicateNode}
-    <div class="flex items-center">
-      <div>→</div>
-      <InlineNode node={predicateNode} {pal} {inducedVariables} />
-    </div>
-  {/each}
-{:else if node.nodeType === "quantifier"}
-  <QuantifierNode {node} {pal} {inducedVariables} />
+  <svelte:self node={node.value} {pal} />
+{:else if node.nodeType === "quantifier" || node.quant}
+  <QuantifierNode {node} {pal} />
+{:else}
+  <InlineNode {node} {pal} />
 {/if}

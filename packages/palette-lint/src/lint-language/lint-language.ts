@@ -162,7 +162,6 @@ export class LLNode {
     return "Node";
   }
   copy() {
-    console.log("asd", this);
     return new LLNode();
   }
 }
@@ -824,6 +823,9 @@ export class LLPairFunction extends LLNode {
     return `${
       this.type
     }(${this.left.toString()}, ${this.right.toString()}${paramString})`;
+  }
+  copy() {
+    return new LLPairFunction(this.type, this.left, this.right, this.params);
   }
 }
 

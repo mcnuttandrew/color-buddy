@@ -17,7 +17,11 @@
     return str;
   }
   $: env = { ...inducedVariables, ...node?.inducedVariables };
-  $: console.log(inducedVariables, node?.inducedVariables);
+  $: console.log(
+    node.nodeType,
+    env,
+    node.nodeType === "variable" ? env[node.value] : " "
+  );
 </script>
 
 <div class="flex items-center">
@@ -47,14 +51,11 @@
     {#if env[node.value]}
       <div
         class="h-5 w-5 rounded-full"
-        style={`background: ${env[node.value].toHex()}`}
+        style={`background: ${env[node.value]}`}
       />
     {:else if node.value === "colors"}
       {#each pal.colors as color}
-        <div
-          class="h-5 w-5 rounded-full"
-          style={`background: ${color.toHex()}`}
-        />
+        <div class="h-5 w-5 rounded-full" style={`background: ${color}`} />
       {/each}
     {:else}
       <div>{node.value}</div>
@@ -80,13 +81,10 @@
     {#if node.value.channels["L"] === 0 && node.value.channels["a"] === 0 && node.value.channels["b"] === 0 && node.constructorString !== "#000"}
       {node.constructorString}
     {:else}
-      <div
-        class="h-5 w-5 rounded-full"
-        style={`background: ${node.value.toHex()}`}
-      />
+      <div class="h-5 w-5 rounded-full" style={`background: ${node.value}`} />
     {/if}
   {:else if node.nodeType === "bool"}
-    <div>{node.value}</div>
+    <div>{node.value ? "T" : "F"}</div>
   {:else if node.nodeType === "aggregate"}
     <div class="flex">
       {node.type}

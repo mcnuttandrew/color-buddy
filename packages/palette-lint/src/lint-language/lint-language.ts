@@ -189,7 +189,7 @@ export class LLExpression extends LLNode {
     return this.value.toString();
   }
   copy() {
-    return new LLExpression(this.value);
+    return new LLExpression(this.value.copy());
   }
 }
 
@@ -248,7 +248,10 @@ export class LLConjunction extends LLNode {
     return new LLConjunction(exprType, childrenTypes);
   }
   copy() {
-    return new LLConjunction(this.type, this.children);
+    return new LLConjunction(
+      this.type,
+      this.children.map((x: any) => x.copy())
+    );
   }
   toString(): string {
     if (this.type === "id") return this.children[0].toString();
@@ -277,7 +280,7 @@ export class LLValueArray extends LLNode {
     return new LLValueArray(childrenTypes);
   }
   copy() {
-    return new LLValueArray(this.children);
+    return new LLValueArray(this.children.map((x) => x.copy()));
   }
   toString(): string {
     return `[${this.children.map((x) => x.toString()).join(", ")}]`;
@@ -352,7 +355,7 @@ export class LLColor extends LLNode {
     return false;
   }
   copy() {
-    return new LLColor(this.value, this.constructorString);
+    return new LLColor(this.value.copy(), this.constructorString);
   }
   toString(): string {
     return this.constructorString;
@@ -427,7 +430,7 @@ export class LLNumberOp extends LLNode {
     return new LLNumberOp(opType, leftType, rightType);
   }
   copy() {
-    return new LLNumberOp(this.type, this.left, this.right);
+    return new LLNumberOp(this.type, this.left.copy(), this.right.copy());
   }
   toString(): string {
     let left = this.left.toString();
@@ -570,7 +573,12 @@ export class LLPredicate extends LLNode {
     return new LLPredicate(predicateType, leftType, rightType, threshold);
   }
   copy() {
-    return new LLPredicate(this.type, this.left, this.right, this.threshold);
+    return new LLPredicate(
+      this.type,
+      this.left.copy(),
+      this.right.copy(),
+      this.threshold
+    );
   }
   toString(): string {
     let type = "" + this.type;
@@ -617,7 +625,7 @@ export class LLValue extends LLNode {
     return value;
   }
   copy() {
-    return new LLValue(this.value);
+    return new LLValue(this.value.copy());
   }
   toString(): string {
     return this.value.toString();
@@ -711,7 +719,7 @@ export class LLValueFunction extends LLNode {
     return new LLValueFunction(op.primaryKey, input, params);
   }
   copy() {
-    return new LLValueFunction(this.type, this.input, this.params);
+    return new LLValueFunction(this.type, this.input.copy(), this.params);
   }
   toString(): string {
     const params = Object.values(this.params).join(", ");
@@ -825,7 +833,12 @@ export class LLPairFunction extends LLNode {
     }(${this.left.toString()}, ${this.right.toString()}${paramString})`;
   }
   copy() {
-    return new LLPairFunction(this.type, this.left, this.right, this.params);
+    return new LLPairFunction(
+      this.type,
+      this.left.copy(),
+      this.right.copy(),
+      this.params
+    );
   }
 }
 
@@ -939,10 +952,10 @@ export class LLQuantifier extends LLNode {
   copy() {
     return new LLQuantifier(
       this.type,
-      this.input,
-      this.predicate,
+      this.input.copy(),
+      this.predicate.copy(),
       this.varbs,
-      this.where
+      this.where?.copy()
     );
   }
   toString(): string {
@@ -1042,8 +1055,8 @@ export class LLAggregate extends LLNode {
     }
     return new LLAggregate(reduceType, childType);
   }
-  copy() {
-    return new LLAggregate(this.type, this.children);
+  copy(): LLAggregate {
+    return new LLAggregate(this.type, this.children.copy());
   }
   toString(): string {
     return `${this.type}(${this.children.toString()})`;
@@ -1155,8 +1168,15 @@ export class LLMap extends LLNode {
     }
     return new LLMap(op, childType, func, varb);
   }
-  copy() {
-    return new LLMap(this.type, this.children, this.func, this.varb);
+  copy(): LLMap {
+    return new LLMap(
+      this.type,
+      Array.isArray(this.children)
+        ? this.children.map((x: any) => x.copy())
+        : this.children.copy(),
+      this.func.copy(),
+      this.varb
+    );
   }
   toString(): string {
     const type = this.type;

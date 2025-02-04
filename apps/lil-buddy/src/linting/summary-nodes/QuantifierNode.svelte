@@ -1,10 +1,11 @@
 <script lang="ts">
-  import type { Palette, Color } from "color-buddy-palette";
+  import type { Palette } from "color-buddy-palette";
   import DispatchNode from "./DispatchNode.svelte";
   export let node: any;
   export let pal: Palette;
 
   let open = true;
+  $: console.log("quants", node?.results);
 </script>
 
 <!-- only show it if its the evaluated version -->
@@ -26,7 +27,7 @@
               <div class="flex">
                 <div
                   class="h-8 w-8 rounded-full"
-                  style={`background: ${result.color.toHex()}`}
+                  style={`background: ${result.color}`}
                 />
                 <div>→</div>
               </div>
@@ -37,7 +38,11 @@
                     removed by where
                   {:else}
                     {#each result.evals as evaluation, idx}
-                      <DispatchNode node={evaluation} {pal} />
+                      <DispatchNode
+                        node={evaluation}
+                        {pal}
+                        inducedVariables={evaluation.inducedVariables}
+                      />
                       {#if idx < result.evals.length - 1}
                         <div>→</div>
                       {/if}

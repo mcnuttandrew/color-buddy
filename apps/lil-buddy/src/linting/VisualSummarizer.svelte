@@ -21,14 +21,14 @@
       const ast = (GenerateAST(JSON.parse(lint) as any).value as any)
         .children[0] as any;
       const rewrittenAST = rewriteQuantifiers(ast);
-      const result = generateEvaluations(rewrittenAST, {}, pal, true).slice(1);
+      const result = generateEvaluations(rewrittenAST, {}, pal, true);
       error = null;
       return result;
     } catch (e) {
       error = e;
     }
   }
-  // $: console.log("summarizer", $store.okayToExecute, executionLog);
+  $: console.log("summarizer", $store.okayToExecute, executionLog);
 </script>
 
 <div class="flex">

@@ -5,6 +5,7 @@
 
   export let node: any;
   export let pal: Palette;
+  export let inducedVariables: Record<string, any> = {};
 
   $: isNotNode = node.nodeType === "conjunction" && node.type === "not";
 </script>
@@ -31,5 +32,5 @@
 {:else if node.nodeType === "quantifier" || node.quant}
   <QuantifierNode {node} {pal} />
 {:else}
-  <InlineNode {node} {pal} />
+  <InlineNode {node} {pal} {inducedVariables} />
 {/if}

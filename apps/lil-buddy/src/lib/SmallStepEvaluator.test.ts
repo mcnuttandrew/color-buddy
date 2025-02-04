@@ -58,7 +58,7 @@ test("Agg Test", () => {
   expect(result).toMatchSnapshot();
 });
 
-test("Fair Test", () => {
+test.only("Fair Test", () => {
   const fair = {
     "<": {
       left: { extent: { sort: "colors", varb: "x", func: { "lch.l": "x" } } },
@@ -82,6 +82,20 @@ test("Quantifier Test", () => {
           },
           right: 3,
         },
+      },
+    },
+  };
+  const result = generateEvaluations(getAST(quantifier), {}, defaultPal, true);
+  expect(result).toMatchSnapshot();
+});
+
+test("Quantifier Test 2", () => {
+  const quantifier = {
+    all: {
+      in: "colors",
+      varb: "a",
+      predicate: {
+        "==": { left: { inGamut: "a" }, right: true },
       },
     },
   };

@@ -83,7 +83,7 @@ function checkWhere(
 
 function getValues(node: any, pal: Palette) {
   if (node?.input?.value === "colors") {
-    return pal.colors;
+    return [...pal.colors];
   }
   if (
     Array.isArray(node?.input?.children) &&
@@ -137,21 +137,22 @@ function isValue(node: any) {
       return false;
   }
 }
-function deepCopyEnv(env: InducedVariables) {
-  return Object.entries(env).reduce(
-    (acc, [key, value]) => ({
-      ...acc,
-      [key]: typeof value === "number" ? value : value.copy(),
-    }),
-    {}
-  );
-}
 
 function subTreeIsPureOp(
   node: any,
   inducedVariables: InducedVariables
 ): boolean {
-  node.inducedVariables = deepCopyEnv(inducedVariables);
+  node.inducedVariables = Object.fromEntries(
+    Object.entries(inducedVariables).map(([k, v]: any) => {
+      if (typeof v === "number") {
+        return [k, v];
+      } else if (!v.toHex) {
+        return [k, v];
+      }
+      return [k, v.toHex()];
+    })
+  );
+  console.log("subTreeIsPureOp", node.nodeType, toHexes(node.inducedVariables));
   switch (node.nodeType) {
     case "pairFunction":
     case "numberOp":
@@ -193,6 +194,21 @@ function subTreeIsPureOp(
   }
 }
 
+function mapObject(obj: any, fn: (k: string, v: any) => any) {
+  return Object.fromEntries(Object.entries(obj).map(([k, v]) => [k, fn(k, v)]));
+}
+function toHexes(obj: any) {
+  return mapObject(obj, (k, v) => {
+    if (typeof v === "number") {
+      return v;
+    }
+    if (!v.toHex) {
+      return v;
+    }
+    return v.toHex();
+  });
+}
+
 let counter = 0;
 function traverseAndMaybeExecute(
   node: any,
@@ -220,14 +236,17 @@ function traverseAndMaybeExecute(
     }
     return { result: astResult, didEval: true };
   }
-  let updatedNode = node.copy();
-  updatedNode.inducedVariables = inducedVariables;
+  let updatedNode = node;
+  // .copy();
+  updatedNode.inducedVariables = toHexes({ ...inducedVariables });
+
+  console.log("attached", updatedNode.nodeType, updatedNode.inducedVariables);
   switch (node.nodeType) {
     case "pairFunction":
     case "numberOp":
     case "predicate":
       const leftTraverse = traverseAndMaybeExecute(
-        node.left,
+        updatedNode.left,
         inducedVariables,
         pal
       );
@@ -236,7 +255,7 @@ function traverseAndMaybeExecute(
         return { result: updatedNode, didEval: true };
       }
       const rightTraverse = traverseAndMaybeExecute(
-        node.right,
+        updatedNode.right,
         inducedVariables,
         pal
       );
@@ -286,11 +305,15 @@ function traverseAndMaybeExecute(
     case "number":
     case "value":
     case undefined:
-      return { result: node, didEval: false };
+      return { result: updatedNode, didEval: false };
     case "variable":
-      return { result: node, didEval: false };
+      return { result: updatedNode, didEval: false };
     case "valueFunction":
-      const arg = traverseAndMaybeExecute(node.input, inducedVariables, pal);
+      const arg = traverseAndMaybeExecute(
+        updatedNode.input,
+        inducedVariables,
+        pal
+      );
       if (arg.didEval) {
         updatedNode.input = arg.result;
         return { result: updatedNode, didEval: true };
@@ -299,46 +322,52 @@ function traverseAndMaybeExecute(
       }
 
     case "quantifier":
-      const values = getValues(node, pal);
-      // todo nested quantifiers
+      const values = getValues(updatedNode, pal);
+      // const results = [];
       const results = values.map((color, i) => {
         const whereResult = checkWhere(
-          node.where,
+          updatedNode.where,
           color,
-          node.varbs[0],
+          updatedNode.varbs[0],
           pal,
-          inducedVariables,
+          { ...updatedNode.inducedVariables },
           i
         );
         if (!whereResult) {
-          return { result: "WHERE SKIP", didEval: true, color: color.copy() };
+          return { result: "WHERE SKIP", didEval: true, color: color.toHex() };
         }
         const updatedVariables = {
-          ...inducedVariables,
-          [node.varbs[0]]: color,
+          ...updatedNode.inducedVariables,
+          [updatedNode.varbs[0]]: color,
           [`index(${node.varbs[0]})`]: i,
         };
+        const evals = generateEvaluations(
+          updatedNode.predicate.value || updatedNode.predicate,
+          { ...updatedVariables },
+          pal
+        );
+        console.log("evals", color.toHex(), JSON.stringify(evals, null, 2));
         return {
-          color: color.copy(),
-          evals: generateEvaluations(
-            node.predicate.value || node.predicate,
-            updatedVariables,
-            pal
-          ),
+          color: color.toHex(),
+          evals: [...evals],
         };
       });
-      // todo doesn't handle evaluation of the node
       return {
-        result: { results, quant: node.type, varb: node.varbs[0] },
+        result: {
+          results,
+          quant: updatedNode.type,
+          varb: updatedNode.varbs[0],
+        },
         didEval: true,
       };
 
     default:
       console.log(node.nodeType, " not implemented yet", node);
       throw new Error(`${node.nodeType} not implemented yet`, node);
-      return { result: node, didEval: false };
+    // return { result: node, didEval: false };
   }
 }
+
 export function generateEvaluations(
   node: LLNode,
   inducedVariables: InducedVariables,
@@ -348,18 +377,33 @@ export function generateEvaluations(
   if (init) {
     counter = 0;
   }
-  const evalLog = [node.copy()];
+  console.log("generateEvaluations", toHexes(inducedVariables));
+  let nodeCopy = node.copy();
+  // weird hack to inset the induced variables over everything
+  subTreeIsPureOp(nodeCopy, inducedVariables);
+  // todo maybe: if this is a quantifier don't copy it
+  // const evalLog = node.nodeType === "quantifier" ? [] : [nodeCopy];
+  const evalLog = [nodeCopy];
   let currentNode = node.copy();
+  subTreeIsPureOp(node, inducedVariables);
+
   while (
-    !subTreeIsPureOp(currentNode, inducedVariables) &&
+    !subTreeIsPureOp(currentNode, { ...inducedVariables }) &&
     !isValue(currentNode)
   ) {
-    const result = traverseAndMaybeExecute(currentNode, inducedVariables, pal);
+    const result = traverseAndMaybeExecute(
+      currentNode,
+      { ...inducedVariables },
+      pal
+    );
+    console.log("trying to attach here", inducedVariables);
+    result.result.inducedVariables = toHexes({ ...inducedVariables });
+
     evalLog.push(result.result);
     currentNode = result.result;
   }
   // get the final result
-  const result = evaluateNode(node, inducedVariables, pal).result;
+  const result = evaluateNode(node, { ...inducedVariables }, pal).result;
   const astResult = LLTypes.LLValue.tryToConstruct(result, {} as any);
   evalLog.push(astResult);
   return evalLog;

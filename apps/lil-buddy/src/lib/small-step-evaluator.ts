@@ -100,6 +100,10 @@ function getValues(node: any, pal: Palette) {
 const toVal = (x: Color | number) => {
   if (typeof x === "number") {
     return new LLTypes.LLValue(new LLTypes.LLNumber(x));
+  } else if (typeof x === "string") {
+    return new LLTypes.LLValue(
+      new LLTypes.LLColor(Color.colorFromHex(x, "lab"), x)
+    );
   }
   return new LLTypes.LLValue(new LLTypes.LLColor(x, x.toHex()));
 };
@@ -142,17 +146,7 @@ function subTreeIsPureOp(
   node: any,
   inducedVariables: InducedVariables
 ): boolean {
-  node.inducedVariables = Object.fromEntries(
-    Object.entries(inducedVariables).map(([k, v]: any) => {
-      if (typeof v === "number") {
-        return [k, v];
-      } else if (!v.toHex) {
-        return [k, v];
-      }
-      return [k, v.toHex()];
-    })
-  );
-  console.log("subTreeIsPureOp", node.nodeType, toHexes(node.inducedVariables));
+  node.inducedVariables = toHexes(inducedVariables);
   switch (node.nodeType) {
     case "pairFunction":
     case "numberOp":
@@ -162,6 +156,7 @@ function subTreeIsPureOp(
     case "array":
     case "map":
       // special thing for conjunction
+      // todo: maybe not necessary, check when the tests work again
       if (node.type === "not") {
         return isValue(node.children[0]);
       }
@@ -236,11 +231,11 @@ function traverseAndMaybeExecute(
     }
     return { result: astResult, didEval: true };
   }
-  let updatedNode = node;
-  // .copy();
+
+  let updatedNode = node.copy();
+  subTreeIsPureOp(updatedNode, inducedVariables);
   updatedNode.inducedVariables = toHexes({ ...inducedVariables });
 
-  console.log("attached", updatedNode.nodeType, updatedNode.inducedVariables);
   switch (node.nodeType) {
     case "pairFunction":
     case "numberOp":
@@ -272,12 +267,12 @@ function traverseAndMaybeExecute(
       if (Array.isArray(children)) {
         const newChildren = [];
         let found = false;
-        for (let idx = 0; idx < updatedNode.children.length; idx++) {
+        for (let idx = 0; idx < children.length; idx++) {
           if (found) {
-            newChildren.push(updatedNode.children[idx]);
+            newChildren.push(children[idx]);
             continue;
           }
-          const child = updatedNode.children[idx];
+          const child = children[idx];
           const childResult = traverseAndMaybeExecute(
             child,
             inducedVariables,
@@ -290,7 +285,7 @@ function traverseAndMaybeExecute(
         return { result: updatedNode, didEval: found };
       } else {
         const childResult = traverseAndMaybeExecute(
-          updatedNode.children,
+          children,
           inducedVariables,
           pal
         );
@@ -346,7 +341,6 @@ function traverseAndMaybeExecute(
           { ...updatedVariables },
           pal
         );
-        console.log("evals", color.toHex(), JSON.stringify(evals, null, 2));
         return {
           color: color.toHex(),
           evals: [...evals],
@@ -377,7 +371,6 @@ export function generateEvaluations(
   if (init) {
     counter = 0;
   }
-  console.log("generateEvaluations", toHexes(inducedVariables));
   let nodeCopy = node.copy();
   // weird hack to inset the induced variables over everything
   subTreeIsPureOp(nodeCopy, inducedVariables);
@@ -396,7 +389,6 @@ export function generateEvaluations(
       { ...inducedVariables },
       pal
     );
-    console.log("trying to attach here", inducedVariables);
     result.result.inducedVariables = toHexes({ ...inducedVariables });
 
     evalLog.push(result.result);

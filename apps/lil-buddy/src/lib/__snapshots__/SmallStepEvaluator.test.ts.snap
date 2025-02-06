@@ -3,6 +3,7 @@
 exports[`Agg Test 1`] = `
 [
   LLExpression {
+    "inducedVariables": {},
     "nodeType": "expression",
     "value": LLPredicate {
       "inducedVariables": {},
@@ -11,7 +12,6 @@ exports[`Agg Test 1`] = `
           "nodeType": "variable",
           "value": "colors",
         },
-        "inducedVariables": {},
         "nodeType": "aggregate",
         "type": "count",
       },
@@ -45,9 +45,585 @@ exports[`Agg Test 1`] = `
 ]
 `;
 
+exports[`Even distribution 1`] = `
+[
+  LLExpression {
+    "inducedVariables": {},
+    "nodeType": "expression",
+    "value": LLConjunction {
+      "children": [
+        LLExpression {
+          "nodeType": "expression",
+          "value": LLPredicate {
+            "left": LLAggregate {
+              "children": LLMap {
+                "children": LLMap {
+                  "children": LLVariable {
+                    "nodeType": "variable",
+                    "value": "colors",
+                  },
+                  "func": LLValueFunction {
+                    "input": LLVariable {
+                      "nodeType": "variable",
+                      "value": "x",
+                    },
+                    "nodeType": "valueFunction",
+                    "params": {},
+                    "type": "lch.h",
+                  },
+                  "nodeType": "map",
+                  "type": "sort",
+                  "varb": "x",
+                },
+                "func": " ",
+                "nodeType": "map",
+                "type": "speed",
+                "varb": " ",
+              },
+              "nodeType": "aggregate",
+              "type": "std",
+            },
+            "nodeType": "predicate",
+            "right": LLNumber {
+              "nodeType": "number",
+              "value": 10,
+            },
+            "threshold": undefined,
+            "type": "<",
+          },
+        },
+        LLExpression {
+          "nodeType": "expression",
+          "value": LLPredicate {
+            "left": LLAggregate {
+              "children": LLMap {
+                "children": LLMap {
+                  "children": LLVariable {
+                    "nodeType": "variable",
+                    "value": "colors",
+                  },
+                  "func": LLNumberOp {
+                    "left": LLNumberOp {
+                      "left": LLValueFunction {
+                        "input": LLVariable {
+                          "nodeType": "variable",
+                          "value": "x",
+                        },
+                        "nodeType": "valueFunction",
+                        "params": {},
+                        "type": "lch.h",
+                      },
+                      "nodeType": "numberOp",
+                      "right": LLNumber {
+                        "nodeType": "number",
+                        "value": 180,
+                      },
+                      "type": "+",
+                    },
+                    "nodeType": "numberOp",
+                    "right": LLNumber {
+                      "nodeType": "number",
+                      "value": 360,
+                    },
+                    "type": "%",
+                  },
+                  "nodeType": "map",
+                  "type": "sort",
+                  "varb": "x",
+                },
+                "func": " ",
+                "nodeType": "map",
+                "type": "speed",
+                "varb": " ",
+              },
+              "nodeType": "aggregate",
+              "type": "std",
+            },
+            "nodeType": "predicate",
+            "right": LLNumber {
+              "nodeType": "number",
+              "value": 10,
+            },
+            "threshold": undefined,
+            "type": "<",
+          },
+        },
+      ],
+      "inducedVariables": {},
+      "nodeType": "conjunction",
+      "type": "or",
+    },
+  },
+  LLConjunction {
+    "children": [
+      LLPredicate {
+        "inducedVariables": {},
+        "left": LLAggregate {
+          "children": LLMap {
+            "children": LLValueArray {
+              "children": [
+                LLNumber {
+                  "nodeType": "number",
+                  "value": 40.85764559535954,
+                },
+                LLNumber {
+                  "nodeType": "number",
+                  "value": 134.38378630956015,
+                },
+              ],
+              "nodeType": "array",
+            },
+            "func": " ",
+            "inducedVariables": {},
+            "nodeType": "map",
+            "type": "speed",
+            "varb": " ",
+          },
+          "inducedVariables": {},
+          "nodeType": "aggregate",
+          "type": "std",
+        },
+        "nodeType": "predicate",
+        "right": LLNumber {
+          "nodeType": "number",
+          "value": 10,
+        },
+        "threshold": undefined,
+        "type": "<",
+      },
+      LLExpression {
+        "nodeType": "expression",
+        "value": LLPredicate {
+          "left": LLAggregate {
+            "children": LLMap {
+              "children": LLMap {
+                "children": LLVariable {
+                  "nodeType": "variable",
+                  "value": "colors",
+                },
+                "func": LLNumberOp {
+                  "left": LLNumberOp {
+                    "left": LLValueFunction {
+                      "input": LLVariable {
+                        "nodeType": "variable",
+                        "value": "x",
+                      },
+                      "nodeType": "valueFunction",
+                      "params": {},
+                      "type": "lch.h",
+                    },
+                    "nodeType": "numberOp",
+                    "right": LLNumber {
+                      "nodeType": "number",
+                      "value": 180,
+                    },
+                    "type": "+",
+                  },
+                  "nodeType": "numberOp",
+                  "right": LLNumber {
+                    "nodeType": "number",
+                    "value": 360,
+                  },
+                  "type": "%",
+                },
+                "nodeType": "map",
+                "type": "sort",
+                "varb": "x",
+              },
+              "func": " ",
+              "nodeType": "map",
+              "type": "speed",
+              "varb": " ",
+            },
+            "nodeType": "aggregate",
+            "type": "std",
+          },
+          "nodeType": "predicate",
+          "right": LLNumber {
+            "nodeType": "number",
+            "value": 10,
+          },
+          "threshold": undefined,
+          "type": "<",
+        },
+      },
+    ],
+    "inducedVariables": {},
+    "nodeType": "conjunction",
+    "type": "or",
+  },
+  LLConjunction {
+    "children": [
+      LLPredicate {
+        "inducedVariables": {},
+        "left": LLAggregate {
+          "children": LLValueArray {
+            "children": [
+              LLNumber {
+                "nodeType": "number",
+                "value": 93.52614071420061,
+              },
+            ],
+            "nodeType": "array",
+          },
+          "inducedVariables": {},
+          "nodeType": "aggregate",
+          "type": "std",
+        },
+        "nodeType": "predicate",
+        "right": LLNumber {
+          "nodeType": "number",
+          "value": 10,
+        },
+        "threshold": undefined,
+        "type": "<",
+      },
+      LLExpression {
+        "nodeType": "expression",
+        "value": LLPredicate {
+          "left": LLAggregate {
+            "children": LLMap {
+              "children": LLMap {
+                "children": LLVariable {
+                  "nodeType": "variable",
+                  "value": "colors",
+                },
+                "func": LLNumberOp {
+                  "left": LLNumberOp {
+                    "left": LLValueFunction {
+                      "input": LLVariable {
+                        "nodeType": "variable",
+                        "value": "x",
+                      },
+                      "nodeType": "valueFunction",
+                      "params": {},
+                      "type": "lch.h",
+                    },
+                    "nodeType": "numberOp",
+                    "right": LLNumber {
+                      "nodeType": "number",
+                      "value": 180,
+                    },
+                    "type": "+",
+                  },
+                  "nodeType": "numberOp",
+                  "right": LLNumber {
+                    "nodeType": "number",
+                    "value": 360,
+                  },
+                  "type": "%",
+                },
+                "nodeType": "map",
+                "type": "sort",
+                "varb": "x",
+              },
+              "func": " ",
+              "nodeType": "map",
+              "type": "speed",
+              "varb": " ",
+            },
+            "nodeType": "aggregate",
+            "type": "std",
+          },
+          "nodeType": "predicate",
+          "right": LLNumber {
+            "nodeType": "number",
+            "value": 10,
+          },
+          "threshold": undefined,
+          "type": "<",
+        },
+      },
+    ],
+    "inducedVariables": {},
+    "nodeType": "conjunction",
+    "type": "or",
+  },
+  LLConjunction {
+    "children": [
+      LLPredicate {
+        "inducedVariables": {},
+        "left": LLNumber {
+          "nodeType": "number",
+          "value": 0,
+        },
+        "nodeType": "predicate",
+        "right": LLNumber {
+          "nodeType": "number",
+          "value": 10,
+        },
+        "threshold": undefined,
+        "type": "<",
+      },
+      LLExpression {
+        "nodeType": "expression",
+        "value": LLPredicate {
+          "left": LLAggregate {
+            "children": LLMap {
+              "children": LLMap {
+                "children": LLVariable {
+                  "nodeType": "variable",
+                  "value": "colors",
+                },
+                "func": LLNumberOp {
+                  "left": LLNumberOp {
+                    "left": LLValueFunction {
+                      "input": LLVariable {
+                        "nodeType": "variable",
+                        "value": "x",
+                      },
+                      "nodeType": "valueFunction",
+                      "params": {},
+                      "type": "lch.h",
+                    },
+                    "nodeType": "numberOp",
+                    "right": LLNumber {
+                      "nodeType": "number",
+                      "value": 180,
+                    },
+                    "type": "+",
+                  },
+                  "nodeType": "numberOp",
+                  "right": LLNumber {
+                    "nodeType": "number",
+                    "value": 360,
+                  },
+                  "type": "%",
+                },
+                "nodeType": "map",
+                "type": "sort",
+                "varb": "x",
+              },
+              "func": " ",
+              "nodeType": "map",
+              "type": "speed",
+              "varb": " ",
+            },
+            "nodeType": "aggregate",
+            "type": "std",
+          },
+          "nodeType": "predicate",
+          "right": LLNumber {
+            "nodeType": "number",
+            "value": 10,
+          },
+          "threshold": undefined,
+          "type": "<",
+        },
+      },
+    ],
+    "inducedVariables": {},
+    "nodeType": "conjunction",
+    "type": "or",
+  },
+  LLConjunction {
+    "children": [
+      LLBool {
+        "nodeType": "bool",
+        "value": true,
+      },
+      LLExpression {
+        "nodeType": "expression",
+        "value": LLPredicate {
+          "left": LLAggregate {
+            "children": LLMap {
+              "children": LLMap {
+                "children": LLVariable {
+                  "nodeType": "variable",
+                  "value": "colors",
+                },
+                "func": LLNumberOp {
+                  "left": LLNumberOp {
+                    "left": LLValueFunction {
+                      "input": LLVariable {
+                        "nodeType": "variable",
+                        "value": "x",
+                      },
+                      "nodeType": "valueFunction",
+                      "params": {},
+                      "type": "lch.h",
+                    },
+                    "nodeType": "numberOp",
+                    "right": LLNumber {
+                      "nodeType": "number",
+                      "value": 180,
+                    },
+                    "type": "+",
+                  },
+                  "nodeType": "numberOp",
+                  "right": LLNumber {
+                    "nodeType": "number",
+                    "value": 360,
+                  },
+                  "type": "%",
+                },
+                "nodeType": "map",
+                "type": "sort",
+                "varb": "x",
+              },
+              "func": " ",
+              "nodeType": "map",
+              "type": "speed",
+              "varb": " ",
+            },
+            "nodeType": "aggregate",
+            "type": "std",
+          },
+          "nodeType": "predicate",
+          "right": LLNumber {
+            "nodeType": "number",
+            "value": 10,
+          },
+          "threshold": undefined,
+          "type": "<",
+        },
+      },
+    ],
+    "inducedVariables": {},
+    "nodeType": "conjunction",
+    "type": "or",
+  },
+  LLConjunction {
+    "children": [
+      LLBool {
+        "inducedVariables": {},
+        "nodeType": "bool",
+        "value": true,
+      },
+      LLPredicate {
+        "inducedVariables": {},
+        "left": LLAggregate {
+          "children": LLMap {
+            "children": LLValueArray {
+              "children": [
+                LLNumber {
+                  "nodeType": "number",
+                  "value": 220.85764559535954,
+                },
+                LLNumber {
+                  "nodeType": "number",
+                  "value": 314.38378630956015,
+                },
+              ],
+              "nodeType": "array",
+            },
+            "func": " ",
+            "inducedVariables": {},
+            "nodeType": "map",
+            "type": "speed",
+            "varb": " ",
+          },
+          "inducedVariables": {},
+          "nodeType": "aggregate",
+          "type": "std",
+        },
+        "nodeType": "predicate",
+        "right": LLNumber {
+          "nodeType": "number",
+          "value": 10,
+        },
+        "threshold": undefined,
+        "type": "<",
+      },
+    ],
+    "inducedVariables": {},
+    "nodeType": "conjunction",
+    "type": "or",
+  },
+  LLConjunction {
+    "children": [
+      LLBool {
+        "inducedVariables": {},
+        "nodeType": "bool",
+        "value": true,
+      },
+      LLPredicate {
+        "inducedVariables": {},
+        "left": LLAggregate {
+          "children": LLValueArray {
+            "children": [
+              LLNumber {
+                "nodeType": "number",
+                "value": 93.52614071420061,
+              },
+            ],
+            "nodeType": "array",
+          },
+          "inducedVariables": {},
+          "nodeType": "aggregate",
+          "type": "std",
+        },
+        "nodeType": "predicate",
+        "right": LLNumber {
+          "nodeType": "number",
+          "value": 10,
+        },
+        "threshold": undefined,
+        "type": "<",
+      },
+    ],
+    "inducedVariables": {},
+    "nodeType": "conjunction",
+    "type": "or",
+  },
+  LLConjunction {
+    "children": [
+      LLBool {
+        "inducedVariables": {},
+        "nodeType": "bool",
+        "value": true,
+      },
+      LLPredicate {
+        "inducedVariables": {},
+        "left": LLNumber {
+          "nodeType": "number",
+          "value": 0,
+        },
+        "nodeType": "predicate",
+        "right": LLNumber {
+          "nodeType": "number",
+          "value": 10,
+        },
+        "threshold": undefined,
+        "type": "<",
+      },
+    ],
+    "inducedVariables": {},
+    "nodeType": "conjunction",
+    "type": "or",
+  },
+  LLConjunction {
+    "children": [
+      LLBool {
+        "inducedVariables": {},
+        "nodeType": "bool",
+        "value": true,
+      },
+      LLBool {
+        "nodeType": "bool",
+        "value": true,
+      },
+    ],
+    "inducedVariables": {},
+    "nodeType": "conjunction",
+    "type": "or",
+  },
+  LLBool {
+    "inducedVariables": {},
+    "nodeType": "bool",
+    "value": true,
+  },
+  LLBool {
+    "nodeType": "bool",
+    "value": true,
+  },
+]
+`;
+
 exports[`Fair Test 1`] = `
 [
   LLExpression {
+    "inducedVariables": {},
     "nodeType": "expression",
     "value": LLPredicate {
       "inducedVariables": {},
@@ -66,12 +642,10 @@ exports[`Fair Test 1`] = `
             "params": {},
             "type": "lch.l",
           },
-          "inducedVariables": {},
           "nodeType": "map",
           "type": "sort",
           "varb": "x",
         },
-        "inducedVariables": {},
         "nodeType": "aggregate",
         "type": "extent",
       },
@@ -136,6 +710,7 @@ exports[`Fair Test 1`] = `
 exports[`Nested Quantifiers Test 1`] = `
 [
   LLExpression {
+    "inducedVariables": {},
     "nodeType": "expression",
     "value": LLQuantifier {
       "inducedVariables": {},
@@ -155,75 +730,9 @@ exports[`Nested Quantifiers Test 1`] = `
           "value": LLConjunction {
             "children": [
               LLExpression {
-                "inducedVariables": {
-                  "a": CIELAB {
-                    "channels": {
-                      "L": 46.27770784805982,
-                      "a": -47.552395089952206,
-                      "b": 48.5862848460751,
-                    },
-                    "spaceName": "lab",
-                    "tags": [],
-                  },
-                  "b": CIELAB {
-                    "channels": {
-                      "L": 54.29054140467191,
-                      "a": 80.80492817043522,
-                      "b": 69.89096476862429,
-                    },
-                    "spaceName": "lab",
-                    "tags": [],
-                  },
-                  "index(a)": 1,
-                  "index(b)": 0,
-                },
                 "nodeType": "expression",
                 "value": LLPredicate {
-                  "inducedVariables": {
-                    "a": CIELAB {
-                      "channels": {
-                        "L": 46.27770784805982,
-                        "a": -47.552395089952206,
-                        "b": 48.5862848460751,
-                      },
-                      "spaceName": "lab",
-                      "tags": [],
-                    },
-                    "b": CIELAB {
-                      "channels": {
-                        "L": 54.29054140467191,
-                        "a": 80.80492817043522,
-                        "b": 69.89096476862429,
-                      },
-                      "spaceName": "lab",
-                      "tags": [],
-                    },
-                    "index(a)": 1,
-                    "index(b)": 0,
-                  },
                   "left": LLValueFunction {
-                    "inducedVariables": {
-                      "a": CIELAB {
-                        "channels": {
-                          "L": 46.27770784805982,
-                          "a": -47.552395089952206,
-                          "b": 48.5862848460751,
-                        },
-                        "spaceName": "lab",
-                        "tags": [],
-                      },
-                      "b": CIELAB {
-                        "channels": {
-                          "L": 54.29054140467191,
-                          "a": 80.80492817043522,
-                          "b": 69.89096476862429,
-                        },
-                        "spaceName": "lab",
-                        "tags": [],
-                      },
-                      "index(a)": 1,
-                      "index(b)": 0,
-                    },
                     "input": LLVariable {
                       "nodeType": "variable",
                       "value": "a",
@@ -236,28 +745,6 @@ exports[`Nested Quantifiers Test 1`] = `
                   },
                   "nodeType": "predicate",
                   "right": LLValueFunction {
-                    "inducedVariables": {
-                      "a": CIELAB {
-                        "channels": {
-                          "L": 46.27770784805982,
-                          "a": -47.552395089952206,
-                          "b": 48.5862848460751,
-                        },
-                        "spaceName": "lab",
-                        "tags": [],
-                      },
-                      "b": CIELAB {
-                        "channels": {
-                          "L": 54.29054140467191,
-                          "a": 80.80492817043522,
-                          "b": 69.89096476862429,
-                        },
-                        "spaceName": "lab",
-                        "tags": [],
-                      },
-                      "index(a)": 1,
-                      "index(b)": 0,
-                    },
                     "input": LLVariable {
                       "nodeType": "variable",
                       "value": "b",
@@ -307,17 +794,13 @@ exports[`Nested Quantifiers Test 1`] = `
     "quant": "all",
     "results": [
       {
-        "color": CIELAB {
-          "channels": {
-            "L": 54.29054140467191,
-            "a": 80.80492817043522,
-            "b": 69.89096476862429,
-          },
-          "spaceName": "lab",
-          "tags": [],
-        },
+        "color": "#f00",
         "evals": [
           LLQuantifier {
+            "inducedVariables": {
+              "a": "#f00",
+              "index(a)": 0,
+            },
             "input": LLVariable {
               "nodeType": "variable",
               "value": "colors",
@@ -328,75 +811,9 @@ exports[`Nested Quantifiers Test 1`] = `
               "value": LLConjunction {
                 "children": [
                   LLExpression {
-                    "inducedVariables": {
-                      "a": CIELAB {
-                        "channels": {
-                          "L": 46.27770784805982,
-                          "a": -47.552395089952206,
-                          "b": 48.5862848460751,
-                        },
-                        "spaceName": "lab",
-                        "tags": [],
-                      },
-                      "b": CIELAB {
-                        "channels": {
-                          "L": 54.29054140467191,
-                          "a": 80.80492817043522,
-                          "b": 69.89096476862429,
-                        },
-                        "spaceName": "lab",
-                        "tags": [],
-                      },
-                      "index(a)": 1,
-                      "index(b)": 0,
-                    },
                     "nodeType": "expression",
                     "value": LLPredicate {
-                      "inducedVariables": {
-                        "a": CIELAB {
-                          "channels": {
-                            "L": 46.27770784805982,
-                            "a": -47.552395089952206,
-                            "b": 48.5862848460751,
-                          },
-                          "spaceName": "lab",
-                          "tags": [],
-                        },
-                        "b": CIELAB {
-                          "channels": {
-                            "L": 54.29054140467191,
-                            "a": 80.80492817043522,
-                            "b": 69.89096476862429,
-                          },
-                          "spaceName": "lab",
-                          "tags": [],
-                        },
-                        "index(a)": 1,
-                        "index(b)": 0,
-                      },
                       "left": LLValueFunction {
-                        "inducedVariables": {
-                          "a": CIELAB {
-                            "channels": {
-                              "L": 46.27770784805982,
-                              "a": -47.552395089952206,
-                              "b": 48.5862848460751,
-                            },
-                            "spaceName": "lab",
-                            "tags": [],
-                          },
-                          "b": CIELAB {
-                            "channels": {
-                              "L": 54.29054140467191,
-                              "a": 80.80492817043522,
-                              "b": 69.89096476862429,
-                            },
-                            "spaceName": "lab",
-                            "tags": [],
-                          },
-                          "index(a)": 1,
-                          "index(b)": 0,
-                        },
                         "input": LLVariable {
                           "nodeType": "variable",
                           "value": "a",
@@ -409,28 +826,6 @@ exports[`Nested Quantifiers Test 1`] = `
                       },
                       "nodeType": "predicate",
                       "right": LLValueFunction {
-                        "inducedVariables": {
-                          "a": CIELAB {
-                            "channels": {
-                              "L": 46.27770784805982,
-                              "a": -47.552395089952206,
-                              "b": 48.5862848460751,
-                            },
-                            "spaceName": "lab",
-                            "tags": [],
-                          },
-                          "b": CIELAB {
-                            "channels": {
-                              "L": 54.29054140467191,
-                              "a": 80.80492817043522,
-                              "b": 69.89096476862429,
-                            },
-                            "spaceName": "lab",
-                            "tags": [],
-                          },
-                          "index(a)": 1,
-                          "index(b)": 0,
-                        },
                         "input": LLVariable {
                           "nodeType": "variable",
                           "value": "b",
@@ -470,115 +865,25 @@ exports[`Nested Quantifiers Test 1`] = `
           },
           {
             "inducedVariables": {
-              "a": CIELAB {
-                "channels": {
-                  "L": 54.29054140467191,
-                  "a": 80.80492817043522,
-                  "b": 69.89096476862429,
-                },
-                "spaceName": "lab",
-                "tags": [],
-              },
+              "a": "#f00",
               "index(a)": 0,
             },
             "quant": "all",
             "results": [
               {
-                "color": CIELAB {
-                  "channels": {
-                    "L": 54.29054140467191,
-                    "a": 80.80492817043522,
-                    "b": 69.89096476862429,
-                  },
-                  "spaceName": "lab",
-                  "tags": [],
-                },
+                "color": "#f00",
                 "didEval": true,
                 "result": "WHERE SKIP",
               },
               {
-                "color": CIELAB {
-                  "channels": {
-                    "L": 46.27770784805982,
-                    "a": -47.552395089952206,
-                    "b": 48.5862848460751,
-                  },
-                  "spaceName": "lab",
-                  "tags": [],
-                },
+                "color": "#008000",
                 "evals": [
                   LLConjunction {
                     "children": [
                       LLExpression {
-                        "inducedVariables": {
-                          "a": CIELAB {
-                            "channels": {
-                              "L": 46.27770784805982,
-                              "a": -47.552395089952206,
-                              "b": 48.5862848460751,
-                            },
-                            "spaceName": "lab",
-                            "tags": [],
-                          },
-                          "b": CIELAB {
-                            "channels": {
-                              "L": 54.29054140467191,
-                              "a": 80.80492817043522,
-                              "b": 69.89096476862429,
-                            },
-                            "spaceName": "lab",
-                            "tags": [],
-                          },
-                          "index(a)": 1,
-                          "index(b)": 0,
-                        },
                         "nodeType": "expression",
                         "value": LLPredicate {
-                          "inducedVariables": {
-                            "a": CIELAB {
-                              "channels": {
-                                "L": 46.27770784805982,
-                                "a": -47.552395089952206,
-                                "b": 48.5862848460751,
-                              },
-                              "spaceName": "lab",
-                              "tags": [],
-                            },
-                            "b": CIELAB {
-                              "channels": {
-                                "L": 54.29054140467191,
-                                "a": 80.80492817043522,
-                                "b": 69.89096476862429,
-                              },
-                              "spaceName": "lab",
-                              "tags": [],
-                            },
-                            "index(a)": 1,
-                            "index(b)": 0,
-                          },
                           "left": LLValueFunction {
-                            "inducedVariables": {
-                              "a": CIELAB {
-                                "channels": {
-                                  "L": 46.27770784805982,
-                                  "a": -47.552395089952206,
-                                  "b": 48.5862848460751,
-                                },
-                                "spaceName": "lab",
-                                "tags": [],
-                              },
-                              "b": CIELAB {
-                                "channels": {
-                                  "L": 54.29054140467191,
-                                  "a": 80.80492817043522,
-                                  "b": 69.89096476862429,
-                                },
-                                "spaceName": "lab",
-                                "tags": [],
-                              },
-                              "index(a)": 1,
-                              "index(b)": 0,
-                            },
                             "input": LLVariable {
                               "nodeType": "variable",
                               "value": "a",
@@ -591,28 +896,6 @@ exports[`Nested Quantifiers Test 1`] = `
                           },
                           "nodeType": "predicate",
                           "right": LLValueFunction {
-                            "inducedVariables": {
-                              "a": CIELAB {
-                                "channels": {
-                                  "L": 46.27770784805982,
-                                  "a": -47.552395089952206,
-                                  "b": 48.5862848460751,
-                                },
-                                "spaceName": "lab",
-                                "tags": [],
-                              },
-                              "b": CIELAB {
-                                "channels": {
-                                  "L": 54.29054140467191,
-                                  "a": 80.80492817043522,
-                                  "b": 69.89096476862429,
-                                },
-                                "spaceName": "lab",
-                                "tags": [],
-                              },
-                              "index(a)": 1,
-                              "index(b)": 0,
-                            },
                             "input": LLVariable {
                               "nodeType": "variable",
                               "value": "b",
@@ -628,6 +911,12 @@ exports[`Nested Quantifiers Test 1`] = `
                         },
                       },
                     ],
+                    "inducedVariables": {
+                      "a": "#f00",
+                      "b": "#008000",
+                      "index(a)": 0,
+                      "index(b)": 1,
+                    },
                     "nodeType": "conjunction",
                     "type": "not",
                   },
@@ -635,51 +924,13 @@ exports[`Nested Quantifiers Test 1`] = `
                     "children": [
                       LLPredicate {
                         "inducedVariables": {
-                          "a": CIELAB {
-                            "channels": {
-                              "L": 54.29054140467191,
-                              "a": 80.80492817043522,
-                              "b": 69.89096476862429,
-                            },
-                            "spaceName": "lab",
-                            "tags": [],
-                          },
-                          "b": CIELAB {
-                            "channels": {
-                              "L": 46.27770784805982,
-                              "a": -47.552395089952206,
-                              "b": 48.5862848460751,
-                            },
-                            "spaceName": "lab",
-                            "tags": [],
-                          },
+                          "a": "#f00",
+                          "b": "#008000",
                           "index(a)": 0,
                           "index(b)": 1,
                         },
                         "left": LLColor {
                           "constructorString": "#9b9b00",
-                          "inducedVariables": {
-                            "a": CIELAB {
-                              "channels": {
-                                "L": 54.29054140467191,
-                                "a": 80.80492817043522,
-                                "b": 69.89096476862429,
-                              },
-                              "spaceName": "lab",
-                              "tags": [],
-                            },
-                            "b": CIELAB {
-                              "channels": {
-                                "L": 46.27770784805982,
-                                "a": -47.552395089952206,
-                                "b": 48.5862848460751,
-                              },
-                              "spaceName": "lab",
-                              "tags": [],
-                            },
-                            "index(a)": 0,
-                            "index(b)": 1,
-                          },
                           "nodeType": "color",
                           "value": CIELAB {
                             "channels": {
@@ -693,28 +944,6 @@ exports[`Nested Quantifiers Test 1`] = `
                         },
                         "nodeType": "predicate",
                         "right": LLValueFunction {
-                          "inducedVariables": {
-                            "a": CIELAB {
-                              "channels": {
-                                "L": 46.27770784805982,
-                                "a": -47.552395089952206,
-                                "b": 48.5862848460751,
-                              },
-                              "spaceName": "lab",
-                              "tags": [],
-                            },
-                            "b": CIELAB {
-                              "channels": {
-                                "L": 54.29054140467191,
-                                "a": 80.80492817043522,
-                                "b": 69.89096476862429,
-                              },
-                              "spaceName": "lab",
-                              "tags": [],
-                            },
-                            "index(a)": 1,
-                            "index(b)": 0,
-                          },
                           "input": LLVariable {
                             "nodeType": "variable",
                             "value": "b",
@@ -730,24 +959,8 @@ exports[`Nested Quantifiers Test 1`] = `
                       },
                     ],
                     "inducedVariables": {
-                      "a": CIELAB {
-                        "channels": {
-                          "L": 54.29054140467191,
-                          "a": 80.80492817043522,
-                          "b": 69.89096476862429,
-                        },
-                        "spaceName": "lab",
-                        "tags": [],
-                      },
-                      "b": CIELAB {
-                        "channels": {
-                          "L": 46.27770784805982,
-                          "a": -47.552395089952206,
-                          "b": 48.5862848460751,
-                        },
-                        "spaceName": "lab",
-                        "tags": [],
-                      },
+                      "a": "#f00",
+                      "b": "#008000",
                       "index(a)": 0,
                       "index(b)": 1,
                     },
@@ -758,48 +971,16 @@ exports[`Nested Quantifiers Test 1`] = `
                     "children": [
                       LLPredicate {
                         "inducedVariables": {
-                          "a": CIELAB {
-                            "channels": {
-                              "L": 54.29054140467191,
-                              "a": 80.80492817043522,
-                              "b": 69.89096476862429,
-                            },
-                            "spaceName": "lab",
-                            "tags": [],
-                          },
-                          "b": CIELAB {
-                            "channels": {
-                              "L": 46.27770784805982,
-                              "a": -47.552395089952206,
-                              "b": 48.5862848460751,
-                            },
-                            "spaceName": "lab",
-                            "tags": [],
-                          },
+                          "a": "#f00",
+                          "b": "#008000",
                           "index(a)": 0,
                           "index(b)": 1,
                         },
                         "left": LLColor {
                           "constructorString": "#9b9b00",
                           "inducedVariables": {
-                            "a": CIELAB {
-                              "channels": {
-                                "L": 54.29054140467191,
-                                "a": 80.80492817043522,
-                                "b": 69.89096476862429,
-                              },
-                              "spaceName": "lab",
-                              "tags": [],
-                            },
-                            "b": CIELAB {
-                              "channels": {
-                                "L": 46.27770784805982,
-                                "a": -47.552395089952206,
-                                "b": 48.5862848460751,
-                              },
-                              "spaceName": "lab",
-                              "tags": [],
-                            },
+                            "a": "#f00",
+                            "b": "#008000",
                             "index(a)": 0,
                             "index(b)": 1,
                           },
@@ -833,24 +1014,8 @@ exports[`Nested Quantifiers Test 1`] = `
                       },
                     ],
                     "inducedVariables": {
-                      "a": CIELAB {
-                        "channels": {
-                          "L": 54.29054140467191,
-                          "a": 80.80492817043522,
-                          "b": 69.89096476862429,
-                        },
-                        "spaceName": "lab",
-                        "tags": [],
-                      },
-                      "b": CIELAB {
-                        "channels": {
-                          "L": 46.27770784805982,
-                          "a": -47.552395089952206,
-                          "b": 48.5862848460751,
-                        },
-                        "spaceName": "lab",
-                        "tags": [],
-                      },
+                      "a": "#f00",
+                      "b": "#008000",
                       "index(a)": 0,
                       "index(b)": 1,
                     },
@@ -865,24 +1030,8 @@ exports[`Nested Quantifiers Test 1`] = `
                       },
                     ],
                     "inducedVariables": {
-                      "a": CIELAB {
-                        "channels": {
-                          "L": 54.29054140467191,
-                          "a": 80.80492817043522,
-                          "b": 69.89096476862429,
-                        },
-                        "spaceName": "lab",
-                        "tags": [],
-                      },
-                      "b": CIELAB {
-                        "channels": {
-                          "L": 46.27770784805982,
-                          "a": -47.552395089952206,
-                          "b": 48.5862848460751,
-                        },
-                        "spaceName": "lab",
-                        "tags": [],
-                      },
+                      "a": "#f00",
+                      "b": "#008000",
                       "index(a)": 0,
                       "index(b)": 1,
                     },
@@ -891,24 +1040,8 @@ exports[`Nested Quantifiers Test 1`] = `
                   },
                   LLBool {
                     "inducedVariables": {
-                      "a": CIELAB {
-                        "channels": {
-                          "L": 54.29054140467191,
-                          "a": 80.80492817043522,
-                          "b": 69.89096476862429,
-                        },
-                        "spaceName": "lab",
-                        "tags": [],
-                      },
-                      "b": CIELAB {
-                        "channels": {
-                          "L": 46.27770784805982,
-                          "a": -47.552395089952206,
-                          "b": 48.5862848460751,
-                        },
-                        "spaceName": "lab",
-                        "tags": [],
-                      },
+                      "a": "#f00",
+                      "b": "#008000",
                       "index(a)": 0,
                       "index(b)": 1,
                     },
@@ -931,17 +1064,13 @@ exports[`Nested Quantifiers Test 1`] = `
         ],
       },
       {
-        "color": CIELAB {
-          "channels": {
-            "L": 46.27770784805982,
-            "a": -47.552395089952206,
-            "b": 48.5862848460751,
-          },
-          "spaceName": "lab",
-          "tags": [],
-        },
+        "color": "#008000",
         "evals": [
           LLQuantifier {
+            "inducedVariables": {
+              "a": "#008000",
+              "index(a)": 1,
+            },
             "input": LLVariable {
               "nodeType": "variable",
               "value": "colors",
@@ -952,75 +1081,9 @@ exports[`Nested Quantifiers Test 1`] = `
               "value": LLConjunction {
                 "children": [
                   LLExpression {
-                    "inducedVariables": {
-                      "a": CIELAB {
-                        "channels": {
-                          "L": 46.27770784805982,
-                          "a": -47.552395089952206,
-                          "b": 48.5862848460751,
-                        },
-                        "spaceName": "lab",
-                        "tags": [],
-                      },
-                      "b": CIELAB {
-                        "channels": {
-                          "L": 54.29054140467191,
-                          "a": 80.80492817043522,
-                          "b": 69.89096476862429,
-                        },
-                        "spaceName": "lab",
-                        "tags": [],
-                      },
-                      "index(a)": 1,
-                      "index(b)": 0,
-                    },
                     "nodeType": "expression",
                     "value": LLPredicate {
-                      "inducedVariables": {
-                        "a": CIELAB {
-                          "channels": {
-                            "L": 46.27770784805982,
-                            "a": -47.552395089952206,
-                            "b": 48.5862848460751,
-                          },
-                          "spaceName": "lab",
-                          "tags": [],
-                        },
-                        "b": CIELAB {
-                          "channels": {
-                            "L": 54.29054140467191,
-                            "a": 80.80492817043522,
-                            "b": 69.89096476862429,
-                          },
-                          "spaceName": "lab",
-                          "tags": [],
-                        },
-                        "index(a)": 1,
-                        "index(b)": 0,
-                      },
                       "left": LLValueFunction {
-                        "inducedVariables": {
-                          "a": CIELAB {
-                            "channels": {
-                              "L": 46.27770784805982,
-                              "a": -47.552395089952206,
-                              "b": 48.5862848460751,
-                            },
-                            "spaceName": "lab",
-                            "tags": [],
-                          },
-                          "b": CIELAB {
-                            "channels": {
-                              "L": 54.29054140467191,
-                              "a": 80.80492817043522,
-                              "b": 69.89096476862429,
-                            },
-                            "spaceName": "lab",
-                            "tags": [],
-                          },
-                          "index(a)": 1,
-                          "index(b)": 0,
-                        },
                         "input": LLVariable {
                           "nodeType": "variable",
                           "value": "a",
@@ -1033,28 +1096,6 @@ exports[`Nested Quantifiers Test 1`] = `
                       },
                       "nodeType": "predicate",
                       "right": LLValueFunction {
-                        "inducedVariables": {
-                          "a": CIELAB {
-                            "channels": {
-                              "L": 46.27770784805982,
-                              "a": -47.552395089952206,
-                              "b": 48.5862848460751,
-                            },
-                            "spaceName": "lab",
-                            "tags": [],
-                          },
-                          "b": CIELAB {
-                            "channels": {
-                              "L": 54.29054140467191,
-                              "a": 80.80492817043522,
-                              "b": 69.89096476862429,
-                            },
-                            "spaceName": "lab",
-                            "tags": [],
-                          },
-                          "index(a)": 1,
-                          "index(b)": 0,
-                        },
                         "input": LLVariable {
                           "nodeType": "variable",
                           "value": "b",
@@ -1094,102 +1135,20 @@ exports[`Nested Quantifiers Test 1`] = `
           },
           {
             "inducedVariables": {
-              "a": CIELAB {
-                "channels": {
-                  "L": 46.27770784805982,
-                  "a": -47.552395089952206,
-                  "b": 48.5862848460751,
-                },
-                "spaceName": "lab",
-                "tags": [],
-              },
+              "a": "#008000",
               "index(a)": 1,
             },
             "quant": "all",
             "results": [
               {
-                "color": CIELAB {
-                  "channels": {
-                    "L": 54.29054140467191,
-                    "a": 80.80492817043522,
-                    "b": 69.89096476862429,
-                  },
-                  "spaceName": "lab",
-                  "tags": [],
-                },
+                "color": "#f00",
                 "evals": [
                   LLConjunction {
                     "children": [
                       LLExpression {
-                        "inducedVariables": {
-                          "a": CIELAB {
-                            "channels": {
-                              "L": 46.27770784805982,
-                              "a": -47.552395089952206,
-                              "b": 48.5862848460751,
-                            },
-                            "spaceName": "lab",
-                            "tags": [],
-                          },
-                          "b": CIELAB {
-                            "channels": {
-                              "L": 54.29054140467191,
-                              "a": 80.80492817043522,
-                              "b": 69.89096476862429,
-                            },
-                            "spaceName": "lab",
-                            "tags": [],
-                          },
-                          "index(a)": 1,
-                          "index(b)": 0,
-                        },
                         "nodeType": "expression",
                         "value": LLPredicate {
-                          "inducedVariables": {
-                            "a": CIELAB {
-                              "channels": {
-                                "L": 46.27770784805982,
-                                "a": -47.552395089952206,
-                                "b": 48.5862848460751,
-                              },
-                              "spaceName": "lab",
-                              "tags": [],
-                            },
-                            "b": CIELAB {
-                              "channels": {
-                                "L": 54.29054140467191,
-                                "a": 80.80492817043522,
-                                "b": 69.89096476862429,
-                              },
-                              "spaceName": "lab",
-                              "tags": [],
-                            },
-                            "index(a)": 1,
-                            "index(b)": 0,
-                          },
                           "left": LLValueFunction {
-                            "inducedVariables": {
-                              "a": CIELAB {
-                                "channels": {
-                                  "L": 46.27770784805982,
-                                  "a": -47.552395089952206,
-                                  "b": 48.5862848460751,
-                                },
-                                "spaceName": "lab",
-                                "tags": [],
-                              },
-                              "b": CIELAB {
-                                "channels": {
-                                  "L": 54.29054140467191,
-                                  "a": 80.80492817043522,
-                                  "b": 69.89096476862429,
-                                },
-                                "spaceName": "lab",
-                                "tags": [],
-                              },
-                              "index(a)": 1,
-                              "index(b)": 0,
-                            },
                             "input": LLVariable {
                               "nodeType": "variable",
                               "value": "a",
@@ -1202,28 +1161,6 @@ exports[`Nested Quantifiers Test 1`] = `
                           },
                           "nodeType": "predicate",
                           "right": LLValueFunction {
-                            "inducedVariables": {
-                              "a": CIELAB {
-                                "channels": {
-                                  "L": 46.27770784805982,
-                                  "a": -47.552395089952206,
-                                  "b": 48.5862848460751,
-                                },
-                                "spaceName": "lab",
-                                "tags": [],
-                              },
-                              "b": CIELAB {
-                                "channels": {
-                                  "L": 54.29054140467191,
-                                  "a": 80.80492817043522,
-                                  "b": 69.89096476862429,
-                                },
-                                "spaceName": "lab",
-                                "tags": [],
-                              },
-                              "index(a)": 1,
-                              "index(b)": 0,
-                            },
                             "input": LLVariable {
                               "nodeType": "variable",
                               "value": "b",
@@ -1239,6 +1176,12 @@ exports[`Nested Quantifiers Test 1`] = `
                         },
                       },
                     ],
+                    "inducedVariables": {
+                      "a": "#008000",
+                      "b": "#f00",
+                      "index(a)": 1,
+                      "index(b)": 0,
+                    },
                     "nodeType": "conjunction",
                     "type": "not",
                   },
@@ -1246,51 +1189,13 @@ exports[`Nested Quantifiers Test 1`] = `
                     "children": [
                       LLPredicate {
                         "inducedVariables": {
-                          "a": CIELAB {
-                            "channels": {
-                              "L": 46.27770784805982,
-                              "a": -47.552395089952206,
-                              "b": 48.5862848460751,
-                            },
-                            "spaceName": "lab",
-                            "tags": [],
-                          },
-                          "b": CIELAB {
-                            "channels": {
-                              "L": 54.29054140467191,
-                              "a": 80.80492817043522,
-                              "b": 69.89096476862429,
-                            },
-                            "spaceName": "lab",
-                            "tags": [],
-                          },
+                          "a": "#008000",
+                          "b": "#f00",
                           "index(a)": 1,
                           "index(b)": 0,
                         },
                         "left": LLColor {
                           "constructorString": "#6a6a16",
-                          "inducedVariables": {
-                            "a": CIELAB {
-                              "channels": {
-                                "L": 46.27770784805982,
-                                "a": -47.552395089952206,
-                                "b": 48.5862848460751,
-                              },
-                              "spaceName": "lab",
-                              "tags": [],
-                            },
-                            "b": CIELAB {
-                              "channels": {
-                                "L": 54.29054140467191,
-                                "a": 80.80492817043522,
-                                "b": 69.89096476862429,
-                              },
-                              "spaceName": "lab",
-                              "tags": [],
-                            },
-                            "index(a)": 1,
-                            "index(b)": 0,
-                          },
                           "nodeType": "color",
                           "value": CIELAB {
                             "channels": {
@@ -1304,28 +1209,6 @@ exports[`Nested Quantifiers Test 1`] = `
                         },
                         "nodeType": "predicate",
                         "right": LLValueFunction {
-                          "inducedVariables": {
-                            "a": CIELAB {
-                              "channels": {
-                                "L": 46.27770784805982,
-                                "a": -47.552395089952206,
-                                "b": 48.5862848460751,
-                              },
-                              "spaceName": "lab",
-                              "tags": [],
-                            },
-                            "b": CIELAB {
-                              "channels": {
-                                "L": 54.29054140467191,
-                                "a": 80.80492817043522,
-                                "b": 69.89096476862429,
-                              },
-                              "spaceName": "lab",
-                              "tags": [],
-                            },
-                            "index(a)": 1,
-                            "index(b)": 0,
-                          },
                           "input": LLVariable {
                             "nodeType": "variable",
                             "value": "b",
@@ -1341,24 +1224,8 @@ exports[`Nested Quantifiers Test 1`] = `
                       },
                     ],
                     "inducedVariables": {
-                      "a": CIELAB {
-                        "channels": {
-                          "L": 46.27770784805982,
-                          "a": -47.552395089952206,
-                          "b": 48.5862848460751,
-                        },
-                        "spaceName": "lab",
-                        "tags": [],
-                      },
-                      "b": CIELAB {
-                        "channels": {
-                          "L": 54.29054140467191,
-                          "a": 80.80492817043522,
-                          "b": 69.89096476862429,
-                        },
-                        "spaceName": "lab",
-                        "tags": [],
-                      },
+                      "a": "#008000",
+                      "b": "#f00",
                       "index(a)": 1,
                       "index(b)": 0,
                     },
@@ -1369,48 +1236,16 @@ exports[`Nested Quantifiers Test 1`] = `
                     "children": [
                       LLPredicate {
                         "inducedVariables": {
-                          "a": CIELAB {
-                            "channels": {
-                              "L": 46.27770784805982,
-                              "a": -47.552395089952206,
-                              "b": 48.5862848460751,
-                            },
-                            "spaceName": "lab",
-                            "tags": [],
-                          },
-                          "b": CIELAB {
-                            "channels": {
-                              "L": 54.29054140467191,
-                              "a": 80.80492817043522,
-                              "b": 69.89096476862429,
-                            },
-                            "spaceName": "lab",
-                            "tags": [],
-                          },
+                          "a": "#008000",
+                          "b": "#f00",
                           "index(a)": 1,
                           "index(b)": 0,
                         },
                         "left": LLColor {
                           "constructorString": "#6a6a16",
                           "inducedVariables": {
-                            "a": CIELAB {
-                              "channels": {
-                                "L": 46.27770784805982,
-                                "a": -47.552395089952206,
-                                "b": 48.5862848460751,
-                              },
-                              "spaceName": "lab",
-                              "tags": [],
-                            },
-                            "b": CIELAB {
-                              "channels": {
-                                "L": 54.29054140467191,
-                                "a": 80.80492817043522,
-                                "b": 69.89096476862429,
-                              },
-                              "spaceName": "lab",
-                              "tags": [],
-                            },
+                            "a": "#008000",
+                            "b": "#f00",
                             "index(a)": 1,
                             "index(b)": 0,
                           },
@@ -1444,24 +1279,8 @@ exports[`Nested Quantifiers Test 1`] = `
                       },
                     ],
                     "inducedVariables": {
-                      "a": CIELAB {
-                        "channels": {
-                          "L": 46.27770784805982,
-                          "a": -47.552395089952206,
-                          "b": 48.5862848460751,
-                        },
-                        "spaceName": "lab",
-                        "tags": [],
-                      },
-                      "b": CIELAB {
-                        "channels": {
-                          "L": 54.29054140467191,
-                          "a": 80.80492817043522,
-                          "b": 69.89096476862429,
-                        },
-                        "spaceName": "lab",
-                        "tags": [],
-                      },
+                      "a": "#008000",
+                      "b": "#f00",
                       "index(a)": 1,
                       "index(b)": 0,
                     },
@@ -1476,24 +1295,8 @@ exports[`Nested Quantifiers Test 1`] = `
                       },
                     ],
                     "inducedVariables": {
-                      "a": CIELAB {
-                        "channels": {
-                          "L": 46.27770784805982,
-                          "a": -47.552395089952206,
-                          "b": 48.5862848460751,
-                        },
-                        "spaceName": "lab",
-                        "tags": [],
-                      },
-                      "b": CIELAB {
-                        "channels": {
-                          "L": 54.29054140467191,
-                          "a": 80.80492817043522,
-                          "b": 69.89096476862429,
-                        },
-                        "spaceName": "lab",
-                        "tags": [],
-                      },
+                      "a": "#008000",
+                      "b": "#f00",
                       "index(a)": 1,
                       "index(b)": 0,
                     },
@@ -1502,24 +1305,8 @@ exports[`Nested Quantifiers Test 1`] = `
                   },
                   LLBool {
                     "inducedVariables": {
-                      "a": CIELAB {
-                        "channels": {
-                          "L": 46.27770784805982,
-                          "a": -47.552395089952206,
-                          "b": 48.5862848460751,
-                        },
-                        "spaceName": "lab",
-                        "tags": [],
-                      },
-                      "b": CIELAB {
-                        "channels": {
-                          "L": 54.29054140467191,
-                          "a": 80.80492817043522,
-                          "b": 69.89096476862429,
-                        },
-                        "spaceName": "lab",
-                        "tags": [],
-                      },
+                      "a": "#008000",
+                      "b": "#f00",
                       "index(a)": 1,
                       "index(b)": 0,
                     },
@@ -1533,15 +1320,7 @@ exports[`Nested Quantifiers Test 1`] = `
                 ],
               },
               {
-                "color": CIELAB {
-                  "channels": {
-                    "L": 46.27770784805982,
-                    "a": -47.552395089952206,
-                    "b": 48.5862848460751,
-                  },
-                  "spaceName": "lab",
-                  "tags": [],
-                },
+                "color": "#008000",
                 "didEval": true,
                 "result": "WHERE SKIP",
               },
@@ -1709,6 +1488,7 @@ LLExpression {
 exports[`Quantifier Test 1`] = `
 [
   LLExpression {
+    "inducedVariables": {},
     "nodeType": "expression",
     "value": LLQuantifier {
       "inducedVariables": {},
@@ -1721,18 +1501,6 @@ exports[`Quantifier Test 1`] = `
         "nodeType": "expression",
         "value": LLPredicate {
           "left": LLPairFunction {
-            "inducedVariables": {
-              "a": CIELAB {
-                "channels": {
-                  "L": 46.27770784805982,
-                  "a": -47.552395089952206,
-                  "b": 48.5862848460751,
-                },
-                "spaceName": "lab",
-                "tags": [],
-              },
-              "index(a)": 1,
-            },
             "left": LLVariable {
               "nodeType": "variable",
               "value": "a",
@@ -1768,30 +1536,14 @@ exports[`Quantifier Test 1`] = `
     "quant": "all",
     "results": [
       {
-        "color": CIELAB {
-          "channels": {
-            "L": 54.29054140467191,
-            "a": 80.80492817043522,
-            "b": 69.89096476862429,
-          },
-          "spaceName": "lab",
-          "tags": [],
-        },
+        "color": "#f00",
         "evals": [
           LLPredicate {
+            "inducedVariables": {
+              "a": "#f00",
+              "index(a)": 0,
+            },
             "left": LLPairFunction {
-              "inducedVariables": {
-                "a": CIELAB {
-                  "channels": {
-                    "L": 46.27770784805982,
-                    "a": -47.552395089952206,
-                    "b": 48.5862848460751,
-                  },
-                  "spaceName": "lab",
-                  "tags": [],
-                },
-                "index(a)": 1,
-              },
               "left": LLVariable {
                 "nodeType": "variable",
                 "value": "a",
@@ -1816,15 +1568,7 @@ exports[`Quantifier Test 1`] = `
           },
           LLPredicate {
             "inducedVariables": {
-              "a": CIELAB {
-                "channels": {
-                  "L": 54.29054140467191,
-                  "a": 80.80492817043522,
-                  "b": 69.89096476862429,
-                },
-                "spaceName": "lab",
-                "tags": [],
-              },
+              "a": "#f00",
               "index(a)": 0,
             },
             "left": LLNumber {
@@ -1846,30 +1590,14 @@ exports[`Quantifier Test 1`] = `
         ],
       },
       {
-        "color": CIELAB {
-          "channels": {
-            "L": 46.27770784805982,
-            "a": -47.552395089952206,
-            "b": 48.5862848460751,
-          },
-          "spaceName": "lab",
-          "tags": [],
-        },
+        "color": "#008000",
         "evals": [
           LLPredicate {
+            "inducedVariables": {
+              "a": "#008000",
+              "index(a)": 1,
+            },
             "left": LLPairFunction {
-              "inducedVariables": {
-                "a": CIELAB {
-                  "channels": {
-                    "L": 46.27770784805982,
-                    "a": -47.552395089952206,
-                    "b": 48.5862848460751,
-                  },
-                  "spaceName": "lab",
-                  "tags": [],
-                },
-                "index(a)": 1,
-              },
               "left": LLVariable {
                 "nodeType": "variable",
                 "value": "a",
@@ -1894,15 +1622,7 @@ exports[`Quantifier Test 1`] = `
           },
           LLPredicate {
             "inducedVariables": {
-              "a": CIELAB {
-                "channels": {
-                  "L": 46.27770784805982,
-                  "a": -47.552395089952206,
-                  "b": 48.5862848460751,
-                },
-                "spaceName": "lab",
-                "tags": [],
-              },
+              "a": "#008000",
               "index(a)": 1,
             },
             "left": LLNumber {
@@ -2086,49 +1806,17 @@ exports[`Quantifier Test 2 1`] = `
 exports[`SmallStepEvaluator works 1`] = `
 [
   LLExpression {
+    "inducedVariables": {
+      "a": "#f00",
+      "b": "#008000",
+    },
     "nodeType": "expression",
     "value": LLPredicate {
       "inducedVariables": {
-        "a": CIELAB {
-          "channels": {
-            "L": 54.29054140467191,
-            "a": 80.80492817043522,
-            "b": 69.89096476862429,
-          },
-          "spaceName": "lab",
-          "tags": [],
-        },
-        "b": CIELAB {
-          "channels": {
-            "L": 46.27770784805982,
-            "a": -47.552395089952206,
-            "b": 48.5862848460751,
-          },
-          "spaceName": "lab",
-          "tags": [],
-        },
+        "a": "#f00",
+        "b": "#008000",
       },
       "left": LLPairFunction {
-        "inducedVariables": {
-          "a": CIELAB {
-            "channels": {
-              "L": 54.29054140467191,
-              "a": 80.80492817043522,
-              "b": 69.89096476862429,
-            },
-            "spaceName": "lab",
-            "tags": [],
-          },
-          "b": CIELAB {
-            "channels": {
-              "L": 46.27770784805982,
-              "a": -47.552395089952206,
-              "b": 48.5862848460751,
-            },
-            "spaceName": "lab",
-            "tags": [],
-          },
-        },
         "left": LLVariable {
           "nodeType": "variable",
           "value": "a",
@@ -2154,24 +1842,8 @@ exports[`SmallStepEvaluator works 1`] = `
   },
   LLPredicate {
     "inducedVariables": {
-      "a": CIELAB {
-        "channels": {
-          "L": 54.29054140467191,
-          "a": 80.80492817043522,
-          "b": 69.89096476862429,
-        },
-        "spaceName": "lab",
-        "tags": [],
-      },
-      "b": CIELAB {
-        "channels": {
-          "L": 46.27770784805982,
-          "a": -47.552395089952206,
-          "b": 48.5862848460751,
-        },
-        "spaceName": "lab",
-        "tags": [],
-      },
+      "a": "#f00",
+      "b": "#008000",
     },
     "left": LLNumber {
       "nodeType": "number",
@@ -2195,14 +1867,13 @@ exports[`SmallStepEvaluator works 1`] = `
 exports[`SmallStepEvaluator works with small not example 1`] = `
 [
   LLExpression {
+    "inducedVariables": {},
     "nodeType": "expression",
     "value": LLConjunction {
       "children": [
         LLExpression {
-          "inducedVariables": {},
           "nodeType": "expression",
           "value": LLPredicate {
-            "inducedVariables": {},
             "left": LLNumber {
               "nodeType": "number",
               "value": 11,
@@ -2248,6 +1919,7 @@ exports[`SmallStepEvaluator works with small not example 1`] = `
 exports[`SmallStepEvaluator works with smaller example 1`] = `
 [
   LLExpression {
+    "inducedVariables": {},
     "nodeType": "expression",
     "value": LLPredicate {
       "inducedVariables": {},

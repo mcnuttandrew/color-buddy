@@ -58,7 +58,7 @@ test("Agg Test", () => {
   expect(result).toMatchSnapshot();
 });
 
-test.only("Fair Test", () => {
+test("Fair Test", () => {
   const fair = {
     "<": {
       left: { extent: { sort: "colors", varb: "x", func: { "lch.l": "x" } } },
@@ -169,6 +169,16 @@ test("Quantifier Rewrite Test 3", () => {
   const ast = (GenerateAST(nested as any).value as any).children[0] as any;
   const unnested = rewriteQuantifiers(ast);
   expect(unnested).toMatchSnapshot();
+});
+
+test("Even distribution", () => {
+  const lint = PREBUILT_LINTS.find(
+    (x) => x.name === "Even distribution in hue"
+  ) as (typeof PREBUILT_LINTS)[0];
+  const ast = getAST(JSON.parse(lint.program));
+  const result = generateEvaluations(ast, {}, defaultPal, true);
+
+  expect(result).toMatchSnapshot();
 });
 
 // test("All Test", () => {

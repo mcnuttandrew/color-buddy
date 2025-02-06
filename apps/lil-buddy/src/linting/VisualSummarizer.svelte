@@ -25,6 +25,7 @@
       error = null;
       return result;
     } catch (e) {
+      console.error(e);
       error = e;
     }
   }

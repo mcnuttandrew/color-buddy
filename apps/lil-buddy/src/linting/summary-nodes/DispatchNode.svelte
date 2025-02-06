@@ -7,10 +7,12 @@
   export let pal: Palette;
   export let inducedVariables: Record<string, any> = {};
 
-  $: isNotNode = node.nodeType === "conjunction" && node.type === "not";
+  $: isNotNode = node && node.nodeType === "conjunction" && node.type === "not";
 </script>
 
-{#if node.nodeType == "conjunction" && !isNotNode}
+{#if !node}
+  <div />
+  <!-- {:else if node.nodeType == "conjunction" && !isNotNode}
   <div class="flex items-center">
     <div
       class="flex flex-col ml-2"
@@ -26,7 +28,7 @@
         </div>
       {/each}
     </div>
-  </div>
+  </div> -->
 {:else if node.nodeType === "expression"}
   <svelte:self node={node.value} {pal} />
 {:else if node.nodeType === "quantifier" || node.quant}

@@ -17,11 +17,6 @@
     return str;
   }
   $: env = { ...inducedVariables, ...node?.inducedVariables };
-  $: console.log(
-    node.nodeType,
-    env,
-    node.nodeType === "variable" ? env[node.value] : " "
-  );
 </script>
 
 <div class="flex items-center">
@@ -44,6 +39,12 @@
       {#each node.children as child}
         <svelte:self node={child} {pal} inducedVariables={env} />
       {/each}
+    </div>
+  {:else if node.nodeType === "numberOp"}
+    <div class="flex">
+      <svelte:self node={node.left} {pal} inducedVariables={env} />
+      {node.type}
+      <svelte:self node={node.right} {pal} inducedVariables={env} />
     </div>
   {:else if node.nodeType === "number"}
     <div class="font-mono text-sm">{`${toThreeDigit(node.value)}`}</div>
@@ -130,13 +131,17 @@
       {:else}
         <svelte:self node={node.children} {pal} inducedVariables={env} />
       {/if}
-      <span>{","}</span>
-      <div>{node.varb}</div>
-      <span>{"=>"}</span>
-      <svelte:self node={node.func} {pal} inducedVariables={env} />
+      {#if !new Set(["speed", "reverse"]).has(node.type)}
+        <span>{","}</span>
+        <div>{node.varb}</div>
+        <span>{"=>"}</span>
+        <svelte:self node={node.func} {pal} inducedVariables={env} />
+      {/if}
       <span>{")"}</span>
     </div>
   {:else if node.nodeType === "expression"}
     <svelte:self node={node.value} {pal} inducedVariables={env} />
+  {:else if typeof node === "boolean"}
+    <div>{node ? "T" : "F"}</div>
   {/if}
 </div>

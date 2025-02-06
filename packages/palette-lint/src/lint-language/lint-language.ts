@@ -624,7 +624,7 @@ export class LLValue extends LLNode {
     if (!value) return false;
     return value;
   }
-  copy() {
+  copy(): LLValue {
     return new LLValue(this.value.copy());
   }
   toString(): string {
@@ -1140,7 +1140,7 @@ export class LLMap extends LLNode {
         return { result: speed, env };
     }
   }
-  static tryToConstruct(node: any, options: OptionsConfig) {
+  static tryToConstruct(node: any, options: OptionsConfig): false | LLMap {
     const op = mapTypes.find((x) => node[x]);
     if (!op) return false;
     const childType =
@@ -1171,10 +1171,8 @@ export class LLMap extends LLNode {
   copy(): LLMap {
     return new LLMap(
       this.type,
-      Array.isArray(this.children)
-        ? this.children.map((x: any) => x.copy())
-        : this.children.copy(),
-      this.func.copy(),
+      this.children.copy(),
+      typeof this.func === "string" ? this.func : this.func.copy(),
       this.varb
     );
   }

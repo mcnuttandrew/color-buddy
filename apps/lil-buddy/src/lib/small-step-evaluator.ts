@@ -11,7 +11,7 @@ export function rewriteQuantifiers(node: any) {
   if (!node || !node.nodeType) {
     return node;
   }
-  const newNode = node.copy();
+  const newNode = copy(node);
   switch (node.nodeType) {
     case "pairFunction":
     case "numberOp":
@@ -44,7 +44,7 @@ export function rewriteQuantifiers(node: any) {
         newNode.predicate = rewriteQuantifiers(node.predicate);
       } else {
         const [head, ...tail] = node.varbs;
-        const newSubNode = node.copy();
+        const newSubNode = copy(node);
         newSubNode.where = rewriteQuantifiers(node.where);
         newSubNode.predicate = node.predicate;
         newSubNode.varbs = tail;
@@ -232,7 +232,7 @@ function traverseAndMaybeExecute(
     return { result: astResult, didEval: true };
   }
 
-  let updatedNode = node.copy();
+  let updatedNode = copy(node);
   subTreeIsPureOp(updatedNode, inducedVariables);
   updatedNode.inducedVariables = toHexes({ ...inducedVariables });
 
@@ -362,6 +362,13 @@ function traverseAndMaybeExecute(
   }
 }
 
+function copy(node: any) {
+  if (node.copy) {
+    return node.copy();
+  }
+  return JSON.parse(JSON.stringify(node));
+}
+
 export function generateEvaluations(
   node: LLNode,
   inducedVariables: InducedVariables,
@@ -371,13 +378,13 @@ export function generateEvaluations(
   if (init) {
     counter = 0;
   }
-  let nodeCopy = node.copy();
+  let nodeCopy = copy(node);
   // weird hack to inset the induced variables over everything
   subTreeIsPureOp(nodeCopy, inducedVariables);
   // todo maybe: if this is a quantifier don't copy it
   // const evalLog = node.nodeType === "quantifier" ? [] : [nodeCopy];
   const evalLog = [nodeCopy];
-  let currentNode = node.copy();
+  let currentNode = copy(node);
   subTreeIsPureOp(node, inducedVariables);
 
   while (

@@ -15,6 +15,10 @@
   function getExecutionLog(lint: string, okayToExecute: boolean) {
     if (!okayToExecute) {
       error = "Changes in process";
+      setTimeout(() => {
+        error = null;
+        $store.okayToExecute = true;
+      }, 2000);
       return null;
     }
     try {

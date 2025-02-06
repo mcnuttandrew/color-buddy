@@ -10,6 +10,10 @@ function isColor(x: any): x is Color {
   return x && typeof x === "object" && "toColorIO" in x;
 }
 
+function deepCopy(x: any): any {
+  return JSON.parse(JSON.stringify(x));
+}
+
 type RawValues = string | number | Color | string[] | number[] | Color[];
 export class Environment {
   constructor(
@@ -250,7 +254,7 @@ export class LLConjunction extends LLNode {
   copy() {
     return new LLConjunction(
       this.type,
-      this.children.map((x: any) => x.copy())
+      this.children.map((x: any) => (!x.copy ? deepCopy(x) : x.copy()))
     );
   }
   toString(): string {
@@ -1218,6 +1222,10 @@ export function LLEval(
   return { result, blame };
 }
 
+/**
+ * Pretty print a Lint Program
+ * root: the ast node, should generate an ast using generateAST to get such a node
+ */
 export function prettyPrintLL(
   root: any,
   options: Partial<typeof DEFAULT_OPTIONS> = {}

@@ -171,23 +171,26 @@ test("Quantifier Rewrite Test 3", () => {
   expect(unnested).toMatchSnapshot();
 });
 
+type LintProgram = (typeof PREBUILT_LINTS)[0];
 test("Even distribution", () => {
   const lint = PREBUILT_LINTS.find(
     (x) => x.name === "Even distribution in hue"
-  ) as (typeof PREBUILT_LINTS)[0];
+  ) as LintProgram;
   const ast = getAST(JSON.parse(lint.program));
   const result = generateEvaluations(ast, {}, defaultPal, true);
 
   expect(result).toMatchSnapshot();
 });
 
-// test("All Test", () => {
-//   for (const test in PREBUILT_LINTS) {
-//     const lint = PREBUILT_LINTS[test as keyof typeof PREBUILT_LINTS];
-//     console.log(lint.name);
-//     const lintProgram = JSON.parse(lint.program);
-//     const ast = (GenerateAST(lintProgram).value as any).children[0] as any;
-//     const result = generateEvaluations(ast, {}, defaultPal, true);
-//     expect(result).toMatchSnapshot();
-//   }
-// });
+test.only("All Test", () => {
+  for (const test in PREBUILT_LINTS) {
+    const lint = PREBUILT_LINTS[
+      test as keyof typeof PREBUILT_LINTS
+    ] as LintProgram;
+    console.log(lint.name);
+    const lintProgram = JSON.parse(lint.program);
+    const ast = getAST(lintProgram);
+    const result = generateEvaluations(ast, {}, defaultPal, true);
+    expect(result).toMatchSnapshot();
+  }
+});

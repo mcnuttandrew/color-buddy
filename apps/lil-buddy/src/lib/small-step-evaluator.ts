@@ -23,6 +23,7 @@ export function rewriteQuantifiers(node: any) {
       break;
     case "aggregate":
     case "array":
+    case "conjunction":
     case "map":
       const children = node.children;
       if (Array.isArray(children)) {
@@ -52,6 +53,58 @@ export function rewriteQuantifiers(node: any) {
         newNode.varbs = [head];
         newNode.predicate = rewriteQuantifiers(newSubNode);
       }
+      break;
+    case "bool":
+    case "color":
+    case "number":
+    case "value":
+    case "variable":
+    default:
+      break;
+  }
+  return newNode;
+}
+
+function clearQuantifierResults(node: any) {
+  if (!node) {
+    return node;
+  }
+  if (!node.nodeType && !node.quant) {
+    return node;
+  } else if (node.quant) {
+    return toVal(node.quantifierResult);
+  }
+  const newNode = copy(node);
+  switch (node.nodeType) {
+    case "pairFunction":
+    case "numberOp":
+    case "predicate":
+      const left = clearQuantifierResults(newNode.left);
+      const right = clearQuantifierResults(newNode.right);
+      newNode.left = left;
+      newNode.right = right;
+      break;
+    case "aggregate":
+    case "array":
+    case "conjunction":
+    case "map":
+      const children = node.children;
+      if (Array.isArray(children)) {
+        newNode.children = children.map(clearQuantifierResults);
+      } else {
+        newNode.children = clearQuantifierResults(children);
+      }
+      break;
+    case "node":
+    case "expression":
+      newNode.value = clearQuantifierResults(node.value);
+      break;
+    case "valueFunction":
+      newNode.input = clearQuantifierResults(node.input);
+      break;
+    case "quantifier":
+      newNode.where = clearQuantifierResults(node.where);
+      newNode.predicate = clearQuantifierResults(node.predicate);
       break;
     case "bool":
     case "color":
@@ -104,6 +157,8 @@ const toVal = (x: Color | number) => {
     return new LLTypes.LLValue(
       new LLTypes.LLColor(Color.colorFromHex(x, "lab"), x)
     );
+  } else if (typeof x === "boolean") {
+    return new LLTypes.LLBool(x);
   }
   return new LLTypes.LLValue(new LLTypes.LLColor(x, x.toHex()));
 };
@@ -118,7 +173,8 @@ function evaluateNode(
     (acc, [key, value]) => acc.set(key, toVal(value)),
     new Environment(pal, {}, opts, {})
   );
-  const result = node.evaluate(newEnv);
+  const cleanedNode = clearQuantifierResults(node);
+  const result = cleanedNode.evaluate(newEnv);
   return result;
 }
 
@@ -346,11 +402,17 @@ function traverseAndMaybeExecute(
           evals: [...evals],
         };
       });
+      const quantifierResult = evaluateNode(
+        updatedNode,
+        inducedVariables,
+        pal
+      ).result;
       return {
         result: {
           results,
           quant: updatedNode.type,
           varb: updatedNode.varbs[0],
+          quantifierResult,
         },
         didEval: true,
       };

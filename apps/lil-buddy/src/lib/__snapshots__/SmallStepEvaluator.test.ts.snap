@@ -613,10 +613,6 @@ exports[`Even distribution 1`] = `
     "nodeType": "bool",
     "value": true,
   },
-  LLBool {
-    "nodeType": "bool",
-    "value": true,
-  },
 ]
 `;
 
@@ -768,18 +764,21 @@ exports[`Nested Quantifiers Test 1`] = `
         "varbs": [
           "b",
         ],
-        "where": LLPredicate {
-          "left": LLVariable {
-            "nodeType": "variable",
-            "value": "index(a)",
+        "where": LLExpression {
+          "nodeType": "expression",
+          "value": LLPredicate {
+            "left": LLVariable {
+              "nodeType": "variable",
+              "value": "index(a)",
+            },
+            "nodeType": "predicate",
+            "right": LLVariable {
+              "nodeType": "variable",
+              "value": "index(b)",
+            },
+            "threshold": undefined,
+            "type": "!=",
           },
-          "nodeType": "predicate",
-          "right": LLVariable {
-            "nodeType": "variable",
-            "value": "index(b)",
-          },
-          "threshold": undefined,
-          "type": "!=",
         },
       },
       "type": "all",
@@ -983,10 +982,6 @@ exports[`Nested Quantifiers Test 1`] = `
                     "nodeType": "bool",
                     "value": true,
                   },
-                  LLBool {
-                    "nodeType": "bool",
-                    "value": true,
-                  },
                 ],
               },
             ],
@@ -1179,10 +1174,6 @@ exports[`Nested Quantifiers Test 1`] = `
                       "index(a)": 1,
                       "index(b)": 0,
                     },
-                    "nodeType": "bool",
-                    "value": true,
-                  },
-                  LLBool {
                     "nodeType": "bool",
                     "value": true,
                   },
@@ -1424,40 +1415,128 @@ exports[`Predefined Lint Tests 2`] = `
       "varbs": [
         "a",
       ],
-      "where": LLValueFunction {
-        "input": LLVariable {
-          "nodeType": "variable",
-          "value": "a",
-        },
-        "nodeType": "valueFunction",
-        "params": {
-          "value": "text",
-        },
-        "type": "isTag",
-      },
+      "where": false,
     },
   },
   {
     "inducedVariables": {},
     "quant": "all",
-    "quantifierResult": true,
+    "quantifierResult": false,
     "results": [
       {
         "color": "#f00",
-        "didEval": true,
-        "result": "WHERE SKIP",
+        "evals": [
+          LLPredicate {
+            "inducedVariables": {
+              "a": "#f00",
+              "index(a)": 0,
+            },
+            "left": LLPairFunction {
+              "left": LLVariable {
+                "nodeType": "variable",
+                "value": "a",
+              },
+              "nodeType": "pairFunction",
+              "params": {
+                "algorithm": "WCAG21",
+              },
+              "right": LLVariable {
+                "nodeType": "variable",
+                "value": "background",
+              },
+              "type": "contrast",
+            },
+            "nodeType": "predicate",
+            "right": LLNumber {
+              "nodeType": "number",
+              "value": 4.5,
+            },
+            "threshold": undefined,
+            "type": ">",
+          },
+          LLPredicate {
+            "inducedVariables": {
+              "a": "#f00",
+              "index(a)": 0,
+            },
+            "left": LLNumber {
+              "nodeType": "number",
+              "value": 3.997818803850546,
+            },
+            "nodeType": "predicate",
+            "right": LLNumber {
+              "nodeType": "number",
+              "value": 4.5,
+            },
+            "threshold": undefined,
+            "type": ">",
+          },
+          LLBool {
+            "nodeType": "bool",
+            "value": false,
+          },
+        ],
       },
       {
         "color": "#008000",
-        "didEval": true,
-        "result": "WHERE SKIP",
+        "evals": [
+          LLPredicate {
+            "inducedVariables": {
+              "a": "#008000",
+              "index(a)": 1,
+            },
+            "left": LLPairFunction {
+              "left": LLVariable {
+                "nodeType": "variable",
+                "value": "a",
+              },
+              "nodeType": "pairFunction",
+              "params": {
+                "algorithm": "WCAG21",
+              },
+              "right": LLVariable {
+                "nodeType": "variable",
+                "value": "background",
+              },
+              "type": "contrast",
+            },
+            "nodeType": "predicate",
+            "right": LLNumber {
+              "nodeType": "number",
+              "value": 4.5,
+            },
+            "threshold": undefined,
+            "type": ">",
+          },
+          LLPredicate {
+            "inducedVariables": {
+              "a": "#008000",
+              "index(a)": 1,
+            },
+            "left": LLNumber {
+              "nodeType": "number",
+              "value": 5.137518325903408,
+            },
+            "nodeType": "predicate",
+            "right": LLNumber {
+              "nodeType": "number",
+              "value": 4.5,
+            },
+            "threshold": undefined,
+            "type": ">",
+          },
+          LLBool {
+            "nodeType": "bool",
+            "value": true,
+          },
+        ],
       },
     ],
     "varb": "a",
   },
   LLBool {
     "nodeType": "bool",
-    "value": true,
+    "value": false,
   },
 ]
 `;
@@ -1505,40 +1584,128 @@ exports[`Predefined Lint Tests 3`] = `
       "varbs": [
         "a",
       ],
-      "where": LLValueFunction {
-        "input": LLVariable {
-          "nodeType": "variable",
-          "value": "a",
-        },
-        "nodeType": "valueFunction",
-        "params": {
-          "value": "text",
-        },
-        "type": "isTag",
-      },
+      "where": false,
     },
   },
   {
     "inducedVariables": {},
     "quant": "all",
-    "quantifierResult": true,
+    "quantifierResult": false,
     "results": [
       {
         "color": "#f00",
-        "didEval": true,
-        "result": "WHERE SKIP",
+        "evals": [
+          LLPredicate {
+            "inducedVariables": {
+              "a": "#f00",
+              "index(a)": 0,
+            },
+            "left": LLPairFunction {
+              "left": LLVariable {
+                "nodeType": "variable",
+                "value": "a",
+              },
+              "nodeType": "pairFunction",
+              "params": {
+                "algorithm": "WCAG21",
+              },
+              "right": LLVariable {
+                "nodeType": "variable",
+                "value": "background",
+              },
+              "type": "contrast",
+            },
+            "nodeType": "predicate",
+            "right": LLNumber {
+              "nodeType": "number",
+              "value": 7,
+            },
+            "threshold": undefined,
+            "type": ">",
+          },
+          LLPredicate {
+            "inducedVariables": {
+              "a": "#f00",
+              "index(a)": 0,
+            },
+            "left": LLNumber {
+              "nodeType": "number",
+              "value": 3.997818803850546,
+            },
+            "nodeType": "predicate",
+            "right": LLNumber {
+              "nodeType": "number",
+              "value": 7,
+            },
+            "threshold": undefined,
+            "type": ">",
+          },
+          LLBool {
+            "nodeType": "bool",
+            "value": false,
+          },
+        ],
       },
       {
         "color": "#008000",
-        "didEval": true,
-        "result": "WHERE SKIP",
+        "evals": [
+          LLPredicate {
+            "inducedVariables": {
+              "a": "#008000",
+              "index(a)": 1,
+            },
+            "left": LLPairFunction {
+              "left": LLVariable {
+                "nodeType": "variable",
+                "value": "a",
+              },
+              "nodeType": "pairFunction",
+              "params": {
+                "algorithm": "WCAG21",
+              },
+              "right": LLVariable {
+                "nodeType": "variable",
+                "value": "background",
+              },
+              "type": "contrast",
+            },
+            "nodeType": "predicate",
+            "right": LLNumber {
+              "nodeType": "number",
+              "value": 7,
+            },
+            "threshold": undefined,
+            "type": ">",
+          },
+          LLPredicate {
+            "inducedVariables": {
+              "a": "#008000",
+              "index(a)": 1,
+            },
+            "left": LLNumber {
+              "nodeType": "number",
+              "value": 5.137518325903408,
+            },
+            "nodeType": "predicate",
+            "right": LLNumber {
+              "nodeType": "number",
+              "value": 7,
+            },
+            "threshold": undefined,
+            "type": ">",
+          },
+          LLBool {
+            "nodeType": "bool",
+            "value": false,
+          },
+        ],
       },
     ],
     "varb": "a",
   },
   LLBool {
     "nodeType": "bool",
-    "value": true,
+    "value": false,
   },
 ]
 `;
@@ -1927,23 +2094,26 @@ exports[`Predefined Lint Tests 6`] = `
       "varbs": [
         "c",
       ],
-      "where": LLPredicate {
-        "left": LLValueFunction {
-          "input": LLVariable {
-            "nodeType": "variable",
-            "value": "c",
+      "where": LLExpression {
+        "nodeType": "expression",
+        "value": LLPredicate {
+          "left": LLValueFunction {
+            "input": LLVariable {
+              "nodeType": "variable",
+              "value": "c",
+            },
+            "nodeType": "valueFunction",
+            "params": {},
+            "type": "hsl.l",
           },
-          "nodeType": "valueFunction",
-          "params": {},
-          "type": "hsl.l",
+          "nodeType": "predicate",
+          "right": LLNumber {
+            "nodeType": "number",
+            "value": 70,
+          },
+          "threshold": undefined,
+          "type": ">",
         },
-        "nodeType": "predicate",
-        "right": LLNumber {
-          "nodeType": "number",
-          "value": 70,
-        },
-        "threshold": undefined,
-        "type": ">",
       },
     },
   },
@@ -2018,23 +2188,26 @@ exports[`Predefined Lint Tests 7`] = `
       "varbs": [
         "c",
       ],
-      "where": LLPredicate {
-        "left": LLValueFunction {
-          "input": LLVariable {
-            "nodeType": "variable",
-            "value": "c",
+      "where": LLExpression {
+        "nodeType": "expression",
+        "value": LLPredicate {
+          "left": LLValueFunction {
+            "input": LLVariable {
+              "nodeType": "variable",
+              "value": "c",
+            },
+            "nodeType": "valueFunction",
+            "params": {},
+            "type": "hsl.l",
           },
-          "nodeType": "valueFunction",
-          "params": {},
-          "type": "hsl.l",
+          "nodeType": "predicate",
+          "right": LLNumber {
+            "nodeType": "number",
+            "value": 70,
+          },
+          "threshold": undefined,
+          "type": ">",
         },
-        "nodeType": "predicate",
-        "right": LLNumber {
-          "nodeType": "number",
-          "value": 70,
-        },
-        "threshold": undefined,
-        "type": ">",
       },
     },
   },
@@ -2109,23 +2282,26 @@ exports[`Predefined Lint Tests 8`] = `
       "varbs": [
         "c",
       ],
-      "where": LLPredicate {
-        "left": LLValueFunction {
-          "input": LLVariable {
-            "nodeType": "variable",
-            "value": "c",
+      "where": LLExpression {
+        "nodeType": "expression",
+        "value": LLPredicate {
+          "left": LLValueFunction {
+            "input": LLVariable {
+              "nodeType": "variable",
+              "value": "c",
+            },
+            "nodeType": "valueFunction",
+            "params": {},
+            "type": "hsl.l",
           },
-          "nodeType": "valueFunction",
-          "params": {},
-          "type": "hsl.l",
+          "nodeType": "predicate",
+          "right": LLNumber {
+            "nodeType": "number",
+            "value": 70,
+          },
+          "threshold": undefined,
+          "type": ">",
         },
-        "nodeType": "predicate",
-        "right": LLNumber {
-          "nodeType": "number",
-          "value": 70,
-        },
-        "threshold": undefined,
-        "type": ">",
       },
     },
   },
@@ -2499,10 +2675,6 @@ exports[`Predefined Lint Tests 9`] = `
             "nodeType": "bool",
             "value": false,
           },
-          LLBool {
-            "nodeType": "bool",
-            "value": false,
-          },
         ],
       },
       {
@@ -2739,10 +2911,6 @@ exports[`Predefined Lint Tests 9`] = `
               "c": "#008000",
               "index(c)": 1,
             },
-            "nodeType": "bool",
-            "value": false,
-          },
-          LLBool {
             "nodeType": "bool",
             "value": false,
           },
@@ -3025,10 +3193,6 @@ exports[`Predefined Lint Tests 10`] = `
             "nodeType": "bool",
             "value": false,
           },
-          LLBool {
-            "nodeType": "bool",
-            "value": false,
-          },
         ],
       },
       {
@@ -3203,10 +3367,6 @@ exports[`Predefined Lint Tests 10`] = `
               "c": "#008000",
               "index(c)": 1,
             },
-            "nodeType": "bool",
-            "value": true,
-          },
-          LLBool {
             "nodeType": "bool",
             "value": true,
           },
@@ -3522,10 +3682,6 @@ exports[`Predefined Lint Tests 11`] = `
             "nodeType": "bool",
             "value": true,
           },
-          LLBool {
-            "nodeType": "bool",
-            "value": true,
-          },
         ],
       },
       {
@@ -3740,10 +3896,6 @@ exports[`Predefined Lint Tests 11`] = `
             "nodeType": "bool",
             "value": false,
           },
-          LLBool {
-            "nodeType": "bool",
-            "value": false,
-          },
         ],
       },
     ],
@@ -3817,18 +3969,21 @@ exports[`Predefined Lint Tests 12`] = `
         "varbs": [
           "b",
         ],
-        "where": LLPredicate {
-          "left": LLVariable {
-            "nodeType": "variable",
-            "value": "index(a)",
+        "where": LLExpression {
+          "nodeType": "expression",
+          "value": LLPredicate {
+            "left": LLVariable {
+              "nodeType": "variable",
+              "value": "index(a)",
+            },
+            "nodeType": "predicate",
+            "right": LLVariable {
+              "nodeType": "variable",
+              "value": "index(b)",
+            },
+            "threshold": undefined,
+            "type": "!=",
           },
-          "nodeType": "predicate",
-          "right": LLVariable {
-            "nodeType": "variable",
-            "value": "index(b)",
-          },
-          "threshold": undefined,
-          "type": "!=",
         },
       },
       "type": "all",
@@ -4032,10 +4187,6 @@ exports[`Predefined Lint Tests 12`] = `
                     "nodeType": "bool",
                     "value": true,
                   },
-                  LLBool {
-                    "nodeType": "bool",
-                    "value": true,
-                  },
                 ],
               },
             ],
@@ -4228,10 +4379,6 @@ exports[`Predefined Lint Tests 12`] = `
                       "index(a)": 1,
                       "index(b)": 0,
                     },
-                    "nodeType": "bool",
-                    "value": true,
-                  },
-                  LLBool {
                     "nodeType": "bool",
                     "value": true,
                   },
@@ -4322,18 +4469,21 @@ exports[`Predefined Lint Tests 13`] = `
         "varbs": [
           "b",
         ],
-        "where": LLPredicate {
-          "left": LLVariable {
-            "nodeType": "variable",
-            "value": "index(a)",
+        "where": LLExpression {
+          "nodeType": "expression",
+          "value": LLPredicate {
+            "left": LLVariable {
+              "nodeType": "variable",
+              "value": "index(a)",
+            },
+            "nodeType": "predicate",
+            "right": LLVariable {
+              "nodeType": "variable",
+              "value": "index(b)",
+            },
+            "threshold": undefined,
+            "type": "!=",
           },
-          "nodeType": "predicate",
-          "right": LLVariable {
-            "nodeType": "variable",
-            "value": "index(b)",
-          },
-          "threshold": undefined,
-          "type": "!=",
         },
       },
       "type": "all",
@@ -4537,10 +4687,6 @@ exports[`Predefined Lint Tests 13`] = `
                     "nodeType": "bool",
                     "value": false,
                   },
-                  LLBool {
-                    "nodeType": "bool",
-                    "value": false,
-                  },
                 ],
               },
             ],
@@ -4733,10 +4879,6 @@ exports[`Predefined Lint Tests 13`] = `
                       "index(a)": 1,
                       "index(b)": 0,
                     },
-                    "nodeType": "bool",
-                    "value": false,
-                  },
-                  LLBool {
                     "nodeType": "bool",
                     "value": false,
                   },
@@ -4827,18 +4969,21 @@ exports[`Predefined Lint Tests 14`] = `
         "varbs": [
           "b",
         ],
-        "where": LLPredicate {
-          "left": LLVariable {
-            "nodeType": "variable",
-            "value": "index(a)",
+        "where": LLExpression {
+          "nodeType": "expression",
+          "value": LLPredicate {
+            "left": LLVariable {
+              "nodeType": "variable",
+              "value": "index(a)",
+            },
+            "nodeType": "predicate",
+            "right": LLVariable {
+              "nodeType": "variable",
+              "value": "index(b)",
+            },
+            "threshold": undefined,
+            "type": "!=",
           },
-          "nodeType": "predicate",
-          "right": LLVariable {
-            "nodeType": "variable",
-            "value": "index(b)",
-          },
-          "threshold": undefined,
-          "type": "!=",
         },
       },
       "type": "all",
@@ -5042,10 +5187,6 @@ exports[`Predefined Lint Tests 14`] = `
                     "nodeType": "bool",
                     "value": true,
                   },
-                  LLBool {
-                    "nodeType": "bool",
-                    "value": true,
-                  },
                 ],
               },
             ],
@@ -5241,10 +5382,6 @@ exports[`Predefined Lint Tests 14`] = `
                     "nodeType": "bool",
                     "value": true,
                   },
-                  LLBool {
-                    "nodeType": "bool",
-                    "value": true,
-                  },
                 ],
               },
               {
@@ -5332,18 +5469,21 @@ exports[`Predefined Lint Tests 15`] = `
         "varbs": [
           "b",
         ],
-        "where": LLPredicate {
-          "left": LLVariable {
-            "nodeType": "variable",
-            "value": "index(a)",
+        "where": LLExpression {
+          "nodeType": "expression",
+          "value": LLPredicate {
+            "left": LLVariable {
+              "nodeType": "variable",
+              "value": "index(a)",
+            },
+            "nodeType": "predicate",
+            "right": LLVariable {
+              "nodeType": "variable",
+              "value": "index(b)",
+            },
+            "threshold": undefined,
+            "type": "!=",
           },
-          "nodeType": "predicate",
-          "right": LLVariable {
-            "nodeType": "variable",
-            "value": "index(b)",
-          },
-          "threshold": undefined,
-          "type": "!=",
         },
       },
       "type": "all",
@@ -5547,10 +5687,6 @@ exports[`Predefined Lint Tests 15`] = `
                     "nodeType": "bool",
                     "value": false,
                   },
-                  LLBool {
-                    "nodeType": "bool",
-                    "value": false,
-                  },
                 ],
               },
             ],
@@ -5746,10 +5882,6 @@ exports[`Predefined Lint Tests 15`] = `
                     "nodeType": "bool",
                     "value": false,
                   },
-                  LLBool {
-                    "nodeType": "bool",
-                    "value": false,
-                  },
                 ],
               },
               {
@@ -5819,40 +5951,128 @@ exports[`Predefined Lint Tests 16`] = `
       "varbs": [
         "a",
       ],
-      "where": LLValueFunction {
-        "input": LLVariable {
-          "nodeType": "variable",
-          "value": "a",
-        },
-        "nodeType": "valueFunction",
-        "params": {
-          "value": "axis",
-        },
-        "type": "isTag",
-      },
+      "where": false,
     },
   },
   {
     "inducedVariables": {},
     "quant": "all",
-    "quantifierResult": true,
+    "quantifierResult": false,
     "results": [
       {
         "color": "#f00",
-        "didEval": true,
-        "result": "WHERE SKIP",
+        "evals": [
+          LLPredicate {
+            "inducedVariables": {
+              "a": "#f00",
+              "index(a)": 0,
+            },
+            "left": LLPairFunction {
+              "left": LLVariable {
+                "nodeType": "variable",
+                "value": "a",
+              },
+              "nodeType": "pairFunction",
+              "params": {
+                "algorithm": "Lstar",
+              },
+              "right": LLVariable {
+                "nodeType": "variable",
+                "value": "background",
+              },
+              "type": "contrast",
+            },
+            "nodeType": "predicate",
+            "right": LLNumber {
+              "nodeType": "number",
+              "value": 20,
+            },
+            "threshold": undefined,
+            "type": "<",
+          },
+          LLPredicate {
+            "inducedVariables": {
+              "a": "#f00",
+              "index(a)": 0,
+            },
+            "left": LLNumber {
+              "nodeType": "number",
+              "value": 45.709,
+            },
+            "nodeType": "predicate",
+            "right": LLNumber {
+              "nodeType": "number",
+              "value": 20,
+            },
+            "threshold": undefined,
+            "type": "<",
+          },
+          LLBool {
+            "nodeType": "bool",
+            "value": false,
+          },
+        ],
       },
       {
         "color": "#008000",
-        "didEval": true,
-        "result": "WHERE SKIP",
+        "evals": [
+          LLPredicate {
+            "inducedVariables": {
+              "a": "#008000",
+              "index(a)": 1,
+            },
+            "left": LLPairFunction {
+              "left": LLVariable {
+                "nodeType": "variable",
+                "value": "a",
+              },
+              "nodeType": "pairFunction",
+              "params": {
+                "algorithm": "Lstar",
+              },
+              "right": LLVariable {
+                "nodeType": "variable",
+                "value": "background",
+              },
+              "type": "contrast",
+            },
+            "nodeType": "predicate",
+            "right": LLNumber {
+              "nodeType": "number",
+              "value": 20,
+            },
+            "threshold": undefined,
+            "type": "<",
+          },
+          LLPredicate {
+            "inducedVariables": {
+              "a": "#008000",
+              "index(a)": 1,
+            },
+            "left": LLNumber {
+              "nodeType": "number",
+              "value": 53.722,
+            },
+            "nodeType": "predicate",
+            "right": LLNumber {
+              "nodeType": "number",
+              "value": 20,
+            },
+            "threshold": undefined,
+            "type": "<",
+          },
+          LLBool {
+            "nodeType": "bool",
+            "value": false,
+          },
+        ],
       },
     ],
     "varb": "a",
   },
   LLBool {
     "nodeType": "bool",
-    "value": true,
+    "value": false,
   },
 ]
 `;
@@ -5903,40 +6123,170 @@ exports[`Predefined Lint Tests 17`] = `
       "varbs": [
         "a",
       ],
-      "where": LLValueFunction {
-        "input": LLVariable {
-          "nodeType": "variable",
-          "value": "a",
-        },
-        "nodeType": "valueFunction",
-        "params": {
-          "value": "blue",
-        },
-        "type": "isTag",
-      },
+      "where": false,
     },
   },
   {
     "inducedVariables": {},
     "quant": "all",
-    "quantifierResult": true,
+    "quantifierResult": false,
     "results": [
       {
         "color": "#f00",
-        "didEval": true,
-        "result": "WHERE SKIP",
+        "evals": [
+          LLPredicate {
+            "inducedVariables": {
+              "a": "#f00",
+              "index(a)": 0,
+            },
+            "left": LLValueFunction {
+              "input": LLVariable {
+                "nodeType": "variable",
+                "value": "a",
+              },
+              "nodeType": "valueFunction",
+              "params": {},
+              "type": "name",
+            },
+            "nodeType": "predicate",
+            "right": LLColor {
+              "constructorString": "electricBlue",
+              "nodeType": "color",
+              "value": CIELAB {
+                "channels": {
+                  "L": 0,
+                  "a": 0,
+                  "b": 0,
+                },
+                "spaceName": "lab",
+                "tags": [],
+              },
+            },
+            "threshold": undefined,
+            "type": "==",
+          },
+          LLPredicate {
+            "inducedVariables": {
+              "a": "#f00",
+              "index(a)": 0,
+            },
+            "left": LLColor {
+              "constructorString": "brightred",
+              "nodeType": "color",
+              "value": CIELAB {
+                "channels": {
+                  "L": 0,
+                  "a": 0,
+                  "b": 0,
+                },
+                "spaceName": "lab",
+                "tags": [],
+              },
+            },
+            "nodeType": "predicate",
+            "right": LLColor {
+              "constructorString": "electricBlue",
+              "nodeType": "color",
+              "value": CIELAB {
+                "channels": {
+                  "L": 0,
+                  "a": 0,
+                  "b": 0,
+                },
+                "spaceName": "lab",
+                "tags": [],
+              },
+            },
+            "threshold": undefined,
+            "type": "==",
+          },
+          LLBool {
+            "nodeType": "bool",
+            "value": false,
+          },
+        ],
       },
       {
         "color": "#008000",
-        "didEval": true,
-        "result": "WHERE SKIP",
+        "evals": [
+          LLPredicate {
+            "inducedVariables": {
+              "a": "#008000",
+              "index(a)": 1,
+            },
+            "left": LLValueFunction {
+              "input": LLVariable {
+                "nodeType": "variable",
+                "value": "a",
+              },
+              "nodeType": "valueFunction",
+              "params": {},
+              "type": "name",
+            },
+            "nodeType": "predicate",
+            "right": LLColor {
+              "constructorString": "electricBlue",
+              "nodeType": "color",
+              "value": CIELAB {
+                "channels": {
+                  "L": 0,
+                  "a": 0,
+                  "b": 0,
+                },
+                "spaceName": "lab",
+                "tags": [],
+              },
+            },
+            "threshold": undefined,
+            "type": "==",
+          },
+          LLPredicate {
+            "inducedVariables": {
+              "a": "#008000",
+              "index(a)": 1,
+            },
+            "left": LLColor {
+              "constructorString": "green",
+              "nodeType": "color",
+              "value": CIELAB {
+                "channels": {
+                  "L": 46.27770784805982,
+                  "a": -47.552395089952206,
+                  "b": 48.5862848460751,
+                },
+                "spaceName": "lab",
+                "tags": [],
+              },
+            },
+            "nodeType": "predicate",
+            "right": LLColor {
+              "constructorString": "electricBlue",
+              "nodeType": "color",
+              "value": CIELAB {
+                "channels": {
+                  "L": 0,
+                  "a": 0,
+                  "b": 0,
+                },
+                "spaceName": "lab",
+                "tags": [],
+              },
+            },
+            "threshold": undefined,
+            "type": "==",
+          },
+          LLBool {
+            "nodeType": "bool",
+            "value": false,
+          },
+        ],
       },
     ],
     "varb": "a",
   },
   LLBool {
     "nodeType": "bool",
-    "value": true,
+    "value": false,
   },
 ]
 `;
@@ -6509,10 +6859,6 @@ exports[`Predefined Lint Tests 18`] = `
     "nodeType": "bool",
     "value": true,
   },
-  LLBool {
-    "nodeType": "bool",
-    "value": true,
-  },
 ]
 `;
 
@@ -6974,10 +7320,6 @@ exports[`Predefined Lint Tests 20`] = `
   },
   LLBool {
     "inducedVariables": {},
-    "nodeType": "bool",
-    "value": true,
-  },
-  LLBool {
     "nodeType": "bool",
     "value": true,
   },
@@ -8517,10 +8859,6 @@ exports[`Predefined Lint Tests 22`] = `
   },
   LLBool {
     "inducedVariables": {},
-    "nodeType": "bool",
-    "value": true,
-  },
-  LLBool {
     "nodeType": "bool",
     "value": true,
   },
@@ -11720,10 +12058,6 @@ exports[`Predefined Lint Tests 23`] = `
                 "nodeType": "bool",
                 "value": false,
               },
-              LLBool {
-                "nodeType": "bool",
-                "value": false,
-              },
             ],
           },
           {
@@ -14705,10 +15039,6 @@ exports[`Predefined Lint Tests 23`] = `
                 "nodeType": "bool",
                 "value": false,
               },
-              LLBool {
-                "nodeType": "bool",
-                "value": false,
-              },
             ],
           },
         ],
@@ -14721,10 +15051,6 @@ exports[`Predefined Lint Tests 23`] = `
   },
   LLBool {
     "inducedVariables": {},
-    "nodeType": "bool",
-    "value": true,
-  },
-  LLBool {
     "nodeType": "bool",
     "value": true,
   },
@@ -15009,10 +15335,6 @@ exports[`Predefined Lint Tests 24`] = `
             "nodeType": "bool",
             "value": true,
           },
-          LLBool {
-            "nodeType": "bool",
-            "value": true,
-          },
         ],
       },
       {
@@ -15215,10 +15537,6 @@ exports[`Predefined Lint Tests 24`] = `
               "a": "#008000",
               "index(a)": 1,
             },
-            "nodeType": "bool",
-            "value": false,
-          },
-          LLBool {
             "nodeType": "bool",
             "value": false,
           },
@@ -15743,10 +16061,6 @@ exports[`Predefined Lint Tests 25`] = `
   },
   LLBool {
     "inducedVariables": {},
-    "nodeType": "bool",
-    "value": true,
-  },
-  LLBool {
     "nodeType": "bool",
     "value": true,
   },
@@ -16574,18 +16888,21 @@ exports[`Predefined Lint Tests 27`] = `
         "varbs": [
           "y",
         ],
-        "where": LLPredicate {
-          "left": LLVariable {
-            "nodeType": "variable",
-            "value": "index(x)",
+        "where": LLExpression {
+          "nodeType": "expression",
+          "value": LLPredicate {
+            "left": LLVariable {
+              "nodeType": "variable",
+              "value": "index(x)",
+            },
+            "nodeType": "predicate",
+            "right": LLVariable {
+              "nodeType": "variable",
+              "value": "index(y)",
+            },
+            "threshold": undefined,
+            "type": "!=",
           },
-          "nodeType": "predicate",
-          "right": LLVariable {
-            "nodeType": "variable",
-            "value": "index(y)",
-          },
-          "threshold": undefined,
-          "type": "!=",
         },
       },
       "type": "all",
@@ -17715,10 +18032,6 @@ exports[`Predefined Lint Tests 27`] = `
                     "nodeType": "bool",
                     "value": true,
                   },
-                  LLBool {
-                    "nodeType": "bool",
-                    "value": true,
-                  },
                 ],
               },
             ],
@@ -18837,10 +19150,6 @@ exports[`Predefined Lint Tests 27`] = `
                       "x": "#008000",
                       "y": "#f00",
                     },
-                    "nodeType": "bool",
-                    "value": true,
-                  },
-                  LLBool {
                     "nodeType": "bool",
                     "value": true,
                   },
@@ -19003,18 +19312,21 @@ exports[`Predefined Lint Tests 28`] = `
         "varbs": [
           "y",
         ],
-        "where": LLPredicate {
-          "left": LLVariable {
-            "nodeType": "variable",
-            "value": "index(x)",
+        "where": LLExpression {
+          "nodeType": "expression",
+          "value": LLPredicate {
+            "left": LLVariable {
+              "nodeType": "variable",
+              "value": "index(x)",
+            },
+            "nodeType": "predicate",
+            "right": LLVariable {
+              "nodeType": "variable",
+              "value": "index(y)",
+            },
+            "threshold": undefined,
+            "type": "!=",
           },
-          "nodeType": "predicate",
-          "right": LLVariable {
-            "nodeType": "variable",
-            "value": "index(y)",
-          },
-          "threshold": undefined,
-          "type": "!=",
         },
       },
       "type": "all",
@@ -20144,10 +20456,6 @@ exports[`Predefined Lint Tests 28`] = `
                     "nodeType": "bool",
                     "value": true,
                   },
-                  LLBool {
-                    "nodeType": "bool",
-                    "value": true,
-                  },
                 ],
               },
             ],
@@ -21266,10 +21574,6 @@ exports[`Predefined Lint Tests 28`] = `
                       "x": "#008000",
                       "y": "#f00",
                     },
-                    "nodeType": "bool",
-                    "value": true,
-                  },
-                  LLBool {
                     "nodeType": "bool",
                     "value": true,
                   },
@@ -21432,18 +21736,21 @@ exports[`Predefined Lint Tests 29`] = `
         "varbs": [
           "y",
         ],
-        "where": LLPredicate {
-          "left": LLVariable {
-            "nodeType": "variable",
-            "value": "index(x)",
+        "where": LLExpression {
+          "nodeType": "expression",
+          "value": LLPredicate {
+            "left": LLVariable {
+              "nodeType": "variable",
+              "value": "index(x)",
+            },
+            "nodeType": "predicate",
+            "right": LLVariable {
+              "nodeType": "variable",
+              "value": "index(y)",
+            },
+            "threshold": undefined,
+            "type": "!=",
           },
-          "nodeType": "predicate",
-          "right": LLVariable {
-            "nodeType": "variable",
-            "value": "index(y)",
-          },
-          "threshold": undefined,
-          "type": "!=",
         },
       },
       "type": "all",
@@ -22573,10 +22880,6 @@ exports[`Predefined Lint Tests 29`] = `
                     "nodeType": "bool",
                     "value": true,
                   },
-                  LLBool {
-                    "nodeType": "bool",
-                    "value": true,
-                  },
                 ],
               },
             ],
@@ -23695,10 +23998,6 @@ exports[`Predefined Lint Tests 29`] = `
                       "x": "#008000",
                       "y": "#f00",
                     },
-                    "nodeType": "bool",
-                    "value": true,
-                  },
-                  LLBool {
                     "nodeType": "bool",
                     "value": true,
                   },
@@ -23926,10 +24225,6 @@ exports[`Predefined Lint Tests 30`] = `
                     "nodeType": "bool",
                     "value": true,
                   },
-                  LLBool {
-                    "nodeType": "bool",
-                    "value": true,
-                  },
                 ],
               },
               {
@@ -23986,10 +24281,6 @@ exports[`Predefined Lint Tests 30`] = `
                       "index(a)": 0,
                       "index(b)": 1,
                     },
-                    "nodeType": "bool",
-                    "value": true,
-                  },
-                  LLBool {
                     "nodeType": "bool",
                     "value": true,
                   },
@@ -24052,10 +24343,6 @@ exports[`Predefined Lint Tests 30`] = `
                     "nodeType": "bool",
                     "value": true,
                   },
-                  LLBool {
-                    "nodeType": "bool",
-                    "value": true,
-                  },
                 ],
               },
               {
@@ -24115,10 +24402,6 @@ exports[`Predefined Lint Tests 30`] = `
                     "nodeType": "bool",
                     "value": false,
                   },
-                  LLBool {
-                    "nodeType": "bool",
-                    "value": false,
-                  },
                 ],
               },
               {
@@ -24175,10 +24458,6 @@ exports[`Predefined Lint Tests 30`] = `
                       "index(a)": 0,
                       "index(b)": 4,
                     },
-                    "nodeType": "bool",
-                    "value": true,
-                  },
-                  LLBool {
                     "nodeType": "bool",
                     "value": true,
                   },
@@ -24261,10 +24540,6 @@ exports[`Predefined Lint Tests 30`] = `
                     "nodeType": "bool",
                     "value": true,
                   },
-                  LLBool {
-                    "nodeType": "bool",
-                    "value": true,
-                  },
                 ],
               },
               {
@@ -24321,10 +24596,6 @@ exports[`Predefined Lint Tests 30`] = `
                       "index(a)": 1,
                       "index(b)": 1,
                     },
-                    "nodeType": "bool",
-                    "value": true,
-                  },
-                  LLBool {
                     "nodeType": "bool",
                     "value": true,
                   },
@@ -24387,10 +24658,6 @@ exports[`Predefined Lint Tests 30`] = `
                     "nodeType": "bool",
                     "value": true,
                   },
-                  LLBool {
-                    "nodeType": "bool",
-                    "value": true,
-                  },
                 ],
               },
               {
@@ -24450,10 +24717,6 @@ exports[`Predefined Lint Tests 30`] = `
                     "nodeType": "bool",
                     "value": true,
                   },
-                  LLBool {
-                    "nodeType": "bool",
-                    "value": true,
-                  },
                 ],
               },
               {
@@ -24510,10 +24773,6 @@ exports[`Predefined Lint Tests 30`] = `
                       "index(a)": 1,
                       "index(b)": 4,
                     },
-                    "nodeType": "bool",
-                    "value": true,
-                  },
-                  LLBool {
                     "nodeType": "bool",
                     "value": true,
                   },
@@ -24587,26 +24846,29 @@ exports[`Predefined Lint Tests 31`] = `
         "varbs": [
           "b",
         ],
-        "where": LLPredicate {
-          "left": LLVariable {
-            "nodeType": "variable",
-            "value": "index(a)",
-          },
-          "nodeType": "predicate",
-          "right": LLNumberOp {
+        "where": LLExpression {
+          "nodeType": "expression",
+          "value": LLPredicate {
             "left": LLVariable {
               "nodeType": "variable",
-              "value": "index(b)",
+              "value": "index(a)",
             },
-            "nodeType": "numberOp",
-            "right": LLNumber {
-              "nodeType": "number",
-              "value": 1,
+            "nodeType": "predicate",
+            "right": LLNumberOp {
+              "left": LLVariable {
+                "nodeType": "variable",
+                "value": "index(b)",
+              },
+              "nodeType": "numberOp",
+              "right": LLNumber {
+                "nodeType": "number",
+                "value": 1,
+              },
+              "type": "-",
             },
-            "type": "-",
+            "threshold": undefined,
+            "type": "==",
           },
-          "threshold": undefined,
-          "type": "==",
         },
       },
       "type": "all",
@@ -24989,18 +25251,21 @@ exports[`Predefined Lint Tests 34`] = `
         "varbs": [
           "b",
         ],
-        "where": LLPredicate {
-          "left": LLVariable {
-            "nodeType": "variable",
-            "value": "index(a)",
+        "where": LLExpression {
+          "nodeType": "expression",
+          "value": LLPredicate {
+            "left": LLVariable {
+              "nodeType": "variable",
+              "value": "index(a)",
+            },
+            "nodeType": "predicate",
+            "right": LLVariable {
+              "nodeType": "variable",
+              "value": "index(b)",
+            },
+            "threshold": undefined,
+            "type": "!=",
           },
-          "nodeType": "predicate",
-          "right": LLVariable {
-            "nodeType": "variable",
-            "value": "index(b)",
-          },
-          "threshold": undefined,
-          "type": "!=",
         },
       },
       "type": "all",
@@ -25239,18 +25504,21 @@ exports[`Predefined Lint Tests 35`] = `
         "varbs": [
           "b",
         ],
-        "where": LLPredicate {
-          "left": LLVariable {
-            "nodeType": "variable",
-            "value": "index(a)",
+        "where": LLExpression {
+          "nodeType": "expression",
+          "value": LLPredicate {
+            "left": LLVariable {
+              "nodeType": "variable",
+              "value": "index(a)",
+            },
+            "nodeType": "predicate",
+            "right": LLVariable {
+              "nodeType": "variable",
+              "value": "index(b)",
+            },
+            "threshold": undefined,
+            "type": "!=",
           },
-          "nodeType": "predicate",
-          "right": LLVariable {
-            "nodeType": "variable",
-            "value": "index(b)",
-          },
-          "threshold": undefined,
-          "type": "!=",
         },
       },
       "type": "all",
@@ -26078,10 +26346,6 @@ exports[`Predefined Lint Tests 36`] = `
     "nodeType": "bool",
     "value": true,
   },
-  LLBool {
-    "nodeType": "bool",
-    "value": true,
-  },
 ]
 `;
 
@@ -26905,18 +27169,21 @@ LLExpression {
       "varbs": [
         "b",
       ],
-      "where": LLPredicate {
-        "left": LLVariable {
-          "nodeType": "variable",
-          "value": "index(a)",
+      "where": LLExpression {
+        "nodeType": "expression",
+        "value": LLPredicate {
+          "left": LLVariable {
+            "nodeType": "variable",
+            "value": "index(a)",
+          },
+          "nodeType": "predicate",
+          "right": LLVariable {
+            "nodeType": "variable",
+            "value": "index(b)",
+          },
+          "threshold": undefined,
+          "type": "!=",
         },
-        "nodeType": "predicate",
-        "right": LLVariable {
-          "nodeType": "variable",
-          "value": "index(b)",
-        },
-        "threshold": undefined,
-        "type": "!=",
       },
     },
     "type": "all",
@@ -26960,18 +27227,21 @@ LLExpression {
         "varbs": [
           "c",
         ],
-        "where": LLPredicate {
-          "left": LLVariable {
-            "nodeType": "variable",
-            "value": "index(a)",
+        "where": LLExpression {
+          "nodeType": "expression",
+          "value": LLPredicate {
+            "left": LLVariable {
+              "nodeType": "variable",
+              "value": "index(a)",
+            },
+            "nodeType": "predicate",
+            "right": LLVariable {
+              "nodeType": "variable",
+              "value": "index(b)",
+            },
+            "threshold": undefined,
+            "type": "!=",
           },
-          "nodeType": "predicate",
-          "right": LLVariable {
-            "nodeType": "variable",
-            "value": "index(b)",
-          },
-          "threshold": undefined,
-          "type": "!=",
         },
       },
       "type": "all",
@@ -27415,10 +27685,6 @@ exports[`SmallStepEvaluator works with small not example 1`] = `
     "nodeType": "bool",
     "value": false,
   },
-  LLBool {
-    "nodeType": "bool",
-    "value": false,
-  },
 ]
 `;
 
@@ -27445,6 +27711,208 @@ exports[`SmallStepEvaluator works with smaller example 1`] = `
   LLBool {
     "nodeType": "bool",
     "value": true,
+  },
+]
+`;
+
+exports[`where problem 1`] = `
+[
+  LLExpression {
+    "inducedVariables": {},
+    "nodeType": "expression",
+    "value": LLQuantifier {
+      "inducedVariables": {},
+      "input": LLVariable {
+        "nodeType": "variable",
+        "value": "colors",
+      },
+      "nodeType": "quantifier",
+      "predicate": LLExpression {
+        "nodeType": "expression",
+        "value": LLPredicate {
+          "left": LLPairFunction {
+            "left": LLVariable {
+              "nodeType": "variable",
+              "value": "a",
+            },
+            "nodeType": "pairFunction",
+            "params": {
+              "algorithm": "WCAG21",
+            },
+            "right": LLVariable {
+              "nodeType": "variable",
+              "value": "background",
+            },
+            "type": "contrast",
+          },
+          "nodeType": "predicate",
+          "right": LLNumber {
+            "nodeType": "number",
+            "value": 7,
+          },
+          "threshold": undefined,
+          "type": ">",
+        },
+      },
+      "type": "all",
+      "varbs": [
+        "a",
+      ],
+      "where": LLExpression {
+        "nodeType": "expression",
+        "value": LLConjunction {
+          "children": [
+            LLExpression {
+              "nodeType": "expression",
+              "value": LLPredicate {
+                "left": LLVariable {
+                  "nodeType": "variable",
+                  "value": "a",
+                },
+                "nodeType": "predicate",
+                "right": LLColor {
+                  "constructorString": "yellow",
+                  "nodeType": "color",
+                  "value": CIELAB {
+                    "channels": {
+                      "L": 97.60700786450093,
+                      "a": -15.749828397827736,
+                      "b": 93.39359070595872,
+                    },
+                    "spaceName": "lab",
+                    "tags": [],
+                  },
+                },
+                "threshold": 10,
+                "type": "similar",
+              },
+            },
+          ],
+          "nodeType": "conjunction",
+          "type": "not",
+        },
+      },
+    },
+  },
+  {
+    "inducedVariables": {},
+    "quant": "all",
+    "quantifierResult": false,
+    "results": [
+      {
+        "color": "#f00",
+        "evals": [
+          LLPredicate {
+            "inducedVariables": {
+              "a": "#f00",
+              "index(a)": 0,
+            },
+            "left": LLPairFunction {
+              "left": LLVariable {
+                "nodeType": "variable",
+                "value": "a",
+              },
+              "nodeType": "pairFunction",
+              "params": {
+                "algorithm": "WCAG21",
+              },
+              "right": LLVariable {
+                "nodeType": "variable",
+                "value": "background",
+              },
+              "type": "contrast",
+            },
+            "nodeType": "predicate",
+            "right": LLNumber {
+              "nodeType": "number",
+              "value": 7,
+            },
+            "threshold": undefined,
+            "type": ">",
+          },
+          LLPredicate {
+            "inducedVariables": {
+              "a": "#f00",
+              "index(a)": 0,
+            },
+            "left": LLNumber {
+              "nodeType": "number",
+              "value": 3.997818803850546,
+            },
+            "nodeType": "predicate",
+            "right": LLNumber {
+              "nodeType": "number",
+              "value": 7,
+            },
+            "threshold": undefined,
+            "type": ">",
+          },
+          LLBool {
+            "nodeType": "bool",
+            "value": false,
+          },
+        ],
+      },
+      {
+        "color": "#008000",
+        "evals": [
+          LLPredicate {
+            "inducedVariables": {
+              "a": "#008000",
+              "index(a)": 1,
+            },
+            "left": LLPairFunction {
+              "left": LLVariable {
+                "nodeType": "variable",
+                "value": "a",
+              },
+              "nodeType": "pairFunction",
+              "params": {
+                "algorithm": "WCAG21",
+              },
+              "right": LLVariable {
+                "nodeType": "variable",
+                "value": "background",
+              },
+              "type": "contrast",
+            },
+            "nodeType": "predicate",
+            "right": LLNumber {
+              "nodeType": "number",
+              "value": 7,
+            },
+            "threshold": undefined,
+            "type": ">",
+          },
+          LLPredicate {
+            "inducedVariables": {
+              "a": "#008000",
+              "index(a)": 1,
+            },
+            "left": LLNumber {
+              "nodeType": "number",
+              "value": 5.137518325903408,
+            },
+            "nodeType": "predicate",
+            "right": LLNumber {
+              "nodeType": "number",
+              "value": 7,
+            },
+            "threshold": undefined,
+            "type": ">",
+          },
+          LLBool {
+            "nodeType": "bool",
+            "value": false,
+          },
+        ],
+      },
+    ],
+    "varb": "a",
+  },
+  LLBool {
+    "nodeType": "bool",
+    "value": false,
   },
 ]
 `;

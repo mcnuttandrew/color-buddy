@@ -182,6 +182,31 @@ test("Even distribution", () => {
   expect(result).toMatchSnapshot();
 });
 
+test("where problem", () => {
+  const whereProg = {
+    $schema: "https://color-buddy-docs.netlify.app/lint-schema.v0.json",
+    all: {
+      in: "colors",
+      varb: "a",
+      where: {
+        not: { similar: { left: "a", right: "yellow", threshold: 10 } },
+      },
+      predicate: {
+        ">": {
+          left: {
+            contrast: { left: "a", right: "background" },
+            algorithm: "WCAG21",
+          },
+          right: 7,
+        },
+      },
+    },
+  };
+  const ast = getAST(whereProg);
+  const result = generateEvaluations(ast, {}, defaultPal, true);
+  expect(result).toMatchSnapshot();
+});
+
 test("Predefined Lint Tests", () => {
   for (const test in PREBUILT_LINTS) {
     const lint = PREBUILT_LINTS[

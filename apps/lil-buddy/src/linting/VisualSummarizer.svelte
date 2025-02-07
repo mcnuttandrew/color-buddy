@@ -24,6 +24,7 @@
     try {
       const ast = (GenerateAST(JSON.parse(lint) as any).value as any)
         .children[0] as any;
+      console.log(ast);
       const rewrittenAST = rewriteQuantifiers(ast);
       const result = generateEvaluations(rewrittenAST, {}, pal, true);
       error = null;

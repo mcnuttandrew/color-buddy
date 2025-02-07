@@ -35,7 +35,7 @@
                 <div class="flex items-center">
                   {#if result.result === "WHERE SKIP"}
                     <div class="text-red-500">✗</div>
-                    removed by where
+                    removed by where clause
                   {:else}
                     {#each result.evals as evaluation, idx}
                       <DispatchNode

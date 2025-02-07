@@ -950,7 +950,7 @@ export class LLQuantifier extends LLNode {
       inputType,
       predicateType,
       varb ? [varb] : varbs,
-      where && tryTypes([LLPredicate, LLValueFunction], options)(where)
+      where && tryTypes([LLExpression], options)(where)
     );
   }
   copy() {
@@ -959,7 +959,7 @@ export class LLQuantifier extends LLNode {
       this.input.copy(),
       this.predicate.copy(),
       this.varbs,
-      this.where?.copy()
+      this.where && this.where?.copy()
     );
   }
   toString(): string {
@@ -1124,7 +1124,6 @@ export class LLMap extends LLNode {
         const allColors = children.every((x) => isColor(x));
         if (!allNumbers && !allColors) {
           const types = children.map((x) => x);
-          console.log(children);
           throw new Error(
             `Type error, speed must receive all numbers or all colors, got ${types}`
           );

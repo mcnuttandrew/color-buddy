@@ -396,11 +396,7 @@ function traverseAndMaybeExecute(
           evals: [...evals],
         };
       });
-      const quantifierResult = evaluateNode(
-        updatedNode,
-        inducedVariables,
-        pal
-      ).result;
+      const quantifierResult = evaluateNode(node, inducedVariables, pal).result;
       return {
         result: {
           results,
@@ -438,7 +434,6 @@ export function generateEvaluations(
   // weird hack to inset the induced variables over everything
   subTreeIsPureOp(nodeCopy, inducedVariables);
   const evalLog = node.nodeType === "quantifier" ? [] : [nodeCopy];
-  // const evalLog = [nodeCopy];
   let currentNode = copy(node);
   subTreeIsPureOp(node, inducedVariables);
 
@@ -460,5 +455,13 @@ export function generateEvaluations(
   const result = evaluateNode(node, { ...inducedVariables }, pal).result;
   const astResult = LLTypes.LLValue.tryToConstruct(result, {} as any);
   evalLog.push(astResult);
+  // check if the last two items are the same, if so, remove the last one
+  if (
+    evalLog.length > 1 &&
+    JSON.stringify(copy(evalLog[evalLog.length - 1])) ===
+      JSON.stringify(copy(evalLog[evalLog.length - 2]))
+  ) {
+    evalLog.pop();
+  }
   return evalLog;
 }

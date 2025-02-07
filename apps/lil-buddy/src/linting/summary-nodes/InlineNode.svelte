@@ -16,7 +16,11 @@
     }
     return str;
   }
-  $: env = { ...inducedVariables, ...node?.inducedVariables };
+  $: env = {
+    ...inducedVariables,
+    ...node?.inducedVariables,
+    background: pal.background,
+  };
 </script>
 
 <div class="flex items-center">
@@ -34,10 +38,12 @@
       <svelte:self node={node.children[0]} {pal} inducedVariables={env} />
     </div>
   {:else if node.nodeType === "conjunction"}
-    <div class="flex flex-col">
-      <div>{node.type}</div>
-      {#each node.children as child}
+    <div class="flex flex-col border border-black p-1 items-center">
+      {#each node.children as child, idx}
         <svelte:self node={child} {pal} inducedVariables={env} />
+        {#if idx !== node.children.length - 1}
+          <div>{node.type}</div>
+        {/if}
       {/each}
     </div>
   {:else if node.nodeType === "numberOp"}
@@ -49,18 +55,21 @@
   {:else if node.nodeType === "number"}
     <div class="font-mono text-sm">{`${toThreeDigit(node.value)}`}</div>
   {:else if node.nodeType === "variable"}
-    {#if env[node.value]}
-      <div
-        class="h-5 w-5 rounded-full"
-        style={`background: ${env[node.value]}`}
-      />
-    {:else if node.value === "colors"}
-      {#each pal.colors as color}
-        <div class="h-5 w-5 rounded-full" style={`background: ${color}`} />
-      {/each}
-    {:else}
-      <div>{node.value}</div>
-    {/if}
+    <div class="relative">
+      <!-- <div class="text-xs absolute text-center">{node.value}</div> -->
+      {#if env[node.value]}
+        <div
+          class="h-5 w-5 rounded-full"
+          style={`background: ${env[node.value]}`}
+        />
+      {:else if node.value === "colors"}
+        {#each pal.colors as color}
+          <div class="h-5 w-5 rounded-full" style={`background: ${color}`} />
+        {/each}
+      {:else}
+        <div>{node.value}</div>
+      {/if}
+    </div>
   {:else if node.nodeType === "pairFunction"}
     <div class="flex">
       {node.type}
@@ -79,13 +88,11 @@
     </div>
   {:else if node.nodeType === "color"}
     <!-- color names are parsed as colors unfortunately, so this is a hack -->
-    {#if node.value.channels["L"] === 0 && node.value.channels["a"] === 0 && node.value.channels["b"] === 0 && node.constructorString !== "#000"}
+    {#if node.value.channels["L"] === 0 && node.value.channels["a"] === 0 && node.value.channels["b"] === 0 && !new Set( ["#000", "#000000"] ).has(node.constructorString)}
       {node.constructorString}
     {:else}
       <div class="h-5 w-5 rounded-full" style={`background: ${node.value}`} />
     {/if}
-  {:else if node.nodeType === "bool"}
-    <div>{node.value ? "T" : "F"}</div>
   {:else if node.nodeType === "aggregate"}
     <div class="flex">
       {node.type}
@@ -141,6 +148,14 @@
     </div>
   {:else if node.nodeType === "expression"}
     <svelte:self node={node.value} {pal} inducedVariables={env} />
+  {:else if node.nodeType === "bool"}
+    <div
+      class=" px-2 text-sm rounded-full"
+      class:bg-green-300={node.value}
+      class:bg-red-300={!node.value}
+    >
+      {node.value ? "T" : "F"}
+    </div>
   {:else if typeof node === "boolean"}
     <div>{node ? "T" : "F"}</div>
   {/if}

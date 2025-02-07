@@ -90,7 +90,7 @@ Palettes that will pass this test:
 
 **Description**: Colors used need to have sufficient contrast with the background to make them legible, as defined by WCAG21 contrast ratios. For this check (for AA text) there should be at least a 4.5:1 contrast ratio. If this lint is not failing and you believe it should be, ensure that a color has been selected as having the "text" tag.
 
-**Natural Language**: ALL a IN colors WHERE isTag(a, text) SUCH THAT contrast(a, background, WCAG21) > 4.5
+**Natural Language**: ALL a IN colors SUCH THAT contrast(a, background, WCAG21) > 4.5
 
 Palettes that will fail this test:
 
@@ -133,7 +133,7 @@ Palettes that will pass this test:
 
 **Description**: Colors used need to have sufficient contrast with the background to make them legible, as defined by WCAG21 contrast ratios. For this check (for AAA text) there should be at least a 7:1 contrast ratio. If this lint is not failing and you believe it should be, ensure that a color has been selected as having the "text" tag.
 
-**Natural Language**: ALL a IN colors WHERE isTag(a, text) SUCH THAT contrast(a, background, WCAG21) > 7
+**Natural Language**: ALL a IN colors SUCH THAT contrast(a, background, WCAG21) > 7
 
 Palettes that will fail this test:
 
@@ -649,7 +649,7 @@ Palettes that will pass this test:
 
 **Description**: Axes should have low contrast with the background. Having it too high can make the axes too distracting. See "Whisper, Don't Scream: Grids and Transparency" for more.
 
-**Natural Language**: ALL a IN colors WHERE isTag(a, axis) SUCH THAT contrast(a, background, Lstar) < 20
+**Natural Language**: ALL a IN colors SUCH THAT contrast(a, background, Lstar) < 20
 
 Palettes that will fail this test:
 
@@ -692,7 +692,7 @@ Palettes that will pass this test:
 
 **Description**: Blue should be high probability for the basic color term blue. If it's not, it can be confusing to users.
 
-**Natural Language**: ALL a IN colors WHERE isTag(a, blue) SUCH THAT name(a) == electricBlue
+**Natural Language**: ALL a IN colors SUCH THAT name(a) == electricBlue
 
 Palettes that will fail this test:
 

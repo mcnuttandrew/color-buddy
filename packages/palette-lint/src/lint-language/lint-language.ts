@@ -173,7 +173,12 @@ export class LLNode {
 export class LLExpression extends LLNode {
   nodeType: string = "expression";
   constructor(
-    public value: LLConjunction | LLPredicate | LLQuantifier | LLBool
+    public value:
+      | LLConjunction
+      | LLPredicate
+      | LLQuantifier
+      | LLBool
+      | LLBoolFunction
   ) {
     super();
   }
@@ -183,7 +188,7 @@ export class LLExpression extends LLNode {
   }
   static tryToConstruct(node: any, options: OptionsConfig) {
     const value = tryTypes(
-      [LLConjunction, LLPredicate, LLQuantifier, LLBool],
+      [LLConjunction, LLBoolFunction, LLPredicate, LLQuantifier, LLBool],
       options
     )(node);
     if (!value) return false;
@@ -600,6 +605,7 @@ export class LLValue extends LLNode {
   constructor(
     public value:
       | LLValueFunction
+      | LLBoolFunction
       | LLPairFunction
       | LLColor
       | LLNumber
@@ -616,6 +622,7 @@ export class LLValue extends LLNode {
   static tryToConstruct(node: any, options: OptionsConfig) {
     const types = [
       LLValueFunction,
+      LLBoolFunction,
       LLPairFunction,
       LLBool,
       LLColor,
@@ -724,6 +731,73 @@ export class LLValueFunction extends LLNode {
   }
   copy() {
     return new LLValueFunction(this.type, this.input.copy(), this.params);
+  }
+  toString(): string {
+    const params = Object.values(this.params).join(", ");
+    const paramString = params.length ? `, ${params}` : "";
+    return `${this.type}(${this.input.toString()}${paramString})`;
+  }
+}
+
+const BoolFunctionTypes: {
+  primaryKey: string;
+  params: string[];
+  op: (val: Color, params: Params) => boolean;
+}[] = [
+  {
+    primaryKey: "inGamut",
+    params: [],
+    op: (val, _params) => val.inGamut(),
+  },
+  {
+    primaryKey: "isTag",
+    params: ["value"],
+    op: (val, params) => {
+      const tag = params.value.toLowerCase();
+      return (val.tags as string[]).some((x) => x.toLowerCase() === tag);
+    },
+  },
+];
+
+export class LLBoolFunction extends LLNode {
+  nodeType: string = "boolFunction";
+  constructor(
+    public type: (typeof BoolFunctionTypes)[number]["primaryKey"],
+    public input: LLColor | LLVariable,
+    public params: Record<string, string>
+  ) {
+    super();
+  }
+  evaluate(env: Environment) {
+    this.evalCheck(env);
+    const { input, params } = this;
+    // get the value of the input, such as by deref
+    const inputEval = input.evaluate(env).result;
+    if (!(typeof inputEval === "object" && isColor(inputEval))) {
+      throw new Error(
+        `Type error, was expecting a color, but got ${inputEval} in function ${this.type}`
+      );
+    }
+    const op = BoolFunctionTypes.find((x) => x.primaryKey === this.type);
+    if (!op) throw new Error("Invalid type");
+    const result = op.op(inputEval, params);
+    if (result === undefined) {
+      throw new Error("Invalid result");
+    }
+    return { result, env };
+  }
+  static tryToConstruct(node: any, options: OptionsConfig) {
+    const inputTypes = [LLAggregate, LLColor, LLVariable];
+    // find the appropriate type and do a simple type check
+    const op = getOp(BoolFunctionTypes)(node);
+    if (!op) return false;
+    const input = tryTypes(inputTypes, options)(node[op.primaryKey]);
+    if (!input) return false;
+    const params = getParams(op, node);
+    return new LLBoolFunction(op.primaryKey, input, params);
+  }
+  copy() {
+    return new LLBoolFunction(this.type, this.input.copy(), this.params);
   }
   toString(): string {
     const params = Object.values(this.params).join(", ");
@@ -860,7 +934,7 @@ export class LLQuantifier extends LLNode {
     public input: LLValueArray | LLVariable | LLMap,
     public predicate: LLPredicate,
     public varbs: string[],
-    public where?: LLPredicate | LLValueFunction
+    public where?: LLExpression
   ) {
     super();
   }
@@ -953,7 +1027,7 @@ export class LLQuantifier extends LLNode {
       where && tryTypes([LLExpression], options)(where)
     );
   }
-  copy() {
+  copy(): LLQuantifier {
     return new LLQuantifier(
       this.type,
       this.input.copy(),

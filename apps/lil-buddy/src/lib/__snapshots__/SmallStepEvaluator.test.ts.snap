@@ -1415,128 +1415,43 @@ exports[`Predefined Lint Tests 2`] = `
       "varbs": [
         "a",
       ],
-      "where": false,
+      "where": LLExpression {
+        "nodeType": "expression",
+        "value": LLBoolFunction {
+          "input": LLVariable {
+            "nodeType": "variable",
+            "value": "a",
+          },
+          "nodeType": "boolFunction",
+          "params": {
+            "value": "text",
+          },
+          "type": "isTag",
+        },
+      },
     },
   },
   {
     "inducedVariables": {},
     "quant": "all",
-    "quantifierResult": false,
+    "quantifierResult": true,
     "results": [
       {
         "color": "#f00",
-        "evals": [
-          LLPredicate {
-            "inducedVariables": {
-              "a": "#f00",
-              "index(a)": 0,
-            },
-            "left": LLPairFunction {
-              "left": LLVariable {
-                "nodeType": "variable",
-                "value": "a",
-              },
-              "nodeType": "pairFunction",
-              "params": {
-                "algorithm": "WCAG21",
-              },
-              "right": LLVariable {
-                "nodeType": "variable",
-                "value": "background",
-              },
-              "type": "contrast",
-            },
-            "nodeType": "predicate",
-            "right": LLNumber {
-              "nodeType": "number",
-              "value": 4.5,
-            },
-            "threshold": undefined,
-            "type": ">",
-          },
-          LLPredicate {
-            "inducedVariables": {
-              "a": "#f00",
-              "index(a)": 0,
-            },
-            "left": LLNumber {
-              "nodeType": "number",
-              "value": 3.997818803850546,
-            },
-            "nodeType": "predicate",
-            "right": LLNumber {
-              "nodeType": "number",
-              "value": 4.5,
-            },
-            "threshold": undefined,
-            "type": ">",
-          },
-          LLBool {
-            "nodeType": "bool",
-            "value": false,
-          },
-        ],
+        "didEval": true,
+        "result": "WHERE SKIP",
       },
       {
         "color": "#008000",
-        "evals": [
-          LLPredicate {
-            "inducedVariables": {
-              "a": "#008000",
-              "index(a)": 1,
-            },
-            "left": LLPairFunction {
-              "left": LLVariable {
-                "nodeType": "variable",
-                "value": "a",
-              },
-              "nodeType": "pairFunction",
-              "params": {
-                "algorithm": "WCAG21",
-              },
-              "right": LLVariable {
-                "nodeType": "variable",
-                "value": "background",
-              },
-              "type": "contrast",
-            },
-            "nodeType": "predicate",
-            "right": LLNumber {
-              "nodeType": "number",
-              "value": 4.5,
-            },
-            "threshold": undefined,
-            "type": ">",
-          },
-          LLPredicate {
-            "inducedVariables": {
-              "a": "#008000",
-              "index(a)": 1,
-            },
-            "left": LLNumber {
-              "nodeType": "number",
-              "value": 5.137518325903408,
-            },
-            "nodeType": "predicate",
-            "right": LLNumber {
-              "nodeType": "number",
-              "value": 4.5,
-            },
-            "threshold": undefined,
-            "type": ">",
-          },
-          LLBool {
-            "nodeType": "bool",
-            "value": true,
-          },
-        ],
+        "didEval": true,
+        "result": "WHERE SKIP",
       },
     ],
     "varb": "a",
   },
   LLBool {
     "nodeType": "bool",
-    "value": false,
+    "value": true,
   },
 ]
 `;
@@ -1584,128 +1499,43 @@ exports[`Predefined Lint Tests 3`] = `
       "varbs": [
         "a",
       ],
-      "where": false,
+      "where": LLExpression {
+        "nodeType": "expression",
+        "value": LLBoolFunction {
+          "input": LLVariable {
+            "nodeType": "variable",
+            "value": "a",
+          },
+          "nodeType": "boolFunction",
+          "params": {
+            "value": "text",
+          },
+          "type": "isTag",
+        },
+      },
     },
   },
   {
     "inducedVariables": {},
     "quant": "all",
-    "quantifierResult": false,
+    "quantifierResult": true,
     "results": [
       {
         "color": "#f00",
-        "evals": [
-          LLPredicate {
-            "inducedVariables": {
-              "a": "#f00",
-              "index(a)": 0,
-            },
-            "left": LLPairFunction {
-              "left": LLVariable {
-                "nodeType": "variable",
-                "value": "a",
-              },
-              "nodeType": "pairFunction",
-              "params": {
-                "algorithm": "WCAG21",
-              },
-              "right": LLVariable {
-                "nodeType": "variable",
-                "value": "background",
-              },
-              "type": "contrast",
-            },
-            "nodeType": "predicate",
-            "right": LLNumber {
-              "nodeType": "number",
-              "value": 7,
-            },
-            "threshold": undefined,
-            "type": ">",
-          },
-          LLPredicate {
-            "inducedVariables": {
-              "a": "#f00",
-              "index(a)": 0,
-            },
-            "left": LLNumber {
-              "nodeType": "number",
-              "value": 3.997818803850546,
-            },
-            "nodeType": "predicate",
-            "right": LLNumber {
-              "nodeType": "number",
-              "value": 7,
-            },
-            "threshold": undefined,
-            "type": ">",
-          },
-          LLBool {
-            "nodeType": "bool",
-            "value": false,
-          },
-        ],
+        "didEval": true,
+        "result": "WHERE SKIP",
       },
       {
         "color": "#008000",
-        "evals": [
-          LLPredicate {
-            "inducedVariables": {
-              "a": "#008000",
-              "index(a)": 1,
-            },
-            "left": LLPairFunction {
-              "left": LLVariable {
-                "nodeType": "variable",
-                "value": "a",
-              },
-              "nodeType": "pairFunction",
-              "params": {
-                "algorithm": "WCAG21",
-              },
-              "right": LLVariable {
-                "nodeType": "variable",
-                "value": "background",
-              },
-              "type": "contrast",
-            },
-            "nodeType": "predicate",
-            "right": LLNumber {
-              "nodeType": "number",
-              "value": 7,
-            },
-            "threshold": undefined,
-            "type": ">",
-          },
-          LLPredicate {
-            "inducedVariables": {
-              "a": "#008000",
-              "index(a)": 1,
-            },
-            "left": LLNumber {
-              "nodeType": "number",
-              "value": 5.137518325903408,
-            },
-            "nodeType": "predicate",
-            "right": LLNumber {
-              "nodeType": "number",
-              "value": 7,
-            },
-            "threshold": undefined,
-            "type": ">",
-          },
-          LLBool {
-            "nodeType": "bool",
-            "value": false,
-          },
-        ],
+        "didEval": true,
+        "result": "WHERE SKIP",
       },
     ],
     "varb": "a",
   },
   LLBool {
     "nodeType": "bool",
-    "value": false,
+    "value": true,
   },
 ]
 `;
@@ -5951,128 +5781,43 @@ exports[`Predefined Lint Tests 16`] = `
       "varbs": [
         "a",
       ],
-      "where": false,
+      "where": LLExpression {
+        "nodeType": "expression",
+        "value": LLBoolFunction {
+          "input": LLVariable {
+            "nodeType": "variable",
+            "value": "a",
+          },
+          "nodeType": "boolFunction",
+          "params": {
+            "value": "axis",
+          },
+          "type": "isTag",
+        },
+      },
     },
   },
   {
     "inducedVariables": {},
     "quant": "all",
-    "quantifierResult": false,
+    "quantifierResult": true,
     "results": [
       {
         "color": "#f00",
-        "evals": [
-          LLPredicate {
-            "inducedVariables": {
-              "a": "#f00",
-              "index(a)": 0,
-            },
-            "left": LLPairFunction {
-              "left": LLVariable {
-                "nodeType": "variable",
-                "value": "a",
-              },
-              "nodeType": "pairFunction",
-              "params": {
-                "algorithm": "Lstar",
-              },
-              "right": LLVariable {
-                "nodeType": "variable",
-                "value": "background",
-              },
-              "type": "contrast",
-            },
-            "nodeType": "predicate",
-            "right": LLNumber {
-              "nodeType": "number",
-              "value": 20,
-            },
-            "threshold": undefined,
-            "type": "<",
-          },
-          LLPredicate {
-            "inducedVariables": {
-              "a": "#f00",
-              "index(a)": 0,
-            },
-            "left": LLNumber {
-              "nodeType": "number",
-              "value": 45.709,
-            },
-            "nodeType": "predicate",
-            "right": LLNumber {
-              "nodeType": "number",
-              "value": 20,
-            },
-            "threshold": undefined,
-            "type": "<",
-          },
-          LLBool {
-            "nodeType": "bool",
-            "value": false,
-          },
-        ],
+        "didEval": true,
+        "result": "WHERE SKIP",
       },
       {
         "color": "#008000",
-        "evals": [
-          LLPredicate {
-            "inducedVariables": {
-              "a": "#008000",
-              "index(a)": 1,
-            },
-            "left": LLPairFunction {
-              "left": LLVariable {
-                "nodeType": "variable",
-                "value": "a",
-              },
-              "nodeType": "pairFunction",
-              "params": {
-                "algorithm": "Lstar",
-              },
-              "right": LLVariable {
-                "nodeType": "variable",
-                "value": "background",
-              },
-              "type": "contrast",
-            },
-            "nodeType": "predicate",
-            "right": LLNumber {
-              "nodeType": "number",
-              "value": 20,
-            },
-            "threshold": undefined,
-            "type": "<",
-          },
-          LLPredicate {
-            "inducedVariables": {
-              "a": "#008000",
-              "index(a)": 1,
-            },
-            "left": LLNumber {
-              "nodeType": "number",
-              "value": 53.722,
-            },
-            "nodeType": "predicate",
-            "right": LLNumber {
-              "nodeType": "number",
-              "value": 20,
-            },
-            "threshold": undefined,
-            "type": "<",
-          },
-          LLBool {
-            "nodeType": "bool",
-            "value": false,
-          },
-        ],
+        "didEval": true,
+        "result": "WHERE SKIP",
       },
     ],
     "varb": "a",
   },
   LLBool {
     "nodeType": "bool",
-    "value": false,
+    "value": true,
   },
 ]
 `;
@@ -6123,170 +5868,43 @@ exports[`Predefined Lint Tests 17`] = `
       "varbs": [
         "a",
       ],
-      "where": false,
+      "where": LLExpression {
+        "nodeType": "expression",
+        "value": LLBoolFunction {
+          "input": LLVariable {
+            "nodeType": "variable",
+            "value": "a",
+          },
+          "nodeType": "boolFunction",
+          "params": {
+            "value": "blue",
+          },
+          "type": "isTag",
+        },
+      },
     },
   },
   {
     "inducedVariables": {},
     "quant": "all",
-    "quantifierResult": false,
+    "quantifierResult": true,
     "results": [
       {
         "color": "#f00",
-        "evals": [
-          LLPredicate {
-            "inducedVariables": {
-              "a": "#f00",
-              "index(a)": 0,
-            },
-            "left": LLValueFunction {
-              "input": LLVariable {
-                "nodeType": "variable",
-                "value": "a",
-              },
-              "nodeType": "valueFunction",
-              "params": {},
-              "type": "name",
-            },
-            "nodeType": "predicate",
-            "right": LLColor {
-              "constructorString": "electricBlue",
-              "nodeType": "color",
-              "value": CIELAB {
-                "channels": {
-                  "L": 0,
-                  "a": 0,
-                  "b": 0,
-                },
-                "spaceName": "lab",
-                "tags": [],
-              },
-            },
-            "threshold": undefined,
-            "type": "==",
-          },
-          LLPredicate {
-            "inducedVariables": {
-              "a": "#f00",
-              "index(a)": 0,
-            },
-            "left": LLColor {
-              "constructorString": "brightred",
-              "nodeType": "color",
-              "value": CIELAB {
-                "channels": {
-                  "L": 0,
-                  "a": 0,
-                  "b": 0,
-                },
-                "spaceName": "lab",
-                "tags": [],
-              },
-            },
-            "nodeType": "predicate",
-            "right": LLColor {
-              "constructorString": "electricBlue",
-              "nodeType": "color",
-              "value": CIELAB {
-                "channels": {
-                  "L": 0,
-                  "a": 0,
-                  "b": 0,
-                },
-                "spaceName": "lab",
-                "tags": [],
-              },
-            },
-            "threshold": undefined,
-            "type": "==",
-          },
-          LLBool {
-            "nodeType": "bool",
-            "value": false,
-          },
-        ],
+        "didEval": true,
+        "result": "WHERE SKIP",
       },
       {
         "color": "#008000",
-        "evals": [
-          LLPredicate {
-            "inducedVariables": {
-              "a": "#008000",
-              "index(a)": 1,
-            },
-            "left": LLValueFunction {
-              "input": LLVariable {
-                "nodeType": "variable",
-                "value": "a",
-              },
-              "nodeType": "valueFunction",
-              "params": {},
-              "type": "name",
-            },
-            "nodeType": "predicate",
-            "right": LLColor {
-              "constructorString": "electricBlue",
-              "nodeType": "color",
-              "value": CIELAB {
-                "channels": {
-                  "L": 0,
-                  "a": 0,
-                  "b": 0,
-                },
-                "spaceName": "lab",
-                "tags": [],
-              },
-            },
-            "threshold": undefined,
-            "type": "==",
-          },
-          LLPredicate {
-            "inducedVariables": {
-              "a": "#008000",
-              "index(a)": 1,
-            },
-            "left": LLColor {
-              "constructorString": "green",
-              "nodeType": "color",
-              "value": CIELAB {
-                "channels": {
-                  "L": 46.27770784805982,
-                  "a": -47.552395089952206,
-                  "b": 48.5862848460751,
-                },
-                "spaceName": "lab",
-                "tags": [],
-              },
-            },
-            "nodeType": "predicate",
-            "right": LLColor {
-              "constructorString": "electricBlue",
-              "nodeType": "color",
-              "value": CIELAB {
-                "channels": {
-                  "L": 0,
-                  "a": 0,
-                  "b": 0,
-                },
-                "spaceName": "lab",
-                "tags": [],
-              },
-            },
-            "threshold": undefined,
-            "type": "==",
-          },
-          LLBool {
-            "nodeType": "bool",
-            "value": false,
-          },
-        ],
+        "didEval": true,
+        "result": "WHERE SKIP",
       },
     ],
     "varb": "a",
   },
   LLBool {
     "nodeType": "bool",
-    "value": false,
+    "value": true,
   },
 ]
 `;

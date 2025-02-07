@@ -182,15 +182,17 @@ test("Even distribution", () => {
   expect(result).toMatchSnapshot();
 });
 
-test.only("All Test", () => {
+test("Predefined Lint Tests", () => {
   for (const test in PREBUILT_LINTS) {
     const lint = PREBUILT_LINTS[
       test as keyof typeof PREBUILT_LINTS
     ] as LintProgram;
-    console.log(lint.name);
+    if (!lint.program) {
+      continue;
+    }
     const lintProgram = JSON.parse(lint.program);
     const ast = getAST(lintProgram);
     const result = generateEvaluations(ast, {}, defaultPal, true);
-    expect(result).toMatchSnapshot();
+    expect(result, `${lint.name} to pass`).toMatchSnapshot();
   }
 });

@@ -1,4 +1,4 @@
-import { LLTypes, linter, Environment } from "color-buddy-palette-lint";
+import { LLTypes, Environment } from "color-buddy-palette-lint";
 import { Color } from "color-buddy-palette";
 import type { Palette } from "color-buddy-palette";
 
@@ -72,7 +72,7 @@ function clearQuantifierResults(node: any) {
   if (!node.nodeType && !node.quant) {
     return node;
   } else if (node.quant) {
-    return toVal(node.quantifierResult);
+    return new LLTypes.LLBool(node.quantifierResult);
   }
   const newNode = copy(node);
   switch (node.nodeType) {
@@ -157,8 +157,6 @@ const toVal = (x: Color | number) => {
     return new LLTypes.LLValue(
       new LLTypes.LLColor(Color.colorFromHex(x, "lab"), x)
     );
-  } else if (typeof x === "boolean") {
-    return new LLTypes.LLBool(x);
   }
   return new LLTypes.LLValue(new LLTypes.LLColor(x, x.toHex()));
 };
@@ -211,11 +209,6 @@ function subTreeIsPureOp(
     case "aggregate":
     case "array":
     case "map":
-      // special thing for conjunction
-      // todo: maybe not necessary, check when the tests work again
-      if (node.type === "not") {
-        return isValue(node.children[0]);
-      }
       if (node.children?.nodeType === "variable") {
         return true;
       }
@@ -239,7 +232,6 @@ function subTreeIsPureOp(
       return isValue(node.input);
     case "quantifier":
       return false;
-    // throw new Error("Quantifiers should not be evaluated here", node);
     default:
       return false;
   }
@@ -278,6 +270,7 @@ function traverseAndMaybeExecute(
     ? (node?.children || []).every((x: any) => isValue(x))
     : false;
   if (thisIsPureOp || allChildrenPureOps) {
+    const preKey = JSON.stringify(node.copy());
     const result = evaluateNode(node, inducedVariables, pal).result;
     let astResult;
     if (Array.isArray(result)) {
@@ -285,7 +278,8 @@ function traverseAndMaybeExecute(
     } else {
       astResult = LLTypes.LLValue.tryToConstruct(result, {} as any);
     }
-    return { result: astResult, didEval: true };
+    const postKey = JSON.stringify(astResult.copy());
+    return { result: astResult, didEval: preKey !== postKey };
   }
 
   let updatedNode = copy(node);
@@ -443,9 +437,8 @@ export function generateEvaluations(
   let nodeCopy = copy(node);
   // weird hack to inset the induced variables over everything
   subTreeIsPureOp(nodeCopy, inducedVariables);
-  // todo maybe: if this is a quantifier don't copy it
-  // const evalLog = node.nodeType === "quantifier" ? [] : [nodeCopy];
-  const evalLog = [nodeCopy];
+  const evalLog = node.nodeType === "quantifier" ? [] : [nodeCopy];
+  // const evalLog = [nodeCopy];
   let currentNode = copy(node);
   subTreeIsPureOp(node, inducedVariables);
 

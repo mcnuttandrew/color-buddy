@@ -36,6 +36,7 @@ export function rewriteQuantifiers(node: any) {
     case "expression":
       newNode.value = rewriteQuantifiers(node.value);
       break;
+    case "boolFunction":
     case "valueFunction":
       newNode.input = rewriteQuantifiers(node.input);
       break;
@@ -100,6 +101,7 @@ function clearQuantifierResults(node: any) {
       newNode.value = clearQuantifierResults(node.value);
       break;
     case "valueFunction":
+    case "boolFunction":
       newNode.input = clearQuantifierResults(node.input);
       break;
     case "quantifier":
@@ -128,7 +130,7 @@ function checkWhere(
   if (!node) return true;
   const result = evaluateNode(
     node,
-    { ...inducedVariables, [varb]: color, [`index(${varb})`]: index },
+    { ...inducedVariables, [varb]: color, [`index(${varb})`]: index + 1 },
     pal
   );
   return result.result;
@@ -228,6 +230,7 @@ function subTreeIsPureOp(
     case "value":
     case "variable":
       return false;
+    case "boolFunction":
     case "valueFunction":
       return isValue(node.input);
     case "quantifier":
@@ -353,6 +356,7 @@ function traverseAndMaybeExecute(
       return { result: updatedNode, didEval: false };
     case "variable":
       return { result: updatedNode, didEval: false };
+    case "boolFunction":
     case "valueFunction":
       const arg = traverseAndMaybeExecute(
         updatedNode.input,
@@ -384,7 +388,7 @@ function traverseAndMaybeExecute(
         const updatedVariables = {
           ...updatedNode.inducedVariables,
           [updatedNode.varbs[0]]: color,
-          [`index(${node.varbs[0]})`]: i,
+          [`index(${node.varbs[0]})`]: i + 1,
         };
         const evals = generateEvaluations(
           updatedNode.predicate.value || updatedNode.predicate,

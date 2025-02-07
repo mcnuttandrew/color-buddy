@@ -956,14 +956,14 @@ export class LLQuantifier extends LLNode {
     let blameIndices = new Set<number>([]);
     let topEnv = env.copy();
     const mappedEvaluations = carts
-      .map((combo: any) => {
+      .map((combo: number[]) => {
         const varbIndex = this.varbs.map((varb, idx) => {
+          // i think the bug relates to this line, something related to the generate index variables...
           return [varb, inputData[combo[idx]]];
         });
         const newEnv = varbIndex.reduce((acc, [varb, [index, x]]) => {
           return acc.set(varb, x).set(`index(${varb})`, idxType(index + 1));
         }, env);
-        ("");
         if (this.where && !this.where.evaluate(newEnv).result) {
           return "skip";
         }

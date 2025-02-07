@@ -124,6 +124,20 @@ test("Nested Quantifiers Test", () => {
   expect(result).toMatchSnapshot();
 });
 
+test("Nested Quantifiers Test 2", () => {
+  const nested = {
+    $schema: "https://color-buddy-docs.netlify.app/lint-schema.v0.json",
+    all: {
+      in: "colors",
+      varbs: ["a", "b"],
+      where: { "!=": { left: "index(a)", right: "index(b)" } },
+      predicate: { not: true },
+    },
+  };
+  const result = generateEvaluations(getAST(nested), {}, defaultPal, true);
+  expect(result).toMatchSnapshot();
+});
+
 test("Quantifier Rewrite Test 1", () => {
   const nested = {
     all: {

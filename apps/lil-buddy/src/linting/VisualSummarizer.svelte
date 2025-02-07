@@ -17,7 +17,7 @@
       error = "Changes in process";
       setTimeout(() => {
         error = null;
-        $store.okayToExecute = true;
+        store.setOkayToExecute(true);
       }, 2000);
       return null;
     }

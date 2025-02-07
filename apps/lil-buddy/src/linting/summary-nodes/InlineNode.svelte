@@ -23,12 +23,18 @@
   };
 </script>
 
-<div class="flex items-center">
+<div class="flex items-center border">
   {#if node.nodeType === "predicate"}
     <div class="flex">
       <div class="border p-2 border-black flex">
         <svelte:self node={node.left} {pal} inducedVariables={env} />
-        <div class="px-1">{node.type}</div>
+        <div class="px-1">
+          {#if node.type === "similar"}
+            <div>{"≈"}</div>
+          {:else}
+            <div>{node.type}</div>
+          {/if}
+        </div>
         <svelte:self node={node.right} {pal} inducedVariables={env} />
       </div>
     </div>
@@ -49,7 +55,11 @@
   {:else if node.nodeType === "numberOp"}
     <div class="flex">
       <svelte:self node={node.left} {pal} inducedVariables={env} />
-      {node.type}
+      {#if node.type === "similar"}
+        <div>{"≈"}</div>
+      {:else}
+        <div>{node.type}</div>
+      {/if}
       <svelte:self node={node.right} {pal} inducedVariables={env} />
     </div>
   {:else if node.nodeType === "number"}
@@ -79,9 +89,13 @@
       <svelte:self node={node.right} {pal} inducedVariables={env} />
       <span>{")"}</span>
     </div>
-  {:else if node.nodeType === "valueFunction"}
+  {:else if node.nodeType === "valueFunction" || node.nodeType === "boolFunction"}
     <div class="flex">
-      {node.type}
+      {#if node.type === "cvdSim"}
+        {node.params["type"]}
+      {:else}
+        {node.type}
+      {/if}
       <span>{"("}</span>
       <svelte:self node={node.input} {pal} inducedVariables={env} />
       <span>{")"}</span>
@@ -110,22 +124,27 @@
       <span>{")"}</span>
     </div>
   {:else if node.nodeType === "array"}
-    <div class="flex">
-      <span>{"["}</span>
+    <div class="flex flex-col">
       {#if Array.isArray(node.children)}
-        {#each node.children as child}
-          <svelte:self node={child} {pal} inducedVariables={env} />
-          {#if child !== node.children[node.children.length - 1]}
-            <span>{","}</span>
-          {/if}
+        {#each node.children as child, idx}
+          <span class="flex">
+            {#if !idx}<span>{"["}</span>{/if}
+            <svelte:self node={child} {pal} inducedVariables={env} />
+            {#if child !== node.children[node.children.length - 1]}
+              <span>{","}</span>
+            {:else}
+              <span>{"]"}</span>
+            {/if}
+          </span>
         {/each}
       {:else}
+        <span>{"["}</span>
         <svelte:self node={node.children} {pal} inducedVariables={env} />
+        <span>{"]"}</span>
       {/if}
-      <span>{"]"}</span>
     </div>
   {:else if node.nodeType === "map"}
-    <div class="flex">
+    <div class="flex items-center">
       {node.type}
       <span>{"("}</span>
       {#if Array.isArray(node.children)}
@@ -141,7 +160,7 @@
       {#if !new Set(["speed", "reverse"]).has(node.type)}
         <span>{","}</span>
         <div>{node.varb}</div>
-        <span>{"=>"}</span>
+        <span>{"→"}</span>
         <svelte:self node={node.func} {pal} inducedVariables={env} />
       {/if}
       <span>{")"}</span>

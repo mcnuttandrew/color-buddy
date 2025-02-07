@@ -1322,6 +1322,7 @@ export function GenerateAST(
 export const LLTypes = {
   LLAggregate,
   LLBool,
+  LLBoolFunction,
   LLColor,
   LLConjunction,
   LLExpression,

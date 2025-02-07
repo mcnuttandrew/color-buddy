@@ -5,7 +5,6 @@
   export let pal: Palette;
 
   let open = true;
-  $: console.log("quants", node?.results);
 </script>
 
 <!-- only show it if its the evaluated version -->

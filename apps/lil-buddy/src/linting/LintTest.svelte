@@ -49,6 +49,24 @@
           });
         }}
       />
+      <div class="flex flex-col">
+        <div>Palette Type</div>
+        <select
+          value={pal.type}
+          on:change={(e) => {
+            // @ts-ignore
+            const val = e.target.value;
+            updatePal({
+              ...pal,
+              type: val,
+            });
+          }}
+        >
+          <option value="sequential">Sequential</option>
+          <option value="diverging">Diverging</option>
+          <option value="categorical">Categorical</option>
+        </select>
+      </div>
     </div>
     <!-- <button class={buttonStyle} slot="target" let:toggle on:click={toggle}>
         Config

@@ -49,8 +49,10 @@
             <PalPreview pal={passing.pal} showTags={true} />
             {#if passing.result.kind === "success" && passing.result?.passes}
               <div class="text-green-500">Correct</div>
-            {:else}
+            {:else if passing.result.kind === "success"}
               <div class="text-red-500">Incorrect</div>
+            {:else}
+              <div class="text-yellow-500">{passing.result.kind}</div>
             {/if}
           </button>
         {/each}
@@ -77,8 +79,10 @@
             {#if failing.result.kind === "success"}
               {#if !failing.result?.passes}
                 <div class="text-green-500">Correct</div>
-              {:else}
+              {:else if failing.result.kind === "success"}
                 <div class="text-red-500">Incorrect</div>
+              {:else}
+                <div class="text-yellow-500">{failing.result.kind}</div>
               {/if}
             {/if}
           </button>

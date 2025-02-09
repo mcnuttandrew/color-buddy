@@ -1,5 +1,6 @@
 <script lang="ts">
   import type { Palette } from "color-buddy-palette";
+  import DispatchNode from "./DispatchNode.svelte";
 
   export let node: any;
   export let pal: Palette;
@@ -23,7 +24,9 @@
   };
 </script>
 
-<div class="flex items-center border">
+<div
+  class="flex items-center border summarizer-node-{node.nodeType}--{node.type}"
+>
   {#if node.nodeType === "predicate"}
     <div class="flex">
       <div class="border p-2 border-black flex">
@@ -41,12 +44,12 @@
   {:else if node.nodeType === "conjunction" && node.type === "not"}
     <div class="flex items-center border border-black p-1">
       <span class="mr-2">NOT</span>
-      <svelte:self node={node.children[0]} {pal} inducedVariables={env} />
+      <DispatchNode node={node.children[0]} {pal} />
     </div>
   {:else if node.nodeType === "conjunction"}
     <div class="flex flex-col border border-black p-1 items-center">
       {#each node.children as child, idx}
-        <svelte:self node={child} {pal} inducedVariables={env} />
+        <DispatchNode node={child} {pal} />
         {#if idx !== node.children.length - 1}
           <div>{node.type}</div>
         {/if}
@@ -176,6 +179,12 @@
       {node.value ? "T" : "F"}
     </div>
   {:else if typeof node === "boolean"}
-    <div>{node ? "T" : "F"}</div>
+    <div
+      class=" px-2 text-sm rounded-full"
+      class:bg-green-300={node}
+      class:bg-red-300={!node}
+    >
+      {node ? "T" : "F"}
+    </div>
   {/if}
 </div>

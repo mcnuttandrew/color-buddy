@@ -17,6 +17,7 @@ interface StoreData {
   loadState?: "loading" | "idle";
   engine: "openai" | "anthropic";
   okayToExecute: boolean;
+  visualSummary: "graph-summary" | "execution-flow";
 }
 
 const InitialStore: StoreData = {
@@ -38,6 +39,7 @@ const InitialStore: StoreData = {
   engine: "openai",
   focusedTest: false,
   okayToExecute: true,
+  visualSummary: "graph-summary",
 };
 
 function serializeStore(store: StoreData) {
@@ -224,6 +226,8 @@ function createStore() {
       persistUpdate((old) => ({ ...old, focusedTest: test })),
     setOkayToExecute: (okay: StoreData["okayToExecute"]) =>
       persistUpdate((old) => ({ ...old, okayToExecute: okay })),
+    setVisualSummary: (visualSummary: StoreData["visualSummary"]) =>
+      persistUpdate((old) => ({ ...old, visualSummary })),
   };
 }
 

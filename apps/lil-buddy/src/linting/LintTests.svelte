@@ -36,7 +36,7 @@
   <div class="flex flex-col">
     <div class="flex flex-col">
       <div class="flex">
-        <div class="font-bold">Palettes that should pass this test:</div>
+        <div class="font-bold">Expected Passing</div>
       </div>
       <div class="flex">
         {#each passingTestResults as passing, idx}
@@ -56,16 +56,17 @@
             {/if}
           </button>
         {/each}
+        <AddTest
+          {lint}
+          currentTests={lint.expectedPassingTests}
+          setNewTests={(tests) =>
+            store.setCurrentLintExpectedPassingTests(tests)}
+        />
       </div>
-      <AddTest
-        {lint}
-        currentTests={lint.expectedPassingTests}
-        setNewTests={(tests) => store.setCurrentLintExpectedPassingTests(tests)}
-      />
     </div>
     <div class="flex flex-col">
       <div class="flex">
-        <div class="font-bold">Expected to be failing</div>
+        <div class="font-bold">Expected failing</div>
       </div>
       <div class="flex">
         {#each failingTestResults as failing, idx}
@@ -87,12 +88,13 @@
             {/if}
           </button>
         {/each}
+        <AddTest
+          {lint}
+          currentTests={lint.expectedFailingTests}
+          setNewTests={(tests) =>
+            store.setCurrentLintExpectedFailingTests(tests)}
+        />
       </div>
-      <AddTest
-        {lint}
-        currentTests={lint.expectedFailingTests}
-        setNewTests={(tests) => store.setCurrentLintExpectedFailingTests(tests)}
-      />
     </div>
   </div>
   <div class="italic">Items marked with dashed sides are blamed</div>

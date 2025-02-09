@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { Palette, Color } from "color-buddy-palette";
+  import type { Palette } from "color-buddy-palette";
   import InlineNode from "./InlineNode.svelte";
   import QuantifierNode from "./QuantifierNode.svelte";
 

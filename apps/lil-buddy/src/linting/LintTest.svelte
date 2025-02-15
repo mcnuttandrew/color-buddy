@@ -5,6 +5,7 @@
   import ColorChannelPicker from "../components/ColorChannelPicker.svelte";
   import Tooltip from "../components/Tooltip.svelte";
   import Background from "../components/Background.svelte";
+  import ModifyPalette from "./ModifyPalette.svelte";
   import { buttonStyle } from "../lib/styles";
   export let pal: Palette;
   export let updatePal: (newPal: Palette) => void;
@@ -34,6 +35,7 @@
       >
         Remove Test Case
       </button>
+      <ModifyPalette palette={pal} {updatePal} />
 
       <Background
         onChange={(newColor) => updatePal({ ...pal, background: newColor })}

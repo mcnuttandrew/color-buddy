@@ -1,6 +1,7 @@
 <script lang="ts">
   import type { Palette } from "color-buddy-palette";
   import DispatchNode from "./DispatchNode.svelte";
+  import { Color } from "color-buddy-palette";
 
   export let node: any;
   export let pal: Palette;
@@ -22,6 +23,11 @@
     ...node?.inducedVariables,
     background: pal.background,
   };
+
+  function getLuminance(color: string) {
+    const clr = Color.colorFromHex(color, "lab");
+    return clr.luminance();
+  }
 </script>
 
 <div
@@ -69,12 +75,25 @@
     <div class="font-mono text-sm">{`${toThreeDigit(node.value)}`}</div>
   {:else if node.nodeType === "variable"}
     <div class="relative">
-      <!-- <div class="text-xs absolute text-center">{node.value}</div> -->
+      {#if node.value.length > 2}
+        <div class="text-xs absolute" style="top: -1em">
+          {node.value}
+        </div>
+      {/if}
       {#if env[node.value]}
         <div
           class="h-5 w-5 rounded-full"
           style={`background: ${env[node.value]}`}
-        />
+        >
+          {#if node.value.length <= 2}
+            <div
+              class="text-xs left-1/2 text-center"
+              class:text-white={getLuminance(env[node.value]) < 0.5}
+            >
+              {node.value}
+            </div>
+          {/if}
+        </div>
       {:else if node.value === "colors"}
         {#each pal.colors as color}
           <div class="h-5 w-5 rounded-full" style={`background: ${color}`} />

@@ -104,7 +104,8 @@ export function generateTest(
   The lint program is: ${lintProgram}.
   Give your answer with the following type {"colors": hexString[], "background": hexString}.
   Do not offer any preamble. Only given the json response.  You should be creative in your selection of colors.
-  Your test palette that ${testResult} for this program as follows:`,
+  You are making a palette that ${testResult} for this test. YOU MUST make a palette that ${testResult} for this test
+  Your newly created palette that ${testResult} for this program as follows:`,
     engine
   ).then((x) => {
     if (x.length === 0) {
@@ -351,6 +352,33 @@ ONLY RETURN THE JSON AND NOTHING ELSE. DO NOT MAKE ANY COMMENTS.
   
 Prompt: ${JSON.stringify(inputPrompt)}
 
+Program Context: ${program}
+
 Your response: `;
+  return engineToScaffold[engine]<string>(`ai-call`, prompt, true);
+}
+
+export function modifyPalette(
+  inputPrompt: string,
+  palette: Palette,
+  engine: Engine
+) {
+  const prompt = `
+You are a color expert. You take in a color palette and make requested modifications to it. 
+
+For example:
+Palette: ["#000000", "#FF0000", "#00FF00", "#0000FF"]
+Background Color: "#FFFFFF" 
+Prompt: "Make the colors more pastel."
+Output: {"background": "#FFFFFF", "colors": ["#9E9E9E", "#F8BBD0", "#D3EC8A", "#D3D3FF"]}
+
+Present your names a single JSON object. It should have a type like {"background: string; colors: string[]}. 
+Unless specified otherwise, it should have EXACTLY the same number of colors as the input. 
+Do not offer any other response.
+
+Palette: ${JSON.stringify(palette.colors.map((x) => x.toHex()))}
+Background Color: ${JSON.stringify(palette.background.toHex())}
+Prompt: ${inputPrompt}
+Your response:`;
   return engineToScaffold[engine]<string>(`ai-call`, prompt, true);
 }

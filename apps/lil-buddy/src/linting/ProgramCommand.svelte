@@ -3,6 +3,7 @@
   import Tooltip from "../components/Tooltip.svelte";
   import { modifyLintProgram } from "../lib/api-calls";
   import { JSONStringify } from "../lib/utils";
+  import { buttonStyle } from "../lib/styles";
 
   export let currentProgram: string;
 
@@ -21,30 +22,6 @@
         store.setCurrentLintProgram(
           JSONStringify(JSON.stringify(suggestions[0]))
         );
-        // const prog = suggestions[0] as any;
-        // let explanation = "";
-        // if (typeof prog === "object" && prog.comments) {
-        //   explanation = prog.comments;
-        //   delete prog.comments;
-        // }
-        // if (typeof prog === "object") {
-        //   prog.$schema = `https://color-buddy-docs.netlify.app/lint-schema.v0.json`;
-        // }
-        // const program = JSON.stringify(JSON.stringify(prog));
-        // let description = explanation || lintPrompt;
-        // let failMessage = lintPrompt;
-        // let name = lintPrompt;
-
-        // store.createNewLint({
-        //   name,
-        //   description,
-        //   failMessage,
-        //   program,
-        // });
-        // setTimeout(() => {
-        //   lintPrompt = "";
-        //   // lintStore.setEvalDisplayMode("check-customization");
-        // }, 100);
 
         requestState = "loaded";
       })
@@ -80,7 +57,7 @@
   <button
     slot="target"
     let:toggle
-    class={""}
+    class={buttonStyle}
     on:click={() => {
       toggle();
     }}

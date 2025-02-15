@@ -11,14 +11,16 @@
 {#if node.nodeType !== "quantifier"}
   <div class="flex items-center">
     <div class="flex flex-col">
-      <button
-        class="font-bold"
-        on:click={() => {
-          open = !open;
-        }}
-      >
-        {node.quant} - {node.varb}
-      </button>
+      <div class="w-full bg-stone-200 flex justify-between items-center">
+        <div class="font-bold">
+          {#if node.quant === "all"}For all{:else}There exists{/if}
+          {node.varb}
+          the following should be true
+        </div>
+        <button on:click={() => (open = !open)}>
+          <div>{open ? "▼" : "▶"}</div>
+        </button>
+      </div>
       {#if open}
         <div class="bg-opacity-30 bg-slate-300 flex flex-col p-2">
           {#each node.results as result}

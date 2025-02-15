@@ -1,11 +1,13 @@
 <script lang="ts">
   import type { LintProgram, LintResult } from "color-buddy-palette-lint";
+  import type { Palette } from "color-buddy-palette";
   import PalPreview from "../components/PalPreview.svelte";
   import store from "../stores/store";
   export let lint: LintProgram;
   import { runLint } from "../lib/utils";
   import VisualSummarizer from "./VisualSummarizer.svelte";
   import LintTest from "./LintTest.svelte";
+  import { buttonStyle } from "../lib/styles";
   $: focusedTest = $store.focusedTest;
   $: testPal = focusedTest
     ? focusedTest.type === "passing"
@@ -40,6 +42,34 @@
   $: pairData = blameData as number[][];
   $: program = lint.program;
   let editTime: null | number = null;
+
+  function updatePal(newPal: Palette) {
+    if (!focusedTest) return;
+    if (editTime === null) {
+      editTime = Date.now();
+      store.setOkayToExecute(false);
+    }
+    const oldTests =
+      focusedTest.type === "passing"
+        ? lint.expectedPassingTests
+        : lint.expectedFailingTests;
+    const newTests = [...oldTests];
+    newTests[focusedTest.index] = newPal;
+    if (focusedTest.type === "passing") {
+      store.setCurrentLintExpectedPassingTests(newTests);
+    } else {
+      store.setCurrentLintExpectedFailingTests(newTests);
+    }
+    editTime = Date.now();
+    setTimeout(() => {
+      if (!editTime) {
+        store.setOkayToExecute(true);
+      } else if (Date.now() - editTime > 1000) {
+        store.setOkayToExecute(true);
+        editTime = null;
+      }
+    }, 1000);
+  }
 </script>
 
 {#if currentLintAppliesToCurrentPalette && testPal}
@@ -67,32 +97,7 @@
         store.setCurrentLintExpectedPassingTests(newTests);
       }}
       pal={testPal}
-      updatePal={(newPal) => {
-        if (editTime === null) {
-          editTime = Date.now();
-          store.setOkayToExecute(false);
-        }
-        const oldTests =
-          focusedTest.type === "passing"
-            ? lint.expectedPassingTests
-            : lint.expectedFailingTests;
-        const newTests = [...oldTests];
-        newTests[focusedTest.index] = newPal;
-        if (focusedTest.type === "passing") {
-          store.setCurrentLintExpectedPassingTests(newTests);
-        } else {
-          store.setCurrentLintExpectedFailingTests(newTests);
-        }
-        editTime = Date.now();
-        setTimeout(() => {
-          if (!editTime) {
-            store.setOkayToExecute(true);
-          } else if (Date.now() - editTime > 1000) {
-            store.setOkayToExecute(true);
-            editTime = null;
-          }
-        }, 1000);
-      }}
+      {updatePal}
     />
   {/if}
 
@@ -148,6 +153,19 @@
           .join(", ")}
       {:else}
         The palette has no tags.
+      {/if}
+      {#if testPal}
+        <button
+          class={buttonStyle}
+          on:click={() => {
+            updatePal({
+              ...testPal,
+              tags: [...new Set([...testPal.tags, ...lint.requiredTags])],
+            });
+          }}
+        >
+          Add Required Tags
+        </button>
       {/if}
     </div>
   {/if}

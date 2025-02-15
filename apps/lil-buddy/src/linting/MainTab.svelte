@@ -34,6 +34,19 @@
   }
 </script>
 
+<Nav
+  tabs={["graph-summary", "execution-flow"]}
+  isTabSelected={(x) => x === $store.visualSummary}
+  selectTab={(x) => store.setVisualSummary(x)}
+/>
+
+{#if $store.visualSummary === "graph-summary"}
+  <div class="font-bold">Graph Summary</div>
+  <GraphSummary {lint} />
+{:else if $store.focusedTest}
+  <div class="font-bold">Focused Test</div>
+  <FocusedTest {lint} />
+{/if}
 <div class="w-full flex">
   <div class="flex flex-col w-1/2 px-4">
     <Controls />
@@ -67,23 +80,10 @@
     />
   </div>
   <div class="w-1/2 px-4">
-    <div>
-      <Nav
-        tabs={["graph-summary", "execution-flow"]}
-        isTabSelected={(x) => x === $store.visualSummary}
-        selectTab={(x) => store.setVisualSummary(x)}
-      />
-    </div>
-    {#if $store.visualSummary === "graph-summary"}
-      <div class="font-bold">Graph Summary</div>
-      <GraphSummary {lint} />
-    {/if}
+    <div></div>
+
     {#if $store.visualSummary === "execution-flow"}
       <LintTests {lint} />
-      {#if $store.focusedTest}
-        <div class="font-bold">Focused Test</div>
-        <FocusedTest {lint} />
-      {/if}
     {/if}
   </div>
 </div>

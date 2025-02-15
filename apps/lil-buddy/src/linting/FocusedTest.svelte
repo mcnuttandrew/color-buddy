@@ -72,101 +72,112 @@
   }
 </script>
 
-{#if currentLintAppliesToCurrentPalette && testPal}
-  {#if lintResult.kind === "success" && lintResult.passes}
-    <div class="text-green-500">This lint passes for the current palette</div>
-  {/if}
-  {#if lintResult.kind === "success" && !lintResult.passes && !errors}
-    <div class="flex">
-      <div class="text-red-500 mr-2">
-        This lint fails for the current palette.
-      </div>
-    </div>
-  {/if}
-{/if}
-{#if testPal}
-  <VisualSummarizer lint={program} pal={testPal} />
-{/if}
-<div class="border p-2 rounded">
-  {#if testPal && focusedTest}
-    <LintTest
-      removeCase={() => {
-        const newTests = [...lint.expectedPassingTests].filter(
-          (_, i) => i !== focusedTest.index
-        );
-        store.setCurrentLintExpectedPassingTests(newTests);
-      }}
-      pal={testPal}
-      {updatePal}
-    />
-  {/if}
-
-  {#if currentLintAppliesToCurrentPalette && testPal}
-    {#if lintResult.kind === "success" && !lintResult.passes && !errors}
-      <div class="border">
-        The following colors are blamed. Using
-        <select
-          value={lint.blameMode}
-          class="mx-2"
-          on:change={() => {
-            // @ts-ignore
-            store.setCurrentLintBlameMode(event.target.value);
-          }}
-        >
-          <option>none</option>
-          <option>single</option>
-          <option>pair</option>
-        </select>
-        Blame mode
-        {#if lint.blameMode === "pair"}
-          <div class="flex flex-wrap">
-            {#each pairData as pair}
-              <div class="mr-2 mb-1 border-2 border-black rounded">
-                <PalPreview
-                  pal={{
-                    ...testPal,
-                    colors: pair.map((x) => testPal.colors[x]),
-                  }}
-                />
-              </div>
-            {/each}
+<div class="flex">
+  <div>
+    {#if currentLintAppliesToCurrentPalette && testPal}
+      {#if lintResult.kind === "success" && lintResult.passes}
+        <div class="text-green-500">
+          This lint passes for the current palette
+        </div>
+      {/if}
+      {#if lintResult.kind === "success" && !lintResult.passes && !errors}
+        <div class="flex">
+          <div class="text-red-500 mr-2">
+            This lint fails for the current palette.
           </div>
-        {:else}
-          <PalPreview
-            pal={{
-              ...testPal,
-              colors: blameData.flatMap((x) => x).map((x) => testPal.colors[x]),
-            }}
-          />
-        {/if}
-      </div>
-    {/if}
-  {:else}
-    <div class="text-red-500">
-      This lint does not apply to the current palette due to a mismatch between
-      its tags and the palette's tags. This lint requires the following tags: {lint.requiredTags
-        .map((x) => `"${x}"`)
-        .join(", ")}.
-      {#if testPal?.tags?.length}
-        The palette has the following tags: {(testPal?.tags || [])
-          .map((x) => `"${x}"`)
-          .join(", ")}
-      {:else}
-        The palette has no tags.
+        </div>
       {/if}
-      {#if testPal}
-        <button
-          class={buttonStyle}
-          on:click={() => {
-            updatePal({
-              ...testPal,
-              tags: [...new Set([...testPal.tags, ...lint.requiredTags])],
-            });
+    {/if}
+
+    <div class="border p-2 rounded">
+      {#if testPal && focusedTest}
+        <LintTest
+          removeCase={() => {
+            const newTests = [...lint.expectedPassingTests].filter(
+              (_, i) => i !== focusedTest.index
+            );
+            store.setCurrentLintExpectedPassingTests(newTests);
           }}
-        >
-          Add Required Tags
-        </button>
+          pal={testPal}
+          {updatePal}
+        />
+      {/if}
+
+      {#if currentLintAppliesToCurrentPalette && testPal}
+        {#if lintResult.kind === "success" && !lintResult.passes && !errors}
+          <div class="border">
+            The following colors are blamed.
+            {#if lint.blameMode === "pair"}
+              <div class="flex flex-wrap">
+                {#each pairData as pair}
+                  <div class="mr-2 mb-1 border-2 border-black rounded">
+                    <PalPreview
+                      pal={{
+                        ...testPal,
+                        colors: pair.map((x) => testPal.colors[x]),
+                      }}
+                    />
+                  </div>
+                {/each}
+              </div>
+            {:else}
+              <PalPreview
+                pal={{
+                  ...testPal,
+                  colors: blameData
+                    .flatMap((x) => x)
+                    .map((x) => testPal.colors[x]),
+                }}
+              />
+            {/if}
+            Using
+            <select
+              value={lint.blameMode}
+              class="mx-2"
+              on:change={() => {
+                // @ts-ignore
+                store.setCurrentLintBlameMode(event.target.value);
+              }}
+            >
+              <option>none</option>
+              <option>single</option>
+              <option>pair</option>
+            </select>
+            Blame mode
+          </div>
+        {/if}
+      {:else}
+        <div class="text-red-500">
+          This lint does not apply to the current palette due to a mismatch
+          between its tags and the palette's tags. This lint requires the
+          following tags: {lint.requiredTags.map((x) => `"${x}"`).join(", ")}.
+          {#if testPal?.tags?.length}
+            The palette has the following tags: {(testPal?.tags || [])
+              .map((x) => `"${x}"`)
+              .join(", ")}
+          {:else}
+            The palette has no tags.
+          {/if}
+          {#if testPal}
+            <button
+              class={buttonStyle}
+              on:click={() => {
+                updatePal({
+                  ...testPal,
+                  tags: [...new Set([...testPal.tags, ...lint.requiredTags])],
+                });
+              }}
+            >
+              Add Required Tags
+            </button>
+          {/if}
+        </div>
       {/if}
     </div>
-  {/if}
+  </div>
+  <div class="w-full overflow-auto">
+    {#if testPal}
+      <VisualSummarizer lint={program} pal={testPal} />
+    {/if}
+  </div>
 </div>

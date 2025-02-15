@@ -17,7 +17,7 @@
 <div class="flex flex-col border rounded">
   <div class="bg-stone-400 flex w-full">
     <!-- <Tooltip positionAlongRightEdge={pivotRight}> -->
-    <div class="flex items-start">
+    <div class="flex flex-col items-start">
       <button
         class={buttonStyle}
         on:click={() => {

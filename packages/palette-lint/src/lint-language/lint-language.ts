@@ -147,8 +147,14 @@ const checkIfValsPresent = (node: Record<any, any>, keys: string[]) =>
   keys.every((key) => key in node);
 
 type ReturnVal<A> = { result: A; env: Environment };
+let idCounter = 0;
 export class LLNode {
   nodeType: string = "node";
+  path: (string | number)[] = [];
+  id: number = 0;
+  constructor() {
+    this.id = idCounter++;
+  }
   evaluate(env: Environment): ReturnVal<any> {
     this.evalCheck(env);
     throw new Error("Invalid node");
@@ -167,6 +173,10 @@ export class LLNode {
   }
   copy() {
     return new LLNode();
+  }
+  generatePath(partialPath: (string | number)[] = []) {
+    this.path = [...partialPath];
+    return this;
   }
 }
 
@@ -199,6 +209,11 @@ export class LLExpression extends LLNode {
   }
   copy() {
     return new LLExpression(this.value.copy());
+  }
+  generatePath(partialPath: (string | number)[] = []) {
+    this.path = [...partialPath];
+    this.value.generatePath(partialPath);
+    return this;
   }
 }
 
@@ -270,6 +285,11 @@ export class LLConjunction extends LLNode {
       .map((x) => `(${x.toString()})`)
       .join(` ${this.type.toUpperCase()} `)})`;
   }
+  generatePath(partialPath: (string | number)[] = []) {
+    this.path = [...partialPath, this.type];
+    this.children.map((x, idx) => x.generatePath([...this.path, idx]));
+    return this;
+  }
 }
 
 export class LLValueArray extends LLNode {
@@ -293,6 +313,11 @@ export class LLValueArray extends LLNode {
   }
   toString(): string {
     return `[${this.children.map((x) => x.toString()).join(", ")}]`;
+  }
+  generatePath(partialPath: (string | number)[] = []) {
+    this.path = [...partialPath];
+    this.children.map((x, idx) => x.generatePath([...this.path, idx]));
+    return this;
   }
 }
 
@@ -456,6 +481,12 @@ export class LLNumberOp extends LLNode {
     }
     return `${left} ${this.type} ${right}`;
   }
+  generatePath(partialPath: (string | number)[] = []): void {
+    this.path = [...partialPath, this.type];
+    this.left.generatePath([...this.path, "left"]);
+    this.right.generatePath([...this.path, "right"]);
+    return this;
+  }
 }
 
 const predicateTypes = ["==", "!=", ">", "<", "similar"] as const;
@@ -598,6 +629,12 @@ export class LLPredicate extends LLNode {
     }
     return `${left} ${type} ${right}`;
   }
+  generatePath(partialPath: (string | number)[] = []): void {
+    this.path = [...partialPath, this.type];
+    this.left.generatePath([...this.path, "left"]);
+    this.right.generatePath([...this.path, "right"]);
+    return this;
+  }
 }
 
 export class LLValue extends LLNode {
@@ -640,6 +677,11 @@ export class LLValue extends LLNode {
   }
   toString(): string {
     return this.value.toString();
+  }
+  generatePath(partialPath: (string | number)[] = []) {
+    this.path = [...partialPath];
+    this.value.generatePath([...this.path]);
+    return this;
   }
 }
 
@@ -737,6 +779,12 @@ export class LLValueFunction extends LLNode {
     const paramString = params.length ? `, ${params}` : "";
     return `${this.type}(${this.input.toString()}${paramString})`;
   }
+  generatePath(partialPath: (string | number)[] = []) {
+    this.path = [...partialPath, this.type];
+    // todo this is wrong
+    this.input.generatePath([...this.path, "value"]);
+    return this;
+  }
 }
 
 const BoolFunctionTypes: {
@@ -803,6 +851,12 @@ export class LLBoolFunction extends LLNode {
     const params = Object.values(this.params).join(", ");
     const paramString = params.length ? `, ${params}` : "";
     return `${this.type}(${this.input.toString()}${paramString})`;
+  }
+  generatePath(partialPath: (string | number)[] = []) {
+    this.path = [...partialPath, this.type];
+    // todo this is wrong
+    this.input.generatePath([...this.path, "value"]);
+    return this;
   }
 }
 
@@ -918,6 +972,12 @@ export class LLPairFunction extends LLNode {
       this.params
     );
   }
+  generatePath(partialPath: (string | number)[] = []) {
+    this.path = [...partialPath, this.type];
+    this.left.generatePath([...this.path, "left"]);
+    this.right.generatePath([...this.path, "right"]);
+    return this;
+  }
 }
 
 let f = (a: any[], b: any[]) =>
@@ -1024,7 +1084,7 @@ export class LLQuantifier extends LLNode {
       inputType,
       predicateType,
       varb ? [varb] : varbs,
-      where && tryTypes([LLExpression], options)(where)
+      (where || where == false) && tryTypes([LLExpression], options)(where)
     );
   }
   copy(): LLQuantifier {
@@ -1050,6 +1110,15 @@ export class LLQuantifier extends LLNode {
     const type = this.type.toUpperCase();
     const pred = this.predicate.toString();
     return `${type} ${varbs} IN ${target}${where} SUCH THAT ${pred}`;
+  }
+  generatePath(partialPath: (string | number)[] = []) {
+    this.path = [...partialPath, this.type];
+    this.input.generatePath([...this.path, "in"]);
+    this.predicate.generatePath([...this.path, "predicate"]);
+    if (this.where) {
+      this.where.generatePath([...this.path, "where"]);
+    }
+    return this;
   }
 }
 
@@ -1138,6 +1207,11 @@ export class LLAggregate extends LLNode {
   }
   toString(): string {
     return `${this.type}(${this.children.toString()})`;
+  }
+  generatePath(partialPath: (string | number)[] = []) {
+    this.path = [...partialPath, this.type];
+    this.children.generatePath([...this.path]);
+    return this;
   }
 }
 
@@ -1260,9 +1334,18 @@ export class LLMap extends LLNode {
       this.varb != " " && funcStr != " " ? `, ${this.varb} => ${funcStr}` : "";
     return `${type}(${this.children.toString()}${func})`;
   }
+  generatePath(partialPath: (string | number)[] = []) {
+    this.path = [...partialPath, this.type];
+    this.children.generatePath([...this.path]);
+    if (this.func && typeof this.func !== "string") {
+      this.func.generatePath([...this.path, "func"]);
+    }
+    return this;
+  }
 }
 
 function parseToAST(root: any, options: OptionsConfig) {
+  idCounter = 0;
   const node = LLExpression.tryToConstruct(root, options);
   if (!node) {
     console.log(root);

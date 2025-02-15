@@ -435,7 +435,7 @@ export function generateEvaluations(
     counter = 0;
   }
   let nodeCopy = copy(node);
-  // weird hack to inset the induced variables over everything
+  // weird hack to insert the induced variables over everything
   subTreeIsPureOp(nodeCopy, inducedVariables);
   const evalLog = node.nodeType === "quantifier" ? [] : [nodeCopy];
   let currentNode = copy(node);

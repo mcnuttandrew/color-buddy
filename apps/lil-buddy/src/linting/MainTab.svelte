@@ -37,7 +37,6 @@
 <div class="w-full flex">
   <div class="flex flex-col w-1/2 px-4">
     <Controls />
-    <div class="font-bold">Lint Meta</div>
     <LintMeta {lint} />
 
     {#if errors}

@@ -41,19 +41,21 @@
       <div class="flex">
         {#each passingTestResults as passing, idx}
           <button
-            class="flex border items-center px-2 mx-2 rounded"
+            class="flex border px-2 mx-2 rounded flex-col items-start"
             on:click={() => {
               store.setFocusedTest({ type: "passing", index: idx });
             }}
           >
+            <div class="text-xs">
+              {#if passing.result.kind === "success" && passing.result?.passes}
+                <div class="text-green-500">Correct</div>
+              {:else if passing.result.kind === "success"}
+                <div class="text-red-500">Incorrect</div>
+              {:else}
+                <div class="text-yellow-500">{passing.result.kind}</div>
+              {/if}
+            </div>
             <PalPreview pal={passing.pal} showTags={true} />
-            {#if passing.result.kind === "success" && passing.result?.passes}
-              <div class="text-green-500">Correct</div>
-            {:else if passing.result.kind === "success"}
-              <div class="text-red-500">Incorrect</div>
-            {:else}
-              <div class="text-yellow-500">{passing.result.kind}</div>
-            {/if}
           </button>
         {/each}
         <AddTest
@@ -71,21 +73,21 @@
       <div class="flex">
         {#each failingTestResults as failing, idx}
           <button
-            class="flex border items-center px-2 mx-2 rounded"
+            class="flex border px-2 mx-2 rounded flex-col items-start"
             on:click={() => {
               store.setFocusedTest({ type: "failing", index: idx });
             }}
           >
-            <PalPreview pal={failing.pal} showTags={true} />
-            {#if failing.result.kind === "success"}
-              {#if !failing.result?.passes}
+            <div class="text-xs">
+              {#if failing.result.kind === "success" && !failing.result?.passes}
                 <div class="text-green-500">Correct</div>
               {:else if failing.result.kind === "success"}
                 <div class="text-red-500">Incorrect</div>
               {:else}
                 <div class="text-yellow-500">{failing.result.kind}</div>
               {/if}
-            {/if}
+            </div>
+            <PalPreview pal={failing.pal} showTags={true} />
           </button>
         {/each}
         <AddTest

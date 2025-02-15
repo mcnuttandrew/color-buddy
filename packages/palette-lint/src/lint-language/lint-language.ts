@@ -477,7 +477,7 @@ export class LLNumberOp extends LLNode {
     }
     return `${left} ${this.type} ${right}`;
   }
-  generatePath(partialPath: (string | number)[] = []): void {
+  generatePath(partialPath: (string | number)[] = []) {
     this.path = [...partialPath, this.type];
     this.left.generatePath([...this.path, "left"]);
     this.right.generatePath([...this.path, "right"]);
@@ -625,7 +625,7 @@ export class LLPredicate extends LLNode {
     }
     return `${left} ${type} ${right}`;
   }
-  generatePath(partialPath: (string | number)[] = []): void {
+  generatePath(partialPath: (string | number)[] = []) {
     this.path = [...partialPath, this.type];
     this.left.generatePath([...this.path, "left"]);
     this.right.generatePath([...this.path, "right"]);

@@ -2,13 +2,13 @@
 
 exports[`Generating the eval paths works 1`] = `
 LLExpression {
-  "id": 5,
+  "id": 0,
   "nodeType": "expression",
   "path": [],
   "value": LLPredicate {
-    "id": 4,
+    "id": 0,
     "left": LLPairFunction {
-      "id": 2,
+      "id": 0,
       "left": LLVariable {
         "id": 0,
         "nodeType": "variable",
@@ -30,7 +30,7 @@ LLExpression {
         "deltaE",
       ],
       "right": LLVariable {
-        "id": 1,
+        "id": 0,
         "nodeType": "variable",
         "path": [
           ">",
@@ -47,7 +47,7 @@ LLExpression {
       ">",
     ],
     "right": LLNumber {
-      "id": 3,
+      "id": 0,
       "nodeType": "number",
       "path": [
         ">",
@@ -63,11 +63,11 @@ LLExpression {
 
 exports[`Quantifier Test 1`] = `
 LLExpression {
-  "id": 10,
+  "id": 0,
   "nodeType": "expression",
   "path": [],
   "value": LLQuantifier {
-    "id": 9,
+    "id": 0,
     "input": LLVariable {
       "id": 0,
       "nodeType": "variable",
@@ -82,18 +82,18 @@ LLExpression {
       "all",
     ],
     "predicate": LLExpression {
-      "id": 6,
+      "id": 0,
       "nodeType": "expression",
       "path": [
         "all",
         "predicate",
       ],
       "value": LLPredicate {
-        "id": 5,
+        "id": 0,
         "left": LLPairFunction {
-          "id": 3,
+          "id": 0,
           "left": LLVariable {
-            "id": 1,
+            "id": 0,
             "nodeType": "variable",
             "path": [
               "all",
@@ -117,7 +117,7 @@ LLExpression {
             "contrast",
           ],
           "right": LLVariable {
-            "id": 2,
+            "id": 0,
             "nodeType": "variable",
             "path": [
               "all",
@@ -138,7 +138,7 @@ LLExpression {
           ">",
         ],
         "right": LLNumber {
-          "id": 4,
+          "id": 0,
           "nodeType": "number",
           "path": [
             "all",
@@ -157,14 +157,14 @@ LLExpression {
       "a",
     ],
     "where": LLExpression {
-      "id": 8,
+      "id": 0,
       "nodeType": "expression",
       "path": [
         "all",
         "where",
       ],
       "value": LLBool {
-        "id": 7,
+        "id": 0,
         "nodeType": "bool",
         "path": [
           "all",

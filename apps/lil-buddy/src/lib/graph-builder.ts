@@ -48,6 +48,7 @@ export function BuildGraph(node: LLNode): {
       case "node":
       case "expression":
         queue.push((current as any).value);
+        edges.push({ from: current.id, to: (current as any).value.id });
         break;
       case "boolFunction":
       case "valueFunction":
@@ -74,9 +75,63 @@ export function BuildGraph(node: LLNode): {
       case "value":
       case "variable":
       default:
-        console.log("not implemented yet");
         break;
     }
   }
   return { nodes, edges };
+}
+
+export function trimTree(node: any) {
+  if (!node || !node.nodeType) {
+    return node;
+  }
+  const newNode = copy(node);
+  switch (node.nodeType) {
+    case "pairFunction":
+    case "numberOp":
+    case "predicate":
+      const left = trimTree(newNode.left);
+      const right = trimTree(newNode.right);
+      newNode.left = left;
+      newNode.right = right;
+      break;
+    case "aggregate":
+    case "array":
+    case "conjunction":
+    case "map":
+      const children = node.children;
+      newNode.children = Array.isArray(children)
+        ? children.map(trimTree)
+        : trimTree(children);
+      break;
+    case "node":
+    case "expression":
+      return trimTree(node.value);
+      break;
+    case "boolFunction":
+    case "valueFunction":
+      newNode.input = trimTree(node.input);
+      break;
+    case "quantifier":
+      newNode.where = trimTree(node.where);
+      newNode.predicate = trimTree(node.predicate);
+      newNode.input = trimTree(node.input);
+
+      break;
+    case "bool":
+    case "color":
+    case "number":
+    case "value":
+    case "variable":
+    default:
+      break;
+  }
+  return newNode;
+}
+
+function copy(node: any) {
+  if (node.copy) {
+    return node.copy();
+  }
+  return JSON.parse(JSON.stringify(node));
 }

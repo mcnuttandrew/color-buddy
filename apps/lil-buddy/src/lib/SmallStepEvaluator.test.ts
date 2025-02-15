@@ -231,6 +231,7 @@ test("Predefined Lint Tests", () => {
     }
     const lintProgram = JSON.parse(lint.program);
     const ast = getAST(lintProgram);
+    console.log(lint.name);
     const result = generateEvaluations(ast, {}, defaultPal, true);
     expect(result, `${lint.name} to pass`).toMatchSnapshot();
   }

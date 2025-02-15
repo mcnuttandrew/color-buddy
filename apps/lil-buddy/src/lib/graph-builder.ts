@@ -81,52 +81,59 @@ export function BuildGraph(node: LLNode): {
   return { nodes, edges };
 }
 
-export function trimTree(node: any) {
-  if (!node || !node.nodeType) {
-    return node;
-  }
-  const newNode = copy(node);
-  switch (node.nodeType) {
-    case "pairFunction":
-    case "numberOp":
-    case "predicate":
-      const left = trimTree(newNode.left);
-      const right = trimTree(newNode.right);
-      newNode.left = left;
-      newNode.right = right;
-      break;
-    case "aggregate":
-    case "array":
-    case "conjunction":
-    case "map":
-      const children = node.children;
-      newNode.children = Array.isArray(children)
-        ? children.map(trimTree)
-        : trimTree(children);
-      break;
-    case "node":
-    case "expression":
-      return trimTree(node.value);
-      break;
-    case "boolFunction":
-    case "valueFunction":
-      newNode.input = trimTree(node.input);
-      break;
-    case "quantifier":
-      newNode.where = trimTree(node.where);
-      newNode.predicate = trimTree(node.predicate);
-      newNode.input = trimTree(node.input);
+export function trimTree(node: any): any {
+  function trimTreeInner(node: any) {
+    if (!node || !node.nodeType) {
+      return node;
+    }
+    const newNode = copy(node);
+    newNode.id = id++;
+    switch (node.nodeType) {
+      case "pairFunction":
+      case "numberOp":
+      case "predicate":
+        const left = trimTreeInner(newNode.left);
+        const right = trimTreeInner(newNode.right);
+        newNode.left = left;
+        newNode.right = right;
+        break;
+      case "aggregate":
+      case "array":
+      case "conjunction":
+      case "map":
+        const children = node.children;
+        newNode.children = Array.isArray(children)
+          ? children.map(trimTreeInner)
+          : trimTreeInner(children);
+        break;
+      case "node":
+      case "expression":
+        return trimTreeInner(node.value);
+        break;
+      case "boolFunction":
+      case "valueFunction":
+        newNode.input = trimTreeInner(node.input);
+        break;
+      case "quantifier":
+        newNode.where = trimTreeInner(node.where);
+        newNode.predicate = trimTreeInner(node.predicate);
+        newNode.input = trimTreeInner(node.input);
 
-      break;
-    case "bool":
-    case "color":
-    case "number":
-    case "value":
-    case "variable":
-    default:
-      break;
+        break;
+      case "bool":
+      case "color":
+      case "number":
+      case "value":
+      case "variable":
+      default:
+        break;
+    }
+    return newNode;
   }
-  return newNode;
+  let id = 1;
+  const result = trimTreeInner(node);
+  console.log(result);
+  return result;
 }
 
 function copy(node: any) {

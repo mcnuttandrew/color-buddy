@@ -221,6 +221,23 @@ test("where problem", () => {
   expect(result).toMatchSnapshot();
 });
 
+test("problematic sort", () => {
+  const sorter = {
+    $schema: "https://color-buddy-docs.netlify.app/lint-schema.v0.json",
+    or: [
+      {
+        "==": {
+          left: { sort: "colors", varb: "x", func: { "lch.l": "x" } },
+          right: { varb: "x", func: { "lch.l": "x" }, map: "colors" },
+        },
+      },
+    ],
+  };
+  const ast = getAST(sorter);
+  const result = generateEvaluations(ast, {}, defaultPal, true);
+  expect(result).toMatchSnapshot();
+});
+
 test("Predefined Lint Tests", () => {
   for (const test in PREBUILT_LINTS) {
     const lint = PREBUILT_LINTS[
@@ -231,7 +248,6 @@ test("Predefined Lint Tests", () => {
     }
     const lintProgram = JSON.parse(lint.program);
     const ast = getAST(lintProgram);
-    console.log(lint.name);
     const result = generateEvaluations(ast, {}, defaultPal, true);
     expect(result, `${lint.name} to pass`).toMatchSnapshot();
   }

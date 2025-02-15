@@ -147,14 +147,10 @@ const checkIfValsPresent = (node: Record<any, any>, keys: string[]) =>
   keys.every((key) => key in node);
 
 type ReturnVal<A> = { result: A; env: Environment };
-let idCounter = 0;
 export class LLNode {
   nodeType: string = "node";
   path: (string | number)[] = [];
   id: number = 0;
-  constructor() {
-    this.id = idCounter++;
-  }
   evaluate(env: Environment): ReturnVal<any> {
     this.evalCheck(env);
     throw new Error("Invalid node");
@@ -1345,7 +1341,6 @@ export class LLMap extends LLNode {
 }
 
 function parseToAST(root: any, options: OptionsConfig) {
-  idCounter = 0;
   const node = LLExpression.tryToConstruct(root, options);
   if (!node) {
     console.log(root);

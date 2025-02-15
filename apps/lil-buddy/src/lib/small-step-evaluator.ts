@@ -255,6 +255,10 @@ function toHexes(obj: any) {
   });
 }
 
+function stripOutIds(str: string): string {
+  return str.replace(/"id":\d+/g, '"id":0');
+}
+
 let counter = 0;
 function traverseAndMaybeExecute(
   node: any,
@@ -282,7 +286,10 @@ function traverseAndMaybeExecute(
       astResult = LLTypes.LLValue.tryToConstruct(result, {} as any);
     }
     const postKey = JSON.stringify(astResult.copy());
-    return { result: astResult, didEval: preKey !== postKey };
+    return {
+      result: astResult,
+      didEval: stripOutIds(preKey) !== stripOutIds(postKey),
+    };
   }
 
   let updatedNode = copy(node);
@@ -462,10 +469,12 @@ export function generateEvaluations(
   // check if the last two items are the same, if so, remove the last one
   if (
     evalLog.length > 1 &&
-    JSON.stringify(copy(evalLog[evalLog.length - 1])) ===
-      JSON.stringify(copy(evalLog[evalLog.length - 2]))
+    prepStr(evalLog[evalLog.length - 1]) ===
+      prepStr(evalLog[evalLog.length - 2])
   ) {
     evalLog.pop();
   }
   return evalLog;
 }
+
+const prepStr = (node: any) => stripOutIds(JSON.stringify(copy(node)));

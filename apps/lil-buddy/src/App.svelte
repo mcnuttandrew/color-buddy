@@ -13,7 +13,7 @@
   <div
     class="flex justify-between bg-stone-200 h-12 items-center px-4 text-xl font-bold"
   >
-    Lil Buddy
+    Lil Buddy: "{lint.name}"
 
     <LintPicker />
 

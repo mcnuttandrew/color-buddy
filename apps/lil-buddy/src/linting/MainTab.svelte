@@ -48,9 +48,11 @@
   <FocusedTest {lint} />
 {/if}
 <div class="w-full flex">
-  <div class="flex flex-col w-1/2 px-4">
-    <Controls />
-    <LintMeta {lint} />
+  <div class="flex flex-col px-4">
+    <div class="flex">
+      <Controls />
+      <LintMeta {lint} />
+    </div>
 
     {#if errors}
       <div class="text-red-500">{errors.message}</div>

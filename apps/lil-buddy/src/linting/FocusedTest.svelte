@@ -18,6 +18,7 @@
     : null;
   $: blameMode = {
     computeBlame: lint.blameMode !== "none",
+    debugCompare: false,
   };
   const nullLint = {
     result: { kind: "invalid" } as LintResult,
@@ -60,8 +61,8 @@
   }
 </script>
 
-<div class="flex px-2">
-  <div>
+<div class="flex px-2 max-h-[50vh]">
+  <div class="max-w-48 overflow-auto">
     <div class="text-sm italic">This is the currently selected example</div>
     {#if testPal && focusedTest}
       <div class="border">

@@ -299,9 +299,9 @@ export function runLint(
   try {
     const result = linter(pal, [lint], options);
     return { result: result[0], errors: null };
-  } catch (e) {
+  } catch (e: any) {
     return {
-      result: { kind: "error", message: e.message } as LintResult,
+      result: { kind: "error", message: e.message } as unknown as LintResult,
       errors: e,
     };
   }

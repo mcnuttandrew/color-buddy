@@ -527,8 +527,8 @@ function compareValues(
       let thresh = pred.threshold;
       if (!thresh) throw new Error("Similarity threshold not found");
       if (isColor) {
-        let localLeft = left as Color;
-        let localRight = right as Color;
+        let localLeft = Color.colorFromHex((left as Color).toHex(), "lab");
+        let localRight = Color.colorFromHex((right as Color).toHex(), "lab");
         const diff = localLeft.symmetricDeltaE(localRight, "2000");
         if (showValues) {
           console.log(
@@ -918,21 +918,31 @@ const LLPairFunctionTypes: {
   {
     primaryKey: "dist",
     params: ["space"] as string[],
-    op: (valA, valB, params) => valA.distance(valB, params.space as any),
+    op: (valA, valB, params) => {
+      const hexA = Color.colorFromHex(valA.toHex(), "lab");
+      const hexB = Color.colorFromHex(valB.toHex(), "lab");
+      return hexA.distance(hexB, params.space as any);
+    },
   },
   {
     primaryKey: "deltaE",
     params: ["algorithm"] as string[],
-    op: (valA, valB, params) =>
-      valA.symmetricDeltaE(valB, params.algorithm as any),
+    op: (valA, valB, params) => {
+      const hexA = Color.colorFromHex(valA.toHex(), "lab");
+      const hexB = Color.colorFromHex(valB.toHex(), "lab");
+      return hexA.symmetricDeltaE(hexB, params.algorithm as any);
+    },
   },
   {
     primaryKey: "contrast",
     params: ["algorithm"] as string[],
     op: (valA, valB, params) => {
-      const a = valA.toColorIO();
-      const b = valB.toColorIO();
-      return Math.abs(a.contrast(b, params.algorithm as any));
+      // const a = valA.toColorIO();
+      // const b = valB.toColorIO();
+      const hexA = Color.colorFromHex(valA.toHex(), "lab");
+      const hexB = Color.colorFromHex(valB.toHex(), "lab");
+      return Math.abs(hexA.contrast(hexB, params.algorithm as any));
+      // return Math.abs(a.contrast(b, params.algorithm as any));
     },
   },
 ];

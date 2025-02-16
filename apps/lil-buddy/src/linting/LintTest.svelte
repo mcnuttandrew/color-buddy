@@ -59,6 +59,29 @@
             );
             if (!lint) return;
             if (type === "passing") {
+              store.setCurrentLintExpectedPassingTests([
+                ...lint.expectedPassingTests,
+                testResult.pal,
+              ]);
+            } else {
+              store.setCurrentLintExpectedFailingTests([
+                ...lint.expectedFailingTests,
+                testResult.pal,
+              ]);
+            }
+          }}
+        >
+          Duplicate
+        </button>
+
+        <button
+          class={buttonStyle}
+          on:click={() => {
+            const lint = $store.lints.find(
+              (lint) => lint.id === $store.focusedLint
+            );
+            if (!lint) return;
+            if (type === "passing") {
               store.setCurrentLintExpectedPassingTests(
                 lint.expectedPassingTests.filter((_, jdx) => idx !== jdx)
               );

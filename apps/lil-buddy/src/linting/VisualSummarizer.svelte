@@ -1,32 +1,25 @@
 <script lang="ts">
   import type { Palette } from "color-buddy-palette";
   import DispatchNode from "./summary-nodes/DispatchNode.svelte";
-  import { GenerateAST } from "color-buddy-palette-lint";
-  import { trimTree } from "../lib/graph-builder";
   import {
-    generateEvaluations,
+    GenerateAST,
+    smallStepEvaluator,
     rewriteQuantifiers,
-  } from "../lib/small-step-evaluator";
+  } from "color-buddy-palette-lint";
+  import { trimTree } from "../lib/graph-builder";
   import store from "../stores/store";
+  import { buttonStyle } from "../lib/styles";
   export let pal: Palette;
   export let lint: string;
 
   $: executionLog = getExecutionLog(lint, $store.okayToExecute);
   let error: any;
   function getExecutionLog(lint: string, okayToExecute: boolean) {
-    // if (!okayToExecute) {
-    //   error = "Changes in process";
-    //   setTimeout(() => {
-    //     error = null;
-    //     store.setOkayToExecute(true);
-    //   }, 2000);
-    //   return null;
-    // }
     try {
       const ast = (GenerateAST(JSON.parse(lint) as any).value as any)
         .children[0] as any;
       const rewrittenAST = trimTree(rewriteQuantifiers(ast));
-      const result = generateEvaluations(rewrittenAST, {}, pal, true);
+      const result = smallStepEvaluator(rewrittenAST, {}, pal, true);
       error = null;
       return result;
     } catch (e) {
@@ -39,6 +32,14 @@
 <div class="flex">
   {#if error}
     <div>{error}</div>
+    <button
+      class={buttonStyle}
+      on:click={() => {
+        executionLog = getExecutionLog(lint, $store.okayToExecute);
+      }}
+    >
+      Try again
+    </button>
   {:else}
     {#each executionLog || [] as log}
       <DispatchNode node={log} {pal} inducedVariables={{}} />

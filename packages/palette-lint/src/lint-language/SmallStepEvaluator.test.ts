@@ -1,10 +1,8 @@
 import { expect, test } from "vitest";
 import { makePalFromString } from "color-buddy-palette";
-import { GenerateAST, PREBUILT_LINTS } from "color-buddy-palette-lint";
-import {
-  generateEvaluations,
-  rewriteQuantifiers,
-} from "./small-step-evaluator";
+import { GenerateAST } from "./lint-language";
+import { PREBUILT_LINTS } from "../linter";
+import { smallStepEvaluator, rewriteQuantifiers } from "./small-step-evaluator";
 
 const getAST = (node: any) => {
   const ast = (GenerateAST(node as any).value as any).children[0] as any;
@@ -21,7 +19,7 @@ test("SmallStepEvaluator works", () => {
     },
   };
   const ast = getAST(exampleNode);
-  const result = generateEvaluations(
+  const result = smallStepEvaluator(
     ast,
     { a: defaultPal.colors[0], b: defaultPal.colors[1] },
     defaultPal,
@@ -32,7 +30,7 @@ test("SmallStepEvaluator works", () => {
 
 test("SmallStepEvaluator works with smaller example", () => {
   const smallExampleNode = { ">": { left: 11, right: 10 } };
-  const result = generateEvaluations(
+  const result = smallStepEvaluator(
     getAST(smallExampleNode),
     {},
     defaultPal,
@@ -43,7 +41,7 @@ test("SmallStepEvaluator works with smaller example", () => {
 
 test("SmallStepEvaluator works with small not example", () => {
   const smallExampleNode = { not: { ">": { left: 11, right: 10 } } };
-  const result = generateEvaluations(
+  const result = smallStepEvaluator(
     getAST(smallExampleNode),
     {},
     defaultPal,
@@ -54,7 +52,7 @@ test("SmallStepEvaluator works with small not example", () => {
 
 test("Agg Test", () => {
   const example = { "<": { left: { count: "colors" }, right: 11 } };
-  const result = generateEvaluations(getAST(example), {}, defaultPal, true);
+  const result = smallStepEvaluator(getAST(example), {}, defaultPal, true);
   expect(result).toMatchSnapshot();
 });
 
@@ -65,7 +63,7 @@ test("Fair Test", () => {
       right: 50,
     },
   };
-  const result = generateEvaluations(getAST(fair), {}, defaultPal, true);
+  const result = smallStepEvaluator(getAST(fair), {}, defaultPal, true);
   expect(result).toMatchSnapshot();
 });
 
@@ -85,7 +83,7 @@ test("Quantifier Test", () => {
       },
     },
   };
-  const result = generateEvaluations(getAST(quantifier), {}, defaultPal, true);
+  const result = smallStepEvaluator(getAST(quantifier), {}, defaultPal, true);
   expect(result).toMatchSnapshot();
 });
 
@@ -99,7 +97,7 @@ test("Quantifier Test 2", () => {
       },
     },
   };
-  const result = generateEvaluations(getAST(quantifier), {}, defaultPal, true);
+  const result = smallStepEvaluator(getAST(quantifier), {}, defaultPal, true);
   expect(result).toMatchSnapshot();
 });
 
@@ -120,7 +118,7 @@ test("Nested Quantifiers Test", () => {
       },
     },
   };
-  const result = generateEvaluations(getAST(nested), {}, defaultPal, true);
+  const result = smallStepEvaluator(getAST(nested), {}, defaultPal, true);
   expect(result).toMatchSnapshot();
 });
 
@@ -134,7 +132,7 @@ test("Nested Quantifiers Test 2", () => {
       predicate: { not: true },
     },
   };
-  const result = generateEvaluations(getAST(nested), {}, defaultPal, true);
+  const result = smallStepEvaluator(getAST(nested), {}, defaultPal, true);
   expect(result).toMatchSnapshot();
 });
 
@@ -191,7 +189,7 @@ test("Even distribution", () => {
     (x) => x.name === "Even distribution in hue"
   ) as LintProgram;
   const ast = getAST(JSON.parse(lint.program));
-  const result = generateEvaluations(ast, {}, defaultPal, true);
+  const result = smallStepEvaluator(ast, {}, defaultPal, true);
 
   expect(result).toMatchSnapshot();
 });
@@ -217,7 +215,7 @@ test("where problem", () => {
     },
   };
   const ast = getAST(whereProg);
-  const result = generateEvaluations(ast, {}, defaultPal, true);
+  const result = smallStepEvaluator(ast, {}, defaultPal, true);
   expect(result).toMatchSnapshot();
 });
 
@@ -234,7 +232,7 @@ test("problematic sort", () => {
     ],
   };
   const ast = getAST(sorter);
-  const result = generateEvaluations(ast, {}, defaultPal, true);
+  const result = smallStepEvaluator(ast, {}, defaultPal, true);
   expect(result).toMatchSnapshot();
 });
 
@@ -248,7 +246,7 @@ test("Predefined Lint Tests", () => {
     }
     const lintProgram = JSON.parse(lint.program);
     const ast = getAST(lintProgram);
-    const result = generateEvaluations(ast, {}, defaultPal, true);
+    const result = smallStepEvaluator(ast, {}, defaultPal, true);
     expect(result, `${lint.name} to pass`).toMatchSnapshot();
   }
 });

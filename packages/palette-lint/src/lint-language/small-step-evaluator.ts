@@ -1,8 +1,6 @@
-import { LLTypes, Environment } from "color-buddy-palette-lint";
-import { Color } from "color-buddy-palette";
+import { Color, makePalFromString } from "color-buddy-palette";
 import type { Palette } from "color-buddy-palette";
-
-import { makePalFromString } from "color-buddy-palette";
+import { LLTypes, Environment } from "./lint-language";
 
 type LLNode = InstanceType<(typeof LLTypes)["LLNode"]>;
 export type InducedVariables = Record<string, Color | number>;
@@ -408,7 +406,7 @@ function traverseAndMaybeExecute(
           [updatedNode.varbs[0]]: color,
           [`index(${node.varbs[0]})`]: i + 1,
         };
-        const evals = generateEvaluations(
+        const evals = smallStepEvaluator(
           updatedNode.predicate.value || updatedNode.predicate,
           { ...updatedVariables },
           pal
@@ -443,7 +441,7 @@ function copy(node: any) {
   return JSON.parse(JSON.stringify(node));
 }
 
-export function generateEvaluations(
+export function smallStepEvaluator(
   node: LLNode,
   inducedVariables: InducedVariables,
   pal: Palette,

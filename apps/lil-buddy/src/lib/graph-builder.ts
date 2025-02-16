@@ -1,4 +1,4 @@
-import { LLTypes, Environment } from "color-buddy-palette-lint";
+import { LLTypes } from "color-buddy-palette-lint";
 
 type LLNode = InstanceType<(typeof LLTypes)["LLNode"]>;
 type LLPair = InstanceType<(typeof LLTypes)["LLPairFunction"]>;

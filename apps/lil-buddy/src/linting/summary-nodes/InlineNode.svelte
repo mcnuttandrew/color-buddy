@@ -5,7 +5,7 @@
 
   export let node: any;
   export let pal: Palette;
-  export let inducedVariables: Record<string, any> = {};
+  export let inducedVariables: Record<string, any>;
 
   function toThreeDigit(num: number): string {
     let str = (Math.round(num * 1000) / 1000).toString();
@@ -50,12 +50,12 @@
   {:else if node.nodeType === "conjunction" && node.type === "not"}
     <div class="flex items-center border border-black p-1">
       <span class="mr-2">NOT</span>
-      <DispatchNode node={node.children[0]} {pal} />
+      <DispatchNode node={node.children[0]} {pal} {inducedVariables} />
     </div>
   {:else if node.nodeType === "conjunction"}
     <div class="flex flex-col border border-black p-1 items-center">
       {#each node.children as child, idx}
-        <DispatchNode node={child} {pal} />
+        <DispatchNode node={child} {pal} {inducedVariables} />
         {#if idx !== node.children.length - 1}
           <div>{node.type}</div>
         {/if}

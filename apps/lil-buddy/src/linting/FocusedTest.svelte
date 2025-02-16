@@ -74,39 +74,43 @@
   }
 </script>
 
-<div class="flex">
+<div class="flex px-2">
   <div>
     <div class="text-sm italic">This is the currently selected example</div>
     {#if testPal && focusedTest}
       <div class="border">
         <div class="font-bold">Palette Config</div>
-        <button
-          class={buttonStyle}
-          on:click={() => {
-            const newColors = [
-              ...testPal.colors,
-              Color.colorFromString("steelblue"),
-            ];
-            updatePal({ ...testPal, colors: newColors });
-          }}
-        >
-          Add Color
-        </button>
-        <button
-          class={buttonStyle}
-          on:click={() => {
-            const newTests = [...lint.expectedPassingTests].filter(
-              (_, i) => i !== focusedTest.index
-            );
-            store.setCurrentLintExpectedPassingTests(newTests);
-          }}
-        >
-          Delete Example
-        </button>
+        <div class="text-xs">Controls</div>
+        <div class="flex flex-wrap">
+          <button
+            class={buttonStyle}
+            on:click={() => {
+              const newColors = [
+                ...testPal.colors,
+                Color.colorFromString("steelblue"),
+              ];
+              updatePal({ ...testPal, colors: newColors });
+            }}
+          >
+            Add Color
+          </button>
+          <button
+            class={buttonStyle}
+            on:click={() => {
+              const newTests = [...lint.expectedPassingTests].filter(
+                (_, i) => i !== focusedTest.index
+              );
+              store.setCurrentLintExpectedPassingTests(newTests);
+            }}
+          >
+            Delete Example
+          </button>
+        </div>
         <ModifyPalette palette={testPal} {updatePal} />
         <div class="flex flex-col">
-          <div>Palette Type</div>
+          <div class="text-xs">Palette Type</div>
           <select
+            class="bg-white border"
             value={testPal.type}
             on:change={(e) => {
               // @ts-ignore

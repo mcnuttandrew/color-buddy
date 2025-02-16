@@ -135,7 +135,4 @@
       </Tooltip>
     {/each}
   </div>
-  <!-- <div>
-    Colors: [{pal.colors.map((x) => `"${x.toHex()}"`).join(", ")}]
-  </div> -->
 </div>

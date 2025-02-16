@@ -132,7 +132,6 @@ export function trimTree(node: any): any {
   }
   let id = 1;
   const result = trimTreeInner(node);
-  console.log(result);
   return result;
 }
 

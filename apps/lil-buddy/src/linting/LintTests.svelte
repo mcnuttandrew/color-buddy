@@ -1,5 +1,4 @@
 <script lang="ts">
-  import LintTest from "./LintTest.svelte";
   import AddTest from "./AddTest.svelte";
   import type { LintProgram, LintResult } from "color-buddy-palette-lint";
   import type { Palette } from "color-buddy-palette";
@@ -32,9 +31,9 @@
   }) as TestResult[];
 </script>
 
-<div class="border">
-  <div class="font-bold">Tests</div>
-  <div class="flex flex-col">
+<div class="border h-full">
+  <div class="font-bold w-full bg-stone-100">Tests</div>
+  <div class="flex flex-col px-2">
     <div class="flex flex-col">
       <div class="flex">
         <div class="font-bold">Expected Passing</div>

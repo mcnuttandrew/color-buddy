@@ -5,15 +5,15 @@
 
   export let node: any;
   export let pal: Palette;
-  export let inducedVariables: Record<string, any> = {};
+  export let inducedVariables: Record<string, any>;
 </script>
 
 {#if !node}
   <div />
 {:else if node.nodeType === "expression"}
-  <svelte:self node={node.value} {pal} />
+  <svelte:self node={node.value} {pal} {inducedVariables} />
 {:else if node.nodeType === "quantifier" || node.quant}
-  <QuantifierNode {node} {pal} />
+  <QuantifierNode {node} {pal} {inducedVariables} />
 {:else}
   <InlineNode {node} {pal} {inducedVariables} />
 {/if}

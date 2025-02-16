@@ -2,6 +2,7 @@
   import type { Palette } from "color-buddy-palette";
   import DispatchNode from "./summary-nodes/DispatchNode.svelte";
   import { GenerateAST } from "color-buddy-palette-lint";
+  import { trimTree } from "../lib/graph-builder";
   import {
     generateEvaluations,
     rewriteQuantifiers,
@@ -24,7 +25,7 @@
     try {
       const ast = (GenerateAST(JSON.parse(lint) as any).value as any)
         .children[0] as any;
-      const rewrittenAST = rewriteQuantifiers(ast);
+      const rewrittenAST = trimTree(rewriteQuantifiers(ast));
       const result = generateEvaluations(rewrittenAST, {}, pal, true);
       error = null;
       return result;
@@ -33,7 +34,6 @@
       error = e;
     }
   }
-  $: console.log("summarizer", $store.okayToExecute, executionLog);
 </script>
 
 <div class="flex">
@@ -41,7 +41,7 @@
     <div>{error}</div>
   {:else}
     {#each executionLog || [] as log}
-      <DispatchNode node={log} {pal} />
+      <DispatchNode node={log} {pal} inducedVariables={{}} />
     {/each}
   {/if}
 </div>

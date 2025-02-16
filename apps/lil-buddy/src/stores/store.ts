@@ -17,7 +17,7 @@ interface StoreData {
   loadState?: "loading" | "idle";
   engine: "openai" | "anthropic";
   okayToExecute: boolean;
-  visualSummary: "graph-summary" | "execution-flow";
+  visualSummary: "graph-summary" | "text-program";
 }
 
 const InitialStore: StoreData = {

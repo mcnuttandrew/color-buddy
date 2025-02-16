@@ -33,6 +33,7 @@
 </script>
 
 <div class="border">
+  <div class="font-bold">Tests</div>
   <div class="flex flex-col">
     <div class="flex flex-col">
       <div class="flex">
@@ -99,5 +100,4 @@
       </div>
     </div>
   </div>
-  <div class="italic">Items marked with dashed sides are blamed</div>
 </div>

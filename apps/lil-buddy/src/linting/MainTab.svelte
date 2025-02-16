@@ -34,17 +34,7 @@
   }
 </script>
 
-<Nav
-  tabs={["graph-summary", "execution-flow"]}
-  isTabSelected={(x) => x === $store.visualSummary}
-  selectTab={(x) => store.setVisualSummary(x)}
-/>
-
-{#if $store.visualSummary === "graph-summary"}
-  <div class="font-bold">Graph Summary</div>
-  <GraphSummary {lint} />
-{:else if $store.focusedTest}
-  <div class="font-bold">Focused Test</div>
+{#if $store.focusedTest}
   <FocusedTest {lint} />
 {/if}
 <div class="w-full flex">
@@ -52,40 +42,48 @@
     <div class="flex">
       <Controls />
       <LintMeta {lint} />
+      <Nav
+        tabs={["graph-summary", "text-program"]}
+        isTabSelected={(x) => x === $store.visualSummary}
+        selectTab={(x) => store.setVisualSummary(x)}
+      />
     </div>
 
     {#if errors}
       <div class="text-red-500">{errors.message}</div>
     {/if}
 
-    <div class="flex justify-between">
-      <div class="font-bold">Lint Program</div>
-      <button
-        class={buttonStyle}
-        on:click={() => {
-          store.setCurrentLintProgram(JSONStringify(program) || "");
+    {#if $store.visualSummary === "graph-summary"}
+      <div class="font-bold">Graph Summary</div>
+      <GraphSummary {lint} />
+    {:else}
+      <div class="flex justify-between">
+        <div class="font-bold">Lint Program</div>
+        <button
+          class={buttonStyle}
+          on:click={() => {
+            store.setCurrentLintProgram(JSONStringify(program) || "");
+          }}
+        >
+          Clean up Program
+        </button>
+        <ProgramCommand currentProgram={lint.program} />
+      </div>
+      <div>
+        {generatePrettyText(program)}
+      </div>
+      <MonacoEditor
+        value={program}
+        onChange={(x) => {
+          store.setCurrentLintProgram(x);
         }}
-      >
-        Clean up Program
-      </button>
-      <ProgramCommand currentProgram={lint.program} />
-    </div>
-    <div>
-      {generatePrettyText(program)}
-    </div>
-    <MonacoEditor
-      value={program}
-      onChange={(x) => {
-        store.setCurrentLintProgram(x);
-      }}
-      language="json"
-    />
+        language="json"
+      />
+    {/if}
   </div>
   <div class="w-1/2 px-4">
     <div></div>
 
-    {#if $store.visualSummary === "execution-flow"}
-      <LintTests {lint} />
-    {/if}
+    <LintTests {lint} />
   </div>
 </div>

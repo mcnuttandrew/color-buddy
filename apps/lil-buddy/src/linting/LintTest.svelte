@@ -5,38 +5,16 @@
   import ColorChannelPicker from "../components/ColorChannelPicker.svelte";
   import Tooltip from "../components/Tooltip.svelte";
   import Background from "../components/Background.svelte";
-  import ModifyPalette from "./ModifyPalette.svelte";
   import { buttonStyle } from "../lib/styles";
   export let pal: Palette;
   export let updatePal: (newPal: Palette) => void;
-  export let removeCase: () => void;
   $: bgLum = pal.background.luminance();
   $: textColor = bgLum > 0.4 ? "#00000066" : "#ffffffaa";
 </script>
 
-<div class="flex flex-col border rounded">
-  <div class="bg-stone-400 flex w-full">
-    <!-- <Tooltip positionAlongRightEdge={pivotRight}> -->
+<div class="flex flex-col rounded">
+  <div class=" flex w-full">
     <div class="flex flex-col items-start">
-      <button
-        class={buttonStyle}
-        on:click={() => {
-          const newColors = [...pal.colors, Color.colorFromString("steelblue")];
-          updatePal({ ...pal, colors: newColors });
-        }}
-      >
-        Add Color
-      </button>
-      <button
-        class={buttonStyle}
-        on:click={() => {
-          removeCase();
-        }}
-      >
-        Remove Test Case
-      </button>
-      <ModifyPalette palette={pal} {updatePal} />
-
       <Background
         onChange={(newColor) => updatePal({ ...pal, background: newColor })}
         bg={pal.background}
@@ -51,29 +29,7 @@
           });
         }}
       />
-      <div class="flex flex-col">
-        <div>Palette Type</div>
-        <select
-          value={pal.type}
-          on:change={(e) => {
-            // @ts-ignore
-            const val = e.target.value;
-            updatePal({
-              ...pal,
-              type: val,
-            });
-          }}
-        >
-          <option value="sequential">Sequential</option>
-          <option value="diverging">Diverging</option>
-          <option value="categorical">Categorical</option>
-        </select>
-      </div>
     </div>
-    <!-- <button class={buttonStyle} slot="target" let:toggle on:click={toggle}>
-        Config
-      </button>
-    </Tooltip> -->
   </div>
   <div
     class="flex flex-wrap rounded p-2 grow items-center"

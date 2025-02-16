@@ -1,8 +1,10 @@
 <script lang="ts">
   import type { LintProgram, LintResult } from "color-buddy-palette-lint";
   import type { Palette } from "color-buddy-palette";
+  import { Color } from "color-buddy-palette";
   import PalPreview from "../components/PalPreview.svelte";
   import store from "../stores/store";
+  import ModifyPalette from "./ModifyPalette.svelte";
   export let lint: LintProgram;
   import { runLint } from "../lib/utils";
   import VisualSummarizer from "./VisualSummarizer.svelte";
@@ -74,38 +76,75 @@
 
 <div class="flex">
   <div>
-    {#if currentLintAppliesToCurrentPalette && testPal}
-      {#if lintResult.kind === "success" && lintResult.passes}
-        <div class="text-green-500">
-          This lint passes for the current palette
-        </div>
-      {/if}
-      {#if lintResult.kind === "success" && !lintResult.passes && !errors}
-        <div class="flex">
-          <div class="text-red-500 mr-2">
-            This lint fails for the current palette.
-          </div>
-        </div>
-      {/if}
-    {/if}
-
-    <div class="border p-2 rounded">
-      {#if testPal && focusedTest}
-        <LintTest
-          removeCase={() => {
+    <div class="text-sm italic">This is the currently selected example</div>
+    {#if testPal && focusedTest}
+      <div class="border">
+        <div class="font-bold">Palette Config</div>
+        <button
+          class={buttonStyle}
+          on:click={() => {
+            const newColors = [
+              ...testPal.colors,
+              Color.colorFromString("steelblue"),
+            ];
+            updatePal({ ...testPal, colors: newColors });
+          }}
+        >
+          Add Color
+        </button>
+        <button
+          class={buttonStyle}
+          on:click={() => {
             const newTests = [...lint.expectedPassingTests].filter(
               (_, i) => i !== focusedTest.index
             );
             store.setCurrentLintExpectedPassingTests(newTests);
           }}
-          pal={testPal}
-          {updatePal}
-        />
-      {/if}
-
+        >
+          Delete Example
+        </button>
+        <ModifyPalette palette={testPal} {updatePal} />
+        <div class="flex flex-col">
+          <div>Palette Type</div>
+          <select
+            value={testPal.type}
+            on:change={(e) => {
+              // @ts-ignore
+              const val = e.target.value;
+              updatePal({
+                ...testPal,
+                type: val,
+              });
+            }}
+          >
+            <option value="sequential">Sequential</option>
+            <option value="diverging">Diverging</option>
+            <option value="categorical">Categorical</option>
+          </select>
+        </div>
+      </div>
+      <div class="border">
+        <div class="font-bold">Palette</div>
+        <LintTest pal={testPal} {updatePal} />
+      </div>
+    {/if}
+    <div class="border rounded">
       {#if currentLintAppliesToCurrentPalette && testPal}
         {#if lintResult.kind === "success" && !lintResult.passes && !errors}
-          <div class="border">
+          <div class="border py-1">
+            {#if lintResult.kind === "success" && lintResult.passes}
+              <div class="text-green-500">
+                This lint passes for the current palette
+              </div>
+            {/if}
+            {#if lintResult.kind === "success" && !lintResult.passes && !errors}
+              <div class="flex">
+                <div class="text-red-500 mr-2">
+                  This lint fails for the current palette.
+                </div>
+              </div>
+            {/if}
+            <div class="font-bold">Blame</div>
             The following colors are blamed.
             {#if lint.blameMode === "pair"}
               <div class="flex flex-wrap">
@@ -143,7 +182,7 @@
               <option>single</option>
               <option>pair</option>
             </select>
-            Blame mode
+            mode
           </div>
         {/if}
       {:else}
@@ -175,7 +214,7 @@
       {/if}
     </div>
   </div>
-  <div class="w-full overflow-auto">
+  <div class="w-full overflow-auto h-[50vh]">
     {#if testPal}
       <VisualSummarizer lint={program} pal={testPal} />
     {/if}

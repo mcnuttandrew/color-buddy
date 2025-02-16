@@ -3,6 +3,7 @@
   import DispatchNode from "./DispatchNode.svelte";
   export let node: any;
   export let pal: Palette;
+  export let inducedVariables: Record<string, any> = {};
 
   let open = true;
 </script>
@@ -11,11 +12,10 @@
 {#if node.nodeType !== "quantifier"}
   <div class="flex items-center">
     <div class="flex flex-col">
-      <div class="w-full bg-stone-200 flex justify-between items-center">
-        <div class="font-bold">
-          {#if node.quant === "all"}For all{:else}There exists{/if}
-          {node.varb}
-          the following should be true
+      <div class="px-2 w-full bg-stone-200 flex justify-between items-center">
+        <div class="">
+          {#if node.quant === "all"}For all{:else}There should exist{/if}
+          {node.varb} (the colors below) the following should be true
         </div>
         <button on:click={() => (open = !open)}>
           <div>{open ? "▼" : "▶"}</div>
@@ -26,6 +26,7 @@
           {#each node.results as result}
             <div class="flex items-center">
               <div class="flex">
+                <!-- possible this could be a number or something else -->
                 <div
                   class="h-8 w-8 rounded-full"
                   style={`background: ${result.color}`}
@@ -42,7 +43,10 @@
                       <DispatchNode
                         node={evaluation}
                         {pal}
-                        inducedVariables={evaluation.inducedVariables}
+                        inducedVariables={{
+                          ...inducedVariables,
+                          ...evaluation.inducedVariables,
+                        }}
                       />
                       {#if idx < result.evals.length - 1}
                         <div>→</div>

@@ -168,7 +168,9 @@ export class LLNode {
     return "Node";
   }
   copy() {
-    return new LLNode();
+    const node = new LLNode();
+    node.path = [...(this.path || [])];
+    return node;
   }
   generatePath(partialPath: (string | number)[] = []) {
     this.path = [...partialPath];
@@ -204,7 +206,9 @@ export class LLExpression extends LLNode {
     return this.value.toString();
   }
   copy() {
-    return new LLExpression(this.value.copy());
+    const node = new LLExpression(this.value.copy());
+    node.path = [...(this.path || [])];
+    return node;
   }
   generatePath(partialPath: (string | number)[] = []) {
     this.path = [...partialPath];
@@ -268,10 +272,12 @@ export class LLConjunction extends LLNode {
     return new LLConjunction(exprType, childrenTypes);
   }
   copy() {
-    return new LLConjunction(
+    const node = new LLConjunction(
       this.type,
       this.children.map((x: any) => (!x.copy ? deepCopy(x) : x.copy()))
     );
+    node.path = [...(this.path || [])];
+    return node;
   }
   toString(): string {
     if (this.type === "id") return this.children[0].toString();
@@ -305,7 +311,9 @@ export class LLValueArray extends LLNode {
     return new LLValueArray(childrenTypes);
   }
   copy() {
-    return new LLValueArray(this.children.map((x) => x.copy()));
+    const node = new LLValueArray(this.children.map((x) => x.copy()));
+    node.path = [...(this.path || [])];
+    return node;
   }
   toString(): string {
     return `[${this.children.map((x) => x.toString()).join(", ")}]`;
@@ -331,7 +339,9 @@ export class LLBool extends LLNode {
     return new LLBool(value);
   }
   copy() {
-    return new LLBool(this.value);
+    const node = new LLBool(this.value);
+    node.path = [...(this.path || [])];
+    return node;
   }
   toString(): string {
     return this.value ? "TRUE" : "FALSE";
@@ -353,7 +363,9 @@ export class LLVariable extends LLNode {
     return new LLVariable(value);
   }
   copy() {
-    return new LLVariable(this.value);
+    const node = new LLVariable(this.value);
+    node.path = [...(this.path || [])];
+    return node;
   }
   toString(): string {
     return this.value;
@@ -385,7 +397,9 @@ export class LLColor extends LLNode {
     return false;
   }
   copy() {
-    return new LLColor(this.value.copy(), this.constructorString);
+    const node = new LLColor(this.value.copy(), this.constructorString);
+    node.path = [...(this.path || [])];
+    return node;
   }
   toString(): string {
     return this.constructorString;
@@ -407,7 +421,9 @@ export class LLNumber extends LLNode {
     return new LLNumber(value);
   }
   copy() {
-    return new LLNumber(this.value);
+    const node = new LLNumber(this.value);
+    node.path = [...(this.path || [])];
+    return node;
   }
   toString(): string {
     return this.value.toString();
@@ -460,7 +476,9 @@ export class LLNumberOp extends LLNode {
     return new LLNumberOp(opType, leftType, rightType);
   }
   copy() {
-    return new LLNumberOp(this.type, this.left.copy(), this.right.copy());
+    const node = new LLNumberOp(this.type, this.left.copy(), this.right.copy());
+    node.path = [...(this.path || [])];
+    return node;
   }
   toString(): string {
     let left = this.left.toString();
@@ -609,12 +627,14 @@ export class LLPredicate extends LLNode {
     return new LLPredicate(predicateType, leftType, rightType, threshold);
   }
   copy() {
-    return new LLPredicate(
+    const node = new LLPredicate(
       this.type,
       this.left.copy(),
       this.right.copy(),
       this.threshold
     );
+    node.path = [...(this.path || [])];
+    return node;
   }
   toString(): string {
     let type = "" + this.type;
@@ -676,7 +696,7 @@ export class LLValue extends LLNode {
   }
   generatePath(partialPath: (string | number)[] = []) {
     this.path = [...partialPath];
-    this.value.generatePath([...this.path]);
+    this.value.generatePath([...(this.path || [])]);
     return this;
   }
 }
@@ -768,7 +788,9 @@ export class LLValueFunction extends LLNode {
     return new LLValueFunction(op.primaryKey, input, params);
   }
   copy() {
-    return new LLValueFunction(this.type, this.input.copy(), this.params);
+    const node = new LLValueFunction(this.type, this.input.copy(), this.params);
+    node.path = [...(this.path || [])];
+    return node;
   }
   toString(): string {
     const params = Object.values(this.params).join(", ");
@@ -841,7 +863,9 @@ export class LLBoolFunction extends LLNode {
     return new LLBoolFunction(op.primaryKey, input, params);
   }
   copy() {
-    return new LLBoolFunction(this.type, this.input.copy(), this.params);
+    const node = new LLBoolFunction(this.type, this.input.copy(), this.params);
+    node.path = [...(this.path || [])];
+    return node;
   }
   toString(): string {
     const params = Object.values(this.params).join(", ");
@@ -961,12 +985,14 @@ export class LLPairFunction extends LLNode {
     }(${this.left.toString()}, ${this.right.toString()}${paramString})`;
   }
   copy() {
-    return new LLPairFunction(
+    const node = new LLPairFunction(
       this.type,
       this.left.copy(),
       this.right.copy(),
       this.params
     );
+    node.path = [...(this.path || [])];
+    return node;
   }
   generatePath(partialPath: (string | number)[] = []) {
     this.path = [...partialPath, this.type];
@@ -1206,7 +1232,7 @@ export class LLAggregate extends LLNode {
   }
   generatePath(partialPath: (string | number)[] = []) {
     this.path = [...partialPath, this.type];
-    this.children.generatePath([...this.path]);
+    this.children.generatePath([...(this.path || [])]);
     return this;
   }
 }
@@ -1332,7 +1358,7 @@ export class LLMap extends LLNode {
   }
   generatePath(partialPath: (string | number)[] = []) {
     this.path = [...partialPath, this.type];
-    this.children.generatePath([...this.path]);
+    this.children.generatePath([...(this.path || [])]);
     if (this.func && typeof this.func !== "string") {
       this.func.generatePath([...this.path, "func"]);
     }

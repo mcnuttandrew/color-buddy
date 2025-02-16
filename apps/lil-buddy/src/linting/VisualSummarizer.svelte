@@ -18,7 +18,7 @@
     try {
       const ast = (GenerateAST(JSON.parse(lint) as any).value as any)
         .children[0] as any;
-      const rewrittenAST = trimTree(rewriteQuantifiers(ast));
+      const rewrittenAST = trimTree(rewriteQuantifiers(ast)).generatePath([]);
       const result = smallStepEvaluator(rewrittenAST, {}, pal, true);
       error = null;
       return result;
@@ -26,6 +26,28 @@
       console.error(e);
       error = e;
     }
+  }
+
+  function modifyLint(path: (number | string)[], newValue: any) {
+    const lintObj = JSON.parse(lint);
+    let current = lintObj;
+    for (const key of path.slice(0, -1)) {
+      current = current[key];
+    }
+    // for the case where the path is to a nested object, replace the key with the new key
+    if (typeof current[path[path.length - 1]] === "object") {
+      const newKey = newValue;
+      const oldKey = path[path.length - 1];
+      const newObj = {};
+      for (const key of Object.keys(current[oldKey])) {
+        newObj[key] = current[oldKey][key];
+      }
+      delete current[oldKey];
+      current[newKey] = newObj;
+    } else {
+      current[path[path.length - 1]] = newValue;
+    }
+    lint = JSON.stringify(lintObj);
   }
 </script>
 
@@ -42,7 +64,7 @@
     </button>
   {:else}
     {#each executionLog || [] as log}
-      <DispatchNode node={log} {pal} inducedVariables={{}} />
+      <DispatchNode node={log} {pal} inducedVariables={{}} {modifyLint} />
     {/each}
   {/if}
 </div>

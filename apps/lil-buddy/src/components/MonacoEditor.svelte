@@ -10,8 +10,6 @@
   let monaco: typeof Monaco;
   let editorContainer: HTMLElement;
 
-  let isTyping = false;
-
   onMount(async () => {
     // Import our 'monaco.ts' file here
     // (onMount() will only be executed in the browser, which is what we want)
@@ -30,7 +28,6 @@
       onChange(editor.getValue());
     });
   });
-  // update the editor when the value changes
   $: {
     if (editor && value !== editor.getValue()) editor.setValue(value);
   }

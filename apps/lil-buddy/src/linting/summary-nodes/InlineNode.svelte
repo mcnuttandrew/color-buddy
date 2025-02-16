@@ -2,10 +2,13 @@
   import type { Palette } from "color-buddy-palette";
   import DispatchNode from "./DispatchNode.svelte";
   import { Color } from "color-buddy-palette";
+  import Tooltip from "../../components/Tooltip.svelte";
+  import NodeWrap from "./NodeWrap.svelte";
 
   export let node: any;
   export let pal: Palette;
   export let inducedVariables: Record<string, any>;
+  export let modifyLint: (path: (number | string)[], newValue: any) => void;
 
   function toThreeDigit(num: number): string {
     let str = (Math.round(num * 1000) / 1000).toString();
@@ -36,26 +39,40 @@
   {#if node.nodeType === "predicate"}
     <div class="flex">
       <div class="border p-2 border-black flex">
-        <svelte:self node={node.left} {pal} inducedVariables={env} />
-        <div class="px-1">
-          {#if node.type === "similar"}
-            <div>{"≈"}</div>
-          {:else}
-            <div>{node.type}</div>
-          {/if}
-        </div>
-        <svelte:self node={node.right} {pal} inducedVariables={env} />
+        <svelte:self
+          {modifyLint}
+          node={node.left}
+          {pal}
+          inducedVariables={env}
+        />
+        <NodeWrap
+          options={["==", "!=", "<", ">", "<=", ">=", "similar"]}
+          {node}
+          {modifyLint}
+          label={node.type === "similar" ? "≈" : node.type}
+        />
+        <svelte:self
+          {modifyLint}
+          node={node.right}
+          {pal}
+          inducedVariables={env}
+        />
       </div>
     </div>
   {:else if node.nodeType === "conjunction" && node.type === "not"}
     <div class="flex items-center border border-black p-1">
       <span class="mr-2">NOT</span>
-      <DispatchNode node={node.children[0]} {pal} {inducedVariables} />
+      <DispatchNode
+        node={node.children[0]}
+        {pal}
+        {inducedVariables}
+        {modifyLint}
+      />
     </div>
   {:else if node.nodeType === "conjunction"}
     <div class="flex flex-col border border-black p-1 items-center">
       {#each node.children as child, idx}
-        <DispatchNode node={child} {pal} {inducedVariables} />
+        <DispatchNode node={child} {pal} {inducedVariables} {modifyLint} />
         {#if idx !== node.children.length - 1}
           <div>{node.type}</div>
         {/if}
@@ -63,16 +80,27 @@
     </div>
   {:else if node.nodeType === "numberOp"}
     <div class="flex">
-      <svelte:self node={node.left} {pal} inducedVariables={env} />
-      {#if node.type === "similar"}
-        <div>{"≈"}</div>
-      {:else}
-        <div>{node.type}</div>
-      {/if}
-      <svelte:self node={node.right} {pal} inducedVariables={env} />
+      <svelte:self {modifyLint} node={node.left} {pal} inducedVariables={env} />
+      <NodeWrap
+        options={["+", "-", "*", "/", "//", "absDiff", "%"]}
+        {node}
+        {modifyLint}
+        label="{node.type === 'similar' ? '≈' : node.type}}"
+      />
+      <svelte:self
+        {modifyLint}
+        node={node.right}
+        {pal}
+        inducedVariables={env}
+      />
     </div>
   {:else if node.nodeType === "number"}
-    <div class="font-mono text-sm">{`${toThreeDigit(node.value)}`}</div>
+    <NodeWrap
+      options="number"
+      {node}
+      {modifyLint}
+      label={toThreeDigit(node.value)}
+    />
   {:else if node.nodeType === "variable"}
     <div class="relative">
       {#if node.value.length > 2}
@@ -104,11 +132,21 @@
     </div>
   {:else if node.nodeType === "pairFunction"}
     <div class="flex">
-      {node.type}
+      <NodeWrap
+        {modifyLint}
+        {node}
+        label={node.type}
+        options={["dist", "deltaE", "contrast"]}
+      />
       <span>{"("}</span>
-      <svelte:self node={node.left} {pal} inducedVariables={env} />
+      <svelte:self {modifyLint} node={node.left} {pal} inducedVariables={env} />
       <span>{","}</span>
-      <svelte:self node={node.right} {pal} inducedVariables={env} />
+      <svelte:self
+        {modifyLint}
+        node={node.right}
+        {pal}
+        inducedVariables={env}
+      />
       <span>{")"}</span>
     </div>
   {:else if node.nodeType === "valueFunction" || node.nodeType === "boolFunction"}
@@ -119,7 +157,12 @@
         {node.type}
       {/if}
       <span>{"("}</span>
-      <svelte:self node={node.input} {pal} inducedVariables={env} />
+      <svelte:self
+        {modifyLint}
+        node={node.input}
+        {pal}
+        inducedVariables={env}
+      />
       <span>{")"}</span>
     </div>
   {:else if node.nodeType === "color"}
@@ -135,13 +178,18 @@
       <span>{"("}</span>
       {#if Array.isArray(node.children)}
         {#each node.children as child}
-          <svelte:self node={child} {pal} inducedVariables={env} />
+          <svelte:self {modifyLint} node={child} {pal} inducedVariables={env} />
           {#if child !== node.children[node.children.length - 1]}
             <span>{","}</span>
           {/if}
         {/each}
       {:else}
-        <svelte:self node={node.children} {pal} inducedVariables={env} />
+        <svelte:self
+          {modifyLint}
+          node={node.children}
+          {pal}
+          inducedVariables={env}
+        />
       {/if}
       <span>{")"}</span>
     </div>
@@ -151,7 +199,12 @@
         {#each node.children as child, idx}
           <span class="flex">
             {#if !idx}<span>{"["}</span>{/if}
-            <svelte:self node={child} {pal} inducedVariables={env} />
+            <svelte:self
+              {modifyLint}
+              node={child}
+              {pal}
+              inducedVariables={env}
+            />
             {#if child !== node.children[node.children.length - 1]}
               <span>{","}</span>
             {:else}
@@ -161,7 +214,12 @@
         {/each}
       {:else}
         <span>{"["}</span>
-        <svelte:self node={node.children} {pal} inducedVariables={env} />
+        <svelte:self
+          {modifyLint}
+          node={node.children}
+          {pal}
+          inducedVariables={env}
+        />
         <span>{"]"}</span>
       {/if}
     </div>
@@ -171,24 +229,34 @@
       <span>{"("}</span>
       {#if Array.isArray(node.children)}
         {#each node.children as child}
-          <svelte:self node={child} {pal} inducedVariables={env} />
+          <svelte:self {modifyLint} node={child} {pal} inducedVariables={env} />
           {#if child !== node.children[node.children.length - 1]}
             <span>{","}</span>
           {/if}
         {/each}
       {:else}
-        <svelte:self node={node.children} {pal} inducedVariables={env} />
+        <svelte:self
+          {modifyLint}
+          node={node.children}
+          {pal}
+          inducedVariables={env}
+        />
       {/if}
       {#if !new Set(["speed", "reverse"]).has(node.type)}
         <span>{","}</span>
         <div>{node.varb}</div>
         <span>{"→"}</span>
-        <svelte:self node={node.func} {pal} inducedVariables={env} />
+        <svelte:self
+          {modifyLint}
+          node={node.func}
+          {pal}
+          inducedVariables={env}
+        />
       {/if}
       <span>{")"}</span>
     </div>
   {:else if node.nodeType === "expression"}
-    <svelte:self node={node.value} {pal} inducedVariables={env} />
+    <svelte:self {modifyLint} node={node.value} {pal} inducedVariables={env} />
   {:else if node.nodeType === "bool"}
     <div
       class=" px-2 text-sm rounded-full"

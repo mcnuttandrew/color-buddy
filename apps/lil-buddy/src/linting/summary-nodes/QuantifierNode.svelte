@@ -4,6 +4,7 @@
   export let node: any;
   export let pal: Palette;
   export let inducedVariables: Record<string, any> = {};
+  export let modifyLint: (path: (number | string)[], newValue: any) => void;
 
   let open = true;
 </script>
@@ -41,6 +42,7 @@
                   {:else}
                     {#each result.evals as evaluation, idx}
                       <DispatchNode
+                        {modifyLint}
                         node={evaluation}
                         {pal}
                         inducedVariables={{

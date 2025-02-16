@@ -162,11 +162,19 @@ const toVal = (x: Color | number) => {
   }
   return new LLTypes.LLValue(new LLTypes.LLColor(x, x.toHex()));
 };
+const evalCache = new Map<string, any>();
 function evaluateNode(
   node: any,
   inducedVariables: InducedVariables,
   pal: Palette
 ) {
+  const serializedNode = JSON.stringify(node);
+  const canUseCache = !serializedNode.includes("colors");
+  const serializeKey = JSON.stringify({ serializedNode, inducedVariables });
+  if (canUseCache && evalCache.has(serializeKey)) {
+    return evalCache.get(serializeKey);
+  }
+
   const opts = { debugParse: false, debugEval: false, debugCompare: false };
 
   const newEnv = Object.entries(inducedVariables).reduce(
@@ -175,6 +183,9 @@ function evaluateNode(
   );
   const cleanedNode = clearQuantifierResults(node);
   const result = cleanedNode.evaluate(newEnv);
+  if (canUseCache) {
+    evalCache.set(serializeKey, result);
+  }
   return result;
 }
 
@@ -438,6 +449,17 @@ export function generateEvaluations(
   pal: Palette,
   init?: boolean
 ): LLNode[] {
+  const serializedNode = JSON.stringify(node);
+  const canUseCache = !serializedNode.includes("colors");
+  const serializeKey = JSON.stringify({
+    serializedNode,
+    inducedVariables,
+    generate: "generate",
+  });
+  if (canUseCache && evalCache.has(serializeKey)) {
+    console.log("cache hit");
+    return evalCache.get(serializeKey);
+  }
   if (init) {
     counter = 0;
   }
@@ -473,6 +495,9 @@ export function generateEvaluations(
       prepStr(evalLog[evalLog.length - 2])
   ) {
     evalLog.pop();
+  }
+  if (canUseCache) {
+    evalCache.set(serializeKey, evalLog);
   }
   return evalLog;
 }

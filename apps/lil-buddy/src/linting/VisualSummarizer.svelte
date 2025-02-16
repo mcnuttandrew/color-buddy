@@ -14,14 +14,14 @@
   $: executionLog = getExecutionLog(lint, $store.okayToExecute);
   let error: any;
   function getExecutionLog(lint: string, okayToExecute: boolean) {
-    if (!okayToExecute) {
-      error = "Changes in process";
-      setTimeout(() => {
-        error = null;
-        store.setOkayToExecute(true);
-      }, 2000);
-      return null;
-    }
+    // if (!okayToExecute) {
+    //   error = "Changes in process";
+    //   setTimeout(() => {
+    //     error = null;
+    //     store.setOkayToExecute(true);
+    //   }, 2000);
+    //   return null;
+    // }
     try {
       const ast = (GenerateAST(JSON.parse(lint) as any).value as any)
         .children[0] as any;

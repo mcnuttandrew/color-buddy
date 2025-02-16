@@ -47,10 +47,10 @@
 
   function updatePal(newPal: Palette) {
     if (!focusedTest) return;
-    if (editTime === null) {
-      editTime = Date.now();
-      store.setOkayToExecute(false);
-    }
+    // if (editTime === null) {
+    //   editTime = Date.now();
+    //   store.setOkayToExecute(false);
+    // }
     const oldTests =
       focusedTest.type === "passing"
         ? lint.expectedPassingTests
@@ -62,15 +62,15 @@
     } else {
       store.setCurrentLintExpectedFailingTests(newTests);
     }
-    editTime = Date.now();
-    setTimeout(() => {
-      if (!editTime) {
-        store.setOkayToExecute(true);
-      } else if (Date.now() - editTime > 1000) {
-        store.setOkayToExecute(true);
-        editTime = null;
-      }
-    }, 1000);
+    // editTime = Date.now();
+    // setTimeout(() => {
+    //   if (!editTime) {
+    //     store.setOkayToExecute(true);
+    //   } else if (Date.now() - editTime > 1000) {
+    //     store.setOkayToExecute(true);
+    //     editTime = null;
+    //   }
+    // }, 1000);
   }
 </script>
 

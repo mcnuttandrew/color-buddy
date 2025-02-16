@@ -2,7 +2,6 @@
   import type { LintProgram } from "color-buddy-palette-lint";
   import ChevDown from "virtual:icons/fa6-solid/angle-down";
   import store from "../stores/store";
-  import Tooltip from "../components/Tooltip.svelte";
   import Modal from "../components/Modal.svelte";
   import { simpleTooltipRowStyle, buttonStyle } from "../lib/styles";
 
@@ -33,6 +32,17 @@
             on:click={() => {
               isOpen = false;
               store.setFocusedLint(lint.id);
+              if (lint.expectedPassingTests.length) {
+                store.setFocusedTest({
+                  type: "passing",
+                  index: 0,
+                });
+              } else if (lint.expectedFailingTests.length) {
+                store.setFocusedTest({
+                  type: "failing",
+                  index: 0,
+                });
+              }
             }}
           >
             {lint.name}

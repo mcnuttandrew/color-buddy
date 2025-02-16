@@ -8,7 +8,7 @@
   export let lint: LintProgram;
   import { runLint } from "../lib/utils";
   import VisualSummarizer from "./VisualSummarizer.svelte";
-  import LintTest from "./LintTest.svelte";
+  import LintTest from "./CurrentPal.svelte";
   import { buttonStyle } from "../lib/styles";
   $: focusedTest = $store.focusedTest;
   $: testPal = focusedTest
@@ -43,14 +43,9 @@
   $: errors = lintRun.errors;
   $: pairData = blameData as number[][];
   $: program = lint.program;
-  let editTime: null | number = null;
 
   function updatePal(newPal: Palette) {
     if (!focusedTest) return;
-    // if (editTime === null) {
-    //   editTime = Date.now();
-    //   store.setOkayToExecute(false);
-    // }
     const oldTests =
       focusedTest.type === "passing"
         ? lint.expectedPassingTests
@@ -62,15 +57,6 @@
     } else {
       store.setCurrentLintExpectedFailingTests(newTests);
     }
-    // editTime = Date.now();
-    // setTimeout(() => {
-    //   if (!editTime) {
-    //     store.setOkayToExecute(true);
-    //   } else if (Date.now() - editTime > 1000) {
-    //     store.setOkayToExecute(true);
-    //     editTime = null;
-    //   }
-    // }, 1000);
   }
 </script>
 
@@ -94,19 +80,8 @@
           >
             Add Color
           </button>
-          <button
-            class={buttonStyle}
-            on:click={() => {
-              const newTests = [...lint.expectedPassingTests].filter(
-                (_, i) => i !== focusedTest.index
-              );
-              store.setCurrentLintExpectedPassingTests(newTests);
-            }}
-          >
-            Delete Example
-          </button>
+          <ModifyPalette palette={testPal} {updatePal} />
         </div>
-        <ModifyPalette palette={testPal} {updatePal} />
         <div class="flex flex-col">
           <div class="text-xs">Palette Type</div>
           <select
@@ -115,10 +90,7 @@
             on:change={(e) => {
               // @ts-ignore
               const val = e.target.value;
-              updatePal({
-                ...testPal,
-                type: val,
-              });
+              updatePal({ ...testPal, type: val });
             }}
           >
             <option value="sequential">Sequential</option>

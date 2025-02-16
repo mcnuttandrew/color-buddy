@@ -47,7 +47,11 @@ export const colorPickerConfig = Object.fromEntries(
   })
 );
 
-export const pick = (arr: any[]) => arr[Math.floor(Math.random() * arr.length)];
+export type TestResult = {
+  pal: Palette;
+  result: LintResult;
+  blame: any;
+};
 
 export function deDup(arr: Color[]): Color[] {
   const seen = new Set();

@@ -31,6 +31,7 @@
       />
     </div>
   </div>
+  <div class="text-xs">Palette</div>
   <div
     class="flex flex-wrap rounded p-2 grow items-center"
     style="background-color: {pal.background.toDisplay()};"
@@ -135,4 +136,5 @@
       </Tooltip>
     {/each}
   </div>
+  <div class="text-xs italic">Click circles to modify</div>
 </div>

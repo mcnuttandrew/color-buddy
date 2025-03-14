@@ -306,3 +306,45 @@ export function runLint(
     };
   }
 }
+
+// example path
+// all.predicate.all.predicate.not.0.similar
+// 0  .1        .2  .3        .4  .5.6
+export function modifyLint(
+  path: (number | string)[],
+  newValue: any,
+  lint: string
+) {
+  const lintObj = JSON.parse(lint);
+  let current = lintObj;
+  const usedPath = path.slice(0, -1);
+  const quantifiers = new Set(["all", "exist"]) as Set<string | number>;
+  for (let idx = 0; idx < usedPath.length; idx++) {
+    const key = usedPath[idx];
+    current = current[key];
+
+    const nextKey = usedPath[idx + 1];
+    // this is a work around to deal with the unfolding of the quantifiers
+    if (quantifiers.has(key) && nextKey === "predicate") {
+      // skip forward by the number of unfolded quantifiers
+      idx = idx + (current.varbs.length - 1) * 2;
+    }
+    if (key === "not") {
+      idx = idx + 1; // skip the next key since it's part of the not
+    }
+  }
+  // for the case where the path is to a nested object, replace the key with the new key
+  if (typeof current[path[path.length - 1]] === "object") {
+    const newKey = newValue;
+    const oldKey = path[path.length - 1];
+    const newObj = {} as any;
+    for (const key of Object.keys(current[oldKey])) {
+      newObj[key] = current[oldKey][key];
+    }
+    delete current[oldKey];
+    current[newKey] = newObj;
+  } else {
+    current[path[path.length - 1]] = newValue;
+  }
+  return JSON.stringify(lintObj);
+}

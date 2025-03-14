@@ -8,7 +8,7 @@
   export let lint: LintProgram;
   import { runLint } from "../lib/utils";
   import VisualSummarizer from "./VisualSummarizer.svelte";
-  import LintTest from "./CurrentPal.svelte";
+  import CurrentPal from "./CurrentPal.svelte";
   import { buttonStyle } from "../lib/styles";
   $: focusedTest = $store.focusedTest;
   $: testPal = focusedTest
@@ -62,28 +62,13 @@
 </script>
 
 <div class="flex px-2 max-h-[50vh]">
-  <div class="max-w-48 overflow-auto">
-    <div class="text-sm italic">This is the currently selected example</div>
+  <div class="max-w-72 w-72 overflow-auto bg-stone-100">
     {#if testPal && focusedTest}
-      <div class="border">
-        <div class="font-bold">Palette Config</div>
-        <div class="text-xs">Controls</div>
-        <div class="flex flex-wrap">
-          <button
-            class={buttonStyle}
-            on:click={() => {
-              const newColors = [
-                ...testPal.colors,
-                Color.colorFromString("steelblue"),
-              ];
-              updatePal({ ...testPal, colors: newColors });
-            }}
-          >
-            Add Color
-          </button>
-          <ModifyPalette palette={testPal} {updatePal} />
-        </div>
-        <div class="flex flex-col">
+      <div class="border"></div>
+      <div class="">
+        <div class="font-bold">Palette</div>
+        <CurrentPal pal={testPal} {updatePal} />
+        <div class="flex flex-col mt-1">
           <div class="text-xs">Palette Type</div>
           <select
             class="bg-white border"
@@ -100,27 +85,46 @@
           </select>
         </div>
       </div>
-      <div class="border">
-        <div class="font-bold">Palette</div>
-        <LintTest pal={testPal} {updatePal} />
+      <div class="text-xs">Controls</div>
+      <div class="flex flex-wrap">
+        <button
+          class={buttonStyle}
+          on:click={() => {
+            const newColors = [
+              ...testPal.colors,
+              Color.colorFromString("steelblue"),
+            ];
+            updatePal({ ...testPal, colors: newColors });
+          }}
+        >
+          Add Color
+        </button>
+        <ModifyPalette palette={testPal} {updatePal} />
       </div>
     {/if}
-    <div class="border rounded">
+    <div class="text-xs">
+      {#if lintResult.kind === "success" && !errors}
+        <div
+          class:text-green-500={lintResult.passes}
+          class:text-red-500={!lintResult.passes}
+        >
+          This lint {lintResult.passes ? "passes" : "fails"} for the current palette
+        </div>
+      {:else if errors}
+        <div class="text-red-500">
+          There was an error running this lint: {errors.join(", ")}
+        </div>
+      {:else}
+        <div class="text-yellow-500">
+          This lint is invalid for the current palette
+        </div>
+      {/if}
+    </div>
+    <div class="">
+      <!-- blame -->
       {#if currentLintAppliesToCurrentPalette && testPal}
         {#if lintResult.kind === "success" && !lintResult.passes && !errors}
           <div class="border py-1">
-            {#if lintResult.kind === "success" && lintResult.passes}
-              <div class="text-green-500">
-                This lint passes for the current palette
-              </div>
-            {/if}
-            {#if lintResult.kind === "success" && !lintResult.passes && !errors}
-              <div class="flex">
-                <div class="text-red-500 mr-2">
-                  This lint fails for the current palette.
-                </div>
-              </div>
-            {/if}
             <div class="font-bold">Blame</div>
             The following colors are blamed.
             {#if lint.blameMode === "pair"}
@@ -163,7 +167,7 @@
           </div>
         {/if}
       {:else}
-        <div class="text-red-500">
+        <div class="text-red-500 text-sm">
           This lint does not apply to the current palette due to a mismatch
           between its tags and the palette's tags. This lint requires the
           following tags: {lint.requiredTags.map((x) => `"${x}"`).join(", ")}.
@@ -191,7 +195,7 @@
       {/if}
     </div>
   </div>
-  <div class="w-full overflow-auto h-[50vh]">
+  <div class="w-full overflow-auto h-[50vh] p-4">
     {#if testPal}
       <VisualSummarizer lint={program} pal={testPal} />
     {/if}

@@ -18,6 +18,7 @@
         <input
           value={node.value}
           on:blur={(e) => {
+            // @ts-ignore
             modifyLint(node.path, parseFloat(e.target.value));
           }}
         />
@@ -25,6 +26,7 @@
         <select
           value={node.value}
           on:change={(e) => {
+            // @ts-ignore
             modifyLint(node.path, e.target.value === "true");
           }}
         >
@@ -35,6 +37,7 @@
         <select
           value={node.value}
           on:change={(e) => {
+            // @ts-ignore
             modifyLint(node.path, e.target.value);
           }}
         >

@@ -47,6 +47,6 @@
     <button on:click={onClick}>Submit</button>
   </div>
   <button slot="target" let:toggle on:click={toggle} class={buttonStyle}>
-    🪄
+    Modify ✨
   </button>
 </Tooltip>

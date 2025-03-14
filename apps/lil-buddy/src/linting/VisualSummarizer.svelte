@@ -9,6 +9,7 @@
   import { trimTree } from "../lib/graph-builder";
   import store from "../stores/store";
   import { buttonStyle } from "../lib/styles";
+  import { modifyLint } from "../lib/utils";
   export let pal: Palette;
   export let lint: string;
 
@@ -31,29 +32,6 @@
       processingState = "ready";
     }
   }
-
-  function modifyLint(path: (number | string)[], newValue: any) {
-    const lintObj = JSON.parse(lint);
-    let current = lintObj;
-    for (const key of path.slice(0, -1)) {
-      current = current[key];
-    }
-    // for the case where the path is to a nested object, replace the key with the new key
-    if (typeof current[path[path.length - 1]] === "object") {
-      const newKey = newValue;
-      const oldKey = path[path.length - 1];
-      const newObj = {};
-      for (const key of Object.keys(current[oldKey])) {
-        newObj[key] = current[oldKey][key];
-      }
-      delete current[oldKey];
-      current[newKey] = newObj;
-    } else {
-      current[path[path.length - 1]] = newValue;
-    }
-    lint = JSON.stringify(lintObj);
-  }
-  $: console.log(`${error}`);
 </script>
 
 <div class="flex">
@@ -86,7 +64,14 @@
     </div>
   {:else}
     {#each executionLog || [] as log}
-      <DispatchNode node={log} {pal} inducedVariables={{}} {modifyLint} />
+      <DispatchNode
+        node={log}
+        {pal}
+        inducedVariables={{}}
+        modifyLint={(path, newVal) => {
+          lint = modifyLint(path, newVal, lint);
+        }}
+      />
     {/each}
   {/if}
 </div>

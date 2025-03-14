@@ -26,9 +26,6 @@
   $: focusedTest = $store.focusedTest;
   $: testPal = getFocusedTestPal(lint, focusedTest);
 
-  // run this lint
-  let errors: any = null;
-
   function generatePrettyText(program: string): string {
     try {
       return prettyPrintLL(JSON.parse(program));
@@ -91,10 +88,6 @@
                 selectTab={(x) => store.setVisualSummary(x)}
               />
             </div>
-
-            {#if errors}
-              <div class="text-red-500">{errors.message}</div>
-            {/if}
 
             {#if $store.visualSummary === "graph-summary"}
               <GraphSummary {lint} />

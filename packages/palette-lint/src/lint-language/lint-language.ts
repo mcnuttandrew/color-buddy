@@ -525,7 +525,8 @@ function compareValues(
   switch (pred.type) {
     case "similar":
       let thresh = pred.threshold;
-      if (!thresh) throw new Error("Similarity threshold not found");
+      if (!thresh && thresh !== 0)
+        throw new Error("Similarity threshold not found");
       if (isColor) {
         let localLeft = Color.colorFromHex((left as Color).toHex(), "lab");
         let localRight = Color.colorFromHex((right as Color).toHex(), "lab");

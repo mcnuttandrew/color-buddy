@@ -41,7 +41,7 @@
 
 <div class="border">
   <div class=" w-full bg-stone-200 flex px-2 py-1">
-    <div class="font-bold">Tests</div>
+    <div class="font-bold">Tests Expected to be</div>
     <Nav
       tabs={["passing", "failing"]}
       isTabSelected={(x) => x === showWhichTests}
@@ -55,7 +55,7 @@
           if (test.result.kind !== "success") return false;
           return x === "passing" ? test.result?.passes : !test.result?.passes;
         }).length;
-        return `Expected to be ${x} (${numCorrect}/${totalTests})`;
+        return ` ${x} (${numCorrect}/${totalTests})`;
       }}
     />
     <AddTest {lint} addNewTest={addTest(showWhichTests === "passing")} />

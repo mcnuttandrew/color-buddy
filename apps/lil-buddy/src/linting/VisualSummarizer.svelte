@@ -9,14 +9,14 @@
   import { trimTree } from "../lib/graph-builder";
   import store from "../stores/store";
   import { buttonStyle } from "../lib/styles";
-  import { modifyLint } from "../lib/utils";
+  import { modifyLint, JSONStringify } from "../lib/utils";
   export let pal: Palette;
   export let lint: string;
 
   let processingState = "processing" as "ready" | "processing";
-  $: executionLog = getExecutionLog(lint, $store.okayToExecute);
+  $: executionLog = getExecutionLog(lint, pal);
   let error: any;
-  function getExecutionLog(lint: string, okayToExecute: boolean) {
+  function getExecutionLog(lint: string, pal: Palette) {
     processingState = "processing";
     try {
       const ast = (GenerateAST(JSON.parse(lint) as any).value as any)
@@ -48,14 +48,14 @@
         <button
           class={buttonStyle}
           on:click={() => {
-            executionLog = getExecutionLog(lint, $store.okayToExecute);
+            executionLog = getExecutionLog(lint, pal);
           }}
         >
           Try again
         </button>
         {#if `${error}` === "Error: Too many iterations"}
           <div class="text-yellow-500">
-            When evaluating large palettes that have a lot of comparisons, the
+            When evaluating larger palettes that have a lot of comparisons, the
             maximum can be unintentionally exceeded. Click this button to try to
             extend the maximum.
           </div>
@@ -70,7 +70,9 @@
           {pal}
           inducedVariables={{}}
           modifyLint={(path, newVal) => {
-            lint = modifyLint(path, newVal, lint);
+            store.setCurrentLintProgram(
+              JSONStringify(modifyLint(path, newVal, lint))
+            );
           }}
         />
         {#if executionLog && idx !== executionLog.length - 1}

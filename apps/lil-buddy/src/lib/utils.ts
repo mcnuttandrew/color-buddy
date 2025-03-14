@@ -361,14 +361,4 @@ export function getFocusedTestPal(
   } else {
     return null;
   }
-
-  //  focusedTest
-  //    ? focusedTest.type === "passing"
-  //      ? lint
-  //        ? lint.expectedPassingTests[focusedTest.index]
-  //        : null
-  //      : lint
-  //        ? lint.expectedFailingTests[focusedTest.index]
-  //        : null
-  //    : null;
 }

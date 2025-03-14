@@ -16,7 +16,6 @@ interface StoreData {
   currentChecks: LintResult[];
   loadState?: "loading" | "idle";
   engine: "openai" | "anthropic";
-  okayToExecute: boolean;
   visualSummary: "graph-summary" | "text-program";
 }
 
@@ -38,7 +37,6 @@ const InitialStore: StoreData = {
   loadState: "idle",
   engine: "openai",
   focusedTest: false,
-  okayToExecute: true,
   visualSummary: "graph-summary",
 };
 
@@ -224,8 +222,6 @@ function createStore() {
       persistUpdate((old) => ({ ...old, engine })),
     setFocusedTest: (test: StoreData["focusedTest"]) =>
       persistUpdate((old) => ({ ...old, focusedTest: test })),
-    setOkayToExecute: (okay: StoreData["okayToExecute"]) =>
-      persistUpdate((old) => ({ ...old, okayToExecute: okay })),
     setVisualSummary: (visualSummary: StoreData["visualSummary"]) =>
       persistUpdate((old) => ({ ...old, visualSummary })),
     setFocusedTestToBeValid: () =>

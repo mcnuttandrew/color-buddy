@@ -12,7 +12,7 @@
 
 <main>
   <div
-    class="flex justify-between bg-stone-200 h-12 items-center px-2 text-xl font-bold"
+    class="flex justify-between bg-stone-400 h-12 items-center px-2 text-xl font-bold"
   >
     <div class="flex">
       Lil Buddy

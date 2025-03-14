@@ -54,12 +54,17 @@
       <FocusedTest {lint} />
     {/if}
   </div>
-  <div class="w-full overflow-auto h-[50vh] p-4">
-    {#if testPal && program}
-      <VisualSummarizer lint={program} pal={testPal} />
-    {:else}
-      <div class="text-red-500">No palette selected</div>
+  <div class="w-full">
+    {#if lint}
+      <LintTests {lint} />
     {/if}
+    <div class="w-full overflow-auto h-[50vh] p-4">
+      {#if testPal && program}
+        <VisualSummarizer lint={program} pal={testPal} />
+      {:else}
+        <div class="text-red-500">No palette selected</div>
+      {/if}
+    </div>
   </div>
 </div>
 <div class="w-full flex">
@@ -107,11 +112,6 @@
           />
         {/if}
       </div>
-    {/if}
-  </div>
-  <div class="w-1/2">
-    {#if lint}
-      <LintTests {lint} />
     {/if}
   </div>
 </div>

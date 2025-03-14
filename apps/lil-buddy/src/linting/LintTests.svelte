@@ -5,6 +5,7 @@
   import store from "../stores/store";
   import { runLint } from "../lib/utils";
   import type { TestResult } from "../lib/utils";
+  import Nav from "../components/Nav.svelte";
   export let lint: LintProgram;
 
   function doLint(pal: LintProgram["expectedPassingTests"][0]): TestResult {
@@ -33,32 +34,35 @@
       }
     };
   }
+  $: showWhichTests = "passing" as "passing" | "failing";
+  $: tests =
+    showWhichTests === "passing" ? passingTestResults : failingTestResults;
 </script>
 
-<div class="border h-full">
-  <div class="font-bold w-full bg-stone-100">Tests</div>
-  <div class="flex flex-col px-2">
-    <div class="flex flex-col">
-      <div class="flex">
-        <div class="font-bold">Expected Passing</div>
-      </div>
-      <div class="flex flex-wrap">
-        {#each passingTestResults as test, idx}
-          <LintTest {idx} testResult={test} type="passing" />
-        {/each}
-        <AddTest {lint} addNewTest={addTest(true)} />
-      </div>
-    </div>
-    <div class="flex flex-col">
-      <div class="flex">
-        <div class="font-bold">Expected failing</div>
-      </div>
-      <div class="flex flex-wrap">
-        {#each failingTestResults as test, idx}
-          <LintTest {idx} testResult={test} type="failing" />
-        {/each}
-        <AddTest {lint} addNewTest={addTest(false)} />
-      </div>
-    </div>
+<div class="border">
+  <div class="font-bold w-full bg-stone-200 flex justify-between px-2 py-1">
+    <div>Tests</div>
+    <AddTest {lint} addNewTest={addTest(showWhichTests === "passing")} />
+    <Nav
+      tabs={["passing", "failing"]}
+      isTabSelected={(x) => x === showWhichTests}
+      selectTab={(x) => {
+        showWhichTests = x;
+      }}
+      formatter={(x) => {
+        const tests = x === "passing" ? passingTestResults : failingTestResults;
+        const totalTests = tests.length;
+        const numCorrect = tests.filter((test) => {
+          if (test.result.kind !== "success") return false;
+          return x === "passing" ? test.result?.passes : !test.result?.passes;
+        }).length;
+        return `Expected to be ${x} (${numCorrect}/${totalTests})`;
+      }}
+    />
+  </div>
+  <div class="bg-stone-100 flex flex-wrap">
+    {#each tests as test, idx}
+      <LintTest {idx} testResult={test} type={showWhichTests} />
+    {/each}
   </div>
 </div>

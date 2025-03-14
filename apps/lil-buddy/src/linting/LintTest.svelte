@@ -18,9 +18,17 @@
     testResult.result.kind === "success" &&
     ((type === "passing" && testResult.result?.passes) ||
       (type === "failing" && !testResult.result?.passes));
+
+  $: isCurrentlySelected =
+    $store.focusedTest &&
+    $store.focusedTest?.type === type &&
+    $store.focusedTest?.index === idx;
 </script>
 
-<div class="border rounded px-2 mx-2">
+<div
+  class="border rounded px-2 mx-2 bg-white"
+  class:border-black={isCurrentlySelected}
+>
   <div class="flex justify-between">
     <div class="text-xs">
       {#if isCorrect}

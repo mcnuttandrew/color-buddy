@@ -362,3 +362,12 @@ export function getFocusedTestPal(
     return null;
   }
 }
+
+export function doLint(
+  pal: LintProgram["expectedPassingTests"][0],
+  lint: LintProgram
+): TestResult {
+  const result = runLint(lint, {}, pal).result;
+  const blame = result.kind === "success" ? result?.blameData : [];
+  return { result, pal, blame };
+}

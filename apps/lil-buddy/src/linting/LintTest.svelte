@@ -128,6 +128,8 @@
                 parsedProgram = { not: parsedProgram };
                 lint.program = JSON.stringify(parsedProgram);
               }
+              // sleep 1 second
+              await new Promise((resolve) => setTimeout(resolve, 1000));
               const fix = await suggestMCFix(testResult.pal, [lint]);
               lint.program = program;
               if (fix) {

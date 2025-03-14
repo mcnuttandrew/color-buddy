@@ -61,7 +61,7 @@
           <LintTests {lint} />
         {/if}
         <div
-          class="w-[calc(100%-300px)] h-[calc(100%-100px)] overflow-auto p-4 mb-64"
+          class="w-[calc(100%-300px)] h-[calc(100%-100px)] overflow-auto p-4 mb-64 max-w-full"
         >
           {#if testPal && program}
             <VisualSummarizer lint={program} pal={testPal} />

@@ -46,7 +46,7 @@
         {:else if options === "color"}
           <input
             type="color"
-            value={node.value}
+            value={node.constructorString}
             on:change={(e) => {
               // @ts-ignore
               modifyLint(path, e.target.value);

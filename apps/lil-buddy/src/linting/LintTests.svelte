@@ -3,18 +3,16 @@
   import type { LintProgram } from "color-buddy-palette-lint";
   import LintTest from "./LintTest.svelte";
   import store from "../stores/store";
-  import { runLint } from "../lib/utils";
-  import type { TestResult } from "../lib/utils";
+  import { doLint } from "../lib/utils";
   import Nav from "../components/Nav.svelte";
   export let lint: LintProgram;
 
-  function doLint(pal: LintProgram["expectedPassingTests"][0]): TestResult {
-    const result = runLint(lint, {}, pal).result;
-    const blame = result.kind === "success" ? result?.blameData : [];
-    return { result, pal, blame };
-  }
-  $: passingTestResults = (lint?.expectedPassingTests || []).map(doLint);
-  $: failingTestResults = (lint?.expectedFailingTests || []).map(doLint);
+  $: passingTestResults = (lint?.expectedPassingTests || []).map((x) =>
+    doLint(x, lint)
+  );
+  $: failingTestResults = (lint?.expectedFailingTests || []).map((x) =>
+    doLint(x, lint)
+  );
   function addTest(passing: boolean) {
     return function (test: LintProgram["expectedPassingTests"][0]) {
       const newTest = { ...test };

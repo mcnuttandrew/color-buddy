@@ -44,14 +44,13 @@
           {pal}
           inducedVariables={env}
         />
-        <div class="px-2">
-          <NodeWrap
-            options={["==", "!=", "<", ">", "similar"]}
-            {node}
-            {modifyLint}
-            label={node.type === "similar" ? "≈" : node.type}
-          />
-        </div>
+        <NodeWrap
+          options={["==", "!=", "<", ">", "similar"]}
+          {node}
+          {modifyLint}
+          classes="px-2"
+          label={node.type === "similar" ? "≈" : node.type}
+        />
         <svelte:self
           {modifyLint}
           node={node.right}
@@ -92,6 +91,7 @@
         options={["+", "-", "*", "/", "//", "absDiff", "%"]}
         {node}
         {modifyLint}
+        classes="px-2"
         label={node.type === "similar" ? "≈" : node.type}
       />
       <svelte:self
@@ -294,34 +294,22 @@
   {:else if node.nodeType === "expression"}
     <svelte:self {modifyLint} node={node.value} {pal} inducedVariables={env} />
   {:else if node.nodeType === "bool"}
-    <div
-      class=" px-2 text-sm"
-      class:bg-green-300={node.value}
-      class:bg-red-300={!node.value}
-    >
-      <NodeWrap
-        label={node.value ? "T" : "F"}
-        {node}
-        {modifyLint}
-        options={"boolean"}
-        classes="text-xs"
-        comment=""
-      />
-    </div>
+    <NodeWrap
+      label={node.value ? "T" : "F"}
+      {node}
+      {modifyLint}
+      options={"boolean"}
+      classes="px-2 text-sm {node.value ? 'bg-green-300' : 'bg-red-300'}"
+      comment=""
+    />
   {:else if typeof node === "boolean"}
-    <div
-      class=" px-2 text-sm"
-      class:bg-green-300={node}
-      class:bg-red-300={!node}
-    >
-      <NodeWrap
-        label={node ? "T" : "F"}
-        {node}
-        {modifyLint}
-        options={"boolean"}
-        classes="text-xs"
-        comment=""
-      />
-    </div>
+    <NodeWrap
+      label={node ? "T" : "F"}
+      {node}
+      {modifyLint}
+      options={"boolean"}
+      classes="px-2 text-sm {node ? 'bg-green-300' : 'bg-red-300'}"
+      comment=""
+    />
   {/if}
 </div>

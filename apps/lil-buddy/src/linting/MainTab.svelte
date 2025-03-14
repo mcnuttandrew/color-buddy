@@ -1,5 +1,6 @@
 <script lang="ts">
   import { prettyPrintLL } from "color-buddy-palette-lint";
+  import { Pane, Splitpanes } from "svelte-splitpanes";
 
   import store from "../stores/store";
 
@@ -38,8 +39,8 @@
   }
 </script>
 
-<div class="flex px-2 max-h-[50vh]">
-  <div class="max-w-72 w-72 overflow-auto bg-stone-100">
+<div class="flex h-full overflow-hidden">
+  <div class="max-w-72 w-72 overflow-auto bg-stone-100 px-2">
     <div class="font-bold">Current Lint</div>
     <LintPicker />
     {#if lint}
@@ -55,63 +56,64 @@
     {/if}
   </div>
   <div class="w-full">
-    {#if lint}
-      <LintTests {lint} />
-    {/if}
-    <div class="w-full overflow-auto h-[50vh] p-4">
-      {#if testPal && program}
-        <VisualSummarizer lint={program} pal={testPal} />
-      {:else}
-        <div class="text-red-500">No palette selected</div>
-      {/if}
-    </div>
-  </div>
-</div>
-<div class="w-full flex">
-  <div class="flex flex-col">
-    <div class="w-full bg-stone-100 font-bold">Lint Customization</div>
-    {#if lint}
-      <div class="flex flex-col px-4">
-        <div class="flex">
-          <button
-            class={buttonStyle}
-            on:click={() => {
-              store.setCurrentLintProgram(JSONStringify(program) || "");
-            }}
-          >
-            Tidy 🧹
-          </button>
-
-          <Nav
-            tabs={["graph-summary", "text-program"]}
-            isTabSelected={(x) => x === $store.visualSummary}
-            selectTab={(x) => store.setVisualSummary(x)}
-          />
+    <Splitpanes horizontal={true}>
+      <Pane class="bg-white">
+        {#if lint}
+          <LintTests {lint} />
+        {/if}
+        <div class="w-full overflow-auto p-4 h-full mb-64">
+          {#if testPal && program}
+            <VisualSummarizer lint={program} pal={testPal} />
+          {:else}
+            <div class="text-red-500">No palette selected</div>
+          {/if}
         </div>
+      </Pane>
+      <Pane class="bg-white flex flex-col" minSize={20}>
+        <div class="w-full bg-stone-100 font-bold">Lint Customization</div>
+        {#if lint}
+          <div class="flex flex-col px-4">
+            <div class="flex">
+              <button
+                class={buttonStyle}
+                on:click={() => {
+                  store.setCurrentLintProgram(JSONStringify(program) || "");
+                }}
+              >
+                Tidy 🧹
+              </button>
 
-        {#if errors}
-          <div class="text-red-500">{errors.message}</div>
-        {/if}
+              <Nav
+                tabs={["graph-summary", "text-program"]}
+                isTabSelected={(x) => x === $store.visualSummary}
+                selectTab={(x) => store.setVisualSummary(x)}
+              />
+            </div>
 
-        {#if $store.visualSummary === "graph-summary"}
-          <div class="font-bold">Graph Summary</div>
-          <GraphSummary {lint} />
-        {:else}
-          <div class="flex justify-between">
-            <div class="font-bold">Lint Program</div>
+            {#if errors}
+              <div class="text-red-500">{errors.message}</div>
+            {/if}
+
+            {#if $store.visualSummary === "graph-summary"}
+              <GraphSummary {lint} />
+            {:else}
+              <div class="flex justify-between">
+                <div class="font-bold">Lint Program</div>
+              </div>
+              <div>
+                {generatePrettyText(program)}
+              </div>
+              <MonacoEditor
+                value={program}
+                onChange={(x) => {
+                  store.setCurrentLintProgram(x);
+                }}
+                language="json"
+              />
+            {/if}
           </div>
-          <div>
-            {generatePrettyText(program)}
-          </div>
-          <MonacoEditor
-            value={program}
-            onChange={(x) => {
-              store.setCurrentLintProgram(x);
-            }}
-            language="json"
-          />
         {/if}
-      </div>
-    {/if}
+      </Pane>
+    </Splitpanes>
   </div>
 </div>

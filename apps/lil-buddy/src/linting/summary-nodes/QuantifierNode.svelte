@@ -11,21 +11,20 @@
 
 <!-- only show it if its the evaluated version -->
 {#if node.nodeType !== "quantifier"}
-  <div class="flex items-center">
+  <div class="flex items-center border">
     <div class="flex flex-col">
-      <div
-        class="px-2 w-full bg-stone-200 flex justify-between items-center mt-1"
-      >
-        <div class="">
-          {#if node.quant === "all"}For all{:else}There should exist{/if}
-          {node.varb} (the colors below) the following should be true
-        </div>
+      <div class="px-2 w-full bg-slate-700 flex items-center mt-1 text-white">
         <button on:click={() => (open = !open)}>
           <div>{open ? "▼" : "▶"}</div>
         </button>
+        <div class="">
+          {#if node.quant === "all"}For all the colors below, each color {node.varb},{:else}There
+            should exist at least one color, {node.varb} where{/if}
+          the following should be true
+        </div>
       </div>
       {#if open}
-        <div class="bg-opacity-30 bg-slate-300 flex flex-col p-2">
+        <div class="bg-opacity-30 bg-slate-200 flex flex-col p-2">
           {#each node.results as result}
             <div class="flex items-center">
               <div class="flex">

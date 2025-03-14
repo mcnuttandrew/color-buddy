@@ -10,12 +10,12 @@
   $: isOpen = !lint;
 </script>
 
-<main>
+<main class="overflow-hidden">
   <div
-    class="flex justify-between bg-stone-400 h-12 items-center px-2 text-xl font-bold"
+    class="flex justify-between bg-stone-900 h-12 items-center px-2 text-xl font-bold overflow-hidden"
   >
     <div class="flex">
-      Lil Buddy
+      <div class="text-white">Lil Buddy</div>
       <div class="ml-8">
         <button class={buttonStyle} on:click={() => store.undo()}>Undo</button>
         <button class={buttonStyle} on:click={() => store.redo()}>Redo</button>

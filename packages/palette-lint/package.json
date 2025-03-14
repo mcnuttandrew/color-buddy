@@ -30,7 +30,8 @@
     "color-buddy-palette": "*",
     "fracturedjsonjs": "^4.0.1",
     "ohm-js": "^17.1.0",
-    "query-string": "^9.1.1"
+    "query-string": "^9.1.1",
+    "svelte-splitpanes": "^8.0.9"
   },
   "license": "BSD-3-Clause",
   "files": [

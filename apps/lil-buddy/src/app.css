@@ -38,3 +38,7 @@ html, body, #app, main {
 ::-webkit-scrollbar-thumb:hover {
     background: #555;
 }
+
+.splitpanes__pane {
+    background-color: #fff !important;
+}

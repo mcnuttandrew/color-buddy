@@ -34,7 +34,7 @@
 </script>
 
 <div
-  class="flex items-center border summarizer-node-{node.nodeType}--{node.type}"
+  class="flex items-center border summarizer-node-{node.nodeType}--{node.type} text-xs font-mono"
 >
   {#if node.nodeType === "predicate"}
     <div class="flex">
@@ -60,14 +60,16 @@
       </div>
     </div>
   {:else if node.nodeType === "conjunction" && node.type === "not"}
-    <div class="flex items-center border border-black p-1">
-      <span class="mr-2">NOT</span>
-      <DispatchNode
-        node={node.children[0]}
-        {pal}
-        {inducedVariables}
-        {modifyLint}
-      />
+    <div class="flex flex-col border p-1 bg-slate-700">
+      <span class="mr-2 text-white">NOT</span>
+      <div class="bg-white">
+        <DispatchNode
+          node={node.children[0]}
+          {pal}
+          {inducedVariables}
+          {modifyLint}
+        />
+      </div>
     </div>
   {:else if node.nodeType === "conjunction"}
     <div class="flex flex-col border border-black p-1 items-center">

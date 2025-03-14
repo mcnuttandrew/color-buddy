@@ -5891,6 +5891,18 @@ eslint-visitor-keys@^3.3.0:
   resolved "https://registry.npmjs.org/eslint-visitor-keys/-/eslint-visitor-keys-3.4.3.tgz"
   integrity sha512-wpc+LXeiyiisxPlEkUzU6svyS1frIO3Mgxj1fdy7Pm8Ygzguax2N3Fa/D/ag1WqbOprdI+uY6wMUl8/a2G+iag==
 
+esm-env-robust@0.0.3:
+  version "0.0.3"
+  resolved "https://registry.yarnpkg.com/esm-env-robust/-/esm-env-robust-0.0.3.tgz#ef95644dde2f2bd750dec4366a43950b3dc3ed50"
+  integrity sha512-90Gnuw2DALOqlL1581VxP3GHPUNHX9U+fQ+8FNcTTFClhY5gEggAAnJ3q1b2Oq23knRsjv8YpNeMRPaMLUymOA==
+  dependencies:
+    esm-env "^1.0.0"
+
+esm-env@^1.0.0:
+  version "1.2.2"
+  resolved "https://registry.yarnpkg.com/esm-env/-/esm-env-1.2.2.tgz#263c9455c55861f41618df31b20cb571fc20b75e"
+  integrity sha512-Epxrv+Nr/CaL4ZcFGPJIYLWFom+YeV1DqMLHJoEd9SYRxNbaFruBwfEX/kkHUJf55j2+TUbmDcmuilbP1TmXHA==
+
 esprima@^4.0.1:
   version "4.0.1"
   resolved "https://registry.npmjs.org/esprima/-/esprima-4.0.1.tgz"
@@ -11042,6 +11054,13 @@ svelte-preprocess@^5.1.3:
     magic-string "^0.30.5"
     sorcery "^0.11.0"
     strip-indent "^3.0.0"
+
+svelte-splitpanes@^8.0.9:
+  version "8.0.9"
+  resolved "https://registry.yarnpkg.com/svelte-splitpanes/-/svelte-splitpanes-8.0.9.tgz#4103765febb58f847db8ef115e0e1b91462fc70b"
+  integrity sha512-L3oLXTC99M191FInTXJ/f/2i0welRql1QuVbPaU8iy6nvCR6X9VyjHCsCpLqKGWHwqkWo/AM9CQ1c0nzlb+MkA==
+  dependencies:
+    esm-env-robust "0.0.3"
 
 svelte@^4.2.3:
   version "4.2.17"

@@ -228,6 +228,20 @@ function createStore() {
       persistUpdate((old) => ({ ...old, okayToExecute: okay })),
     setVisualSummary: (visualSummary: StoreData["visualSummary"]) =>
       persistUpdate((old) => ({ ...old, visualSummary })),
+    setFocusedTestToBeValid: () =>
+      persistUpdate((old) => {
+        const currentLint = old.lints.find((x) => x.id === old.focusedLint);
+        if (!currentLint) {
+          return old;
+        }
+        let newTest = false as StoreData["focusedTest"];
+        if (currentLint.expectedPassingTests.length) {
+          newTest = { type: "passing", index: 0 };
+        } else if (currentLint.expectedFailingTests.length) {
+          newTest = { type: "failing", index: 0 };
+        }
+        return { ...old, focusedTest: newTest };
+      }),
   };
 }
 

@@ -325,7 +325,7 @@ export function modifyLint(
 
     const nextKey = usedPath[idx + 1];
     // this is a work around to deal with the unfolding of the quantifiers
-    if (quantifiers.has(key) && nextKey === "predicate") {
+    if (quantifiers.has(key) && nextKey === "predicate" && current.varbs) {
       // skip forward by the number of unfolded quantifiers
       idx = idx + (current.varbs.length - 1) * 2;
     }
@@ -347,4 +347,28 @@ export function modifyLint(
     current[path[path.length - 1]] = newValue;
   }
   return JSON.stringify(lintObj);
+}
+
+export function getFocusedTestPal(
+  lint: LintProgram | undefined,
+  focusedTest: false | { type: string; index: number }
+) {
+  if (!lint || !focusedTest) return null;
+  if (focusedTest.type === "passing") {
+    return lint.expectedPassingTests[focusedTest.index];
+  } else if (focusedTest.type === "failing") {
+    return lint.expectedFailingTests[focusedTest.index];
+  } else {
+    return null;
+  }
+
+  //  focusedTest
+  //    ? focusedTest.type === "passing"
+  //      ? lint
+  //        ? lint.expectedPassingTests[focusedTest.index]
+  //        : null
+  //      : lint
+  //        ? lint.expectedFailingTests[focusedTest.index]
+  //        : null
+  //    : null;
 }

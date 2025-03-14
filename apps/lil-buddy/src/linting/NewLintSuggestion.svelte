@@ -2,6 +2,7 @@
   import store from "../stores/store";
   import Tooltip from "../components/Tooltip.svelte";
   import { suggestLint } from "../lib/api-calls";
+  import { buttonStyle } from "../lib/styles";
 
   let lintPrompt: string = "";
   let requestState: "idle" | "loading" | "loaded" | "failed" = "idle";
@@ -93,7 +94,6 @@
               failMessage: "",
               program: "true",
             });
-            // lintStore.setEvalDisplayMode("check-customization");
           }}
         >
           Just give me a blank one
@@ -104,11 +104,11 @@
   <button
     slot="target"
     let:toggle
-    class={""}
+    class={buttonStyle}
     on:click={() => {
       toggle();
     }}
   >
-    Create New Check
+    Create New Lint
   </button>
 </Tooltip>

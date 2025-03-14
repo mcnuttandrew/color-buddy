@@ -251,7 +251,7 @@ test("Predefined Lint Tests", () => {
   }
 });
 
-test.only("Conjunction weirdness", () => {
+test("Conjunction weirdness", () => {
   const program = {
     $schema: "https://color-buddy-docs.netlify.app/lint-schema.v0.json",
     and: [

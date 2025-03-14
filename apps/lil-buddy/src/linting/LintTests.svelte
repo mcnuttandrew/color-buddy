@@ -23,6 +23,25 @@
       blame: result.kind === "success" ? result?.blameData : [],
     };
   }) as TestResult[];
+  function addTest(passing: boolean) {
+    return function (test: LintProgram["expectedPassingTests"][0]) {
+      const newTest = { ...test };
+
+      if (lint.requiredTags) {
+        newTest.tags = [...(newTest.tags || []), ...lint.requiredTags];
+      }
+      if (lint.taskTypes.length !== 3) {
+        newTest.type = lint.taskTypes[0];
+      }
+      const newTests = [...lint.expectedPassingTests, newTest];
+
+      if (passing) {
+        store.setCurrentLintExpectedPassingTests(newTests);
+      } else {
+        store.setCurrentLintExpectedFailingTests(newTests);
+      }
+    };
+  }
 </script>
 
 <div class="border h-full">
@@ -36,12 +55,7 @@
         {#each passingTestResults as test, idx}
           <LintTest {idx} testResult={test} type="passing" />
         {/each}
-        <AddTest
-          {lint}
-          currentTests={lint.expectedPassingTests}
-          setNewTests={(tests) =>
-            store.setCurrentLintExpectedPassingTests(tests)}
-        />
+        <AddTest {lint} addNewTest={addTest(true)} />
       </div>
     </div>
     <div class="flex flex-col">
@@ -52,12 +66,7 @@
         {#each failingTestResults as test, idx}
           <LintTest {idx} testResult={test} type="failing" />
         {/each}
-        <AddTest
-          {lint}
-          currentTests={lint.expectedFailingTests}
-          setNewTests={(tests) =>
-            store.setCurrentLintExpectedFailingTests(tests)}
-        />
+        <AddTest {lint} addNewTest={addTest(false)} />
       </div>
     </div>
   </div>

@@ -250,3 +250,34 @@ test("Predefined Lint Tests", () => {
     expect(result, `${lint.name} to pass`).toMatchSnapshot();
   }
 });
+
+test.only("Conjunction weirdness", () => {
+  const program = {
+    $schema: "https://color-buddy-docs.netlify.app/lint-schema.v0.json",
+    and: [
+      {
+        all: {
+          in: "colors",
+          varb: "c",
+          where: {
+            ">": { left: { "hsl.l": "c" }, right: 70 },
+          },
+          predicate: {
+            and: [
+              {
+                not: {
+                  ">": { left: { "hsl.s": "c" }, right: 70 },
+                },
+              },
+              true,
+            ],
+          },
+        },
+      },
+      { or: [true, false] },
+    ],
+  };
+  const ast = getAST(program);
+  const result = smallStepEvaluator(ast, {}, defaultPal, true);
+  expect(result).toMatchSnapshot();
+});

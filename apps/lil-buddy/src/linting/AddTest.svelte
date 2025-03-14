@@ -7,8 +7,7 @@
   import store from "../stores/store";
 
   export let lint: LintProgram;
-  export let currentTests: LintProgram["expectedPassingTests"];
-  export let setNewTests: (tests: LintProgram["expectedPassingTests"]) => void;
+  export let addNewTest: (test: LintProgram["expectedPassingTests"][0]) => void;
 
   let makingTest = false;
   let numColors = 1;
@@ -26,12 +25,8 @@
     </button>
     <button
       class={buttonStyle}
-      on:click={() => {
-        generateTest(lint.program, $store.engine, "passes").then((newTest) => {
-          const newTests = [...currentTests, newTest];
-          setNewTests(newTests);
-        });
-      }}
+      on:click={() =>
+        generateTest(lint.program, $store.engine, "passes").then(addNewTest)}
     >
       Generate using AI
     </button>
@@ -58,9 +53,7 @@
               ).toHex()
             );
           }
-          const newTest = makePalFromString(colors);
-          const newTests = [...currentTests, newTest];
-          setNewTests(newTests);
+          addNewTest(makePalFromString(colors));
           makingTest = false;
         }}
       >

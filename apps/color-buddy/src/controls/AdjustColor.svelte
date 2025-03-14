@@ -25,6 +25,7 @@
     });
     colorStore.setCurrentPalColors(newColors);
   }
+  type Coords = [number, number, number];
   const actions: (
     | { type: "single"; name: string; effect: ColorEffect }
     | { type: "break" }
@@ -40,9 +41,9 @@
       name: "Lighten",
       positive: (color) =>
         color.toColorIO().set("lch.l", (l) => clamp(l ? l * 1.2 : 5, 0, 100))
-          .coords,
+          .coords as Coords,
       negative: (color) =>
-        color.toColorIO().set("lch.l", (l) => l * 0.8).coords,
+        color.toColorIO().set("lch.l", (l) => l * 0.8).coords as Coords,
     },
 
     {
@@ -50,16 +51,16 @@
       name: "Saturate",
       positive: (color) =>
         color.toColorIO().set("hsl.s", (c) => clamp(c ? c * 1.2 : 5, 0, 100))
-          .coords,
+          .coords as Coords,
       negative: (color) =>
-        color.toColorIO().set("hsl.s", (c) => c * 0.8).coords,
+        color.toColorIO().set("hsl.s", (c) => c * 0.8).coords as Coords,
     },
     { type: "break" },
     {
       type: "single",
       name: "Flip To Opposing",
       effect: (color) =>
-        color.toColorIO().set("lch.h", (h) => (h + 180) % 360).coords,
+        color.toColorIO().set("lch.h", (h) => (h + 180) % 360).coords as Coords,
     },
     {
       type: "single",
@@ -73,7 +74,7 @@
         newChannels[config.xChannelIndex] += xStep * (Math.random() - 0.5);
         newChannels[config.yChannelIndex] += yStep * (Math.random() - 0.5);
         newChannels[config.zChannelIndex] += zStep * (Math.random() - 0.5);
-        return newChannels as [number, number, number];
+        return newChannels as Coords;
       },
     },
     {

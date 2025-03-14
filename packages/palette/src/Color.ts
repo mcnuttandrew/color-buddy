@@ -115,10 +115,18 @@ export class Color {
     //     : stringToChannels(this.spaceName, colorString);
     let channels: Channels;
     try {
-      channels = new ColorIO(colorString).to(this.spaceName).coords;
+      channels = new ColorIO(colorString).to(this.spaceName).coords as [
+        number,
+        number,
+        number,
+      ];
     } catch (e) {
       try {
-        channels = new ColorIO(`#${colorString}`).to(this.spaceName).coords;
+        channels = new ColorIO(`#${colorString}`).to(this.spaceName).coords as [
+          number,
+          number,
+          number,
+        ];
       } catch (e) {
         if (allowError) {
           throw new Error("Invalid color string: " + colorString);
@@ -550,7 +558,9 @@ function colorFromHex(
   }
   const color = new ColorIO(hex).to(colorSpace);
   const outColor = new (ColorSpaceDirectory[colorSpace] ||
-    ColorSpaceDirectory.lab)().fromChannels(color.coords);
+    ColorSpaceDirectory.lab)().fromChannels(
+    color.coords as [number, number, number]
+  );
   colorHexCache.set(hex, outColor);
   return outColor;
 }
@@ -581,7 +591,9 @@ function toColorSpace(
   const channels = color.toColorIO().to(space, { inGamut: true }).coords;
 
   const newColor = new (ColorSpaceDirectory[colorSpace] ||
-    ColorSpaceDirectory.lab)().fromChannels(channels);
+    ColorSpaceDirectory.lab)().fromChannels(
+    channels as [number, number, number]
+  );
   newColor.tags = color.tags;
   return newColor;
 }

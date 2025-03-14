@@ -40,7 +40,7 @@
 </script>
 
 <div class="flex h-full overflow-hidden">
-  <div class="max-w-72 w-72 overflow-auto bg-stone-100 px-2">
+  <div class="min-w-72 max-w-72 w-full overflow-auto bg-stone-100 px-2">
     <div class="font-bold">Current Lint</div>
     <LintPicker />
     {#if lint}
@@ -61,7 +61,9 @@
         {#if lint}
           <LintTests {lint} />
         {/if}
-        <div class="w-full overflow-auto p-4 h-full mb-64">
+        <div
+          class="w-[calc(100%-300px)] h-[calc(100%-100px)] overflow-auto p-4 mb-64"
+        >
           {#if testPal && program}
             <VisualSummarizer lint={program} pal={testPal} />
           {:else}

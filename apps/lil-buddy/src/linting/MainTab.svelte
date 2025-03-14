@@ -57,7 +57,7 @@
   </div>
   <div class="w-full">
     <Splitpanes horizontal={true}>
-      <Pane class="bg-white">
+      <Pane class="bg-white w-full ">
         {#if lint}
           <LintTests {lint} />
         {/if}

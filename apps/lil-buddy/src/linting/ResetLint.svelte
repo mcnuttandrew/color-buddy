@@ -8,7 +8,6 @@
   $: builtInLint = PREBUILT_LINTS.find((x) => x.id === $store.focusedLint);
   $: isBuiltInThatsBeenModified =
     builtInLint && lint?.program !== builtInLint?.program;
-  $: console.log(`isBuiltInThatsBeenModified: ${isBuiltInThatsBeenModified}`);
 </script>
 
 {#if isBuiltInThatsBeenModified}

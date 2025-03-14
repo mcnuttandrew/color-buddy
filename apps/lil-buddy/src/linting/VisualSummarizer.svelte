@@ -63,15 +63,20 @@
       </div>
     </div>
   {:else}
-    {#each executionLog || [] as log}
-      <DispatchNode
-        node={log}
-        {pal}
-        inducedVariables={{}}
-        modifyLint={(path, newVal) => {
-          lint = modifyLint(path, newVal, lint);
-        }}
-      />
+    {#each executionLog || [] as log, idx}
+      <div class="flex items-center">
+        <DispatchNode
+          node={log}
+          {pal}
+          inducedVariables={{}}
+          modifyLint={(path, newVal) => {
+            lint = modifyLint(path, newVal, lint);
+          }}
+        />
+        {#if executionLog && idx !== executionLog.length - 1}
+          <div class="">→</div>
+        {/if}
+      </div>
     {/each}
   {/if}
 </div>

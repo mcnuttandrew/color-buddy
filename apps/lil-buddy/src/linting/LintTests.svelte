@@ -40,9 +40,8 @@
 </script>
 
 <div class="border">
-  <div class="font-bold w-full bg-stone-200 flex justify-between px-2 py-1">
-    <div>Tests</div>
-    <AddTest {lint} addNewTest={addTest(showWhichTests === "passing")} />
+  <div class=" w-full bg-stone-200 flex px-2 py-1">
+    <div class="font-bold">Tests</div>
     <Nav
       tabs={["passing", "failing"]}
       isTabSelected={(x) => x === showWhichTests}
@@ -59,6 +58,7 @@
         return `Expected to be ${x} (${numCorrect}/${totalTests})`;
       }}
     />
+    <AddTest {lint} addNewTest={addTest(showWhichTests === "passing")} />
   </div>
   <div class="bg-stone-100 flex flex-wrap">
     {#each tests as test, idx}

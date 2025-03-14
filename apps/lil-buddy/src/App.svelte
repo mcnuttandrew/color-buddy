@@ -14,7 +14,13 @@
   <div
     class="flex justify-between bg-stone-200 h-12 items-center px-2 text-xl font-bold"
   >
-    Lil Buddy
+    <div class="flex">
+      Lil Buddy
+      <div class="ml-8">
+        <button class={buttonStyle} on:click={() => store.undo()}>Undo</button>
+        <button class={buttonStyle} on:click={() => store.redo()}>Redo</button>
+      </div>
+    </div>
 
     <div class="flex">
       <a

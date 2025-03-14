@@ -139,7 +139,7 @@
     <div class="flex flex-col w-full">
       <div class="text-xs">Color Space</div>
       <select
-        class="h-full {''}"
+        class="h-full bg-white rounded"
         value={colorMode}
         on:change={(e) => onSpaceChange(e.currentTarget.value)}
       >

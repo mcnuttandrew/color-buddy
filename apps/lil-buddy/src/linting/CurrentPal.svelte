@@ -40,7 +40,7 @@
       <Tooltip top={"75px"}>
         <div slot="content" class="flex flex-col">
           <input
-            class="mb-2"
+            class="mb-2 border rounded px-2"
             value={color.toHex()}
             on:change={(e) => {
               // @ts-ignore
@@ -72,13 +72,13 @@
             }}
           />
           <button
-            class="w-6 h-6 mx-2 rounded-full transition-all"
+            class={buttonStyle}
             on:click={() => {
               const newColors = [...pal.colors].filter((_, i) => i !== idx);
               updatePal({ ...pal, colors: newColors });
             }}
           >
-            Remove
+            Delete this color
           </button>
           <div class="font-bold">Tags</div>
           <div class="flex flex-wrap">

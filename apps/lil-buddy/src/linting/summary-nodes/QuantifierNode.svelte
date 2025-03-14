@@ -1,6 +1,7 @@
 <script lang="ts">
   import type { Palette } from "color-buddy-palette";
   import DispatchNode from "./DispatchNode.svelte";
+  import NodeWrap from "./NodeWrap.svelte";
   export let node: any;
   export let pal: Palette;
   export let inducedVariables: Record<string, any> = {};
@@ -39,7 +40,14 @@
                 <div class="flex items-center">
                   {#if result.result === "WHERE SKIP"}
                     <div class="text-red-500">✗</div>
-                    removed by where clause
+                    <NodeWrap
+                      label="removed by where clause"
+                      node={null}
+                      {modifyLint}
+                      options={null}
+                      classes=""
+                      comment="This color or combination of colors was removed by a where clause. This means it is not relevant to the quantifier."
+                    />
                   {:else}
                     {#each result.evals as evaluation, idx}
                       <DispatchNode

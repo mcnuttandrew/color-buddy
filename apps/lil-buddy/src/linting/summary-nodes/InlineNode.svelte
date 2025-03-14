@@ -46,7 +46,7 @@
         />
         <div class="px-2">
           <NodeWrap
-            options={["==", "!=", "<", ">", "<=", ">=", "similar"]}
+            options={["==", "!=", "<", ">", "similar"]}
             {node}
             {modifyLint}
             label={node.type === "similar" ? "≈" : node.type}
@@ -175,9 +175,25 @@
   {:else if node.nodeType === "color"}
     <!-- color names are parsed as colors unfortunately, so this is a hack -->
     {#if node.value.channels["L"] === 0 && node.value.channels["a"] === 0 && node.value.channels["b"] === 0 && !new Set( ["#000", "#000000"] ).has(node.constructorString)}
-      {node.constructorString}
+      <NodeWrap
+        label={node.constructorString}
+        {node}
+        {modifyLint}
+        options={"string"}
+        classes=""
+        comment=""
+      />
     {:else}
-      <div class="h-5 w-5 rounded-full" style={`background: ${node.value}`} />
+      <NodeWrap
+        label={""}
+        {node}
+        {modifyLint}
+        options={"color"}
+        classes=""
+        comment=""
+      >
+        <div class="h-5 w-5 rounded-full" style={`background: ${node.value}`} />
+      </NodeWrap>
     {/if}
   {:else if node.nodeType === "aggregate"}
     <div class="flex flex-col border">
@@ -283,7 +299,14 @@
       class:bg-green-300={node.value}
       class:bg-red-300={!node.value}
     >
-      {node.value ? "T" : "F"}
+      <NodeWrap
+        label={node.value ? "T" : "F"}
+        {node}
+        {modifyLint}
+        options={"boolean"}
+        classes="text-xs"
+        comment=""
+      />
     </div>
   {:else if typeof node === "boolean"}
     <div
@@ -291,7 +314,14 @@
       class:bg-green-300={node}
       class:bg-red-300={!node}
     >
-      {node ? "T" : "F"}
+      <NodeWrap
+        label={node ? "T" : "F"}
+        {node}
+        {modifyLint}
+        options={"boolean"}
+        classes="text-xs"
+        comment=""
+      />
     </div>
   {/if}
 </div>

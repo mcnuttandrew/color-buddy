@@ -1,4 +1,5 @@
 <script lang="ts">
+  import type { Palette } from "color-buddy-palette";
   import store from "../stores/store";
   import Tooltip from "../components/Tooltip.svelte";
   import { modifyLintProgram } from "../lib/api-calls";
@@ -6,14 +7,15 @@
   import { buttonStyle } from "../lib/styles";
 
   export let currentProgram: string;
+  export let pal: Palette;
 
   let lintPrompt: string = "";
   let requestState: "idle" | "loading" | "loaded" | "failed" = "idle";
 
-  function makeRequest() {
+  function makeRequest(onFinish: () => void) {
     requestState = "loading";
 
-    modifyLintProgram(lintPrompt, currentProgram, $store.engine)
+    modifyLintProgram(lintPrompt, currentProgram, pal, $store.engine)
       .then(async (suggestions) => {
         if (suggestions.length === 0) {
           requestState = "idle";
@@ -24,6 +26,7 @@
         );
 
         requestState = "loaded";
+        onFinish();
       })
       .catch((e) => {
         console.log(e);
@@ -33,16 +36,21 @@
 </script>
 
 <Tooltip>
-  <div slot="content" class="w-96">
-    <div>What would you like your check to be able to do?</div>
-    <form on:submit|preventDefault={makeRequest} class="flex flex-col">
+  <div slot="content" class="w-96" let:onClick>
+    <div class="text-xs">
+      Ask an AI to make a modification to the lint program
+    </div>
+    <form
+      on:submit|preventDefault={() => makeRequest(onClick)}
+      class="flex flex-col"
+    >
       <textarea
         bind:value={lintPrompt}
         on:keypress={(e) => {
           if (e.key === "Enter") {
             // @ts-ignore
             e.target.blur();
-            makeRequest();
+            makeRequest(onClick);
           }
         }}
         id="pal-prompt"

@@ -128,6 +128,7 @@ Your response: `;
 export function modifyLintProgram(
   inputPrompt: string,
   program: string,
+  palette: Palette,
   engine: Engine
 ) {
   const prompt = `
@@ -138,9 +139,16 @@ Given a lint prompt, suggest a lint using the color check linting language. Your
 
 ONLY RETURN THE JSON AND NOTHING ELSE. DO NOT MAKE ANY COMMENTS.
   
-Prompt: ${JSON.stringify(inputPrompt)}
+
 
 Program Context: ${program}
+
+Palette: ${JSON.stringify(
+    palette.colors.map((x) => x.toHex())
+  )} Background Color: ${JSON.stringify(palette.background.toHex())}
+Do not consider the palette unless the prompt specifically asks for it. 
+
+Prompt: ${JSON.stringify(inputPrompt)}
 
 Your response: `;
   return engineToScaffold[engine]<string>(`ai-call`, prompt, true);

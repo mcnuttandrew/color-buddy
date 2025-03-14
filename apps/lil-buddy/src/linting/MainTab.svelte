@@ -15,7 +15,7 @@
   import Nav from "../components/Nav.svelte";
 
   import ResetLint from "./ResetLint.svelte";
-  import ProgramCommand from "./ProgramCommand.svelte";
+  import ModifyLint from "./ModifyLint.svelte";
 
   import LintTests from "./LintTests.svelte";
   import FocusedTest from "./FocusedTest.svelte";
@@ -43,7 +43,9 @@
     {#if lint}
       <div class="flex flex-wrap">
         <LintMeta {lint} />
-        <ProgramCommand currentProgram={lint.program} />
+        {#if testPal}
+          <ModifyLint currentProgram={lint.program} pal={testPal} />
+        {/if}
         <ResetLint />
       </div>
     {/if}

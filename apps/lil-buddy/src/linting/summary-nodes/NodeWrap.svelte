@@ -17,6 +17,7 @@
       {#if options === "number"}
         <input
           value={node.value}
+          class="border"
           on:blur={(e) => {
             // @ts-ignore
             modifyLint(node.path, parseFloat(e.target.value));
@@ -33,7 +34,7 @@
           <option value="true">true</option>
           <option value="false">false</option>
         </select>
-      {:else}
+      {:else if options && Array.isArray(options)}
         <select
           value={node.value}
           on:change={(e) => {
@@ -46,6 +47,12 @@
           {/each}
         </select>
       {/if}
+    {:else}
+      <div class="text-xs">
+        This value is <span class="italic">calculated,</span>
+        meaning that it can not be altered directly. To modify it, try changing something
+        upstream.
+      </div>
     {/if}
   </div>
   <button class={classes} slot="target" let:toggle on:click={toggle}>

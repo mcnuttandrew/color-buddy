@@ -62,6 +62,6 @@
     {/if}
   </div>
   <button slot="target" let:toggle class={buttonStyle} on:click={toggle}>
-    (Add Test)
+    +
   </button>
 </Tooltip>

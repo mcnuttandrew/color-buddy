@@ -58,11 +58,11 @@
         return ` ${x} (${numCorrect}/${totalTests})`;
       }}
     />
-    <AddTest {lint} addNewTest={addTest(showWhichTests === "passing")} />
   </div>
-  <div class="bg-stone-100 flex flex-wrap">
+  <div class="bg-stone-100 flex items-center overflow-auto">
     {#each tests as test, idx}
       <LintTest {idx} testResult={test} type={showWhichTests} />
     {/each}
+    <AddTest {lint} addNewTest={addTest(showWhichTests === "passing")} />
   </div>
 </div>

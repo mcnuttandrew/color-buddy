@@ -7,10 +7,8 @@
   import Nav from "../components/Nav.svelte";
 </script>
 
-<Tooltip>
+<Tooltip positionAlongRightEdge={true}>
   <div slot="content">
-    <p>Controls</p>
-
     <div>
       <div>Engine</div>
       <Nav

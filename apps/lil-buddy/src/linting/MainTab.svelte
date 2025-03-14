@@ -38,50 +38,53 @@
   <FocusedTest {lint} />
 {/if}
 <div class="w-full flex">
-  <div class="flex flex-col px-4">
-    <div class="flex">
-      <Controls />
-      <LintMeta {lint} />
-      <Nav
-        tabs={["graph-summary", "text-program"]}
-        isTabSelected={(x) => x === $store.visualSummary}
-        selectTab={(x) => store.setVisualSummary(x)}
-      />
-    </div>
-
-    {#if errors}
-      <div class="text-red-500">{errors.message}</div>
-    {/if}
-
-    {#if $store.visualSummary === "graph-summary"}
-      <div class="font-bold">Graph Summary</div>
-      <GraphSummary {lint} />
-    {:else}
-      <div class="flex justify-between">
-        <div class="font-bold">Lint Program</div>
+  <div class="flex flex-col">
+    <div class="w-full bg-stone-100 font-bold">Lint Customization</div>
+    <div class="flex flex-col px-4">
+      <div class="flex">
+        <Controls />
+        <LintMeta {lint} />
         <button
           class={buttonStyle}
           on:click={() => {
             store.setCurrentLintProgram(JSONStringify(program) || "");
           }}
         >
-          Clean up Program
+          Tidy 🧹
         </button>
         <ProgramCommand currentProgram={lint.program} />
+        <Nav
+          tabs={["graph-summary", "text-program"]}
+          isTabSelected={(x) => x === $store.visualSummary}
+          selectTab={(x) => store.setVisualSummary(x)}
+        />
       </div>
-      <div>
-        {generatePrettyText(program)}
-      </div>
-      <MonacoEditor
-        value={program}
-        onChange={(x) => {
-          store.setCurrentLintProgram(x);
-        }}
-        language="json"
-      />
-    {/if}
+
+      {#if errors}
+        <div class="text-red-500">{errors.message}</div>
+      {/if}
+
+      {#if $store.visualSummary === "graph-summary"}
+        <div class="font-bold">Graph Summary</div>
+        <GraphSummary {lint} />
+      {:else}
+        <div class="flex justify-between">
+          <div class="font-bold">Lint Program</div>
+        </div>
+        <div>
+          {generatePrettyText(program)}
+        </div>
+        <MonacoEditor
+          value={program}
+          onChange={(x) => {
+            store.setCurrentLintProgram(x);
+          }}
+          language="json"
+        />
+      {/if}
+    </div>
   </div>
-  <div class="w-1/2 px-4">
+  <div class="w-1/2">
     <div></div>
 
     <LintTests {lint} />

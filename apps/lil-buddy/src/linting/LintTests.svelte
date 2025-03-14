@@ -7,22 +7,13 @@
   import type { TestResult } from "../lib/utils";
   export let lint: LintProgram;
 
-  $: passingTestResults = (lint?.expectedPassingTests || []).map((pal) => {
+  function doLint(pal: LintProgram["expectedPassingTests"][0]): TestResult {
     const result = runLint(lint, {}, pal).result;
-    return {
-      result,
-      pal,
-      blame: result.kind === "success" ? result?.blameData : [],
-    };
-  }) as TestResult[];
-  $: failingTestResults = (lint?.expectedFailingTests || []).map((pal) => {
-    const result = runLint(lint, {}, pal).result;
-    return {
-      result,
-      pal,
-      blame: result.kind === "success" ? result?.blameData : [],
-    };
-  }) as TestResult[];
+    const blame = result.kind === "success" ? result?.blameData : [];
+    return { result, pal, blame };
+  }
+  $: passingTestResults = (lint?.expectedPassingTests || []).map(doLint);
+  $: failingTestResults = (lint?.expectedFailingTests || []).map(doLint);
   function addTest(passing: boolean) {
     return function (test: LintProgram["expectedPassingTests"][0]) {
       const newTest = { ...test };

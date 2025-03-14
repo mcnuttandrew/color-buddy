@@ -49,6 +49,6 @@
     </div>
   </div>
   <button class={buttonStyle} slot="target" let:toggle on:click={toggle}>
-    Controls
+    Controls ⚙️
   </button>
 </Tooltip>

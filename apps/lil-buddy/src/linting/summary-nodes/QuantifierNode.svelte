@@ -13,7 +13,9 @@
 {#if node.nodeType !== "quantifier"}
   <div class="flex items-center">
     <div class="flex flex-col">
-      <div class="px-2 w-full bg-stone-200 flex justify-between items-center">
+      <div
+        class="px-2 w-full bg-stone-200 flex justify-between items-center mt-1"
+      >
         <div class="">
           {#if node.quant === "all"}For all{:else}There should exist{/if}
           {node.varb} (the colors below) the following should be true

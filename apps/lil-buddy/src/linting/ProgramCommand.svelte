@@ -62,6 +62,6 @@
       toggle();
     }}
   >
-    Modify program by AI
+    Modify ✨
   </button>
 </Tooltip>

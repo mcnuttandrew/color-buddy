@@ -12,7 +12,7 @@
 
 <Tooltip>
   <button class={buttonStyle} slot="target" let:toggle on:click={toggle}>
-    Configuration
+    Configuration 🔨
   </button>
   <div slot="content">
     <div class="">

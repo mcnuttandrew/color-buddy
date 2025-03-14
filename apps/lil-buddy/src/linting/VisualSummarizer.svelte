@@ -12,19 +12,23 @@
   export let pal: Palette;
   export let lint: string;
 
+  let processingState = "processing" as "ready" | "processing";
   $: executionLog = getExecutionLog(lint, $store.okayToExecute);
   let error: any;
   function getExecutionLog(lint: string, okayToExecute: boolean) {
+    processingState = "processing";
     try {
       const ast = (GenerateAST(JSON.parse(lint) as any).value as any)
         .children[0] as any;
       const rewrittenAST = trimTree(rewriteQuantifiers(ast)).generatePath([]);
       const result = smallStepEvaluator(rewrittenAST, {}, pal, true);
       error = null;
+      processingState = "ready";
       return result;
     } catch (e) {
       console.error(e);
       error = e;
+      processingState = "ready";
     }
   }
 
@@ -49,19 +53,37 @@
     }
     lint = JSON.stringify(lintObj);
   }
+  $: console.log(`${error}`);
 </script>
 
 <div class="flex">
-  {#if error}
-    <div>{error}</div>
-    <button
-      class={buttonStyle}
-      on:click={() => {
-        executionLog = getExecutionLog(lint, $store.okayToExecute);
-      }}
-    >
-      Try again
-    </button>
+  {#if processingState === "processing"}
+    <div class="w-full flex flex-col items-center justify-center p-2">
+      <div class="max-w-64">
+        <div class="text-xl">Processing...</div>
+      </div>
+    </div>
+  {:else if error}
+    <div class="w-full flex flex-col items-center justify-center p-2">
+      <div class="max-w-64">
+        <div class="text-xl">{error}</div>
+        <button
+          class={buttonStyle}
+          on:click={() => {
+            executionLog = getExecutionLog(lint, $store.okayToExecute);
+          }}
+        >
+          Try again
+        </button>
+        {#if `${error}` === "Error: Too many iterations"}
+          <div class="text-yellow-500">
+            When evaluating large palettes that have a lot of comparisons, the
+            maximum can be unintentionally exceeded. Click this button to try to
+            extend the maximum.
+          </div>
+        {/if}
+      </div>
+    </div>
   {:else}
     {#each executionLog || [] as log}
       <DispatchNode node={log} {pal} inducedVariables={{}} {modifyLint} />

@@ -18,7 +18,6 @@
     testResult.result.kind === "success" &&
     ((type === "passing" && testResult.result?.passes) ||
       (type === "failing" && !testResult.result?.passes));
-  $: console.log(mcState);
 </script>
 
 <div class="border rounded px-2 mx-2">

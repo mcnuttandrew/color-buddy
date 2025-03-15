@@ -32,10 +32,10 @@
             <div class="flex items-center">
               <div class="flex">
                 <NodeWrap
-                  label=""
                   {node}
+                  path={["fake path", "path"]}
                   modifyLint={(_path, newValue) => {
-                    //TODO: allow updates to the colors, requires fishing throw a function that support modification of the colors
+                    store.updateColorInCurrentTest(idx, newValue);
                   }}
                   options={"color"}
                   specificValue={result.color}
@@ -52,13 +52,15 @@
                   {#if result.result === "WHERE SKIP"}
                     <div class="text-red-500">✗</div>
                     <NodeWrap
-                      label="removed by where clause"
                       node={null}
+                      path={null}
                       {modifyLint}
                       options={null}
                       classes=""
                       comment="This color or combination of colors was removed by a where clause. This means it is not relevant to the quantifier."
-                    />
+                    >
+                      {"removed by where clause"}
+                    </NodeWrap>
                   {:else}
                     {#each result.evals as evaluation, idx}
                       <DispatchNode

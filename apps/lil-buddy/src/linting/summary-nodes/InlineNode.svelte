@@ -3,6 +3,7 @@
   import DispatchNode from "./DispatchNode.svelte";
   import { Color } from "color-buddy-palette";
   import NodeWrap from "./NodeWrap.svelte";
+  import store from "../../stores/store";
 
   export let node: any;
   export let pal: Palette;
@@ -46,11 +47,14 @@
         />
         <NodeWrap
           options={["==", "!=", "<", ">", "similar"]}
+          path={node.path}
           {node}
           {modifyLint}
           classes="px-2"
-          label={node.type === "similar" ? "≈" : node.type}
-        />
+        >
+          {node.type === "similar" ? "≈" : node.type}
+        </NodeWrap>
+
         <svelte:self
           {modifyLint}
           node={node.right}
@@ -89,11 +93,13 @@
       <svelte:self {modifyLint} node={node.left} {pal} inducedVariables={env} />
       <NodeWrap
         options={["+", "-", "*", "/", "//", "absDiff", "%"]}
+        path={node.path}
         {node}
         {modifyLint}
         classes="px-2"
-        label={node.type === "similar" ? "≈" : node.type}
-      />
+      >
+        {node.type === "similar" ? "≈" : node.type}
+      </NodeWrap>
       <svelte:self
         {modifyLint}
         node={node.right}
@@ -102,12 +108,9 @@
       />
     </div>
   {:else if node.nodeType === "number"}
-    <NodeWrap
-      options="number"
-      {node}
-      {modifyLint}
-      label={toThreeDigit(node.value)}
-    />
+    <NodeWrap options="number" path={node.path} {node} {modifyLint}>
+      {toThreeDigit(node.value)}
+    </NodeWrap>
   {:else if node.nodeType === "variable"}
     <div class="relative flex">
       {#if node.value.length > 2}
@@ -117,9 +120,23 @@
       {/if}
       {#if env[node.value]}
         <NodeWrap
-          modifyLint={(path, value) => modifyLint(path, value)}
+          modifyLint={(_path, value) => {
+            // find variable in pal and save index
+            let index = pal.colors.findIndex(
+              (color) => color.toHex() === env[node.value]
+            );
+            if (index === -1 && node.value !== "background") {
+              return;
+            }
+            // using -1 to indicate background color
+            if (node.value === "background") {
+              index = -1;
+            }
+            // update color in pal
+            store.updateColorInCurrentTest(index, value);
+          }}
+          path={node.path}
           {node}
-          label={node.type}
           options={"color"}
           specificValue={env[node.value]}
         >
@@ -149,10 +166,12 @@
     <div class="flex">
       <NodeWrap
         {modifyLint}
+        path={node.path}
         {node}
-        label={node.type}
         options={["dist", "deltaE", "contrast"]}
-      />
+      >
+        {node.type}
+      </NodeWrap>
       <span>{"("}</span>
       <svelte:self {modifyLint} node={node.left} {pal} inducedVariables={env} />
       <span>{","}</span>
@@ -183,14 +202,11 @@
   {:else if node.nodeType === "color"}
     <!-- color names are parsed as colors unfortunately, so this is a hack -->
     {#if node.value.channels["L"] === 0 && node.value.channels["a"] === 0 && node.value.channels["b"] === 0 && !new Set( ["#000", "#000000"] ).has(node.constructorString)}
-      <NodeWrap
-        label={node.constructorString}
-        {node}
-        {modifyLint}
-        options={"string"}
-      />
+      <NodeWrap path={node.path} {node} {modifyLint} options={"string"}>
+        {node.constructorString}
+      </NodeWrap>
     {:else}
-      <NodeWrap label={""} {node} {modifyLint} options={"color"}>
+      <NodeWrap {node} {modifyLint} options={"color"} path={node.path}>
         <div class="h-5 w-5 rounded-full" style={`background: ${node.value}`} />
       </NodeWrap>
     {/if}
@@ -294,19 +310,23 @@
     <svelte:self {modifyLint} node={node.value} {pal} inducedVariables={env} />
   {:else if node.nodeType === "bool"}
     <NodeWrap
-      label={node.value ? "T" : "F"}
+      path={node.path}
       {node}
       {modifyLint}
       options={"boolean"}
       classes="px-2 text-sm {node.value ? 'bg-green-300' : 'bg-red-300'}"
-    />
+    >
+      {node.value ? "T" : "F"}
+    </NodeWrap>
   {:else if typeof node === "boolean"}
     <NodeWrap
-      label={node ? "T" : "F"}
+      path={null}
       {node}
       {modifyLint}
       options={"boolean"}
       classes="px-2 text-sm {node ? 'bg-green-300' : 'bg-red-300'}"
-    />
+    >
+      {node ? "T" : "F"}
+    </NodeWrap>
   {/if}
 </div>

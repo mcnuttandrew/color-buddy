@@ -62,8 +62,8 @@ function deserializeStore(store: any) {
     ...store,
     lints: store.lints.map((x: any) => ({
       ...x,
-      expectedFailingTests: (x.expectedFailingTests || []).map((x) =>
-        stringPalToColorPal(x)
+      expectedFailingTests: (x.expectedFailingTests || []).map(
+        stringPalToColorPal
       ),
       expectedPassingTests: (x.expectedPassingTests || []).map(
         stringPalToColorPal
@@ -184,6 +184,40 @@ function createStore() {
       lintUpdate((old) => ({ ...old, expectedFailingTests })),
     setCurrentLintExpectedPassingTests: (expectedPassingTests: Palette[]) =>
       lintUpdate((old) => ({ ...old, expectedPassingTests })),
+    updateColorInCurrentTest: (index: number, color: string) =>
+      persistUpdate((old) => {
+        const currentLintIdx = old.lints.findIndex(
+          (x) => x.id === old.focusedLint
+        );
+        const currentLint = old.lints[currentLintIdx];
+        const focusedTest = old.focusedTest;
+        if (!currentLint || !focusedTest) {
+          return old;
+        }
+
+        let oldPal: Palette;
+        if (focusedTest.type === "passing") {
+          oldPal = currentLint.expectedPassingTests[focusedTest.index];
+        } else {
+          oldPal = currentLint.expectedFailingTests[focusedTest.index];
+        }
+        const newPal = { ...oldPal, colors: [...oldPal.colors] };
+        if (index >= 0) {
+          newPal.colors[index] = Color.colorFromHex(color, oldPal.colorSpace);
+        } else {
+          newPal.background = Color.colorFromHex(color, oldPal.colorSpace);
+        }
+
+        if (focusedTest.type === "passing") {
+          currentLint.expectedPassingTests[focusedTest.index] = newPal;
+        } else {
+          currentLint.expectedFailingTests[focusedTest.index] = newPal;
+        }
+
+        const lints = [...old.lints];
+        lints[currentLintIdx] = currentLint;
+        return { ...old, lints };
+      }),
     deleteLint: (id: string) =>
       persistUpdate((old) => ({
         ...old,

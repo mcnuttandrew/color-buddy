@@ -1,5 +1,7 @@
 <script lang="ts">
   import Tooltip from "../../components/Tooltip.svelte";
+  import { Color } from "color-buddy-palette";
+  import ColorChannelPicker from "../../components/ColorChannelPicker.svelte";
   export let node: any | null;
   export let options:
     | string[]
@@ -9,14 +11,12 @@
     | "string"
     | null;
   export let modifyLint: (path: (number | string)[], newValue: any) => void;
-  export let label: string;
   export let classes: string = "";
   export let comment: string = "";
   export let specificValue: any = null;
+  export let path: (number | string)[] | null;
 
-  $: path = (node?.path || []) as (number | string)[];
   function displayValue(node: any) {
-    console.log(node);
     if (typeof node === "boolean") {
       return node ? "true" : "false";
     }
@@ -26,7 +26,8 @@
     return node.value || node.type;
   }
   $: value = specificValue || node?.value || null;
-  $: console.log(node);
+  let localSpace = "lab" as any;
+  $: isCalculated = !path || path.length < 1;
 </script>
 
 <Tooltip>
@@ -34,78 +35,82 @@
     {#if node}
       {`${node.nodeType}: ${displayValue(node)}`}
 
-      {#if node && path.length > 1}
+      <!-- {#if path && path.length > 1}
         <div class="text-xs text-gray-500">
           {path.map((p) => p).join(".")}
         </div>
-      {:else}
-        <div class="text-xs">
-          This value is <span class="italic">calculated,</span>
-          meaning that it can not be altered directly. To modify it, try changing
-          something upstream.
-        </div>
-      {/if}
+      {/if} -->
     {/if}
-    {#if options === "number"}
-      <input
-        {value}
-        class="border"
-        on:blur={(e) => {
-          // @ts-ignore
-          modifyLint(path, parseFloat(e.target.value));
-        }}
-      />
-    {:else if options === "color"}
-      <input
-        type="color"
-        value={value?.toHex ? value.toHex() : value}
-        on:change={(e) => {
-          // @ts-ignore
-          modifyLint(path, e.target.value);
-        }}
-      />
-    {:else if options === "string"}
-      <input
-        {value}
-        class="border"
-        on:blur={(e) => {
-          // @ts-ignore
-          modifyLint(path, e.target.value);
-        }}
-      />
-    {:else if options === "boolean"}
-      <select
-        {value}
-        on:change={(e) => {
-          // @ts-ignore
-          modifyLint(path, e.target.value === "true");
-        }}
-      >
-        <option value="true">true</option>
-        <option value="false">false</option>
-      </select>
-    {:else if options && Array.isArray(options)}
-      <select
-        {value}
-        on:change={(e) => {
-          // @ts-ignore
-          modifyLint(path, e.target.value);
-        }}
-      >
-        {#each options as option}
-          <option value={option}>{option}</option>
-        {/each}
-      </select>
+    {#if !isCalculated}
+      {#if options === "number"}
+        <input
+          {value}
+          class="border"
+          on:blur={(e) => {
+            // @ts-ignore
+            modifyLint(path, parseFloat(e.target.value));
+          }}
+        />
+      {:else if options === "color"}
+        <ColorChannelPicker
+          onSpaceChange={(x) => {
+            localSpace = x;
+          }}
+          colorMode={localSpace}
+          color={Color.colorFromHex(
+            value?.toHex ? value.toHex() : value,
+            localSpace
+          )}
+          onColorChange={(x) => {
+            // @ts-ignore
+            modifyLint(path, x.toHex());
+          }}
+        />
+      {:else if options === "string"}
+        <input
+          {value}
+          class="border"
+          on:blur={(e) => {
+            // @ts-ignore
+            modifyLint(path, e.target.value);
+          }}
+        />
+      {:else if options === "boolean"}
+        <select
+          {value}
+          on:change={(e) => {
+            // @ts-ignore
+            modifyLint(path, e.target.value === "true");
+          }}
+        >
+          <option value="true">true</option>
+          <option value="false">false</option>
+        </select>
+      {:else if options && Array.isArray(options)}
+        <select
+          {value}
+          on:change={(e) => {
+            // @ts-ignore
+            modifyLint(path, e.target.value);
+          }}
+        >
+          {#each options as option}
+            <option value={option}>{option}</option>
+          {/each}
+        </select>
+      {/if}
+    {:else if options}
+      <div class="text-xs">
+        This value is <span class="italic">calculated,</span>
+        meaning that it can not be altered directly. To modify it, try changing something
+        upstream.
+      </div>
     {/if}
     <div>
       {comment}
     </div>
   </div>
   <button class={classes} slot="target" let:toggle on:click={toggle}>
-    {#if label}
-      {label}
-    {:else}
-      <slot />
-    {/if}
+    <slot />
   </button>
 </Tooltip>

@@ -40,7 +40,6 @@
   $: blameData = (lintResult.kind === "success" && lintResult.blameData) || [];
   $: errors = lintRun.errors;
   $: pairData = blameData as number[][];
-  $: program = lint.program;
 
   function updatePal(newPal: Palette) {
     if (!focusedTest) return;

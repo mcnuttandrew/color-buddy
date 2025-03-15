@@ -1,6 +1,5 @@
 <script lang="ts">
   import type { Palette } from "color-buddy-palette";
-  import { Color } from "color-buddy-palette";
   import store from "../../stores/store";
   import DispatchNode from "./DispatchNode.svelte";
   import NodeWrap from "./NodeWrap.svelte";

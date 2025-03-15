@@ -168,7 +168,11 @@ function evaluateNode(
 ) {
   const serializedNode = JSON.stringify(node);
   const canUseCache = !serializedNode.includes("colors");
-  const serializeKey = JSON.stringify({ serializedNode, inducedVariables });
+  const serializeKey = JSON.stringify({
+    serializedNode,
+    inducedVariables,
+    background: pal.background.toHex(),
+  });
   if (canUseCache && evalCache.has(serializeKey)) {
     return evalCache.get(serializeKey);
   }
@@ -452,6 +456,7 @@ export function smallStepEvaluator(
   const serializeKey = JSON.stringify({
     serializedNode,
     inducedVariables,
+    background: pal.background.toHex(),
     generate: "generate",
   });
   if (canUseCache && evalCache.has(serializeKey)) {

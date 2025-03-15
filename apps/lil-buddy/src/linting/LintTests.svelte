@@ -35,6 +35,15 @@
   $: showWhichTests = "passing" as "passing" | "failing";
   $: tests =
     showWhichTests === "passing" ? passingTestResults : failingTestResults;
+
+  $: numPassing = passingTestResults.filter(
+    (test) => test.result.kind === "success" && test.result.passes
+  ).length;
+  $: numFailing = failingTestResults.filter(
+    (test) => test.result.kind === "success" && !test.result.passes
+  ).length;
+
+  $: console.log(passingTestResults);
 </script>
 
 <div class="border">
@@ -49,10 +58,7 @@
       formatter={(x) => {
         const tests = x === "passing" ? passingTestResults : failingTestResults;
         const totalTests = tests.length;
-        const numCorrect = tests.filter((test) => {
-          if (test.result.kind !== "success") return false;
-          return x === "passing" ? test.result?.passes : !test.result?.passes;
-        }).length;
+        const numCorrect = x === "passing" ? numPassing : numFailing;
         return ` ${x} (${numCorrect}/${totalTests})`;
       }}
     />

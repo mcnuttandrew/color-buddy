@@ -6,15 +6,15 @@
   import type { TestResult } from "../lib/utils";
   import PalPreview from "../components/PalPreview.svelte";
   import Tooltip from "../components/Tooltip.svelte";
+  import { buttonStyle } from "../lib/styles";
 
   export let idx: number;
-  import { buttonStyle } from "../lib/styles";
   export let testResult: TestResult;
   export let type: "passing" | "failing";
 
   let mcState = "ready" as "ready" | "loading" | "error";
 
-  let isCorrect =
+  $: isCorrect =
     testResult.result.kind === "success" &&
     ((type === "passing" && testResult.result?.passes) ||
       (type === "failing" && !testResult.result?.passes));

@@ -116,19 +116,27 @@
         </div>
       {/if}
       {#if env[node.value]}
-        <div
-          class="h-5 w-5 rounded-full"
-          style={`background: ${env[node.value]}`}
+        <NodeWrap
+          modifyLint={(path, value) => modifyLint(path, value)}
+          {node}
+          label={node.type}
+          options={"color"}
+          specificValue={env[node.value]}
         >
-          {#if node.value.length <= 2}
-            <div
-              class="text-xs left-1/2 text-center"
-              class:text-white={getLuminance(env[node.value]) < 0.5}
-            >
-              {node.value}
-            </div>
-          {/if}
-        </div>
+          <div
+            class="h-5 w-5 rounded-full"
+            style={`background: ${env[node.value]}`}
+          >
+            {#if node.value.length <= 2}
+              <div
+                class="text-xs left-1/2 text-center"
+                class:text-white={getLuminance(env[node.value]) < 0.5}
+              >
+                {node.value}
+              </div>
+            {/if}
+          </div>
+        </NodeWrap>
       {:else if node.value === "colors"}
         {#each pal.colors as color}
           <div class="h-5 w-5 rounded-full" style={`background: ${color}`} />
@@ -180,18 +188,9 @@
         {node}
         {modifyLint}
         options={"string"}
-        classes=""
-        comment=""
       />
     {:else}
-      <NodeWrap
-        label={""}
-        {node}
-        {modifyLint}
-        options={"color"}
-        classes=""
-        comment=""
-      >
+      <NodeWrap label={""} {node} {modifyLint} options={"color"}>
         <div class="h-5 w-5 rounded-full" style={`background: ${node.value}`} />
       </NodeWrap>
     {/if}
@@ -300,7 +299,6 @@
       {modifyLint}
       options={"boolean"}
       classes="px-2 text-sm {node.value ? 'bg-green-300' : 'bg-red-300'}"
-      comment=""
     />
   {:else if typeof node === "boolean"}
     <NodeWrap
@@ -309,7 +307,6 @@
       {modifyLint}
       options={"boolean"}
       classes="px-2 text-sm {node ? 'bg-green-300' : 'bg-red-300'}"
-      comment=""
     />
   {/if}
 </div>

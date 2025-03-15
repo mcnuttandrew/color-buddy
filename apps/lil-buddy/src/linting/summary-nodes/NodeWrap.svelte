@@ -12,9 +12,11 @@
   export let label: string;
   export let classes: string = "";
   export let comment: string = "";
+  export let specificValue: any = null;
 
   $: path = (node?.path || []) as (number | string)[];
   function displayValue(node: any) {
+    console.log(node);
     if (typeof node === "boolean") {
       return node ? "true" : "false";
     }
@@ -23,6 +25,8 @@
     }
     return node.value || node.type;
   }
+  $: value = specificValue || node?.value || null;
+  $: console.log(node);
 </script>
 
 <Tooltip>
@@ -34,57 +38,6 @@
         <div class="text-xs text-gray-500">
           {path.map((p) => p).join(".")}
         </div>
-        {#if options === "number"}
-          <input
-            value={node.value}
-            class="border"
-            on:blur={(e) => {
-              // @ts-ignore
-              modifyLint(path, parseFloat(e.target.value));
-            }}
-          />
-        {:else if options === "color"}
-          <input
-            type="color"
-            value={node.constructorString}
-            on:change={(e) => {
-              // @ts-ignore
-              modifyLint(path, e.target.value);
-            }}
-          />
-        {:else if options === "string"}
-          <input
-            value={node.value}
-            class="border"
-            on:blur={(e) => {
-              // @ts-ignore
-              modifyLint(path, e.target.value);
-            }}
-          />
-        {:else if options === "boolean"}
-          <select
-            value={node.value}
-            on:change={(e) => {
-              // @ts-ignore
-              modifyLint(path, e.target.value === "true");
-            }}
-          >
-            <option value="true">true</option>
-            <option value="false">false</option>
-          </select>
-        {:else if options && Array.isArray(options)}
-          <select
-            value={node.value}
-            on:change={(e) => {
-              // @ts-ignore
-              modifyLint(path, e.target.value);
-            }}
-          >
-            {#each options as option}
-              <option value={option}>{option}</option>
-            {/each}
-          </select>
-        {/if}
       {:else}
         <div class="text-xs">
           This value is <span class="italic">calculated,</span>
@@ -92,6 +45,57 @@
           something upstream.
         </div>
       {/if}
+    {/if}
+    {#if options === "number"}
+      <input
+        {value}
+        class="border"
+        on:blur={(e) => {
+          // @ts-ignore
+          modifyLint(path, parseFloat(e.target.value));
+        }}
+      />
+    {:else if options === "color"}
+      <input
+        type="color"
+        value={value?.toHex ? value.toHex() : value}
+        on:change={(e) => {
+          // @ts-ignore
+          modifyLint(path, e.target.value);
+        }}
+      />
+    {:else if options === "string"}
+      <input
+        {value}
+        class="border"
+        on:blur={(e) => {
+          // @ts-ignore
+          modifyLint(path, e.target.value);
+        }}
+      />
+    {:else if options === "boolean"}
+      <select
+        {value}
+        on:change={(e) => {
+          // @ts-ignore
+          modifyLint(path, e.target.value === "true");
+        }}
+      >
+        <option value="true">true</option>
+        <option value="false">false</option>
+      </select>
+    {:else if options && Array.isArray(options)}
+      <select
+        {value}
+        on:change={(e) => {
+          // @ts-ignore
+          modifyLint(path, e.target.value);
+        }}
+      >
+        {#each options as option}
+          <option value={option}>{option}</option>
+        {/each}
+      </select>
     {/if}
     <div>
       {comment}

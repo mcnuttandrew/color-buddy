@@ -1,5 +1,7 @@
 <script lang="ts">
   import type { Palette } from "color-buddy-palette";
+  import { Color } from "color-buddy-palette";
+  import store from "../../stores/store";
   import DispatchNode from "./DispatchNode.svelte";
   import NodeWrap from "./NodeWrap.svelte";
   export let node: any;
@@ -26,14 +28,23 @@
       </div>
       {#if open}
         <div class="bg-opacity-30 bg-slate-200 flex flex-col p-2">
-          {#each node.results as result}
+          {#each node.results as result, idx}
             <div class="flex items-center">
               <div class="flex">
-                <!-- possible this could be a number or something else -->
-                <div
-                  class="h-8 w-8 rounded-full"
-                  style={`background: ${result.color}`}
-                />
+                <NodeWrap
+                  label=""
+                  {node}
+                  modifyLint={(_path, newValue) => {
+                    //TODO: allow updates to the colors, requires fishing throw a function that support modification of the colors
+                  }}
+                  options={"color"}
+                  specificValue={result.color}
+                >
+                  <div
+                    class="h-8 w-8 rounded-full"
+                    style={`background: ${result.color}`}
+                  />
+                </NodeWrap>
                 <div>→</div>
               </div>
               <div class="flex flex-col">

@@ -45,7 +45,7 @@
     "color-buddy-color-namer": "*",
     "color-buddy-palette": "*",
     "color-buddy-palette-lint": "*",
-    "colorjs.io": "^0.5.2",
+    "colorjs.io": "0.6.0-alpha.1",
     "colorthief": "^2.6.0",
     "d3-scale": "^4.0.2",
     "d3-shape": "^3.2.0",

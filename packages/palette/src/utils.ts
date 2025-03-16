@@ -64,7 +64,7 @@ export function clipToGamut(color: Color): [number, number, number] {
       .to("srgb")
       .toGamut()
       .to(color.spaceName).coords;
-    return newChannels;
+    return newChannels as [number, number, number];
   }
 }
 

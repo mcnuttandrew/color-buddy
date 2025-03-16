@@ -47,7 +47,8 @@ const lint: LintProgram = {
 };
 export default lint;
 
-const getLightness = (color: Color) => color.toColorIO().to("lab").coords[0];
+const getLightness = (color: Color) =>
+  color.toColorIO().to("lab").coords[0] as number;
 export const fixSequentialOrder: LintFixer = async (palette: Palette) => {
   const colors = [...palette.colors];
   colors.sort((a, b) => getLightness(a) - getLightness(b));

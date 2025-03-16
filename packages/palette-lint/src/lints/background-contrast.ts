@@ -135,7 +135,7 @@ const getColorsCloseToBackground = (colors: Color[], background: Color) => {
 
 export const fixBackgroundDifferentiability: LintFixer = async (palette) => {
   const { colors, background, colorSpace } = palette;
-  const backgroundL = background.toColorIO().to("lab").coords[0];
+  const backgroundL = background.toColorIO().to("lab").coords[0] as number;
   const bgCloserToWhite = backgroundL > 50;
   const clamp = (x: number) => Math.max(0, Math.min(100, x));
   // const newL = clamp(!bgCloserToWhite ? backgroundL * 1.5 : backgroundL * 0.5);

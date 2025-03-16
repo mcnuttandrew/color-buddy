@@ -1,0 +1,178 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Generating the eval paths works 1`] = `
+LLExpression {
+  "id": 0,
+  "nodeType": "expression",
+  "path": [],
+  "value": LLPredicate {
+    "id": 0,
+    "left": LLPairFunction {
+      "id": 0,
+      "left": LLVariable {
+        "id": 0,
+        "nodeType": "variable",
+        "path": [
+          ">",
+          "left",
+          "deltaE",
+          "left",
+        ],
+        "value": "a",
+      },
+      "nodeType": "pairFunction",
+      "params": {
+        "algorithm": "2000",
+      },
+      "path": [
+        ">",
+        "left",
+        "deltaE",
+      ],
+      "right": LLVariable {
+        "id": 0,
+        "nodeType": "variable",
+        "path": [
+          ">",
+          "left",
+          "deltaE",
+          "right",
+        ],
+        "value": "b",
+      },
+      "type": "deltaE",
+    },
+    "nodeType": "predicate",
+    "path": [
+      ">",
+    ],
+    "right": LLNumber {
+      "id": 0,
+      "nodeType": "number",
+      "path": [
+        ">",
+        "right",
+      ],
+      "value": 10,
+    },
+    "threshold": undefined,
+    "type": ">",
+  },
+}
+`;
+
+exports[`Quantifier Test 1`] = `
+LLExpression {
+  "id": 0,
+  "nodeType": "expression",
+  "path": [],
+  "value": LLQuantifier {
+    "id": 0,
+    "input": LLVariable {
+      "id": 0,
+      "nodeType": "variable",
+      "path": [
+        "all",
+        "in",
+      ],
+      "value": "colors",
+    },
+    "nodeType": "quantifier",
+    "path": [
+      "all",
+    ],
+    "predicate": LLExpression {
+      "id": 0,
+      "nodeType": "expression",
+      "path": [
+        "all",
+        "predicate",
+      ],
+      "value": LLPredicate {
+        "id": 0,
+        "left": LLPairFunction {
+          "id": 0,
+          "left": LLVariable {
+            "id": 0,
+            "nodeType": "variable",
+            "path": [
+              "all",
+              "predicate",
+              ">",
+              "left",
+              "contrast",
+              "left",
+            ],
+            "value": "a",
+          },
+          "nodeType": "pairFunction",
+          "params": {
+            "algorithm": "WCAG21",
+          },
+          "path": [
+            "all",
+            "predicate",
+            ">",
+            "left",
+            "contrast",
+          ],
+          "right": LLVariable {
+            "id": 0,
+            "nodeType": "variable",
+            "path": [
+              "all",
+              "predicate",
+              ">",
+              "left",
+              "contrast",
+              "right",
+            ],
+            "value": "background",
+          },
+          "type": "contrast",
+        },
+        "nodeType": "predicate",
+        "path": [
+          "all",
+          "predicate",
+          ">",
+        ],
+        "right": LLNumber {
+          "id": 0,
+          "nodeType": "number",
+          "path": [
+            "all",
+            "predicate",
+            ">",
+            "right",
+          ],
+          "value": 3,
+        },
+        "threshold": undefined,
+        "type": ">",
+      },
+    },
+    "type": "all",
+    "varbs": [
+      "a",
+    ],
+    "where": LLExpression {
+      "id": 0,
+      "nodeType": "expression",
+      "path": [
+        "all",
+        "where",
+      ],
+      "value": LLBool {
+        "id": 0,
+        "nodeType": "bool",
+        "path": [
+          "all",
+          "where",
+        ],
+        "value": false,
+      },
+    },
+  },
+}
+`;

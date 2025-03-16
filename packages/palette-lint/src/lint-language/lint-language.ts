@@ -10,11 +10,15 @@ function isColor(x: any): x is Color {
   return x && typeof x === "object" && "toColorIO" in x;
 }
 
+function deepCopy(x: any): any {
+  return JSON.parse(JSON.stringify(x));
+}
+
 type RawValues = string | number | Color | string[] | number[] | Color[];
-class Environment {
+export class Environment {
   constructor(
-    private palette: Palette,
-    private variables: Record<string, LLVariable | LLValue | LLValueArray>,
+    public palette: Palette,
+    public variables: Record<string, LLVariable | LLValue | LLValueArray>,
     public options: OptionsConfig,
     public colorBlame: Record<number, boolean> = {}
   ) {}
@@ -144,6 +148,9 @@ const checkIfValsPresent = (node: Record<any, any>, keys: string[]) =>
 
 type ReturnVal<A> = { result: A; env: Environment };
 export class LLNode {
+  nodeType: string = "node";
+  path: (string | number)[] = [];
+  id: number = 0;
   evaluate(env: Environment): ReturnVal<any> {
     this.evalCheck(env);
     throw new Error("Invalid node");
@@ -160,11 +167,26 @@ export class LLNode {
   toString() {
     return "Node";
   }
+  copy() {
+    const node = new LLNode();
+    node.path = [...(this.path || [])];
+    return node;
+  }
+  generatePath(partialPath: (string | number)[] = []) {
+    this.path = [...partialPath];
+    return this;
+  }
 }
 
 export class LLExpression extends LLNode {
+  nodeType: string = "expression";
   constructor(
-    private value: LLConjunction | LLPredicate | LLQuantifier | LLBool
+    public value:
+      | LLConjunction
+      | LLPredicate
+      | LLQuantifier
+      | LLBool
+      | LLBoolFunction
   ) {
     super();
   }
@@ -174,7 +196,7 @@ export class LLExpression extends LLNode {
   }
   static tryToConstruct(node: any, options: OptionsConfig) {
     const value = tryTypes(
-      [LLConjunction, LLPredicate, LLQuantifier, LLBool],
+      [LLConjunction, LLBoolFunction, LLPredicate, LLQuantifier, LLBool],
       options
     )(node);
     if (!value) return false;
@@ -183,13 +205,24 @@ export class LLExpression extends LLNode {
   toString(): string {
     return this.value.toString();
   }
+  copy() {
+    const node = new LLExpression(this.value.copy());
+    node.path = [...(this.path || [])];
+    return node;
+  }
+  generatePath(partialPath: (string | number)[] = []) {
+    this.path = [...partialPath];
+    this.value.generatePath(partialPath);
+    return this;
+  }
 }
 
 const ConjunctionTypes = ["and", "or", "not", "none", "id"] as const;
 export class LLConjunction extends LLNode {
+  nodeType: string = "conjunction";
   constructor(
-    private type: (typeof ConjunctionTypes)[number],
-    private children: LLConjunction[]
+    public type: (typeof ConjunctionTypes)[number],
+    public children: LLConjunction[]
   ) {
     super();
   }
@@ -238,6 +271,14 @@ export class LLConjunction extends LLNode {
     if (childrenTypes.some((x) => x === false)) return false;
     return new LLConjunction(exprType, childrenTypes);
   }
+  copy() {
+    const node = new LLConjunction(
+      this.type,
+      this.children.map((x: any) => (!x.copy ? deepCopy(x) : x.copy()))
+    );
+    node.path = [...(this.path || [])];
+    return node;
+  }
   toString(): string {
     if (this.type === "id") return this.children[0].toString();
     if (this.type === "none") return "";
@@ -246,10 +287,16 @@ export class LLConjunction extends LLNode {
       .map((x) => `(${x.toString()})`)
       .join(` ${this.type.toUpperCase()} `)})`;
   }
+  generatePath(partialPath: (string | number)[] = []) {
+    this.path = [...partialPath, this.type];
+    this.children.map((x, idx) => x.generatePath([...this.path, idx]));
+    return this;
+  }
 }
 
 export class LLValueArray extends LLNode {
-  constructor(private children: LLValue[]) {
+  nodeType: string = "array";
+  constructor(public children: LLValue[]) {
     super();
   }
   evaluate(env: Environment): ReturnVal<RawValues[]> {
@@ -263,13 +310,24 @@ export class LLValueArray extends LLNode {
     if (childrenTypes.some((x) => x === false)) return false;
     return new LLValueArray(childrenTypes);
   }
+  copy() {
+    const node = new LLValueArray(this.children.map((x) => x.copy()));
+    node.path = [...(this.path || [])];
+    return node;
+  }
   toString(): string {
     return `[${this.children.map((x) => x.toString()).join(", ")}]`;
+  }
+  generatePath(partialPath: (string | number)[] = []) {
+    this.path = [...partialPath];
+    this.children.map((x, idx) => x.generatePath([...this.path, idx]));
+    return this;
   }
 }
 
 export class LLBool extends LLNode {
-  constructor(private value: boolean) {
+  nodeType: string = "bool";
+  constructor(public value: boolean) {
     super();
   }
   evaluate(env: Environment): ReturnVal<boolean> {
@@ -280,13 +338,19 @@ export class LLBool extends LLNode {
     if (typeof value !== "boolean") return false;
     return new LLBool(value);
   }
+  copy() {
+    const node = new LLBool(this.value);
+    node.path = [...(this.path || [])];
+    return node;
+  }
   toString(): string {
     return this.value ? "TRUE" : "FALSE";
   }
 }
 
 export class LLVariable extends LLNode {
-  constructor(private value: string) {
+  nodeType: string = "variable";
+  constructor(public value: string) {
     super();
   }
   evaluate(env: Environment): any {
@@ -298,15 +362,21 @@ export class LLVariable extends LLNode {
     if (typeof value !== "string") return false;
     return new LLVariable(value);
   }
+  copy() {
+    const node = new LLVariable(this.value);
+    node.path = [...(this.path || [])];
+    return node;
+  }
   toString(): string {
     return this.value;
   }
 }
 
 export class LLColor extends LLNode {
+  nodeType: string = "color";
   constructor(
-    private value: Color,
-    private constructorString: string
+    public value: Color,
+    public constructorString: string
   ) {
     super();
   }
@@ -326,6 +396,11 @@ export class LLColor extends LLNode {
     }
     return false;
   }
+  copy() {
+    const node = new LLColor(this.value.copy(), this.constructorString);
+    node.path = [...(this.path || [])];
+    return node;
+  }
   toString(): string {
     return this.constructorString;
     // return this.value.toHex();
@@ -333,7 +408,8 @@ export class LLColor extends LLNode {
 }
 
 export class LLNumber extends LLNode {
-  constructor(private value: number) {
+  nodeType: string = "number";
+  constructor(public value: number) {
     super();
   }
   evaluate(env: Environment): ReturnVal<number> {
@@ -344,6 +420,11 @@ export class LLNumber extends LLNode {
     if (typeof value !== "number") return false;
     return new LLNumber(value);
   }
+  copy() {
+    const node = new LLNumber(this.value);
+    node.path = [...(this.path || [])];
+    return node;
+  }
   toString(): string {
     return this.value.toString();
   }
@@ -351,10 +432,11 @@ export class LLNumber extends LLNode {
 
 const LLNumberOpTypes = ["+", "-", "*", "/", "//", "absDiff", "%"] as const;
 export class LLNumberOp extends LLNode {
+  nodeType: string = "numberOp";
   constructor(
-    private type: (typeof LLNumberOpTypes)[number],
-    private left: LLValue,
-    private right: LLValue
+    public type: (typeof LLNumberOpTypes)[number],
+    public left: LLValue,
+    public right: LLValue
   ) {
     super();
   }
@@ -393,6 +475,11 @@ export class LLNumberOp extends LLNode {
     }
     return new LLNumberOp(opType, leftType, rightType);
   }
+  copy() {
+    const node = new LLNumberOp(this.type, this.left.copy(), this.right.copy());
+    node.path = [...(this.path || [])];
+    return node;
+  }
   toString(): string {
     let left = this.left.toString();
     let right = this.right.toString();
@@ -407,6 +494,12 @@ export class LLNumberOp extends LLNode {
       // return `|${left} - ${right}|`;
     }
     return `${left} ${this.type} ${right}`;
+  }
+  generatePath(partialPath: (string | number)[] = []) {
+    this.path = [...partialPath, this.type];
+    this.left.generatePath([...this.path, "left"]);
+    this.right.generatePath([...this.path, "right"]);
+    return this;
   }
 }
 
@@ -432,10 +525,11 @@ function compareValues(
   switch (pred.type) {
     case "similar":
       let thresh = pred.threshold;
-      if (!thresh) throw new Error("Similarity threshold not found");
+      if (!thresh && thresh !== 0)
+        throw new Error("Similarity threshold not found");
       if (isColor) {
-        let localLeft = left as Color;
-        let localRight = right as Color;
+        let localLeft = Color.colorFromHex((left as Color).toHex(), "lab");
+        let localRight = Color.colorFromHex((right as Color).toHex(), "lab");
         const diff = localLeft.symmetricDeltaE(localRight, "2000");
         if (showValues) {
           console.log(
@@ -474,10 +568,11 @@ const getType = (x: any): string => {
     : typeof x;
 };
 export class LLPredicate extends LLNode {
+  nodeType: string = "predicate";
   constructor(
     public type: (typeof predicateTypes)[number],
-    private left: LLValue | LLValueArray | LLMap,
-    private right: LLValue | LLValueArray | LLMap,
+    public left: LLValue | LLValueArray | LLMap,
+    public right: LLValue | LLValueArray | LLMap,
     public threshold?: number
   ) {
     super();
@@ -532,6 +627,16 @@ export class LLPredicate extends LLNode {
     if (!leftType || !rightType) return false;
     return new LLPredicate(predicateType, leftType, rightType, threshold);
   }
+  copy() {
+    const node = new LLPredicate(
+      this.type,
+      this.left.copy(),
+      this.right.copy(),
+      this.threshold
+    );
+    node.path = [...(this.path || [])];
+    return node;
+  }
   toString(): string {
     let type = "" + this.type;
     const left = this.left.toString();
@@ -541,12 +646,20 @@ export class LLPredicate extends LLNode {
     }
     return `${left} ${type} ${right}`;
   }
+  generatePath(partialPath: (string | number)[] = []) {
+    this.path = [...partialPath, this.type];
+    this.left.generatePath([...this.path, "left"]);
+    this.right.generatePath([...this.path, "right"]);
+    return this;
+  }
 }
 
 export class LLValue extends LLNode {
+  nodeType: string = "value";
   constructor(
-    private value:
+    public value:
       | LLValueFunction
+      | LLBoolFunction
       | LLPairFunction
       | LLColor
       | LLNumber
@@ -563,6 +676,7 @@ export class LLValue extends LLNode {
   static tryToConstruct(node: any, options: OptionsConfig) {
     const types = [
       LLValueFunction,
+      LLBoolFunction,
       LLPairFunction,
       LLBool,
       LLColor,
@@ -575,8 +689,16 @@ export class LLValue extends LLNode {
     if (!value) return false;
     return value;
   }
+  copy(): LLValue {
+    return new LLValue(this.value.copy());
+  }
   toString(): string {
     return this.value.toString();
+  }
+  generatePath(partialPath: (string | number)[] = []) {
+    this.path = [...partialPath];
+    this.value.generatePath([...(this.path || [])]);
+    return this;
   }
 }
 
@@ -630,10 +752,11 @@ Object.entries(ColorSpaceDirectory).map(([colorSpace, space]) => {
 });
 
 export class LLValueFunction extends LLNode {
+  nodeType: string = "valueFunction";
   constructor(
-    private type: (typeof VFTypes)[number]["primaryKey"],
-    private input: LLColor | LLVariable,
-    private params: Record<string, string>
+    public type: (typeof VFTypes)[number]["primaryKey"],
+    public input: LLColor | LLVariable,
+    public params: Record<string, string>
   ) {
     super();
   }
@@ -665,10 +788,96 @@ export class LLValueFunction extends LLNode {
     const params = getParams(op, node);
     return new LLValueFunction(op.primaryKey, input, params);
   }
+  copy() {
+    const node = new LLValueFunction(this.type, this.input.copy(), this.params);
+    node.path = [...(this.path || [])];
+    return node;
+  }
   toString(): string {
     const params = Object.values(this.params).join(", ");
     const paramString = params.length ? `, ${params}` : "";
     return `${this.type}(${this.input.toString()}${paramString})`;
+  }
+  generatePath(partialPath: (string | number)[] = []) {
+    this.path = [...partialPath, this.type];
+    // todo this is wrong
+    this.input.generatePath([...this.path, "value"]);
+    return this;
+  }
+}
+
+const BoolFunctionTypes: {
+  primaryKey: string;
+  params: string[];
+  op: (val: Color, params: Params) => boolean;
+}[] = [
+  {
+    primaryKey: "inGamut",
+    params: [],
+    op: (val, _params) => val.inGamut(),
+  },
+  {
+    primaryKey: "isTag",
+    params: ["value"],
+    op: (val, params) => {
+      const tag = params.value.toLowerCase();
+      return (val.tags as string[]).some((x) => x.toLowerCase() === tag);
+    },
+  },
+];
+
+export class LLBoolFunction extends LLNode {
+  nodeType: string = "boolFunction";
+  constructor(
+    public type: (typeof BoolFunctionTypes)[number]["primaryKey"],
+    public input: LLColor | LLVariable,
+    public params: Record<string, string>
+  ) {
+    super();
+  }
+  evaluate(env: Environment) {
+    this.evalCheck(env);
+    const { input, params } = this;
+    // get the value of the input, such as by deref
+    const inputEval = input.evaluate(env).result;
+    if (!(typeof inputEval === "object" && isColor(inputEval))) {
+      throw new Error(
+        `Type error, was expecting a color, but got ${inputEval} in function ${this.type}`
+      );
+    }
+    const op = BoolFunctionTypes.find((x) => x.primaryKey === this.type);
+    if (!op) throw new Error("Invalid type");
+    const result = op.op(inputEval, params);
+    if (result === undefined) {
+      throw new Error("Invalid result");
+    }
+    return { result, env };
+  }
+  static tryToConstruct(node: any, options: OptionsConfig) {
+    const inputTypes = [LLAggregate, LLColor, LLVariable];
+    // find the appropriate type and do a simple type check
+    const op = getOp(BoolFunctionTypes)(node);
+    if (!op) return false;
+    const input = tryTypes(inputTypes, options)(node[op.primaryKey]);
+    if (!input) return false;
+    const params = getParams(op, node);
+    return new LLBoolFunction(op.primaryKey, input, params);
+  }
+  copy() {
+    const node = new LLBoolFunction(this.type, this.input.copy(), this.params);
+    node.path = [...(this.path || [])];
+    return node;
+  }
+  toString(): string {
+    const params = Object.values(this.params).join(", ");
+    const paramString = params.length ? `, ${params}` : "";
+    return `${this.type}(${this.input.toString()}${paramString})`;
+  }
+  generatePath(partialPath: (string | number)[] = []) {
+    this.path = [...partialPath, this.type];
+    // todo this is wrong
+    this.input.generatePath([...this.path, "value"]);
+    return this;
   }
 }
 
@@ -710,30 +919,41 @@ const LLPairFunctionTypes: {
   {
     primaryKey: "dist",
     params: ["space"] as string[],
-    op: (valA, valB, params) => valA.distance(valB, params.space as any),
+    op: (valA, valB, params) => {
+      const hexA = Color.colorFromHex(valA.toHex(), "lab");
+      const hexB = Color.colorFromHex(valB.toHex(), "lab");
+      return hexA.distance(hexB, params.space as any);
+    },
   },
   {
     primaryKey: "deltaE",
     params: ["algorithm"] as string[],
-    op: (valA, valB, params) =>
-      valA.symmetricDeltaE(valB, params.algorithm as any),
+    op: (valA, valB, params) => {
+      const hexA = Color.colorFromHex(valA.toHex(), "lab");
+      const hexB = Color.colorFromHex(valB.toHex(), "lab");
+      return hexA.symmetricDeltaE(hexB, params.algorithm as any);
+    },
   },
   {
     primaryKey: "contrast",
     params: ["algorithm"] as string[],
     op: (valA, valB, params) => {
-      const a = valA.toColorIO();
-      const b = valB.toColorIO();
-      return Math.abs(a.contrast(b, params.algorithm as any));
+      // const a = valA.toColorIO();
+      // const b = valB.toColorIO();
+      const hexA = Color.colorFromHex(valA.toHex(), "lab");
+      const hexB = Color.colorFromHex(valB.toHex(), "lab");
+      return Math.abs(hexA.contrast(hexB, params.algorithm as any));
+      // return Math.abs(a.contrast(b, params.algorithm as any));
     },
   },
 ];
 export class LLPairFunction extends LLNode {
+  nodeType: string = "pairFunction";
   constructor(
-    private type: (typeof LLPairFunctionTypes)[number]["primaryKey"],
-    private left: LLColor | LLVariable,
-    private right: LLColor | LLVariable,
-    private params: Record<string, string>
+    public type: (typeof LLPairFunctionTypes)[number]["primaryKey"],
+    public left: LLColor | LLVariable,
+    public right: LLColor | LLVariable,
+    public params: Record<string, string>
   ) {
     super();
   }
@@ -775,6 +995,22 @@ export class LLPairFunction extends LLNode {
       this.type
     }(${this.left.toString()}, ${this.right.toString()}${paramString})`;
   }
+  copy() {
+    const node = new LLPairFunction(
+      this.type,
+      this.left.copy(),
+      this.right.copy(),
+      this.params
+    );
+    node.path = [...(this.path || [])];
+    return node;
+  }
+  generatePath(partialPath: (string | number)[] = []) {
+    this.path = [...partialPath, this.type];
+    this.left.generatePath([...this.path, "left"]);
+    this.right.generatePath([...this.path, "right"]);
+    return this;
+  }
 }
 
 let f = (a: any[], b: any[]) =>
@@ -785,12 +1021,13 @@ let cartesian = (a: any[], b: any[], ...c: any[]): any[] =>
 const QuantifierTypes = ["exist", "all"] as const;
 const QuantifierTypeErrors = [{ wrong: "exists", right: "exist" }] as const;
 export class LLQuantifier extends LLNode {
+  nodeType: string = "quantifier";
   constructor(
-    private type: (typeof QuantifierTypes)[number],
-    private input: LLValueArray | LLVariable | LLMap,
-    private predicate: LLPredicate,
-    private varbs: string[],
-    private where?: LLPredicate | LLValueFunction
+    public type: (typeof QuantifierTypes)[number],
+    public input: LLValueArray | LLVariable | LLMap,
+    public predicate: LLPredicate,
+    public varbs: string[],
+    public where?: LLExpression
   ) {
     super();
   }
@@ -812,14 +1049,14 @@ export class LLQuantifier extends LLNode {
     let blameIndices = new Set<number>([]);
     let topEnv = env.copy();
     const mappedEvaluations = carts
-      .map((combo: any) => {
+      .map((combo: number[]) => {
         const varbIndex = this.varbs.map((varb, idx) => {
+          // i think the bug relates to this line, something related to the generate index variables...
           return [varb, inputData[combo[idx]]];
         });
         const newEnv = varbIndex.reduce((acc, [varb, [index, x]]) => {
           return acc.set(varb, x).set(`index(${varb})`, idxType(index + 1));
         }, env);
-        ("");
         if (this.where && !this.where.evaluate(newEnv).result) {
           return "skip";
         }
@@ -880,7 +1117,16 @@ export class LLQuantifier extends LLNode {
       inputType,
       predicateType,
       varb ? [varb] : varbs,
-      where && tryTypes([LLPredicate, LLValueFunction], options)(where)
+      (where || where == false) && tryTypes([LLExpression], options)(where)
+    );
+  }
+  copy(): LLQuantifier {
+    return new LLQuantifier(
+      this.type,
+      this.input.copy(),
+      this.predicate.copy(),
+      this.varbs,
+      this.where && this.where?.copy()
     );
   }
   toString(): string {
@@ -898,6 +1144,15 @@ export class LLQuantifier extends LLNode {
     const pred = this.predicate.toString();
     return `${type} ${varbs} IN ${target}${where} SUCH THAT ${pred}`;
   }
+  generatePath(partialPath: (string | number)[] = []) {
+    this.path = [...partialPath, this.type];
+    this.input.generatePath([...this.path, "in"]);
+    this.predicate.generatePath([...this.path, "predicate"]);
+    if (this.where) {
+      this.where.generatePath([...this.path, "where"]);
+    }
+    return this;
+  }
 }
 
 const reduceTypes = [
@@ -913,9 +1168,10 @@ const reduceTypes = [
   "extent",
 ] as const;
 export class LLAggregate extends LLNode {
+  nodeType: string = "aggregate";
   constructor(
-    private type: (typeof reduceTypes)[number],
-    private children: LLValueArray | LLVariable | LLMap
+    public type: (typeof reduceTypes)[number],
+    public children: LLValueArray | LLVariable | LLMap
   ) {
     super();
   }
@@ -979,8 +1235,16 @@ export class LLAggregate extends LLNode {
     }
     return new LLAggregate(reduceType, childType);
   }
+  copy(): LLAggregate {
+    return new LLAggregate(this.type, this.children.copy());
+  }
   toString(): string {
     return `${this.type}(${this.children.toString()})`;
+  }
+  generatePath(partialPath: (string | number)[] = []) {
+    this.path = [...partialPath, this.type];
+    this.children.generatePath([...(this.path || [])]);
+    return this;
   }
 }
 
@@ -988,11 +1252,12 @@ const mapTypes = ["map", "filter", "sort", "reverse", "speed"] as const;
 // example syntax
 // {map: colors, func: {cvdSim: {type: "protanomaly"}}, varb: "x"}
 export class LLMap extends LLNode {
+  nodeType: string = "map";
   constructor(
-    private type: (typeof mapTypes)[number],
-    private children: LLValueArray | LLVariable | LLMap,
-    private func: LLValueFunction | LLPairFunction | LLNumberOp,
-    private varb: string
+    public type: (typeof mapTypes)[number],
+    public children: LLValueArray | LLVariable | LLMap,
+    public func: LLValueFunction | LLPairFunction | LLNumberOp,
+    public varb: string
   ) {
     super();
   }
@@ -1040,7 +1305,6 @@ export class LLMap extends LLNode {
         const allColors = children.every((x) => isColor(x));
         if (!allNumbers && !allColors) {
           const types = children.map((x) => x);
-          console.log(children);
           throw new Error(
             `Type error, speed must receive all numbers or all colors, got ${types}`
           );
@@ -1060,7 +1324,7 @@ export class LLMap extends LLNode {
         return { result: speed, env };
     }
   }
-  static tryToConstruct(node: any, options: OptionsConfig) {
+  static tryToConstruct(node: any, options: OptionsConfig): false | LLMap {
     const op = mapTypes.find((x) => node[x]);
     if (!op) return false;
     const childType =
@@ -1088,12 +1352,28 @@ export class LLMap extends LLNode {
     }
     return new LLMap(op, childType, func, varb);
   }
+  copy(): LLMap {
+    return new LLMap(
+      this.type,
+      this.children.copy(),
+      typeof this.func === "string" ? this.func : this.func.copy(),
+      this.varb
+    );
+  }
   toString(): string {
     const type = this.type;
     const funcStr = this.func.toString();
     const func =
       this.varb != " " && funcStr != " " ? `, ${this.varb} => ${funcStr}` : "";
     return `${type}(${this.children.toString()}${func})`;
+  }
+  generatePath(partialPath: (string | number)[] = []) {
+    this.path = [...partialPath, this.type];
+    this.children.generatePath([...(this.path || [])]);
+    if (this.func && typeof this.func !== "string") {
+      this.func.generatePath([...this.path, "func"]);
+    }
+    return this;
   }
 }
 
@@ -1130,6 +1410,10 @@ export function LLEval(
   return { result, blame };
 }
 
+/**
+ * Pretty print a Lint Program
+ * root: the ast node, should generate an ast using generateAST to get such a node
+ */
 export function prettyPrintLL(
   root: any,
   options: Partial<typeof DEFAULT_OPTIONS> = {}
@@ -1142,3 +1426,30 @@ export function prettyPrintLL(
   const ast = parseToAST({ id: [root] }, opts);
   return ast.toString();
 }
+
+export function GenerateAST(
+  root: LintProgram,
+  options: Partial<typeof DEFAULT_OPTIONS> = {}
+) {
+  return parseToAST({ id: [root] }, { ...DEFAULT_OPTIONS, ...options });
+}
+
+export const LLTypes = {
+  LLAggregate,
+  LLBool,
+  LLBoolFunction,
+  LLColor,
+  LLConjunction,
+  LLExpression,
+  LLMap,
+  LLNode,
+  LLNumber,
+  LLNumberOp,
+  LLPairFunction,
+  LLPredicate,
+  LLQuantifier,
+  LLValue,
+  LLValueArray,
+  LLValueFunction,
+  LLVariable,
+};

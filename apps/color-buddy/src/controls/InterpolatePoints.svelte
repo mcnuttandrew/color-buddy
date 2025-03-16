@@ -33,8 +33,16 @@
       const spaceOverWrite = { rgb: "srgb" } as any;
       const space = spaceOverWrite[colorSpace] || colorSpace;
       // const space = spaceOverWrite[pointA.spaceName] || pointA.spaceName;
-      const [x1, x2, x3] = pointA.toColorIO().to(space).coords;
-      const [y1, y2, y3] = pointB.toColorIO().to(space).coords;
+      const [x1, x2, x3] = pointA.toColorIO().to(space).coords as [
+        number,
+        number,
+        number,
+      ];
+      const [y1, y2, y3] = pointB.toColorIO().to(space).coords as [
+        number,
+        number,
+        number,
+      ];
       const coords = [
         x1 * (1 - t) + y1 * t,
         x2 * (1 - t) + y2 * t,

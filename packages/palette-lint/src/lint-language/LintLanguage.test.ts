@@ -906,3 +906,17 @@ test("LintLanguage Name Check", () => {
   expect(result.result).toBe(true);
   expect(result.blame).toStrictEqual([]);
 });
+
+test("LintLanguage Similarity", () => {
+  const program = {
+    exist: {
+      in: "colors",
+      varb: "a",
+      predicate: { similar: { left: "a", right: "#fff", threshold: 10 } },
+    },
+  };
+  const pal = toPal(["#feed72", "#f8f4d2", "#fff"]);
+  const result = LLEval(program, pal);
+  expect(result.result).toBe(true);
+  expect(result.blame).toStrictEqual([]);
+});

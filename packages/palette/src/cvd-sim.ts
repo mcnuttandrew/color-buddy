@@ -143,10 +143,15 @@ export default function simulate_cvd(
   const spaceName = "srgb-linear";
   const transformedColor = colorIOcolor.to(spaceName);
   const coords = transformedColor.coords;
-  const newCoords = dl_simulate_cvd(deficiency, coords);
+  const newCoords = dl_simulate_cvd(
+    deficiency,
+    coords as [number, number, number]
+  );
   const newColorIO = new ColorIO(spaceName, newCoords).to(color.spaceName);
 
-  const result = color.fromChannels(newColorIO.coords);
+  const result = color.fromChannels(
+    newColorIO.coords as [number, number, number]
+  );
   result.tags = color.tags;
   simulationCache.set(key, result);
   return result;

@@ -8,12 +8,7 @@
   import Nav from "../components/Nav.svelte";
   import QuestionIcon from "virtual:icons/fa6-solid/circle-question";
   import ChevDown from "virtual:icons/fa6-solid/chevron-down";
-  const aiModes = [
-    // "google",
-    "openai",
-    "anthropic",
-    "none",
-  ] as string[];
+  const aiModes = ["google", "openai", "anthropic", "none"] as string[];
 
   const isMac = navigator.userAgent.indexOf("Mac OS X") !== -1;
   const metaKey = isMac ? "⌘" : "ctrl";

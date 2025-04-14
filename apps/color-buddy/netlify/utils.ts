@@ -1,8 +1,6 @@
 import OpenAI from "openai";
-// const { GoogleGenerativeAI } = require("@google/generative-ai");
 import { GoogleGenerativeAI } from "@google/generative-ai";
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_KEY as string);
-const model = genAI.getGenerativeModel({ model: "gemini-pro" });
 import Anthropic from "@anthropic-ai/sdk";
 
 const openai = new OpenAI({
@@ -23,22 +21,21 @@ export function errorResponse(callback, err) {
 }
 
 const engines = {
-  google: (prompt: string) => model.generateContent(prompt),
+  google: (prompt: string) =>
+    genAI
+      .getGenerativeModel({ model: "gemini-1.5-flash" })
+      .generateContent(prompt),
   openai: (prompt: string) =>
     openai.chat.completions.create({
       messages: [{ role: "user", content: prompt }],
-      // model: "gpt-3.5-turbo",
       n: 1,
       temperature: 0,
       model: "gpt-4o",
       // model: "gpt-4",
-      // model: "gpt-4-turbo-preview",
     }),
   anthropic: (prompt: string) =>
     anthropic.messages.create({
-      // model: "claude-3-opus-20240229",
-      model: "claude-3-haiku-20240307",
-      // model: "claude-3-sonnet-20240229",
+      model: "claude-3-5-haiku-latest",
       max_tokens: 256,
       temperature: 0,
       messages: [{ role: "user", content: prompt }],

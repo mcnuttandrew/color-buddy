@@ -16,6 +16,7 @@
   let processingState = "processing" as "ready" | "processing";
   $: executionLog = getExecutionLog(lint, pal);
   let error: any;
+  $: attempts = 0;
   function getExecutionLog(lint: string, pal: Palette) {
     processingState = "processing";
     try {
@@ -25,11 +26,19 @@
       const result = smallStepEvaluator(rewrittenAST, {}, pal, true);
       error = null;
       processingState = "ready";
+      attempts = 0;
       return result;
-    } catch (e) {
+    } catch (e: any) {
       console.error(e);
       error = e;
       processingState = "ready";
+      if (e.message.includes("Too many iterations")) {
+        // If the error is due to too many iterations, we can try to extend the maximum
+        attempts += 1;
+        if (attempts < 3) {
+          return getExecutionLog(lint, pal);
+        }
+      }
     }
   }
 </script>

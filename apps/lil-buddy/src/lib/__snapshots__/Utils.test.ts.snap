@@ -1,0 +1,17 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`modifyLint 1`] = `"{"all":{"predicate":{"==":{"right":true,"left":{"inGamut":"a"}}}},"undefined":"asd"}"`;
+
+exports[`modifyLint 2`] = `"{"1":"asd","all":{"predicate":{"==":{"right":true,"left":{"inGamut":"a"}}}}}"`;
+
+exports[`modifyLint 3`] = `"{"asd":{"predicate":{"==":{"right":true,"left":{"inGamut":"a"}}}}}"`;
+
+exports[`modifyLint 4`] = `"{"all":{"asd":{"==":{"right":true,"left":{"inGamut":"a"}}}}}"`;
+
+exports[`modifyLint 5`] = `"{"all":{"predicate":{"asd":{"right":true,"left":{"inGamut":"a"}}}}}"`;
+
+exports[`modifyLint 6`] = `"{"all":{"predicate":{"==":{"right":true,"asd":{"inGamut":"a"}}}}}"`;
+
+exports[`modifyLint delete 1`] = `"{"all":{"predicate":{"==":{"right":true}}}}"`;
+
+exports[`modifyLint.non obj swap key case 1`] = `"{"all":{"predicate":{"==":{"right":true,"left":{"asd":"a"}}}}}"`;

@@ -317,11 +317,18 @@ export function modifyLint(
 ) {
   const lintObj = JSON.parse(lint);
   let current = lintObj;
+  const currentSequence = [current];
   const usedPath = path.slice(0, -1);
   const quantifiers = new Set(["all", "exist"]) as Set<string | number>;
-  for (let idx = 0; idx < usedPath.length; idx++) {
+  const specialKeys = new Set([MODIFY_LINT_DELETE, MODIFY_LINT_TARGET_KEY]);
+  for (
+    let idx = 0;
+    idx < usedPath.filter((x) => !specialKeys.has(x as any)).length;
+    idx++
+  ) {
     const key = usedPath[idx];
     current = current[key];
+    currentSequence.push(current);
 
     const nextKey = usedPath[idx + 1];
     // this is a work around to deal with the unfolding of the quantifiers
@@ -334,20 +341,35 @@ export function modifyLint(
     }
   }
   // for the case where the path is to a nested object, replace the key with the new key
-  if (typeof current[path[path.length - 1]] === "object") {
+  let last = path[path.length - 1];
+  console.log(last, current[last]);
+  if (typeof current[last] === "object") {
     const newKey = newValue;
-    const oldKey = path[path.length - 1];
+    let oldKey = last;
     const newObj = {} as any;
     for (const key of Object.keys(current[oldKey])) {
       newObj[key] = current[oldKey][key];
     }
     delete current[oldKey];
     current[newKey] = newObj;
+  } else if (last === MODIFY_LINT_TARGET_KEY) {
+    const newKey = newValue;
+    let oldKey = path[path.length - 2];
+    const newObj = current as any;
+    current = currentSequence[currentSequence.length - 2];
+    delete current[oldKey];
+    current[newKey] = newObj;
+  } else if (newValue === MODIFY_LINT_DELETE) {
+    let oldKey = path[path.length - 2];
+    current = currentSequence[currentSequence.length - 2];
+    delete current[oldKey];
   } else {
-    current[path[path.length - 1]] = newValue;
+    current[last] = newValue;
   }
   return JSON.stringify(lintObj);
 }
+export const MODIFY_LINT_TARGET_KEY = "TARGET KEY !! KEY TARGET";
+export const MODIFY_LINT_DELETE = "TARGET KEY !! DELETE TARGET";
 
 export function getFocusedTestPal(
   lint: LintProgram | undefined,
@@ -370,4 +392,16 @@ export function doLint(
   const result = runLint(lint, {}, pal).result;
   const blame = result.kind === "success" ? result?.blameData : [];
   return { result, pal, blame };
+}
+
+export function toThreeDigit(num: number): string {
+  let str = (Math.round(num * 1000) / 1000).toString();
+  const [left, right] = str.split(".");
+  if (right && right.length < 3) {
+    str += "0".repeat(3 - right.length);
+  }
+  if (left.length < 3) {
+    str = " ".repeat(3 - left.length) + str;
+  }
+  return str;
 }

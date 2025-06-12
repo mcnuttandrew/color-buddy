@@ -37,69 +37,76 @@
 </script>
 
 <div class="flex h-full overflow-hidden">
-  <div class="min-w-72 max-w-72 w-full overflow-auto bg-stone-100 px-2">
-    <div class="font-bold">Current Lint</div>
-    <LintPicker />
-    {#if lint}
-      <div class="flex flex-wrap">
-        <LintMeta {lint} />
-        {#if testPal}
-          <ModifyLint currentProgram={lint.program} pal={testPal} />
-        {/if}
-        <ResetLint />
-      </div>
-    {/if}
-    <div class="font-bold">Palette</div>
-    {#if $store.focusedTest && lint}
+  <!-- <div class="min-w-72 max-w-72 w-full overflow-auto bg-stone-100 px-2"> -->
+  <!-- <div class="font-bold">Current Lint</div> -->
+
+  <!-- {#if $store.focusedTest && lint}
       <FocusedTest {lint} />
-    {/if}
-  </div>
+    {/if} -->
+  <!-- </div> -->
   <div class="w-full">
     <Splitpanes horizontal={true}>
       <Pane class="bg-white w-full ">
         {#if lint}
           <LintTests {lint} />
         {/if}
-        <div
-          class="w-[calc(100%-300px)] h-[calc(100%-100px)] overflow-auto p-4 mb-64 min-w-full"
-        >
-          {#if testPal && program}
-            <VisualSummarizer lint={program} pal={testPal} />
-          {:else}
-            <div class="text-red-500">No palette selected</div>
-          {/if}
+        <div class="flex h-full">
+          <div class="bg-stone-100 py-1 px-4 flex flex-col w-80">
+            {#if $store.focusedTest && lint}
+              <div class="font-bold">Palette</div>
+              <FocusedTest {lint} />
+            {/if}
+          </div>
+          <div
+            class="w-[calc(100%-300px)] h-[calc(100%-100px)] overflow-auto p-4 mb-64 min-w-[calc(100%-300px)]"
+          >
+            {#if testPal && program}
+              <VisualSummarizer lint={program} pal={testPal} />
+            {:else}
+              <div class="text-red-500">No palette selected</div>
+            {/if}
+          </div>
         </div>
       </Pane>
       <Pane class="bg-white flex flex-col" minSize={20}>
-        <div class="w-full bg-stone-100 font-bold">Lint Customization</div>
+        <div class="w-full bg-stone-100 py-1 px-4 flex">
+          {#if testPal && lint}
+            <ModifyLint currentProgram={lint.program} pal={testPal} />
+          {/if}
+          <button
+            class={`${buttonStyle} mx-2`}
+            on:click={() => {
+              store.setCurrentLintProgram(JSONStringify(program) || "");
+            }}
+          >
+            Tidy 🧹
+          </button>
+          <ResetLint />
+          {#if lint}
+            <div class="flex flex-wrap mx-2">
+              <LintMeta {lint} />
+            </div>
+          {/if}
+        </div>
         {#if lint}
           <div class="flex flex-col px-4">
             <div class="flex">
-              <button
-                class={buttonStyle}
-                on:click={() => {
-                  store.setCurrentLintProgram(JSONStringify(program) || "");
-                }}
-              >
-                Tidy 🧹
-              </button>
-
-              <Nav
+              <!-- <Nav
                 tabs={["graph-summary", "text-program"]}
                 isTabSelected={(x) => x === $store.visualSummary}
                 selectTab={(x) => store.setVisualSummary(x)}
-              />
+              /> -->
             </div>
 
             {#if $store.visualSummary === "graph-summary"}
               <GraphSummary {lint} />
             {:else}
-              <div class="flex justify-between">
+              <!-- <div class="flex justify-between">
                 <div class="font-bold">Lint Program</div>
               </div>
               <div>
                 {generatePrettyText(program)}
-              </div>
+              </div> -->
               <MonacoEditor
                 value={program}
                 onChange={(x) => {

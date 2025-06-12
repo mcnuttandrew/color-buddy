@@ -8,6 +8,7 @@
   import LintMeta from "./LintMeta.svelte";
   import LintPicker from "./LintPicker.svelte";
   import VisualSummarizer from "./VisualSummarizer.svelte";
+  import LintTestsAlt from "./LintTestsAlt.svelte";
 
   import { JSONStringify, getFocusedTestPal } from "../lib/utils";
 
@@ -38,7 +39,6 @@
 
 <div class="flex h-full overflow-hidden">
   <!-- <div class="min-w-72 max-w-72 w-full overflow-auto bg-stone-100 px-2"> -->
-  <!-- <div class="font-bold">Current Lint</div> -->
 
   <!-- {#if $store.focusedTest && lint}
       <FocusedTest {lint} />
@@ -46,27 +46,34 @@
   <!-- </div> -->
   <div class="w-full">
     <Splitpanes horizontal={true}>
-      <Pane class="bg-white w-full ">
-        {#if lint}
+      <Pane class="bg-white w-full flex">
+        <!-- <div class="flex h-full"> -->
+        <div class="bg-stone-100 py-1 px-4 flex flex-col w-80">
+          <div class="flex justify-between">
+            <div class="font-bold">Current Lint</div>
+            <LintPicker />
+          </div>
+          <div class="flex w-full justify-between">
+            <div class="font-bold">Palette</div>
+            {#if lint}<LintTestsAlt {lint} />{/if}
+          </div>
+          <!-- {#if lint}
           <LintTests {lint} />
-        {/if}
-        <div class="flex h-full">
-          <div class="bg-stone-100 py-1 px-4 flex flex-col w-80">
-            {#if $store.focusedTest && lint}
-              <div class="font-bold">Palette</div>
-              <FocusedTest {lint} />
-            {/if}
-          </div>
-          <div
-            class="w-[calc(100%-300px)] h-[calc(100%-100px)] overflow-auto p-4 mb-64 min-w-[calc(100%-300px)]"
-          >
-            {#if testPal && program}
-              <VisualSummarizer lint={program} pal={testPal} />
-            {:else}
-              <div class="text-red-500">No palette selected</div>
-            {/if}
-          </div>
+        {/if} -->
+          {#if $store.focusedTest && lint}
+            <FocusedTest {lint} />
+          {/if}
         </div>
+        <div
+          class="w-[calc(100%-300px)] h-[calc(100%-100px)] overflow-auto p-4 mb-64 min-w-[calc(100%-300px)]"
+        >
+          {#if testPal && program}
+            <VisualSummarizer lint={program} pal={testPal} />
+          {:else}
+            <div class="text-red-500">No palette selected</div>
+          {/if}
+        </div>
+        <!-- </div> -->
       </Pane>
       <Pane class="bg-white flex flex-col" minSize={20}>
         <div class="w-full bg-stone-100 py-1 px-4 flex">

@@ -101,6 +101,12 @@
       class:text-red-500={!lintResult.passes}
     >
       This lint {lintResult.passes ? "passes" : "fails"} for the current palette
+      {#if $store.focusedTest && $store.focusedTest.type === "failing" && !lintResult.passes}
+        (this is what you want for this test)
+      {/if}
+      {#if $store.focusedTest && $store.focusedTest.type === "passing" && !lintResult.passes}
+        (this is not what you want for this test)
+      {/if}
     </div>
   {:else if errors}
     <div class="text-red-500">

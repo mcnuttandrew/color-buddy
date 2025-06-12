@@ -6,6 +6,8 @@
   import { doLint } from "../lib/utils";
   import LintPicker from "./LintPicker.svelte";
   import Nav from "../components/Nav.svelte";
+  import Tooltip from "../components/Tooltip.svelte";
+  import { buttonStyle } from "../lib/styles";
   export let lint: LintProgram;
 
   $: passingTestResults = (lint?.expectedPassingTests || []).map((x) =>
@@ -45,27 +47,33 @@
   ).length;
 </script>
 
-<div class="">
-  <div class=" w-full bg-stone-100 flex px-2 py-1">
-    <div class="font-bold">Tests Expected to be</div>
-    <Nav
-      tabs={["passing", "failing"]}
-      isTabSelected={(x) => x === showWhichTests}
-      selectTab={(x) => {
-        showWhichTests = x;
-      }}
-      formatter={(x) => {
-        const tests = x === "passing" ? passingTestResults : failingTestResults;
-        const totalTests = tests.length;
-        const numCorrect = x === "passing" ? numPassing : numFailing;
-        return ` ${x} (${numCorrect}/${totalTests})`;
-      }}
-    />
+<Tooltip>
+  <div slot="content" class="">
+    <div class=" w-full flex px-2 py-1">
+      <div class="font-bold">Tests Expected to be</div>
+      <Nav
+        tabs={["passing", "failing"]}
+        isTabSelected={(x) => x === showWhichTests}
+        selectTab={(x) => {
+          showWhichTests = x;
+        }}
+        formatter={(x) => {
+          const tests =
+            x === "passing" ? passingTestResults : failingTestResults;
+          const totalTests = tests.length;
+          const numCorrect = x === "passing" ? numPassing : numFailing;
+          return ` ${x} (${numCorrect}/${totalTests})`;
+        }}
+      />
+    </div>
+    <div class=" flex items-center overflow-auto">
+      {#each tests as test, idx}
+        <LintTest {idx} testResult={test} type={showWhichTests} />
+      {/each}
+      <AddTest {lint} addNewTest={addTest(showWhichTests === "passing")} />
+    </div>
   </div>
-  <div class="bg-stone-100 flex items-center overflow-auto">
-    {#each tests as test, idx}
-      <LintTest {idx} testResult={test} type={showWhichTests} />
-    {/each}
-    <AddTest {lint} addNewTest={addTest(showWhichTests === "passing")} />
-  </div>
-</div>
+  <button slot="target" let:toggle on:click={toggle} class={buttonStyle}>
+    Change Test Case
+  </button>
+</Tooltip>

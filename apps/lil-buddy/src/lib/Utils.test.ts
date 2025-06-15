@@ -38,7 +38,7 @@ test("modifyLint.non obj swap key case", () => {
   ).toMatchSnapshot();
 });
 
-test.only("modifyLint delete", () => {
+test("modifyLint delete", () => {
   expect(
     modifyLint(
       ["all", "predicate", "==", "left", "inGamut"],

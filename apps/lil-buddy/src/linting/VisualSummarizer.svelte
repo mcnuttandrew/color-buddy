@@ -27,7 +27,6 @@
       const result = pruneUnfinishedNodes(
         smallStepEvaluator(rewrittenAST, {}, pal, true)
       );
-      console.log(result);
       error = null;
       processingState = "ready";
       attempts = 0;

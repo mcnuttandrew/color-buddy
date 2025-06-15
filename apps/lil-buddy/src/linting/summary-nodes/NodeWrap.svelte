@@ -1,8 +1,11 @@
 <script lang="ts">
+  import type { Palette } from "color-buddy-palette";
   import Tooltip from "../../components/Tooltip.svelte";
   import { Color } from "color-buddy-palette";
   import { buttonStyle } from "../../lib/styles";
+  import DispatchNode from "./DispatchNode.svelte";
   import ColorChannelPicker from "../../components/ColorChannelPicker.svelte";
+  export let pal: Palette;
   export let node: any | null;
   export let options:
     | string[]
@@ -32,6 +35,7 @@
   $: value = specificValue || node?.value || null;
   let localSpace = "lab" as any;
   $: isCalculated = !path || path.length < 1;
+  $: whereSeq = node?.results?.at(0)?.whereExplanation || [];
 </script>
 
 <Tooltip>
@@ -126,6 +130,24 @@
     <div>
       {comment}
     </div>
+    {#if whereSeq.length}
+      <div class="flex">
+        {#each whereSeq || [] as log, idx}
+          <div class="flex items-center">
+            <DispatchNode
+              node={log}
+              {pal}
+              inducedVariables={{}}
+              modifyLint={(path, newVal) => {}}
+            />
+            {#if whereSeq && idx !== whereSeq.length - 1}
+              <div class="">→</div>
+            {/if}
+          </div>
+        {/each}
+      </div>
+    {/if}
+    <!-- <DispatchNode /> -->
     <!-- {#if !isCalculated}
       <Tooltip>
         <div slot="content">asd</div>

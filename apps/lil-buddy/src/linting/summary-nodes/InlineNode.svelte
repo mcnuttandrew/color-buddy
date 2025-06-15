@@ -42,6 +42,7 @@
         <NodeWrap
           options={["==", "!=", "<", ">", "similar"]}
           path={node.path}
+          {pal}
           {node}
           modifyLint={(path, val) => {
             if (val === "similar") {
@@ -105,6 +106,7 @@
         path={node.path}
         {node}
         {modifyLint}
+        {pal}
         classes="px-2"
       >
         {node.type === "similar" ? "≈" : node.type}
@@ -117,7 +119,7 @@
       />
     </div>
   {:else if node.nodeType === "number"}
-    <NodeWrap options="number" path={node.path} {node} {modifyLint}>
+    <NodeWrap options="number" path={node.path} {node} {modifyLint} {pal}>
       {toThreeDigit(node.value)}
     </NodeWrap>
   {:else if node.nodeType === "variable"}
@@ -177,6 +179,7 @@
         {modifyLint}
         path={node.path}
         {node}
+        {pal}
         options={["dist", "deltaE", "contrast"]}
       >
         {node.type}
@@ -200,6 +203,7 @@
       }}
       path={node.path}
       {node}
+      {pal}
       options={[
         "cvdSim",
         "name",
@@ -246,11 +250,11 @@
   {:else if node.nodeType === "color"}
     <!-- color names are parsed as colors unfortunately, so this is a hack -->
     {#if node.value.channels["L"] === 0 && node.value.channels["a"] === 0 && node.value.channels["b"] === 0 && !new Set( ["#000", "#000000"] ).has(node.constructorString)}
-      <NodeWrap path={node.path} {node} {modifyLint} options={"string"}>
+      <NodeWrap path={node.path} {node} {modifyLint} options={"string"} {pal}>
         {node.constructorString}
       </NodeWrap>
     {:else}
-      <NodeWrap {node} {modifyLint} options={"color"} path={node.path}>
+      <NodeWrap {node} {modifyLint} options={"color"} path={node.path} {pal}>
         <div class="h-5 w-5 rounded-full" style={`background: ${node.value}`} />
       </NodeWrap>
     {/if}
@@ -356,6 +360,7 @@
     <NodeWrap
       path={node.path}
       {node}
+      {pal}
       {modifyLint}
       options={"boolean"}
       classes="px-2 text-sm {node.value ? 'bg-green-300' : 'bg-red-300'}"
@@ -366,6 +371,7 @@
     <NodeWrap
       path={null}
       {node}
+      {pal}
       {modifyLint}
       options={"boolean"}
       classes="px-2 text-sm {node ? 'bg-green-300' : 'bg-red-300'}"

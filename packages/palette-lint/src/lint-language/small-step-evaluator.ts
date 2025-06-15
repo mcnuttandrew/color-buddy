@@ -403,7 +403,21 @@ function traverseAndMaybeExecute(
           i
         );
         if (!whereResult) {
-          return { result: "WHERE SKIP", didEval: true, color: color.toHex() };
+          const whereExplanation = smallStepEvaluator(
+            updatedNode.where,
+            {
+              ...inducedVariables,
+              [updatedNode.varbs[0]]: color,
+              [`index(${updatedNode.varbs[0]})`]: i + 1,
+            },
+            pal
+          );
+          return {
+            result: "WHERE SKIP",
+            didEval: true,
+            color: color.toHex(),
+            whereExplanation,
+          };
         }
         const updatedVariables = {
           ...updatedNode.inducedVariables,

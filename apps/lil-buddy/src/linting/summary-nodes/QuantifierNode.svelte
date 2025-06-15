@@ -31,6 +31,7 @@
             <div class="flex items-center">
               <div class="flex">
                 <NodeWrap
+                  {pal}
                   {node}
                   path={["fake path", "path"]}
                   modifyLint={(_path, newValue) => {
@@ -51,7 +52,8 @@
                   {#if result.result === "WHERE SKIP"}
                     <div class="text-red-500">✗</div>
                     <NodeWrap
-                      node={null}
+                      {pal}
+                      {node}
                       path={null}
                       {modifyLint}
                       options={null}

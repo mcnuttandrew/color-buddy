@@ -92,7 +92,7 @@
       {/each}
     </div>
   {:else if node.nodeType === "numberOp"}
-    <div class="flex">
+    <div class="flex items-center">
       <svelte:self {modifyLint} node={node.left} {pal} inducedVariables={env} />
       <NodeWrap
         options={["+", "-", "*", "/", "//", "absDiff", "%"]}

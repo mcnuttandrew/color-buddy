@@ -47,33 +47,46 @@
   ).length;
 </script>
 
-<Tooltip>
-  <div slot="content" class="">
-    <div class=" w-full flex px-2 py-1">
-      <div class="font-bold">Tests Expected to be</div>
-      <Nav
-        tabs={["passing", "failing"]}
-        isTabSelected={(x) => x === showWhichTests}
-        selectTab={(x) => {
-          showWhichTests = x;
-        }}
-        formatter={(x) => {
-          const tests =
-            x === "passing" ? passingTestResults : failingTestResults;
-          const totalTests = tests.length;
-          const numCorrect = x === "passing" ? numPassing : numFailing;
-          return ` ${x} (${numCorrect}/${totalTests})`;
-        }}
-      />
+<div class="flex w-full justify-between">
+  <div class="font-bold">Palette Case</div>
+  <Tooltip>
+    <div slot="content" class="">
+      <div class=" w-full flex px-2 py-1">
+        <div class="font-bold">Tests Expected to be</div>
+        <Nav
+          tabs={["passing", "failing"]}
+          isTabSelected={(x) => x === showWhichTests}
+          selectTab={(x) => {
+            showWhichTests = x;
+          }}
+          formatter={(x) => {
+            const tests =
+              x === "passing" ? passingTestResults : failingTestResults;
+            const totalTests = tests.length;
+            const numCorrect = x === "passing" ? numPassing : numFailing;
+            return ` ${x} (${numCorrect}/${totalTests})`;
+          }}
+        />
+      </div>
+      <div class=" flex items-center overflow-auto">
+        {#each tests as test, idx}
+          <LintTest {idx} testResult={test} type={showWhichTests} />
+        {/each}
+        <AddTest {lint} addNewTest={addTest(showWhichTests === "passing")} />
+      </div>
     </div>
-    <div class=" flex items-center overflow-auto">
-      {#each tests as test, idx}
-        <LintTest {idx} testResult={test} type={showWhichTests} />
-      {/each}
-      <AddTest {lint} addNewTest={addTest(showWhichTests === "passing")} />
-    </div>
+    <button slot="target" let:toggle on:click={toggle} class={buttonStyle}>
+      Change Test Case
+    </button>
+  </Tooltip>
+</div>
+<div class=" mb-2">
+  <div class="text-sm flex justify-between">
+    <span class="">
+      {numPassing} / {passingTestResults.length} passing cases
+    </span>
+    <span>
+      {numFailing} / {failingTestResults.length} failing cases
+    </span>
   </div>
-  <button slot="target" let:toggle on:click={toggle} class={buttonStyle}>
-    Change Test Case
-  </button>
-</Tooltip>
+</div>

@@ -53,10 +53,10 @@
             <div class="font-bold">Current Lint</div>
             <LintPicker />
           </div>
-          <div class="flex w-full justify-between">
+          <!-- <div class="flex w-full justify-between">
             <div class="font-bold">Palette</div>
-            {#if lint}<LintTestsAlt {lint} />{/if}
-          </div>
+          </div> -->
+          {#if lint}<LintTestsAlt {lint} />{/if}
           <!-- {#if lint}
           <LintTests {lint} />
         {/if} -->

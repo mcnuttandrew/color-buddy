@@ -13,12 +13,10 @@
   import { JSONStringify, getFocusedTestPal } from "../lib/utils";
 
   import MonacoEditor from "../components/MonacoEditor.svelte";
-  import Nav from "../components/Nav.svelte";
 
   import ResetLint from "./ResetLint.svelte";
   import ModifyLint from "./ModifyLint.svelte";
 
-  import LintTests from "./LintTests.svelte";
   import FocusedTest from "./FocusedTest.svelte";
   import GraphSummary from "./GraphSummary.svelte";
 
@@ -27,45 +25,37 @@
   $: focusedTest = $store.focusedTest;
   $: testPal = getFocusedTestPal(lint, focusedTest);
 
-  function generatePrettyText(program: string): string {
-    try {
-      return prettyPrintLL(JSON.parse(program));
-    } catch (e) {
-      console.log(e);
-      return "parsing error";
-    }
-  }
+  // function generatePrettyText(program: string): string {
+  //   try {
+  //     return prettyPrintLL(JSON.parse(program));
+  //   } catch (e) {
+  //     console.log(e);
+  //     return "parsing error";
+  //   }
+  // }
 </script>
 
 <div class="flex h-full overflow-hidden">
-  <!-- <div class="min-w-72 max-w-72 w-full overflow-auto bg-stone-100 px-2"> -->
-
-  <!-- {#if $store.focusedTest && lint}
-      <FocusedTest {lint} />
-    {/if} -->
-  <!-- </div> -->
   <div class="w-full">
     <Splitpanes horizontal={true}>
       <Pane class="bg-white w-full flex">
-        <!-- <div class="flex h-full"> -->
-        <div class="bg-stone-100 py-1 px-4 flex flex-col w-80">
-          <div class="flex justify-between">
-            <div class="font-bold">Current Lint</div>
-            <LintPicker />
+        <div class="flex flex-col w-80 h-full">
+          <div class="bg-stone-200 px-4 pt-1">
+            <div class="flex justify-between">
+              <div class="font-bold">Current Lint</div>
+              <LintPicker />
+            </div>
+            {#if lint}<LintTestsAlt {lint} />{/if}
           </div>
-          <!-- <div class="flex w-full justify-between">
-            <div class="font-bold">Palette</div>
-          </div> -->
-          {#if lint}<LintTestsAlt {lint} />{/if}
-          <!-- {#if lint}
-          <LintTests {lint} />
-        {/if} -->
-          {#if $store.focusedTest && lint}
-            <FocusedTest {lint} />
-          {/if}
+          <div class="bg-stone-100 py-1 px-4 h-full overflow-auto">
+            <div class="font-bold">Test Case</div>
+            {#if $store.focusedTest && lint}
+              <FocusedTest {lint} />
+            {/if}
+          </div>
         </div>
         <div
-          class="w-[calc(100%-300px)] h-[calc(100%-100px)] overflow-auto p-4 mb-64 min-w-[calc(100%-300px)]"
+          class="w-[calc(100%-300px)] h-[calc(100%)] overflow-auto p-4 mb-64 min-w-[calc(100%-300px)]"
         >
           {#if testPal && program}
             <VisualSummarizer lint={program} pal={testPal} />

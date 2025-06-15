@@ -2,10 +2,12 @@
   import AddTest from "./AddTest.svelte";
   import type { LintProgram } from "color-buddy-palette-lint";
   import LintTest from "./LintTest.svelte";
+  import { makePalFromString, Color } from "color-buddy-palette";
+
   import store from "../stores/store";
   import { doLint } from "../lib/utils";
-  import LintPicker from "./LintPicker.svelte";
-  import Nav from "../components/Nav.svelte";
+  // import LintPicker from "./LintPicker.svelte";
+  // import Nav from "../components/Nav.svelte";
   import Tooltip from "../components/Tooltip.svelte";
   import { buttonStyle } from "../lib/styles";
   export let lint: LintProgram;
@@ -26,7 +28,10 @@
       if (lint.taskTypes.length !== 3) {
         newTest.type = lint.taskTypes[0];
       }
-      const newTests = [...lint.expectedPassingTests, newTest];
+      const newTests = [
+        ...(passing ? lint.expectedPassingTests : lint.expectedFailingTests),
+        newTest,
+      ];
 
       if (passing) {
         store.setCurrentLintExpectedPassingTests(newTests);
@@ -35,9 +40,50 @@
       }
     };
   }
-  $: showWhichTests = $store.focusedTest ? $store.focusedTest.type : "passing";
-  $: tests =
-    showWhichTests === "passing" ? passingTestResults : failingTestResults;
+  function intRand(lower: number, upper: number) {
+    return Math.floor((upper - lower) * Math.random() + lower);
+  }
+
+  function generateTestCases() {
+    ["passing", "failing"].forEach((testType) => {
+      const newTests = [...new Array(3)].map(() => {
+        const numColors = intRand(3, 10);
+        // build initial version of palette
+        const colors = [];
+        for (let i = 0; i < numColors; i++) {
+          colors.push(
+            Color.colorFromChannels(
+              [255 * Math.random(), 255 * Math.random(), 255 * Math.random()],
+              "rgb"
+            ).toHex()
+          );
+        }
+        const newPal = makePalFromString(colors);
+        if (lint.requiredTags) {
+          newPal.tags = [...(newPal.tags || []), ...lint.requiredTags];
+        }
+        if (lint.taskTypes.length !== 3) {
+          newPal.type = lint.taskTypes[0];
+        }
+
+        // check to see if its working
+
+        return newPal;
+      });
+
+      if (testType === "passing") {
+        store.setCurrentLintExpectedPassingTests([
+          ...newTests,
+          ...lint.expectedPassingTests,
+        ]);
+      } else {
+        store.setCurrentLintExpectedFailingTests([
+          ...newTests,
+          ...lint.expectedFailingTests,
+        ]);
+      }
+    });
+  }
 
   $: numPassing = passingTestResults.filter(
     (test) => test.result.kind === "success" && test.result.passes
@@ -48,32 +94,27 @@
 </script>
 
 <div class="flex w-full justify-between">
-  <div class="font-bold">Palette Case</div>
+  <div class="font-bold">Test Cases</div>
   <Tooltip>
     <div slot="content" class="">
-      <div class=" w-full flex px-2 py-1">
-        <div class="font-bold">Tests Expected to be</div>
-        <Nav
-          tabs={["passing", "failing"]}
-          isTabSelected={(x) => x === showWhichTests}
-          selectTab={(x) => {
-            showWhichTests = x;
-          }}
-          formatter={(x) => {
-            const tests =
-              x === "passing" ? passingTestResults : failingTestResults;
-            const totalTests = tests.length;
-            const numCorrect = x === "passing" ? numPassing : numFailing;
-            return ` ${x} (${numCorrect}/${totalTests})`;
-          }}
-        />
-      </div>
+      <div class=" w-full flex py-1 font-bold">Tests Cases</div>
+      <div>Cases expected to be passing</div>
       <div class=" flex items-center overflow-auto">
-        {#each tests as test, idx}
-          <LintTest {idx} testResult={test} type={showWhichTests} />
+        {#each passingTestResults as test, idx}
+          <LintTest {idx} testResult={test} type={"passing"} />
         {/each}
-        <AddTest {lint} addNewTest={addTest(showWhichTests === "passing")} />
+        <AddTest {lint} addNewTest={addTest(true)} />
       </div>
+      <div>Cases expected to be failing</div>
+      <div class=" flex items-center overflow-auto">
+        {#each failingTestResults as test, idx}
+          <LintTest {idx} testResult={test} type={"failing"} />
+        {/each}
+        <AddTest {lint} addNewTest={addTest(false)} />
+      </div>
+      <button class="{buttonStyle} mt-4" on:click={generateTestCases}>
+        Generate a handful of additional test cases
+      </button>
     </div>
     <button slot="target" let:toggle on:click={toggle} class={buttonStyle}>
       Change Test Case
@@ -82,11 +123,13 @@
 </div>
 <div class=" mb-2">
   <div class="text-sm flex justify-between">
-    <span class="">
-      {numPassing} / {passingTestResults.length} passing cases
+    <span class="flex">
+      <div class="font-mono mr-1">{numPassing}/{passingTestResults.length}</div>
+      passing cases
     </span>
-    <span>
-      {numFailing} / {failingTestResults.length} failing cases
+    <span class="flex">
+      <div class="font-mono mr-1">{numFailing}/{failingTestResults.length}</div>
+      failing cases
     </span>
   </div>
 </div>

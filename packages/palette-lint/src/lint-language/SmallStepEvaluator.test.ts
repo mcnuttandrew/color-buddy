@@ -282,7 +282,7 @@ test("Conjunction weirdness", () => {
   expect(result).toMatchSnapshot();
 });
 
-test.only("More Conjunction Weirdness", () => {
+test("More Conjunction Weirdness", () => {
   const program = {
     $schema: "https://color-buddy-docs.netlify.app/lint-schema.v0.json",
     not: {

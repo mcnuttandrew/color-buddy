@@ -2,6 +2,7 @@ import linter, { PREBUILT_LINTS } from "./linter";
 import {
   rewriteQuantifiers,
   smallStepEvaluator,
+  pruneUnfinishedNodes,
 } from "./lint-language/small-step-evaluator";
 import type { LintResult, LintProgram } from "./ColorLint";
 import {
@@ -21,5 +22,6 @@ export {
   smallStepEvaluator,
   suggestLintFix,
   suggestMCFix,
+  pruneUnfinishedNodes,
 };
 export type { LintResult, LintProgram };

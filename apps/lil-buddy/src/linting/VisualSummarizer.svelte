@@ -5,6 +5,7 @@
     GenerateAST,
     smallStepEvaluator,
     rewriteQuantifiers,
+    pruneUnfinishedNodes,
   } from "color-buddy-palette-lint";
   import { trimTree } from "../lib/graph-builder";
   import store from "../stores/store";
@@ -23,7 +24,10 @@
       const ast = (GenerateAST(JSON.parse(lint) as any).value as any)
         .children[0] as any;
       const rewrittenAST = trimTree(rewriteQuantifiers(ast)).generatePath([]);
-      const result = smallStepEvaluator(rewrittenAST, {}, pal, true);
+      const result = pruneUnfinishedNodes(
+        smallStepEvaluator(rewrittenAST, {}, pal, true)
+      );
+      console.log(result);
       error = null;
       processingState = "ready";
       attempts = 0;

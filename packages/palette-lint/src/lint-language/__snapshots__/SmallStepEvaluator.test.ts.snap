@@ -1274,6 +1274,322 @@ exports[`Fair Test 1`] = `
 ]
 `;
 
+exports[`More Conjunction Weirdness 1`] = `
+[
+  LLExpression {
+    "id": 0,
+    "inducedVariables": {},
+    "nodeType": "expression",
+    "path": [],
+    "value": LLConjunction {
+      "children": [
+        LLExpression {
+          "id": 0,
+          "nodeType": "expression",
+          "path": [
+            "not",
+            0,
+          ],
+          "value": LLQuantifier {
+            "id": 0,
+            "input": LLVariable {
+              "id": 0,
+              "nodeType": "variable",
+              "path": [
+                "not",
+                0,
+                "exist",
+                "in",
+              ],
+              "value": "colors",
+            },
+            "nodeType": "quantifier",
+            "path": [],
+            "predicate": LLExpression {
+              "id": 0,
+              "nodeType": "expression",
+              "path": [
+                "not",
+                0,
+                "exist",
+                "predicate",
+              ],
+              "value": LLConjunction {
+                "children": [
+                  LLExpression {
+                    "id": 0,
+                    "nodeType": "expression",
+                    "path": [
+                      "not",
+                      0,
+                      "exist",
+                      "predicate",
+                      "and",
+                      0,
+                    ],
+                    "value": LLBool {
+                      "id": 0,
+                      "nodeType": "bool",
+                      "path": [
+                        "not",
+                        0,
+                        "exist",
+                        "predicate",
+                        "and",
+                        0,
+                      ],
+                      "value": true,
+                    },
+                  },
+                  LLExpression {
+                    "id": 0,
+                    "nodeType": "expression",
+                    "path": [
+                      "not",
+                      0,
+                      "exist",
+                      "predicate",
+                      "and",
+                      1,
+                    ],
+                    "value": LLBool {
+                      "id": 0,
+                      "nodeType": "bool",
+                      "path": [
+                        "not",
+                        0,
+                        "exist",
+                        "predicate",
+                        "and",
+                        1,
+                      ],
+                      "value": false,
+                    },
+                  },
+                ],
+                "id": 0,
+                "nodeType": "conjunction",
+                "path": [
+                  "not",
+                  0,
+                  "exist",
+                  "predicate",
+                  "and",
+                ],
+                "type": "and",
+              },
+            },
+            "type": "exist",
+            "varbs": [
+              "a",
+            ],
+            "where": false,
+          },
+        },
+      ],
+      "id": 0,
+      "inducedVariables": {},
+      "nodeType": "conjunction",
+      "path": [
+        "not",
+      ],
+      "type": "not",
+    },
+  },
+  LLConjunction {
+    "children": [
+      {
+        "quant": "exist",
+        "quantifierResult": false,
+        "results": [
+          {
+            "color": "#f00",
+            "evals": [
+              LLConjunction {
+                "children": [
+                  LLExpression {
+                    "id": 0,
+                    "nodeType": "expression",
+                    "path": [
+                      "not",
+                      0,
+                      "exist",
+                      "predicate",
+                      "and",
+                      0,
+                    ],
+                    "value": LLBool {
+                      "id": 0,
+                      "nodeType": "bool",
+                      "path": [
+                        "not",
+                        0,
+                        "exist",
+                        "predicate",
+                        "and",
+                        0,
+                      ],
+                      "value": true,
+                    },
+                  },
+                  LLExpression {
+                    "id": 0,
+                    "nodeType": "expression",
+                    "path": [
+                      "not",
+                      0,
+                      "exist",
+                      "predicate",
+                      "and",
+                      1,
+                    ],
+                    "value": LLBool {
+                      "id": 0,
+                      "nodeType": "bool",
+                      "path": [
+                        "not",
+                        0,
+                        "exist",
+                        "predicate",
+                        "and",
+                        1,
+                      ],
+                      "value": false,
+                    },
+                  },
+                ],
+                "id": 0,
+                "inducedVariables": {
+                  "a": "#f00",
+                  "index(a)": 1,
+                },
+                "nodeType": "conjunction",
+                "path": [
+                  "not",
+                  0,
+                  "exist",
+                  "predicate",
+                  "and",
+                ],
+                "type": "and",
+              },
+              LLBool {
+                "id": 0,
+                "inducedVariables": {
+                  "a": "#f00",
+                  "index(a)": 1,
+                },
+                "nodeType": "bool",
+                "path": [],
+                "value": false,
+              },
+            ],
+          },
+          {
+            "color": "#008000",
+            "evals": [
+              LLConjunction {
+                "children": [
+                  LLExpression {
+                    "id": 0,
+                    "nodeType": "expression",
+                    "path": [
+                      "not",
+                      0,
+                      "exist",
+                      "predicate",
+                      "and",
+                      0,
+                    ],
+                    "value": LLBool {
+                      "id": 0,
+                      "nodeType": "bool",
+                      "path": [
+                        "not",
+                        0,
+                        "exist",
+                        "predicate",
+                        "and",
+                        0,
+                      ],
+                      "value": true,
+                    },
+                  },
+                  LLExpression {
+                    "id": 0,
+                    "nodeType": "expression",
+                    "path": [
+                      "not",
+                      0,
+                      "exist",
+                      "predicate",
+                      "and",
+                      1,
+                    ],
+                    "value": LLBool {
+                      "id": 0,
+                      "nodeType": "bool",
+                      "path": [
+                        "not",
+                        0,
+                        "exist",
+                        "predicate",
+                        "and",
+                        1,
+                      ],
+                      "value": false,
+                    },
+                  },
+                ],
+                "id": 0,
+                "inducedVariables": {
+                  "a": "#008000",
+                  "index(a)": 2,
+                },
+                "nodeType": "conjunction",
+                "path": [
+                  "not",
+                  0,
+                  "exist",
+                  "predicate",
+                  "and",
+                ],
+                "type": "and",
+              },
+              LLBool {
+                "id": 0,
+                "inducedVariables": {
+                  "a": "#008000",
+                  "index(a)": 2,
+                },
+                "nodeType": "bool",
+                "path": [],
+                "value": false,
+              },
+            ],
+          },
+        ],
+        "varb": "a",
+      },
+    ],
+    "id": 0,
+    "inducedVariables": {},
+    "nodeType": "conjunction",
+    "path": [
+      "not",
+    ],
+    "type": "not",
+  },
+  LLBool {
+    "id": 0,
+    "inducedVariables": {},
+    "nodeType": "bool",
+    "path": [],
+    "value": true,
+  },
+]
+`;
+
 exports[`Nested Quantifiers Test 1`] = `
 [
   LLExpression {

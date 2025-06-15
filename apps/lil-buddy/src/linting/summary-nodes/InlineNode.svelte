@@ -83,6 +83,12 @@
       class="flex flex-col border border-black p-1 items-center bg-slate-500"
     >
       {#each node.children as child, idx}
+        {#if node.children.length === 1}<div
+            class="text-white uppercase font-bold"
+          >
+            {node.type}
+          </div>
+        {/if}
         <div class="bg-white">
           <DispatchNode node={child} {pal} {inducedVariables} {modifyLint} />
         </div>

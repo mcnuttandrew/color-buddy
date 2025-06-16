@@ -57,6 +57,6 @@
     </form>
   </div>
   <button slot="target" let:toggle on:click={toggle} class={buttonStyle}>
-    Modify ✨
+    Modify Palette ✨
   </button>
 </Tooltip>

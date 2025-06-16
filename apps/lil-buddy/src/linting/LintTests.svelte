@@ -4,6 +4,7 @@
   import LintTest from "./LintTest.svelte";
   import store from "../stores/store";
   import { doLint } from "../lib/utils";
+  import LintPicker from "./LintPicker.svelte";
   import Nav from "../components/Nav.svelte";
   export let lint: LintProgram;
 
@@ -32,7 +33,7 @@
       }
     };
   }
-  $: showWhichTests = "passing" as "passing" | "failing";
+  $: showWhichTests = $store.focusedTest ? $store.focusedTest.type : "passing";
   $: tests =
     showWhichTests === "passing" ? passingTestResults : failingTestResults;
 
@@ -42,12 +43,10 @@
   $: numFailing = failingTestResults.filter(
     (test) => test.result.kind === "success" && !test.result.passes
   ).length;
-
-  $: console.log(passingTestResults);
 </script>
 
-<div class="border">
-  <div class=" w-full bg-stone-200 flex px-2 py-1">
+<div class="">
+  <div class=" w-full bg-stone-100 flex px-2 py-1">
     <div class="font-bold">Tests Expected to be</div>
     <Nav
       tabs={["passing", "failing"]}

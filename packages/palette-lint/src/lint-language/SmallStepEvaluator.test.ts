@@ -281,3 +281,23 @@ test("Conjunction weirdness", () => {
   const result = smallStepEvaluator(ast, {}, defaultPal, true);
   expect(result).toMatchSnapshot();
 });
+
+test("More Conjunction Weirdness", () => {
+  const program = {
+    $schema: "https://color-buddy-docs.netlify.app/lint-schema.v0.json",
+    not: {
+      exist: {
+        varb: "a",
+        in: "colors",
+        predicate: {
+          and: [true, false],
+        },
+      },
+    },
+  };
+  const ast = getAST(program);
+  const rewrittenAST = rewriteQuantifiers(ast).generatePath([]);
+  const result = smallStepEvaluator(rewrittenAST, {}, defaultPal, true);
+
+  expect(result).toMatchSnapshot();
+});

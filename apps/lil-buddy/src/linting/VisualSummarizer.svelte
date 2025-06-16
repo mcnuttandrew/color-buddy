@@ -5,6 +5,7 @@
     GenerateAST,
     smallStepEvaluator,
     rewriteQuantifiers,
+    pruneUnfinishedNodes,
   } from "color-buddy-palette-lint";
   import { trimTree } from "../lib/graph-builder";
   import store from "../stores/store";
@@ -16,20 +17,31 @@
   let processingState = "processing" as "ready" | "processing";
   $: executionLog = getExecutionLog(lint, pal);
   let error: any;
+  $: attempts = 0;
   function getExecutionLog(lint: string, pal: Palette) {
     processingState = "processing";
     try {
       const ast = (GenerateAST(JSON.parse(lint) as any).value as any)
         .children[0] as any;
       const rewrittenAST = trimTree(rewriteQuantifiers(ast)).generatePath([]);
-      const result = smallStepEvaluator(rewrittenAST, {}, pal, true);
+      const result = pruneUnfinishedNodes(
+        smallStepEvaluator(rewrittenAST, {}, pal, true)
+      );
       error = null;
       processingState = "ready";
+      attempts = 0;
       return result;
-    } catch (e) {
+    } catch (e: any) {
       console.error(e);
       error = e;
       processingState = "ready";
+      if (e.message.includes("Too many iterations")) {
+        // If the error is due to too many iterations, we can try to extend the maximum
+        attempts += 1;
+        if (attempts < 3) {
+          return getExecutionLog(lint, pal);
+        }
+      }
     }
   }
 </script>

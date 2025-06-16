@@ -546,7 +546,7 @@ function compareValues(
         return Math.abs(left - right) < thresh;
       }
       throw new Error(
-        `Type error. Similar must be used with colors or numbers. 
+        `Type error. "Similar" must be used with colors or numbers. 
         Got ${JSON.stringify(left)} and ${JSON.stringify(right)}`
       );
     case "==":

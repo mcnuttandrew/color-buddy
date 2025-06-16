@@ -403,7 +403,21 @@ function traverseAndMaybeExecute(
           i
         );
         if (!whereResult) {
-          return { result: "WHERE SKIP", didEval: true, color: color.toHex() };
+          const whereExplanation = smallStepEvaluator(
+            updatedNode.where,
+            {
+              ...inducedVariables,
+              [updatedNode.varbs[0]]: color,
+              [`index(${updatedNode.varbs[0]})`]: i + 1,
+            },
+            pal
+          );
+          return {
+            result: "WHERE SKIP",
+            didEval: true,
+            color: color.toHex(),
+            whereExplanation,
+          };
         }
         const updatedVariables = {
           ...updatedNode.inducedVariables,
@@ -503,6 +517,58 @@ export function smallStepEvaluator(
     evalCache.set(serializeKey, evalLog);
   }
   return evalLog;
+}
+
+function containUnevaledNodes(node: any): boolean {
+  if (!node.nodeType) {
+    return false;
+  }
+  console.log("here", node.nodeType);
+  switch (node.nodeType) {
+    case "pairFunction":
+    case "numberOp":
+    case "predicate":
+      return (
+        containUnevaledNodes(node.left) || containUnevaledNodes(node.right)
+      );
+    case "conjunction":
+    case "aggregate":
+    case "array":
+    case "map":
+      if (node.children?.nodeType === "variable") {
+        return false;
+      }
+      const children = node.children;
+      if (Array.isArray(children)) {
+        return children.some((x: any) => containUnevaledNodes(x));
+      } else {
+        // for variables and such
+        return containUnevaledNodes(children);
+      }
+    case "node":
+    case "expression":
+      return containUnevaledNodes(node.value);
+    case "bool":
+    case "color":
+    case "number":
+    case "value":
+    case "variable":
+      return false;
+    case "boolFunction":
+    case "valueFunction":
+      return containUnevaledNodes(node.input);
+    case "quantifier":
+      return true;
+    default:
+      return false;
+  }
+}
+
+export function pruneUnfinishedNodes(nodes: LLNode[]) {
+  // algorithm: for each node in nodes, recursively check if it contains unevaluated nodes
+  // console.log(nodes);
+  return nodes;
+  // return nodes.filter((x) => !containUnevaledNodes(x));
 }
 
 const prepStr = (node: any) => stripOutIds(JSON.stringify(copy(node)));

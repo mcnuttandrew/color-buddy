@@ -11,6 +11,7 @@
   import store from "../stores/store";
   import { buttonStyle } from "../lib/styles";
   import { modifyLint, JSONStringify } from "../lib/utils";
+
   export let pal: Palette;
   export let lint: string;
 
@@ -78,13 +79,14 @@
     {#each executionLog || [] as log, idx}
       <div class="flex items-center">
         <DispatchNode
-          node={log}
-          {pal}
-          inducedVariables={{}}
-          modifyLint={(path, newVal) => {
-            store.setCurrentLintProgram(
-              JSONStringify(modifyLint(path, newVal, lint))
-            );
+          props={{
+            node: log,
+            pal,
+            inducedVariables: {},
+            modifyLint: (path, newVal) =>
+              store.setCurrentLintProgram(
+                JSONStringify(modifyLint(path, newVal, lint))
+              ),
           }}
         />
         {#if executionLog && idx !== executionLog.length - 1}

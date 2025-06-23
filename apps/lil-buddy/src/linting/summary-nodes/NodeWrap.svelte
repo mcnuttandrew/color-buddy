@@ -1,12 +1,11 @@
 <script lang="ts">
-  import type { Palette } from "color-buddy-palette";
   import Tooltip from "../../components/Tooltip.svelte";
   import { Color } from "color-buddy-palette";
-  import { buttonStyle } from "../../lib/styles";
   import DispatchNode from "./DispatchNode.svelte";
   import ColorChannelPicker from "../../components/ColorChannelPicker.svelte";
-  export let pal: Palette;
-  export let node: any | null;
+  import type { SummaryNodeProps } from "./summary-node";
+  export let props: SummaryNodeProps;
+
   export let options:
     | string[]
     | "number"
@@ -14,7 +13,7 @@
     | "color"
     | "string"
     | null;
-  export let modifyLint: (path: (number | string)[], newValue: any) => void;
+
   export let classes: string = "";
   export let comment: string = "";
   export let specificValue: any = null;
@@ -32,24 +31,24 @@
     }
     return node.value || node.type;
   }
-  $: value = specificValue || node?.value || null;
+  $: value = specificValue || props.node?.value || null;
   let localSpace = "lab" as any;
   $: isCalculated = !path || path.length < 1;
-  $: whereSeq = node?.results?.at(0)?.whereExplanation || [];
+  $: whereSeq = props.node?.results?.at(0)?.whereExplanation || [];
 </script>
 
 <Tooltip>
   <div slot="content" class="max-w-screen-md overflow-auto">
     {#if !whereSeq.length}
-      {#if node}
+      {#if props.node}
         <div>
           <div class="text-sm">
             <span class="font-bold">Node Type:</span>
-            {node.nodeType}
+            {props.node.nodeType}
           </div>
           <div class="text-sm">
             <span class="font-bold">Current Value:</span>
-            {displayValue(node)}
+            {displayValue(props.node)}
           </div>
         </div>
         <!-- {`${node.nodeType}: ${displayValue(node)}`} -->
@@ -69,7 +68,7 @@
               type="number"
               on:blur={(e) => {
                 // @ts-ignore
-                modifyLint(path, parseFloat(e.target.value));
+                props.modifyLint(path, parseFloat(e.target.value));
               }}
             />
           {:else if options === "color"}
@@ -84,7 +83,7 @@
               )}
               onColorChange={(x) => {
                 // @ts-ignore
-                modifyLint(path, x.toHex());
+                props.modifyLint(path, x.toHex());
               }}
             />
           {:else if options === "string"}
@@ -93,7 +92,7 @@
               class="border"
               on:blur={(e) => {
                 // @ts-ignore
-                modifyLint(path, e.target.value);
+                props.modifyLint(path, e.target.value);
               }}
             />
           {:else if options === "boolean"}
@@ -101,7 +100,7 @@
               {value}
               on:change={(e) => {
                 // @ts-ignore
-                modifyLint(path, e.target.value === "true");
+                props.modifyLint(path, e.target.value === "true");
               }}
             >
               <option value="true">true</option>
@@ -112,7 +111,7 @@
               {value}
               on:change={(e) => {
                 // @ts-ignore
-                modifyLint(path, e.target.value);
+                props.modifyLint(path, e.target.value);
               }}
             >
               {#each options as option}
@@ -139,10 +138,12 @@
           {#each whereSeq || [] as log, idx}
             <div class="flex items-center">
               <DispatchNode
-                node={log}
-                {pal}
-                inducedVariables={{}}
-                modifyLint={(path, newVal) => {}}
+                props={{
+                  node: log,
+                  pal: props.pal,
+                  inducedVariables: {},
+                  modifyLint: () => {},
+                }}
               />
               {#if whereSeq && idx !== whereSeq.length - 1}
                 <div class="">→</div>

@@ -35,7 +35,6 @@
   $: value = specificValue || props.node?.value || null;
   let localSpace = "lab" as any;
   $: isCalculated = !path || path.length < 1;
-  $: props.node.results && console.log(props.node.results);
   $: whereSeq = props.node?.results?.at(index)?.whereExplanation || [];
 </script>
 

@@ -1,7 +1,6 @@
 <script lang="ts">
-  import { suggestMCFix } from "color-buddy-palette-lint";
-
   import store from "../stores/store";
+  import AttemptToFix from "./AttemptToFix.svelte";
 
   import type { TestResult } from "../lib/utils";
   import PalPreview from "../components/PalPreview.svelte";
@@ -12,8 +11,6 @@
   export let testResult: TestResult;
   export let type: "passing" | "failing";
 
-  let mcState = "ready" as "ready" | "loading" | "error";
-
   $: isCorrect =
     testResult.result.kind === "success" &&
     ((type === "passing" && testResult.result?.passes) ||
@@ -23,6 +20,8 @@
     $store.focusedTest &&
     $store.focusedTest?.type === type &&
     $store.focusedTest?.index === idx;
+
+  $: lint = $store.lints.find((lint) => lint.id === $store.focusedLint);
 </script>
 
 <div
@@ -113,52 +112,25 @@
           Delete
         </button>
 
-        {#if !isCorrect}
-          <button
-            class={buttonStyle}
-            on:click={async () => {
-              mcState = "loading";
-              const lint = $store.lints.find(
-                (lint) => lint.id === $store.focusedLint
-              );
-              if (!lint) return;
-              const program = lint.program;
-              let parsedProgram = JSON.parse(program);
-              if (type === "failing") {
-                parsedProgram = { not: parsedProgram };
-                lint.program = JSON.stringify(parsedProgram);
-              }
-              // sleep 1 second
-              await new Promise((resolve) => setTimeout(resolve, 1000));
-              const fix = await suggestMCFix(testResult.pal, [lint]);
-              lint.program = program;
-              if (fix) {
-                const tests =
-                  type === "passing"
-                    ? lint.expectedPassingTests
-                    : lint.expectedFailingTests;
-                const updatedTests = tests.map((pal, jdx) =>
-                  jdx === idx ? fix : pal
-                );
+        {#if lint}
+          <AttemptToFix
+            pal={testResult.pal}
+            {type}
+            {isCorrect}
+            {lint}
+            onFix={(fix) => {
+              const tests =
                 type === "passing"
-                  ? store.setCurrentLintExpectedPassingTests(updatedTests)
-                  : store.setCurrentLintExpectedFailingTests(updatedTests);
-
-                mcState = "ready";
-              } else {
-                console.log("no fix found");
-                mcState = "error";
-              }
+                  ? lint.expectedPassingTests
+                  : lint.expectedFailingTests;
+              const updatedTests = tests.map((pal, jdx) =>
+                jdx === idx ? fix : pal
+              );
+              type === "passing"
+                ? store.setCurrentLintExpectedPassingTests(updatedTests)
+                : store.setCurrentLintExpectedFailingTests(updatedTests);
             }}
-          >
-            {#if mcState === "loading"}
-              Processing
-            {:else if mcState === "error"}
-              No fix found
-            {:else}
-              Attempt to fix
-            {/if}
-          </button>
+          />
         {/if}
       </div>
 

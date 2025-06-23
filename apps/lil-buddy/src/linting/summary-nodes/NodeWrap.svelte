@@ -18,6 +18,7 @@
   export let comment: string = "";
   export let specificValue: any = null;
   export let path: (number | string)[] | null;
+  export let index: number | null = null;
 
   function displayValue(node: any) {
     if (typeof node === "boolean") {
@@ -34,7 +35,8 @@
   $: value = specificValue || props.node?.value || null;
   let localSpace = "lab" as any;
   $: isCalculated = !path || path.length < 1;
-  $: whereSeq = props.node?.results?.at(0)?.whereExplanation || [];
+  $: props.node.results && console.log(props.node.results);
+  $: whereSeq = props.node?.results?.at(index)?.whereExplanation || [];
 </script>
 
 <Tooltip>

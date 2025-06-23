@@ -52,6 +52,7 @@
                       props={{ ...props }}
                       path={null}
                       options={null}
+                      index={idx}
                       classes="justify-center"
                       comment="This color or combination of colors was removed by a where clause. This means it is not relevant to the quantifier, see explanation below."
                     >

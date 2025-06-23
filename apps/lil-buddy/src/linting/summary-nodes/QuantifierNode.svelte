@@ -58,7 +58,7 @@
                       {modifyLint}
                       options={null}
                       classes=""
-                      comment="This color or combination of colors was removed by a where clause. This means it is not relevant to the quantifier."
+                      comment="This color or combination of colors was removed by a where clause. This means it is not relevant to the quantifier, see explanation below."
                     >
                       {"removed by where clause"}
                     </NodeWrap>

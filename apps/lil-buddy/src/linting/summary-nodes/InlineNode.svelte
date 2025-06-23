@@ -55,7 +55,9 @@
           specificValue={node.type}
           classes="px-2"
         >
-          {node.type === "similar" ? "≈" : node.type}
+          <div class="whitespace-nowrap">
+            {node.type === "similar" ? "≈" : node.type}
+          </div>
         </NodeWrap>
 
         <svelte:self
@@ -129,7 +131,7 @@
           {node.value}:
         </div>
       {/if}
-      {#if env[node.value]}
+      {#if env[node.value] && typeof env[node.value] != "number"}
         <NodeWrap
           modifyLint={(_path, value) => {
             // find variable in pal and save index
@@ -147,6 +149,7 @@
             store.updateColorInCurrentTest(index, value);
           }}
           path={node.path}
+          {pal}
           {node}
           options={"color"}
           specificValue={env[node.value]}
@@ -165,6 +168,8 @@
             {/if}
           </div>
         </NodeWrap>
+      {:else if env[node.value] && typeof env[node.value] === "number"}
+        <div>{env[node.value]}</div>
       {:else if node.value === "colors"}
         {#each pal.colors as color}
           <div class="h-5 w-5 rounded-full" style={`background: ${color}`} />

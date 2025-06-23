@@ -62,7 +62,7 @@
     </div>
   {:else if props.node.nodeType === "conjunction" && props.node.type === "not"}
     <div class="flex flex-col border p-1 bg-slate-700">
-      <span class="mr-2 text-white">NOT</span>
+      <span class=" text-white">NOT</span>
 
       <div class="bg-white">
         <DispatchNode
@@ -150,7 +150,7 @@
           specificValue={env[props.node.value]}
         >
           <div
-            class="h-5 w-5 rounded-full"
+            class="h-5 w-5 rounded-full border border-black"
             style={`background: ${env[props.node.value]}`}
           >
             {#if props.node.value.length <= 2}
@@ -167,7 +167,10 @@
         <div>{env[props.node.value]}</div>
       {:else if props.node.value === "colors"}
         {#each props.pal.colors as color}
-          <div class="h-5 w-5 rounded-full" style={`background: ${color}`} />
+          <div
+            class="h-5 w-5 rounded-full border border-black"
+            style={`background: ${color}`}
+          />
         {/each}
       {:else}
         <div>{props.node.value}</div>
@@ -260,7 +263,7 @@
         path={props.node.path}
       >
         <div
-          class="h-5 w-5 rounded-full"
+          class="h-5 w-5 rounded-full border border-black"
           style={`background: ${props.node.value}`}
         />
       </NodeWrap>

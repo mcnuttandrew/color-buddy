@@ -39,7 +39,7 @@
                   specificValue={result.color}
                 >
                   <div
-                    class="h-8 w-8 rounded-full"
+                    class="h-8 w-8 rounded-full border border-black"
                     style={`background: ${result.color}`}
                   />
                 </NodeWrap>
@@ -48,15 +48,18 @@
               <div class="flex flex-col">
                 <div class="flex items-center">
                   {#if result.result === "WHERE SKIP"}
-                    <div class="text-red-500">✗</div>
                     <NodeWrap
                       props={{ ...props }}
                       path={null}
                       options={null}
-                      classes=""
+                      classes="justify-center"
                       comment="This color or combination of colors was removed by a where clause. This means it is not relevant to the quantifier, see explanation below."
                     >
-                      {"removed by where clause"}
+                      <div
+                        class="flex bg-amber-600 font-mono text-white text-sm px-1 py-2"
+                      >
+                        {"removed by where clause"}
+                      </div>
                     </NodeWrap>
                   {:else}
                     {#each result.evals as evaluation, idx}

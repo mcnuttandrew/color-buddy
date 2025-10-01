@@ -34,6 +34,7 @@ First time you start it up there's a couple things you need to do.
 2. To get the LLM support you need to to provide LLM keys. First create a file at the root directory called ".env.development" (it should already be git ignored so don't worry). In this file you should provide keys like:
 
 ```sh
+GEMINI_KEY = "YOUR KEY HERE"
 OPENAI_API_KEY = "YOUR KEY HERE"
 ANTHROPIC_KEY = "YOUR KEY HERE"
 ```

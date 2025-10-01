@@ -23,7 +23,7 @@ export function errorResponse(callback, err) {
 const engines = {
   google: (prompt: string) =>
     genAI
-      .getGenerativeModel({ model: "gemini-1.5-flash" })
+      .getGenerativeModel({ model: "gemini-2.5-flash" })
       .generateContent(prompt),
   openai: (prompt: string) =>
     openai.chat.completions.create({

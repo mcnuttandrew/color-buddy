@@ -3,9 +3,11 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_KEY as string);
 import Anthropic from "@anthropic-ai/sdk";
 
+
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
+
 
 const anthropic = new Anthropic({
   apiKey: process.env.ANTHROPIC_KEY, // defaults to process.env["ANTHROPIC_API_KEY"]
@@ -23,7 +25,7 @@ export function errorResponse(callback, err) {
 const engines = {
   google: (prompt: string) =>
     genAI
-      .getGenerativeModel({ model: "gemini-1.5-flash" })
+      .getGenerativeModel({ model: "gemini-2.5-flash" })
       .generateContent(prompt),
   openai: (prompt: string) =>
     openai.chat.completions.create({

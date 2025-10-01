@@ -3,6 +3,7 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_KEY as string);
 import Anthropic from "@anthropic-ai/sdk";
 
+
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });

@@ -3,7 +3,6 @@
   import colorStore from "../stores/color-store";
   import configStore from "../stores/config-store";
 
-  import Tooltip from "../components/Tooltip.svelte";
   import AdjustColor from "./AdjustColor.svelte";
   import AlignSelection from "./AlignSelection.svelte";
   import DistributePoints from "./DistributePoints.svelte";
@@ -15,7 +14,6 @@
   import InterpolatePoints from "./InterpolatePoints.svelte";
   import SuggestionModificationToSelection from "./SuggestionModificationToSelection.svelte";
   import DupAndDelete from "./DupAndDelete.svelte";
-  import { buttonStyle } from "../lib/styles";
 
   $: currentPal = $colorStore.palettes[$colorStore.currentPal];
 
@@ -23,10 +21,10 @@
   const breaker = "w-full border-b border-stone-200 my-3";
 </script>
 
+<!-- style={`max-height: calc(100% - (450px + 65px + 48px + 20px))`} -->
 <div
-  class="bg-stone-100 py-2 px-4 border-t border-stone-200 flex flex-col w-full h-full pt-3 overflow-y-auto pb-20"
+  class="bg-stone-100 py-2 px-4 border-t border-stone-200 flex flex-col w-full h-full pt-3 overflow-y-auto pb-[200px]"
   id="adjust-controls"
-  style={`max-height: calc(100% - (450px + 65px + 48px + 20px))`}
 >
   <div class="flex w-full flex-wrap">
     {#if $configStore.engine !== "none"}

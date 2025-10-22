@@ -1,20 +1,16 @@
 <script lang="ts">
-  import type { Palette } from "color-buddy-palette";
   import InlineNode from "./InlineNode.svelte";
   import QuantifierNode from "./QuantifierNode.svelte";
-
-  export let node: any;
-  export let pal: Palette;
-  export let inducedVariables: Record<string, any>;
-  export let modifyLint: (path: (number | string)[], newValue: any) => void;
+  import type { SummaryNodeProps } from "./summary-node";
+  export let props: SummaryNodeProps;
 </script>
 
-{#if !node}
+{#if !props.node}
   <div />
-{:else if node.nodeType === "expression"}
-  <svelte:self node={node.value} {pal} {inducedVariables} {modifyLint} />
-{:else if node.nodeType === "quantifier" || node.quant}
-  <QuantifierNode {node} {pal} {inducedVariables} {modifyLint} />
+{:else if props.node.nodeType === "expression"}
+  <svelte:self props={{ ...props, node: props.node.value }} />
+{:else if props.node.nodeType === "quantifier" || props.node.quant}
+  <QuantifierNode {props} />
 {:else}
-  <InlineNode {node} {pal} {inducedVariables} {modifyLint} />
+  <InlineNode {props} />
 {/if}

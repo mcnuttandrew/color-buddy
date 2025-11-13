@@ -133,21 +133,31 @@
   $: y = scales.y;
   $: z = scales.z;
 
-  $: CircleProps = (color: Color, i: number) => ({
-    cx: x(color),
-    cy: y(color),
-    class: "cursor-pointer",
-    fill: color.toDisplay(),
-    r: 10 + (focusSet.has(i) ? 5 : 0),
-  });
-  $: RectProps = (color: Color, i: number) => ({
-    y: z(color),
-    class: "cursor-pointer",
-    fill: color.toDisplay(),
-    x: 10 - (focusSet.has(i) ? 5 : 0),
-    height: 5,
-    width: zWidth - 10 * 2 + (focusSet.has(i) ? 10 : 0),
-  });
+  $: CircleProps = (color: Color, i: number) => {
+    let xPos = x(color);
+    let yPos = y(color);
+    if (isNaN(xPos)) xPos = config.isPolar ? 0 : plotWidth / 2;
+    if (isNaN(yPos)) yPos = config.isPolar ? 0 : plotHeight / 2;    
+    return {
+      cx: xPos,
+      cy: yPos,
+      class: "cursor-pointer",
+      fill: color.toDisplay(),
+      r: 10 + (focusSet.has(i) ? 5 : 0),
+    };
+  };
+  $: RectProps = (color: Color, i: number) => {
+    let zPos = z(color);
+    if (isNaN(zPos)) zPos = plotHeight / 2;  
+    return {
+      y: zPos,
+      class: "cursor-pointer",
+      fill: color.toDisplay(),
+      x: 10 - (focusSet.has(i) ? 5 : 0),
+      height: 5,
+      width: zWidth - 10 * 2 + (focusSet.has(i) ? 10 : 0),
+    };
+  };
   $: outerDottedBoxStyle = {
     fill: "white",
     "fill-opacity": "0",

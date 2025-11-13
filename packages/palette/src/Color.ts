@@ -133,8 +133,24 @@ export class Color {
         channels = [0, 0, 0];
       }
     }
-    stringChannelsCache.set(key, channels.map((x) => Number(x)) as Channels);
-    return this.fromChannels(channels);
+    const cleanChannels = channels.map((ch, idx) => {
+      const num = Number(ch);
+      if (isNaN(num) || ch === null || ch === undefined) {
+        const domains = (this.constructor as any).domains;
+        const channelNames = (this.constructor as any).channelNames;
+        
+        if (domains && channelNames && channelNames[idx]) {
+          const channelName = channelNames[idx];
+          if (domains[channelName]) {
+            return domains[channelName][0];
+          }
+        }
+        return 0;
+      }
+      return num;
+    }) as Channels;
+    stringChannelsCache.set(key, cleanChannels);
+    return this.fromChannels(cleanChannels);
   }
   fromChannels(channels: Channels): Color {
     const newColor = new (this.constructor as typeof Color)();

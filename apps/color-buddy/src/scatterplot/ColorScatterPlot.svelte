@@ -57,21 +57,33 @@
 
   $: domainXScale = scaleLinear().domain([0, 1]).range(config.xDomain);
   $: xScale = scaleLinear()
-    .domain([domainXScale(extents.x[0]), domainXScale(extents.x[1])])
+    .domain([
+      domainXScale(extents.x[0]) ?? config.xDomain[0],
+      domainXScale(extents.x[1]) ?? config.xDomain[1]
+    ])
     .range([0, plotWidth]);
 
   $: rScale = scaleLinear()
-    .domain([domainXScale(extents.x[0]), domainXScale(extents.x[1])])
+    .domain([
+        domainXScale(extents.x[0]) ?? config.xDomain[0],
+        domainXScale(extents.x[1]) ?? config.xDomain[1]
+      ])
     .range([0, plotWidth / 2]);
 
   $: domainYScale = scaleLinear().domain([0, 1]).range(config.yDomain);
   $: yScale = scaleLinear()
-    .domain([domainYScale(extents.y[0]), domainYScale(extents.y[1])])
+    .domain([
+      domainXScale(extents.x[0]) ?? config.xDomain[0],
+      domainXScale(extents.x[1]) ?? config.xDomain[1]
+    ])
     .range([0, plotHeight]);
 
   $: domainZScale = scaleLinear().domain([0, 1]).range(config.zDomain);
   $: zScale = scaleLinear()
-    .domain([domainZScale(extents.z[0]), domainZScale(extents.z[1])])
+    .domain([
+      domainXScale(extents.x[0]) ?? config.xDomain[0],
+      domainXScale(extents.x[1]) ?? config.xDomain[1]
+    ])
     .range([0, plotHeight]);
 
   $: angleScale = scaleLinear()

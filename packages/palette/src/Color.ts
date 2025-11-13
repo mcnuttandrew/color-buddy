@@ -32,7 +32,7 @@ export class Color {
     y: "",
     z: "",
   };
-  static axisLabel: (num: number) => string = (x) => x.toFixed(1).toString();
+  static axisLabel: (num: number) => string = (x) => (x ?? 0).toFixed(1).toString();
   static isPolar = false;
 
   toHex(): string {
@@ -51,9 +51,8 @@ export class Color {
     return `${this.spaceName}(${channelsString.join(", ")})`;
   }
   prettyChannels(): string[] {
-    // get axisLabel for class instance
     const label = (this.constructor as any).axisLabel;
-    return Object.values(this.channels).map((x) => label(x));
+    return Object.values(this.channels).map((x) => label(x ?? 0));
   }
   toPrettyString(): string {
     return `${this.spaceName}(${this.prettyChannels().join(", ")})`;
@@ -295,7 +294,7 @@ class CIELAB extends Color {
   static description =
     "Lightness, Red-green (a), and Yellow-blue (b). International standard";
   static spaceType = "perceptually uniform";
-  static axisLabel = (num: number) => `${Math.round(num)}`;
+  static axisLabel = (num: number) => `${Math.round(num ?? 0)}`;
 
   toString(): string {
     const [L, a, b] = this.stringChannels();
@@ -336,7 +335,7 @@ class RGB extends Color {
   static dimensionToChannel = { x: "g", y: "b", z: "r" };
   static description = "Red, Green, Blue.";
   static spaceType = "rgb based";
-  static axisLabel = (num: number) => `${Math.round(num)}`;
+  static axisLabel = (num: number) => `${Math.round(num ?? 0)}`;
   toString(): string {
     const [r, g, b] = this.stringChannels();
     return `rgb(${r} ${g} ${b})`;
@@ -358,7 +357,7 @@ class SRGB extends Color {
   static description =
     "Red, Green, Blue. Designed for display, but not palette design";
   static spaceType = "rgb based";
-  static axisLabel = (num: number) => `${Math.round(num)}`;
+  static axisLabel = (num: number) => `${Math.round(num ?? 0)}`;
   toString(): string {
     const [r, g, b] = this.stringChannels();
     return `rgb(${Number(r) * 255} ${Number(g) * 255} ${Number(b) * 255})`;
@@ -401,7 +400,7 @@ class LCH extends Color {
   static description = "Lightness, Chroma, Hue. Cylindrical, refinement of LAB";
   static spaceType = "perceptually uniform";
   static isPolar = true;
-  static axisLabel = (num: number) => `${Math.round(num)}`;
+  static axisLabel = (num: number) => `${Math.round(num ?? 0)}`;
 }
 
 // OKLAB still cursed

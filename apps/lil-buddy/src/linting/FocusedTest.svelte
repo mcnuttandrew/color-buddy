@@ -5,8 +5,9 @@
   import PalPreview from "../components/PalPreview.svelte";
   import store from "../stores/store";
   import ModifyPalette from "./ModifyPalette.svelte";
-  export let lint: LintProgram;
   import { runLint, getFocusedTestPal } from "../lib/utils";
+  import AttemptToFix from "./AttemptToFix.svelte";
+  export let lint: LintProgram;
 
   import CurrentPal from "./CurrentPal.svelte";
   import { buttonStyle } from "../lib/styles";
@@ -106,6 +107,15 @@
       {/if}
       {#if $store.focusedTest && $store.focusedTest.type === "passing" && !lintResult.passes}
         (this is not what you want for this test)
+      {/if}
+      {#if $store.focusedTest && testPal}
+        <AttemptToFix
+          pal={testPal}
+          type={$store.focusedTest.type}
+          isCorrect={false}
+          {lint}
+          onFix={(fixedPal) => updatePal({ ...fixedPal })}
+        />
       {/if}
     </div>
   {:else if errors}

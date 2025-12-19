@@ -10,8 +10,12 @@ import {
   stringPalToColorPal,
 } from "../lib/utils";
 
+import { PREBUILT_LINTS } from "color-buddy-palette-lint";
 import { DEFAULT_LINT_LIST } from "../lib/pre-built-lint-configs";
 const DEFAULT_LINT_SET = new Set(DEFAULT_LINT_LIST);
+const COMPLEMENT_LINTS = PREBUILT_LINTS.map((x) => x.id).filter(
+  (x) => !DEFAULT_LINT_SET.has(x)
+);
 
 interface StoreData {
   palettes: Palette[];
@@ -34,7 +38,7 @@ const InitialStore: StorageData = {
     makeExample("Example 3"),
   ],
   currentPal: 0,
-  globallyIgnoredLints: [...DEFAULT_LINT_SET],
+  globallyIgnoredLints: [...COMPLEMENT_LINTS],
 };
 
 function convertStoreHexToColor(store: StorageData): StoreData {

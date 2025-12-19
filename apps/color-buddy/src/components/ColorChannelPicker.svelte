@@ -40,11 +40,11 @@
         { name: "a", min: -125, max: 125, step: 1 },
         { name: "b", min: -125, max: 125, step: 1 },
       ],
-      // oklab: [
-      //   { name: "L", min: 0, max: 1, step: 0.01 },
-      //   { name: "a", min: -0.4, max: 0.4, step: 0.01 },
-      //   { name: "b", min: -0.4, max: 0.4, step: 0.01 },
-      // ],
+      oklab: [
+        { name: "L", min: 0, max: 1, step: 0.01 },
+        { name: "a", min: -0.4, max: 0.4, step: 0.01 },
+        { name: "b", min: -0.4, max: 0.4, step: 0.01 },
+      ],
       hsv: [
         { name: "Hue", min: 0, max: 360, step: 1 },
         { name: "Saturation", min: 0, max: 100, step: 1 },

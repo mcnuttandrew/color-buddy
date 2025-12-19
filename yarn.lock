@@ -4608,10 +4608,10 @@ colorette@^2.0.20:
   resolved "https://registry.npmjs.org/colorette/-/colorette-2.0.20.tgz"
   integrity sha512-IfEDxwoWIjkeXL1eXcDiow4UbKjhLdq6/EuSVR9GMN7KVH3r9gQ83e73hsz1Nd1T3ijd5xv1wcWRYO+D6kCI2w==
 
-colorjs.io@0.6.0-alpha.1:
-  version "0.6.0-alpha.1"
-  resolved "https://registry.yarnpkg.com/colorjs.io/-/colorjs.io-0.6.0-alpha.1.tgz#c1c382d0f4f34ae8b1d82db73a233a69b7c36f98"
-  integrity sha512-c/h/8uAmPydQcriRdX8UTAFHj6SpSHFHBA8LvMikvYWAVApPTwg/pyOXNsGmaCBd6L/EeDlRHSNhTtnIFp/qsg==
+colorjs.io@0.6.0-beta.2:
+  version "0.6.0-beta.2"
+  resolved "https://registry.yarnpkg.com/colorjs.io/-/colorjs.io-0.6.0-beta.2.tgz#3d5c02c83211605c181101660876c09bc59f3afd"
+  integrity sha512-gRpdfhuaELBkhPlqpN4v5lzqj76weU79mHH2p7oPviaHPQsxuyrge9GQMAhGeUJe5nqsa8rLTCXzLGeepNI8aA==
 
 colors-option@^3.0.0:
   version "3.0.0"

@@ -30,7 +30,7 @@
     },
     bottom: {
       y: zScale.range()[1] + 30,
-      label: zScale.domain()[1].toFixed(1),
+      label: (zScale.domain()[1] ?? 0).toFixed(1),
     },
   };
 </script>

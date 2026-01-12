@@ -112,7 +112,10 @@
       </button>
     </form>
     {#if requestState === "failed"}
-      <div class="text-red-500">No suggestions found, please try again</div>
+      <div class="text-red-500">
+        No suggestions found, please try again. If this error persists, try
+        changing the AI provider (see settings in the upper right )
+      </div>
     {/if}
   {/if}
 </div>

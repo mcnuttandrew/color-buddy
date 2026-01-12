@@ -10,13 +10,11 @@
   import DownChev from "virtual:icons/fa6-solid/angle-down";
   import DupAndDelete from "../controls/DupAndDelete.svelte";
   import Tooltip from "../components/Tooltip.svelte";
+  import { Color, makePalFromString } from "color-buddy-palette";
   $: currentPal = $colorStore.palettes[$colorStore.currentPal];
-  $: selectedCVDType = $configStore.colorSim;
-  $: config = colorPickerConfig[currentPal.colorSpace];
   $: colors = currentPal.colors;
   $: colorNames = colors.map((x) => nameColor(x)[0]);
   $: bgLum = currentPal.background.luminance();
-  $: console.log(bgLum);
 </script>
 
 <div class="flex flex-col pb-2 min-w-[600px]">
@@ -32,6 +30,24 @@
       colorSpace={$configStore.channelPickerSpaceBackground}
     />
     <SetSimulation />
+    <button
+      class={buttonStyle}
+      on:click|stopPropagation|preventDefault={() => {
+        const newColorChannels = [
+          Math.random(),
+          Math.random(),
+          Math.random(),
+        ].map((x) => Math.floor(x * 255));
+        const preColor = makePalFromString([
+          `rgb(${newColorChannels.join(",")})`,
+        ]).colors;
+        const newColor = Color.toColorSpace(preColor[0], currentPal.colorSpace);
+        const newColors = [...colors, newColor];
+        colorStore.setCurrentPalColors(newColors);
+      }}
+    >
+      Add Color
+    </button>
   </div>
   <div class="flex justify-center flex-wrap py-4">
     {#each currentPal?.colors || [] as color, idx}

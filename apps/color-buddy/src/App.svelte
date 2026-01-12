@@ -88,6 +88,7 @@
   import Config from "./controls/Config.svelte";
   import Title from "./controls/Title.svelte";
   import SharePal from "./components/SharePal.svelte";
+  import PickerOnly from "./content-modules/PickerOnly.svelte";
 
   import { lint } from "./lib/api-calls";
   import { debounce } from "vega";
@@ -132,6 +133,8 @@
   $: numPassing = $lintStore.currentChecks.filter(
     (x) => x.kind === "success" && !x.passes
   ).length;
+
+  const mode = "picker-only" as "normal" | "picker-only";
 </script>
 
 <header class="flex w-full bg-stone-800 justify-between min-h-12">
@@ -183,23 +186,29 @@
     <!-- main content -->
     <div class="flex h-full">
       <!-- left -->
-      <LeftPanel />
+      {#if mode === "normal"}
+        <LeftPanel />
+      {/if}
       <!-- main -->
       <div
         class="h-full flex flex-col grow main-content border-b border-l border-stone-200"
       >
-        {#if palPresent}
-          <MainColumn {scatterSize} />
-        {:else}
-          <div
-            class="flex-grow flex justify-center items-center"
-            style={`width: ${columnWidth}px`}
-          >
-            <div class="text-2xl max-w-md text-center">
-              No palettes present, click "New" in the upper left to create a new
-              one, or "Browse" to pick from existing ones.
+        {#if mode === "normal"}
+          {#if palPresent}
+            <MainColumn {scatterSize} />
+          {:else}
+            <div
+              class="flex-grow flex justify-center items-center"
+              style={`width: ${columnWidth}px`}
+            >
+              <div class="text-2xl max-w-md text-center">
+                No palettes present, click "New" in the upper left to create a
+                new one, or "Browse" to pick from existing ones.
+              </div>
             </div>
-          </div>
+          {/if}
+        {:else}
+          <PickerOnly />
         {/if}
       </div>
     </div>

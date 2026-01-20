@@ -20,7 +20,7 @@
 </script>
 
 <Tooltip>
-  <span slot="content" let:onClick>
+  <span slot="content">
     <div class="flex flex-col">
       <div class="font-bold">Sort By Channel</div>
       <div class="flex">
@@ -54,7 +54,7 @@
         on:click={() =>
           sortByChannel(
             selectedColorSpace,
-            selectedColorSpace.indexOf(selectedLetter)
+            selectedColorSpace.indexOf(selectedLetter),
           )}
       >
         Do Sort
@@ -80,9 +80,14 @@
     slot="target"
     id="sort-button"
     let:toggle
-    class={controlButtonStyle}
+    class={controlButtonStyle
+      .split(" ")
+      .filter((x) => !x.startsWith("w-"))
+      .join(" ")}
+    class:w-16={true}
     on:click={toggle}
   >
+    <div class="mr-2">Sort</div>
     <SortIcon class="text-sm" />
   </button>
 </Tooltip>

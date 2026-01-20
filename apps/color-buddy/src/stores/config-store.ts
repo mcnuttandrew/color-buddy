@@ -23,7 +23,7 @@ interface StoreData {
   includeQuotes: boolean;
   manageBrowsePreviewIdx: number;
   newExampleModalTarget: "off" | number | "new";
-  route: "examples" | "compare" | "eval";
+  route: "examples" | "compare" | "eval" | "metrics";
   scatterplotMode: "moving" | "putting";
   selectedFolder: { isPreMade: boolean; name: string };
   showColorBackground: "always show" | "show on drag" | "never show";
@@ -181,7 +181,7 @@ function createStore() {
     setChannelPickerSpace: (n: StoreData["channelPickerSpace"]) =>
       persist((old) => ({ ...old, channelPickerSpace: n })),
     setChannelPickerSpaceBackground: (
-      n: StoreData["channelPickerSpaceBackground"]
+      n: StoreData["channelPickerSpaceBackground"],
     ) => persist((old) => ({ ...old, channelPickerSpaceBackground: n })),
     setCompareBackground: (n: StoreData["compareBackground"]) =>
       persist((old) => ({ ...old, compareBackground: n })),

@@ -1,7 +1,5 @@
 <script lang="ts">
   import { nameColor } from "color-buddy-color-namer";
-  import { cvdSim } from "color-buddy-palette";
-  import { Color } from "color-buddy-palette";
 
   import colorStore from "../stores/color-store";
   import focusStore from "../stores/focus-store";
@@ -12,49 +10,24 @@
   import ModifySelection from "../controls/ModifySelection.svelte";
 
   import AddColor from "../controls/AddColor.svelte";
-  import DeMetric from "../controls/DeMetric.svelte";
 
-  import { deltaMetrics, ballSize } from "../constants";
+  import { ballSize } from "../constants";
 
   $: checks = $lintStore.currentChecks;
 
   $: colorNames = colors.map((x) => nameColor(x)[0]);
   $: currentPal = $colorStore.palettes[$colorStore.currentPal];
   $: colors = currentPal.colors;
-  $: bg = currentPal.background;
 
   $: colorsToIssues = colors.map((x) => {
     const hex = `${x.toHex()}`;
     return checks.filter(
       (check) =>
-        check.kind === "success" && !check.passes && check.message.includes(hex)
+        check.kind === "success" &&
+        !check.passes &&
+        check.message.includes(hex),
     );
   });
-
-  function computeStats(
-    colors: Color[],
-    metric: typeof $configStore.evalDeltaDisplay
-  ) {
-    if (metric === "none") {
-      return [];
-    }
-    // is contrast metric
-    if (!new Set(deltaMetrics).has(metric as any)) {
-      return colors.map((color) => color.contrast(bg, metric));
-    }
-    // is delta metric
-    const deltas = [];
-    for (let i = 1; i < colors.length; i++) {
-      const left = colors[i - 1];
-      const right = colors[i];
-      deltas.push(left.symmetricDeltaE(right, metric as any));
-    }
-    return deltas;
-  }
-  $: stats =
-    $configStore.evalDeltaDisplay === "none"
-      ? []
-      : computeStats(colors, $configStore.evalDeltaDisplay);
 
   $: focusedSet = new Set($focusStore.focusedColors);
 </script>
@@ -66,10 +39,7 @@
       <div class="flex">
         <ModifySelection />
       </div>
-      <DeMetric />
     </div>
-    <!-- svelte-ignore a11y-click-events-have-key-events -->
-    <!-- svelte-ignore a11y-no-static-element-interactions -->
     <div class="flex flex-col overflow-auto mr-5 px-4 h-full">
       {#each colors as color, idx}
         <ColorBall
@@ -78,7 +48,6 @@
           {colorsToIssues}
           {idx}
           isFocused={focusedSet.has(idx)}
-          {stats}
         />
       {/each}
       <div class="flex mt-2">

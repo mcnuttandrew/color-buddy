@@ -56,7 +56,7 @@
 </div>
 
 <div class="p-4 h-full overflow-y-auto pb-64">
-  {#if !isContrastMetric}
+  {#if !isContrastMetric && $configStore.evalDeltaDisplay !== "none"}
     <div class="mb-8">
       <div class="font-bold">Differences in sequence order</div>
       <div class="flex mt-8">
@@ -68,7 +68,7 @@
                   class="w-8 h-8 border border-stone-400 mr-6"
                   style="background-color: {color.toHex()}"
                 ></div>
-                {#if jdx < colors.length - 1}
+                {#if jdx < colors.length - 1 && stats.at(idx)?.at(jdx)}
                   <div
                     class="font-mono text-sm absolute right-[-4px] text-center {idx %
                       2 ===
@@ -87,35 +87,42 @@
     </div>
   {/if}
 
-  <div class="font-bold">All difference pairs</div>
-  {#each colors as color, idx}
-    <div class="flex flex-col border-b border-stone-300 pt-4">
-      <div class="flex items-center mb-4">
-        <div
-          class="w-8 h-8 border border-stone-400 mr-2"
-          style="background-color: {color.toHex()}"
-        ></div>
-        <div class="font-bold mr-4">{colorNames[idx]}</div>
-        <div class="font-mono">{color.toHex()}</div>
-      </div>
-      <div class="text-sm font-bold italic">Compared to</div>
-      <div class="flex flex-wrap">
-        {#each colors as colorPair, jdx}
-          <div class="flex items-center justify-center mr-4 mb-4">
-            <div
-              class="w-8 h-8 border border-stone-400 mr-2"
-              style="background-color: {colorPair.toHex()}"
-            ></div>
-            <div class="font-mono mb-2 text-sm">
-              {#if stats.length > 0}
-                {stats[idx][jdx].toFixed(2)}
-              {:else}
-                --
-              {/if}
-            </div>
-          </div>
-        {/each}
-      </div>
+  {#if $configStore.evalDeltaDisplay === "none"}
+    <div class="italic text-stone-500 mb-4">
+      No metric selected. Please choose a metric to see differences between
+      colors.
     </div>
-  {/each}
+  {:else}
+    <div class="font-bold">All difference pairs</div>
+    {#each colors as color, idx}
+      <div class="flex flex-col border-b border-stone-300 pt-4">
+        <div class="flex items-center mb-4">
+          <div
+            class="w-8 h-8 border border-stone-400 mr-2"
+            style="background-color: {color.toHex()}"
+          ></div>
+          <div class="font-bold mr-4">{colorNames[idx]}</div>
+          <div class="font-mono">{color.toHex()}</div>
+        </div>
+        <div class="text-sm font-bold italic">Compared to</div>
+        <div class="flex flex-wrap">
+          {#each colors as colorPair, jdx}
+            <div class="flex items-center justify-center mr-4 mb-4">
+              <div
+                class="w-8 h-8 border border-stone-400 mr-2"
+                style="background-color: {colorPair.toHex()}"
+              ></div>
+              <div class="font-mono mb-2 text-sm">
+                {#if stats.length > 0}
+                  {stats[idx][jdx].toFixed(2)}
+                {:else}
+                  --
+                {/if}
+              </div>
+            </div>
+          {/each}
+        </div>
+      </div>
+    {/each}
+  {/if}
 </div>

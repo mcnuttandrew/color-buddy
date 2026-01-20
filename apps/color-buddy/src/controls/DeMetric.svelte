@@ -62,15 +62,5 @@
         {/if}
       </button>
     {/each}
-    <!-- <div class="w-full border-b border-stone-200 my-2"></div> -->
-    <!-- <label>
-      Show Issues <input
-        class="ml-1"
-        on:change={(e) =>
-          configStore.setShowIssuesOnLeft(e.currentTarget.checked)}
-        type="checkbox"
-        checked={$configStore.showIssuesOnLeft}
-      />
-    </label> -->
   </div>
 </Tooltip>

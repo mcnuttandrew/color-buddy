@@ -85,10 +85,10 @@
   $: bgLum = bg.luminance();
   const findColorWithTag = (
     colors: Color[],
-    tag: string
+    tag: string,
   ): Color | undefined => {
     return colors.find((x) =>
-      x.tags.some((y) => y.toLowerCase() === tag.toLowerCase())
+      x.tags.some((y) => y.toLowerCase() === tag.toLowerCase()),
     );
   };
   $: taggedAxisColor = findColorWithTag(colors, "axis");
@@ -114,7 +114,7 @@
   // coordinate transforms
   $: scales = makeScales(
     { rScale, angleScale, xScale, yScale, zScale },
-    config
+    config,
   );
   // color space -> screen
   $: x = scales.x;
@@ -189,7 +189,7 @@
         config,
         scales,
         colorSpace,
-        dragDelta
+        dragDelta,
       );
     });
 
@@ -232,7 +232,7 @@
       selectionMouseCurrent,
       windowPos,
       colors,
-      { ...miniConfig, ...scales }
+      { ...miniConfig, ...scales },
     );
     onFocusedColorsChange(newFocus);
   };

@@ -16,7 +16,6 @@
   export let color: Color;
   export let colorName: string | undefined;
   export let colorsToIssues: any[];
-  export let stats: number[];
 
   $: selectedCVDType = $configStore.colorSim;
   $: currentPal = $colorStore.palettes[$colorStore.currentPal];
@@ -24,7 +23,7 @@
 
   const deltaMetricsSet = new Set(deltaMetrics);
   $: statsTypeIsDelta = deltaMetricsSet.has(
-    $configStore.evalDeltaDisplay as any
+    $configStore.evalDeltaDisplay as any,
   );
 </script>
 
@@ -41,7 +40,7 @@
       class="cursor-pointer"
       on:click={(e) => {
         focusStore.setColors(
-          dealWithFocusEvent(e, idx, $focusStore.focusedColors)
+          dealWithFocusEvent(e, idx, $focusStore.focusedColors),
         );
       }}
     >
@@ -93,16 +92,5 @@
         {/each}
       </span>
     {/if}
-    {#if stats[idx] && !statsTypeIsDelta && $configStore.evalDeltaDisplay !== "none"}
-      <div class=" text-black text-right text-xs whitespace-nowrap">
-        Contrast: {Math.round(stats[idx] * 10) / 10}
-      </div>
-    {/if}
   </div>
 </div>
-
-{#if stats[idx] && statsTypeIsDelta && $configStore.evalDeltaDisplay !== "none"}
-  <div class=" text-black text-right text-xs whitespace-nowrap">
-    dE: {Math.round(stats[idx] * 10) / 10}
-  </div>
-{/if}

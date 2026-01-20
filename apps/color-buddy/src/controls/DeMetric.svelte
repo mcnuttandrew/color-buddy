@@ -9,19 +9,24 @@
   const nameMap: Record<string, string> = {
     Lstar: "Delta L*",
   };
+
+  $: isContrastMetric = contrastMetrics.includes(
+    $configStore.evalDeltaDisplay as any,
+  );
 </script>
 
 <Tooltip bg="bg-white">
   <button
     class={`${controlButtonStyle
       .split(" ")
-      .filter((x) => !x.startsWith("w-"))
+      .filter((x) => !x.startsWith("w-") && !x.startsWith("h-"))
       .join(" ")} px-2`}
     slot="target"
     let:toggle
     on:click={toggle}
   >
-    Metrics <ChevDown class="ml-2 text-sm" />
+    Select a metric (current: {isContrastMetric ? "Contrast" : "Delta"}: {$configStore.evalDeltaDisplay})
+    <ChevDown class="ml-2 text-sm" />
   </button>
   <div slot="content" class="flex flex-col">
     <button
@@ -57,8 +62,8 @@
         {/if}
       </button>
     {/each}
-    <div class="w-full border-b border-stone-200 my-2"></div>
-    <label>
+    <!-- <div class="w-full border-b border-stone-200 my-2"></div> -->
+    <!-- <label>
       Show Issues <input
         class="ml-1"
         on:change={(e) =>
@@ -66,6 +71,6 @@
         type="checkbox"
         checked={$configStore.showIssuesOnLeft}
       />
-    </label>
+    </label> -->
   </div>
 </Tooltip>

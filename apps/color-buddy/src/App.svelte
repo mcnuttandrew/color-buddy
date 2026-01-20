@@ -13,7 +13,7 @@
       "start-up",
       // localStorage.getItem("color-pal"),
       {},
-      $configStore.userName
+      $configStore.userName,
     );
 
     // check if there's a palette specified in the url
@@ -88,6 +88,7 @@
   import Config from "./controls/Config.svelte";
   import Title from "./controls/Title.svelte";
   import SharePal from "./components/SharePal.svelte";
+  import Metrics from "./content-modules/Metrics.svelte";
 
   import { lint } from "./lib/api-calls";
   import { debounce } from "vega";
@@ -128,9 +129,9 @@
   const zWidth = 110;
   $: scatterSize = Math.max(Math.min(columnWidth - zWidth - padding, 420), 300);
 
-  const currentPalTabs = ["examples", "compare", "eval"];
+  const currentPalTabs = ["examples", "compare", "eval", "metrics"];
   $: numPassing = $lintStore.currentChecks.filter(
-    (x) => x.kind === "success" && !x.passes
+    (x) => x.kind === "success" && !x.passes,
   ).length;
 </script>
 
@@ -223,6 +224,8 @@
             return "Evaluation";
           } else if (x === "compare") {
             return "Comparison";
+          } else if (x === "metrics") {
+            return "Metrics";
           } else {
             return "Examples";
           }
@@ -260,6 +263,8 @@
         <ComparePal {scatterSize} />
       {:else if palPresent && $configStore.route === "eval"}
         <Eval />
+      {:else if palPresent && $configStore.route === "metrics"}
+        <Metrics />
       {/if}
     </div>
   </div>

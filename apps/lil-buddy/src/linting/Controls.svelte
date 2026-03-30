@@ -5,6 +5,11 @@
 
   import Tooltip from "../components/Tooltip.svelte";
   import Nav from "../components/Nav.svelte";
+  const tabs = [
+    "openai",
+    "anthropic",
+    // "google"
+  ];
 </script>
 
 <Tooltip positionAlongRightEdge={true}>
@@ -12,7 +17,7 @@
     <div>
       <div>Engine</div>
       <Nav
-        tabs={["openai", "anthropic", "google"]}
+        {tabs}
         isTabSelected={(x) => x === $store.engine}
         selectTab={(x) => store.setEngine(x)}
       />

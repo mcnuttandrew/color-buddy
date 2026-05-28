@@ -24,7 +24,7 @@ const postCreds = {
 function openAIScaffold<A>(
   api: string,
   body: string,
-  parseAsJSON: boolean
+  parseAsJSON: boolean,
 ): Promise<A[]> {
   return fetch(`/.netlify/functions/${api}?engine=openai`, {
     ...postCreds,
@@ -43,7 +43,7 @@ function openAIScaffold<A>(
 function anthropicScaffold<A>(
   api: string,
   body: string,
-  parseAsJSON: boolean
+  parseAsJSON: boolean,
 ): Promise<A[]> {
   return fetch(`/.netlify/functions/${api}?engine=anthropic`, {
     ...postCreds,
@@ -62,7 +62,7 @@ function anthropicScaffold<A>(
 function googleScaffold<A>(
   api: string,
   body: string,
-  parseAsJSON: boolean
+  parseAsJSON: boolean,
 ): Promise<A[]> {
   return fetch(`/.netlify/functions/${api}?engine=google`, {
     ...postCreds,
@@ -74,7 +74,7 @@ function googleScaffold<A>(
       const result = x?.response?.candidates
         .flatMap((x: any) => x.content?.parts?.flatMap((x: any) => x.text))
         .map((x: any) =>
-          x.replace(/\\n/g, "").replace(/\`/g, "").replace("json", "").trim()
+          x.replace(/\\n/g, "").replace(/\`/g, "").replace("json", "").trim(),
         )
         .flatMap((x: any) => (parseAsJSON ? Json.parse(x) : x));
       return result;
@@ -92,7 +92,7 @@ const engineToScaffold = {
 export function suggestAdditionsToPalette(
   palette: Palette,
   engine: Engine,
-  search: string
+  search: string,
 ): Promise<string[]> {
   const body = JSON.stringify({
     ...palToString(palette),
@@ -110,7 +110,7 @@ export function suggestPal(prompt: string, engine: Engine) {
 
 export function suggestNameForPalette(
   palette: Palette,
-  engine: Engine
+  engine: Engine,
 ): Promise<string[]> {
   const body = JSON.stringify({ ...palToString(palette) });
   return engineToScaffold[engine]<string>(`suggest-name`, body, true);
@@ -119,7 +119,7 @@ export function suggestNameForPalette(
 export function suggestContextualAdjustments(
   prompt: string,
   currentPal: Palette,
-  engine: Engine
+  engine: Engine,
 ) {
   const adjustedPrompt = `${summarizePal(currentPal)}\n\n${prompt}`;
   const body = JSON.stringify({
@@ -129,7 +129,7 @@ export function suggestContextualAdjustments(
   return engineToScaffold[engine]<SimplePal>(
     `suggest-contextual-adjustments`,
     body,
-    true
+    true,
   );
 }
 
@@ -227,6 +227,12 @@ export function logEvent(event: string, data: any, userName: string) {
   }
   fetch(`/.netlify/functions/log`, {
     ...postCreds,
-    body: JSON.stringify({ event, data, userName, location }),
+    body: JSON.stringify({
+      event,
+      data,
+      userName,
+      location,
+      userAgent: navigator.userAgent,
+    }),
   });
 }

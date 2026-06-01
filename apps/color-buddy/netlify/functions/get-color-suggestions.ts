@@ -22,7 +22,7 @@ Your response: `;
   return result;
 };
 
-export const handler = genericHandler<promptInput>(prompt, (x) => {
+export default genericHandler<promptInput>(prompt, (x) => {
   const input = JSON.parse(x);
   const inputColors = input.colors;
   if (

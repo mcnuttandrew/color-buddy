@@ -2,27 +2,22 @@ import OpenAI from "openai";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_KEY as string);
 import Anthropic from "@anthropic-ai/sdk";
-
+import type { Context } from "@netlify/functions";
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
-
 const anthropic = new Anthropic({
   apiKey: process.env.ANTHROPIC_KEY, // defaults to process.env["ANTHROPIC_API_KEY"]
 });
 
-export function errorResponse(callback, err) {
+export function errorResponse(err: string) {
   console.error(err);
-
-  callback(null, {
-    statusCode: 500,
-    body: JSON.stringify({ error: err }),
-  });
+  return Response.json({ error: err }, { status: 500 });
 }
 
-const engines = {
+const engines: Record<string, (prompt: string) => Promise<any>> = {
   google: (prompt: string) =>
     genAI
       .getGenerativeModel({ model: "gemini-2.5-flash" })
@@ -37,7 +32,7 @@ const engines = {
     }),
   anthropic: (prompt: string) =>
     anthropic.messages.create({
-      model: "claude-3-5-haiku-latest",
+      model: "claude-haiku-4-5",
       max_tokens: 256,
       temperature: 0,
       messages: [{ role: "user", content: prompt }],
@@ -45,28 +40,27 @@ const engines = {
 };
 
 export const genericHandler =
-  <A>(prompt: (input: A) => string, bodyGetter: (string) => A) =>
-  async (event, _context, callback) => {
+  <A>(prompt: (input: A) => string, bodyGetter: (string: string) => A) =>
+  async (req: Request, context: Context) => {
     let promptInput;
     try {
-      promptInput = bodyGetter(event.body);
+      const body: string = await req.text();
+      promptInput = bodyGetter(body || "");
     } catch (e) {
       console.log(e);
-      errorResponse(callback, "Bad submit");
-      return;
+      return errorResponse("Bad submit");
     }
-    const engine = event.queryStringParameters.engine;
+    const queryString = new URL(req.url).searchParams;
+    const engine = queryString.get("engine");
     if (!engine) {
-      errorResponse(callback, "No engine");
-      return;
+      return errorResponse("No engine");
     }
     if (typeof engine !== "string" || !engines[engine]) {
-      errorResponse(callback, "Bad engine");
-      return;
+      return errorResponse("Bad engine");
     }
     const content = prompt(promptInput);
     console.log(engine, content);
     const result = await engines[engine](content);
     console.log(result);
-    callback(null, { statusCode: 200, body: JSON.stringify(result) });
+    return Response.json(result, { status: 200 });
   };

@@ -53,7 +53,7 @@ Task
 Prompt: ${JSON.stringify(pal.textPrompt)}
 Response:`;
 
-export const handler = genericHandler<promptInput>(prompt, (x) => {
+export default genericHandler<promptInput>(prompt, (x) => {
   // TODO sanitize for prompt injection
 
   const input = JSON.parse(x);

@@ -74,7 +74,7 @@ Background Color: ${JSON.stringify(pal.background)}
 Error: ${JSON.stringify(pal.error)}
 
 Response:`;
-export const handler = genericHandler<promptInput>(prompt, (x) => {
+export default genericHandler<promptInput>(prompt, (x) => {
   const input = JSON.parse(x);
   const inputColors = input.colors;
   if (

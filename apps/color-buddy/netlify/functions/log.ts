@@ -1,45 +1,35 @@
 import { MongoClient } from "mongodb";
+import type { Context } from "@netlify/functions";
 
-export function errorResponse(callback, err) {
+export function errorResponse(err: string) {
   console.error(err);
-
-  callback(null, {
-    statusCode: 500,
-    body: JSON.stringify({ error: err }),
-  });
+  return Response.json({ error: err }, { status: 500 });
 }
 const DB_URL = process.env.DB_URL || "mongodb://localhost:27017";
 const DB_NAME = "color-buddy-analytics";
 
-export const handler = (event, context, callback) => {
+export default async (req: Request, context: Context) => {
   let eventLog;
+  const body: string = await req.text();
   try {
-    eventLog = JSON.parse(event.body);
+    eventLog = JSON.parse(body || "");
+    eventLog = { ...eventLog, country: context.geo?.country || "unknown" };
   } catch (e) {
-    errorResponse(callback, "Bad submit");
-    return;
+    return errorResponse("Bad submit");
   }
   console.log(eventLog);
-  MongoClient.connect(`${DB_URL}/${DB_NAME}`)
+  return MongoClient.connect(`${DB_URL}/${DB_NAME}`)
     .then((connection) => {
       const db = connection.db(DB_NAME);
       const collection = db.collection("analytics");
 
-      collection
+      return collection
         .insertOne({ ...eventLog, createdAt: new Date() })
         .then(() => {
           connection.close();
-          callback(null, {
-            statusCode: 200,
-            body: JSON.stringify({ status: "success" }),
-          });
-          context.done();
+          return Response.json({ status: "success" }, { status: 200 });
         })
-        .catch((err) => {
-          return errorResponse(callback, err);
-        });
+        .catch((err) => errorResponse(err));
     })
-    .catch((err) => {
-      return errorResponse(callback, err);
-    });
+    .catch((err) => errorResponse(err));
 };

@@ -119,7 +119,7 @@ You should include an extra field in your output called "comments" that explains
 Prompt: ${JSON.stringify(pal.lintPrompt)}
 
 Your response: `;
-export const handler = genericHandler<promptInput>(prompt, (x) => {
+export default genericHandler<promptInput>(prompt, (x) => {
   const input = JSON.parse(x);
   const lintPrompt = input.lintPrompt;
   if (typeof lintPrompt !== "string") {

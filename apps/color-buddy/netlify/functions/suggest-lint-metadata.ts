@@ -13,7 +13,7 @@ Your response should be a JSON object with the following structure: {"descriptio
 Prompt: ${JSON.stringify(pal.lintProgram)}
 
 Your response: `;
-export const handler = genericHandler<promptInput>(prompt, (x) => {
+export default genericHandler<promptInput>(prompt, (x) => {
   const input = JSON.parse(x);
   const lintProgram = input.lintProgram;
   if (typeof lintProgram !== "string") {

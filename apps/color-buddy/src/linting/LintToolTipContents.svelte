@@ -52,18 +52,18 @@
           suggestions = [...suggestions, x].filter((x) => x) as FixSuggestion[];
           requestState = "loaded";
           waitingOnFixes = waitingOnFixes - 1;
-          logEvent(
-            "lint-fix",
-            {
-              fixType,
-              errorName: lintProgram.name,
-              lintProgram: lintProgram.program,
-              palette: palette.colors.map((x) => x.toDisplay()),
-              background: palette.background.toDisplay(),
-              fix: x?.pal?.colors.map((z) => z.toDisplay()),
-            },
-            $configStore.userName
-          );
+          // logEvent(
+          //   "lint-fix",
+          //   {
+          //     fixType,
+          //     errorName: lintProgram.name,
+          //     lintProgram: lintProgram.program,
+          //     palette: palette.colors.map((x) => x.toDisplay()),
+          //     background: palette.background.toDisplay(),
+          //     fix: x?.pal?.colors.map((z) => z.toDisplay()),
+          //   },
+          //   $configStore.userName
+          // );
         });
     };
 
@@ -108,15 +108,16 @@
   ] as const;
   $: currentSim = $configStore.colorSim;
   $: cbMatch = options.find((x) =>
-    lintProgram.name.toLowerCase().includes(x)
+    lintProgram.name.toLowerCase().includes(x),
   ) as (typeof options)[number];
   const allowedColorSpaces = ["lch", "lab", "hsl", "hsv"] as const;
   $: spaceMatch = allowedColorSpaces.find(
-    (x) => lintProgram.description.toLowerCase().includes(x) && x !== colorSpace
+    (x) =>
+      lintProgram.description.toLowerCase().includes(x) && x !== colorSpace,
   ) as any;
   $: ignored = !!evalConfig[lintProgram.name]?.ignore;
   $: blameData = Array.from(
-    new Set((lintResult.kind === "success" ? lintResult.blameData : []).flat())
+    new Set((lintResult.kind === "success" ? lintResult.blameData : []).flat()),
   );
 </script>
 
@@ -219,7 +220,7 @@
           style={`background: ${palette.colors[index]?.toHex()}; border: 1px solid ${computeStroke(
             palette.colors[index],
             index,
-            new Set([index])
+            new Set([index]),
           )}`}
         />
       </button>

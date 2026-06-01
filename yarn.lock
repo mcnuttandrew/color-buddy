@@ -1730,13 +1730,6 @@
     p-wait-for "^5.0.0"
     picoquery "^2.5.0"
 
-"@netlify/aws-lambda-compat@^1.0.2":
-  version "1.0.2"
-  resolved "https://registry.yarnpkg.com/@netlify/aws-lambda-compat/-/aws-lambda-compat-1.0.2.tgz#d018764ee4837bf1d12e67ff7dbc4d492649ca9c"
-  integrity sha512-VUObxEsHOA9LcXCfDN4KRBN+ZtmINZKJIKgTgkd+citJigC21JB2P3ogXNapg2NoZZjgFzE7b3qN5KqM56z9EA==
-  dependencies:
-    "@netlify/types" "2.8.0"
-
 "@netlify/binary-info@^1.0.0":
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/@netlify/binary-info/-/binary-info-1.0.0.tgz#cd0d86fb783fb03e52067f0cd284865e57be86c8"

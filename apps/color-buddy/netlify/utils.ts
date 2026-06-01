@@ -50,8 +50,6 @@ export const genericHandler =
       console.log(e);
       return errorResponse("Bad submit");
     }
-    // const engine = event.queryStringParameters?.engine;
-    // const engine =
     const queryString = new URL(req.url).searchParams;
     const engine = queryString.get("engine");
     if (!engine) {

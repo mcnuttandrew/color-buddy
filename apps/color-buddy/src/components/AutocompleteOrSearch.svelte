@@ -55,7 +55,7 @@
           e.currentTarget.blur();
         }
         const exactOption = currentOptions.find(
-          (x) => x.toLowerCase() === value.toLowerCase()
+          (x) => x.toLowerCase() === value.toLowerCase(),
         );
         if (e.key === "Enter" && selectedIndex === -1 && exactOption) {
           setValue(exactOption);
@@ -75,7 +75,6 @@
         {#each currentOptions as option, idx}
           <button
             on:click|preventDefault|stopPropagation={() => {
-              console.log("option", option);
               setValue(option);
               value = "";
             }}

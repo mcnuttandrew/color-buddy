@@ -32,7 +32,6 @@
         }, 500);
       }}
       on:keydown={(e) => {
-        console.log(e.key, selectedIndex, currentOptions.length);
         if (e.key === "Escape") {
           e.currentTarget.blur();
           selectedIndex = -1;
@@ -76,7 +75,6 @@
         {#each currentOptions as option, idx}
           <button
             on:click|preventDefault|stopPropagation={() => {
-              console.log("option", option);
               setValue(option);
               value = "";
             }}

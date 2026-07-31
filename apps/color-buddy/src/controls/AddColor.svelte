@@ -50,7 +50,7 @@
       setValue={(x) => {
         const newColor = Color.colorFromString(
           colorCentersFromStoneHeer[x],
-          colorSpace
+          colorSpace,
         );
         const newColors = [...colors, newColor];
         colorStore.setCurrentPalColors(newColors);
@@ -59,6 +59,14 @@
       searchOptions={Object.keys(colorCentersFromStoneHeer)}
       placeholder="e.g. Scandinavian Blue or Canadian Maple"
       runSearch={(x) => {
+        // if its a hex color, just add it to the palette
+        if (x.match(/^#([0-9a-f]{3}){1,2}$/i)) {
+          const newColor = Color.colorFromString(x, colorSpace);
+          const newColors = [...colors, newColor];
+          colorStore.setCurrentPalColors(newColors);
+          return;
+        }
+
         getColorForSearch(x);
       }}
     />

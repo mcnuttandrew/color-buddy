@@ -32,6 +32,7 @@
         }, 500);
       }}
       on:keydown={(e) => {
+        console.log(e.key, selectedIndex, currentOptions.length);
         if (e.key === "Escape") {
           e.currentTarget.blur();
           selectedIndex = -1;
@@ -55,7 +56,7 @@
           e.currentTarget.blur();
         }
         const exactOption = currentOptions.find(
-          (x) => x.toLowerCase() === value.toLowerCase()
+          (x) => x.toLowerCase() === value.toLowerCase(),
         );
         if (e.key === "Enter" && selectedIndex === -1 && exactOption) {
           setValue(exactOption);

@@ -194,10 +194,10 @@
   resolved "https://registry.yarnpkg.com/@antfu/utils/-/utils-8.1.1.tgz#95b1947d292a9a2efffba2081796dcaa05ecedfb"
   integrity sha512-Mex9nXf9vR6AhcXmMrlz/HVgYYZpVGJ6YlPgwl7UnaFpnshXs6EK/oa5Gpf3CzENMjkvEx2tQtntGnb7UtSTOQ==
 
-"@anthropic-ai/sdk@^0.100.1":
-  version "0.100.1"
-  resolved "https://registry.yarnpkg.com/@anthropic-ai/sdk/-/sdk-0.100.1.tgz#ef34da7f06dd164d9e2324edda8fe7fc61f6f688"
-  integrity sha512-RANcEe7LpiLczkKGOwoXOTuFdPhuubS0i4xaAKOMpcqc55YO0mukgxppV7eygx3DXNjxWT6RYOLPyOy0aIAmwg==
+"@anthropic-ai/sdk@^0.133.0":
+  version "0.133.0"
+  resolved "https://registry.yarnpkg.com/@anthropic-ai/sdk/-/sdk-0.133.0.tgz#08db7874dde5e2e02b42d12680315efa72fa9799"
+  integrity sha512-jlqUN8p8ESTJj+GJnA4KjzbEfF1waEoGzRT8jwytlYGFFgv+/DUQOxlYGvYw10UzhD1kwLqYzxvA3FrTB2YWuQ==
   dependencies:
     json-schema-to-ts "^3.1.1"
     standardwebhooks "^1.0.0"
@@ -11187,10 +11187,10 @@ openai@^4.78.1:
     formdata-node "^4.3.2"
     node-fetch "^2.6.7"
 
-openai@^6.39.1:
-  version "6.39.1"
-  resolved "https://registry.yarnpkg.com/openai/-/openai-6.39.1.tgz#ca825d519952759c192b02ee3d716f1eb07b31ca"
-  integrity sha512-z3dO9fEWOXBzlXynVb/xZ/tujzUjFWQWn3C0n0mw6Vo0zJTbEkaN4b2cLWjhJ6haJQx8LlREoafHRl+Gu/Hl+A==
+openai@^7.33.0:
+  version "7.33.0"
+  resolved "https://registry.yarnpkg.com/openai/-/openai-7.33.0.tgz#dbc8267aa0a70c92443502d1200d1c393c2b3174"
+  integrity sha512-OtC8xefTzjyamDjagrVvuZzoB8YiT/xhg9QbBo8cFt+FtaL5wj2eX5CuQcAS2DqNEYqzXIhV3+q4GG2dweYgiw==
 
 ora@8.2.0:
   version "8.2.0"

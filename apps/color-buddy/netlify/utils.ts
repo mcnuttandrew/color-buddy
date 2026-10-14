@@ -1,6 +1,6 @@
 import OpenAI from "openai";
-import { GoogleGenerativeAI } from "@google/generative-ai";
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_KEY as string);
+// import { GoogleGenerativeAI } from "@google/generative-ai";
+// const genAI = new GoogleGenerativeAI(process.env.GEMINI_KEY as string);
 import Anthropic from "@anthropic-ai/sdk";
 import type { Context } from "@netlify/functions";
 
@@ -18,23 +18,22 @@ export function errorResponse(err: string) {
 }
 
 const engines: Record<string, (prompt: string) => Promise<any>> = {
-  google: (prompt: string) =>
-    genAI
-      .getGenerativeModel({ model: "gemini-2.5-flash" })
-      .generateContent(prompt),
+  // google: (prompt: string) =>
+  //   genAI
+  //     .getGenerativeModel({ model: "gemini-2.5-flash" })
+  //     .generateContent(prompt),
   openai: (prompt: string) =>
     openai.chat.completions.create({
       messages: [{ role: "user", content: prompt }],
       n: 1,
-      temperature: 0,
-      model: "gpt-4o",
-      // model: "gpt-4",
+      // temperature: 0,
+      model: "gpt-6-luna",
     }),
   anthropic: (prompt: string) =>
     anthropic.messages.create({
-      model: "claude-haiku-4-5",
+      model: "claude-haiku-5-5",
       max_tokens: 256,
-      temperature: 0,
+      // temperature: 0,
       messages: [{ role: "user", content: prompt }],
     }),
 };
